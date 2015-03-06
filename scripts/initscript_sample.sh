@@ -3,19 +3,12 @@
 #		skyhopper.
 #
 # chkconfig: - 58 74
-# description: skyhopper is the cloud daemon. \
+# description: skyhopper is the cloud daemon.
 
 ### BEGIN INIT INFO
 # Provides: skyhopper
-# Required-Start: $network $local_fs $remote_fs
-# Required-Stop: $network $local_fs $remote_fs
-# Should-Start: $syslog $named skyhopperate
-# Should-Stop: $syslog $named
 # Short-Description: start and stop skyhopper
-# Description: skyhopper is the NTPv4 daemon. The Network Time Protocol (NTP)
-#              is used to synchronize the time of a computer client or
-#              server to another server or reference time source, such
-#              as a radio or satellite receiver or modem.
+# Description: skyhopper is the DevOps framework tool.
 ### END INIT INFO
 
 # Source function library.
