@@ -1,0 +1,54 @@
+<%= form_for @project, html: { class: 'form-horizontal', role: 'form' } do |f| %>
+  <div class="form-group">
+    <%= f.label :client_id, t('clients.client'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= uneditable_input(Client.find_by(id: @project.client_id).name) %>
+      <%= f.hidden_field :client_id %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :code, t('projects.code'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <% if @project.client.is_for_system? %>
+        <%= uneditable_input(@project.code) %>
+        <%= f.hidden_field :code %>
+      <% else %>
+        <%= f.text_field :code, class: 'form-control' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :name, t('projects.name'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <% if @project.client.is_for_system? %>
+        <%= uneditable_input(@project.name) %>
+        <%= f.hidden_field :name %>
+      <% else %>
+        <%= f.text_field :name, class: 'form-control' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :cloud_provider_id, t('projects.cloud_provider'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.select :cloud_provider_id, @cloud_providers.map{|x| [x.name, x.id]}, {}, {class: "form-control"} %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :access_key, t('projects.access_key'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :access_key, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :secret_access_key, t('projects.secret_access_key'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :secret_access_key, class: 'form-control form-control-masked' %>
+    </div>
+  </div>
+
+  <div class="form-actions-top">
+    <%= f.submit nil, class: 'btn btn-primary create' %>
+    <%= link_to t('.cancel', default: t("helpers.links.cancel")), projects_path(client_id: @project.client_id), class: 'btn btn-default' %>
+  </div>
+<% end %>

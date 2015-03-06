@@ -1,0 +1,313 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
+# for Node model and Chef
+
+class NodesController < ApplicationController
+  include Concerns::BeforeAuth
+  include Concerns::InfraLogger
+
+
+  # --------------- Auth
+  before_action :authenticate_user!
+
+  # infra
+  before_action except: [:recipes] do
+    infra_id = params.require(:infra_id)
+    allowed_infrastructure(infra_id)
+  end
+
+
+
+  # GET /nodes/i-0b8e7f12/run_bootstrap
+  def run_bootstrap
+    Thread.new_with_db do
+      physical_id = params.require(:id)
+      infra       = Infrastructure.find(params.require(:infra_id))
+      fqdn        = infra.instance(physical_id).dns_name || infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
+
+      infra_logger_success("Bootstrapping for #{physical_id} is started.")
+
+      ws = WSConnector.new('bootstrap', physical_id)
+
+      begin
+        Node.bootstrap(fqdn, physical_id, infra)
+      rescue => ex
+        logger.error ex
+        infra_logger_fail("Bootstrapping for #{physical_id} is failed. \n #{ex.message}")
+        ws.push_as_json({message: ex.message, status: false})
+      else
+        infra_logger_success("Bootstrapping for #{physical_id} is successfully finished.")
+        ws.push_as_json({message: I18n.t('nodes.msg.bootstrap_finish', physical_id: physical_id), status: true})
+      end
+    end
+
+    render nothing: true, status: 200 and return
+  end
+
+  # GET /nodes/i-0b8e7f12
+  def show
+    # TODO: before_action
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+
+    infra             = Infrastructure.find(infra_id)
+    instance          = infra.instance(physical_id)
+    @instance_summary = instance.summary
+
+    case @instance_summary[:status]
+    when :terminated, :stopped
+      return
+    end
+
+    chef_server = ServerState.new('chef')
+
+    if @chef_error = !chef_server.is_running?
+      @chef_msg = t 'chef_servers.msg.not_running'
+      return
+    end
+
+    n = Node.new(physical_id)
+    begin
+      @runlist       = n.details["run_list"]
+      @selected_dish = n.details['normal']['dish_id']
+    rescue ChefAPI::Error::NotFound
+      # in many cases, before bootstrap
+      @before_bootstrap = true
+      return
+    rescue ChefAPI::Error => ex
+      @chef_error = true
+      @chef_msg = ex.message
+      return
+    end
+
+    @info = {}
+    @info[:cook_status]       = Rails.cache.read(CookStatus::TagName + physical_id)       || 'UnExecuted'
+    @info[:serverspec_status] = Rails.cache.read(ServerspecStatus::TagName + physical_id) || 'UnExecuted'
+    @info[:update_status]     = Rails.cache.read(UpdateStatus::TagName + physical_id)     || 'UnExecuted'
+
+    @dishes = Dish.valid_dishes(infra.project_id)
+  end
+
+  # GET /nodes/i-0b8e7f12/edit
+  def edit
+    physical_id = params.require(:id)
+    details = Node.new(physical_id).details
+    @runlist = details["run_list"]
+
+    @roles     = ChefAPI.index(:role).map(&:name).sort
+    @cookbooks = ChefAPI.index(:cookbook).keys.sort
+  end
+
+  # GET /nodes/recipes/:cookbook
+  def recipes
+    cookbook_name = params.require(:cookbook)
+    @recipes = ChefAPI.recipes(cookbook_name).sort
+    render json: @recipes
+  end
+
+  # PUT /nodes/i-0b8e7f12
+  def update
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+    runlist     = params[:runlist] || []
+
+    infrastructure = Infrastructure.find(infra_id)
+
+
+    ret = update_runlist(physical_id: physical_id, infrastructure: infrastructure, runlist: runlist)
+
+    if ret[:status]
+      render text: I18n.t('nodes.msg.runlist_updated') and return
+    end
+
+    render text: ret[:message], status: 500 and return
+  end
+
+  # PUT /nodes/i-0b8e7f12/cook
+  def cook
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+
+    infrastructure = Infrastructure.find(infra_id)
+
+    cook_nodes(infrastructure, physical_id)
+    render text: I18n.t('nodes.msg.runlist_applying'), status: 202
+  end
+
+  # POST /nodes/i-0b8e7f12/apply_dish
+  def apply_dish
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+    dish_id     = params.require(:dish_id)
+
+    infrastructure = Infrastructure.find(infra_id)
+    dish           = Dish.find(dish_id)
+    node           = Node.new(physical_id)
+
+    runlist = dish.runlist
+    if runlist.blank?
+      # TODO: I18n
+      render text: 'Runlist is empty.' and return
+    end
+
+    ret = update_runlist(physical_id: physical_id, infrastructure: infrastructure, runlist: runlist, dish_id: dish_id)
+
+    unless ret[:status]
+      render text: ret[:message], status: 500 and return
+    end
+
+    Thread.new(infrastructure, dish, node, physical_id) do |infrastructure, dish, node, physical_id|
+      # TODO: error handling
+      cook_nodes(infrastructure, physical_id, sync: true)
+    end
+
+    render text: I18n.t('nodes.msg.cook_started')
+  end
+
+
+  # ==== Route
+  # PUT /nodes/i-hogehoge/update_attributes
+  # ==== params
+  # [id] physical_id
+  # [attributes] JSON string
+  # [infra_id] 認証に必要
+  def update_attributes
+    physical_id = params.require(:id)
+    attr  = JSON.parse(params.require(:attributes))
+
+    node = Node.new(physical_id)
+
+    parsed_attr = node.attr_slash_to_hash(attr)
+
+    begin
+      node.update_attributes(parsed_attr)
+    rescue => e
+      render text: e.message, status: 500 and return
+    end
+
+    render text: I18n.t('nodes.msg.attribute_updated') and return
+  end
+
+  # ==== Route
+  # GET /nodes/:id/edit_attributes
+  # ==== params
+  # [id] physical_id
+  # [infra_id] 認証に必要
+  def edit_attributes
+    physical_id = params.require(:id)
+
+    node = Node.new(physical_id)
+
+    @attrs = node.enabled_attributes.dup
+    @current_attributes = node.get_attributes
+  end
+
+  def yum_update
+    physical_id = params.require(:id)
+    infra_id = params.require(:infra_id)
+
+    infra = Infrastructure.find(infra_id)
+
+    exec_yum_update(infra, physical_id)
+    render text: I18n.t('nodes.msg.yum_update_started'), status: 202
+  end
+
+
+  private
+
+  def update_runlist(physical_id: nil, infrastructure: nil, runlist: nil, dish_id: nil)
+    node = Node.new(physical_id)
+    infra_logger_update_runlist(node)
+
+    begin
+      node.update_runlist(runlist, dish_id)
+
+    rescue => ex
+      infra_logger_fail("Updating runlist for #{physical_id} is failed. \n #{ex.message}")
+      return {status: false, message: ex.message}
+    else
+      # change cookstatus to unexected
+      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::UnExecuted)
+      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+
+      infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
+      return {status: true, message: nil}
+    end
+  end
+
+
+  # TODO: refactor
+  def cook_nodes(infrastructure, *physical_ids, sync: false)
+    thread_cook = Thread.new_with_db(infrastructure, physical_ids, current_user.id) do |infrastructure, physical_ids, user_id|
+      physical_ids.each do |physical_id|
+        infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+
+        Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
+        Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+        node = Node.new(physical_id)
+        node.wait_search_index
+        log = []
+
+        ws = WSConnector.new('cooks', physical_id)
+
+        begin
+          node.cook(infrastructure) do |line|
+            ws.push_as_json({v: line})
+            Rails.logger.debug "cooking #{physical_id} > #{line}"
+            log << line
+          end
+        rescue => ex
+          Rails.logger.debug(ex)
+          Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
+          infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+          ws.push_as_json({v: false})
+        else
+          Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
+          infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+          ws.push_as_json({v: true})
+        end
+      end
+    end
+    thread_cook.join if sync
+  end
+
+  # TODO: DRY
+  def exec_yum_update(infra, physical_id)
+    thread_yum = Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
+      infra_logger_success("yum update for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
+
+      Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::InProgress)
+      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+
+      node = Node.new(physical_id)
+
+      ws = WSConnector.new('cooks', physical_id)
+
+      log = []
+
+      begin
+        node.yum_update(infra) do |line|
+          ws.push_as_json({v: line})
+          Rails.logger.debug "yum update #{physical_id} > #{line}"
+          log << line
+        end
+      rescue => ex
+        Rails.logger.debug(ex)
+        infra_logger_fail("yum update for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Failed)
+        ws.push_as_json({v: false})
+      else
+        infra_logger_success("yum update for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Success)
+        ws.push_as_json({v: true})
+      end
+    end
+
+  end
+end

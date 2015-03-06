@@ -1,0 +1,49 @@
+<%= form_for @infrastructure, html: { class: 'form-horizontal', multipart: true, role: 'form' } do |f| %>
+  <div class="form-group">
+    <%= f.label :projec_id, t('projects.project'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= uneditable_input(Project.find_by(id: @infrastructure.project_id).name) %>
+      <%= f.hidden_field :project_id %>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <%= f.label :stack_name, t('infrastructures.stackname'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :stack_name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :region, t('infrastructures.region'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.select :region, @regions, {}, {class: "form-control"} %>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label"><%= t 'app_settings.aws_keypair' %></label>
+    <div class="col-sm-5">
+<% unless controller.action_name == "edit" %>
+      <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
+      <input id="keypair_name" class="form-control ec2-private-key-name allow-empty" type="text" name="infrastructure[keypair_name]">
+
+      <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
+      <textarea id="keypair_value" class="form-control ec2-private-key-value allow-empty" name="infrastructure[keypair_value]" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
+      <p class="help-block"><%= t('infrastructures.msg.help_keypair') %></p>
+<% else %>
+      <%= uneditable_input(@infrastructure.ec2_private_key.name) if @infrastructure.ec2_private_key_id %>
+      <%= uneditable_input(t('infrastructures.msg.no_keypair')) unless @infrastructure.ec2_private_key_id %>
+<% end %>
+    </div>
+  </div>
+
+
+  <div class="form-actions-top">
+    <%= f.submit nil, class: 'btn btn-primary create' %>
+    <%= link_to t('.cancel', default: t("helpers.links.cancel")),
+      infrastructures_path(project_id: @infrastructure.project_id),
+      class: 'btn btn-default' %>
+  </div>
+<% end %>

@@ -1,0 +1,45 @@
+class Hash
+  def symbolize_keys_recursive
+    result = self.symbolize_keys
+    result.each_pair do |key, val|
+      val.symbolize_keys! if val.is_a?(Hash)
+    end
+  end
+
+  def recursive_freeze
+    freeze
+    self.each do |key, val|
+      if defined? val.recursive_freeze
+        val.recursive_freeze
+      else
+        val.freeze
+      end
+    end
+  end
+end
+
+class Array
+  def recursive_freeze
+    freeze
+    self.each do |x|
+      if defined? x.recursive_freeze
+        x.recursive_freeze
+      else
+        x.freeze
+      end
+    end
+  end
+end
+
+class Thread
+  def self.new_with_db(*args, &block)
+    curryed_block = block.curry(args.size + 1)
+    args.each do |arg|
+      curryed_block = curryed_block[arg]
+    end
+
+    Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection(&curryed_block)
+    end
+  end
+end

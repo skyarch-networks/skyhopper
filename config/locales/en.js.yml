@@ -1,0 +1,58 @@
+# js専用のlocale辞書を記述する。
+# 但し、JSから他のlocale辞書を読みに行くこともあり得る。
+
+en:
+  js:
+    users:
+      msg:
+        project_not_select: 'Any project are not selected.'
+
+
+    dishes:
+      msg:
+        ask_validate: 'Do you validate dish?'
+
+
+    edit_runlist:
+      msg:
+        recipe_not_select: 'Any recipes are not selected.'
+
+
+    infrastructures:
+      msg:
+        invalid_json:          'Please insert well-formatted JSON Template.'
+        empty_subject:         'Please insert subject.'
+        sending_cf:            ' Now sending template to CloudFormation... (Please wait a moment, Hold on.)'
+        run_bootstrap:         ' Bootstrap is in progress... (Please wait a moment hold on.)'
+        apply_runlist:         ' Applying runlist... (Please wait a moment, Hold on.)'
+        exec_yum_update:       ' yum update is to be started... (Please wait a moment, hold on.)'
+        serverspec_not_select: 'You must select one or more serverspecs.'
+        run_serverspec:        ' serverspec is in progress...(Please wait a moment, hold on.)'
+        run_serverspec_failed: 'Failed to start serverspec.'
+        start_cook:            'cook is started'
+        user_pass_required:    'Username and Password are required.'
+        gen_serverspec_failed: 'Failed to generate serverspec.'
+        serverspec_deleted:    'serverspec deleted'
+
+
+    template_builder:
+      msg:
+        confirm_delete: |-
+          You are attempting delete this resource.
+          Are you sure?
+        resource_name_required: 'Resource Name is required.'
+        subject_required:       'Subject is required.'
+        resources_empty:        'There are no resources added.'
+        property_missing:       'Some property values are missing.'
+      inserted_properties: 'Properties'
+      to_be_parameterized: 'Properties to be parameterized'
+
+    server_status:
+      zabbix:
+        title:         'Zabbix Server Settings'
+        confirm_start: 'Do you want to start Zabbix Server?'
+        confirm_stop:  'Do you want to stop Zabbix Server?'
+      chef:
+        title:         'Chef Server Settings'
+        confirm_start: 'Do you want to start Chef Server?'
+        confirm_stop:  'Do you want to stop Chef Server?'

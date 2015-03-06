@@ -1,0 +1,14 @@
+<%# TODO: 任意のシェルコマンドを実行可能な脆弱性をどうにかする %>
+require 'serverspec_helper'
+
+cmd = "echo '\\q' | "
+<% if db_engine == 'mysql' %>
+  cmd << "<%= db_engine %> -h'<%= host.gsub("'"){"'\\''"} %>' -u'<%= user.gsub("'"){"'\\''"} %>' -p'<%= passwd.gsub("'"){"'\\''"} %>' "
+  <% if db_name %> cmd << "<%= db_name %>" <% end %>
+<% elsif db_engine == 'psql' %>
+  cmd << "PGPASSWORD=<%= passwd %> <%= db_engine %> -h <%= host %> <%= db_name || 'postgres' %> <%= user %> "
+<% end %>
+
+describe command(cmd) do
+  its(:exit_status) { should eq 0 }
+end

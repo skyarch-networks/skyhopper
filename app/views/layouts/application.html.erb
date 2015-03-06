@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title><%= content_for?(:title) ? yield(:title) : "SkyHopper" %></title>
+    <%= csrf_meta_tags %>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <%= stylesheet_link_tag "application", media: "all" %>
+    <%= favicon_link_tag 'favicon.ico' %>
+    <script type="text/javascript">
+      var session_id = '<%= current_user.ws_key if current_user %>';
+    </script>
+  </head>
+
+  <body>
+
+    <%= render partial: 'layouts/navbar_top' %>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-sm-12">
+          <%= bootstrap_flash %>
+          <%= yield %>
+        </div>
+      </div>
+
+
+    </div> <!-- /container -->
+
+    <%= render partial: 'layouts/navbar_bottom' %>
+
+    <%= render partial: 'layouts/notification_center' %>
+
+
+    <!-- Javascripts ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag controller.controller_name %>
+
+    <script type="text/javascript">
+      I18n.defaultLocale = "<%= I18n.default_locale %>";
+      I18n.locale = "<%= I18n.locale %>";
+    </script>
+
+  </body>
+</html>

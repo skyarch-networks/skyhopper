@@ -1,0 +1,30 @@
+<%= form_for @cf_template, html: { class: 'form-horizontal', role: 'form' } do |f| %>
+  <div class="form-group">
+    <%= f.label :name, t('cf_templates.subject'), class: 'control-label col-sm-4' %>
+    <div class="col-sm-5">
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :detail, t('cf_templates.details'), class: 'control-label col-sm-4' %>
+    <div class="col-sm-5">
+      <%= f.text_area :detail, size: "20x3", class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :value, t('cf_templates.cf_template'), class: 'control-label col-sm-4' %>
+    <div class="col-sm-5">
+      <%= f.text_area :value, size: "20x10", class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-actions-top">
+    <%= f.submit t('common.btn.submit'), class: 'btn btn-primary create' %>
+    <%= link_to t('.cancel', default: t("helpers.links.cancel")),
+      cf_templates_path,
+      class: 'btn btn-default' %>
+  </div>
+
+<% end %>

@@ -1,0 +1,77 @@
+<%#
+args:
+  roles
+  cookbooks
+  runlist
+%>
+
+<h3 class="page-header"><%= t 'nodes.runlist' %></h3>
+
+<div class="col-md-6 col-sm-6">
+
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header"><%= t 'nodes.role' %></h5>
+    <div class="form-group">
+      <select multiple="multiple" id="roles" class="form-control roles-selectbox-height">
+        <% roles.each do |role| %>
+          <option value="<%= role %>"><%= role %></option>
+        <% end %>
+        <%# options_for_select(roles) %>
+      </select>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-default pull-right" id="addRoles"><span class="glyphicon glyphicon-plus"></span></button>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-sm-6">
+    <h5 class="page-header"><%= t 'nodes.cookbook' %></h5>
+    <div class="form-group">
+      <select size="2" id="cookbooks" class="form-control recipes-selectbox-height">
+        <% cookbooks.each do |cookbook| %>
+          <option value="<%= cookbook %>"><%= cookbook %></option>
+        <% end %>
+        <%# options_for_select(cookbooks) %>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-sm-6">
+    <h5 class="page-header"><%= t 'nodes.recipe' %></h5>
+    <div class="form-group">
+      <select id="recipes" class="form-control recipes-selectbox-height" multiple="multiple">
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12">
+    <div class="form-group">
+      <button class="btn btn-default pull-right" id="addRecipes"><span class="glyphicon glyphicon-plus"></span></button>
+    </div>
+  </div>
+
+</div>
+
+<div class="col-md-6 col-sm-6">
+
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header"><%= t 'nodes.runlist' %></h5>
+    <div class="form-group">
+      <select id="runlist" multiple="multiple" class="form-control runlist-selectbox-height">
+        <%= options_for_select(runlist) %>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12">
+    <div class="form-group">
+      <button id="upRunlist" class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
+      <button id="downRunlist" class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
+      &nbsp;
+      <button id="removeRunlist" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+    </div>
+  </div>
+
+</div>
+
+<%= javascript_include_tag 'edit_runlist' %>

@@ -1,0 +1,44 @@
+<script id="serverspec-tabpane-template" type="text/template">
+<h3 class="page-header"><%= t 'serverspecs.select_serverspec' %></h3>
+
+<div class="col-md-6 col-sm-6">
+  <h4 class="page-header"><%= t 'serverspecs.global' %></h4>
+  <div class="checkbox">
+    <label class="checkbox">
+      <input type="checkbox" v-model="checked_auto_generated" v-attr="disabled: !available_auto_generated">
+      <%= t 'serverspecs.auto_generated' %>
+    </label>
+  </div>
+  <p class="muted"><%= t 'serverspecs.msg.auto_generated_disabled_html' %></p>
+
+  <div v-repeat="s: globals" class="checkbox">
+    <label class="checkbox">
+      <input type="checkbox" v-model="s.checked">
+      {{s.name}}
+    </label>
+    <p class="muted"><small>{{s.description}}</small></p>
+  </div>
+</div>
+
+<div class="col-md-6 col-sm-6">
+  <h4 class="page-header"><%= t 'serverspecs.individual' %></h4>
+  <div v-repeat="s: individuals" class="checkbox">
+    <label class="checkbox">
+      <input type="checkbox" v-model="s.checked">
+      {{s.name}}
+    </label>
+    <p class="muted"><small>{{s.description}}</small></p>
+  </div>
+</div>
+
+<div class="col-md-12 col-sm-12">
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: run()"      class="btn btn-sm btn-primary" v-attr="disabled: !can_run"><%= t 'serverspecs.btn.run' %></button>
+    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
+  </div>
+
+  <div v-if="loading" class="form-actions-top">
+    <div-loader></div-loader>
+  </div>
+</div>
+</script>

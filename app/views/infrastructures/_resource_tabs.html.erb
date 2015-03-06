@@ -1,0 +1,28 @@
+<!-- resources TABs -->
+<%# TODO: DRY %>
+
+<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpane_active(ec2.physical_id)" v-on="click: show_ec2(ec2.physical_id)">
+  <a href="#">
+    <span class="label label-warning">EC2</span>&nbsp;
+    <small>{{screen_name(ec2)}}</small>
+    <small v-if="tabpane_active(ec2.physical_id)"><%= glyphicon 'refresh' %></small>
+    <!-- workaround http://stackoverflow.com/questions/18730116/twitter-bootstrap-3-0-how-do-i-badge-badge-important-now -->
+    <span v-if="!ec2.serverspec_status" class="badge progress-bar-danger" data-original-title="Serverspec failed">!</span>
+  </a>
+</li>
+
+<li v-repeat="rds: current_infra.resources.rds_instances" v-class="active: tabpane_active(rds.physical_id)" v-on="click: show_rds(rds.physical_id)">
+  <a href="#">
+    <span class="label label-info">RDS</span>&nbsp;
+    <small>{{screen_name(rds)}}</small>
+    <small v-if="tabpane_active(rds.physical_id)"><%= glyphicon 'refresh' %></small>
+  </a>
+</li>
+
+<li v-repeat="s3: current_infra.resources.s3_buckets" v-class="active: tabpane_active(s3.physical_id)" v-on="click: show_s3(s3.physical_id)">
+  <a href="#">
+    <span class="label label-danger">S3</span>&nbsp;
+    <small>{{screen_name(s3)}}</small>&nbsp;
+    <small v-if="tabpane_active(s3.physical_id)"><%= glyphicon 'refresh' %></small>
+  </a>
+</li>

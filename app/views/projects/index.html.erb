@@ -1,0 +1,63 @@
+<%- model_class = Project -%>
+<div class="page-header">
+  <h1><%= t 'projects.project' %></h1>
+  <%= breadcrumbs(@selected_client) if current_user.master? %>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th><%= t 'projects.code' %></th>
+      <th><%= t 'projects.name' %></th>
+      <th><%= t 'projects.cloud_provider' %></th>
+      <th><%= t 'projects.access_key' %></th>
+      <th><%= t 'common.actions' %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr class="projects-row <%= 'info' if project.id == @selected_project_id %>">
+        <td><%= project.code %></td>
+        <td><%= project.name %></td>
+        <td><%= project.cloud_provider.name %></td>
+        <td>*****<%= project.access_key[-3..-1] %></td>
+        <td>
+          <%= link_to t('projects.btn.show_infrastructures'),
+            infrastructures_path(project_id: project.id),
+            class: 'btn btn-xs btn-info' %>
+
+          <div class="btn-group">
+            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#">
+              <%= t 'common.btn.settings' %> <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <%= link_to "Dishes", dishes_path(project_id: project.id) %>
+              </li>
+            </ul>
+          </div>
+
+          <% if current_user.admin? %>
+
+            <%= link_to t('.edit', default: t("helpers.links.edit")),
+              edit_project_path(project),
+              class: 'btn btn-default btn-xs' %>
+
+            <%= button_delete_project(project, @selected_client || project.client) %>
+
+          <% end %>
+
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginate(@projects) %>
+</div>
+
+
+<%= button_add_project(@selected_client) if current_user.admin? %>
+
+<div class="page-header"></div>

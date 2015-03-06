@@ -1,0 +1,69 @@
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="<%= root_path %>" style="padding: 5px"><%= image_tag('skyhopper.png',  style: "display: inline;", alt: "brand") %></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+<% if user_signed_in? %>
+        <li class="dropdown">
+          <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= t('common.btn.settings') %> <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
+  <% if current_user.admin? && current_user.master? %>
+            <li role="presentation"><%= link_to 'Zabbix Server', edit_zabbix_app_settings_path %></li>
+            <li class="divider"></li>
+  <% end %>
+            <li role="presentation"><%= link_to t('dishes.dishes'), dishes_path %></li>
+            <li role="presentation"><%= link_to t('serverspecs.serverspecs'), serverspecs_path %></li>
+            <li role="presentation"><%= link_to t('cf_templates.cf_templates'), cf_templates_path %></li>
+          </ul>
+        </li>
+<% end %>
+        <li class="dropdown">
+          <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= t 'common.btn.lang'%> <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+            <%
+            base_path = request.path_info
+            options   = request.parameters.reject{|key, val| key == 'lang' or key == 'action' or key == 'controller'}
+            %>
+            <li role="presentation"><%= link_to 'English', add_option_path(base_path, {lang: 'en'}.merge(options)) %></li>
+            <li role="presentation"><%= link_to '日本語' , add_option_path(base_path, {lang: 'ja'}.merge(options)) %></li>
+          </ul>
+        </li>
+      </ul>
+<% if user_signed_in? %>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#" role="button" id="notifications" data-toggle="modal" data-target="#notification-center"><%= glyphicon 'comment' %></a>
+        </li>
+
+        <li class="dropdown">
+          <a href="#" role="button" id="user" class="dropdown-toggle" data-toggle="dropdown">
+            <%= master_label if current_user.master? %>
+            <%= admin_label if current_user.admin? %>
+            <small><%= current_user.email %></small>&nbsp;<%= gravatar(current_user.email) %> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+  <% if current_user.admin? && current_user.master? %>
+            <li role="presentation"><%= link_to t('common.btn.user_management'), users_admin_index_path %></li>
+            <li class="divider"></li>
+  <% end %>
+            <li role="presentation"><%= link_to t('common.btn.logout'), destroy_user_session_path, method: :delete %></li>
+          </ul>
+        </li>
+      </ul>
+<% end %>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+
+</nav>

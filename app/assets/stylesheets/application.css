@@ -1,0 +1,269 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ *= require bootstrap.min
+ *= require animate.min
+ */
+
+
+ /* Bootstrap overrides */
+
+@font-face {
+  font-family: 'glyphicon localized';
+
+  src: url('/assets/glyphicons-halflings-regular.eot');
+  src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+.glyphicon {
+  font-family: 'glyphicon localized' !important;
+}
+
+.modal-header {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+/* NC-380: Fix broken apply-dish button. */
+.pull-right > .input-group > .input-group-btn {
+  width: auto !important;
+}
+
+/* define migrated panel-disabled */
+.panel-default .panel-heading .panel-title a.property-heading {
+  color: #b7b7b7;
+}
+
+@font-face {
+  font-family: 'NotoSans';
+  src: url('/assets/NotoSansJP-Regular.otf') format('opentype');
+}
+
+body {
+  font-family: "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  padding-top: 60px !important;
+  padding-bottom: 60px !important;
+}
+
+body.modal-open{
+  padding-right: 0 !important;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+input, button, select, textarea {
+  font-family: "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+img.gravatar-icon {
+  margin-top: -5px;
+  margin-bottom: -5px;
+  padding: 0;
+}
+
+.tab-pane {
+  padding-top: 0.5em;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+
+.nav-header {
+  margin-top: -15px
+}
+
+
+.form-actions {
+  background-color: white;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding: 19px 20px 20px;
+}
+.form-actions-top {
+  background-color: white;
+  border-top: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding: 19px 20px 20px;
+}
+.bg-white {
+  background-color: white !important;
+}
+
+h4.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+h5.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+h6.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+
+
+.hidden-row {
+  padding: 0 !important;
+  border-top: none !important;
+}
+
+
+/* loading circle icon */
+.loader {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 60%;
+  border: 3px solid #fff;
+  border-right-color: transparent;
+  border-color: #17cddd transparent #17cddd #17cddd;
+
+  animation: spin 1s linear infinite;
+  -moz-animation: spin 1s lenear infinite;
+
+  -webkit-animation-name: spin;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-duration: 1s;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: rotate(180deg);
+    opacity: 1.0;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+@-moz-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: rotate(180deg);
+    opacity: 1.0;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    opacity: 1.0;
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+
+/* selectbox heights */
+.admin-selectbox-height {
+  height: 350px !important;
+}
+
+.roles-selectbox-height {
+  height: 180px !important;
+}
+.recipes-selectbox-height {
+  height: 285px !important;
+}
+.runlist-selectbox-height {
+  height: 600px !important;
+}
+
+
+.blinking {
+  -webkit-animation:blink 0.7s ease-in-out infinite alternate;
+  -moz-animation:blink 0.7s ease-in-out infinite alternate;
+  animation:blink 0.7s ease-in-out infinite alternate;
+}
+@-webkit-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+.border-blink {
+  -webkit-animation:border_blink 0.7s ease-in-out infinite alternate;
+  -moz-animation:border_blink 0.7s ease-in-out infinite alternate;
+  animation:border_blink 0.7s ease-in-out infinite alternate;
+}
+@-webkit-keyframes border_blink {
+  0% {
+    border: solid 2px #5bc0de;
+  }
+  100% {
+    border: solid 2px #fff;
+  }
+}
+@-moz-keyframes border_blink {
+  0% {
+    border: solid 2px #5bc0de;
+  }
+  100% {
+    border: solid 2px #fff;
+  }
+}
+@keyframes border_blink {
+  0% {
+    border: solid 2px #5bc0de;
+  }
+  100% {
+    border: solid 2px #fff;
+  }
+}
+
+[v-cloak] {display: none;}

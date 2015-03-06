@@ -1,0 +1,99 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "S3Bucket (S3x1)",
+
+  "Parameters" : {
+    "BucketName" : {
+      "Description" : "The name of S3Bucket",
+      "Type" : "String",
+      "Default" : ""
+    },
+    "AccessControl" : {
+      "Description" : "grants predefined permissions to the bucket.",
+      "Type" : "String",
+      "Default" : "Private",
+      "AllowedValues" : [
+        "Private",
+        "PublicRead",
+        "PublicReadWrite",
+        "AuthenticatedRead",
+        "LogDeliveryWrite",
+        "BucketOwnerRead",
+        "BucketOwnerFullControl"
+      ]
+    },
+    "ExpirationInDays" : {
+      "Description" : "Indicates the number of days after creation when objects are deleted from Amazon S3 and Amazon Glacier.",
+      "Type" : "String"
+    },
+    "Prefix" : {
+      "Description" : "Object key prefix that identifies one or more objects to which this rule applies.",
+      "Type" : "String"
+    }
+  },
+
+  "Resources" : {
+
+    "S3Bucket" : {
+      "Type"  : "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl": { "Ref" : "AccessControl" },
+        "BucketName":    { "Ref" : "BucketName" },
+        "LifecycleConfiguration" : {
+          "Rules" : [{
+            "ExpirationInDays" : { "Ref" : "ExpirationInDays" },
+            "Prefix" : { "Ref" : "Prefix" },
+            "Status" : "Enabled"
+          }]
+        }
+      }
+    },
+
+    "IAMRole" : {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement" : [ {
+            "Effect" : "Allow",
+            "Principal" : {
+              "Service" : [ "ec2.amazonaws.com" ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ]
+        },
+        "Path" : "/",
+        "Policies": [ {
+          "PolicyName": "root",
+          "PolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement": [ {
+              "Effect": "Allow",
+              "Action": "*",
+              "Resource": "*"
+            } ]
+          }
+        } ]
+      }
+    },
+
+    "BucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "PolicyDocument": {
+          "Version"      : "2008-10-17",
+          "Id"           : "MyPolicy",
+          "Statement"    : [{
+            "Sid"        : "ReadAccess",
+            "Action"     : ["s3:GetObject"],
+            "Effect"     : "Allow",
+            "Resource"   : { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "S3Bucket"} , "/*"]]},
+            "Principal"  : { "AWS": {"Fn::GetAtt" : ["IAMRole", "Arn"]} }
+          }]
+        },
+        "Bucket" : {"Ref" : "S3Bucket"}
+      }
+    }
+  }
+}

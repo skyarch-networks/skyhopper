@@ -1,0 +1,7 @@
+{
+  "name": "SkyHopper",
+  "options": {
+    "paths": "app/assets/javascripts",
+    "outdir": "./doc/javascripts/"
+  }
+}

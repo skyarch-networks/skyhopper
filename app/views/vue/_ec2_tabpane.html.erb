@@ -1,0 +1,215 @@
+<%#
+Arguments:
+  ec2
+%>
+<script id="ec2-tabpane-template" type="text/template">
+<div>
+  <h3 class="page-header">
+    {{physical_id}}&nbsp;<small>{{ec2.public_ip}}</small>
+  </h3>
+
+  <div class="col-xs-12">
+
+    <h4 class="page-header"><%= t 'ec2_instances.description' %></h4>
+
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th><%= t 'infrastructures.genre' %></th>
+          <th colspan="2"><%= t 'common.value' %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Status</td>
+          <td>
+            <%# TODO: I18n %>
+            <div-loader v-if="ec2_status_changing" v-with="text: 'Changing EC2 status'"></div-loader>
+            <span v-if="!ec2_status_changing">{{ec2.status}}</span>
+          </td>
+          <td>
+            <div class="btn-group">
+              <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
+                <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
+                <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
+                <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Instance Type</td>
+          <td>{{ec2.instance_type}}</td>
+          <td>
+            <button href="#change-scale-modal" role="button" class="btn btn-xs btn-warning" data-toggle="modal">
+              <%= t 'infrastructures.btn.change_scale' %>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>Public DNS</td>
+          <td colspan="2">{{ec2.public_dns}}</td>
+        </tr>
+        <tr>
+          <td>Elastic IP</td>
+          <td colspan="2">{{ec2.elastic_ip}}</td>
+        </tr>
+        <tr>
+          <td>Public IP</td>
+          <td colspan="2">{{ec2.public_ip}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="alert alert-danger col-xs-12" v-if="ec2.chef_error">
+  <h4>Connection Error</h4>
+  {{ec2.chef_msg}}
+</div>
+
+<div v-if="ec2.before_bootstrap">
+  <div class="col-xs-12">
+    <div class="alert alert-warning">
+      <%= t 'nodes.msg.before_bootstrap' %>
+    </div>
+  </div>
+
+  <div class="form-actions-top col-xs-12">
+    <button v-if="!loading" v-on="click: bootstrap()" class="btn btn-primary">
+      <%= t 'nodes.btn.bootstrap_with_chef_server' %>
+    </button>
+    <div-loader v-if="loading"></div-loader>
+  </div>
+</div>
+
+<%# show-node-infomation %>
+<div v-if="!ec2.chef_error && !ec2.before_bootstrap && running">
+  <h4 class="page-header col-xs-12"><%= t 'ec2_instances.settings' %></h4>
+
+  <%# Status labels %>
+  <div class="col-xs-12 col-sm-2">
+    <h5 class="page-header"><%= t 'nodes.statuses' %></h5>
+
+    <div class="col-xs-4 col-sm-12">
+      <h6><%= t 'nodes.latest_cook_status' %></h6>
+      <span v-class="cook_status_class" class="label">{{cook_status}}</span>
+    </div>
+    <div class="col-xs-4 col-sm-12">
+      <h6><%= t 'nodes.latest_serverspec_status' %></h6>
+      <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
+    </div>
+    <div class="col-xs-4 col-sm-12">
+      <h6><%= t 'nodes.latest_update_status' %></h6>
+      <span v-class="update_status_class" class="label">{{update_status}}</span>
+    </div>
+  </div>
+
+  <%# Runlist  table %>
+  <div class="col-xs-12 col-sm-10">
+    <h5 class="page-header">Runlist</h5>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>type</th>
+          <th>name</th>
+        </tr>
+      </thead>
+      <tbody v-if="!runlist_empty">
+        <tr v-repeat="ec2.runlist" v-class="success: is_role($value)">
+          <td v-text="runlist_type($value)"></td>
+          <td v-text="runlist_name($value)"></td>
+        </tr>
+      </tbody>
+      <tbody v-if="runlist_empty">
+        <tr>
+          <td colspan="2"><%= t 'common.msg.empty', name: t('infrastructures.runlist') %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <%# Buttons %>
+  <div class="col-xs-12" v-if="!inprogress">
+    <div class="form-actions-top">
+      <button v-on="click: cook()" v-class="border-blink: cook_status === 'UnExecuted'" class="btn btn-sm btn-primary">
+        <%= t 'nodes.cook'%>
+      </button>
+      <button v-on="click: edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
+      <button v-on="click: edit_attr()" class="btn btn-sm btn-default"><%= t 'nodes.btn.instance_settings' %></button>
+      <button v-on="click: yum_update()" class="btn btn-sm btn-warning">yum update</button>
+      <button v-on="click: select_serverspec()" v-class="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
+
+      <div class="pull-right">
+
+        <span v-if="dishes_empty">
+          <%= t 'nodes.msg.no_dishes' %>&nbsp;
+          <button class="btn btn-info btn-sm disabled">
+            <%= t 'nodes.btn.apply_dish' %>
+          </button>
+        </span>
+
+        <div v-if="!dishes_empty" class="input-group">
+          <select class="form-control input-sm" v-model="selected_dish">
+            <option>Select!</option>
+            <option v-repeat="dish: ec2.dishes" value="{{dish.id}}">{{dish.name}}</option>
+          </select>
+
+          <div class="input-group-btn">
+            <button class="btn btn-info btn-sm" v-on="click: apply_dish()">
+              <%= t 'nodes.btn.apply_dish' %>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <%# Cook in-progress console %>
+  <div class="col-xs-12" v-if="inprogress">
+    <div class="form-actions-top">
+      <div-loader v-with="text: '<%= t 'nodes.msg.cooking'%>'"></div-loader>
+    </div>
+    <div>
+      <%# わざと一行で書いてます %>
+      <%# TODO: id をつけていないとスクロール出来ない。Vueでうまくやりたい %>
+      <pre id="cook-status" class="pre-progress"><samp v-text="chef_console_text"></samp></pre>
+    </div>
+  </div>
+</div>
+
+<%# modal for change scale ec2 %>
+<div id="change-scale-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t('infrastructures.btn.change_scale') %></h4>
+      </div>
+
+      <div class="modal-body">
+        <label class="control-label"><%= t('infrastructures.instance_type') %></label>
+        <select v-model="change_scale_type_to" class="form-control">
+          <% EC2Instance::Types.each do |t| %>
+            <option><%= t %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <div v-if="!loading">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button v-on="click: change_scale()" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+        </div>
+        <div-loader v-if="loading"></div-loader>
+      </div>
+    </div>
+  </div>
+
+</div>
+</script>

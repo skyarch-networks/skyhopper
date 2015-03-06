@@ -1,0 +1,31 @@
+<%= form_for dish, html: { class: 'form-horizontal' } do |f| %>
+  <% if dish.project_id %>
+    <div class="form-group">
+      <%= f.label :project_id, t('projects.project'), class: 'control-label col-sm-2' %>
+      <div class="col-sm-5">
+        <%= uneditable_input(dish.project.name) %>
+        <%= f.hidden_field :project_id %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, t('dishes.name'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :detail, t('dishes.detail'), class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_area :detail, {class: 'form-control'} %>
+    </div>
+  </div>
+
+
+  <div class="form-actions-top">
+    <%= f.submit t('common.btn.submit'), class: 'btn btn-primary create' %>
+    <%= link_to t('.cancel', default: t("helpers.links.cancel")), dishes_path(project_id: dish.project_id), class: 'btn btn-default' %>
+  </div>
+<% end %>

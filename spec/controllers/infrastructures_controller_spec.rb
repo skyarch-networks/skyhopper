@@ -1,0 +1,486 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
+require_relative '../spec_helper'
+
+describe InfrastructuresController, :type => :controller do
+  login_user
+
+  let(:infra){create(:infrastructure)}
+  let(:project){infra.project}
+  let(:infra_stknm){'stackname'}
+  let(:infra_region){'region'}
+  let(:infra_hash){ attributes_for(:infrastructure, project_id: project.id, stack_name: infra_stknm, keypair_name: infra_key_name, keypair_value: infra_key_value, region: infra_region) }
+
+  let(:regions) {AWS::Regions}
+
+  describe '#index' do
+    before { get :index, project_id: project.id }
+
+    should_be_success
+
+    it "assigns @selected_project" do
+      expect(assigns[:selected_project]).to eq project
+    end
+
+    it "assigns @selected_client" do
+      expect(assigns[:selected_client]).to eq project.client
+    end
+
+    it "assigns @infrastructures" do
+      assigns[:infrastructures].each do |infrastructure|
+        expect(infrastructure).to be_a(Infrastructure)
+      end
+    end
+  end
+
+  describe "GET #show" do
+    let(:infra){create(:infrastructure)}
+    let(:ec2_resource){create(:ec2_resource, infrastructure: infra)}
+    let(:rds_resource){create(:rds_resource, infrastructure: infra)}
+    let(:s3bucket_resource){create(:s3bucket_resource, infrastructure: infra)}
+    let(:stack_status){{available: stack_availability, message: "stack_message", status: ""}}
+
+    before do
+      ec2_resource
+      rds_resource
+      s3bucket_resource
+    end
+    let(:request_show){get :show, id: infra.id}
+
+    stubize_stack
+
+    context "when status available false" do
+      let(:stack_availability){false}
+
+      before do
+        allow_any_instance_of(Stack).to receive(:status).and_return(stack_status)
+        request_show
+      end
+
+      it "should delete resources" do
+        infra.reload
+        expect(infra.resources).to be_empty
+      end
+
+      it "infra.status should be ''" do
+        expect(assigns[:infrastructure].status).to eq ""
+      end
+
+      it "infra.status should be saved" do
+        expect(assigns[:infrastructure]).to be_persisted
+      end
+
+      should_be_success
+    end
+
+    context "when status available true" do
+      let(:stack_availability){true}
+
+      before do
+        allow_any_instance_of(Stack).to receive(:status).and_return(stack_status)
+        allow_any_instance_of(Stack).to receive(:create_complete?).and_return(create_status)
+        allow_any_instance_of(Stack).to receive(:update_complete?).and_return(update_status)
+        allow_any_instance_of(Stack).to receive(:in_progress?).and_return(progress_status)
+        allow_any_instance_of(Stack).to receive(:failed?).and_return(failed_status)
+      end
+
+      ["create", "update", "progress", "failed"].each do |action|
+        context "when #{action}?" do
+          let(:create_status){action == "create"}
+          let(:update_status){action == "update"}
+          let(:progress_status){action == "progress"}
+          let(:failed_status){action == "failed"}
+
+          case action
+          when "create", "update"
+            if action == "update"
+              before do
+                allow_any_instance_of(Infrastructure).to receive(:resources_or_create).and_return(infra.resources)
+              end
+
+              it "should delete resource" do
+                infra.reload
+                expect(infra.resources).to be_empty
+              end
+            end
+          end
+
+          before do
+            request_show
+          end
+
+          it "should assign infra.status eq stack.status" do
+            expect(assigns[:infrastructure].status).to eq stack_status[:status]
+          end
+
+          it "should be persisted" do
+            expect(assigns[:infrastructure]).to be_persisted
+          end
+
+          should_be_success
+        end
+      end
+    end
+  end
+
+  describe '#new' do
+    before { get :new, project_id: project.id }
+
+    should_be_success
+
+    it "assigns @regions" do
+      expect(assigns[:regions]).to eq regions
+    end
+
+    it "assigns @infrastructure" do
+      expect(assigns[:infrastructure]).to be_a(Infrastructure)
+    end
+  end
+
+  describe '#edit' do
+      before do
+        get :edit, id: infra.id
+      end
+
+    context 'when cant edit' do
+      it 'assigns @infrastructure' do
+        expect(assigns[:infrastructure]).to be_a(Infrastructure)
+      end
+
+      it 'redirect_to infra#index' do
+        expect(response).to redirect_to infrastructures_path(project_id: infra.project_id)
+      end
+    end
+
+    context 'when can edit' do
+      let(:infra){create(:infrastructure, status: '')}
+
+      should_be_success
+
+      it 'assigns @infrastructure' do
+        expect(assigns[:infrastructure]).to be_a(Infrastructure)
+      end
+
+      it 'assigns @regions' do
+        expect(assigns[:regions]).to eq regions
+      end
+    end
+  end
+
+  describe 'POST #create' do
+    let(:ec2_key){create(:ec2_private_key)}
+    let(:infra_key_name){ec2_key.name}
+    let(:infra_key_value){ec2_key.value}
+    let(:create_request){post :create, infrastructure: infra_hash}
+
+    context 'when create succees' do
+      it 'should increase the total count of database by one' do
+        project #XXX: これがないとコケる
+        expect{create_request}.to change(Infrastructure, :count).by(1)
+      end
+
+      it do
+        create_request
+        expect(response).to redirect_to(infrastructures_path(project_id: project.id))
+      end
+    end
+
+    context 'when create fails' do
+      before do
+        allow(Infrastructure).to receive(:create_with_ec2_private_key!).and_raise(StandardError)
+        create_request
+      end
+
+      should_be_failure
+
+      it 'should have an error message' do
+        expect(create_request.request.flash['alert']).to_not be_nil
+      end
+
+      it 'should assign @regions' do
+        expect(assigns(:regions)).to eq regions
+      end
+
+      it 'should make a new infra instance' do
+        expect(assigns(:infrastructure)).to be_a_new(Infrastructure)
+      end
+    end
+  end # end of Post #create
+
+  describe 'PATCH #update' do
+    let(:infra_key_name){nil}
+    let(:infra_key_value){nil}
+    let(:delete_keys){[:project_id, :keypair_name, :keypair_value].each { |x| infra_hash.delete(x) }} #deleting unwanted hash keys
+    let(:update_request){delete_keys; patch :update, id: infra.id, infrastructure: infra_hash}
+
+    context 'when valid params' do
+      before do
+        update_request
+      end
+
+      it 'should update finely' do
+        i = Infrastructure.find(infra.id)
+        expect(i.stack_name).to eq(infra_stknm)
+        expect(i.region).to eq(infra_region)
+      end
+
+      it 'should redirect to infrastructure_path' do
+        expect(response).to redirect_to(infrastructures_path(project_id: infra.project_id))
+      end
+    end
+
+    context 'when invalid params' do
+      before do
+        allow_any_instance_of(Infrastructure).to receive(:update).and_return(false)
+        update_request
+      end
+
+      it 'should render template edit' do
+        expect(response).to render_template :edit
+      end
+    end
+  end # end of update
+
+  describe 'DELETE #destroy' do
+    let(:delete_request) {delete :destroy, id: infra.id}
+
+    stubize_infra
+    stubize_zabbix
+
+    before do
+      delete_request
+    end
+
+    subject{ Infrastructure.find(infra.id) }
+
+    context 'when deleted requested' do
+      it 'should delete seleted infrastracture finely' do
+        expect{subject}.to raise_error ActiveRecord::RecordNotFound
+      end
+
+      should_be_success
+
+      it 'should return message' do
+        expect(request.body).to be_present
+      end
+    end
+  end #end of destroy
+
+  describe '#delete_stack' do
+    stubize_zabbix
+    stubize_infra
+
+    let(:delete_stack_request){post :delete_stack, id: infra.id}
+
+    context 'when delete success' do
+      stubize_stack
+
+      before do
+        delete_stack_request
+      end
+
+      should_be_success
+    end
+
+    context 'when delete fail' do
+      stubize_stack(delete: :error)
+
+      before do
+        delete_stack_request
+      end
+
+      should_be_failure
+    end
+  end
+
+  describe '#show_s3' do
+    let(:bucket_name){"log_bucket"}
+    let(:request_show_s3){ get :show_s3, infra_id: infra.id, bucket_name: bucket_name }
+
+    stubize_s3
+    before{request_show_s3}
+    subject{Infrastructure.find(infra.id)}
+
+    should_be_success
+
+    it 'should assign @s3' do
+      # _s3 defined by support/mocks/s3.rb
+      expect(assigns[:s3]).to eq _s3
+    end
+
+    it 'should assign @bucket_name' do
+      expect(assigns[:bucket_name]).to eq bucket_name
+    end
+
+    it do
+      expect(response).to render_template(partial: '_show_s3')
+    end
+  end
+
+  describe '#show_rds' do
+    let(:physical_id){"physical_id"}
+    let(:request_show_rds){ get :show_rds, infra_id: infra.id, physical_id: physical_id }
+
+    instance_class    = "foo"
+    allocated_storage = "100"
+    endpoint_address  = "hoge.fuga"
+    multi_az          = true
+    engine            = 'mysql'
+
+    stubize_rds(
+      db_instance_class: instance_class,
+      allocated_storage: allocated_storage,
+      endpoint_address:  endpoint_address,
+      multi_az:          multi_az,
+      engine:            engine,
+    )
+
+    before{request_show_rds}
+
+    subject{Infrastructure.find(infra.id)}
+
+    it 'should assign @db_instance_class' do
+      expect(assigns[:db_instance_class]).to eq instance_class
+    end
+
+    it 'should assign @allocated_storage' do
+      expect(assigns[:allocated_storage]).to eq allocated_storage
+    end
+
+    it 'should assign @endpoint_address' do
+      expect(assigns[:endpoint_address]).to eq endpoint_address
+    end
+
+    it 'should assign @multi_az' do
+      expect(assigns[:multi_az]).to eq multi_az
+    end
+
+    it 'should assign @engine' do
+      expect(assigns[:engine]).to eq engine
+    end
+  end
+
+  describe "#events" do
+    let(:request_events){get :events, infrastructure_id: infra.id}
+
+    context "when stack.events success" do
+      stubize_stack
+
+      before do
+        request_events
+      end
+
+      should_be_success
+    end
+
+    context "when stack.events fail" do
+      stubize_stack(events: :error)
+
+      before do
+        request_events
+      end
+
+      should_be_failure
+    end
+  end
+
+  describe '#change_rds_scale' do
+    let(:type){'db.m1.small'}
+
+    subject{
+      post(
+        :change_rds_scale,
+        physical_id:   'hogehoge',
+        infra_id:      infra.id,
+        instance_type: type
+      )
+    }
+
+    before do
+      allow_any_instance_of(RDS).to receive(:db_instance_class)
+    end
+
+    it 'should call RDS#change_scale' do
+      expect_any_instance_of(RDS).to receive(:change_scale).with(type)
+      subject
+    end
+
+    context 'when ChangeScaleError' do
+      let(:ex_msg){"hoge"}
+
+      before do
+        allow_any_instance_of(RDS).to receive(:change_scale){raise RDS::ChangeScaleError, ex_msg}
+        subject
+      end
+
+      it 'should render error message' do
+        expect(response.body).to eq ex_msg
+      end
+
+      should_be_failure
+    end
+  end
+
+  describe '#CloudFormation Status' do
+    let(:infra){create(:infrastructure)}
+    let(:cfstatus_request){get :cloudformation_status,  infrastructure_id: infra.id}
+
+    stubize_stack
+
+    ["progress", "complete", "create_failed", "failed"].each do |status|
+      context "when #{status}" do
+        let(:progress_status){status == "progress"}
+        let(:complete_status){status == "complete"}
+        let(:create_failed){status == "create_failed"}
+        let(:failed_status){status == "failed"}
+
+      before do
+        allow_any_instance_of(Stack).to receive(:in_progress?).and_return(progress_status)
+        allow_any_instance_of(Stack).to receive(:complete?).and_return(complete_status)
+        allow_any_instance_of(Stack).to receive(:create_failed?).and_return(create_failed)
+        allow_any_instance_of(Stack).to receive(:failed?).and_return(failed_status)
+      end
+
+        before do
+          cfstatus_request
+        end
+
+        status_code =
+        case status
+        when "progress"
+          200
+        when "complete"
+          201
+        when "create_failed"
+          500
+        when "failed"
+          500
+        else
+          201
+        end
+
+        it "should return status code:#{status_code}" do
+          expect(response.status).to eq status_code
+        end
+      end
+    end
+
+    context "when error" do
+      before do
+        allow_any_instance_of(Stack).to receive(:in_progress?).and_raise(Aws::CloudFormation::Errors::ValidationError.new('CONTEXT', 'MESSAGE'))
+        cfstatus_request
+      end
+
+      it "should render stauts" do
+        expect(response.status).to eq 201
+      end
+    end
+  end
+end
+

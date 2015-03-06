@@ -1,0 +1,40 @@
+<h4 class="page-header"><%= @bucket_name %></h4>
+
+<table class="table table-condensed table-striped">
+  <thead>
+    <tr>
+      <th><%= t 'infrastructures.genre' %></th>
+      <th><%= t 'common.value' %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Owner</td>
+      <td><%= @s3.owner %></td>
+    </tr>
+    <tr>
+      <td>Bucket URL</td>
+      <td><%= @s3.url %></td>
+    </tr>
+    <tr>
+      <td>Website Configuration</td>
+      <td><%= @s3.website? %></td>
+    </tr>
+
+    <% if @s3.website? %>
+      <tr>
+        <td>Website URL</td>
+        <td><%= link_to(@s3.public_url, @s3.public_url, {target: "_blank"}) %></td>
+      </tr>
+      <tr>
+        <td>Index Document</td>
+        <td><%= @s3.index_document %></td>
+      </tr>
+      <tr>
+        <td>Error Document</td>
+        <td><%= @s3.error_document %></td>
+      </tr>
+    <% end %>
+
+  </tbody>
+</table>

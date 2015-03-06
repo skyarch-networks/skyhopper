@@ -1,0 +1,1 @@
+../../bower_components/favico.js/favico.js

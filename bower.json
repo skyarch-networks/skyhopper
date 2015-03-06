@@ -1,0 +1,24 @@
+{
+  "name": "SkyHopper",
+  "version": "0.0.0",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "favico.js": "~0.3.5",
+    "bootstrap": "~3.3.1",
+    "ajax_set.js": "https://github.com/pocke/ajax_set.js.git",
+    "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
+    "noty": "~2.3.1",
+    "animate.css": "~3.2.0",
+    "jquery": "~2.1.1",
+    "jquery-ujs": "~1.0.2",
+    "vue": "~0.11.5",
+    "lodash": "~3.1.0"
+  }
+}

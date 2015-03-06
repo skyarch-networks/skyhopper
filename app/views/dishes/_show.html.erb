@@ -1,0 +1,72 @@
+<h2><%= @dish.name %> <small><%= @dish.detail %></small></h2>
+<div class="row">
+
+  <div class="col-md-6 col-sm-6">
+    <h4 class="page-header">Runlist</h4>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>type</th>
+          <th>name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @runlist.each do |item| %>
+          <tr <% if item.include?("role") %>class="success"<% end %>>
+            <td><%= item.split("[")[0] %></td>
+            <td><%= item.split("[")[1][0..-2] %></td>
+          </tr>
+        <% end %>
+        <% if @runlist.empty? %>
+          <tr>
+            <td colspan="2"><%= t('common.msg.empty', name: t('infrastructures.runlist')) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-md-6 col-sm-6">
+    <h4 class="page-header">Serverspecs</h4>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th><%= t('serverspecs.name') %></th>
+          <th><%= t('serverspecs.description') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @selected_serverspecs.each do |serverspec| %>
+          <tr>
+            <td><%= serverspec.name %></td>
+            <td><%= serverspec.description %></td>
+          </tr>
+        <% end %>
+        <% if @selected_serverspecs.empty? %>
+          <tr>
+            <td colspan="2"><%= t('dishes.msg.no_serverspec_selected') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<% if current_user.master? and current_user.admin? %>
+  <div class="row">
+
+    <div class="col-md-12 col-sm-12">
+      <div class="form-actions-top">
+      <% if @dish.validating? %>
+        <span class="muted">Validation is in progress...</span>
+        <%= progressbar_dish_status(@dish) %>
+      <% else %>
+        <button class="validate-dish btn btn-sm btn-warning"><%= t('dishes.validate')%></button>
+        <button class="btn btn-default btn-sm edit-dish"><%= t('helpers.links.edit') %></button>
+      <% end %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

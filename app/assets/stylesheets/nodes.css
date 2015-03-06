@@ -1,0 +1,5 @@
+.pre-progress {
+  overflow: auto;
+  height: 300px;
+  color: gray;
+}

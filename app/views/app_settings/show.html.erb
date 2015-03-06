@@ -1,0 +1,17 @@
+<h1 class="page-header"><%= t 'app_settings.title.show' %></h1>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <%= I18n.t("app_settings.title.setup") %>
+  </div>
+  <div class="panel-body">
+    <%= render partial: 'panel_content_system' %>
+    <%= render partial: 'panel_content_chef' %>
+  </div>
+
+  <div class="panel-footer">
+    <div class="btn-toolbar">
+      <%= link_to t('app_settings.btn.done'), root_path, class: 'btn btn-primary diasbled', id: 'done-appsetting', disabled: "disabled" %>
+    </div>
+  </div>
+</div>

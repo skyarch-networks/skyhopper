@@ -1,0 +1,56 @@
+# js専用のlocale辞書を記述する。
+# 但し、JSから他のlocale辞書を読みに行くこともあり得る。
+
+ja:
+  js:
+    users:
+      msg:
+        project_not_select: 'プロジェクトが選択されていません'
+
+
+    dishes:
+      msg:
+        ask_validate: 'ディッシュを検証しますか?'
+
+
+    edit_runlist:
+      msg:
+        recipe_not_select: 'レシピが選択されていません'
+
+
+    infrastructures:
+      msg:
+        invalid_json:          '正しい JSON 形式でテンプレートを入力してください'
+        empty_subject:         'タイトルを入力してください'
+        sending_cf:            ' CloudFormation にテンプレートを送信しています。しばらくお待ちください...'
+        run_bootstrap:         ' Chef Server に登録しています。 しばらくお待ちください...'
+        apply_runlist:         ' Runlist を適用しています。しばらくお待ちください...'
+        exec_yum_update:       ' yum update を開始しています。しばらくお待ちください...'
+        serverspec_not_select: '１つ以上の Serverspec を選択してください'
+        run_serverspec:        ' Serverspec を実行しています。しばらくお待ちください...'
+        run_serverspec_failed: 'Serverspec の実行に失敗しました'
+        start_cook:            'Cook を開始しました'
+        user_pass_required:    'ユーザー名とパスワードは必須項目です'
+        gen_serverspec_failed: 'Serverspec の生成に失敗しました'
+        serverspec_deleted:    'Serverspec を削除しました'
+
+
+    template_builder:
+      msg:
+        confirm_delete:         'このリソースを削除しますか?'
+        resource_name_required: 'Resource Name が入力されていません'
+        subject_required:       'タイトルが入力されていません'
+        resources_empty:        '少なくとも１つのリソースを追加してください'
+        property_missing:       '入力されていないプロパティがあります'
+      inserted_properties: 'プロパティ'
+      to_be_parameterized: 'パラメータ化するプロパティ'
+
+    server_status:
+      zabbix:
+        title:         'Zabbix Server の設定'
+        confirm_start: 'Zabbix Server を起動しますか?'
+        confirm_stop:  'Zabbix Server を停止しますか?'
+      chef:
+        title:         'Chef Server の設定'
+        confirm_start: 'Chef Server を起動しますか?'
+        confirm_stop:  'Chef Server を停止しますか?'

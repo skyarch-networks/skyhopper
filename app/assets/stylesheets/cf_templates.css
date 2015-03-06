@@ -1,0 +1,9 @@
+
+span.remove-resource, span.remove-array-item {
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.input-property {
+  width: 100%;
+}

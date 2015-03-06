@@ -1,0 +1,9 @@
+<% disabled = current_page.last? ? 'disabled' : nil %>
+
+<li class="<%= disabled %>">
+  <% if disabled %>
+    <%= content_tag(:span, raw(t 'views.pagination.last')) %>
+  <% else %>
+    <%= link_to raw(t 'views.pagination.last'), url %>
+  <% end %>
+</li>

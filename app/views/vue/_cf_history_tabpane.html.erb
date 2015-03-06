@@ -1,0 +1,45 @@
+<%#
+Arguments:
+  histories
+  current
+%>
+<script id="cf-history-tabpane-template" type="text/template">
+<div class="tabbable tabs-right">
+  <div class="col-md-3 col-sm-3">
+    <h4 class="page-header">History</h4>
+    <div class="list-group">
+      <a href="#" class="list-group-item" v-class="active: active(h.id)" v-repeat="h: histories" v-on="click: get(h.id)" rel="tooltip" title="{{h.detail}}">
+        <h4 class="list-group-item-heading">{{h.name}}</h4>
+        <p class="list-group-item-text">{{h.created_at | toLocaleString}}</p>
+      </a>
+    </div>
+  </div>
+
+
+  <div class="col-md-9 col-sm-9">
+    <div class="tab-pane" v-if="currentExists">
+      <h4 class="page-header"><%= t 'cf_templates.operator' %></h4>
+      <pre>{{current.email}}&nbsp;<span v-if="current.admin" class="label label-info">admin</span></pre>
+      <h4 class="page-header"><%= t 'cf_templates.details' %></h4>
+      <pre v-text="current.detail"></pre>
+      <h4 class="page-header"><%= t 'cf_templates.cf_template' %></h4>
+      <pre v-text="current.value"></pre>
+      <h4 class="page-header"><%= t 'cf_templates.parameters' %></h4>
+      <pre>
+      <table class="table table-condensed table-striped">
+        <thead>
+          <th>Key</th>
+          <th>Value</th>
+        </thead>
+        <tbody>
+          <tr v-repeat="p: current.params">
+            <td v-text="p.parameter_key"></td>
+            <td v-text="p.parameter_value"></td>
+          </tr>
+        </tbody>
+      </table>
+      </pre>
+    </div>
+  </div>
+</div>
+</script>

@@ -1,0 +1,27 @@
+<div class="modal fade" id="new-scenario" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Adding new web scenario</h4>
+      </div>
+      <div class="modal-body">
+        <% url_settings.each do |setting| %>
+          <div class="row" style="margin-bottom: 5px">
+            <div class="col-md-4">
+              <p><%= setting[:name] %></p>
+            </div>
+            <div class="col-md-8">
+              <input v-model="add_scenario.<%= setting[:sym] %>" type="text" class="form-control" style="padding: 5px !important; height: 32px !important" placeholder="<%= setting[:example] %>">
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <p class="text-danger">{{add_step_err()}}</p>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" v-on="click: add_step()" v-attr="disabled: add_step_err()">Add</button>
+      </div>
+    </div>
+  </div>
+</div>

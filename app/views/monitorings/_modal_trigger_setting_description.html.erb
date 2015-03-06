@@ -1,0 +1,25 @@
+<!-- modal for trigger setting -->
+<div id="trigger-warning" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"><%= t 'monitoring.explanation_triggers' %></h4>
+      </div>
+      <div class="modal-body">
+        <% MasterMonitoring.all.each do |monitoring| %>
+          <blockquote>
+            <p><%= monitoring.name %></p>
+            <small><%= t "monitoring.explanations.#{monitoring.name.downcase.delete(' ')}" %></small>
+            <% if monitoring.trigger_expression.present? %>
+              <code><%= monitoring.trigger_expression %>value</code>
+            <% end %>
+          </blockquote>
+        <% end %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

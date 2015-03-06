@@ -1,0 +1,356 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+ja:
+  lang: 'ja'
+
+  common:
+    actions:       '操作'
+    value:         '値'
+    required:      '必須'
+    optional:      'オプション'
+    username:      'ユーザー名'
+    password:      'パスワード'
+    please_select: '選択してください'
+    btn:
+      architecture:    'インフラ管理'
+      settings:        '設定'
+      user_management: 'ユーザー管理'
+      login:           'ログイン'
+      logout:          'ログアウト'
+      submit:          '送信'
+      save_changes:    '変更の保存'
+      lang:            '言語'
+      previous:        '前へ'
+      next:            '次へ'
+    msg:
+      loading:       ' 読み込み中...'
+      empty:         '%{name}がありません'
+      no_permission: '権限がありません'
+      key_droppable: '使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください'
+
+
+  views:
+    pagination:
+      first: '&laquo;'
+      last: '&raquo;'
+      next:  '&rsaquo;'
+      previous: '&lsaquo;'
+      truncate: '...'
+
+  app_settings:
+    log_directory:  'ログ保存先のパス'
+    aws_region:     '使用するリージョン'
+    aws_keypair:    '使用する鍵ペア'
+    keypair_name:   '鍵ペア名'
+    private_key:    '秘密鍵'
+    access_key:        'APIキー'
+    secret_access_key: 'APIシークレット'
+    chef_server:    'Chef Server'
+
+    msg:
+      created:          'アプリケーションは正常に設定されました'
+      show:             'SkyHopper へようこそ!'
+      log_directory:    'データベースに出力できなかったログを保存するディレクトリ'
+      access_key:          'SkyHopper のシステムが使用する AWS の Access Key ID（個別のインフラの管理には使用されません）'
+      secret_access_key:   'SkyHopper のシステムが使用する AWS の Secret Access Key（個別のインフラの管理には使用されません）'
+      aws_region:       'SkyHopper のシステムが使用する AWS のリージョン'
+      aws_keypair:      'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
+    title:
+      show:   'SkyHopper へようこそ'
+      setup:  'SkyHopper のセットアップ'
+      system: 'システムの設定'
+      chef:   'Chef Server の設定'
+      aws:    'AWS の設定'
+    btn:
+      create_chefserver: 'Chef Server の構築'
+      done:              '完了'
+
+  clients:
+    client: '顧客'
+    code:   '顧客コード'
+    name:   '顧客名'
+    btn:
+      show_projects: '案件一覧'
+      add:           '新規顧客'
+    msg:
+      no_permission:      '顧客管理の権限がありません'
+      created:            '顧客が正常に追加されました'
+      updated:            '顧客が正常に更新されました'
+      deleted:            '顧客が正常に削除されました'
+      cant_change_system: 'システム用の顧客は変更できません'
+
+
+  projects:
+    project:           '案件'
+    code:              '案件コード'
+    name:              '案件名'
+    access_key:        'アクセスキー'
+    secret_access_key: 'シークレットキー'
+    cloud_provider:    'クラウド提供会社'
+    btn:
+      show_infrastructures: 'インフラ一覧'
+      add:                  '新規案件'
+    msg:
+      created:            '案件が正常に追加されました'
+      updated:            '案件が正常に更新されました'
+      deleted:            '案件が正常に削除されました'
+      cant_delete_system: 'システム用のプロジェクトは削除できません'
+
+
+  infrastructures:
+    infrastructure:     'インフラストラクチャ'
+    genre:              '種別'
+    stackname:          'スタック名'
+    region:             'リージョン'
+    keypair:            '鍵ペア名'
+    sshkey:             'SSH鍵（鍵ペア）'
+    return_to_projects: 'プロジェクト一覧に戻る'
+    stack_info:         'スタックの詳細'
+    no_stack_info:      '情報なし'
+    in_progress:        '実行中...'
+    database:           'データベース'
+    runlist:            'Runlist'
+    instance_type:      'インスタンスの種類'
+    btn:
+      delete_stack:         'スタックの削除'
+      delete_stack_confirm: '実行'
+      add:                  '新規インフラ'
+      change_scale:         'スケールの変更'
+      generate_serverspec:  'Serverspec の生成'
+      apply_template:       'CloudFormation テンプレートの適用'
+      template_history:     'CloudFormation テンプレートの履歴'
+      stack_eventlog:       'スタックのイベント履歴'
+      infrastructure_log:   '作業履歴'
+    msg:
+      created:                     'インフラ情報が正常に追加されました'
+      updated:                     'インフラ情報が正常に更新されました'
+      detached:                    'インフラの管理を解除しました'
+      delete_stack_failed:         'スタックの削除に失敗しました'
+      delete_stack_started:        'スタックの削除が開始されました'
+      create_stack_failed:         'スタックの作成に失敗しました'
+      detach_stack_confirm:        'このスタックを管理から外しますか?'
+      delete_stack_confirm:        'このスタックを削除しますか?'
+      help_keypair:                'EC2::Instance を含むインフラを作成する場合には ここで鍵ペアを設定する必要があります'
+      no_keypair:                  '設定なし'
+      no_stack_info:               '以下の理由によりスタックの情報が取得できませんでした。'
+      not_necessary:               '変更の必要はありません'
+      check_intervals:             '15秒おきに自動的にステータスが更新されます...'
+      generate_serverspec_confirm: 'このRDSへのアクセスを検証する Serverspec を生成します'
+
+
+  nodes:
+    bootstrap:   'Bootstrap'
+    cook:        'Cook'
+    runlist:     'Runlist'
+    recipe:      'Recipe'
+    cookbook:    'CookBook'
+    role:        'Role'
+    statuses:    '状態'
+    latest_cook_status:       'Cook'
+    latest_update_status:     'yum update'
+    latest_serverspec_status: 'Serverspec'
+    btn:
+      edit_runlist: 'Runlist の編集'
+      apply_dish: 'ディッシュの適用'
+      bootstrap_with_chef_server: 'Chef Server に登録'
+      instance_settings: 'インスタンスの設定'
+    msg:
+      before_bootstrap:   'このインスタンスは Chef Server に登録されていません'
+      no_dishes:          '検証済みのディッシュがありません'
+      cooking:            'Cook の実行中...'
+      updating:           'yum update の実行中...'
+      bootstrap_finish:   '%{physical_id} を Chef Server に登録しました'
+      not_change_scale:   '%{type} に変更する必要はありません'
+      changed_scale:      '%{type} のスケールが変更されました'
+      runlist_updated:    'Runlist は正常に更新されました'
+      runlist_applying:   'Runlist を適用中です...'
+      cook_started:       'Cook が正常に開始されました'
+      attribute_updated:  'Attribute が正常に更新されました'
+      yum_update_confirm: 'yum update を実行しますか?'
+      yum_update_started: 'yum update が正常に開始されました'
+      attr_not_exists:    '利用可能なアトリビュートは存在しません'
+
+  dishes:
+    dishes:            'ディッシュ'
+    dish:              'ディッシュ'
+    name:              'ディッシュ名'
+    detail:            '詳細'
+    validation_status: '検証状態'
+    validate:          '検証'
+    btn:
+      add: 'ディッシュの追加'
+    msg:
+      updated:                'ディッシュが正常に更新されました'
+      created:                'ディッシュが正常に追加されました'
+      deleted:                'ディッシュが正常に削除されました'
+      description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
+      no_serverspec_selected: 'Serverspec が選択されていません'
+
+
+  serverspecs:
+    name:        'Serverspec 名'
+    serverspecs: 'Serverspecs'
+    serverspec:  'Serverspec'
+    description: '詳細'
+    value:       '内容'
+    global:      'インフラ共通の Serverspec'
+    individual:  'インフラ固有の Serverspec'
+    auto_generated: '自動生成された Serverspec'
+    select_serverspec: '実行する Serverspec を選択'
+    btn:
+      add:    'Serverspec の追加'
+      create: 'Serverspec の作成'
+      run:    'Serverspec の実行'
+    msg:
+      created:  'Serverspec が正常に追加されました'
+      updated:  'Serverspec が正常に更新されました'
+      deleted:  'Serverspec が正常に削除されました'
+      parseerr: '入力された Serverspec に間違いがあります'
+      success:  '%{physical_id} の Serverspec が正常に終了しました'
+      pending:  '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
+      failure:  '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
+      generated: 'Serverspec は正常に作成されました。'
+      auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
+      auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
+
+
+  cf_templates:
+    cf_templates: 'CloudFormation テンプレート'
+    cf_template:  'CloudFormation テンプレート'
+    subject:      'タイトル'
+    details:      '詳細'
+    operator:     '作業者'
+    parameters:   'パラメータ'
+    history:      '履歴'
+    global:       'プリセット'
+    insert_parameters: 'パラメータの入力'
+    enable_property:   'このプロパティを使用する'
+    parameterize:      'このプロパティをパラメータ化する'
+    btn:
+      add:  'テンプレートの追加'
+      send: '送信'
+    msg:
+      keypair_missing: 'EC2::Instance を使用するには鍵ペアを設定する必要があります'
+      created:         'テンプレートが正常に追加されました'
+      updated:         'テンプレートが正常に更新されました'
+      deleted:         'テンプレートが正常に削除されました'
+      updating:        'スタックの更新を開始しました'
+      creating:        'スタックの作成を開始しました'
+
+
+  template_builder:
+    btn:
+      add_resource: 'このリソースを追加'
+    template_builder: 'テンプレート生成ツール'
+    resources:        'リソースの構成'
+    select_resources: '追加するリソースを選択'
+    enable:           '有効'
+    disable:          '無効'
+
+  monitoring:
+    title:                '監視'
+    config:               '監視項目の設定'
+    select:               '監視項目の選択'
+    trigger:              '閾値の設定'
+    explanation_triggers: '各閾値の説明'
+    register_host:        'Zabbixにホストを登録'
+    btn:
+      create: 'ホストの登録'
+      add:    '追加'
+      edit:   '編集'
+      delete: '削除'
+    msg:
+      host_creating:           'ホストの登録を行っています。少々お待ちください...'
+      before_create_host:      'このインフラストラクチャはまだ Zabbix に登録されていません'
+      created:                 'インフラストラクチャを Zabbix に登録しました'
+      failure:                 'Zabbix の登録に失敗しました。'
+      not_selected:            '監視項目が設定されていません。操作から項目の設定をして下さい'
+      invalid_parameters:      'ユーザ名かパスワードが間違っている為 Zabbix に接続出来ません'
+      not_running:             ' Zabbix が起動していません'
+      trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
+      no_data: |
+        データが取得出来ませんでした。
+          1. Zabbix Agentをインストール後直ぐにデータは取得出来ません。時間をおいて再度試して下さい。
+          2. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server, Client etc)。ご確認下さい。
+    explanations:
+      cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
+      ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
+      loadaverage:              '過去一分間のロードアベレージが一定の値を超えた時にアラートを鳴らします'
+      swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
+      http:                     ' HTTP の応答監視及び応答コードを監視致します'
+      smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
+      url:                      'ご指定がの FQDN のハッシュ値もしくは特定文字列があるか監視致します'
+      mysql:                    ' MySQL アカウントを作成し、MySQLへのログイン可能か監視致します'
+      postgresql:               ' PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視致します'
+
+
+  users:
+    title:             'ユーザー管理'
+    user:              'ユーザー'
+    role:              '権限'
+    email:             'メールアドレス'
+    last_signed_in_at: '最終ログイン日時'
+    you:               'このアカウント'
+    edit:              '権限の編集'
+    allowed_projects:  '管理する案件'
+    unregistered:      '未登録'
+    btn:
+      add: '新規ユーザー'
+    msg:
+      role: 'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます'
+      created:     'ユーザーアカウントが正常に追加されました'
+      updated:     'ユーザーアカウントが正常に更新されました'
+      deleted:     'ユーザーアカウントが正常に削除されました'
+      only_master: 'ユーザー管理は master ユーザーのみが行うことができます'
+
+
+  chef_servers:
+    msg:
+      creating_infra: 'Chef Server 用のインフラを作成しています...'
+      creating_stack: 'Chef Server 用のスタックを作成しています...'
+      init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
+      install_chef:   'Chef Server をインストールしています...'
+      setting_chef:   'Chef Server を設定しています...'
+      complete:       'Chef Server の構築が完了しました. RAILS_ROOT/tmp/chef/ 下のファイルを~/.chef/ にコピーしてください'
+      confirm_start:  'Chef Server を起動しますか?'
+      confirm_stop:   'Chef Server を停止しますか?'
+      start:          'Chef Server を起動しています...'
+      stop:           'Chef Server を停止しています...'
+      not_running:    'Chef Server が起動していません'
+
+  zabbix_server:
+    msg:
+      creating_infra: 'Zabbix Server 用のインフラを作成しています...'
+      creating_stack: 'Zabbix Server 用のスタックを作成しています...'
+      init_ec2:       'Zabbix Server 用の EC2 Instance を起動しています...'
+      install_zabbix: 'Zabbix Server をインストールしています...'
+      setting_zabbix: 'Zabbix Server を設定しています...'
+      complete:       'Zabbix Server の構築が完了しました'
+      confirm_start:  'Zabbix Server を起動しますか?'
+      confirm_stop:   'Zabbix Server を停止しますか?'
+      start:          'Zabbix Server を起動しています...'
+      stop:           'Zabbix Server を停止しています...'
+      not_running:    'Zabbix Server が起動していません'
+
+  ec2_instances:
+    description: '詳細'
+    settings:    '設定'

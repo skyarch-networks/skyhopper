@@ -1,0 +1,75 @@
+<script id="edit-runlist-tabpane-template" type="text/template">
+<h3 class="page-header"><%= t 'nodes.runlist' %></h3>
+
+<div class="col-md-6 col-sm-6">
+  <%# Roles %>
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header"><%= t 'nodes.role' %></h5>
+    <div class="form-group">
+      <select v-model="selected_roles" v-on="dblclick: add_role()" multiple="multiple" class="form-control roles-selectbox-height">
+        <option v-repeat="r: roles">{{r}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button v-on="click: add_role()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+    </div>
+  </div>
+
+  <%# Cookbooks %>
+  <div class="col-md-6 col-sm-6">
+    <h5 class="page-header"><%= t 'nodes.cookbook' %></h5>
+    <div class="form-group">
+      <select size="2" class="form-control recipes-selectbox-height" v-model="selected_cookbook" v-on="click: get_recipes()">
+        <option v-repeat="c: cookbooks">{{c}}</option>
+      </select>
+    </div>
+  </div>
+  <%# Recipes %>
+  <div class="col-md-6 col-sm-6">
+    <h5 class="page-header"><%= t 'nodes.recipe' %></h5>
+    <div class="form-group">
+      <select v-model="selected_recipes" class="form-control recipes-selectbox-height" multiple="multiple" v-on="dblclick: add_recipe()">
+        <option v-repeat="r: current_recipes">{{r}}</option>
+      </select>
+    </div>
+  </div>
+  <%# Button for Recipes %>
+  <div class="col-md-12 col-sm-12">
+    <div class="form-group">
+      <button v-on="click: add_recipe()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+    </div>
+  </div>
+</div>
+
+<%# Runlist %>
+<div class="col-md-6 col-sm-6">
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header"><%= t 'nodes.runlist' %></h5>
+    <div class="form-group">
+      <select v-model="selected_runlist" v-on="dblclick: del()" multiple="multiple" class="form-control runlist-selectbox-height">
+        <option v-repeat="r: runlist">{{r}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12">
+    <div class="form-group">
+      <button v-on="click: up()"   class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
+      <button v-on="click: down()" class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
+      &nbsp;
+      <button v-on="click: del()"  class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+    </div>
+  </div>
+</div>
+
+<%# Buttons %>
+<div class="col-md-12 col-sm-12">
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: update()"   class="btn btn-sm btn-primary"><%= t 'common.btn.save_changes' %></button>
+    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
+  </div>
+  <div v-if="loading" class="form-actions-top">
+    <div-loader></div-loader>
+  </div>
+</div>
+</script>

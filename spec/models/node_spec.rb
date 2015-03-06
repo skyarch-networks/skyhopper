@@ -1,0 +1,193 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
+require_relative '../spec_helper'
+
+describe Node, :type => :model do
+
+  describe ".bootstrap" do
+    before do
+      status = double()
+      expect(status).to receive(:success?).and_return(true)
+      expect(Open3).to receive(:capture3).and_return(['out','err', status])
+    end
+
+    let(:infra){FactoryGirl.create(:infrastructure)}
+
+    it "returns true if status is success" do
+      expect(Node.bootstrap("hoge", "fuga", infra)).to be_truthy
+    end
+  end
+
+  describe "#cook" do
+    subject { Node.new("test") }
+
+    before do
+      allow(IO).to receive(:popen)
+    end
+
+    let(:infra){FactoryGirl.create(:infrastructure)}
+
+    it "returns true if status is success" do
+      expect(subject.cook(infra)).to be_truthy
+    end
+  end
+
+  describe '#all_recipe' do
+    subject { Node.new("test") }
+
+    before do
+      allow(ChefAPI).to receive_message_chain(:find, :run_list).and_return(%w[recipe[hoge] recipe[fuga] recipe[piyo]])
+    end
+
+    it 'return all run_list' do
+      s = subject.__send__(:all_recipe, %w{role[role1] recipe[bar]})
+      expect(s).to match_array %w{recipe[bar] recipe[hoge] recipe[fuga] recipe[piyo]}
+    end
+  end
+
+
+  describe ".exec_command" do
+    let(:command){'hoge'}
+
+    context 'command succeeded' do
+      let(:res){['foo', 'bar', double('status', success?: true)]}
+
+      it 'should call Open3.capture3' do
+        expect(Open3).to receive(:capture3).with(command).and_return(res)
+        Node.exec_command(command)
+      end
+
+      it 'should return out, error and status' do
+        allow(Open3).to receive(:capture3).and_return(*res)
+      end
+    end
+
+    context "command faild" do
+      let(:res){['foo', 'bar', double('status', success?: false)]}
+      subject{Node.exec_command(command)}
+
+      before do
+        allow(Open3).to receive(:capture3).and_return(res)
+      end
+
+      it do
+        expect{subject}.to raise_error RuntimeError
+      end
+    end
+  end
+
+  describe "#fqdn" do
+    context "only fqdn is configured" do
+      let (:details) do
+        {
+          "automatic" => {
+            "fqdn" => "example.com"
+          }
+        }
+      end
+
+      before do
+        allow_any_instance_of(Node).to receive(:details).and_return(details)
+      end
+
+      subject do
+        Node.new("test")
+      end
+
+      it "acquires fqdn from details" do
+        expect(subject.__send__(:fqdn)).to eq('example.com')
+      end
+    end
+
+    context "both fqdn and public_dns is configured" do
+      let (:details) do
+        {
+          "automatic" => {
+            "fqdn" => "example.com"
+          },
+          "normal" => {
+            "public_dns" => "foo.example.com"
+          }
+        }
+      end
+
+      before do
+        allow_any_instance_of(Node).to receive(:details).and_return(details)
+      end
+
+      subject do
+        Node.new("test")
+      end
+
+      it "returns public_dns" do
+        expect(subject.__send__(:fqdn)).to eq('foo.example.com')
+      end
+    end
+  end
+
+  describe '#scp_specs' do
+    skip
+  end
+
+  describe 'have_auto_generated' do
+    subject { Node.new("test") }
+
+    shared_context 'have_auto_generated?' do |bool|
+      before do
+        r = ['recipe[hoge]', 'recipe[fuga]']
+        r << 'recipe[serverspec-handler]' if bool
+        allow(subject).to receive(:all_recipe).and_return(r)
+      end
+
+      it 'return boolean' do
+        expect(subject.have_auto_generated).to __send__(bool ? :be_truthy : :be_falsey)
+      end
+    end
+
+    context 'have serverspec-handler recipe' do
+      include_context 'have_auto_generated?', true
+    end
+
+    context 'dont have serverspec-handler recipe' do
+      include_context 'have_auto_generated?', false
+    end
+  end
+
+  describe '#run_serverspec' do
+    subject{ Node.new('test') }
+    let(:infra){create(:infrastructure)}
+    let(:serverspec){create(:serverspec)}
+
+    before do
+      status = double()
+      out = <<-EOS
+{
+  "hoge": "fuga",
+  "examples": [
+    {
+      "exception": {
+        "backtrace": "piyo"
+      }
+    }
+  ]
+}
+      EOS
+      expect(status).to receive(:success?).and_return(true)
+      expect(Open3).to receive(:capture3).and_return([out, 'err', status])
+      expect(subject).to receive(:fqdn).and_return('example.com')
+    end
+
+    it 'return hash' do
+      infrastructure_id = 1
+      serverspecs = [serverspec.id]
+
+      expect(subject.run_serverspec(infra.id, serverspecs, false)).to be_kind_of(Hash)
+    end
+  end
+end

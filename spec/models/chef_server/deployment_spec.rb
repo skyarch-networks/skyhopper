@@ -1,0 +1,188 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
+require_relative '../../spec_helper'
+
+FactoryGirl.create(:app_setting)
+describe ChefServer::Deployment, :type => :model do
+  let(:klass){ChefServer::Deployment}
+
+  describe '.create' do
+    let(:stack_name){'FooStack'}
+    let(:region){'ap-northeast-1'}
+    let(:keypair_name){'hogekey'}
+    let(:keypair_value){'hogehogeRSAhogehoge'}
+
+    let(:infra){create(:infrastructure)}
+    let(:project){create(:project)}
+    let(:stack){double('stack')}
+    let(:physical_id){'i-hogefuga'}
+
+    let(:chef_server){klass.new(infra, physical_id)}
+
+    before do
+      allow(stack).to receive_message_chain(:instances, :first, :physical_resource_id).and_return(physical_id)
+    end
+
+    before do
+      expect(klass).to receive(:new).with(infra, physical_id).and_return(chef_server)
+    end
+
+    before do
+      allow(Infrastructure).to receive(:create_with_ec2_private_key).and_return(infra)
+      allow(Project).to receive(:for_test).and_return(project)
+    end
+
+    before do
+      create(:project, code: Project::ChefServerCodeName)
+    end
+
+    it 'should call methods' do
+      expect(klass).to receive(:create_stack).with(infra).and_return(stack)
+      expect(klass).to receive(:wait_creation).with(stack)
+
+      expect(chef_server).to receive(:wait_init_ec2).with(no_args)
+      expect(chef_server).to receive(:fix_hostname).with(no_args)
+      expect(chef_server).to receive(:install_chef).with(no_args)
+      expect(chef_server).to receive(:init_knife_rb).with(no_args)
+
+      klass.create(
+        stack_name,
+        region,
+        keypair_name,
+        keypair_value
+      )
+    end
+  end
+
+  describe 'private methods' do
+    describe '.create_stack' do
+      let(:infra){create(:infrastructure)}
+      let(:cf_template){double('cf_template')}
+      let(:stack){double('stack')}
+
+      before do
+        allow(CfTemplate).to receive(:new).and_return(cf_template)
+        allow(cf_template).to receive(:parsed_cfparams)
+      end
+
+      before do
+        allow(Stack).to receive(:new).and_return(stack)
+      end
+
+      subject{klass.__send__(:create_stack, infra)}
+
+
+      it 'should call methods' do
+        expect(cf_template).to receive(:create_cfparams_set).with(infra)
+        expect(cf_template).to receive(:update_cfparams).with(no_args)
+        expect(cf_template).to receive(:save!).with(no_args)
+        expect(stack).to       receive(:create).with(any_args)
+
+        expect(subject).to eq stack
+      end
+    end
+
+    describe '.wait_creation' do
+      let(:stack){double('stack')}
+
+      subject{klass.__send__(:wait_creation, stack)}
+
+      it 'should call Stack#wait_status' do
+        expect(stack).to receive(:wait_status).with("CREATE_COMPLETE")
+
+        subject
+      end
+    end
+  end
+
+  describe '#initialize' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-hogehoge'}
+    subject{klass.new(infra, physical_id)}
+
+    it 'should assign @infra' do
+      expect(subject.instance_variable_get(:@infra)).to eq infra
+    end
+
+    it 'should assign @physical_id' do
+      expect(subject.instance_variable_get(:@physical_id)).to eq physical_id
+    end
+  end
+
+  describe '#fqdn' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-fugafuga'}
+    subject{klass.new(infra, physical_id)}
+
+    it 'should call infra.ec2.instances[].public_dns_name' do
+      expect(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      subject.fqdn
+    end
+
+    it 'should memolize' do
+      allow(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      fqdn = subject.fqdn
+      expect(subject.instance_variable_get(:@fqdn)).to eq fqdn
+    end
+  end
+
+  describe '#fqdn' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-fugafuga'}
+    subject{klass.new(infra, physical_id)}
+
+    it 'should call infra.ec2.instances[].ip_address' do
+      expect(infra).to receive_message_chain(:ec2, :instances, :[], :ip_address)
+      subject.ip_addr
+    end
+
+    it 'should memolize' do
+      allow(infra).to receive_message_chain(:ec2, :instances, :[], :ip_address)
+      ip_addr = subject.ip_addr
+      expect(subject.instance_variable_get(:@ip_addr)).to eq ip_addr
+    end
+  end
+
+  describe '#fix_hostname' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-fugafuga'}
+    subject{klass.new(infra, physical_id)}
+
+    it 'should call exec_ssh' do
+      expect(subject).to receive(:exec_ssh).with(any_args)
+      subject.fix_hostname
+    end
+  end
+
+  describe '#install_chef' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-fugafuga'}
+    subject{klass.new(infra, physical_id)}
+
+    it 'should call exec_ssh' do
+      expect(subject).to receive(:exec_ssh).with(any_args)
+      subject.install_chef
+    end
+  end
+
+  describe '#init_knife_rb' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-fugafuga'}
+    subject{klass.new(infra, physical_id)}
+
+    before do
+      allow(subject).to receive(:fqdn).and_return('ec2-xx-xx-x-xx.us-west-2.compute.amazonaws.com')
+    end
+
+    it 'should call exec_ssh' do
+      expect(subject).to receive(:exec_ssh).with(any_args)
+      subject.init_knife_rb
+    end
+  end
+end

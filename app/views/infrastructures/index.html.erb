@@ -1,0 +1,59 @@
+<%- model_class = Infrastructure -%>
+<div class="page-header">
+  <h1><%=t 'infrastructures.infrastructure' %></h1>
+  <%= breadcrumbs(@selected_client, @selected_project, nil) if current_user.master? %>
+  <%= link_to t('infrastructures.return_to_projects'), projects_path, {class: "btn btn-small btn-link"} unless current_user.master? %>
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th><%= t 'infrastructures.stackname' %></th>
+      <th><%= t 'infrastructures.region' %></th>
+      <th><%= t 'infrastructures.keypair' %></th>
+      <th><%= t 'common.actions' %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @infrastructures.each do |infra| %>
+      <tr class="infrastructure-row">
+        <td><%= infra.stack_name %></td>
+        <td><%= infra.region %></td>
+        <td><%= infra.keypairname || t('infrastructures.msg.no_keypair') %></td>
+        <td>
+          <% stack_availability = infra.status.present? %>
+
+          <%= button_show_infra(infra) %>
+
+          <%= button_serverspecs(infra.id) %>
+
+          <% if current_user.admin? %>
+
+            <% if stack_availability %>
+              <%= link_to t('.edit', default: t("helpers.links.edit")),
+                "#",
+                class: 'btn btn-default btn-xs disabled' %>
+            <% else %>
+              <%= link_to t('.edit', default: t("helpers.links.edit")),
+                edit_infrastructure_path(infra),
+                class: 'btn btn-default btn-xs' %>
+            <% end %>
+            <%= button_detach_stack(infra) %>
+            <%= button_delete_stack(infra) %>
+
+          <% end %>
+
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginate(@infrastructures) %>
+</div>
+
+<%= button_add_infra(@selected_client, @selected_project) if current_user.admin? %>
+
+<div class="page-header"></div>
+
+<%= render 'show' %>

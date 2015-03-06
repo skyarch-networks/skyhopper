@@ -1,0 +1,39 @@
+<%# 
+Arguments
+
+params
+{
+  name: {
+    AllowedValues: Array(Optional),
+    Default: String(Optional),
+    ConstraintDescription: String(Optional),
+    Description: String(Optional),
+  }
+}
+%>
+<script id="insert-cf-params-template" type="text/template">
+<div>
+  <h4 class="page-header"><%= t 'cf_templates.insert_parameters' %></h4>
+  <form class="form-horizontal">
+    <div v-repeat="p: params" class="form-group">
+      <label class="col-sm-3 control-label" v-attr="for: $key" v-text="$key"></label>
+
+      <div class="col-md-7">
+        <select v-if="p.AllowedValues" id="{{$key}}" v-model="result[$key]" class="form-control" required="">
+          <option v-repeat="p.AllowedValues">{{$value}}</option>
+        </select>
+
+        <input v-if="!p.AllowedValues" id="{{$key}}" v-model="result[$key]" class="form-control" type="text" required="">
+        <span class="help-block" v-text="p.Description"></span>
+      </div>
+    </div>
+  </form>
+
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
+  </div>
+  <div v-if="loading" class="form-actions-top">
+    <div-loader></div-loader>
+  </div>
+</div>
+</script>

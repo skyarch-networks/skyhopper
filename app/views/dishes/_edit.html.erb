@@ -1,0 +1,34 @@
+<div class="col-md-12 col-sm-12">
+  <%= render partial: 'shared/edit_runlist', locals: {
+    roles:        @roles,
+    cookbooks:    @cookbooks,
+    runlist:      @runlist,
+  } %>
+</div>
+
+<div class="col-md-12 col-sm-12">
+
+  <h3 class="page-header">Serverspecs</h3>
+  <div class="form-group checkbox">
+
+  <% @global_serverspecs.each do |serverspec| %>
+
+  <% if @selected_serverspecs.include?(serverspec) %>
+    <label class="checkbox"><%= check_box_tag "serverspecs", serverspec.id, {checked: true} %><%= serverspec.name %></label>
+  <% else %>
+    <label class="checkbox"><%= check_box_tag "serverspecs", serverspec.id %><%= serverspec.name %></label>
+  <% end %>
+
+    <p class="muted"><small><%= serverspec.description %></small></p>
+
+  <% end %>
+  </div>
+
+</div>
+
+<div class="col-md-12 col-sm-12">
+  <div class="form-actions-top">
+    <button id="update-dish" class="btn btn-sm btn-primary"><%= t 'common.btn.save_changes' %></button>
+    <button class='btn btn-sm btn-default show-current-dish'><%= t 'helpers.links.cancel' %></button>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<script id="edit-monitoring-tabpane-template" type="text/template">
+<div class="row" style="margin-top:30px">
+  <div class="col-md-2 col-sm-6">
+    <h4 class="page-header"><%= t 'monitoring.select' %></h4>
+  </div>
+
+  <div class="col-md-10 col-sm-6">
+    <h4 class="page-header"><%= t 'monitoring.trigger' %>
+    <small>
+      <a href="#" data-toggle="modal" data-target="#trigger-warning"><%= glyphicon('question-sign') %></a>
+    </small>
+    </h4>
+  </div>
+</div>
+
+<%= render 'monitorings/modal_trigger_setting_description' %>
+
+<form>
+  <div class="row" v-repeat="master: master_monitorings">
+    <div class="col-md-2 col-sm-6" style="height: 32px">
+      <div class="checkbox" style="margin-top: 5px; margin-bottom: 5px">
+        <label>
+          <input type="checkbox" v-model="checked: master.checked">
+          {{master.name}}
+        </label>
+      </div>
+    </div>
+
+    <div class="col-md-10 col-sm-6">
+      <!-- if following parameters, dont let trigger value to be set -->
+      <div v-if="type(master) === 'trigger'" class="col-md-1" style="padding-left: 0px; height: 32px">
+        {{$log(master)}}
+        <input v-if="master.checked" type="number" class="form-control" v-model="master.value" style="padding: 5px !important" min="1">
+        <p     v-if="!master.checked" style="margin-bottom: 5px; margin-top: 5px">--</p>
+      </div>
+      <div v-if="type(master) === 'url'">
+        <div v-if="master.checked">
+          <table class="table">
+            <thead>
+              <tr>
+                <% url_settings.each do |setting| %>
+                  <th><%= setting[:name] %></th>
+                <% end %>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-repeat="s: web_scenarios">
+                <td v-repeat="v: s">{{v}}</td>
+                <td class="actions">
+                  <a v-on="click: delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="btn btn-primary btn-sm" data-target="#new-scenario" data-toggle="modal" style="margin-bottom: 10px"><%= t "monitoring.btn.add" %></a>
+        </div>
+        <%= render 'monitorings/modal_trigger_setting_add' %>
+      </div>
+      <div v-if="type(master) === 'mysql' || type(master) === 'postgresql'">
+        <input v-if="master.checked" type="text" class="form-control" v-model="master.value" style="width:40%; height: 30px">
+      </div>
+    </div>
+  </div>
+</form>
+
+<div class="form-actions-top">
+  <a v-if="!loading" href="#" class="btn btn-sm btn-primary" v-on="click: submit()"><%= t 'helpers.titles.save' %></a>
+  <div-loader v-if="loading"></div-loader>
+</div>
+</script>

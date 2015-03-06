@@ -1,0 +1,155 @@
+<div id="infra-show"></div>
+
+<script id="infra-show-template" type="text/template">
+<div id="infra-show-template" v-cloak v-show="current_infra.stack">
+  <h3><%= t 'infrastructures.stack_info' %>
+    <small>#{{current_infra.stack.name}} :
+      <span v-class="'label', status_label_class()">{{current_infra.stack.status.name}}</span>
+    </small>
+  </h3>
+
+
+  <div class="tabbable">
+    <ul class="nav nav-tabs" role="tablist">
+      <%# Resource TABs %>
+      <%= render 'resource_tabs' %>
+
+      <li class="active">
+        <a v-if="no_stack()"    v-on="click: show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
+        <a v-if="in_progress()" v-on="click: show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
+        <a v-if="stack_fail()"  v-on="click: show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a> <%# TODO: I18n %>
+      </li>
+
+
+      <!-- Infrastructure Control TAB -->
+      <li class="dropdown pull-right">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          <%= t 'common.actions' %>&nbsp;<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+          <li v-class="disabled : current_infra.token_invalid">
+            <a href="#" tabindex="-1" v-on="click: show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
+          </li>
+          <li>
+            <a href="#" tabindex="-1" v-on="click: show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
+          </li>
+          <li v-class="disabled : no_stack()">
+            <a href="#" tabindex="-1" v-on="click: show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
+          </li>
+          <li class="divider"></li>
+          <li v-class="disabled : no_stack()">
+            <a href="#" id="show-monitoring" tabindex="-1" v-on="click: show_monitoring()"><%= t 'monitoring.title' %></a>
+          </li>
+          <li v-class="disabled : no_stack()">
+            <a href="#" tabindex="-1" v-on="click: show_edit_monitoring()"><%= t 'monitoring.config' %></a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="#" tabindex="-1" v-on="click: show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+
+    <%# create tab-panes %>
+    <div>
+
+      <%# loading tabpane %>
+      <div class="tab-pane" v-if="loading">
+        <div-loader></div-loader>
+      </div>
+
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('default')">
+        <%# No stack %>
+        <div v-if="no_stack()">
+          <div id="initTop" class="initialization">
+            <p><%= t 'infrastructures.msg.no_stack_info' %></p>
+            <pre v-text="current_infra.stack.message"></pre>
+          </div>
+        </div>
+
+        <%# IN PROGRESS %>
+        <div v-if="in_progress()">
+          <span><%= loading_with_message(t('infrastructures.msg.check_intervals')) %></span>
+        </div>
+
+        <%# Stack Event Table %>
+        <stack-events-table v-with="events: current_infra.events"></stack-events-table>
+      </div>
+
+
+
+      <%# Add/Modify tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('add_modify')">
+        <add-modify-tabpane v-with="current_infra.add_modify"></add-modify-tabpane>
+      </div>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('insert-cf-params')">
+        <insert-cf-params v-with="current_infra.insert_cf_params"></insert-cf-params>
+      </div>
+      <%# Template History tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('cf_history')">
+        <cf-history-tabpane v-with="histories: current_infra.cf_history"></cf-history-tabpane>
+      </div>
+      <%# Stack Eventlogs tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('event_logs')">
+        <stack-events-table v-with="events: current_infra.events"></stack-events-table>
+      </div>
+
+      <%# Monitoring tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('monitoring')">
+        <monitoring-tabpane></monitoring-tabpane>
+      </div>
+      <%# Monitoring Config tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('edit-monitoring')">
+        <edit-monitoring-tabpane></edit-monitoring-tabpane>
+      </div>
+
+      <%# infra_logs tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('infra_logs')">
+        <infra-logs-tabpane v-with="infra_logs: current_infra.infra_logs"></infra-logs-tabpane>
+      </div>
+
+
+      <div v-repeat="current_infra.resources.ec2_instances">
+        <ec2-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></ec2-tabpane>
+      </div>
+
+      <div v-repeat="current_infra.resources.rds_instances">
+        <rds-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></rds-tabpane>
+      </div>
+
+      <div v-repeat="current_infra.resources.s3_buckets">
+        <s3-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></s3-tabpane>
+      </div>
+
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('edit_runlist')">
+        <edit-runlist-tabpane></edit-runlist-tabpane>
+      </div>
+
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('edit_attr')">
+        <edit-attr-tabpane></edit-attr-tabpane>
+      </div>
+
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('serverspec')">
+        <serverspec-tabpane></serverspec-tabpane>
+      </div>
+    </div>
+  </div>
+</div>
+</script>
+
+<%= render 'vue/stack_events_table' %>
+<%= render 'vue/add_modify_tabpane' %> <%= render 'vue/insert_cf_params' %>
+<%= render 'vue/cf_history_tabpane' %>
+<%= render 'vue/infra_logs_tabpane'  %>
+<%= render 'vue/monitoring_tabpane' %>
+<%= render 'vue/edit_monitoring_tabpane' %>
+<%= render 'vue/rds_tabpane'  %>
+<%= render 'vue/s3_tabpane'  %>
+<%= render 'vue/vue_paginator' %>
+
+<%= render 'vue/ec2_tabpane' %>
+<%= render 'vue/edit_runlist_tabpane' %>
+<%= render 'vue/edit_attr_tabpane' %>
+<%= render 'vue/serverspec_tabpane' %>
