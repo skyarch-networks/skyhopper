@@ -79,6 +79,6 @@ class AppSetting < ActiveRecord::Base
   end
 
   def dummy?
-    attributes.any?{|key, val| val == DummyText}
+    attributes.any?{|key, val| val.kind_of?(String) && val == DummyText}
   end
 end

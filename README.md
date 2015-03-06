@@ -1,8 +1,11 @@
+[![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg)](https://travis-ci.org/skyarch-networks/skyhopper)
+
+
 # デプロイ手順フロー
 
 ## アプリケーションのデプロイ
 
-`doc/installation/skyhopper.md`  
+`doc/installation/skyhopper.md`
 
 1. rubyのインストール
 1. node.jsのインストール
@@ -18,7 +21,7 @@
 
 ## Cookbook/Roleのアップロード
 
-`doc/installation/upload_cookbooks.md`  
+`doc/installation/upload_cookbooks.md`
 
 
 ## SkyHopperで使用するZabbix Serverのデプロイ手順
