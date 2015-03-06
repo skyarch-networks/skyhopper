@@ -76,7 +76,7 @@ $ sudo npm install bower --global
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
 $ sudo yum install ruby21-devel sqlite-devel
-$ sudo yum install gcc g++ make zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel
+$ sudo yum install zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel
 $ sudo yum --enablerepo=epel install redis
 ```
 
@@ -315,7 +315,7 @@ $ sudo service nginx restart
 ```
 
 
-## 完了
+## 起動
 
 SkyHopperの実行は以下
 
@@ -330,4 +330,23 @@ $ ./scripts/dev_server.sh
 $ ./scripts/skyhopper_daemon.sh start
 # usage start|stop|status
 # daemonモードで起動
+```
+
+
+## SkyHopperの初期設定
+
+ブラウザからSkyHopperにアクセスし、初期設定を行ってください
+
+
+## Chef Serverの鍵を設置
+
+SkyHopperのプロジェクトディレクトリ下の`tmp/chef`内のファイルを`~/.chef`に設置
+```sh
+$ cp -r ~/skyhopper/tmp/chef ~/.chef
+```
+
+SkyHopperの再起動
+```sh
+$ ./scripts/skyhopper_daemon.sh stop
+$ ./scripts/skyhopper_daemon.sh start
 ```
