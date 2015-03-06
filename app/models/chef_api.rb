@@ -14,9 +14,16 @@ module ChefAPI
     class CookbookNotFound < NotFound; end
   end
 
-  @@ridley = ::Ridley.from_chef_config(File.expand_path("~/.chef/knife.rb"))
 
   module_function
+
+  # TODO: Rails server をリスタートする必要がある
+  def setup
+    @@ridley = ::Ridley.from_chef_config(File.expand_path("~/.chef/knife.rb"))
+  rescue => ex
+    Rails.logger.warn(ex)
+  end
+  setup
 
   # == Arguments
   # [kind]
