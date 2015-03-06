@@ -15,7 +15,8 @@
 1. SkyHopperのセットアップ
 1. DBのセットアップ
 1. リバースプロキシの設定
-
+1. SkyHopperの初期設定
+1. Chef Serverの鍵を設置
 
 
 ## Cookbook/Roleのアップロード
@@ -26,3 +27,9 @@
 ## SkyHopperで使用するZabbix Serverのデプロイ手順
 
 `doc/installation/zabbix_server.md`
+
+
+
+# 既知の問題
+
+`doc/known_issues.md`
