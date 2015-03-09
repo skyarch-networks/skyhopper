@@ -57,7 +57,7 @@
     var notification_status =  "notification-panel bs-callout bs-callout-" + status;
 
     var header = $('<h5>', {text: timestamp});
-    var content = $('<p>', {text: message});
+    var content = $('<div>', {html: message.replace(/[\n\r]/g, "<br />")});
 
     $("div#notification").prepend( $("<div>", {class: notification_status, role: "alert"}).append(header).append(content) );
 
