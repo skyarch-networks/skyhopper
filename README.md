@@ -1,9 +1,13 @@
+# SkyHopper
+システム自動構築ツール
+
+http://www.skyarch.net/blog/?p=2709
+
 [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg)](https://travis-ci.org/skyarch-networks/skyhopper)
 
+## デプロイ手順フロー
 
-# デプロイ手順フロー
-
-## アプリケーションのデプロイ
+### アプリケーションのデプロイ
 
 `doc/installation/skyhopper.md`
 
@@ -19,17 +23,17 @@
 1. Chef Serverの鍵を設置
 
 
-## Cookbook/Roleのアップロード
+### Cookbook/Roleのアップロード
 
 `doc/installation/upload_cookbooks.md`
 
 
-## SkyHopperで使用するZabbix Serverのデプロイ手順
+### SkyHopperで使用するZabbix Serverのデプロイ手順
 
 `doc/installation/zabbix_server.md`
 
 
 
-# 既知の問題
+## 既知の問題
 
 `doc/known_issues.md`
