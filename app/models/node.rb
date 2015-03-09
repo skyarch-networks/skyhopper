@@ -179,9 +179,17 @@ knife bootstrap #{fqdn} \
   end
 
 
-  # yum -y update
-  def yum_update(infra, &block)
-    exec_knife_ssh('sudo yum -y update', infra, &block)
+  def yum_update(infra, security=false, exec=false, &block)
+    cmd = "sudo yum "
+
+    cmd << "-y update " if exec
+    cmd << "check-update " unless exec
+
+    cmd << "--security " if security
+
+    cmd << "| cat" unless exec
+
+    exec_knife_ssh(cmd, infra, &block)
   end
 
 

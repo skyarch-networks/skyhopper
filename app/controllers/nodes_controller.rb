@@ -211,10 +211,12 @@ class NodesController < ApplicationController
   def yum_update
     physical_id = params.require(:id)
     infra_id = params.require(:infra_id)
+    security = params.require(:security) == "security"
+    exec = params.require(:exec) == "exec"
 
     infra = Infrastructure.find(infra_id)
 
-    exec_yum_update(infra, physical_id)
+    exec_yum_update(infra, physical_id, security, exec)
     render text: I18n.t('nodes.msg.yum_update_started'), status: 202
   end
 
@@ -278,9 +280,13 @@ class NodesController < ApplicationController
   end
 
   # TODO: DRY
-  def exec_yum_update(infra, physical_id)
+  def exec_yum_update(infra, physical_id, security=true, exec=false)
     thread_yum = Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
-      infra_logger_success("yum update for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
+      yum_screen_name = "yum "
+      yum_screen_name << " check" unless exec
+      yum_screen_name << " security" if security
+      yum_screen_name << " update"
+      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
 
       Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::InProgress)
       Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
@@ -292,18 +298,18 @@ class NodesController < ApplicationController
       log = []
 
       begin
-        node.yum_update(infra) do |line|
+        node.yum_update(infra, security, exec) do |line|
           ws.push_as_json({v: line})
-          Rails.logger.debug "yum update #{physical_id} > #{line}"
+          Rails.logger.debug "#{yum_screen_name} #{physical_id} > #{line}"
           log << line
         end
       rescue => ex
         Rails.logger.debug(ex)
-        infra_logger_fail("yum update for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
         Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Failed)
         ws.push_as_json({v: false})
       else
-        infra_logger_success("yum update for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
         Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Success)
         ws.push_as_json({v: true})
       end

@@ -108,7 +108,7 @@ Arguments:
     </div>
   </div>
 
-  <%# Runlist  table %>
+  <%# Runlist table %>
   <div class="col-xs-12 col-sm-10">
     <h5 class="page-header">Runlist</h5>
     <table class="table table-condensed">
@@ -140,7 +140,18 @@ Arguments:
       </button>
       <button v-on="click: edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
       <button v-on="click: edit_attr()" class="btn btn-sm btn-default"><%= t 'nodes.btn.instance_settings' %></button>
-      <button v-on="click: yum_update()" class="btn btn-sm btn-warning">yum update</button>
+      <div class="dropup" style="display: inline-block">
+        <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+          yum
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'check')">Check security updates</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'exec')">Execute security update</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')">Check all updates</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')">Execute all update</a></li>
+        </ul>
+      </div>
       <button v-on="click: select_serverspec()" v-class="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
 
       <div class="pull-right">
