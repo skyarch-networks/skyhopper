@@ -166,7 +166,7 @@ en:
     role:        'Role'
     statuses:    'Statuses'
     latest_cook_status:       'Latest Cook Status'
-    latest_update_status:     'Latest yum update Status'
+    latest_update_status:     'Latest yum command Status'
     latest_serverspec_status: 'Latest Serverspec Status'
     btn:
       edit_runlist: 'Edit Runlist'
@@ -177,7 +177,7 @@ en:
       before_bootstrap:   'This instance is not bootstrapped with Chef Server.'
       no_dishes:          "No valid dishes available."
       cooking:            'Cook being executed...'
-      updating:           'yum update is in progress...'
+      updating:           'yum command is in progress...'
       bootstrap_finish:   '%{physical_id} was successfully registered in Chef Server.'
       not_change_scale:   "Unnecessary to change to '%{type}'"
       changed_scale:      'Change scale to %{type}'
@@ -185,8 +185,8 @@ en:
       runlist_applying:   'Runlist is being applied...'
       cook_started:       'Cook was successfully started'
       attribute_updated:  'Attribute was successfully updated.'
-      yum_update_confirm: 'Are you sure you want to do yum update?'
-      yum_update_started: 'yum update is started.'
+      yum_update_confirm: 'Are you sure you want to execute yum command?'
+      yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
 
 

@@ -58,3 +58,8 @@
 input[type="number"] {
   height: 30px
 }
+
+.modal.modal-large .modal-content {
+    width: 800px;
+    margin-left: -100px;
+}

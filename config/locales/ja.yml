@@ -166,7 +166,7 @@ ja:
     role:        'Role'
     statuses:    '状態'
     latest_cook_status:       'Cook'
-    latest_update_status:     'yum update'
+    latest_update_status:     'yum'
     latest_serverspec_status: 'Serverspec'
     btn:
       edit_runlist: 'Runlist の編集'
@@ -177,7 +177,7 @@ ja:
       before_bootstrap:   'このインスタンスは Chef Server に登録されていません'
       no_dishes:          '検証済みのディッシュがありません'
       cooking:            'Cook の実行中...'
-      updating:           'yum update の実行中...'
+      updating:           'yum の実行中...'
       bootstrap_finish:   '%{physical_id} を Chef Server に登録しました'
       not_change_scale:   '%{type} に変更する必要はありません'
       changed_scale:      '%{type} のスケールが変更されました'
@@ -185,8 +185,8 @@ ja:
       runlist_applying:   'Runlist を適用中です...'
       cook_started:       'Cook が正常に開始されました'
       attribute_updated:  'Attribute が正常に更新されました'
-      yum_update_confirm: 'yum update を実行しますか?'
-      yum_update_started: 'yum update が正常に開始されました'
+      yum_update_confirm: 'yum を実行しますか?'
+      yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
 
   dishes:

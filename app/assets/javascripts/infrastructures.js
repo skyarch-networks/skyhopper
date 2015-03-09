@@ -621,10 +621,26 @@
       cook: function () {
         this._cook('cook');
       },
-      yum_update: function () {
+      yum_update: function (security, exec) {
         var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+
+        var security_bool = (security == "security");
+        var exec_bool = (exec == "exec");
+
         bootstrap_confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
-          self._cook('yum_update');
+          var dfd = ec2.yum_update(security_bool, exec_bool).fail(
+            // cook start fail
+            alert_danger(self._show_ec2)
+          ).progress(function (state, msg) {
+            // cook start success
+            if(state !== 'start'){return;}
+
+            alert_success(function () {
+              self.inprogress = true;
+            })(msg);
+          });
+          self.watch_cook(dfd);
         });
       },
       edit_runlist: function () {

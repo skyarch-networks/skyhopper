@@ -113,8 +113,27 @@ var EC2Instance = function (infra, physical_id) {
     return _cook('cook');
   };
 
-  this.yum_update = function () {
-    return _cook('yum_update');
+  this.yum_update = function (security, exec) {
+    var extra_params = {
+      security: "security",
+      exec: "check"
+    };
+    if (!security) {
+      extra_params.security = "all";
+    }
+    if (exec) {
+      extra_params.exec = "exec";
+    }
+    var p = _.merge(params, extra_params);
+
+    var dfd = $.Deferred();
+
+    ajax_node.yum_update(p).done(function (data) {
+      dfd.notify('start', data);
+      self.watch_cook(dfd);
+    }).fail(rejectXHR(dfd));
+
+    return dfd.promise();
   };
 
   this.apply_dish = function (dish_id) {
