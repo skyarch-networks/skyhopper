@@ -36,8 +36,13 @@ class ResourcesController < ApplicationController
     screen_name = params[:screen_name] || physical_id
     type_name   = 'AWS::EC2::Instance' # TODO: 決め打ち
 
+    infra = Infrastructure.find(infra_id)
+    unless infra.create_complete?
+      # TODO: I18n
+      render text: "Infrastructure isn't create complete.", status: 400;return
+    end
+
     #TODO: check aws
-    #TODO: check infra status
 
     begin
       Resource.create!(

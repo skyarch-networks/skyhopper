@@ -22,18 +22,30 @@ describe ResourcesController do
 
     before{req}
 
-    should_be_success
+    context 'when infra is not create complete' do
+      let(:infra){create(:infrastructure, status: 'ROLLBACK_COMPLETE')}
+      should_be_failure
 
-    it 'should increment resource' do
-      expect(infra.resources.size).to eq resources.size + 1
+      it 'should not increment resources' do
+        expect(infra.resources.size).to eq resources.size
+      end
     end
 
-    it 'should set physical_id' do
-      expect(infra.resources.last.physical_id).to eq physical_id
-    end
+    context 'when infra is create complete' do
+      let(:infra){create(:infrastructure, status: 'CREATE_COMPLETE')}
+      should_be_success
 
-    it 'should set screen_name' do
-      expect(infra.resources.last.screen_name).to eq screen_name
+      it 'should increment resource' do
+        expect(infra.resources.size).to eq resources.size + 1
+      end
+
+      it 'should set physical_id' do
+        expect(infra.resources.last.physical_id).to eq physical_id
+      end
+
+      it 'should set screen_name' do
+        expect(infra.resources.last.screen_name).to eq screen_name
+      end
     end
   end
 end
