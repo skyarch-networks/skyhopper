@@ -35,6 +35,34 @@ describe ServerStatusController, type: :controller do
   end
 
   describe '#status' do
-    # TODO
+    let(:status){'hogefuga'}
+    before do
+      allow(server).to receive(:status).and_return(status)
+      allow(server).to receive(:is_in_progress?).and_return(false)
+    end
+
+    %w[chef zabbix].each do |kind|
+      context "when #{kind}" do
+        context 'when not work background' do
+          let(:req){post :status, kind: kind}
+          before{req}
+
+          should_be_success
+
+          it 'should render status' do
+            expect(response.body).to eq status
+          end
+        end
+
+        context 'when work background' do
+          let(:req){post :status, kind: kind, background: true}
+          #TODO:
+        end
+
+        context 'when server in progress' do
+          #TODO:
+        end
+      end
+    end
   end
 end
