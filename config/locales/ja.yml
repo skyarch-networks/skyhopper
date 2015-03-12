@@ -360,5 +360,6 @@ ja:
     settings:    '設定'
 
   resources:
+    screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'

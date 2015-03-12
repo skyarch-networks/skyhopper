@@ -30,6 +30,7 @@
           <li v-class="disabled : current_infra.token_invalid">
             <a href="#" tabindex="-1" v-on="click: show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
           </li>
+          <li><a href="#" tabindex="-1" v-on="click: show_add_ec2"><%= t 'infrastructures.add_ec2' %></a></li>
           <li>
             <a href="#" tabindex="-1" v-on="click: show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
           </li>
@@ -87,6 +88,11 @@
       <div class="tab-pane" v-show="!loading" v-if="tabpane_active('insert-cf-params')">
         <insert-cf-params v-with="current_infra.insert_cf_params"></insert-cf-params>
       </div>
+
+      <%# Add EC2 tabpane %>
+      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('add-ec2')">
+        <add-ec2-tabpane></add-ec2-tabpane>
+      </div>
       <%# Template History tabpane %>
       <div class="tab-pane" v-show="!loading" v-if="tabpane_active('cf_history')">
         <cf-history-tabpane v-with="histories: current_infra.cf_history"></cf-history-tabpane>
@@ -141,6 +147,7 @@
 
 <%= render 'vue/stack_events_table' %>
 <%= render 'vue/add_modify_tabpane' %> <%= render 'vue/insert_cf_params' %>
+<%= render 'vue/add_ec2_tabpane' %>
 <%= render 'vue/cf_history_tabpane' %>
 <%= render 'vue/infra_logs_tabpane'  %>
 <%= render 'vue/monitoring_tabpane' %>

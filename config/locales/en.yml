@@ -362,5 +362,6 @@ en:
     settings:    'Settings'
 
   resources:
+    screen_name: 'Screen Name'
     msg:
       created: 'Resource was successfully created.'
