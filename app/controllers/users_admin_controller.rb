@@ -85,7 +85,6 @@ class UsersAdminController < ApplicationController
 
   # PUT /users_admin/1
   def update
-
     user_id          = params.require(:id)
     allowed_projects = params[:allowed_projects]
     master           = params.require(:master) == 'true'
@@ -137,6 +136,28 @@ class UsersAdminController < ApplicationController
       z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
     end
     render text: I18n.t('users.msg.updated')
+  end
+
+  # PUT /users_admin/sync_zabbix
+  # 全てのユーザーをZabbixに登録する。
+  def sync_zabbix
+    s = AppSetting.get
+    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+
+    users = User.all
+    users.each do |user|
+      next if z.user_exists?(user.email)
+
+      # XXX: DRY. Same as create of this controller.
+      user_id_z = z.create_user(user.email, user.encrypted_password)
+      if user.master && user.admin
+        z.update_user(user_id_z, type: Zabbix::UserTypeSuperAdmin)
+      elsif user.master
+        z.update_user(user_id_z, usergroup_ids: [z.get_master_usergroup_id])
+      end
+    end
+
+    render text: I18n.t('users.msg.updated'); return
   end
 
   # delete acount
