@@ -27,5 +27,13 @@ describe ResourcesController do
     it 'should increment resource' do
       expect(infra.resources.size).to eq resources.size + 1
     end
+
+    it 'should set physical_id' do
+      expect(infra.resources.last.physical_id).to eq physical_id
+    end
+
+    it 'should set screen_name' do
+      expect(infra.resources.last.screen_name).to eq screen_name
+    end
   end
 end
