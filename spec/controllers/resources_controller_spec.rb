@@ -18,8 +18,12 @@ describe ResourcesController do
   describe '#create' do
     let(:physical_id){'i-hogehoge'}
     let(:screen_name){'hogefuga'}
+    let(:ec2_exists){true}
     let(:req){post :create, infra_id: infra.id, physical_id: physical_id, screen_name: screen_name}
 
+    before do
+      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[], :exists?).and_return(ec2_exists)
+    end
     before{req}
 
     context 'when infra is not create complete' do
@@ -31,7 +35,16 @@ describe ResourcesController do
       end
     end
 
-    context 'when infra is create complete' do
+    context 'when ec2 does not exists' do
+      let(:ec2_exists){false}
+      should_be_failure
+
+      it 'should not increment resources' do
+        expect(infra.resources.size).to eq resources.size
+      end
+    end
+
+    context 'when infra is create complete and ec2 exists' do
       let(:infra){create(:infrastructure, status: 'CREATE_COMPLETE')}
       should_be_success
 

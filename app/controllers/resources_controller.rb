@@ -42,7 +42,11 @@ class ResourcesController < ApplicationController
       render text: "Infrastructure isn't create complete.", status: 400;return
     end
 
-    #TODO: check aws
+    # Infraが所属するRegionにphysical_idのインスタンスが存在しない場合
+    unless infra.ec2.instances[physical_id].exists?
+      # TODO: I18n
+      render text: "Cannot find #{physical_id}", status: 400; return
+    end
 
     begin
       Resource.create!(
