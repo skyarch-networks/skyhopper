@@ -27,7 +27,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :resources, only: [:index]
+  resources :resources, only: [:index, :create]
 
   resources :nodes, only: [:update, :show, :edit] do
     collection do
