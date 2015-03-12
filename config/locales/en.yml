@@ -130,6 +130,7 @@ en:
     database:           'Database'
     runlist:            'Runlist'
     instance_type:      'Instance type'
+    add_ec2:            'Add EC2'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -359,3 +360,8 @@ en:
   ec2_instances:
     description: 'Description'
     settings:    'Settings'
+
+  resources:
+    screen_name: 'Screen Name'
+    msg:
+      created: 'Resource was successfully created.'

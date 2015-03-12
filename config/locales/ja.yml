@@ -130,6 +130,7 @@ ja:
     database:           'データベース'
     runlist:            'Runlist'
     instance_type:      'インスタンスの種類'
+    add_ec2:            'EC2の追加'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -357,3 +358,8 @@ ja:
   ec2_instances:
     description: '詳細'
     settings:    '設定'
+
+  resources:
+    screen_name: '表示名'
+    msg:
+      created: 'リソースは正常に追加されました'

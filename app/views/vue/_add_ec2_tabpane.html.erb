@@ -1,0 +1,24 @@
+<script id="add-ec2-tabpane-template" type="text/template">
+<h3 class="page-header"><%= t('infrastructures.add_ec2') %></h3>
+
+<form class="form-horizontal">
+  <div class="form-group">
+    <label class="col-xs-3 control-label" for="add_ec2_physical_id">physical_id</label>
+    <div class="col-xs-7">
+      <input type="text" v-model="physical_id" id="add_ec2_physical_id" class="form-control" required placeholder="required">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-xs-3 control-label" for="add_ec2_screen_name"><%= t('resources.screen_name') %></label>
+    <div class="col-xs-7">
+      <input type="text" v-model="screen_name" id="add_ec2_screen_name" class="form-control" placeholder="optional">
+    </div>
+  </div>
+</form>
+
+<div class="form-actions-top">
+  <button v-if="!loading" v-on="click: submit()" class="btn btn-primary"><%= t 'common.btn.submit' %></button>
+  <div-loader v-if="loading"></div-loader>
+</div>
+</script>
