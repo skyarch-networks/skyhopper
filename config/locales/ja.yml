@@ -315,12 +315,15 @@ ja:
     unregistered:      '未登録'
     btn:
       add: '新規ユーザー'
+      sync: 'Zabbix と同期'
     msg:
       role: 'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます'
       created:     'ユーザーアカウントが正常に追加されました'
       updated:     'ユーザーアカウントが正常に更新されました'
       deleted:     'ユーザーアカウントが正常に削除されました'
+      synced:      '全てのユーザーアカウントは正常にZabbixと同期されました。'
       only_master: 'ユーザー管理は master ユーザーのみが行うことができます'
+      confirm_sync_zabbix: 'Zabbixとユーザーを同期しますか?'
 
 
   chef_servers:

@@ -157,7 +157,7 @@ class UsersAdminController < ApplicationController
       end
     end
 
-    render text: I18n.t('users.msg.updated'); return
+    render text: I18n.t('users.msg.synced'); return
   end
 
   # delete acount
