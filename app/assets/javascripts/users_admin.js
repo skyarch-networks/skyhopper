@@ -9,6 +9,7 @@
 (function () {        //  for file local scope
 
   var ajax_users_admin = new AjaxSet.Resources("users_admin");
+  ajax_users_admin.add_collection('sync_zabbix', 'PUT');
 
   var highlight_user_row = function (selected_user) {
     $(".user-row").removeClass("info");
@@ -63,6 +64,28 @@
         $("#allowed-projects").append(option);
       }
     });
+  };
+
+  var sync_zabbix = function (btn) {
+    var f = function () {
+      var reload = function (){
+        // ここでdisabled を消さないと、何故かリロードしてもdisabledがついたままになる(FireFox で確認)
+        btn.prop('disabled', false);
+        location.reload();
+      };
+
+      btn.prop('disabled', true);
+      var frag = $(document.createDocumentFragment());
+      show_loading(frag);
+      btn.after(frag);
+      ajax_users_admin.sync_zabbix().done(function (data) {
+        bootstrap_alert(t('users.title'), data).done(reload);
+      }).fail(function (xhr) {
+        bootstrap_alert(t('users.title'), xhr.responseText, "danger").done(reload);
+      });
+    };
+
+    bootstrap_confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
   };
 
   var remove_selected_allowed_projects = function () {
@@ -159,6 +182,10 @@
     }).fail(function (xhr, status, error) {
       bootstrap_alert(t('users.title'), xhr.responseText, "danger");
     });
+  });
+
+  $(document).on('click', '#sync_zabbix', function () {
+    sync_zabbix($(this));
   });
 })();
 

@@ -317,12 +317,15 @@ en:
     unregistered:      'Unregistered'
     btn:
       add: 'Add User'
+      sync: 'Synchronize with Zabbix'
     msg:
       role: 'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
       created:     'An account was successfully created.'
       updated:     'An account was successfully updated.'
       deleted:     'An account was successfully deleted.'
+      synced:      'All accounts was successfully synchronized with Zabbix.'
       only_master: 'User Management feature is only permitted to Master users.'
+      confirm_sync_zabbix: 'Do you synchronize with Zabbix?'
 
 
   chef_servers:
