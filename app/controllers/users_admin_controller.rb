@@ -12,6 +12,9 @@ class UsersAdminController < ApplicationController
 
   before_action :authenticate_user!
   before_action :master
+
+  before_action :with_zabbix_or_back, only: [:new, :create, :destroy]
+  before_action :with_zabbix_or_render, only: [:edit, :update, :sync_zabbix]
   before_action :set_zabbix, only: [:update, :destroy]
 
   # user management

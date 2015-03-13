@@ -31,6 +31,7 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#new' do
+    run_zabbix_server
     before do
       get :new
     end
@@ -48,6 +49,7 @@ describe UsersAdminController, :type => :controller do
     let(:user_data){{"userids" => [1]}}
 
     stubize_zabbix
+    run_zabbix_server
 
     context 'when valid params' do
       it 'should assign @user' do
@@ -74,6 +76,8 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#edit' do
+    run_zabbix_server
+
     before do
       create(:user_project, user: user)
     end
@@ -106,6 +110,7 @@ describe UsersAdminController, :type => :controller do
 
   describe '#update' do
     stubize_zabbix
+    run_zabbix_server
 
     context 'when master' do
       before do
@@ -131,6 +136,7 @@ describe UsersAdminController, :type => :controller do
 
   describe '#destroy' do
     let(:zabbix){double('Zabbix')}
+    run_zabbix_server
 
     before do
       allow(Zabbix).to receive(:new).and_return(zabbix)

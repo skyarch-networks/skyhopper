@@ -9,7 +9,9 @@
 require_relative '../spec_helper'
 
 describe ServerState, type: :model do
-  let(:server){double('server')}
+  servers = %w[zabbix chef]
+
+  let(:server){double('@server')}
   before(:all) do
     unless Project.for_chef_server
       p = create(:project, code: Project::ChefServerCodeName)
@@ -29,7 +31,7 @@ describe ServerState, type: :model do
 
 
   describe '.new' do
-    %w[zabbix chef].each do |kind|
+    servers.each do |kind|
       context "when kind is #{kind}" do
         subject{ServerState.new(kind)}
         it{is_expected.to be_a ServerState}
@@ -55,7 +57,7 @@ describe ServerState, type: :model do
   end
 
   describe '#status' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       context "when #{kind}" do
         context 'when not cached' do
           before do
@@ -80,7 +82,7 @@ describe ServerState, type: :model do
   end
 
   describe '#latest_status' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       before do
         Rails.cache.clear("serverstate-#{eval(kind).kind}")
       end
@@ -97,7 +99,7 @@ describe ServerState, type: :model do
   end
 
   describe '#start' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       context "when server is #{kind}" do
         it 'should call @server.start' do
           expect(server).to receive(:start)
@@ -108,7 +110,7 @@ describe ServerState, type: :model do
   end
 
   describe '#stop' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       context "when server is #{kind}" do
         it 'should call @server.stop' do
           expect(server).to receive(:stop)
@@ -119,7 +121,7 @@ describe ServerState, type: :model do
   end
 
   describe '#is_running?' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       context "when server is #{kind}" do
         subject{eval(kind).is_running?}
 
@@ -137,7 +139,7 @@ describe ServerState, type: :model do
   end
 
   describe '#is_in_progress?' do
-    %w[chef zabbix].each do |kind|
+    servers.each do |kind|
       context "when server is #{kind}" do
         subject{eval(kind).is_in_progress?}
 

@@ -17,6 +17,7 @@ class MonitoringsController < ApplicationController
     infra = Infrastructure.find(params.require(:id))
     admin(infrastructure_path(project_id: infra.project.id))
   end
+  before_action :with_zabbix_or_render, expect: [:show_cloudwatch_graph]
   before_action :set_zabbix, except: [:show_cloudwatch_graph]
 
 

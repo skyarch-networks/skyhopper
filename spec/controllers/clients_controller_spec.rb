@@ -120,6 +120,7 @@ describe ClientsController, :type => :controller do
 
     stubize_infra
     stubize_zabbix
+    run_zabbix_server
 
     context 'when destroy success' do
       before{request}
