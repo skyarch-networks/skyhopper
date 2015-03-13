@@ -6,13 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require models/infrastructure
-//= require models/ec2_instance
-//= require models/rds_instance
-//= require models/s3_bucket
-//= require models/cf_template
-//= require models/monitoring
-//= require models/dish
+//= require_tree ./models/.
 
 
 (function () {
@@ -157,6 +151,25 @@
         app.loading = false;
       });
     },
+  });
+
+  Vue.component('add-ec2-tabpane', {
+    template: '#add-ec2-tabpane-template',
+    methods: {
+      submit: function () {
+        var res = new Resource(current_infra);
+        res.create(this.physical_id, this.screen_name)
+          .done(alert_success(function () {
+            show_infra(current_infra.id);
+          }))
+          .fail(alert_and_show_infra);
+      },
+    },
+    computed: {},
+    created: function () {
+      this.$set('physical_id', '');
+      this.$set('screen_name', '');
+    }
   });
 
   Vue.component("cf-history-tabpane", {
@@ -1025,6 +1038,9 @@
             self.show_tabpane('add_modify');
           }).fail(alert_danger());
         },
+        show_add_ec2: function () {
+          this.show_tabpane('add-ec2');
+        },
         show_cf_history: function () {
           var self = this;
           self.loading = true;
@@ -1109,7 +1125,8 @@
       ready: function () {
         var self = this;
         if (stack.status.type == 'OK') {
-          current_infra.resources().done(function (resources) {
+          var res = new Resource(current_infra);
+          res.index().done(function (resources) {
             _.forEach(resources.ec2_instances, function (v) {
               v.serverspec_status = true;
             });

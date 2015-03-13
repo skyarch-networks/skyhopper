@@ -2,55 +2,60 @@
 
 <form class="form-horizontal" id="app-settings-form" role="form">
 
-  <legend><%= t('app_settings.title.system') %></legend>
-  <div class="form-group">
-    <label for="log_directory" class="col-sm-3 control-label"><%= t 'app_settings.log_directory' %></label>
-    <div class="col-sm-7">
-      <input type="text" class="form-control" id="log_directory" name="log_directory">
-      <p class="help-block"><%= I18n.t('app_settings.msg.log_directory') %></p>
+  <fieldset>
+    <legend><%= t('app_settings.title.system') %></legend>
+    <div class="form-group">
+      <label for="log_directory" class="col-sm-3 control-label"><%= t 'app_settings.log_directory' %></label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control" id="log_directory" name="log_directory">
+        <p class="help-block"><%= I18n.t('app_settings.msg.log_directory') %></p>
+      </div>
     </div>
-  </div>
+  </fieldset>
 
 
-  <legend><%= t('app_settings.title.aws') %></legend>
+  <fieldset>
+    <legend><%= t('app_settings.title.aws') %></legend>
+    <div class="help-block"><%= simple_format(t('app_settings.msg.aws_description')) %></div>
 
-  <div class="form-group">
-    <label for="access_key" class="col-sm-3 control-label"><%= t 'app_settings.access_key' %></label>
-    <div class="col-sm-7">
-      <input type="text" class="form-control" id="access_key" name="access_key">
-      <p class="help-block"><%= t('app_settings.msg.access_key') %></p>
+    <div class="form-group">
+      <label for="access_key" class="col-sm-3 control-label"><%= t 'app_settings.access_key' %></label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control" id="access_key" name="access_key">
+        <p class="help-block"><%= t('app_settings.msg.access_key') %></p>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label for="secret_access_key" class="col-sm-3 control-label"><%= t 'app_settings.secret_access_key' %></label>
-    <div class="col-sm-7">
-      <input type="text" class="form-control form-control-masked" id="secret_access_key" name="secret_access_key">
-      <p class="help-block"><%= t('app_settings.msg.secret_access_key') %></p>
+    <div class="form-group">
+      <label for="secret_access_key" class="col-sm-3 control-label"><%= t 'app_settings.secret_access_key' %></label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control form-control-masked" id="secret_access_key" name="secret_access_key">
+        <p class="help-block"><%= t('app_settings.msg.secret_access_key') %></p>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
-    <div class="col-sm-7">
-      <select class="form-control" id="aws_region" name="aws_region">
-        <%= please_select_option %>
-        <%= options_for_select(AWS::Regions) %>
-      </select>
-      <p class="help-block"><%= t('app_settings.msg.aws_region') %></p>
+    <div class="form-group">
+      <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
+      <div class="col-sm-7">
+        <select class="form-control" id="aws_region" name="aws_region">
+          <%= please_select_option %>
+          <%= options_for_select(AWS::Regions) %>
+        </select>
+        <p class="help-block"><%= t('app_settings.msg.aws_region') %></p>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
-    <div class="col-sm-7">
-      <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
-      <input id="keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name">
+    <div class="form-group">
+      <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
+      <div class="col-sm-7">
+        <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
+        <input id="keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name">
 
-      <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-      <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
-      <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
+        <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
+        <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
+        <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
+      </div>
     </div>
-  </div>
+  </fieldset>
 
 </form>

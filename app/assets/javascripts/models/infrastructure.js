@@ -69,20 +69,6 @@ var Infrastructure = function (infra_id) {
     return dfd.promise();
   };
 
-  this.resources = function () {
-    var dfd = $.Deferred();
-
-    ajax_resources.index({
-      infrastructure_id: self.id
-    }).done(function (data, status, xhr) {
-      dfd.resolve(data);
-    }).fail(function (xhr) {
-      dfd.reject(xhr.responseText);
-    });
-
-    return dfd.promise();
-  };
-
 
   this.logs = function (page) {
     page = page || 1;

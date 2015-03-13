@@ -32,6 +32,8 @@ describe ProjectsController, :type => :controller do
   end # end of describe #index
 
   describe '#new' do
+    run_zabbix_server
+
     before do
       get :new, client_id: client.id
     end
@@ -51,6 +53,7 @@ describe ProjectsController, :type => :controller do
     let(:create_request){post :create, project: project_hash}
 
     stubize_zabbix
+    run_zabbix_server
 
     context 'when valid params' do
       before{create_request}
@@ -146,6 +149,7 @@ describe ProjectsController, :type => :controller do
 
     stubize_zabbix
     stubize_infra
+    run_zabbix_server
 
     context 'when delete success' do
       before{request}

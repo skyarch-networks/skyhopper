@@ -34,9 +34,16 @@ class Zabbix
 
   # ホストが存在するかをbooleanで返す
   # @param [String] physical_id
-  # @return [Boolean]
+  # @return [TrueClass|FalseClass]
   def host_exists?(physical_id)
     return !!get_host_id(physical_id)
+  end
+
+  # user が存在するかを返す。
+  # @param [String] user_name Email address of SkyHopper user
+  # @return [TrueClass|FalseClass]
+  def user_exists?(user_name)
+    return !!@zabbix.users.get_id(alias: user_name)
   end
 
   # ホストにテンプレートを追加する

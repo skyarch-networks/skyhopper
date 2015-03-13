@@ -22,6 +22,7 @@ class ClientsController < ApplicationController
     master(projects_path)
   end
 
+  before_action :with_zabbix_or_back, only: :destroy
 
 
 

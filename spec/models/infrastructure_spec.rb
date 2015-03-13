@@ -197,4 +197,17 @@ describe Infrastructure, :type => :model do
       subject.rds(physical_id)
     end
   end
+
+  describe '#create_complete?' do
+    subject{infra.create_complete?}
+    context 'when create complete' do
+      let(:infra){create(:infrastructure, status: 'CREATE_COMPLETE')}
+      it{is_expected.to be true}
+    end
+
+    context 'when not create complete' do
+      let(:infra){create(:infrastructure, status: 'ROLLBACK_COMPLETE')}
+      it{is_expected.to be false}
+    end
+  end
 end

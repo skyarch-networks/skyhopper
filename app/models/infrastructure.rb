@@ -169,4 +169,9 @@ class Infrastructure < ActiveRecord::Base
   def rds(physical_id)
     RDS.new(self, physical_id)
   end
+
+  # @return [TrueClass|FalseClass]
+  def create_complete?
+    return self.status == 'CREATE_COMPLETE'
+  end
 end
