@@ -12,7 +12,7 @@ describe ApplicationController do
     let(:req){get :index}
 
     context 'when zabbix server running' do
-      let(:state){double('server-state', running?: true)}
+      let(:state){double('server-state', is_running?: true)}
       before do
         allow(ServerState).to receive(:new).and_return(state)
         req
@@ -22,7 +22,7 @@ describe ApplicationController do
     end
 
     context 'when zabbix server not running' do
-      let(:state){double('server-state', running?: false)}
+      let(:state){double('server-state', is_running?: false)}
       before do
         allow(ServerState).to receive(:new).and_return(state)
         req
@@ -47,7 +47,7 @@ describe ApplicationController do
         end
       end
 
-      let(:state){double('server-state', running?: false)}
+      let(:state){double('server-state', is_running?: false)}
       before do
         allow(ServerState).to receive(:new).and_return(state)
         get :show, id: 1

@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   # また、block が与えられていれば400を返す代わりにそれを実行する。redirect したい場合はblockを与えて
   def with_zabbix
     z = ServerState.new('zabbix')
-    return if z.running?
+    return if z.is_running?
 
     if block_given?
       yield
