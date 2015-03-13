@@ -37,7 +37,8 @@ describe ApplicationController do
     context 'when zabbix server not running and with block' do
       controller do
         before_action do
-          with_zabbix do
+          with_zabbix do |msg|
+            flash.alert = msg
             redirect_to '/'
           end
         end
@@ -54,6 +55,9 @@ describe ApplicationController do
       end
 
       it{is_expected.to redirect_to '/'}
+      it 'should flash message' do
+        expect(flash.alert).to eq  I18n.t('monitoring.msg.not_running')
+      end
     end
   end
 end

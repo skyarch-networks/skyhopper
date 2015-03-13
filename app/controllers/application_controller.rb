@@ -48,10 +48,11 @@ class ApplicationController < ActionController::Base
     z = ServerState.new('zabbix')
     return if z.is_running?
 
+    msg = I18n.t('monitoring.msg.not_running')
     if block_given?
-      yield
+      yield msg
     else
-      render text: I18n.t('monitoring.msg.not_running'), status: 400 and return
+      render text: msg, status: 400 and return
     end
   end
 end
