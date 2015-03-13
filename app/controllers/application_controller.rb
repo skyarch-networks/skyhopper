@@ -39,4 +39,19 @@ class ApplicationController < ActionController::Base
   def set_notifications
     @notifications_for_layout = InfrastructureLog.where(user: current_user).limit(10).order('created_at DESC')
   end
+
+  # before_action で使用する。
+  # Zabbix Serverが起動していれば何もしない。
+  # Zabbix Serverが起動していない場合、400を返す。
+  # また、block が与えられていれば400を返す代わりにそれを実行する。redirect したい場合はblockを与えて
+  def with_zabbix
+    z = ServerState.new('zabbix')
+    return if z.running?
+
+    if block_given?
+      yield
+    else
+      render text: I18n.t('monitoring.msg.not_running'), status: 400 and return
+    end
+  end
 end
