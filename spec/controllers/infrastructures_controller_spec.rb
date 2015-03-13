@@ -252,6 +252,7 @@ describe InfrastructuresController, :type => :controller do
 
     stubize_infra
     stubize_zabbix
+    run_zabbix_server
 
     before do
       delete_request
@@ -275,6 +276,7 @@ describe InfrastructuresController, :type => :controller do
   describe '#delete_stack' do
     stubize_zabbix
     stubize_infra
+    run_zabbix_server
 
     let(:delete_stack_request){post :delete_stack, id: infra.id}
 

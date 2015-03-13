@@ -11,6 +11,7 @@ require_relative '../spec_helper'
 RSpec.describe MonitoringsController, :type => :controller do
   login_user
   stubize_zabbix
+  run_zabbix_server
 
   let(:infra){create(:infrastructure)}
   let(:physical_id){"i-#{SecureRandom.base64(10)}"}
