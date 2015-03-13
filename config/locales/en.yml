@@ -180,7 +180,7 @@ en:
       cooking:            'Cook being executed...'
       updating:           'yum command is in progress...'
       bootstrap_finish:   '%{physical_id} was successfully registered in Chef Server.'
-      not_change_scale:   'Unnecessary to change to '%{type}''
+      not_change_scale:   "Unnecessary to change to '%{type}'"
       changed_scale:      'Change scale to %{type}'
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
