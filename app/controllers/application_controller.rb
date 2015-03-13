@@ -44,15 +44,24 @@ class ApplicationController < ActionController::Base
   # Zabbix Serverが起動していれば何もしない。
   # Zabbix Serverが起動していない場合、400を返す。
   # また、block が与えられていれば400を返す代わりにそれを実行する。redirect したい場合はblockを与えて
-  def with_zabbix
+  def with_zabbix_or_render
+    _with_zabbix do |msg|
+      render text: msg, status: 400
+    end
+  end
+
+  def with_zabbix_or_back
+    _with_zabbix do |msg|
+      flash.alert = msg
+      redirect_to :back
+    end
+  end
+
+  def _with_zabbix
     z = ServerState.new('zabbix')
     return if z.is_running?
 
     msg = I18n.t('monitoring.msg.not_running')
-    if block_given?
-      yield msg
-    else
-      render text: msg, status: 400 and return
-    end
+    yield msg
   end
 end
