@@ -26,8 +26,6 @@ class InfrastructuresController < ApplicationController
     admin(infrastructures_path(project_id: project_id))
   end
 
-  before_action :set_zabbix, only: [:destroy]
-
   # admin でも new, create はできる？
   # master
   # before_action only: [:new, :create] do
@@ -346,13 +344,4 @@ class InfrastructuresController < ApplicationController
       redirect_to path, alert: msg
     end
   end
-
-  def set_zabbix
-    begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError => ex
-      #flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-    end
-  end
-
 end
