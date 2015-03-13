@@ -70,6 +70,10 @@ en:
       created:           'SkyHopper was successfully setup'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database will be stored in this directory'
+      aws_description:  | # XXX: I'm not good at English!
+        SkyHopper system use AWS.
+        For example SkyHopper use to manage Chef Server and Zabbix Server used SkyHopper.
+        Secret keys configured by this form used only by SkyHopper system, users do not use those.
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
