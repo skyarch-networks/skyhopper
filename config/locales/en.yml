@@ -50,30 +50,30 @@ en:
 
   views:
     pagination:
-      first: '&laquo;'
-      last: '&raquo;'
-      next:  '&rsaquo;'
+      first:    '&laquo;'
+      last:     '&raquo;'
+      next:     '&rsaquo;'
       previous: '&lsaquo;'
       truncate: '...'
 
   app_settings:
-    log_directory:  'Log directory'
-    aws_region:     'Region'
-    aws_keypair:    'KeyPair'
-    keypair_name:   'Name of KeyPair'
-    private_key:    'Secret SSH Key'
+    log_directory:     'Log directory'
+    aws_region:        'Region'
+    aws_keypair:       'KeyPair'
+    keypair_name:      'Name of KeyPair'
+    private_key:       'Secret SSH Key'
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
-    chef_server:    'Chef Server'
+    chef_server:       'Chef Server'
 
     msg:
-      created:          'SkyHopper was successfully setup'
-      show:             'Welcome to SkyHopper!'
-      log_directory:    'Logs could not be displayed in database will be stored in this directory'
-      access_key:          'AWS Access Key ID for SkyHopper System'
-      secret_access_key:   'AWS Secret Access Key for SkyHopper System'
-      aws_region:       'Regions of AWS available for SkyHopper System'
-      aws_keypair:      'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
+      created:           'SkyHopper was successfully setup'
+      show:              'Welcome to SkyHopper!'
+      log_directory:     'Logs could not be displayed in database will be stored in this directory'
+      access_key:        'AWS Access Key ID for SkyHopper System'
+      secret_access_key: 'AWS Secret Access Key for SkyHopper System'
+      aws_region:        'Regions of AWS available for SkyHopper System'
+      aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -153,7 +153,7 @@ en:
       help_keypair:                'Please set up a KeyPair to utilise EC2::Instance.'
       no_keypair:                  'KeyPair has not been set'
       no_stack_info:               'Unable to get information for this stack for the following reasons.'
-      not_necessary:               "Unnecessary to edit this infrastructure."
+      not_necessary:               'Unnecessary to edit this infrastructure.'
       check_intervals:             'Automatic status update: every 15 seconds ...'
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
 
@@ -170,17 +170,17 @@ en:
     latest_update_status:     'Latest yum command Status'
     latest_serverspec_status: 'Latest Serverspec Status'
     btn:
-      edit_runlist: 'Edit Runlist'
-      apply_dish: 'Apply Dish'
+      edit_runlist:               'Edit Runlist'
+      apply_dish:                 'Apply Dish'
       bootstrap_with_chef_server: 'Bootstrap with Chef Server'
-      instance_settings: 'Settings'
+      instance_settings:          'Settings'
     msg:
       before_bootstrap:   'This instance is not bootstrapped with Chef Server.'
-      no_dishes:          "No valid dishes available."
+      no_dishes:          'No valid dishes available.'
       cooking:            'Cook being executed...'
       updating:           'yum command is in progress...'
       bootstrap_finish:   '%{physical_id} was successfully registered in Chef Server.'
-      not_change_scale:   "Unnecessary to change to '%{type}'"
+      not_change_scale:   'Unnecessary to change to '%{type}''
       changed_scale:      'Change scale to %{type}'
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
@@ -209,14 +209,14 @@ en:
 
 
   serverspecs:
-    name:        'Name'
-    serverspecs: 'Serverspecs'
-    serverspec:  'Serverspec'
-    description: 'Description'
-    value:       'Value'
-    auto_generated: 'Auto generated Serverspecs'
-    global:      'Global'
-    individual:  'Infrastructure Individual'
+    name:              'Name'
+    serverspecs:       'Serverspecs'
+    serverspec:        'Serverspec'
+    description:       'Description'
+    value:             'Value'
+    auto_generated:    'Auto generated Serverspecs'
+    global:            'Global'
+    individual:        'Infrastructure Individual'
     select_serverspec: 'Select Serverspecs'
     btn:
       add:    'Add Serverspec'
@@ -248,8 +248,8 @@ en:
     enable_property:   'Use this property'
     parameterize:      'Parameterize this property'
     btn:
-      add:              'Add Template'
-      send:             'Send'
+      add:  'Add Template'
+      send: 'Send'
     msg:
       keypair_missing: 'Please set up a KeyPair to utilise EC2::Instance.'
       created:         'Template was successfully created.'
@@ -260,13 +260,13 @@ en:
 
 
   template_builder:
-    btn:
-      add_resource: 'Add this resource'
     template_builder: 'Template Builder'
     resources:        'Resources'
     select_resources: 'Select Resource'
     enable:           'Enable'
     disable:          'Disable'
+    btn:
+      add_resource: 'Add this resource'
 
   monitoring:
     title:                'Monitoring'
@@ -320,12 +320,12 @@ en:
       add: 'Add User'
       sync: 'Synchronize with Zabbix'
     msg:
-      role: 'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
-      created:     'An account was successfully created.'
-      updated:     'An account was successfully updated.'
-      deleted:     'An account was successfully deleted.'
-      synced:      'All accounts was successfully synchronized with Zabbix.'
-      only_master: 'User Management feature is only permitted to Master users.'
+      role:                'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
+      created:             'An account was successfully created.'
+      updated:             'An account was successfully updated.'
+      deleted:             'An account was successfully deleted.'
+      synced:              'All accounts was successfully synchronized with Zabbix.'
+      only_master:         'User Management feature is only permitted to Master users.'
       confirm_sync_zabbix: 'Do you synchronize with Zabbix?'
 
 
