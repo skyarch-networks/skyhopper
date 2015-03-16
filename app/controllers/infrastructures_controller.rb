@@ -214,6 +214,17 @@ class InfrastructuresController < ApplicationController
     @engine            = rds.engine
   end
 
+  # GET /infrastructures/show_elb
+  def show_elb
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
+
+    infra = Infrastructure.find(infra_id)
+    elb = ELB.new(infra, physical_id)
+
+    @ec2_instances = elb.instances
+  end
+
   # POST /infrastructures/change_rds_scale
   def change_rds_scale
     physical_id = params.require(:physical_id)

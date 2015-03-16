@@ -16,6 +16,7 @@ SkyHopper::Application.routes.draw do
   resources :infrastructures do
     collection do
       get  'show_rds'
+      get  'show_elb'
       get  'show_s3'
       get  'cloudformation_status'
       get  'events'
