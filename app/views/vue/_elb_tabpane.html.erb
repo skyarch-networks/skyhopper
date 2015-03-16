@@ -8,7 +8,9 @@
 <h5>Instances</h5>
 
 <table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
-  <caption v-text="e.instance_id"></caption>
+  <caption>
+    <a href="#" v-on="click: show_ec2(e.instance_id)">{{e.instance_id}}</a>
+  </caption>
 
   <thead>
     <tr>

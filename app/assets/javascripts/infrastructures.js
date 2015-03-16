@@ -537,6 +537,11 @@
 
   Vue.component('elb-tabpane', {
     template: '#elb-tabpane-template',
+    methods: {
+      show_ec2: function (physical_id) {
+        this.$parent.show_ec2(physical_id);
+      },
+    },
     compiled: function () {
       var self = this;
       current_infra.show_elb(this.physical_id).done(function (data) {
