@@ -8,15 +8,15 @@ var RDSInstance = function (infra, physical_id) {
 
 
   var ajax_infra = new AjaxSet.Resources('infrastructures');
-  ajax_infra.add_collection('show_rds', 'GET');
-  ajax_infra.add_collection('change_rds_scale', 'POST');
+  ajax_infra.add_member('show_rds', 'GET');
+  ajax_infra.add_member('change_rds_scale', 'POST');
 
   var ajax_serverspec = new AjaxSet.Resources('serverspecs');
   ajax_serverspec.add_collection('create_for_rds', 'PUT');
 
   var params = {
     physical_id: physical_id,
-    infra_id:    infra.id
+    id:          infra.id
   };
 
   // TODO: DRY
@@ -51,7 +51,7 @@ var RDSInstance = function (infra, physical_id) {
   this.gen_serverspec = function (parameter) {
     var dfd = $.Deferred();
 
-    ajax_serverspec.create_for_rds(_.merge(params, parameter))
+    ajax_serverspec.create_for_rds(_.merge({physical_id: physical_id, infra_id: infra.id}, parameter))
       .done(dfd.resolve)
       .fail(rejectXHR(dfd));
     return dfd.promise();

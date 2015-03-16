@@ -9,8 +9,7 @@ var Infrastructure = function (infra_id) {
   ajax_infra.add_member('delete_stack', 'POST');
   ajax_infra.add_member('stack_events', 'GET');
   ajax_infra.add_collection('cloudformation_status', 'GET');
-  ajax_infra.add_collection('change_rds_scale', 'POST');
-  ajax_infra.add_collection('show_elb', 'GET');
+  ajax_infra.add_member('show_elb', 'GET');
 
   var ajax_resources = new AjaxSet.Resources('resources');
 
@@ -94,7 +93,7 @@ var Infrastructure = function (infra_id) {
 
     console.log(physical_id);
     ajax_infra.show_elb({
-      infra_id:    infra_id,
+      id:          infra_id,
       physical_id: physical_id,
     }).done(function (data) {
       dfd.resolve(data);

@@ -303,7 +303,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_s3' do
     let(:bucket_name){"log_bucket"}
-    let(:request_show_s3){ get :show_s3, infra_id: infra.id, bucket_name: bucket_name }
+    let(:request_show_s3){ get :show_s3, id: infra.id, bucket_name: bucket_name }
 
     stubize_s3
     before{request_show_s3}
@@ -327,7 +327,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    let(:request_show_rds){ get :show_rds, infra_id: infra.id, physical_id: physical_id }
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
 
     instance_class    = "foo"
     allocated_storage = "100"
@@ -399,7 +399,7 @@ describe InfrastructuresController, :type => :controller do
       post(
         :change_rds_scale,
         physical_id:   'hogehoge',
-        infra_id:      infra.id,
+        id:            infra.id,
         instance_type: type
       )
     }

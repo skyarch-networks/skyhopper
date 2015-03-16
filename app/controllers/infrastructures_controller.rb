@@ -202,7 +202,7 @@ class InfrastructuresController < ApplicationController
 
   def show_rds
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
+    infra_id    = params.require(:id)
 
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
@@ -217,7 +217,7 @@ class InfrastructuresController < ApplicationController
   # GET /infrastructures/show_elb
   def show_elb
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
+    infra_id    = params.require(:id)
 
     infra = Infrastructure.find(infra_id)
     elb = ELB.new(infra, physical_id)
@@ -229,7 +229,7 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures/change_rds_scale
   def change_rds_scale
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
+    infra_id    = params.require(:id)
     type        = params.require(:instance_type)
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
@@ -253,7 +253,7 @@ class InfrastructuresController < ApplicationController
 
   def show_s3
     @bucket_name = params.require(:bucket_name)
-    infra_id     = params.require(:infra_id)
+    infra_id     = params.require(:id)
 
     infrastructure = Infrastructure.find(infra_id)
     @s3 = S3.new(infrastructure, @bucket_name)
