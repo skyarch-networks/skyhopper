@@ -1120,6 +1120,7 @@
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
+          self.current_physical_id = null;
           // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
           self.current_infra.tabpaneID = null;
           Vue.nextTick(function () {

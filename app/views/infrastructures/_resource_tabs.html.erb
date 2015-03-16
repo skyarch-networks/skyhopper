@@ -1,7 +1,7 @@
 <!-- resources TABs -->
 <%# TODO: DRY %>
 
-<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpane_active(ec2.physical_id)" v-on="click: show_ec2(ec2.physical_id)">
+<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpane_active(ec2.physical_id) || current_physical_id === ec2.physical_id" v-on="click: show_ec2(ec2.physical_id)">
   <a href="#">
     <span class="label label-warning">EC2</span>&nbsp;
     <small>{{screen_name(ec2)}}</small>
