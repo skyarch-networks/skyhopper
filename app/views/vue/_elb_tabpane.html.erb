@@ -1,0 +1,31 @@
+<script id="elb-tabpane-template" type="text/template">
+<h4 class="page-header">{{physical_id}}</h4>
+
+<h5>Instances</h5>
+
+<table class="table table-condensed table-striped" v-repeat="ec2_instances">
+  <caption v-text="instance_id"></caption>
+
+  <thead>
+    <tr>
+      <th><%= t 'infrastructures.genre' %></th>
+      <th colspan="2"><%= t 'common.value' %></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>State</td>
+      <td>{{state}}</td>
+    </tr>
+    <tr>
+      <td>ReasonCode</td>
+      <td>{{reason_code}}</td>
+    </tr>
+    <tr>
+      <td>Description</td>
+      <td>{{description}}</td>
+    </tr>
+  </tbody>
+</table>
+</script>
