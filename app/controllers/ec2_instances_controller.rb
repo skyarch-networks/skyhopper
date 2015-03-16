@@ -103,6 +103,41 @@ class Ec2InstancesController < ApplicationController
   end
 
 
+  # GET /ec2_instances/:id/register_to_elb
+  # @param [String] id physical_id of ec2 instance
+  # @param [String] elb_name ELB name
+  # @param [String] infra_id ID of Infrastructure
+  def register_to_elb
+    physical_id = params.require(:id)
+    elb_name    = params.require(:elb_name)
+    infra_id    = params.require(:infra_id)
+
+    infra = Infrastructure.find(infra_id)
+    elb   = ELB.new(infra, elb_name)
+
+    elb.register(physical_id)
+
+    render nothing: true
+  end
+
+  # GET /ec2_instances/:id/deregister_to_elb
+  # @param [String] id physical_id of ec2 instance
+  # @param [String] elb_name ELB name
+  # @param [String] infra_id ID of Infrastructure
+  def deregister_from_elb
+    physical_id = params.require(:id)
+    elb_name    = params.require(:elb_name)
+    infra_id    = params.require(:infra_id)
+
+    infra = Infrastructure.find(infra_id)
+    elb   = ELB.new(infra, elb_name)
+
+    elb.deregister(physical_id)
+
+    render nothing: true
+  end
+
+
   private
 
   def notify_ec2_status(instance, status)

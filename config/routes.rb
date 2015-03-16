@@ -51,6 +51,8 @@ SkyHopper::Application.routes.draw do
       post 'stop'
       post 'reboot'
       get  'serverspec_status'
+      post 'register_to_elb'
+      post 'deregister_from_elb'
     end
   end
 

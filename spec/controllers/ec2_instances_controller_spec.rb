@@ -108,4 +108,14 @@ describe Ec2InstancesController, :type => :controller do
       end
     end
   end
+
+  describe '#register_to_elb' do
+    let(:elb_name){'foo-ElasticL-bar'}
+    # TODO:
+  end
+
+  describe '#deregister_from_elb' do
+    let(:elb_name){'fuga-ElasticL-hoge'}
+    # TODO:
+  end
 end
