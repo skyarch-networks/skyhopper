@@ -1035,20 +1035,24 @@
         },
         show_rds: function (physical_id) {
           this.show_tabpane(physical_id);
+          this.current_physical_id = null;
           this.loading = true;
         },
         show_elb: function (physical_id) {
           this.show_tabpane(physical_id);
+          this.current_physical_id = null;
           this.loading = true;
         },
         show_s3: function (physical_id) {
           this.show_tabpane(physical_id);
+          this.current_physical_id = null;
           this.loading = true;
         },
         show_add_modify: function () {
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
+          this.current_physical_id = null;
 
           var cft = new CFTemplate(current_infra);
           cft.new().done(function (data) {
@@ -1061,9 +1065,11 @@
         },
         show_add_ec2: function () {
           this.show_tabpane('add-ec2');
+          this.current_physical_id = null;
         },
         show_cf_history: function () {
           var self = this;
+          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
 
@@ -1075,6 +1081,7 @@
         },
         show_event_logs: function () {
           if (this.no_stack()) {return;}
+          this.current_physical_id = null;
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
@@ -1086,6 +1093,7 @@
         },
         show_infra_logs: function () {
           var self = this;
+          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
           current_infra.logs().done(function (data) {
@@ -1095,6 +1103,7 @@
         },
         show_monitoring: function () {
           if (this.no_stack()) {return;}
+          this.current_physical_id = null;
           var self = this;
           self.show_tabpane('monitoring');
           self.loading = true;
@@ -1102,6 +1111,7 @@
         show_edit_monitoring: function () {
           if (this.no_stack()) {return;}
           var self = this;
+          this.current_physical_id = null;
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
@@ -1120,7 +1130,6 @@
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
-          self.current_physical_id = null;
           // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
           self.current_infra.tabpaneID = null;
           Vue.nextTick(function () {
