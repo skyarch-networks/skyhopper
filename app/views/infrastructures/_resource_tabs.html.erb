@@ -19,6 +19,14 @@
   </a>
 </li>
 
+<li v-repeat="elb: current_infra.resources.elb_instances" v-class="active: tabpane_active(elb.physical_id)" v-on="click: show_elb(elb.physical_id)">
+  <a href="#">
+    <span class="label label-warning">ELB</span>&nbsp;
+    <small>{{screen_name(elb)}}</small>
+    <small v-if="tabpane_active(elb.physical_id)"><%= glyphicon 'refresh' %></small>
+  </a>
+</li>
+
 <li v-repeat="s3: current_infra.resources.s3_buckets" v-class="active: tabpane_active(s3.physical_id)" v-on="click: show_s3(s3.physical_id)">
   <a href="#">
     <span class="label label-danger">S3</span>&nbsp;

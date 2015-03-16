@@ -15,13 +15,14 @@ SkyHopper::Application.routes.draw do
 
   resources :infrastructures do
     collection do
-      get  'show_rds'
-      get  'show_s3'
       get  'cloudformation_status'
       get  'events'
-      post 'change_rds_scale'
     end
     member do
+      post 'change_rds_scale'
+      get  'show_rds'
+      get  'show_elb'
+      get  'show_s3'
       get  'stack_events'
       post 'delete_stack'
     end

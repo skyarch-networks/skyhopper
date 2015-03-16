@@ -1,0 +1,29 @@
+<script id="elb-tabpane-template" type="text/template">
+<h3 class="page-header">{{physical_id}}</h3>
+
+<h4>DNS name</h4>
+
+<a v-attr="href: 'http://' + dns_name" target="_blank">{{dns_name}}</a>
+
+<h4>Instances</h4>
+
+<table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
+  <caption>
+    <a href="#" v-on="click: show_ec2(e.instance_id)">{{e.instance_id}}</a>
+  </caption>
+
+  <thead>
+    <tr>
+      <th class="col-sm-3"><%= t 'infrastructures.genre' %></th>
+      <th class="col-sm-9"><%= t 'common.value' %></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr v-repeat="e">
+      <td class="col-sm-3">{{$key | capitalize}}</td>
+      <td class="col-sm-9">{{$value}}</td>
+    </tr>
+  </tbody>
+</table>
+</script>

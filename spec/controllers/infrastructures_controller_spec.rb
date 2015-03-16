@@ -303,7 +303,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_s3' do
     let(:bucket_name){"log_bucket"}
-    let(:request_show_s3){ get :show_s3, infra_id: infra.id, bucket_name: bucket_name }
+    let(:request_show_s3){ get :show_s3, id: infra.id, bucket_name: bucket_name }
 
     stubize_s3
     before{request_show_s3}
@@ -327,7 +327,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    let(:request_show_rds){ get :show_rds, infra_id: infra.id, physical_id: physical_id }
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
 
     instance_class    = "foo"
     allocated_storage = "100"
@@ -368,6 +368,29 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
+  describe '#show_elb' do
+    let(:physical_id){"hogefugahoge-ElasticL-1P3I4RD6PEUBK"}
+    let(:req){get :show_elb, id: infra.id, physical_id: physical_id}
+    let(:instances){['foo', 'bar']}
+    let(:dns_name){'hoge.example.com'}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name)}
+
+    before do
+      allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
+      req
+    end
+
+    should_be_success
+
+    it 'should assign @ec2_instances' do
+      expect(assigns[:ec2_instances]).to eq instances
+    end
+
+    it 'should assign @dns_name' do
+      expect(assigns[:dns_name]).to eq dns_name
+    end
+  end
+
   describe "#events" do
     let(:request_events){get :events, infrastructure_id: infra.id}
 
@@ -399,7 +422,7 @@ describe InfrastructuresController, :type => :controller do
       post(
         :change_rds_scale,
         physical_id:   'hogehoge',
-        infra_id:      infra.id,
+        id:            infra.id,
         instance_type: type
       )
     }
