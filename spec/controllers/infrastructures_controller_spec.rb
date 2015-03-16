@@ -368,6 +368,29 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
+  describe '#show_elb' do
+    let(:physical_id){"hogefugahoge-ElasticL-1P3I4RD6PEUBK"}
+    let(:req){get :show_elb, id: infra.id, physical_id: physical_id}
+    let(:instances){['foo', 'bar']}
+    let(:dns_name){'hoge.example.com'}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name)}
+
+    before do
+      allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
+      req
+    end
+
+    should_be_success
+
+    it 'should assign @ec2_instances' do
+      expect(assigns[:ec2_instances]).to eq instances
+    end
+
+    it 'should assign @dns_name' do
+      expect(assigns[:dns_name]).to eq dns_name
+    end
+  end
+
   describe "#events" do
     let(:request_events){get :events, infrastructure_id: infra.id}
 
