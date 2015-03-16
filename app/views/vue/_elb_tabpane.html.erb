@@ -1,6 +1,10 @@
 <script id="elb-tabpane-template" type="text/template">
 <h4 class="page-header">{{physical_id}}</h4>
 
+<h5>DNS name</h5>
+
+<a v-attr="href: 'http://' + dns_name" target="_blank">{{dns_name}}</a>
+
 <h5>Instances</h5>
 
 <table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
@@ -8,15 +12,15 @@
 
   <thead>
     <tr>
-      <th><%= t 'infrastructures.genre' %></th>
-      <th colspan="2"><%= t 'common.value' %></th>
+      <th class="col-sm-3"><%= t 'infrastructures.genre' %></th>
+      <th class="col-sm-9"><%= t 'common.value' %></th>
     </tr>
   </thead>
 
   <tbody>
     <tr v-repeat="e">
-      <td>{{$key | capitalize}}</td>
-      <td>{{$value}}</td>
+      <td class="col-sm-3">{{$key | capitalize}}</td>
+      <td class="col-sm-9">{{$value}}</td>
     </tr>
   </tbody>
 </table>

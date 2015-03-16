@@ -27,4 +27,19 @@ class ELB
     data = @elb.describe_instance_health(load_balancer_name: @name)
     return data.first.instance_states.map(&:to_hash)
   end
+
+  # @return [String]
+  def dns_name
+    return details.dns_name
+  end
+
+
+  private
+
+
+  # @return [Struct]
+  def details
+    data = @elb.describe_load_balancers
+    return data.load_balancer_descriptions.find{|x| x.load_balancer_name == @name}
+  end
 end

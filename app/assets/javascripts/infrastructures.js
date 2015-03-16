@@ -541,6 +541,7 @@
       var self = this;
       current_infra.show_elb(this.physical_id).done(function (data) {
         self.$set('ec2_instances', data.ec2_instances);
+        self.$set('dns_name', data.dns_name);
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },

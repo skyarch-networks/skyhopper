@@ -223,6 +223,7 @@ class InfrastructuresController < ApplicationController
     elb = ELB.new(infra, physical_id)
 
     @ec2_instances = elb.instances
+    @dns_name      = elb.dns_name
   end
 
   # POST /infrastructures/change_rds_scale
