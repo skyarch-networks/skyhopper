@@ -535,6 +535,17 @@
     },
   });
 
+  Vue.component('elb-tabpane', {
+    template: '#elb-tabpane-template',
+    compiled: function () {
+      var self = this;
+      current_infra.show_elb(this.physical_id).done(function (data) {
+        self.$set('ec2_instances', data.ec2_instances);
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+  });
+
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
     compiled: function () {
@@ -1017,6 +1028,10 @@
           this.current_physical_id = physical_id;
         },
         show_rds: function (physical_id) {
+          this.show_tabpane(physical_id);
+          this.loading = true;
+        },
+        show_elb: function (physical_id) {
           this.show_tabpane(physical_id);
           this.loading = true;
         },

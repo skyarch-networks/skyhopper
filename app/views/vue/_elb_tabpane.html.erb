@@ -3,8 +3,8 @@
 
 <h5>Instances</h5>
 
-<table class="table table-condensed table-striped" v-repeat="ec2_instances">
-  <caption v-text="instance_id"></caption>
+<table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
+  <caption v-text="e.instance_id"></caption>
 
   <thead>
     <tr>
@@ -14,17 +14,9 @@
   </thead>
 
   <tbody>
-    <tr>
-      <td>State</td>
-      <td>{{state}}</td>
-    </tr>
-    <tr>
-      <td>ReasonCode</td>
-      <td>{{reason_code}}</td>
-    </tr>
-    <tr>
-      <td>Description</td>
-      <td>{{description}}</td>
+    <tr v-repeat="e">
+      <td>{{$key | capitalize}}</td>
+      <td>{{$value}}</td>
     </tr>
   </tbody>
 </table>
