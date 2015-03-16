@@ -70,17 +70,19 @@ class Stack
     return resource_by_type("AWS::EC2::Instance")
   end
 
+  # XXX: このメソッドが使われていない気がする。
   def rds_instances
     return resource_by_type("AWS::RDS::DBInstance")
   end
 
+  # XXX: このメソッドが使われていない気がする。
   def s3_buckets
     return resource_by_type("AWS::S3::Bucket")
   end
 
   def instances_for_resources
     return resource_by_type(
-      "AWS::EC2::Instance", "AWS::RDS::DBInstance", "AWS::S3::Bucket"
+      "AWS::EC2::Instance", "AWS::RDS::DBInstance", "AWS::S3::Bucket", "AWS::ElasticLoadBalancing::LoadBalancer"
     )
   end
 
