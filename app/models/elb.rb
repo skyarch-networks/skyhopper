@@ -33,6 +33,24 @@ class ELB
     return details.dns_name
   end
 
+  # register EC2 instance to ELB
+  # @param [String] physical_id ID of EC2 instance.
+  def register(physical_id)
+    @elb.register_instances_with_load_balancer(
+      load_balancer_name: @name,
+      instances: [{instance_id: physical_id}],
+    )
+  end
+
+  # deregister EC2 instance from ELB
+  # @param [String] physical_id ID of EC2 instance.
+  def deregister(physical_id)
+    @elb.deregister_instances_from_load_balancer(
+      load_balancer_name: @name,
+      instances:[{instance_id: physical_id}],
+    )
+  end
+
 
   private
 
