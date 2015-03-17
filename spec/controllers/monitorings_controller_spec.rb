@@ -169,4 +169,25 @@ RSpec.describe MonitoringsController, :type => :controller do
       end
     end
   end
+
+  describe '#create_host' do
+    before do
+      create(:ec2_resource, infrastructure: infra)
+    end
+    let(:req){post :create_host, id: infra.id}
+
+    context 'when success' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when failure' do
+      before do
+        allow(_zabbix).to receive(:create_host).and_raise
+        req
+      end
+
+      should_be_failure
+    end
+  end
 end
