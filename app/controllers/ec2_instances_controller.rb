@@ -117,7 +117,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.register(physical_id)
 
-    render nothing: true
+    render text: I18n.t('ec2_instances.msg.registered_to_elb')
   end
 
   # POST /ec2_instances/:id/deregister_to_elb
@@ -134,7 +134,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.deregister(physical_id)
 
-    render nothing: true
+    render text: I18n.t('ec2_instances.msg.deregistered_from_elb')
   end
 
 

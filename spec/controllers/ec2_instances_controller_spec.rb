@@ -121,6 +121,10 @@ describe Ec2InstancesController, :type => :controller do
     end
 
     should_be_success
+
+    it 'should render message' do
+      expect(response.body).to eq I18n.t('ec2_instances.msg.registered_to_elb')
+    end
   end
 
   describe '#deregister_from_elb' do
@@ -135,5 +139,9 @@ describe Ec2InstancesController, :type => :controller do
     end
 
     should_be_success
+
+    it 'should render message' do
+      expect(response.body).to eq I18n.t('ec2_instances.msg.deregistered_from_elb')
+    end
   end
 end
