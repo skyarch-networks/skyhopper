@@ -535,11 +535,23 @@
     },
   });
 
+  // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
     template: '#elb-tabpane-template',
     methods: {
       show_ec2: function (physical_id) {
         this.$parent.show_ec2(physical_id);
+      },
+      deregister: function (physical_id) {
+        // TODO: confirm
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, physical_id);
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.deregister(self.physical_id)
+          .done(alert_success(reload))
+          .fail(alert_danger(reload));
       },
     },
     compiled: function () {
