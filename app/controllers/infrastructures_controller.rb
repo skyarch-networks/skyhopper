@@ -131,18 +131,16 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures
   # POST /infrastructures.json
   def create
-    begin
-      infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
-    rescue => ex
-      flash[:alert] = ex.message
-      @regions        = @@regions
-      @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
+    infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
+  rescue => ex
+    flash[:alert] = ex.message
+    @regions        = @@regions
+    @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
 
-      render action: 'new', status: 400 and return
-    else
-      redirect_to infrastructures_path(project_id: infra.project_id),
-        notice: I18n.t('infrastructures.msg.created')
-    end
+    render action: 'new', status: 400 and return
+  else
+    redirect_to infrastructures_path(project_id: infra.project_id),
+      notice: I18n.t('infrastructures.msg.created')
   end
 
   # PATCH/PUT /infrastructures/1
@@ -202,7 +200,7 @@ class InfrastructuresController < ApplicationController
 
   def show_rds
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
+    infra_id    = params.require(:id)
 
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
@@ -214,10 +212,25 @@ class InfrastructuresController < ApplicationController
     @engine            = rds.engine
   end
 
+  # GET /infrastructures/show_elb
+  def show_elb
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:id)
+
+    infra = Infrastructure.find(infra_id)
+    elb = ELB.new(infra, physical_id)
+
+    @ec2_instances = elb.instances
+    @dns_name      = elb.dns_name
+
+    ec2 = infra.resources.ec2
+    @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
+  end
+
   # POST /infrastructures/change_rds_scale
   def change_rds_scale
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
+    infra_id    = params.require(:id)
     type        = params.require(:instance_type)
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
@@ -241,7 +254,7 @@ class InfrastructuresController < ApplicationController
 
   def show_s3
     @bucket_name = params.require(:bucket_name)
-    infra_id     = params.require(:infra_id)
+    infra_id     = params.require(:id)
 
     infrastructure = Infrastructure.find(infra_id)
     @s3 = S3.new(infrastructure, @bucket_name)
@@ -310,40 +323,37 @@ class InfrastructuresController < ApplicationController
   # redirect to projects#index if specified project does not exist
   def project_exist
     return if params[:project_id].blank?
+    return if Project.exists?(id: params[:project_id])
 
-    unless Project.exists?(id: params[:project_id])
-      msg = "Project \##{params[:project_id]} does not exist."
-      if current_user.master?
-        if session[:client_id].present?
-          path = projects_path(client_id: client_id)
-        else
-          path = clients_path
-        end
+    if current_user.master?
+      if session[:client_id].present?
+        path = projects_path(client_id: session[:client_id])
       else
-        path = projects_path
+        path = clients_path
       end
-
-      redirect_to path, alert: msg
+    else
+      path = projects_path
     end
+
+    redirect_to path, alert: "Project \##{params[:project_id]} does not exist."
   end
 
   # redirect to projects#index if specified project does not exist
   def infrastructure_exist
     return if params[:id].blank?
+    return if Infrastructure.exists?(id: params[:id])
 
-    unless Infrastructure.exists?(id: params[:id])
-      msg = "Infrastructure \##{params[:id]} does not exist."
-      if session[:project_id].present?
-        path = infrastructures_path(project_id: session[:project_id])
+    msg = "Infrastructure \##{params[:id]} does not exist."
+    if session[:project_id].present?
+      path = infrastructures_path(project_id: session[:project_id])
+    else
+      if current_user.master?
+        path = clients_path
       else
-        if current_user.master?
-          path = clients_path
-        else
-          path = projects_path
-        end
+        path = projects_path
       end
-
-      redirect_to path, alert: msg
     end
+
+    redirect_to path, alert: msg
   end
 end

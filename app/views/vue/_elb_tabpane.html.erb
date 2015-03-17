@@ -1,0 +1,51 @@
+<script id="elb-tabpane-template" type="text/template">
+<h3 class="page-header">{{* physical_id}}</h3>
+
+<h4>DNS name</h4>
+
+<a v-attr="href: 'http://' + dns_name" target="_blank">{{dns_name}}</a>
+
+<h4>Instances</h4>
+
+<div class="input-group col-xs-3" v-if="unregistereds.length !== 0">
+  <select class="form-control input-sm" v-model="selected_ec2">
+    <option>Select!</option>
+    <option v-repeat="unregistereds" v-attr="value: physical_id">{{* screen_name}}</option>
+  </select>
+  <div class="input-group-btn">
+    <button class="btn btn-primary btn-sm" v-on="click: register()" v-attr="disabled: !selected_ec2">
+      <%= I18n.t('ec2_instances.btn.register') %>
+    </button>
+  </div>
+</div>
+
+
+<table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
+  <caption>
+    <a href="#" v-on="click: show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
+    <button class="btn btn-danger btn-xs" v-on="click: deregister(e.instance_id)"><%= I18n.t('ec2_instances.btn.deregister') %></button>
+  </caption>
+
+  <thead>
+    <tr>
+      <th class="col-sm-3"><%= t 'infrastructures.genre' %></th>
+      <th class="col-sm-9"><%= t 'common.value' %></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td class="col-sm-3">State</td>
+      <td class="col-sm-9"><span class="label" v-class="stateLabel(e.state)">{{* e.state}}</span></td>
+    </tr>
+    <tr>
+      <td class="col-sm-3">ReasonCode</td>
+      <td class="col-sm-9">{{* e.reason_code}}</td>
+    </tr>
+    <tr>
+      <td class="col-sm-3">Description</td>
+      <td class="col-sm-9">{{* e.description}}</td>
+    </tr>
+  </tbody>
+</table>
+</script>

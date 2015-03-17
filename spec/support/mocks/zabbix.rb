@@ -9,6 +9,8 @@
 module ZabbixStub
   def stubize_zabbix
     let(:_zabbix){double('zabbix')}
+    let(:_cpu_item){double('CPU item')}
+    let(:_mysql_item){double('MySQL item')}
 
     before do
       allow(Zabbix).to receive(:new).and_return(_zabbix)
@@ -19,7 +21,16 @@ module ZabbixStub
       allow(_zabbix).to receive(:get_hostgroup_ids).and_return(["1", "2", "3"]) # .with(String or Array of String)
       allow(_zabbix).to receive(:change_mastergroup_rights).with(array_including(str))
       allow(_zabbix).to receive(:create_user).with(str, str).and_return('1')
+      allow(_zabbix).to receive(:create_host).with(kind_of(Infrastructure), str)
+      allow(_zabbix).to receive(:templates_link_host).with(str, array_including(str))
+      allow(_zabbix).to receive(:create_cpu_usage_item).with(str).and_return(_cpu_item)
+      allow(_zabbix).to receive(:create_cpu_usage_trigger).with(_cpu_item, str)
+      allow(_zabbix).to receive(:create_mysql_login_item).with(str).and_return(_mysql_item)
+      allow(_zabbix).to receive(:create_mysql_login_trigger).with(_mysql_item, str)
+      allow(_zabbix).to receive(:create_elb_host).with(kind_of(Infrastructure))
       allow(_zabbix).to receive(:update_user)
+      allow(_zabbix).to receive(:user_exists?).with(str).and_return(false)
+      allow(_zabbix).to receive(:delete_user).with(str)
       allow(_zabbix).to receive(:get_master_usergroup_id).with(no_args)
       allow(_zabbix).to receive(:get_default_usergroup_id).with(no_args)
       allow(_zabbix).to receive(:get_user_id).with(str)

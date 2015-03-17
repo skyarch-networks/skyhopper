@@ -24,7 +24,7 @@ var modal = function (title, message, modal_type, status) {
     dfd.resolve();
   };
 
-  if (modal_type == "confirm") {
+  if (modal_type === "confirm") {
     modal_footer.append(
       $("<button>", {class: "btn btn-default", "data-dismiss": "modal", text: "Cancel"})
     ).append(
@@ -38,10 +38,10 @@ var modal = function (title, message, modal_type, status) {
   }
 
   var additional_class;
-  if (status == "warning") {
+  if (status === "warning") {
     additional_class = "bg-warning";
   }
-  else if (status == "danger") {
+  else if (status === "danger") {
     additional_class = "bg-danger";
   }
 

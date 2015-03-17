@@ -21,6 +21,7 @@ class ResourcesController < ApplicationController
       ec2_instances: resources.ec2,
       rds_instances: resources.rds,
       s3_buckets:    resources.s3,
+      elb_instances: resources.elb,
     }
 
     render json: resp and return

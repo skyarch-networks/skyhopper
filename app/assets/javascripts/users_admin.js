@@ -165,7 +165,7 @@
     };
 
     if (password && password_confirmation) {
-      if (password == password_confirmation) {
+      if (password === password_confirmation) {
         params.password = password;
         params.password_confirmation = password_confirmation;
       }
@@ -203,7 +203,7 @@ $(document).ready(function () {
         checkValue[i] = 1;
       }
     }
-    if ($.inArray(0, checkValue) == -1) {
+    if ($.inArray(0, checkValue) === -1) {
       checkbutton.attr('disabled', false);
     }
     else {

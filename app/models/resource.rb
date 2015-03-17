@@ -12,4 +12,5 @@ class Resource < ActiveRecord::Base
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
   scope :s3,  -> {where(type_name: 'AWS::S3::Bucket')}
+  scope :elb,  -> {where(type_name: 'AWS::ElasticLoadBalancing::LoadBalancer')}
 end

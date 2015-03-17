@@ -125,6 +125,10 @@
         <rds-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></rds-tabpane>
       </div>
 
+      <div v-repeat="current_infra.resources.elb_instances">
+        <elb-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></elb-tabpane>
+      </div>
+
       <div v-repeat="current_infra.resources.s3_buckets">
         <s3-tabpane v-if="tabpane_active(physical_id)" v-with="physical_id: physical_id" class="tab-pane" v-show="!loading"></s3-tabpane>
       </div>
@@ -153,6 +157,7 @@
 <%= render 'vue/monitoring_tabpane' %>
 <%= render 'vue/edit_monitoring_tabpane' %>
 <%= render 'vue/rds_tabpane'  %>
+<%= render 'vue/elb_tabpane'  %>
 <%= render 'vue/s3_tabpane'  %>
 <%= render 'vue/vue_paginator' %>
 

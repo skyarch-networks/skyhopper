@@ -364,6 +364,15 @@ en:
   ec2_instances:
     description: 'Description'
     settings:    'Settings'
+    msg:
+      registered_to_elb:    'EC2 instance was successfully registered to ELB'
+      deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB'
+    btn:
+      register:   'Register to ELB'
+      deregister: 'Deregister from ELB'
+    confirm:
+      register:   'Do you want to register EC2 instance to ELB?'
+      deregister: 'Do you want to deregister EC2 instance from ELB?'
 
   resources:
     screen_name: 'Screen Name'

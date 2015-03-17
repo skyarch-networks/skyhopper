@@ -116,7 +116,7 @@ class UsersAdminController < ApplicationController
     end
 
     unless user.save
-      render text: user.errors.full_messages.join(' '), staus: 500 and return
+      render text: user.errors.full_messages.join(' '), status: 500 and return
     end
 
     z = @zabbix

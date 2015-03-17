@@ -69,7 +69,7 @@
   };
 
   var is_validate_finish_status = function (status) {
-    return status == 'SUCCESS' || status == 'FAILURE' || status == 'NOT YET';
+    return status === 'SUCCESS' || status === 'FAILURE' || status === 'NOT YET';
   };
 
   var get_validate_status = function (dish_id, callback) {
@@ -90,7 +90,7 @@
     if (is_validate_finish_status(status)) {
       show_dish(current_dish_id());
     } else {
-      if (dish_id != current_dish_id()) return;
+      if (dish_id !== current_dish_id()) return;
 
       var progress_bar = $('.validating-dish').children('.progress-bar');
       var progress;

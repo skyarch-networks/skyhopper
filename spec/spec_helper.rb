@@ -11,13 +11,8 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'simplecov'
-require 'simplecov-rcov'
-SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
-SimpleCov.start do
-  add_filter '/vendor/bundle/'
-  add_filter '/spec/'
-  add_filter '/db/'
-end
+require 'coveralls'
+Coveralls.wear!('rails')
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.

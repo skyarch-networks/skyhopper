@@ -38,7 +38,7 @@ module Concerns::BeforeAuth
 
     unless current_user.allow?(project)
       client_id = project.client_id
-      redirect_to projects_url(client_id: client_id), alert: I18n.t('common.msg.no_permission') and return
+      redirect_to projects_path(client_id: client_id), alert: I18n.t('common.msg.no_permission') and return
     end
     true
   end
@@ -51,7 +51,7 @@ module Concerns::BeforeAuth
     unless current_user.allow?(infra)
       #TODO: リダイレクト以外の方法を考える
       project_id = infra.project_id
-      redirect_to infrastructures_url(project_id: project_id), alert: I18n.t('common.msg.no_permission') and return
+      redirect_to infrastructures_path(project_id: project_id), alert: I18n.t('common.msg.no_permission') and return
     end
     true
   end

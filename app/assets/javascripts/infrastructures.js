@@ -77,13 +77,13 @@
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
-        if (status == "CREATE_COMPLETE") {
+        if (status === "CREATE_COMPLETE") {
           return "success";
         }
-        else if (status.indexOf("FAILED") != -1) {
+        else if (status.indexOf("FAILED") !== -1) {
           return "danger";
         }
-        else if (status.indexOf("DELETE") != -1) {
+        else if (status.indexOf("DELETE") !== -1) {
           return "warning";
         }
         return '';
@@ -535,6 +535,57 @@
     },
   });
 
+  // this.physical_id is a elb_name.
+  Vue.component('elb-tabpane', {
+    template: '#elb-tabpane-template',
+    methods: {
+      show_ec2: function (physical_id) {
+        this.$parent.show_ec2(physical_id);
+      },
+      deregister: function (physical_id) {
+        // TODO: confirm
+        var self = this;
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, physical_id);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.deregister(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      register: function () {
+        var self = this;
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
+          var ec2 = new EC2Instance(current_infra, self.selected_ec2);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.register(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      stateLabel: function (state) {
+        if (state === 'InService') {
+          return 'label-success';
+        }
+        return 'label-danger';
+      },
+    },
+    compiled: function () {
+      var self = this;
+      current_infra.show_elb(this.physical_id).done(function (data) {
+        self.$set('ec2_instances', data.ec2_instances);
+        self.$set('unregistereds', data.unregistereds);
+        self.$set('dns_name', data.dns_name);
+        self.$set('selected_ec2', null);
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+  });
+
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
     compiled: function () {
@@ -638,8 +689,8 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
 
-        var security_bool = (security == "security");
-        var exec_bool = (exec == "exec");
+        var security_bool = (security === "security");
+        var exec_bool = (exec === "exec");
 
         bootstrap_confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
           var dfd = ec2.yum_update(security_bool, exec_bool).fail(
@@ -1000,9 +1051,9 @@
         status_label_class: function () {
           var resp = "label-";
           var type = this.current_infra.stack.status.type;
-          if (type == "OK") {
+          if (type === "OK") {
             resp += 'success';
-          } else if (type == "NG") {
+          } else if (type === "NG") {
             resp += "danger";
           } else {
             resp += "default";
@@ -1018,16 +1069,24 @@
         },
         show_rds: function (physical_id) {
           this.show_tabpane(physical_id);
+          this.current_physical_id = null;
+          this.loading = true;
+        },
+        show_elb: function (physical_id) {
+          this.show_tabpane(physical_id);
+          this.current_physical_id = null;
           this.loading = true;
         },
         show_s3: function (physical_id) {
           this.show_tabpane(physical_id);
+          this.current_physical_id = null;
           this.loading = true;
         },
         show_add_modify: function () {
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
+          this.current_physical_id = null;
 
           var cft = new CFTemplate(current_infra);
           cft.new().done(function (data) {
@@ -1040,9 +1099,11 @@
         },
         show_add_ec2: function () {
           this.show_tabpane('add-ec2');
+          this.current_physical_id = null;
         },
         show_cf_history: function () {
           var self = this;
+          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
 
@@ -1054,6 +1115,7 @@
         },
         show_event_logs: function () {
           if (this.no_stack()) {return;}
+          this.current_physical_id = null;
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
@@ -1065,6 +1127,7 @@
         },
         show_infra_logs: function () {
           var self = this;
+          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
           current_infra.logs().done(function (data) {
@@ -1074,6 +1137,7 @@
         },
         show_monitoring: function () {
           if (this.no_stack()) {return;}
+          this.current_physical_id = null;
           var self = this;
           self.show_tabpane('monitoring');
           self.loading = true;
@@ -1081,14 +1145,15 @@
         show_edit_monitoring: function () {
           if (this.no_stack()) {return;}
           var self = this;
+          this.current_physical_id = null;
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
         no_stack: function () {
-          return this.current_infra.stack.status.type == 'NONE';
+          return this.current_infra.stack.status.type === 'NONE';
         },
         in_progress: function () {
-          return this.current_infra.stack.status.type == 'IN_PROGRESS';
+          return this.current_infra.stack.status.type === 'IN_PROGRESS';
         },
         stack_fail: function () {
           return this.current_infra.stack.status.type === 'NG';
@@ -1124,7 +1189,7 @@
       },
       ready: function () {
         var self = this;
-        if (stack.status.type == 'OK') {
+        if (stack.status.type === 'OK') {
           var res = new Resource(current_infra);
           res.index().done(function (resources) {
             _.forEach(resources.ec2_instances, function (v) {
@@ -1148,11 +1213,11 @@
             });
           });
         }
-        else if (stack.status.type == 'IN_PROGRESS') {
+        else if (stack.status.type === 'IN_PROGRESS') {
           stack_in_progress(current_infra);
           self.$data.loading = false;
         }
-        else if (stack.status.type == 'NG') {
+        else if (stack.status.type === 'NG') {
           current_infra.stack_events().done(function (res) {
             self.$data.current_infra.events = res.stack_events;
             self.$data.loading = false;
@@ -1172,7 +1237,7 @@
       if(infra.id !== current_infra.id){return;}
       app.$data.current_infra.events = res.stack_events;
 
-      if (res.stack_status.type == 'IN_PROGRESS') {
+      if (res.stack_status.type === 'IN_PROGRESS') {
         setTimeout(function () {
           stack_in_progress(infra);
         }, 15000);

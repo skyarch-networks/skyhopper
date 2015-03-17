@@ -37,7 +37,7 @@
     if ( selected_resources[resource_name] ) summary += t('js.template_builder.inserted_properties') + ":\n";
 
     $.each(selected_resources[resource_name], function (property_type, val) {
-      if ( property_type != "resource_name" && property_type != "resource_type" ) {
+      if ( property_type !== "resource_name" && property_type !== "resource_type" ) {
         if (typeof(val) === "object") {
           summary += "\t" + property_type + ": " + JSON.stringify(val) + ", \n";
         }
@@ -151,15 +151,15 @@
     var property = $(".property-value[property-type=" + property_name + "]");
 
     // radio
-    if ( property.attr("type") == "radio" ) {
+    if ( property.attr("type") === "radio" ) {
       var val_radio = $(".property-value[property-type=" + property_name + "]:checked").val();
       if ( typeof val_radio === "undefined" ) {
         return null;
       }
-      return ( val_radio == "enable" );
+      return ( val_radio === "enable" );
     }
     // nested
-    else if ( property.attr("data-type") == "array" ) {
+    else if ( property.attr("data-type") === "array" ) {
       if (nested_properties[property_name] && nested_properties[property_name].length > 0) {
         return nested_properties[property_name];
       }
@@ -187,7 +187,7 @@
   var nested_properties = {};
 
   var add_array_item = function (property_type) {
-    if (!nested_properties[property_type]) nested_properties[property_type] = [];
+    if (!nested_properties[property_type]) {nested_properties[property_type] = [];}
     var array_item = {};
     $.each( $("input[array-item=true][property-type=" + property_type + "]"), function() {
       if ( $(this).attr("hash-key") ) {
@@ -214,7 +214,7 @@
 
   var row_array_item = function (item, num) {
     var tr = $("<tr>").attr("item-number", num);
-    if ( typeof(item) == "object" ) {
+    if ( typeof(item) === "object" ) {
       $.each(item, function(k, v) {
         $("<td>").text(v).appendTo(tr);
       });

@@ -129,6 +129,28 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
+  describe '#stack_events' do
+    let(:events){[{foo: 'hoge'}]}
+    let(:status_and_type){{foo: 'bar'}}
+    let(:stack){double('stack', events: events, status_and_type: status_and_type)}
+    before do
+      allow(Stack).to receive(:new).and_return(stack)
+      get :stack_events, id: infra.id
+    end
+
+    should_be_success
+
+    let(:body){JSON.parse(response.body, symbolize_names: true)}
+
+    it 'should assign stack_status' do
+      expect(body[:stack_status]).to eq status_and_type
+    end
+
+    it 'should assign events' do
+      expect(body[:stack_events]).to eq events
+    end
+  end
+
   describe '#new' do
     before { get :new, project_id: project.id }
 
@@ -247,31 +269,35 @@ describe InfrastructuresController, :type => :controller do
     end
   end # end of update
 
-  describe 'DELETE #destroy' do
-    let(:delete_request) {delete :destroy, id: infra.id}
+  describe '#destroy' do
+    let(:req){delete :destroy, id: infra.id}
 
-    stubize_infra
     stubize_zabbix
+    stubize_infra
     run_zabbix_server
 
-    before do
-      delete_request
-    end
-
-    subject{ Infrastructure.find(infra.id) }
-
-    context 'when deleted requested' do
-      it 'should delete seleted infrastracture finely' do
-        expect{subject}.to raise_error ActiveRecord::RecordNotFound
-      end
-
+    context 'when delete successfully' do
+      before{req}
       should_be_success
 
-      it 'should return message' do
-        expect(request.body).to be_present
+      it do
+        expect(Infrastructure).not_to be_exists infra.id
       end
     end
-  end #end of destroy
+
+    context 'when delete failures' do
+      before do
+        allow_any_instance_of(Infrastructure).to receive(:destroy!).and_raise
+        req
+      end
+
+      should_be_failure
+
+      it do
+        expect(Infrastructure).to be_exists infra.id
+      end
+    end
+  end
 
   describe '#delete_stack' do
     stubize_zabbix
@@ -280,7 +306,7 @@ describe InfrastructuresController, :type => :controller do
 
     let(:delete_stack_request){post :delete_stack, id: infra.id}
 
-    context 'when delete success' do
+    context 'when delete stack success' do
       stubize_stack
 
       before do
@@ -290,7 +316,16 @@ describe InfrastructuresController, :type => :controller do
       should_be_success
     end
 
-    context 'when delete fail' do
+    context 'when detach zabbix fail' do
+      before do
+        allow_any_instance_of(Infrastructure).to receive(:detach_zabbix).and_raise
+        delete_stack_request
+      end
+
+      should_be_failure
+    end
+
+    context 'when delete stack fail' do
       stubize_stack(delete: :error)
 
       before do
@@ -303,7 +338,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_s3' do
     let(:bucket_name){"log_bucket"}
-    let(:request_show_s3){ get :show_s3, infra_id: infra.id, bucket_name: bucket_name }
+    let(:request_show_s3){ get :show_s3, id: infra.id, bucket_name: bucket_name }
 
     stubize_s3
     before{request_show_s3}
@@ -327,7 +362,7 @@ describe InfrastructuresController, :type => :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    let(:request_show_rds){ get :show_rds, infra_id: infra.id, physical_id: physical_id }
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
 
     instance_class    = "foo"
     allocated_storage = "100"
@@ -368,6 +403,34 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
+  describe '#show_elb' do
+    let(:physical_id){"hogefugahoge-ElasticL-1P3I4RD6PEUBK"}
+    let(:req){get :show_elb, id: infra.id, physical_id: physical_id}
+    let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
+    let(:dns_name){'hoge.example.com'}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name)}
+
+    before do
+      allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
+      create(:ec2_resource, infrastructure: infra)
+      req
+    end
+
+    should_be_success
+
+    it 'should assign @ec2_instances' do
+      expect(assigns[:ec2_instances]).to eq instances
+    end
+
+    it 'should assign @dns_name' do
+      expect(assigns[:dns_name]).to eq dns_name
+    end
+
+    it 'should assign @unregistereds' do
+      expect(assigns[:unregistereds]).to eq infra.resources.ec2
+    end
+  end
+
   describe "#events" do
     let(:request_events){get :events, infrastructure_id: infra.id}
 
@@ -399,7 +462,7 @@ describe InfrastructuresController, :type => :controller do
       post(
         :change_rds_scale,
         physical_id:   'hogehoge',
-        infra_id:      infra.id,
+        id:            infra.id,
         instance_type: type
       )
     }
@@ -484,5 +547,103 @@ describe InfrastructuresController, :type => :controller do
       end
     end
   end
-end
 
+  describe '#project_exist' do
+    controller InfrastructuresController do
+      before_action :project_exist
+      def foo
+        render text: 'success!!!'
+      end
+      def allowed_infrastructure(_);end #skip
+    end
+    before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
+    let(:prj_id){project.id}
+    let(:req){get :foo, project_id: prj_id}
+
+    context 'when project_id param is blank' do
+      let(:prj_id){nil}
+      before{req}
+      should_be_success
+    end
+
+    context 'when project exists' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when user is master' do
+      context 'when client_id is present' do
+        let(:client){build_stubbed(:client)}
+        before do
+          session[:client_id] = client.id
+          project.delete
+          req
+        end
+        it {is_expected.to redirect_to projects_path(client_id: client.id)}
+      end
+
+      context 'when client_id is blank' do
+        before do
+          project.delete
+          req
+        end
+        it {is_expected.to redirect_to clients_path}
+      end
+    end
+
+    context 'when user isnot master' do
+      before{sign_out User}
+      login_user(master: false)
+      before{project.delete; req}
+      it {is_expected.to redirect_to projects_path}
+    end
+  end
+
+  describe '#infrastructure_exist' do
+    controller InfrastructuresController do
+      before_action :infrastructure_exist
+      def foo
+        render text: 'success!!!'
+      end
+      def allowed_infrastructure(_);end #skip
+    end
+    before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
+    let(:infra_id){infra.id}
+    let(:req){get :foo, id: infra_id}
+
+    context 'when id param is blank' do
+      let(:infra_id){nil}
+      before{req}
+      should_be_success
+    end
+
+    context 'when infra exists' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when project_id is present' do
+      before do
+        session[:project_id] = project.id
+        infra.delete
+        req
+      end
+      it {is_expected.to redirect_to infrastructures_path(project_id: project.id)}
+    end
+
+    context 'when project id is blank' do
+      context 'when user is master' do
+        before{infra.delete; req}
+        it {is_expected.to redirect_to clients_path}
+      end
+
+      context 'when user isnot master' do
+        before{sign_out User}
+        login_user(master: false)
+        before{infra.delete; req}
+
+        it {is_expected.to redirect_to projects_path}
+      end
+    end
+  end
+end
