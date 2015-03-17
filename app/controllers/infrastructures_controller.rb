@@ -131,18 +131,16 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures
   # POST /infrastructures.json
   def create
-    begin
-      infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
-    rescue => ex
-      flash[:alert] = ex.message
-      @regions        = @@regions
-      @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
+    infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
+  rescue => ex
+    flash[:alert] = ex.message
+    @regions        = @@regions
+    @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
 
-      render action: 'new', status: 400 and return
-    else
-      redirect_to infrastructures_path(project_id: infra.project_id),
-        notice: I18n.t('infrastructures.msg.created')
-    end
+    render action: 'new', status: 400 and return
+  else
+    redirect_to infrastructures_path(project_id: infra.project_id),
+      notice: I18n.t('infrastructures.msg.created')
   end
 
   # PATCH/PUT /infrastructures/1
@@ -325,40 +323,37 @@ class InfrastructuresController < ApplicationController
   # redirect to projects#index if specified project does not exist
   def project_exist
     return if params[:project_id].blank?
+    return if Project.exists?(id: params[:project_id])
 
-    unless Project.exists?(id: params[:project_id])
-      msg = "Project \##{params[:project_id]} does not exist."
-      if current_user.master?
-        if session[:client_id].present?
-          path = projects_path(client_id: client_id)
-        else
-          path = clients_path
-        end
+    if current_user.master?
+      if session[:client_id].present?
+        path = projects_path(client_id: session[:client_id])
       else
-        path = projects_path
+        path = clients_path
       end
-
-      redirect_to path, alert: msg
+    else
+      path = projects_path
     end
+
+    redirect_to path, alert: "Project \##{params[:project_id]} does not exist."
   end
 
   # redirect to projects#index if specified project does not exist
   def infrastructure_exist
     return if params[:id].blank?
+    return if Infrastructure.exists?(id: params[:id])
 
-    unless Infrastructure.exists?(id: params[:id])
-      msg = "Infrastructure \##{params[:id]} does not exist."
-      if session[:project_id].present?
-        path = infrastructures_path(project_id: session[:project_id])
+    msg = "Infrastructure \##{params[:id]} does not exist."
+    if session[:project_id].present?
+      path = infrastructures_path(project_id: session[:project_id])
+    else
+      if current_user.master?
+        path = clients_path
       else
-        if current_user.master?
-          path = clients_path
-        else
-          path = projects_path
-        end
+        path = projects_path
       end
-
-      redirect_to path, alert: msg
     end
+
+    redirect_to path, alert: msg
   end
 end
