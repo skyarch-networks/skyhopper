@@ -545,23 +545,27 @@
       deregister: function (physical_id) {
         // TODO: confirm
         var self = this;
-        var ec2 = new EC2Instance(current_infra, physical_id);
-        var reload = function () {
-          self.$parent.show_elb(self.physical_id);
-        };
-        ec2.deregister(self.physical_id)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, physical_id);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.deregister(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
       },
       register: function () {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.selected_ec2);
-        var reload = function () {
-          self.$parent.show_elb(self.physical_id);
-        };
-        ec2.register(self.physical_id)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
+          var ec2 = new EC2Instance(current_infra, self.selected_ec2);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.register(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
       },
     },
     compiled: function () {

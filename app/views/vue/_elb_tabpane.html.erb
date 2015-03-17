@@ -10,10 +10,10 @@
 <div class="input-group col-xs-3" v-if="unregistereds.length !== 0">
   <select class="form-control input-sm" v-model="selected_ec2">
     <option>Select!</option>
-    <option v-repeat="unregistereds" v-attr="value: physical_id">{{physical_id}}</option>
+    <option v-repeat="unregistereds" v-attr="value: physical_id">{{screen_name}}</option>
   </select>
   <div class="input-group-btn">
-    <button class="btn btn-primary btn-sm" v-on="click: register()">
+    <button class="btn btn-primary btn-sm" v-on="click: register()" v-attr="disabled: !selected_ec2">
       <%= I18n.t('ec2_instances.btn.register') %>
     </button>
   </div>

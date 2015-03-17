@@ -369,6 +369,9 @@ ja:
     btn:
       register:   'インスタンスを登録'
       deregister: 'インスタンスの登録を解除'
+    confirm:
+      register:   'EC2 インスタンスを ELB に登録しますか?'
+      deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
 
   resources:
     screen_name: '表示名'
