@@ -20,6 +20,8 @@ var EC2Instance = function (infra, physical_id) {
   ajax_ec2.add_member("stop", "POST");
   ajax_ec2.add_member("reboot", "POST");
   ajax_ec2.add_member('serverspec_status', 'GET');
+  ajax_ec2.add_member('register_to_elb', 'POST');
+  ajax_ec2.add_member('deregister_from_elb', 'POST');
 
   var ajax_serverspec = new AjaxSet.Resources('serverspecs');
   ajax_serverspec.add_collection('select', 'GET');
@@ -298,6 +300,26 @@ var EC2Instance = function (infra, physical_id) {
       .done(function (data) {
         dfd.resolve(data.status);
       })
+      .fail(rejectXHR(dfd));
+
+    return dfd.promise();
+  };
+
+  this.register = function (elb_name) {
+    var dfd = $.Deferred();
+
+    ajax_ec2.register_to_elb(_.merge(params, {elb_name: elb_name}))
+      .done(dfd.resolve)
+      .fail(rejectXHR(dfd));
+
+    return dfd.promise();
+  };
+
+  this.deregister = function (elb_name) {
+    var dfd = $.Deferred();
+
+    ajax_ec2.deregister_from_elb(_.merge(params, {elb_name: elb_name}))
+      .done(dfd.resolve)
       .fail(rejectXHR(dfd));
 
     return dfd.promise();

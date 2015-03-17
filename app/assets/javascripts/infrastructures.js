@@ -535,18 +535,52 @@
     },
   });
 
+  // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
     template: '#elb-tabpane-template',
     methods: {
       show_ec2: function (physical_id) {
         this.$parent.show_ec2(physical_id);
       },
+      deregister: function (physical_id) {
+        // TODO: confirm
+        var self = this;
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, physical_id);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.deregister(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      register: function () {
+        var self = this;
+        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
+          var ec2 = new EC2Instance(current_infra, self.selected_ec2);
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.register(self.physical_id)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      stateLabel: function (state) {
+        if (state === 'InService') {
+          return 'label-success';
+        }
+        return 'label-danger';
+      },
     },
     compiled: function () {
       var self = this;
       current_infra.show_elb(this.physical_id).done(function (data) {
         self.$set('ec2_instances', data.ec2_instances);
+        self.$set('unregistereds', data.unregistereds);
         self.$set('dns_name', data.dns_name);
+        self.$set('selected_ec2', null);
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
