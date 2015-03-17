@@ -27,7 +27,7 @@ var bootstrap_alert_div = function (klass, content) {
 var overwrite_by_alert = function (button, extraClass, content) {
   var target = button.parent();
   var klass  = "";
-  if (extraClass) klass += extraClass;
+  if (extraClass) {klass += extraClass;}
 
   var alertDiv = bootstrap_alert_div(klass, content);
 
@@ -115,7 +115,7 @@ var unmasking_input_form = function (btn, target) {
 };
 
 var toggle_input_masking = function (btn, target) {
-  if (target.attr("type") == "text") {
+  if (target.attr("type") === "text") {
     masking_input_form(btn, target);
   }
   else {
@@ -165,7 +165,7 @@ $(document).ready(function () {
         is_filled = false;
         return false;
       }
-      if ( $(this).attr("type") == "password" && $(this).val().indexOf(" ") != -1 ) {
+      if ( $(this).attr("type") === "password" && $(this).val().indexOf(" ") !== -1 ) {
         is_filled = false;
         return false;
       }

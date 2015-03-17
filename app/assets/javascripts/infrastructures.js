@@ -77,13 +77,13 @@
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
-        if (status == "CREATE_COMPLETE") {
+        if (status === "CREATE_COMPLETE") {
           return "success";
         }
-        else if (status.indexOf("FAILED") != -1) {
+        else if (status.indexOf("FAILED") !== -1) {
           return "danger";
         }
-        else if (status.indexOf("DELETE") != -1) {
+        else if (status.indexOf("DELETE") !== -1) {
           return "warning";
         }
         return '';
@@ -689,8 +689,8 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
 
-        var security_bool = (security == "security");
-        var exec_bool = (exec == "exec");
+        var security_bool = (security === "security");
+        var exec_bool = (exec === "exec");
 
         bootstrap_confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
           var dfd = ec2.yum_update(security_bool, exec_bool).fail(
@@ -1051,9 +1051,9 @@
         status_label_class: function () {
           var resp = "label-";
           var type = this.current_infra.stack.status.type;
-          if (type == "OK") {
+          if (type === "OK") {
             resp += 'success';
-          } else if (type == "NG") {
+          } else if (type === "NG") {
             resp += "danger";
           } else {
             resp += "default";
@@ -1150,10 +1150,10 @@
           self.loading = true;
         },
         no_stack: function () {
-          return this.current_infra.stack.status.type == 'NONE';
+          return this.current_infra.stack.status.type === 'NONE';
         },
         in_progress: function () {
-          return this.current_infra.stack.status.type == 'IN_PROGRESS';
+          return this.current_infra.stack.status.type === 'IN_PROGRESS';
         },
         stack_fail: function () {
           return this.current_infra.stack.status.type === 'NG';
@@ -1189,7 +1189,7 @@
       },
       ready: function () {
         var self = this;
-        if (stack.status.type == 'OK') {
+        if (stack.status.type === 'OK') {
           var res = new Resource(current_infra);
           res.index().done(function (resources) {
             _.forEach(resources.ec2_instances, function (v) {
@@ -1213,11 +1213,11 @@
             });
           });
         }
-        else if (stack.status.type == 'IN_PROGRESS') {
+        else if (stack.status.type === 'IN_PROGRESS') {
           stack_in_progress(current_infra);
           self.$data.loading = false;
         }
-        else if (stack.status.type == 'NG') {
+        else if (stack.status.type === 'NG') {
           current_infra.stack_events().done(function (res) {
             self.$data.current_infra.events = res.stack_events;
             self.$data.loading = false;
@@ -1237,7 +1237,7 @@
       if(infra.id !== current_infra.id){return;}
       app.$data.current_infra.events = res.stack_events;
 
-      if (res.stack_status.type == 'IN_PROGRESS') {
+      if (res.stack_status.type === 'IN_PROGRESS') {
         setTimeout(function () {
           stack_in_progress(infra);
         }, 15000);
