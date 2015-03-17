@@ -80,8 +80,7 @@ group :development, :test do
   gem "factory_girl_rails"
   gem "database_cleaner"
   gem 'guard-rspec'
-  gem 'simplecov', require: false
-  gem 'simplecov-rcov'
+  gem 'coveralls', require: false
   gem 'named_let'
 
   gem 'sqlite3'
