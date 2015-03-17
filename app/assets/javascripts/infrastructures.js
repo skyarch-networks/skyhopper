@@ -567,6 +567,12 @@
             .fail(alert_danger(reload));
         });
       },
+      stateLabel: function (state) {
+        if (state === 'InService') {
+          return 'label-success';
+        }
+        return 'label-danger';
+      },
     },
     compiled: function () {
       var self = this;
@@ -576,7 +582,6 @@
         self.$set('dns_name', data.dns_name);
         self.$set('selected_ec2', null);
         self.$parent.loading = false;
-        console.log(self);
       }).fail(alert_and_show_infra);
     },
   });
