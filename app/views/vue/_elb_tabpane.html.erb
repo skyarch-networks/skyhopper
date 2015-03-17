@@ -10,7 +10,7 @@
 <table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
   <caption>
     <a href="#" v-on="click: show_ec2(e.instance_id)">{{e.instance_id}}</a>&nbsp;
-    <button class="btn btn-danger btn-xs" v-on="click: deregister(e.instance_id)">Deregister from ELB</button>
+    <button class="btn btn-danger btn-xs" v-on="click: deregister(e.instance_id)"><%= I18n.t('ec2_instances.btn.deregister') %></button>
   </caption>
 
   <thead>

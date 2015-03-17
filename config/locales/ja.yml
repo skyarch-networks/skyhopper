@@ -366,6 +366,9 @@ ja:
     msg:
       registered_to_elb:    'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
+    btn:
+      register:   'インスタンスを登録'
+      deregister: 'インスタンスの登録を解除'
 
   resources:
     screen_name: '表示名'
