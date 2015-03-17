@@ -7,6 +7,19 @@
 
 <h4>Instances</h4>
 
+<div class="input-group col-xs-3" v-if="unregistereds.length !== 0">
+  <select class="form-control input-sm" v-model="selected_ec2">
+    <option>Select!</option>
+    <option v-repeat="unregistereds" v-attr="value: physical_id">{{physical_id}}</option>
+  </select>
+  <div class="input-group-btn">
+    <button class="btn btn-primary btn-sm" v-on="click: register()">
+      <%= I18n.t('ec2_instances.btn.register') %>
+    </button>
+  </div>
+</div>
+
+
 <table class="table table-condensed table-striped" v-repeat="e: ec2_instances">
   <caption>
     <a href="#" v-on="click: show_ec2(e.instance_id)">{{e.instance_id}}</a>&nbsp;
