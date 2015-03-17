@@ -103,7 +103,7 @@ class Ec2InstancesController < ApplicationController
   end
 
 
-  # GET /ec2_instances/:id/register_to_elb
+  # POST /ec2_instances/:id/register_to_elb
   # @param [String] id physical_id of ec2 instance
   # @param [String] elb_name ELB name
   # @param [String] infra_id ID of Infrastructure
@@ -120,7 +120,7 @@ class Ec2InstancesController < ApplicationController
     render nothing: true
   end
 
-  # GET /ec2_instances/:id/deregister_to_elb
+  # POST /ec2_instances/:id/deregister_to_elb
   # @param [String] id physical_id of ec2 instance
   # @param [String] elb_name ELB name
   # @param [String] infra_id ID of Infrastructure

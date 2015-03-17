@@ -111,11 +111,29 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#register_to_elb' do
     let(:elb_name){'foo-ElasticL-bar'}
-    # TODO:
+    let(:req){post :register_to_elb, id: physical_id, elb_name: elb_name, infra_id: infra.id}
+
+    let(:elb){double('elb')}
+    before do
+      allow(ELB).to receive(:new).with(infra, elb_name).and_return(elb)
+      allow(elb).to receive(:register).with(physical_id)
+      req
+    end
+
+    should_be_success
   end
 
   describe '#deregister_from_elb' do
     let(:elb_name){'fuga-ElasticL-hoge'}
-    # TODO:
+    let(:req){post :deregister_from_elb, id: physical_id, elb_name: elb_name, infra_id: infra.id}
+
+    let(:elb){double('elb')}
+    before do
+      allow(ELB).to receive(:new).with(infra, elb_name).and_return(elb)
+      allow(elb).to receive(:deregister).with(physical_id)
+      req
+    end
+
+    should_be_success
   end
 end
