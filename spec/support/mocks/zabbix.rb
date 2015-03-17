@@ -29,6 +29,8 @@ module ZabbixStub
       allow(_zabbix).to receive(:create_mysql_login_trigger).with(_mysql_item, str)
       allow(_zabbix).to receive(:create_elb_host).with(kind_of(Infrastructure))
       allow(_zabbix).to receive(:update_user)
+      allow(_zabbix).to receive(:user_exists?).with(str).and_return(false)
+      allow(_zabbix).to receive(:delete_user).with(str)
       allow(_zabbix).to receive(:get_master_usergroup_id).with(no_args)
       allow(_zabbix).to receive(:get_default_usergroup_id).with(no_args)
       allow(_zabbix).to receive(:get_user_id).with(str)

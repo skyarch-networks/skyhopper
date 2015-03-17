@@ -11,6 +11,8 @@ require_relative '../spec_helper'
 
 describe UsersAdminController, :type => :controller do
   login_user
+  stubize_zabbix
+  run_zabbix_server
 
   let(:klass){User}
   let(:user){create(:user)}
@@ -31,7 +33,6 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#new' do
-    run_zabbix_server
     before do
       get :new
     end
@@ -44,12 +45,51 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#create' do
+    let(:master){true}
+    let(:admin){true}
+    let(:req){post :create, user: attributes_for(:user, master: master, admin: admin)}
+
+
+    context 'when User#save! raise error' do
+      before do
+        allow_any_instance_of(User).to receive(:save!).and_raise
+        req
+      end
+
+      it {is_expected.to redirect_to action: :new}
+    end
+
+    context 'when User#save! success' do
+      context 'when master and admin' do
+        let(:master){true}
+        let(:admin){true}
+        before{req}
+
+        it {is_expected.to redirect_to action: :index}
+      end
+
+      context 'when master only' do
+        let(:master){true}
+        let(:admin){false}
+        before{req}
+
+        it {is_expected.to redirect_to action: :index}
+      end
+
+      context 'when zabbix error' do
+        before do
+          allow(Zabbix).to receive(:new).and_raise
+          req
+        end
+        it {is_expected.to redirect_to action: :new}
+      end
+    end
+  end
+
+  describe '#create' do
     let(:create_request){post :create, user: user_hash}
     let(:admin_user_group){1}
     let(:user_data){{"userids" => [1]}}
-
-    stubize_zabbix
-    run_zabbix_server
 
     context 'when valid params' do
       it 'should assign @user' do
@@ -76,8 +116,6 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#edit' do
-    run_zabbix_server
-
     before do
       create(:user_project, user: user)
     end
@@ -109,8 +147,34 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#update' do
-    stubize_zabbix
-    run_zabbix_server
+    let(:master){true}
+    let(:admin){true}
+    let(:allowed_projects){nil}
+    let(:password){nil}
+    let(:password_confirm){password}
+    let(:req){put :update, id: user.id, master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm}
+
+    context 'when set password' do
+      let(:password){'hoge'}
+      context 'when password not match' do
+        let(:password_confirm){'fuga'}
+        before{req}
+        should_be_failure
+      end
+
+      context 'when password match' do
+        before{req}
+        should_be_success
+      end
+    end
+
+    context 'when user save failure' do
+      before do
+        allow_any_instance_of(User).to receive(:save).and_return(false)
+        req
+      end
+      should_be_failure
+    end
 
     context 'when master' do
       before do
@@ -119,39 +183,64 @@ describe UsersAdminController, :type => :controller do
 
       it 'should delete all UserProject' do
         expect(user.projects).not_to be_empty
-        put :update, id: user.id, master: 'true', admin: 'true'
+        req
         expect(user.projects).to be_empty
       end
     end
 
+    context 'when master only' do
+      let(:master){true}
+      let(:admin){false}
+      before{req}
+
+      should_be_success
+    end
+
     context 'when not master' do
       let(:allowed_projects){create_list(:project, 3).map{|prj|prj.id}}
+      let(:master){false}
+      before{req}
 
       it 'should update UserProject' do
-        put :update, id: user.id, master: 'false', admin: 'true', allowed_projects: allowed_projects
         expect(user.projects.pluck(:id)).to eq allowed_projects
       end
     end
   end
 
-  describe '#destroy' do
-    let(:zabbix){double('Zabbix')}
-    run_zabbix_server
-
+  describe '#sync_zabbix' do
     before do
-      allow(Zabbix).to receive(:new).and_return(zabbix)
+      create(:user, master: true, admin: true)
+      create(:user, master: true, admin: false)
+      create(:user, master: false, admin: true)
+      create(:user, master: false, admin: false)
+      put :sync_zabbix
     end
 
-    it 'should destroy user' do
-      allow(zabbix).to receive(:delete_user)
-      expect(klass.exists?(user.id)).to be true
-      delete :destroy, id: user.id
-      expect(klass.exists?(user.id)).to be false
+    should_be_success
+  end
+
+  describe '#destroy' do
+    let(:req){delete :destroy, id: user.id}
+
+    context 'when delete success' do
+      it 'should destroy user' do
+        expect(User).to be_exists user.id
+        req
+        expect(User).not_to be_exists user.id
+      end
     end
 
-    it 'should destroy user from zabbix' do
-      expect(zabbix).to receive(:delete_user)
-      delete :destroy,  id: user.id
+    context 'when delete failure' do
+      before do
+        allow(_zabbix).to receive(:delete_user).and_raise
+        req
+      end
+
+      it {is_expected.to redirect_to action: :index}
+
+      it 'should not delete user' do
+        expect(User).to be_exists user.id
+      end
     end
   end
 end
