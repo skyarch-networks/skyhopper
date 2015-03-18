@@ -10,12 +10,11 @@ require_relative '../spec_helper'
 
 describe NodesController, :type => :controller do
   login_user
+  let(:infra){create(:infrastructure)}
+  let(:physical_id){'i-hogehoge'}
 
   # TODO: Threadつらい
   describe 'GET #run bootstrap' do
-    let(:physical_id){'i-hogehoge'}
-    let(:infra){create(:infrastructure)}
-
     before do
       allow(Thread).to receive(:new_with_db)
       get :run_bootstrap, id: physical_id, infra_id: infra.id
@@ -25,8 +24,6 @@ describe NodesController, :type => :controller do
   end
 
   describe "#show" do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-hogefuga'}
 
     let(:request){get :show, infra_id: infra.id, id: physical_id, format: 'json'}
 
@@ -140,8 +137,6 @@ describe NodesController, :type => :controller do
   end
 
   describe "#POST cook" do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){"i-abc123"}
     let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
 
     before do
@@ -155,6 +150,34 @@ describe NodesController, :type => :controller do
 
     it "should be success" do
       expect(response.status).to eq 202
+    end
+  end
+
+  describe '#edit' do
+    let(:req){get :edit, id: physical_id, infra_id: infra.id}
+    let(:details){{"run_list" => ['foo', 'bar']}}
+    let(:roles){[double('role1', name: 'ROLE1'), double('role2', name: 'ROLE2')]}
+    let(:cookbooks){{hoge: 'Hoge Cookbook', fuga: 'Fuga Cookbook'}}
+
+    before do
+      allow_any_instance_of(Node).to receive(:details).and_return(details)
+      allow(ChefAPI).to receive(:index).with(:role).and_return(roles)
+      allow(ChefAPI).to receive(:index).with(:cookbook).and_return(cookbooks)
+      req
+    end
+
+    should_be_success
+
+    it 'should assign @runlist' do
+      expect(assigns[:runlist]).to eq details['run_list']
+    end
+
+    it 'should assign @roles' do
+      expect(assigns[:roles]).to eq roles.map(&:name).sort
+    end
+
+    it 'should assign @cookbooks' do
+      expect(assigns[:cookbooks]).to eq cookbooks.keys.sort
     end
   end
 
@@ -175,23 +198,38 @@ describe NodesController, :type => :controller do
   end
 
   describe '#update' do
-    let(:infra){FactoryGirl.create(:infrastructure)}
-    let(:physical_id){'foo'}
     let(:runlist){['a', 'b', 'c']}
+    let(:req){put :update, id: physical_id, infra_id: infra.id, runlist: runlist}
+    let(:status){true}
+    let(:message){'hogefuga piyoyo'}
 
-    it 'should call #update_runlist' do
-      expect_any_instance_of(NodesController).to receive(:update_runlist)
+    before do
+      allow_any_instance_of(NodesController).to receive(:update_runlist)
         .with(physical_id: physical_id, infrastructure: infra, runlist: runlist)
-        .and_return(Hash.new)
+        .and_return({status: status, message: message})
+      req
+    end
 
-      put :update, id: physical_id, infra_id: infra.id, runlist: runlist
+    context 'when update success' do
+      should_be_success
+
+      it 'should render text' do
+        expect(response.body).to eq I18n.t('nodes.msg.runlist_updated')
+      end
+    end
+
+    context 'when update fail' do
+      let(:status){false}
+      should_be_failure
+
+      it 'should render text' do
+        expect(response.body).to eq message
+      end
     end
   end
 
   describe '#apply dish' do
     let(:dish){create(:dish)}
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-abc123'}
     let(:node){double(:node)}
     let(:ret){{status: status, message: "message"}}
 
@@ -226,9 +264,37 @@ describe NodesController, :type => :controller do
     end
   end
 
+  describe '#update_attributes' do
+    let(:attributes){JSON.generate({'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'})}
+    let(:req){put :update_attributes, id: physical_id, infra_id: infra.id, attributes: attributes}
+
+    context 'update success' do
+      before do
+        allow_any_instance_of(Node).to receive(:update_attributes)
+        req
+      end
+      should_be_success
+
+      it 'should render text' do
+        expect(response.body).to eq I18n.t('nodes.msg.attribute_updated')
+      end
+    end
+
+    context 'update failures' do
+      let(:msg){'!!!ERROR!!!'}
+      before do
+        allow_any_instance_of(Node).to receive(:update_attributes).and_raise(msg)
+        req
+      end
+      should_be_failure
+
+      it 'should render text' do
+        expect(response.body).to eq msg
+      end
+    end
+  end
+
   describe '#edit_attributes' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-111aaa'}
     let(:req){get :edit_attributes, id: physical_id, infra_id: infra.id}
     let(:attrs){{foo: {bar: 'hoge'}}}
     let(:current_attr){{foo: 'piyopiyo'}}
@@ -244,6 +310,26 @@ describe NodesController, :type => :controller do
 
     it 'should assign @current_attributes' do
       expect(assigns[:current_attributes]).to eq current_attr
+    end
+  end
+
+  describe '#yum_update' do
+    let(:security){'security'}
+    let(:exec){'exec'}
+    let(:req){put :yum_update, id: physical_id, infra_id: infra.id, security: security, exec: exec}
+
+    before do
+      allow_any_instance_of(NodesController).to receive(:exec_yum_update)
+        .with(infra, physical_id, security=='security', exec=='exec')
+      req
+    end
+
+    it 'status should be 202' do
+      expect(response.status).to eq 202
+    end
+
+    it 'should render text' do
+      expect(response.body).to eq I18n.t('nodes.msg.yum_update_started')
     end
   end
 end
