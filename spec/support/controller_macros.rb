@@ -9,6 +9,7 @@
 module ControllerMacros
   def login_user(master: true, admin: true)
     before(:each) do
+      sign_out User
       @request.env["devise.mapping"] = Devise.mappings[:user]
       sign_in FactoryGirl.create(:user, master: master, admin: admin)
     end
@@ -32,5 +33,11 @@ module ControllerMacros
     it do
       expect(response).not_to be_success
     end
+  end
+end
+
+module ControllerMacrosInclude
+  def current_user
+    return User.find(session['warden.user.user.key'][0][0])
   end
 end

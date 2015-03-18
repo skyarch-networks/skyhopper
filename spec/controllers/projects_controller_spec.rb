@@ -11,25 +11,43 @@ require_relative '../spec_helper'
 describe ProjectsController, :type => :controller do
   login_user
 
-  let(:client) { Client.create(code: 'CODE', name: 'NAME') }
-  let(:project) { create(:project) }
-  let(:project_hash) { attributes_for(:project, client_id: client.id) }
+  let(:client){create(:client)}
+  let(:project){create(:project, client: client)}
+  let(:project_hash){attributes_for(:project, client_id: client.id)}
 
   describe '#index' do
-    before do
-      get :index, client_id: client.id
+    let(:req){get :index, client_id: client.id}
+
+    context 'when not have client_id' do
+      let(:client){double('client', id: nil)}
+      before{req}
+
+      it {is_expected.to redirect_to clients_path}
     end
 
-    should_be_success
+    context 'when user master' do
+      before{req}
+      should_be_success
 
-    it 'assigns @selected_client' do
-      expect(assigns[:selected_client]).to be_kind_of Client
+      it 'assigns @selected_client' do
+        expect(assigns[:selected_client]).to be_kind_of Client
+      end
+
+      it 'assigns @projects' do
+        expect(assigns[:projects]).to eq client.projects.to_a
+      end
     end
 
-    it 'assigns @projects' do
-      expect(assigns[:projects]).to eq client.projects.to_a
+    context 'when user doesnot master' do
+      login_user(master: false)
+      before{req}
+      should_be_success
+
+      it 'assigns @projects' do
+        expect(assigns[:projects]).to eq current_user.projects
+      end
     end
-  end # end of describe #index
+  end
 
   describe '#new' do
     run_zabbix_server
@@ -50,45 +68,31 @@ describe ProjectsController, :type => :controller do
   end # end of describe #new
 
   describe 'POST #create' do
-    let(:create_request){post :create, project: project_hash}
-
-    stubize_zabbix
+    let(:req){post :create, project: project_hash}
     run_zabbix_server
+    stubize_zabbix
 
-    context 'when valid params' do
-      before{create_request}
-      it 'should create a new project and save' do
-        expect(assigns(:project)).to be_a Project
-      end
-
-      it 'should redirect to projects_path with right id' do
-        expect(response).to redirect_to(projects_path(client_id: client.id))
-      end
-
-      it 'notice should not be nil' do
-        expect(create_request.request.flash[:notice]).to_not be_nil
-      end
-    end
-
-    context 'when invalid params' do
+    context 'when save fail' do
       before do
         allow_any_instance_of(Project).to receive(:save).and_return(false)
-        create_request
+        req
       end
-
-      it 'should not be saved' do
-        expect(assigns(:project)).not_to be_persisted
-      end
-
-      it do
-        expect(response).to redirect_to(new_project_path(client_id: client.id))
-      end
-
-      it 'alert should not be nil' do
-        expect(create_request.request.flash[:alert]).to_not be_nil
-      end
+      it {is_expected.to redirect_to new_project_path(client_id: client.id)}
     end
-  end # end of describe post #create
+
+    context 'when zabbix error' do
+      before do
+        allow(_zabbix).to receive(:create_usergroup).and_raise
+        req
+      end
+      it {is_expected.to redirect_to new_project_path(client_id: client.id)}
+    end
+
+    context 'when success' do
+      before{req}
+      it {is_expected.to redirect_to projects_path(client_id: client.id)}
+    end
+  end
 
   describe 'PATCH #update' do
     let(:new_name){'foobarhogehoge'}
@@ -183,6 +187,106 @@ describe ProjectsController, :type => :controller do
 
       it 'should flash alert' do
         expect(request.request.flash[:alert]).to eq err_msg
+      end
+    end
+  end
+
+  describe '#not_for_system' do
+    controller ProjectsController do
+      before_action :set_project
+      before_action :not_for_system
+      def foo
+        render text: 'success!!!'
+      end
+    end
+    before{routes.draw{resources(:projects){collection{get :foo}}}}
+    let(:req){get :foo, id: project.id}
+
+    context 'when project is not system' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when project is system' do
+      before do
+        allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
+        req
+      end
+      it {is_expected.to redirect_to projects_path(client_id: client.id)}
+    end
+  end
+
+  describe '#client_exist' do
+    controller ProjectsController do
+      before_action :client_exist
+      def foo
+        render text: 'success!!!'
+      end
+    end
+    before{routes.draw{resources(:projects){collection{get :foo}}}}
+    let(:req){get :foo, client_id: client.id}
+
+    context 'when client_id is blank' do
+      let(:client){double('client', id: nil)}
+      before{req}
+      should_be_success
+    end
+
+    context 'when client does not exists' do
+      before do
+        client.destroy
+        req
+      end
+      it {is_expected.to redirect_to clients_path}
+    end
+
+    context 'when client exitst' do
+      before{req}
+      should_be_success
+    end
+  end
+
+  describe '#project_exist' do
+    controller ProjectsController do
+      before_action :project_exist
+      def foo
+        render text: 'success!!!'
+      end
+    end
+    before{routes.draw{resources(:projects){collection{get :foo}}}}
+    let(:req){get :foo, id: project.id}
+
+    context 'when id is blank' do
+      let(:project){double('project', id: nil)}
+      before{req}
+      should_be_success
+    end
+
+    context 'when project exists' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when project does not exists' do
+      stubize_zabbix
+      before{project.destroy}
+      context 'when user not master' do
+        login_user(master: false)
+        before{req}
+        it {is_expected.to redirect_to projects_path}
+      end
+
+      context 'when client_id is present' do
+        before do
+          session[:client_id] = client.id
+          req
+        end
+        it {is_expected.to redirect_to projects_path(client_id: client.id)}
+      end
+
+      context 'when client_id is blank' do
+        before{req}
+        it {is_expected.to redirect_to clients_path}
       end
     end
   end
