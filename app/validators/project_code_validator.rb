@@ -9,11 +9,6 @@
 class ProjectCodeValidator < ActiveModel::Validator
   def validate(record)
     code = record.code
-    unless code.kind_of?(String)
-      record.errors[:code] << "should be a String"
-      return
-    end
-
     if code == 'master'
       record.errors[:code] << "should not be 'master'"
       return
