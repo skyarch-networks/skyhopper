@@ -107,7 +107,7 @@
     var current_percentage = parseInt( progress_bar.attr("area-valuenow") );
 
     progress_alert.text(data.message);
-    //  進捗していればプログレスバーを進める
+    // 進捗していればプログレスバーを進める
     if (data.percentage !== null && parseInt(data.percentage) > current_percentage ) {
       progress_bar.attr("style", "width: " + data.percentage + "%").attr("area-valuenow", data.percentage);
     }
