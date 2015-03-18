@@ -202,34 +202,10 @@ class ChefServer::Deployment
   end
 
   def init_knife_rb
-    admin_pem     = ''
-    validator_pem = ''
-    crt = ''
-
     exec_ssh do |ssh|
       ssh.shell do |sh|
         sh.execute! 'cd /tmp/'
-
-        # TODO: SCPでとってくる
-        sh.execute!("sudo cat #{User}.pem") do |process|
-          process.on_output do |pr, data|
-            admin_pem = data
-          end
-        end
-
-        # TODO: SCPでとってくる
-        sh.execute!("sudo cat #{Org}.pem") do |process|
-          process.on_output do |pr, data|
-            validator_pem = data
-          end
-        end
-
-        # TODO: SCPでとってくる
-        sh.execute!("sudo cat /var/opt/opscode/nginx/ca/#{fqdn}.crt") do |process|
-          process.on_output do |pr, data|
-            crt = data
-          end
-        end
+        sh.execute! "sudo cp /var/opt/opscode/nginx/ca/#{fqdn}.crt ./"
 
         sh.close!
         sh.execute! 'exit'
@@ -241,22 +217,16 @@ class ChefServer::Deployment
     path = Rails.root.join('tmp', 'chef')
     FileUtils.mkdir_p(path) unless Dir.exists?(path)
 
-    File.open(path.join("#{User}.pem"), 'w', 0600) do |f|
-      f.write(admin_pem)
-      f.flush
-    end
+    exec_scp("/tmp/#{User}.pem", path)
+    File.chmod(0600, path.join("#{User}.pem"))
 
-    File.open(path.join("#{Org}.pem"), 'w', 0600) do |f|
-      f.write(validator_pem)
-      f.flush
-    end
+    exec_scp("/tmp/#{Org}.pem", path)
+    File.chmod(0600, path.join("#{Org}.pem"))
 
     crt_path = path.join('trusted_certs')
     Dir.mkdir(crt_path) unless Dir.exists?(crt_path)
-    File.open(crt_path.join("#{fqdn}.crt"), 'w') do |f|
-      f.write(crt)
-      f.flush
-    end
+    exec_scp("/tmp/#{fqdn}.crt", crt_path)
+
 
     File.open(path.join('knife.rb'), 'w') do |f|
       f.write <<-EOF
@@ -281,5 +251,16 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
 
   def exec_ssh(opt = {}, &block)
     Net::SSH.start(fqdn, EC2User, {key_data: [@infra.ec2_private_key.value]}.merge(opt), &block)
+  end
+
+  # @param [String] src File Source
+  # @param [String] dst File Destination
+  def exec_scp(src, dst)
+    ssh_key = @infra.ec2_private_key
+    ssh_key.output_temp
+    scp_cmd = "scp -i #{ssh_key.path_temp} #{EC2User}@#{fqdn}:#{src} #{dst}"
+    system(scp_cmd)
+  ensure
+    ssh_key.close_temp
   end
 end
