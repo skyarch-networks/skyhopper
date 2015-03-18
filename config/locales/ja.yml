@@ -71,8 +71,7 @@ ja:
       show:              'SkyHopper へようこそ!'
       log_directory:     'データベースに出力できなかったログを保存するディレクトリ'
       aws_description:   |
-        SkyHopper ではシステムが AWS を使用します。
-        例えば、SkyHopper が使用する Chef Server や Zabbix Server を管理するために使用します。
+        SkyHopper では、Chef Server や Zabbix Server などを AWS 上に構築します。
         ここで設定された秘密鍵などは SkyHopper システムのみが使用し、ユーザーが作成するインフラには使用されません。
       access_key:        'SkyHopper のシステムが使用する AWS の Access Key ID（個別のインフラの管理には使用されません）'
       secret_access_key: 'SkyHopper のシステムが使用する AWS の Secret Access Key（個別のインフラの管理には使用されません）'
@@ -295,8 +294,8 @@ ja:
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       no_data: |
         データが取得出来ませんでした。
-          1. Zabbix Agentをインストール後直ぐにデータは取得出来ません。時間をおいて再度試して下さい。
-          2. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server, Client etc)。ご確認下さい。
+          1. Zabbix Agent のインストール直後はデータの取得が出来ません。時間をおいて再度試して下さい。
+          2. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server / Client etc...)。
     explanations:
       cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
       ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
@@ -304,9 +303,9 @@ ja:
       swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
       http:                     ' HTTP の応答監視及び応答コードを監視致します'
       smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
-      url:                      'ご指定がの FQDN のハッシュ値もしくは特定文字列があるか監視致します'
-      mysql:                    ' MySQL アカウントを作成し、MySQLへのログイン可能か監視致します'
-      postgresql:               ' PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視致します'
+      url:                      'ご指定の FQDN のハッシュ値もしくは特定文字列があるか監視します'
+      mysql:                    ' MySQL アカウントを作成し、MySQLへのログイン可能か監視します'
+      postgresql:               ' PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視します'
 
 
   users:
@@ -323,13 +322,13 @@ ja:
       add: '新規ユーザー'
       sync: 'Zabbix と同期'
     msg:
-      role:                'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます'
+      role:                'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
       created:             'ユーザーアカウントが正常に追加されました'
       updated:             'ユーザーアカウントが正常に更新されました'
       deleted:             'ユーザーアカウントが正常に削除されました'
-      synced:              '全てのユーザーアカウントは正常にZabbixと同期されました。'
+      synced:              '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
       only_master:         'ユーザー管理は master ユーザーのみが行うことができます'
-      confirm_sync_zabbix: 'Zabbixとユーザーを同期しますか?'
+      confirm_sync_zabbix: 'Zabbix Server とユーザーを同期しますか?'
 
 
   chef_servers:
@@ -339,7 +338,7 @@ ja:
       init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
-      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行してください'
+      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
       confirm_start:  'Chef Server を起動しますか?'
       confirm_stop:   'Chef Server を停止しますか?'
       start:          'Chef Server を起動しています...'

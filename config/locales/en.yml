@@ -70,10 +70,9 @@ en:
       created:           'SkyHopper was successfully setup'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database will be stored in this directory'
-      aws_description:  | # XXX: I'm not good at English!
-        SkyHopper system use AWS.
-        For example SkyHopper use to manage Chef Server and Zabbix Server used SkyHopper.
-        Secret keys configured by this form used only by SkyHopper system, users do not use those.
+      aws_description:  |
+        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
+        The following settings of the AWS you entered are used only to construct the Chef Server and the Zabbix Server.
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
@@ -293,21 +292,20 @@ en:
       invalid_parameters:      'Owing to incorrect username or password, cannot connect Zabbix'
       not_running:             'Zabbix is not running'
       trigger_setting_warning: 'Threshold will be updated only the selected item'
-      # TODO: translation!
-      # no_data: |
-      #   データが取得出来ませんでした。
-      #     1. Zabbix Agentをインストール後直ぐにデータは取得出来ません。時間をおいて再度試して下さい。
-      #     2. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server, Client etc)。ご確認下さい。
-    # explanations:
-    #   cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-    #   ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-    #   loadaverage:              '過去一分間のロードアベレージが一定の値を超えた時にアラートを鳴らします'
-    #   swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
-    #   http:                     ' HTTP の応答監視及び応答コードを監視致します'
-    #   smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
-    #   url:                      'ご指定がの FQDN のハッシュ値もしくは特定文字列があるか監視致します'
-    #   mysql:                    ' MySQL アカウントを作成し、MySQLへのログイン可能か監視致します'
-    #   postgresql:               ' PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視致します'
+      no_data: |
+        Failed to fetch any data.
+          1. Cannot fetch any data just after installing the Zabbix Agent. You should retry after a short intervals.
+          2. Required packages may not have been installed into the server. (Ex. MySQL Server, Client etc...)
+    explanations:
+      cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
+      ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
+      loadaverage:              '過去一分間のロードアベレージが一定の値を超えた時にアラートを鳴らします'
+      swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
+      http:                     ' HTTP の応答監視及び応答コードを監視致します'
+      smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
+      url:                      'ご指定の FQDN のハッシュ値もしくは特定文字列があるか監視します'
+      mysql:                    ' Create an account of MySQL, and try to login to MySQL.'
+      postgresql:               ' Create an account of PostgreSQL, and try to login to PostgreSQL.'
 
 
   users:
@@ -324,13 +322,13 @@ en:
       add: 'Add User'
       sync: 'Synchronize with Zabbix'
     msg:
-      role:                'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
+      role:                'Master users can see all of infrastructures. Admin users can change assigned infrastructures.'
       created:             'An account was successfully created.'
       updated:             'An account was successfully updated.'
       deleted:             'An account was successfully deleted.'
-      synced:              'All accounts was successfully synchronized with Zabbix.'
-      only_master:         'User Management feature is only permitted to Master users.'
-      confirm_sync_zabbix: 'Do you synchronize with Zabbix?'
+      synced:              'All of accounts was successfully synchronized with Zabbix.'
+      only_master:         'The feature of User Management is only permitted to Master users.'
+      confirm_sync_zabbix: 'Do you want to synchronize users with Zabbix?'
 
 
   chef_servers:
@@ -340,7 +338,7 @@ en:
       init_ec2:       'Initializing EC2 Instance...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting Chef Server...'
-      complete:       'Chef Server was successfully built. Copy from RAILS_ROOT/tmp/chef/ to ~/.chef/'
+      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart the SkyHopper.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'
       start:          'Stopping Chef Server...'
@@ -354,7 +352,7 @@ en:
       init_ec2:       'Initializing EC2 Instance...'
       install_zabbix: 'Installing Zabbix Server...'
       setting_zabbix: 'Setting Zabbix Server...'
-      complete:       'Zabbix Server was successfully built.'
+      complete:       'Zabbix Server was successfully constructed.'
       confirm_start:  'Do you want to start Zabbix Server?'
       confirm_stop:   'Do you want to stop Zabbix Server?'
       start:          'Stopping Zabbix Server...'
@@ -365,14 +363,14 @@ en:
     description: 'Description'
     settings:    'Settings'
     msg:
-      registered_to_elb:    'EC2 instance was successfully registered to ELB'
-      deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB'
+      registered_to_elb:    'EC2 instance was successfully registered to ELB.'
+      deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
     confirm:
-      register:   'Do you want to register EC2 instance to ELB?'
-      deregister: 'Do you want to deregister EC2 instance from ELB?'
+      register:   'Do you want to register EC2 instance with ELB?'
+      deregister: 'Do you want to release registration of EC2 instance from ELB?'
 
   resources:
     screen_name: 'Screen Name'
