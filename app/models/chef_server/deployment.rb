@@ -210,18 +210,21 @@ class ChefServer::Deployment
       ssh.shell do |sh|
         sh.execute! 'cd /tmp/'
 
+        # TODO: SCPでとってくる
         sh.execute!("sudo cat #{User}.pem") do |process|
           process.on_output do |pr, data|
             admin_pem = data
           end
         end
 
+        # TODO: SCPでとってくる
         sh.execute!("sudo cat #{Org}.pem") do |process|
           process.on_output do |pr, data|
             validator_pem = data
           end
         end
 
+        # TODO: SCPでとってくる
         sh.execute!("sudo cat /var/opt/opscode/nginx/ca/#{fqdn}.crt") do |process|
           process.on_output do |pr, data|
             crt = data

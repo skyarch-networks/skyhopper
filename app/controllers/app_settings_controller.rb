@@ -131,6 +131,8 @@ class AppSettingsController < ApplicationController
         chef_url  = chef_server.url
         begin
           # updateされるのは追加されたSettingではなく、AppSetting.getによって取得されるもの。
+          AppSetting.clear_cache
+
           set = AppSetting.get
           set.update!(
             chef_url:  chef_url,
