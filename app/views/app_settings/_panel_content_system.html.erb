@@ -15,8 +15,7 @@
 
 
   <fieldset>
-    <legend><%= t('app_settings.title.aws') %></legend>
-    <div class="help-block"><%= simple_format(t('app_settings.msg.aws_description')) %></div>
+    <legend><%= t('app_settings.title.aws') %>&nbsp;<button type="button" class="btn btn-link" data-toggle="popover" title="AWS" data-content="<%= t('app_settings.msg.aws_description') %>"><%= glyphicon 'question-sign' %></button></legend>
 
     <div class="form-group">
       <label for="access_key" class="col-sm-3 control-label"><%= t 'app_settings.access_key' %></label>

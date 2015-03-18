@@ -5,5 +5,6 @@ jQuery ->
   $('.dropdown-toggle').dropdown()
   $(".popovermore").popover().click( (e)->e.preventDefault() )
   $(".popover-help").popover().click( (e)->e.preventDefault() )
+  $("button[data-toggle=popover]").popover().click( (e)->e.preventDefault() )
   $(document).on("click", "a[href=#]", (e)->e.preventDefault() )
   $(document).on("click", ".disabled", (e)->e.preventDefault() )
