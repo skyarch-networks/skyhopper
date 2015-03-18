@@ -48,9 +48,6 @@ class AppSettingsController < ApplicationController
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
-    app_setting.chef_url  = DummyText
-    app_setting.chef_name = DummyText
-    app_setting.chef_key  = DummyText
     app_setting.save!
     AppSetting.clear_cache
 
@@ -125,28 +122,6 @@ class AppSettingsController < ApplicationController
           Rails.logger.debug("ChefServer creating > #{data} #{msg}")
           ws.push(build_ws_message(data, msg))
         end
-
-        chef_key  = chef_server.key
-        chef_name = ChefServer::Deployment::User
-        chef_url  = chef_server.url
-        begin
-          # updateされるのは追加されたSettingではなく、AppSetting.getによって取得されるもの。
-          AppSetting.clear_cache
-
-          set = AppSetting.get
-          set.update!(
-            chef_url:  chef_url,
-            chef_name: chef_name,
-            chef_key:  chef_key
-          )
-        rescue => ex
-          # TODO: show stack trace
-          Rails.logger.error(ex.message)
-          Rails.logger.error(ex.backtrace)
-          ws.push(build_ws_message(:error, ex.message))
-          next
-        end
-        AppSetting.clear_cache
 
         Rails.logger.debug("ChefServer creating > complete")
         ws.push(build_ws_message(:complete))

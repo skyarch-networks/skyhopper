@@ -58,11 +58,8 @@ EOS
 # ---------------------- AppSetting
 unless AppSetting.get
   AppSetting.create(
-    chef_url: DummyText,
-    chef_name: DummyText,
-    chef_key: DummyText,
     aws_region: DummyText,
-    log_directory: DummyText
+    log_directory: DummyText,
   )
 end
 

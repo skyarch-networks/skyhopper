@@ -242,10 +242,6 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
     end
   end
 
-  def key
-    return File.read(Rails.root.join('tmp', 'chef', "#{User}.pem"))
-  end
-
 
   private
 
