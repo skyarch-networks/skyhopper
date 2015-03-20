@@ -1300,10 +1300,10 @@
 
   // for infrastructures#new
   var new_ec2_key = function () {
-    bootstrap_confirm(t('infrastructures.infrastructure'), 'Would you like to create new KeyPair to AWS?').done(function () {
+    bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
       var name   = $('#keypair_name').val();
       if(!name){
-        bootstrap_alert(t('infrastructures.infrastructure'), 'Please input keypair name.', 'danger');
+        bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
         return;
       }
       var region_input = $('#infrastructure_region');
