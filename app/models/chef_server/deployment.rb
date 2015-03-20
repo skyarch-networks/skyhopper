@@ -10,7 +10,8 @@ require 'pathname'
 require "json"
 
 class ChefServer::Deployment
-  PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.1-1.x86_64.rpm".freeze
+  PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.5-1.el6.x86_64.rpm".freeze
+
   TemplatePath = Rails.root.join("lib/cf_templates/chef_server.json").freeze
   EC2User      = "ec2-user".freeze
 
@@ -185,12 +186,12 @@ class ChefServer::Deployment
       ssh.shell do |sh|
         sh.execute! 'cd /tmp/'
         sh.execute! "sudo rpm -Uvh #{PackageURL}"
+        sh.execute! "sudo dd if=/dev/zero of=/swap bs=1M count=600"
+        sh.execute! "sudo mkswap /swap"
+        sh.execute! "sudo swapon /swap"
         sh.execute! 'sudo chef-server-ctl reconfigure'
         sh.execute! 'sudo chef-server-ctl start'
-        # XXX: 1回目の user-create が何故か Internal Server Error でコケるので、2回やる。(とても闇)
         Rails.logger.debug("exec user-create")
-        sh.execute! "sudo chef-server-ctl user-create #{User} #{FullName} #{EMail} #{PassWord} --filename #{User}.pem", &log
-        Rails.logger.debug("exec user-create 2")
         sh.execute! "sudo chef-server-ctl user-create #{User} #{FullName} #{EMail} #{PassWord} --filename #{User}.pem", &log
         Rails.logger.debug("exec org-create")
         sh.execute! "sudo chef-server-ctl org-create #{Org} #{FullOrg} --association_user #{User} --filename #{Org}.pem", &log
@@ -239,6 +240,17 @@ validation_key           '~/.chef/#{Org}.pem'
 chef_server_url          '#{url}'
 syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
       EOF
+    end
+
+    exec_ssh do |ssh|
+      ssh.shell do |sh|
+        sh.execute! 'cd /tmp/'
+        sh.execute! "sudo rm -f #{User}.pem"
+        sh.execute! "sudo rm -f #{Org}.pem"
+        sh.execute! "sudo rm -f #{fqdn}.crt"
+        sh.close!
+        sh.execute! 'exit'
+      end
     end
   end
 
