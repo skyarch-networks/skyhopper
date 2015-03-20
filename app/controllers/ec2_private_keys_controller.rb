@@ -11,7 +11,7 @@ class Ec2PrivateKeysController < ApplicationController
     begin
       key = Ec2PrivateKey.new_from_aws(name, project_id, region)
     rescue => ex
-      render text: ex.message
+      render text: ex.message, status: 500 and return
     end
 
     render json: key
