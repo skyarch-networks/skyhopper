@@ -372,6 +372,14 @@ ja:
       register:   'EC2 インスタンスを ELB に登録しますか?'
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
 
+  ec2_private_keys:
+    msg:
+      please_name: '鍵ペア名を入力してください'
+    btn:
+      new: '新規作成'
+    confirm:
+      create: '新規にAWSへ鍵ペアを登録しますか?'
+
   resources:
     screen_name: '表示名'
     msg:

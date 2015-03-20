@@ -29,6 +29,12 @@
       <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
       <input id="keypair_name" class="form-control ec2-private-key-name allow-empty" type="text" name="infrastructure[keypair_name]">
 
+      <div class="row">
+        <div class="col-sm-12">
+          <button class="btn btn-primary create_ec2_key"><%= t 'ec2_private_keys.btn.new' %></button>
+        </div>
+      </div>
+
       <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
       <textarea id="keypair_value" class="form-control ec2-private-key-value allow-empty" name="infrastructure[keypair_value]" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
       <p class="help-block"><%= t('infrastructures.msg.help_keypair') %></p>

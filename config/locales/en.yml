@@ -372,6 +372,14 @@ en:
       register:   'Do you want to register EC2 instance with ELB?'
       deregister: 'Do you want to release registration of EC2 instance from ELB?'
 
+  ec2_private_keys:
+    msg:
+      please_name: 'Please input keypair name'
+    btn:
+      new: 'New KeyPair'
+    confirm:
+      create: 'Would you like to create new KeyPair to AWS?'
+
   resources:
     screen_name: 'Screen Name'
     msg:
