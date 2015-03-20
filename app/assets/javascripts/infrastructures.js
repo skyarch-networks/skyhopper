@@ -1323,7 +1323,7 @@
         var textarea = $('#keypair_value');
         textarea.val(value);
         textarea.attr('readonly', true);
-        region_input.attr('disabled', true);
+        region_input.attr('readonly', true);
 
         // download file.
         var file = new File([value], name + '.pem');
