@@ -170,12 +170,10 @@ class Stack
   def get_resources
     aws_resources = instances_for_resources
     return aws_resources.map do |aws_resource|
-      screen_name = if aws_resource.resource_type == "AWS::EC2::Instance"
+      if aws_resource.resource_type == "AWS::EC2::Instance"
         physical_id = aws_resource.physical_resource_id
         tags = @infra.ec2.instances[physical_id].tags
-        tags['Name']
-      else
-        nil
+        screen_name = tags['Name']
       end
 
       r = Resource.new(

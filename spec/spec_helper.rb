@@ -50,10 +50,11 @@ RSpec.configure do |config|
   config.include Capybara::DSL, :type => :feature
 
   config.include FactoryGirl::Syntax::Methods
-  config.include Devise::TestHelpers, :type => :controller
-  config.include Devise::TestHelpers, :type => :view
-  config.extend ControllerMacros, :type => :controller
-  config.extend ControllerMacros, :type => :view
+  config.include Devise::TestHelpers, type: :controller
+  config.include Devise::TestHelpers, type: :view
+  config.include ControllerMacrosInclude, type: :controller
+  config.extend ControllerMacros, type: :controller
+  config.extend ControllerMacros, type: :view
   config.extend StackStub
   config.extend InfraStub
   config.extend ZabbixStub

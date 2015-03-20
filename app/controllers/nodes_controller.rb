@@ -208,11 +208,12 @@ class NodesController < ApplicationController
     @current_attributes = node.get_attributes
   end
 
+  # PUT /nodes/:id/yum_update
   def yum_update
     physical_id = params.require(:id)
-    infra_id = params.require(:infra_id)
-    security = params.require(:security) == "security"
-    exec = params.require(:exec) == "exec"
+    infra_id    = params.require(:infra_id)
+    security    = params.require(:security) == "security"
+    exec        = params.require(:exec) == "exec"
 
     infra = Infrastructure.find(infra_id)
 

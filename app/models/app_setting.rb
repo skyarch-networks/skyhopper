@@ -38,7 +38,7 @@ class AppSetting < ActiveRecord::Base
 
     # setting is Symbol key Hash
     def validate(setting)
-      [:chef_key, :log_directory].each do |col|
+      [:log_directory].each do |col|
         begin
           val = setting.fetch(col)
         rescue KeyError
@@ -47,27 +47,12 @@ class AppSetting < ActiveRecord::Base
         raise ValidateError, "#{col} must be a pathname!" unless is_pathname?(val)
       end
 
-      [:chef_url].each do |col|
-        begin
-          val = setting.fetch(col)
-        rescue KeyError
-          next
-        end
-        begin
-          URI::parse(val)
-        rescue URI::InvalidURIError
-          raise ValidateError, "#{col} must be a url"
-        end
-      end
-
       begin
         val = setting.fetch(:aws_region)
       rescue KeyError
       else
         raise ValidateError, "aws_region must be an aws region" unless AWS::Regions.include?(val)
       end
-
-      # TODO: chef_name
 
       return true
     end

@@ -178,10 +178,12 @@ describe ChefServer::Deployment, :type => :model do
 
     before do
       allow(subject).to receive(:fqdn).and_return('ec2-xx-xx-x-xx.us-west-2.compute.amazonaws.com')
+      allow(subject).to receive(:exec_ssh).with(any_args)
+      allow(subject).to receive(:exec_scp).with(any_args)
+      allow(File).to receive(:chmod).with(kind_of(Integer), any_args)
     end
 
-    it 'should call exec_ssh' do
-      expect(subject).to receive(:exec_ssh).with(any_args)
+    it 'should not raise error' do
       subject.init_knife_rb
     end
   end

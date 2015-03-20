@@ -11,16 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150219060005) do
+ActiveRecord::Schema.define(version: 20150318082757) do
 
   create_table "app_settings", force: :cascade do |t|
-    t.string   "chef_url",           limit: 255,   null: false
-    t.string   "chef_name",          limit: 255,   null: false
-    t.text     "chef_key",           limit: 65535, null: false
-    t.string   "aws_region",         limit: 255,   null: false
+    t.string   "aws_region",         limit: 255, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "log_directory",      limit: 255,   null: false
+    t.string   "log_directory",      limit: 255, null: false
     t.integer  "ec2_private_key_id", limit: 4
     t.string   "zabbix_fqdn",        limit: 255
     t.string   "zabbix_user",        limit: 255

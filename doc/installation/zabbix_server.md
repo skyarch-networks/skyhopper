@@ -48,3 +48,14 @@ Chef を実行します。
 Cook を実行している状況がリアルタイムに表示されます。
 
 Cookが終了したら Zabbix Server のデプロイは終了です。
+最後に、SkyHopper に Zabbix Server のユーザー情報を設定します。
+
+6 ユーザー情報の設定
+-------------------------
+
+画面左上の設定から、Zabbix Server を選択してください。
+username と password を入力してください。
+デフォルト値は、admin, ilikerandompasswords です。
+
+
+ユーザー情報の登録が完了したら、Zabbix Server の設定は完了です。

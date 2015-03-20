@@ -137,7 +137,7 @@ module Node::Attribute
   #   },
   #   'zabbix' => {
   #     'agent' => {
-  #       'servers' => 'example.com'
+  #       'servers' => ['example.com']
   #     }
   #   }
   # }

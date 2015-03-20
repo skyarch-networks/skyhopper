@@ -52,7 +52,7 @@ describe AppSetting, :type => :model do
     context 'when have dummy setting' do
       before do
         klass.delete_all
-        create(:app_setting, chef_name: ::DummyText)
+        create(:app_setting, aws_region: ::DummyText)
       end
 
       subject{klass.class_variable_set(:@@get, nil);klass.set?}
@@ -63,7 +63,7 @@ describe AppSetting, :type => :model do
 
   describe '.clear_dummy' do
     before do
-      create(:app_setting, chef_name: ::DummyText)
+      create(:app_setting, aws_region: ::DummyText)
     end
 
     it 'should clear dummy setting' do
@@ -110,18 +110,6 @@ describe AppSetting, :type => :model do
       end
     end
 
-    context 'when invalid url' do
-      let(:arg){{chef_url: ''}}
-
-      before do
-        allow(URI).to receive(:parse).and_raise(URI::InvalidURIError)
-      end
-
-      it do
-        expect{klass.validate(arg)}.to raise_error klass::ValidateError
-      end
-    end
-
     context 'when invalid region' do
       let(:arg){{aws_region: 'hoge-region'}}
 
@@ -131,7 +119,7 @@ describe AppSetting, :type => :model do
     end
 
     context 'when valid setting' do
-      let(:arg){{chef_url: 'https://192.0.2.1'}}
+      let(:arg){{log_directory: '/foo/bar'}}
 
       it 'should return true' do
         expect(klass.validate(arg)).to be_truthy
@@ -166,7 +154,7 @@ describe AppSetting, :type => :model do
 
   describe 'dummy?' do
     context 'when dummy' do
-      subject{create(:app_setting, chef_name: ::DummyText)}
+      subject{create(:app_setting, aws_region: ::DummyText)}
 
       it 'should return true' do
         expect(subject.dummy?).to be true
