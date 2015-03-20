@@ -156,4 +156,61 @@ describe ClientsController, :type => :controller do
       end
     end
   end
+
+  describe '#not_for_system' do
+    controller ClientsController do
+      before_action :set_client
+      before_action :not_for_system
+      def test
+        render text: 'success!'
+      end
+    end
+    before{routes.draw{resources(:clients){collection{get :test}}}}
+    let(:req){get :test, id: client.id}
+    let(:client){create(:client)}
+
+    context 'when client is not system' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when client is system' do
+      before do
+        allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
+        req
+      end
+      it {is_expected.to redirect_to clients_path}
+    end
+  end
+
+  describe '#client_exist' do
+    controller ClientsController do
+      before_action :client_exist
+      def test
+        render text: 'success!'
+      end
+    end
+    before{routes.draw{resources(:clients){collection{get :test}}}}
+    let(:req){get :test, id: client.id}
+    let(:client){create(:client)}
+
+    context 'when not have id' do
+      let(:client){double('client', id: nil)}
+      before{req}
+      should_be_success
+    end
+
+    context 'when clinet does not exists' do
+      before do
+        client.delete
+        req
+      end
+      it {is_expected.to redirect_to clients_path}
+    end
+
+    context 'when client is exists' do
+      before{req}
+      should_be_success
+    end
+  end
 end

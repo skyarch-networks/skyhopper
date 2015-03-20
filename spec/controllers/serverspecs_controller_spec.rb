@@ -248,6 +248,84 @@ describe ServerspecsController, :type => :controller do
     end
   end
 
+  describe '#run' do
+    let(:infra){create(:infrastructure)}
+    let(:physical_id){'i-hogefuga111'}
+    let(:serverspecs){create_list(:serverspec, 3)}
+    let(:serverspec_ids){serverspecs.map(&:id)}
+    let(:failure_count){0}
+    let(:pending_count){0}
+    let(:resp){{
+      summary: {failure_count: failure_count, pending_count: pending_count},
+      examples: [{status: 'pending', full_description: 'hogefuga'}]
+    }}
+    let(:req){post :run, physical_id: physical_id, infra_id: infra.id, serverspec_ids: serverspec_ids}
+    let(:status){Rails.cache.read(ServerspecStatus::TagName + physical_id)}
+
+    before do
+      allow_any_instance_of(Node).to receive(:run_serverspec).and_return(resp)
+    end
+
+    context 'when selected auto generated' do
+      let(:serverspec_ids){serverspecs.map(&:id).push('-1')}
+
+      it 'should call run_serverspec with auto generated flag true' do
+        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), true)
+        req
+      end
+    end
+
+    context 'when not selected auto generated' do
+      it 'should call run_serverspec with auto generated flag false' do
+        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), false)
+        req
+      end
+    end
+
+    context 'when Serverspec command is failed' do
+      let(:err_msg){'This is Error <3'}
+      before do
+        allow_any_instance_of(Node).to receive(:run_serverspec).and_raise(err_msg)
+        req
+      end
+      should_be_failure
+
+      it 'should write serverspec status' do
+        expect(status).to eq ServerspecStatus::Failed
+      end
+
+      it 'should render message' do
+        expect(response.body).to eq err_msg
+      end
+    end
+
+    context 'when serverspec result is fail' do
+      let(:failure_count){1}
+      before{req}
+      should_be_success
+      it 'should write serverspec status' do
+        expect(status).to eq ServerspecStatus::Failed
+      end
+    end
+
+    context 'when serverspec result is pending' do
+      let(:pending_count){1}
+      before{req}
+      should_be_success
+      it 'should write serverspec status' do
+        expect(status).to eq ServerspecStatus::Pending
+      end
+    end
+
+    context 'when serverspec result is success' do
+      before{req}
+      should_be_success
+      it 'should write serverspec status' do
+        expect(status).to eq ServerspecStatus::Success
+      end
+    end
+  end
+
   describe "#create_for_rds" do
     let(:infra_id){infrastructure.id}
     let(:physical_id){"i-abcd1234"}

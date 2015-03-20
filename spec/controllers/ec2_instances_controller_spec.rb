@@ -49,8 +49,8 @@ describe Ec2InstancesController, :type => :controller do
 
     let(:instance){double('instance', start: nil)}
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return(instance)
-      allow(Ec2InstancesController).to receive(:notify_ec2_status).with(instance, :running)
+      expect_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
+      expect_any_instance_of(Ec2InstancesController).to receive(:notify_ec2_status).with(instance, :running)
       req
     end
 
@@ -62,8 +62,8 @@ describe Ec2InstancesController, :type => :controller do
 
     let(:instance){double('instance', stop: nil)}
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return(instance)
-      allow(Ec2InstancesController).to receive(:notify_ec2_status).with(instance, :stopped)
+      expect_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
+      expect_any_instance_of(Ec2InstancesController).to receive(:notify_ec2_status).with(instance, :stopped)
       req
     end
 
@@ -75,7 +75,7 @@ describe Ec2InstancesController, :type => :controller do
 
     let(:instance){double('instance', reboot: nil)}
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return(instance)
+      allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
       req
     end
 
@@ -142,6 +142,50 @@ describe Ec2InstancesController, :type => :controller do
 
     it 'should render message' do
       expect(response.body).to eq I18n.t('ec2_instances.msg.deregistered_from_elb')
+    end
+  end
+
+  describe '#notify_ec2_status' do
+    controller Ec2InstancesController do
+      def test
+        instance = double_instance()
+        status   = params.require(:status)
+        notify_ec2_status(instance, status)
+        render text: 'success!'
+      end
+    end
+    before{routes.draw{resources(:ec2_instances){collection{get :test}}}}
+    let(:req){get :test, status: status, infra_id: infra.id}
+    let(:status){'running'}
+
+    before do
+      allow(Thread).to receive(:new_with_db).and_yield
+      allow_any_instance_of(Ec2InstancesController).to receive(:double_instance).and_return(instance)
+    end
+
+    context 'when instance error' do
+      let(:instance){double('instance', physical_id: physical_id)}
+      let(:err_msg){'this is error.'}
+      before do
+        expect(instance).to receive(:wait_status).with(status).and_raise(err_msg)
+      end
+
+      it 'should push error message' do
+        expect_any_instance_of(WSConnector).to receive(:push_as_json).with(error: err_msg)
+        req
+      end
+    end
+
+    context 'when success' do
+      let(:instance){double('instance', physical_id: physical_id)}
+      before do
+        expect(instance).to receive(:wait_status).with(status)
+      end
+
+      it 'should push error message' do
+        expect_any_instance_of(WSConnector).to receive(:push_as_json).with(error: nil, msg: kind_of(String))
+        req
+      end
     end
   end
 end
