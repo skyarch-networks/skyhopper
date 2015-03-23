@@ -567,11 +567,11 @@
             .fail(alert_danger(reload));
         });
       },
-      stateLabel: function (state) {
+      state: function (state){
         if (state === 'InService') {
-          return 'label-success';
+          return 'success';
         }
-        return 'label-danger';
+        return 'danger';
       },
     },
     compiled: function () {
