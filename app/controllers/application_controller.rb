@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_action :appsetting_set?, unless: :appsetting_controller
   before_action :restore_locale
   before_action :set_notifications
 
@@ -63,5 +64,15 @@ class ApplicationController < ActionController::Base
 
     msg = I18n.t('monitoring.msg.not_running')
     yield msg
+  end
+
+  def appsetting_set?
+    unless AppSetting.set?
+      redirect_to app_settings_path
+    end
+  end
+
+  def appsetting_controller
+    controller_name == 'app_settings'
   end
 end
