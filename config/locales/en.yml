@@ -45,7 +45,9 @@ en:
       loading:       ' Loading...'
       empty:         '%{name} is empty'
       no_permission: 'Permission denied'
-      key_droppable: 'Please either insert a private key or drag-and-drop a file that has a private key stored'
+      key_droppable: |
+        Please either insert a private key or drag-and-drop the file of private key.
+        It will be inserted automatically if you generate a new keypair.
 
 
   views:
@@ -375,9 +377,10 @@ en:
 
   ec2_private_keys:
     msg:
+      enter_or_generate: 'You should generate a new keypair or enter one of the keypairs existing at AWS'
       please_name: 'Please input keypair name'
     btn:
-      new: 'New KeyPair'
+      new: 'Generate new KeyPair'
     confirm:
       create: 'Would you like to create new KeyPair to AWS?'
 

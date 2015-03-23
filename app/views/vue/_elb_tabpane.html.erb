@@ -13,24 +13,17 @@
           <a href="#" v-on="click: show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
       </div>
       <table class="table">
-        <thead>
-          <tr>
-            <th><%= t 'infrastructures.genre' %></th>
-            <th><%= t 'common.value' %></th>
-          </tr>
-        </thead>
-
         <tbody>
           <tr>
-            <td>State</td>
+            <th>State</td>
             <td><span class="label label-{{state(e.state)}}">{{* e.state}}</span></td>
           </tr>
           <tr>
-            <td>ReasonCode</td>
+            <th>ReasonCode</td>
             <td>{{* e.reason_code}}</td>
           </tr>
           <tr>
-            <td>Description</td>
+            <th>Description</td>
             <td>{{* e.description}}</td>
           </tr>
         </tbody>
@@ -41,8 +34,8 @@
     </div>
   </div>
 
-  <div class="form-actions-top col-sm-12">
-    <div class="input-group col-xs-3" v-if="unregistereds.length !== 0">
+  <div class="form-actions-top col-xs-12" v-if="unregistereds.length !== 0">
+    <div class="input-group col-xs-12 col-sm-5">
       <select class="form-control input-sm" v-model="selected_ec2">
         <option>Select!</option>
         <option v-repeat="unregistereds" v-attr="value: physical_id">{{* screen_name}}</option>
