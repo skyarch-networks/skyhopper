@@ -104,7 +104,9 @@ class ProjectsController < ApplicationController
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.created') and return
     rescue => ex
-      @project.destroy
+      # In many case, create hostgroup was failed.
+      # If use Project#destroy, Project detached from zabbix by model hook.
+      @project.delete
       flash[:alert] = ex.message
 
       on_error.() and return
