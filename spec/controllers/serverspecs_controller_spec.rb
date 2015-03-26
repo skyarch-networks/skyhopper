@@ -202,16 +202,19 @@ describe ServerspecsController, :type => :controller do
     shared_context 'get_page' do |bool|
       let(:infra){create(:infrastructure)}
       let(:specs){create_list(:serverspec, 3, infrastructure: infra)}
+      let(:physical_id){SecureRandom.base64(10)}
+      let(:dish){create(:dish, serverspecs: [specs.sample])}
+      let(:resource){create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra)}
 
       before do
         specs
+        resource
         node = double(have_auto_generated: bool)
-        allow(node).to receive(:details).and_return({'normal' => {'dish_id' => 0}})
         allow(Node).to receive(:new).and_return(node)
       end
 
       before do
-        get :select, physical_id: 'i-hogehoge', infra_id: infra.id
+        get :select, physical_id: physical_id, infra_id: infra.id
       end
 
       should_be_success
@@ -220,6 +223,10 @@ describe ServerspecsController, :type => :controller do
 
       it 'render serverspecs/_select' do
         is_expected.to render_template('serverspecs/select')
+      end
+
+      it 'should assign @selected_serverspec_ids' do
+        expect(assigns[:selected_serverspec_ids]).to eq dish.serverspec_ids
       end
 
       it 'assigns @individual_serverspecs' do

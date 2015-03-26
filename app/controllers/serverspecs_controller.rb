@@ -91,19 +91,19 @@ class ServerspecsController < ApplicationController
 
   # GET /serverspecs/select
   def select
-    physical_id       = params.require(:physical_id)
-    infrastructure_id = params.require(:infra_id)
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
 
-    node    = Node.new(physical_id)
-    dish_id = node.details['normal']['dish_id'].to_i
-    if dish_id == 0     # when no apply dish
-      @selected_serverspec_ids = []
+    dish = Infrastructure.find(infra_id).resource(physical_id).dish
+    @selected_serverspec_ids = if dish     # when no apply dish
+      dish.serverspec_ids
     else
-      @selected_serverspec_ids = Dish.find(dish_id).serverspecs.map(&:id)
+      []
     end
 
-    serverspecs = Serverspec.for_infra(infrastructure_id)
-    @individual_serverspecs, @global_serverspecs = serverspecs.partition{ |spec| spec.infrastructure_id }
+    serverspecs = Serverspec.for_infra(infra_id)
+    @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
+    node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
   end
 

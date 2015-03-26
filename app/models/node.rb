@@ -86,10 +86,9 @@ knife bootstrap #{fqdn} \
     ChefAPI.destroy('client', @name)
   end
 
-  def update_runlist(runlist, dish_id = nil)
+  def update_runlist(runlist)
     n = ChefAPI.find(:node, @name)
     n.run_list = runlist
-    n.normal["dish_id"] = dish_id if dish_id
     n.save
   end
 

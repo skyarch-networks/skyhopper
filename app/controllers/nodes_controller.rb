@@ -77,7 +77,7 @@ class NodesController < ApplicationController
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
-      @selected_dish = n.details['normal']['dish_id']
+      @selected_dish = infra.resource(physical_id).dish_id
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true
@@ -233,7 +233,10 @@ class NodesController < ApplicationController
     infra_logger_update_runlist(node)
 
     begin
-      node.update_runlist(runlist, dish_id)
+      node.update_runlist(runlist)
+      r = infrastructure.resource(physical_id)
+      r.dish_id = dish_id
+      r.save!
     rescue => ex
       infra_logger_fail("Updating runlist for #{physical_id} is failed. \n #{ex.message}")
       return {status: false, message: ex.message}

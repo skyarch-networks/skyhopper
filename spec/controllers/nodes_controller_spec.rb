@@ -11,9 +11,8 @@ require_relative '../spec_helper'
 describe NodesController, :type => :controller do
   login_user
   let(:infra){create(:infrastructure)}
-  let(:physical_id){'i-hogehoge'}
+  let(:physical_id){attributes_for(:resource)[:physical_id]}
 
-  # TODO: Threadつらい
   describe '#run_bootstrap' do
     let(:req){get :run_bootstrap, id: physical_id, infra_id: infra.id}
     let(:fqdn){'sky.example.com'}
@@ -70,11 +69,9 @@ describe NodesController, :type => :controller do
     let(:dish){create(:dish)}
     let(:details){{
       "run_list" => ['a', 'b', 'f'],
-      'normal' => {
-        'dish_id' => dish.id
-      }
     }}
     before do
+      create(:resource, physical_id: physical_id, infrastructure: infra, dish: dish)
       allow_any_instance_of(Node).to receive(:details).and_return(details)
     end
 
@@ -138,7 +135,7 @@ describe NodesController, :type => :controller do
       end
 
       it 'should assigns @selected_dish' do
-        expect(assigns[:selected_dish]).to eq details['normal']['dish_id']
+        expect(assigns[:selected_dish]).to eq dish.id
       end
 
       it 'should assigns @info' do
@@ -356,13 +353,17 @@ describe NodesController, :type => :controller do
     controller NodesController do
       def show
         physical_id = params.require(:id)
-        infra_id = params.require(:infra_id)
-        infra = Infrastructure.find(infra_id)
-        render json: update_runlist(physical_id: physical_id, infrastructure: infra)
+        dish_id     = params.require(:dish_id)
+        infra_id    = params.require(:infra_id)
+        infra       = Infrastructure.find(infra_id)
+        render json: update_runlist(physical_id: physical_id, infrastructure: infra, dish_id: dish_id)
       end
     end
-    let(:req){get :show, id: physical_id, infra_id: infra.id}
+    let(:dish){create(:dish)}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
+    let(:req){get :show, id: physical_id, infra_id: infra.id, dish_id: dish.id}
     before do
+      resource
       allow_any_instance_of(NodesController).to receive(:infra_logger_update_runlist).with(kind_of(Node))
     end
 
@@ -384,6 +385,11 @@ describe NodesController, :type => :controller do
       it 'should update cook and serverspec status' do
         expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::UnExecuted
         expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::UnExecuted
+      end
+
+      it 'resource should have dish' do
+        resource.reload
+        expect(resource.dish).to eq dish
       end
     end
 
