@@ -24,7 +24,9 @@ class NodesController < ApplicationController
 
 
 
-  # GET /nodes/i-0b8e7f12/run_bootstrap
+  # GET /nodes/:id/run_bootstrap
+  # @param [String] id physical_id of EC2 instance.
+  # @param [String] infra_id Infrastructure id.
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
@@ -162,10 +164,7 @@ class NodesController < ApplicationController
       render text: ret[:message], status: 500 and return
     end
 
-    Thread.new(infrastructure, dish, node, physical_id) do |infrastructure, dish, node, physical_id|
-      # TODO: error handling
-      cook_nodes(infrastructure, physical_id, sync: true)
-    end
+    cook_nodes(infrastructure, physical_id)
 
     render text: I18n.t('nodes.msg.cook_started')
   end
@@ -224,65 +223,67 @@ class NodesController < ApplicationController
 
   private
 
+  # @param [String] physical_id physical_id of EC2 instance.
+  # @param [Infrastructure] infrastructure
+  # @param [Array<String>] runlist Array of cookbook/recipe
+  # @param [String] dish_id Dish id.
+  # @return [Hash] status and message. If update fail, status is false and message is error message.
   def update_runlist(physical_id: nil, infrastructure: nil, runlist: nil, dish_id: nil)
     node = Node.new(physical_id)
     infra_logger_update_runlist(node)
 
     begin
       node.update_runlist(runlist, dish_id)
-
     rescue => ex
       infra_logger_fail("Updating runlist for #{physical_id} is failed. \n #{ex.message}")
       return {status: false, message: ex.message}
-    else
-      # change cookstatus to unexected
-      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::UnExecuted)
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
-
-      infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
-      return {status: true, message: nil}
     end
+
+    # change cookstatus to unexected
+    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::UnExecuted)
+    Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+
+    infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
+    return {status: true, message: nil}
   end
 
 
   # TODO: refactor
-  def cook_nodes(infrastructure, *physical_ids, sync: false)
-    thread_cook = Thread.new_with_db(infrastructure, physical_ids, current_user.id) do |infrastructure, physical_ids, user_id|
-      physical_ids.each do |physical_id|
-        infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+  def cook_nodes(infrastructure, physical_id)
+    Thread.new_with_db(infrastructure, physical_id, current_user.id) do |infrastructure, physical_id, user_id|
+      infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
-        Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
-        Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
-        node = Node.new(physical_id)
-        node.wait_search_index
-        log = []
+      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
+      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+      node = Node.new(physical_id)
+      node.wait_search_index
+      log = []
 
-        ws = WSConnector.new('cooks', physical_id)
+      ws = WSConnector.new('cooks', physical_id)
 
-        begin
-          node.cook(infrastructure) do |line|
-            ws.push_as_json({v: line})
-            Rails.logger.debug "cooking #{physical_id} > #{line}"
-            log << line
-          end
-        rescue => ex
-          Rails.logger.debug(ex)
-          Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
-          infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-          ws.push_as_json({v: false})
-        else
-          Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
-          infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-          ws.push_as_json({v: true})
+      begin
+        node.cook(infrastructure) do |line|
+          ws.push_as_json({v: line})
+          Rails.logger.debug "cooking #{physical_id} > #{line}"
+          log << line
         end
+      rescue => ex
+        Rails.logger.debug(ex)
+        Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
+        infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+        ws.push_as_json({v: false})
+        next
       end
+
+      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
+      infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      ws.push_as_json({v: true})
     end
-    thread_cook.join if sync
   end
 
   # TODO: DRY
   def exec_yum_update(infra, physical_id, security=true, exec=false)
-    thread_yum = Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
+    Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
       yum_screen_name = "yum "
       yum_screen_name << " check" unless exec
       yum_screen_name << " security" if security
@@ -315,6 +316,5 @@ class NodesController < ApplicationController
         ws.push_as_json({v: true})
       end
     end
-
   end
 end

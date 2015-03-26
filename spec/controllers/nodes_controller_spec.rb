@@ -14,13 +14,31 @@ describe NodesController, :type => :controller do
   let(:physical_id){'i-hogehoge'}
 
   # TODO: Threadつらい
-  describe 'GET #run bootstrap' do
+  describe '#run_bootstrap' do
+    let(:req){get :run_bootstrap, id: physical_id, infra_id: infra.id}
+    let(:fqdn){'sky.example.com'}
     before do
-      allow(Thread).to receive(:new_with_db)
-      get :run_bootstrap, id: physical_id, infra_id: infra.id
+      expect(Thread).to receive(:new_with_db).and_yield
+      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :dns_name).and_return(fqdn)
+      allow_any_instance_of(WSConnector).to receive(:push_as_json).with(any_args)
     end
 
-    should_be_success
+    context 'when success' do
+      before do
+        expect(Node).to receive(:bootstrap).with(fqdn, physical_id, infra)
+        req
+      end
+
+      should_be_success
+    end
+
+    context 'when failure' do
+      before do
+        expect(Node).to receive(:bootstrap).with(fqdn, physical_id, infra).and_raise()
+        req
+      end
+      should_be_success
+    end
   end
 
   describe "#show" do
@@ -228,7 +246,7 @@ describe NodesController, :type => :controller do
     end
   end
 
-  describe '#apply dish' do
+  describe '#apply_dish' do
     let(:dish){create(:dish)}
     let(:node){double(:node)}
     let(:ret){{status: status, message: "message"}}
@@ -238,6 +256,7 @@ describe NodesController, :type => :controller do
     before do
       allow(Dish).to receive(:find).with(dish.id.to_s).and_return(dish)
       allow(Node).to receive(:new).with(physical_id).and_return(node)
+      allow_any_instance_of(NodesController).to receive(:cook_nodes).with(infra, physical_id)
     end
 
     context "when runlist present?" do
@@ -330,6 +349,99 @@ describe NodesController, :type => :controller do
 
     it 'should render text' do
       expect(response.body).to eq I18n.t('nodes.msg.yum_update_started')
+    end
+  end
+
+  describe '#update_runlist' do
+    controller NodesController do
+      def show
+        physical_id = params.require(:id)
+        infra_id = params.require(:infra_id)
+        infra = Infrastructure.find(infra_id)
+        render json: update_runlist(physical_id: physical_id, infrastructure: infra)
+      end
+    end
+    let(:req){get :show, id: physical_id, infra_id: infra.id}
+    before do
+      allow_any_instance_of(NodesController).to receive(:infra_logger_update_runlist).with(kind_of(Node))
+    end
+
+    context 'when success' do
+      before do
+        Rails.cache.write(CookStatus::TagName + physical_id, nil)
+        Rails.cache.write(ServerspecStatus::TagName + physical_id, nil)
+        expect_any_instance_of(Node).to receive(:update_runlist)
+        req
+      end
+
+      should_be_success
+
+      it 'should status is true, message is nil' do
+        expect(JSON[response.body]['status']).to be true
+        expect(JSON[response.body]['message']).to be nil
+      end
+
+      it 'should update cook and serverspec status' do
+        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::UnExecuted
+        expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::UnExecuted
+      end
+    end
+
+    context 'when failure' do
+      let(:err_msg){'THIS IS ERROR!!!'}
+      before do
+        expect_any_instance_of(Node).to receive(:update_runlist).and_raise(err_msg)
+        req
+      end
+
+      should_be_success
+
+      it 'should status is false, message is error message' do
+        expect(JSON[response.body]['status']).to be false
+        expect(JSON[response.body]['message']).to eq err_msg
+      end
+    end
+  end
+
+  describe '#cook_nodes' do
+    controller NodesController do
+      def show
+        physical_id = params.require(:id)
+        infra_id = params.require(:infra_id)
+        infra = Infrastructure.find(infra_id)
+        cook_nodes(infra, physical_id)
+        render nothing: true
+      end
+    end
+    let(:req){get :show, id: physical_id, infra_id: infra.id}
+    before do
+      allow(Thread).to receive(:new_with_db).and_yield(infra, physical_id, current_user.id)
+      allow_any_instance_of(Node).to receive(:wait_search_index)
+      allow_any_instance_of(WSConnector).to receive(:push_as_json)
+    end
+
+    context 'when success' do
+      before do
+        allow_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+        req
+      end
+      should_be_success
+
+      it 'should cook status is Success' do
+        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::Success
+      end
+    end
+
+    context 'when failure' do
+      before do
+        allow_any_instance_of(Node).to receive(:cook).and_raise
+        req
+      end
+      should_be_success
+
+      it 'should cook status is Failed' do
+        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::Failed
+      end
     end
   end
 end
