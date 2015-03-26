@@ -8,6 +8,7 @@
 
 class Resource < ActiveRecord::Base
   belongs_to :infrastructure
+  belongs_to :dish
   has_many :resource_serverspecs
   has_many :serverspecs, through: :resource_serverspecs
 
