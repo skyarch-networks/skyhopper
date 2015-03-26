@@ -28,6 +28,8 @@ SkyHopper::Application.routes.draw do
     end
   end
 
+  resources :ec2_private_keys, only: [:create]
+
   resources :resources, only: [:index, :create]
 
   resources :nodes, only: [:update, :show, :edit] do

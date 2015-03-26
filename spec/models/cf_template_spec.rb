@@ -1,4 +1,4 @@
-#
+# #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
@@ -49,9 +49,42 @@ describe CfTemplate, :type => :model do
     end
   end
 
-  # TODO:
   describe '#create_cfparams_set' do
-    skip
+    let(:cft){create(:cf_template)}
+    let(:infra){create(:infrastructure)}
+    let(:subject){cft.create_cfparams_set(infra, params_inserted)}
+
+    context 'when not received params_inserted' do
+      let(:params_inserted){nil}
+      context 'when have KeyName' do
+        it {is_expected.to be_a Array}
+        it {expect(subject.size).to be 1}
+        it {expect(subject.first[:parameter_key]).to eq 'KeyName'}
+        it {expect(subject.first[:parameter_value]).to eq infra.keypairname}
+      end
+
+      context 'when not have KeyName' do
+        before do
+          v = JSON.parse(cft.value)
+          v['Parameters'].delete('KeyName')
+          cft.value = JSON.generate(v)
+          cft.save!
+        end
+        it {is_expected.to eq []}
+      end
+    end
+
+    context 'when received params_inserted' do
+      let(:params_inserted){{'foo' => 'bar', 'hoge' => 'fuga'}}
+
+      it{is_expected.to be_a Array}
+      it{expect(subject.size).to be 3}
+      it 'should be [{parameter_key: String, parameter_value: String}, ...]' do
+        subject.each do |val|
+          expect(val).to match(parameter_key: kind_of(String), parameter_value: kind_of(String))
+        end
+      end
+    end
   end
 
   describe '#parsed_cfparams' do

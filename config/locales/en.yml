@@ -45,7 +45,9 @@ en:
       loading:       ' Loading...'
       empty:         '%{name} is empty'
       no_permission: 'Permission denied'
-      key_droppable: 'Please either insert a private key or drag-and-drop a file that has a private key stored'
+      key_droppable: |
+        Please either insert a private key or drag-and-drop the file of private key.
+        It will be inserted automatically if you generate a new keypair.
 
 
   views:
@@ -182,7 +184,7 @@ en:
       no_dishes:          'No valid dishes available.'
       cooking:            'Cook being executed...'
       updating:           'yum command is in progress...'
-      bootstrap_finish:   '%{physical_id} was successfully registered in Chef Server.'
+      bootstrap_finish:   '%{physical_id} was successfully registered with Chef Server.'
       not_change_scale:   "Unnecessary to change to '%{type}'"
       changed_scale:      'Change scale to %{type}'
       runlist_updated:    'Runlist was successfully updated.'
@@ -276,34 +278,35 @@ en:
     config:               'Monitoring Configuration'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
-    explanation_triggers: 'Description of each threshold'
-    register_host:        'Register host to Zabbix'
+    explanation_triggers: 'Triggers'
+    register_host:        'Register infrastructure with Zabbix Server'
     btn:
-      create: 'Create Host'
+      create: 'Register'
       add:    'Add'
       edit:   'Edit'
       delete: 'Delete'
     msg:
-      host_creating:           'Creating Host...'
-      before_create_host:      'This infrastructure has not been registered on Zabbix Server'
-      created:                 'This infrastructure has been registered on Zabbix Server'
-      failure:                 'Failed to register on Zabbix'
-      not_selected:            'Monitoring options not selected yet'
-      invalid_parameters:      'Owing to incorrect username or password, cannot connect Zabbix'
-      not_running:             'Zabbix is not running'
-      trigger_setting_warning: 'Threshold will be updated only the selected item'
+      host_creating:           'Registering infrastructure...'
+      before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
+      created:                 'This infrastructure has been registered with Zabbix Server.'
+      failure:                 'Failed to register with Zabbix Server.'
+      not_selected:            'Monitoring options not selected yet.'
+      invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
+      not_running:             'Zabbix Server is not running.'
+      trigger_setting_warning: 'Threshold will be updated only the selected items.'
       no_data: |
         Failed to fetch any data.
-          1. Cannot fetch any data just after installing the Zabbix Agent. You should retry after a short intervals.
-          2. Required packages may not have been installed into the server. (Ex. MySQL Server, Client etc...)
+          1. Zabbix Agent may not have been installed into the server.
+          2. Cannot fetch any data just after installing the Zabbix Agent. You should retry after a short intervals.
+          3. Required package may not have been installed into the server. (Ex. MySQL Server, Client etc...)
     explanations:
-      cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-      ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-      loadaverage:              '過去一分間のロードアベレージが一定の値を超えた時にアラートを鳴らします'
-      swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
-      http:                     ' HTTP の応答監視及び応答コードを監視致します'
-      smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
-      url:                      'ご指定の FQDN のハッシュ値もしくは特定文字列があるか監視します'
+      cpu:                      'Average of CPU usage last a minute'
+      ram:                      'Average of free Memory last a minute'
+      loadaverage:              'Load Average last a minute'
+      swap:                     'Swap usage last a minute'
+      http:                     'HTTP request failed three times in a row'
+      smtp:                     'SMTP request failed three times in a row'
+      url:                      'Check Response body, Status code and Response time of specified URL'
       mysql:                    ' Create an account of MySQL, and try to login to MySQL.'
       postgresql:               ' Create an account of PostgreSQL, and try to login to PostgreSQL.'
 
@@ -320,15 +323,15 @@ en:
     unregistered:      'Unregistered'
     btn:
       add: 'Add User'
-      sync: 'Synchronize with Zabbix'
+      sync: 'Synchronize with Zabbix Server'
     msg:
       role:                'Master users can see all of infrastructures. Admin users can change assigned infrastructures.'
       created:             'An account was successfully created.'
       updated:             'An account was successfully updated.'
       deleted:             'An account was successfully deleted.'
-      synced:              'All of accounts was successfully synchronized with Zabbix.'
+      synced:              'All of accounts was successfully synchronized with Zabbix Server.'
       only_master:         'The feature of User Management is only permitted to Master users.'
-      confirm_sync_zabbix: 'Do you want to synchronize users with Zabbix?'
+      confirm_sync_zabbix: 'Do you want to synchronize users with Zabbix Server?'
 
 
   chef_servers:
@@ -371,6 +374,15 @@ en:
     confirm:
       register:   'Do you want to register EC2 instance with ELB?'
       deregister: 'Do you want to release registration of EC2 instance from ELB?'
+
+  ec2_private_keys:
+    msg:
+      enter_or_generate: 'You should generate a new keypair or enter one of the keypairs existing at AWS'
+      please_name: 'Please input keypair name'
+    btn:
+      new: 'Generate new KeyPair'
+    confirm:
+      create: 'Would you like to create new KeyPair to AWS?'
 
   resources:
     screen_name: 'Screen Name'

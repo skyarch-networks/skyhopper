@@ -76,7 +76,9 @@
 
       btn.prop('disabled', true);
       var frag = $(document.createDocumentFragment());
-      show_loading(frag);
+      var p = $("<p>");
+      frag.append(p);
+      show_loading(p);
       btn.after(frag);
       ajax_users_admin.sync_zabbix().done(function (data) {
         bootstrap_alert(t('users.title'), data).done(reload);

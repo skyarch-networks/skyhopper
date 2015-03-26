@@ -567,11 +567,11 @@
             .fail(alert_danger(reload));
         });
       },
-      stateLabel: function (state) {
+      state: function (state){
         if (state === 'InService') {
-          return 'label-success';
+          return 'success';
         }
-        return 'label-danger';
+        return 'danger';
       },
     },
     compiled: function () {
@@ -1298,6 +1298,47 @@
   };
 
 
+  // for infrastructures#new
+  var new_ec2_key = function () {
+    bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
+      var name   = $('#keypair_name').val();
+      if(!name){
+        bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+        return;
+      }
+      var region_input = $('#infrastructure_region');
+      var region = region_input.val();
+      var project_id = $('#infrastructure_project_id').val();
+
+      $.ajax({
+        url: '/ec2_private_keys',
+        type: 'POST',
+        data: {
+          name:       name,
+          region:     region,
+          project_id: project_id,
+        },
+      }).done(function (key) {
+        var value = key.value;
+        var textarea = $('#keypair_value');
+        textarea.val(value);
+        textarea.attr('readonly', true);
+        region_input.attr('readonly', true);
+
+        // download file.
+        var file = new File([value], name + '.pem');
+        var url = window.URL.createObjectURL(file);
+        var a = document.createElement('a');
+        a.href = url;
+        a.setAttribute('download', file.name);
+        document.body.appendChild(a);
+        a.click();
+      }).fail(function (xhr) {
+        bootstrap_alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+      });
+    });
+  };
+
 
 
 
@@ -1327,5 +1368,10 @@
     var infra_id = $(this).attr('infrastructure-id');
 
     delete_stack(infra_id);
+  });
+
+  $(document).on('click', '.create_ec2_key', function (e) {
+    e.preventDefault();
+    new_ec2_key();
   });
 })();

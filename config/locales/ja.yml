@@ -45,7 +45,9 @@ ja:
       loading:       ' 読み込み中...'
       empty:         '%{name}がありません'
       no_permission: '権限がありません'
-      key_droppable: '使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください'
+      key_droppable: |
+        使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください。
+        鍵ペアを新しく生成した場合は、自動的に入力されます。
 
 
   views:
@@ -276,36 +278,37 @@ ja:
     config:               '監視項目の設定'
     select:               '監視項目の選択'
     trigger:              '閾値の設定'
-    explanation_triggers: '各閾値の説明'
-    register_host:        'Zabbixにホストを登録'
+    explanation_triggers: 'トリガーの説明'
+    register_host:        'インフラストラクチャを Zabbix Server に登録'
     btn:
-      create: 'ホストの登録'
+      create: '登録'
       add:    '追加'
       edit:   '編集'
       delete: '削除'
     msg:
-      host_creating:           'ホストの登録を行っています。少々お待ちください...'
-      before_create_host:      'このインフラストラクチャはまだ Zabbix に登録されていません'
-      created:                 'インフラストラクチャを Zabbix に登録しました'
-      failure:                 'Zabbix の登録に失敗しました。'
-      not_selected:            '監視項目が設定されていません。操作から項目の設定をして下さい'
-      invalid_parameters:      'ユーザ名かパスワードが間違っている為 Zabbix に接続出来ません'
-      not_running:             ' Zabbix が起動していません'
+      host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
+      before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
+      created:                 'インフラストラクチャを Zabbix Server に登録しました'
+      failure:                 'Zabbix Server への登録に失敗しました'
+      not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
+      invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
+      not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       no_data: |
         データが取得出来ませんでした。
-          1. Zabbix Agent のインストール直後はデータの取得が出来ません。時間をおいて再度試して下さい。
-          2. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server / Client etc...)。
+          1. Zabbix Agent がインストールされていない可能性があります。
+          2. Zabbix Agent のインストール直後はデータの取得が出来ません。時間をおいて再度試して下さい。
+          3. サーバーに必要なパッケージがインストールされていない可能性があります(MySQL Server / Client etc...)。
     explanations:
-      cpu:                      ' CPU の過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-      ram:                      'メモリの過去一分間の使用率が一定の値を超えた時にアラートを鳴らします'
-      loadaverage:              '過去一分間のロードアベレージが一定の値を超えた時にアラートを鳴らします'
-      swap:                     ' SWAP の過去一分間の使用率がある一定の値を超えた時にアラートを鳴らします'
-      http:                     ' HTTP の応答監視及び応答コードを監視致します'
-      smtp:                     ' SMTP の応答監視及び応答コードを監視致します'
-      url:                      'ご指定の FQDN のハッシュ値もしくは特定文字列があるか監視します'
-      mysql:                    ' MySQL アカウントを作成し、MySQLへのログイン可能か監視します'
-      postgresql:               ' PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視します'
+      cpu:                      '過去一分間のCPU使用率の平均'
+      ram:                      '過去一分間の空きメモリの平均'
+      loadaverage:              '過去一分間のロードアベレージ'
+      swap:                     '過去一分間のスワップ領域の使用率の平均'
+      http:                     'HTTP リクエストが3回連続で失敗'
+      smtp:                     'SMTP リクエストが3回連続で失敗'
+      url:                      '指定したURLのレスポンス内容、ステータスコード、レスポンス時間'
+      mysql:                    'MySQL アカウントを作成し、MySQLへのログイン可能か監視します'
+      postgresql:               'PosgreSQL アカウントを作成し,  PosgreSQL へのログイン可能か監視します'
 
 
   users:
@@ -320,7 +323,7 @@ ja:
     unregistered:      '未登録'
     btn:
       add: '新規ユーザー'
-      sync: 'Zabbix と同期'
+      sync: 'Zabbix Server と同期'
     msg:
       role:                'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
       created:             'ユーザーアカウントが正常に追加されました'
@@ -371,6 +374,15 @@ ja:
     confirm:
       register:   'EC2 インスタンスを ELB に登録しますか?'
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
+
+  ec2_private_keys:
+    msg:
+      enter_or_generate: '新しく鍵ペアを生成するか、すでにAWSに登録されている鍵ペアを入力してください'
+      please_name: '鍵ペア名を入力してください'
+    btn:
+      new: '鍵ペアを新しく生成'
+    confirm:
+      create: 'AWSに鍵ペアを生成しますか??'
 
   resources:
     screen_name: '表示名'

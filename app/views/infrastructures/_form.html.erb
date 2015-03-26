@@ -26,6 +26,8 @@
     <label class="col-sm-2 control-label"><%= t 'app_settings.aws_keypair' %></label>
     <div class="col-sm-5">
 <% unless controller.action_name == "edit" %>
+      <p class="help-block"><%= t('ec2_private_keys.msg.enter_or_generate') %></p>
+      <p><button class="btn btn-default btn-sm create_ec2_key"><%= t 'ec2_private_keys.btn.new' %></button></p>
       <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
       <input id="keypair_name" class="form-control ec2-private-key-name allow-empty" type="text" name="infrastructure[keypair_name]">
 
