@@ -94,11 +94,11 @@ class ServerspecsController < ApplicationController
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
 
-    dish = Infrastructure.find(infra_id).resource(physical_id).dish
-    @selected_serverspec_ids = if dish     # when no apply dish
-      dish.serverspec_ids
-    else
-      []
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+    dish = resource.dish
+    @selected_serverspec_ids = resource.serverspec_ids
+    if dish # when applied dish
+      @selected_serverspec_ids |= dish.serverspec_ids
     end
 
     serverspecs = Serverspec.for_infra(infra_id)
@@ -152,6 +152,7 @@ class ServerspecsController < ApplicationController
       Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Success)
     end
 
+    Resource.where(infrastructure_id: infrastructure_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids
     infra_logger(server_spec_msg, server_spec_status)
 
     render text: render_msg, status: 200 and return
