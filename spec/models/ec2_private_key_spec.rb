@@ -21,4 +21,62 @@ describe Ec2PrivateKey do
       end
     end
   end
+
+  describe '.new_from_aws' do
+    let(:ec2){double('ec2')}
+    let(:key_pairs){double('key pairs')}
+    let(:key){double('key', private_key: attributes_for(:ec2_private_key)[:value])}
+
+    let(:name){'foobar'}
+    let(:project){create(:project)}
+    let(:region){'ap-northeast-1'}
+
+    subject{Ec2PrivateKey.new_from_aws(name, project.id, region)}
+
+    before do
+      allow_any_instance_of(Infrastructure).to receive(:ec2).and_return(ec2)
+      allow(ec2).to receive(:key_pairs).and_return(key_pairs)
+      allow(key_pairs).to receive(:create).with(name).and_return(key)
+    end
+
+    it{is_expected.to be_a Ec2PrivateKey}
+  end
+
+  describe '#path_temp' do
+    let(:key){build(:ec2_private_key)}
+    subject{key.path_temp}
+
+    context 'before output' do
+      it{is_expected.to be nil}
+    end
+
+    context 'after output' do
+      before{key.output_temp}
+      it{is_expected.to be_a String}
+
+      it 'file should exist' do
+        expect(File.exists?(subject)).to be true
+      end
+    end
+  end
+
+  describe '#close_temp' do
+    let(:key){build(:ec2_private_key)}
+    subject{key.close_temp}
+
+    context 'before output' do
+      it{is_expected.to be nil}
+    end
+
+    context 'after output' do
+      before{key.output_temp}
+
+      it 'file should not exist' do
+        path = key.path_temp
+        expect(File.exists?(path)).to be true
+        key.close_temp
+        expect(File.exists?(path)).to be false
+      end
+    end
+  end
 end

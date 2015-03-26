@@ -13,7 +13,9 @@ class Ec2PrivateKey < ActiveRecord::Base
 
   class << self
     # AWSに新たに鍵ペアを作成し, それを返す。
-    # @param [String] name
+    # @param [String] name KeyPair name.
+    # @param [String|Integer] project_id Project ID
+    # @param [String] region AWS region.
     # @return [Ec2PrivateKey] Created Ec2PrivateKey
     # @raise [AWS::EC2::Errors::InvalidKeyPair::Duplicate]
     def new_from_aws(name, project_id, region)
