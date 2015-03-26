@@ -6,10 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-FactoryGirl.define do  factory :cloud_watch do
-
-  end
-
+FactoryGirl.define do
   sequence(:id) {|n| n }
 
   sequence(:code) {|n| "a10#{n}a1a1" }

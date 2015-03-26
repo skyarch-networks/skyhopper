@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150318082757) do
+ActiveRecord::Schema.define(version: 20150326065023) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -129,6 +129,13 @@ ActiveRecord::Schema.define(version: 20150318082757) do
 
   add_index "projects", ["client_id"], name: "projects_client_id_fk", using: :btree
 
+  create_table "resource_serverspecs", force: :cascade do |t|
+    t.integer  "resource_id",   limit: 4, null: false
+    t.integer  "serverspec_id", limit: 4, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string   "physical_id",       limit: 255, null: false
     t.string   "type_name",         limit: 255, null: false
@@ -136,6 +143,7 @@ ActiveRecord::Schema.define(version: 20150318082757) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "screen_name",       limit: 255
+    t.integer  "dish_id",           limit: 4
   end
 
   add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree

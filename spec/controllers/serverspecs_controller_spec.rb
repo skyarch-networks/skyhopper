@@ -202,16 +202,19 @@ describe ServerspecsController, :type => :controller do
     shared_context 'get_page' do |bool|
       let(:infra){create(:infrastructure)}
       let(:specs){create_list(:serverspec, 3, infrastructure: infra)}
+      let(:physical_id){SecureRandom.base64(10)}
+      let(:dish){create(:dish, serverspecs: [create(:serverspec)])}
+      let(:resource){create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra, serverspecs: [create(:serverspec)])}
 
       before do
         specs
+        resource
         node = double(have_auto_generated: bool)
-        allow(node).to receive(:details).and_return({'normal' => {'dish_id' => 0}})
         allow(Node).to receive(:new).and_return(node)
       end
 
       before do
-        get :select, physical_id: 'i-hogehoge', infra_id: infra.id
+        get :select, physical_id: physical_id, infra_id: infra.id
       end
 
       should_be_success
@@ -220,6 +223,10 @@ describe ServerspecsController, :type => :controller do
 
       it 'render serverspecs/_select' do
         is_expected.to render_template('serverspecs/select')
+      end
+
+      it 'should assign @selected_serverspec_ids' do
+        expect(assigns[:selected_serverspec_ids]).to match_array(dish.serverspec_ids | resource.serverspec_ids)
       end
 
       it 'assigns @individual_serverspecs' do
@@ -250,8 +257,9 @@ describe ServerspecsController, :type => :controller do
 
   describe '#run' do
     let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-hogefuga111'}
+    let(:physical_id){SecureRandom.base64(10)}
     let(:serverspecs){create_list(:serverspec, 3)}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
     let(:serverspec_ids){serverspecs.map(&:id)}
     let(:failure_count){0}
     let(:pending_count){0}
@@ -263,6 +271,7 @@ describe ServerspecsController, :type => :controller do
     let(:status){Rails.cache.read(ServerspecStatus::TagName + physical_id)}
 
     before do
+      resource
       allow_any_instance_of(Node).to receive(:run_serverspec).and_return(resp)
     end
 
@@ -306,6 +315,10 @@ describe ServerspecsController, :type => :controller do
       it 'should write serverspec status' do
         expect(status).to eq ServerspecStatus::Failed
       end
+      it 'should be updated Resource#serverspecs' do
+        resource.reload
+        expect(resource.serverspec_ids).to eq serverspec_ids
+      end
     end
 
     context 'when serverspec result is pending' do
@@ -315,6 +328,10 @@ describe ServerspecsController, :type => :controller do
       it 'should write serverspec status' do
         expect(status).to eq ServerspecStatus::Pending
       end
+      it 'should be updated Resource#serverspecs' do
+        resource.reload
+        expect(resource.serverspec_ids).to eq serverspec_ids
+      end
     end
 
     context 'when serverspec result is success' do
@@ -322,6 +339,10 @@ describe ServerspecsController, :type => :controller do
       should_be_success
       it 'should write serverspec status' do
         expect(status).to eq ServerspecStatus::Success
+      end
+      it 'should be updated Resource#serverspecs' do
+        resource.reload
+        expect(resource.serverspec_ids).to eq serverspec_ids
       end
     end
   end
