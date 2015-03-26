@@ -8,6 +8,8 @@
 
 class Resource < ActiveRecord::Base
   belongs_to :infrastructure
+  has_many :resource_serverspecs
+  has_many :resources, through: :dish_serverspecs
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
