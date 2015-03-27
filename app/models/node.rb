@@ -8,6 +8,10 @@
 
 require 'tempfile'
 require 'open3'
+require 'fileutils'
+require 'net/scp'
+require 'tmpdir'
+require 'rbconfig'
 
 class Node
   include ::Node::Attribute
@@ -119,23 +123,20 @@ knife bootstrap #{fqdn} \
     (all_role & roles).present?
   end
 
-  # run_spec_list => ServerspecのidのArray
-  def run_serverspec(infrastructure_id, run_spec_list, selected_auto_generated)
-    require 'json'
-    require 'rbconfig'
-
+  # serverspec_ids => ServerspecのidのArray
+  def run_serverspec(infra_id, serverspec_ids, selected_auto_generated)
     # get params
-    infra = Infrastructure.find(infrastructure_id)
+    infra = Infrastructure.find(infra_id)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
-    raise ServerspecError, 'specs is empty' if run_spec_list.empty? and ! selected_auto_generated
+    raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
 
     if selected_auto_generated
       local_path = scp_specs(ec2key.path_temp)
     end
 
-    run_spec_list_path = run_spec_list.map do |spec|
+    run_spec_list_path = serverspec_ids.map do |spec|
       ::Serverspec.to_file(spec)
     end
 
@@ -160,17 +161,13 @@ knife bootstrap #{fqdn} \
     # create result
     result = JSON::parse(out, symbolize_names: true)
     result[:examples].each do |e|
-      # status   =>   "passed" or "failed" or "pending"
-      if e[:exception] then
-        e[:exception].delete(:backtrace)
-      end
+      e[:exception].delete(:backtrace) if e[:exception]
     end
     Rails.logger.debug(result)
     result
   ensure
     ec2key.close_temp
 
-    require 'fileutils'
     FileUtils::rm_rf(run_spec_list_path) if run_spec_list_path
     if selected_auto_generated then
       FileUtils::rm_rf(local_path, secure: true)
@@ -224,9 +221,6 @@ knife bootstrap #{fqdn} \
   end
 
   def scp_specs(sshkey_path)
-    require 'net/scp'
-    require 'tmpdir'
-
     d = details
     remote_path =
       begin
