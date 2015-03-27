@@ -118,7 +118,7 @@ class ServerspecsController < ApplicationController
     infra_logger_serverspec_start(selected_auto_generated, serverspec_ids)
 
     begin
-      server_spec_response = Node.new(physical_id).run_serverspec(infrastructure_id, serverspec_ids, selected_auto_generated)
+      resp = Node.new(physical_id).run_serverspec(infrastructure_id, serverspec_ids, selected_auto_generated)
     rescue => ex
       # serverspec が正常に実行されなかったとき
       logger.error ex
@@ -129,24 +129,22 @@ class ServerspecsController < ApplicationController
       render text: ex.message, status: 500 and return
     end
 
-    if server_spec_response[:summary][:failure_count] != 0 then
-      failed_specs = server_spec_response[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}
-      server_spec_status = false
-      server_spec_msg    = "serverspec for #{physical_id} is failed. failure specs: \n#{failed_specs.join("\n")}"
-      render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: failed_specs.join("\n"))
-    elsif server_spec_response[:summary][:pending_count] != 0 then
-      pending_specs = server_spec_response[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}
-      server_spec_status = true
-      server_spec_msg    = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{pending_specs.join("\n")}"
-      render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: pending_specs.join("\n"))
-    else
-      server_spec_status = true
-      server_spec_msg    = "serverspec for #{physical_id} is successfully finished."
+    case resp[:status_text]
+    when ServerspecStatus::Success
+      log_msg    = "serverspec for #{physical_id} is successfully finished."
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
+    when ServerspecStatus::Pending
+      pending_specs = resp[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}
+      log_msg       = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{pending_specs.join("\n")}"
+      render_msg    = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: pending_specs.join("\n"))
+    when ServerspecStatus::Failed
+      failed_specs = resp[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}
+      log_msg      = "serverspec for #{physical_id} is failed. failure specs: \n#{failed_specs.join("\n")}"
+      render_msg   = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: failed_specs.join("\n"))
     end
 
     Resource.where(infrastructure_id: infrastructure_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids
-    infra_logger(server_spec_msg, server_spec_status)
+    infra_logger(log_msg, resp[:status])
 
     render text: render_msg, status: 200 and return
   end
