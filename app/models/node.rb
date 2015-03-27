@@ -124,12 +124,12 @@ knife bootstrap #{fqdn} \
     require 'json'
     require 'rbconfig'
 
-    raise ServerspecError, 'specs is empty' if run_spec_list.empty? and ! selected_auto_generated
-
     # get params
     infra = Infrastructure.find(infrastructure_id)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
+
+    raise ServerspecError, 'specs is empty' if run_spec_list.empty? and ! selected_auto_generated
 
     if selected_auto_generated
       local_path = scp_specs(ec2key.path_temp)
