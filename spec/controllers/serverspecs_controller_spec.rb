@@ -268,7 +268,6 @@ describe ServerspecsController, :type => :controller do
       examples: [{status: 'pending', full_description: 'hogefuga'}]
     }}
     let(:req){post :run, physical_id: physical_id, infra_id: infra.id, serverspec_ids: serverspec_ids}
-    let(:status){Rails.cache.read(ServerspecStatus::TagName + physical_id)}
 
     before do
       resource
@@ -299,10 +298,6 @@ describe ServerspecsController, :type => :controller do
       end
       should_be_failure
 
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Failed
-      end
-
       it 'should render message' do
         expect(response.body).to eq err_msg
       end
@@ -312,9 +307,6 @@ describe ServerspecsController, :type => :controller do
       let(:failure_count){1}
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Failed
-      end
       it 'should be updated Resource#serverspecs' do
         resource.reload
         expect(resource.serverspec_ids).to eq serverspec_ids
@@ -325,9 +317,6 @@ describe ServerspecsController, :type => :controller do
       let(:pending_count){1}
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Pending
-      end
       it 'should be updated Resource#serverspecs' do
         resource.reload
         expect(resource.serverspec_ids).to eq serverspec_ids
@@ -337,9 +326,6 @@ describe ServerspecsController, :type => :controller do
     context 'when serverspec result is success' do
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Success
-      end
       it 'should be updated Resource#serverspecs' do
         resource.reload
         expect(resource.serverspec_ids).to eq serverspec_ids

@@ -164,7 +164,18 @@ knife bootstrap #{fqdn} \
       e[:exception].delete(:backtrace) if e[:exception]
     end
     Rails.logger.debug(result)
-    result
+    result[:status] = result[:summary][:failure_count] == 0
+    result[:status_text] = if result[:status]
+      if result[:summary][:pending_count] == 0
+        ServerspecStatus::Success
+      else
+        ServerspecStatus::Pending
+      end
+    else
+      ServerspecStatus::Failed
+    end
+    Rails.cache.write(ServerspecStatus::TagName + @name, result[:status_text])
+    return result
   ensure
     ec2key.close_temp
 

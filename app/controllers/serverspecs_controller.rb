@@ -134,18 +134,15 @@ class ServerspecsController < ApplicationController
       server_spec_status = false
       server_spec_msg    = "serverspec for #{physical_id} is failed. failure specs: \n#{failed_specs.join("\n")}"
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: failed_specs.join("\n"))
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Failed)
     elsif server_spec_response[:summary][:pending_count] != 0 then
       pending_specs = server_spec_response[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}
       server_spec_status = true
       server_spec_msg    = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{pending_specs.join("\n")}"
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: pending_specs.join("\n"))
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Pending)
     else
       server_spec_status = true
       server_spec_msg    = "serverspec for #{physical_id} is successfully finished."
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Success)
     end
 
     Resource.where(infrastructure_id: infrastructure_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids

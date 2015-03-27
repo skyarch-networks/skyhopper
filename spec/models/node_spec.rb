@@ -131,10 +131,6 @@ describe Node, :type => :model do
     end
   end
 
-  describe '#scp_specs' do
-    skip
-  end
-
   describe 'have_auto_generated' do
     subject { Node.new("test") }
 
@@ -160,9 +156,10 @@ describe Node, :type => :model do
   end
 
   describe '#run_serverspec' do
-    subject{ Node.new('test') }
+    subject{ Node.new(physical_id) }
     let(:infra){create(:infrastructure)}
     let(:serverspec){create(:serverspec)}
+    let(:physical_id){SecureRandom.base64(10)}
 
     before do
       status = double()
@@ -175,7 +172,8 @@ describe Node, :type => :model do
         "backtrace": "piyo"
       }
     }
-  ]
+  ],
+  "summary": {}
 }
       EOS
       expect(status).to receive(:success?).and_return(true)
@@ -184,10 +182,14 @@ describe Node, :type => :model do
     end
 
     it 'return hash' do
-      infrastructure_id = 1
       serverspecs = [serverspec.id]
-
       expect(subject.run_serverspec(infra.id, serverspecs, false)).to be_kind_of(Hash)
+    end
+
+    it 'should update status' do
+      serverspecs = [serverspec.id]
+      subject.run_serverspec(infra.id, serverspecs, false)
+      expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Failed
     end
   end
 end
