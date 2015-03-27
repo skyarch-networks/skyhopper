@@ -19,7 +19,6 @@ describe NodesController, :type => :controller do
     before do
       expect(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :dns_name).and_return(fqdn)
-      allow_any_instance_of(WSConnector).to receive(:push_as_json).with(any_args)
     end
 
     context 'when success' do
@@ -363,8 +362,8 @@ describe NodesController, :type => :controller do
     let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
     let(:req){get :show, id: physical_id, infra_id: infra.id, dish_id: dish.id}
     before do
+      expect_any_instance_of(Node).to receive(:details).and_return({'run_list' => []})
       resource
-      allow_any_instance_of(NodesController).to receive(:infra_logger_update_runlist).with(kind_of(Node))
     end
 
     context 'when success' do
@@ -423,7 +422,6 @@ describe NodesController, :type => :controller do
     before do
       allow(Thread).to receive(:new_with_db).and_yield(infra, physical_id, current_user.id)
       allow_any_instance_of(Node).to receive(:wait_search_index)
-      allow_any_instance_of(WSConnector).to receive(:push_as_json)
     end
 
     context 'when success' do
