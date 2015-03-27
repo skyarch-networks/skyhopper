@@ -91,19 +91,19 @@ class ServerspecsController < ApplicationController
 
   # GET /serverspecs/select
   def select
-    physical_id       = params.require(:physical_id)
-    infrastructure_id = params.require(:infra_id)
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
 
-    node    = Node.new(physical_id)
-    dish_id = node.details['normal']['dish_id'].to_i
-    if dish_id == 0     # when no apply dish
-      @selected_serverspec_ids = []
-    else
-      @selected_serverspec_ids = Dish.find(dish_id).serverspecs.map(&:id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+    dish = resource.dish
+    @selected_serverspec_ids = resource.serverspec_ids
+    if dish # when applied dish
+      @selected_serverspec_ids |= dish.serverspec_ids
     end
 
-    serverspecs = Serverspec.for_infra(infrastructure_id)
-    @individual_serverspecs, @global_serverspecs = serverspecs.partition{ |spec| spec.infrastructure_id }
+    serverspecs = Serverspec.for_infra(infra_id)
+    @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
+    node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
   end
 
@@ -152,6 +152,7 @@ class ServerspecsController < ApplicationController
       Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Success)
     end
 
+    Resource.where(infrastructure_id: infrastructure_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids
     infra_logger(server_spec_msg, server_spec_status)
 
     render text: render_msg, status: 200 and return

@@ -174,4 +174,8 @@ class Infrastructure < ActiveRecord::Base
   def create_complete?
     return self.status == 'CREATE_COMPLETE'
   end
+
+  def resource(physical_id)
+    resources.find_by(physical_id: physical_id)
+  end
 end

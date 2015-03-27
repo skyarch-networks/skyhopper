@@ -8,7 +8,7 @@
 
 class Dish < ActiveRecord::Base
   belongs_to :project
-
+  has_many :resources
   has_many :dish_serverspecs
   has_many :serverspecs, through: :dish_serverspecs
 
