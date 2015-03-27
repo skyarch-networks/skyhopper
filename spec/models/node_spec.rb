@@ -159,13 +159,12 @@ describe Node, :type => :model do
     subject{ Node.new(physical_id) }
     let(:infra){create(:infrastructure)}
     let(:serverspec){create(:serverspec)}
-    let(:physical_id){SecureRandom.base64(10)}
+    let(:physical_id){SecureRandom.hex(10)}
 
     before do
       status = double()
       out = <<-EOS
 {
-  "hoge": "fuga",
   "examples": [
     {
       "exception": {
@@ -173,11 +172,14 @@ describe Node, :type => :model do
       }
     }
   ],
-  "summary": {}
+  "summary": {
+    "failure_count": 0,
+    "pending_count": 0
+  }
 }
       EOS
-      expect(status).to receive(:success?).and_return(true)
-      expect(Open3).to receive(:capture3).and_return([out, 'err', status])
+      allow(status).to receive(:success?).and_return(true)
+      allow(Open3).to receive(:capture3).and_return([out, 'err', status])
       expect(subject).to receive(:fqdn).and_return('example.com')
     end
 
@@ -189,7 +191,19 @@ describe Node, :type => :model do
     it 'should update status' do
       serverspecs = [serverspec.id]
       subject.run_serverspec(infra.id, serverspecs, false)
-      expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Failed
+      expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Success
+    end
+
+    context 'when command fail' do
+      before do
+        expect(Node).to receive(:exec_command).and_raise
+      end
+
+      it 'should update status' do
+        serverspecs = [serverspec.id]
+        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
+        expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Failed
+      end
     end
   end
 end

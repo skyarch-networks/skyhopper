@@ -163,7 +163,6 @@ knife bootstrap #{fqdn} \
     result[:examples].each do |e|
       e[:exception].delete(:backtrace) if e[:exception]
     end
-    Rails.logger.debug(result)
     result[:status] = result[:summary][:failure_count] == 0
     result[:status_text] = if result[:status]
       if result[:summary][:pending_count] == 0
@@ -174,8 +173,19 @@ knife bootstrap #{fqdn} \
     else
       ServerspecStatus::Failed
     end
+
+    case result[:status_text]
+    when ServerspecStatus::Pending
+      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}.join("\n")
+    when ServerspecStatus::Failed
+      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+    end
+
     Rails.cache.write(ServerspecStatus::TagName + @name, result[:status_text])
     return result
+  rescue => ex
+    Rails.cache.write(ServerspecStatus::TagName + @name, ServerspecStatus::Failed)
+    raise ex
   ensure
     ec2key.close_temp
 

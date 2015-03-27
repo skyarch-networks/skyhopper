@@ -273,21 +273,27 @@ describe ServerspecsController, :type => :controller do
 
     before do
       resource
-      allow_any_instance_of(Node).to receive(:run_serverspec).and_return(resp)
+      allow(ServerspecJob).to receive(:perform_now).and_return(resp)
     end
 
     context 'when selected auto generated' do
       let(:serverspec_ids){serverspecs.map(&:id).push('-1')}
 
       it 'should call run_serverspec with auto generated flag true' do
-        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), true)
+        expect(ServerspecJob).to receive(:perform_now).with(
+          physical_id, infra.id.to_param, kind_of(Integer),
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true,
+        )
         req
       end
     end
 
     context 'when not selected auto generated' do
       it 'should call run_serverspec with auto generated flag false' do
-        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), false)
+        expect(ServerspecJob).to receive(:perform_now).with(
+          physical_id, infra.id.to_param, kind_of(Integer),
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false,
+        )
         req
       end
     end
@@ -295,7 +301,7 @@ describe ServerspecsController, :type => :controller do
     context 'when Serverspec command is failed' do
       let(:err_msg){'This is Error <3'}
       before do
-        allow_any_instance_of(Node).to receive(:run_serverspec).and_raise(err_msg)
+        allow(ServerspecJob).to receive(:perform_now).and_raise(err_msg)
         req
       end
       should_be_failure
@@ -309,30 +315,18 @@ describe ServerspecsController, :type => :controller do
       let(:status_text){ServerspecStatus::Failed}
       before{req}
       should_be_success
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
 
     context 'when serverspec result is pending' do
       let(:status_text){ServerspecStatus::Pending}
       before{req}
       should_be_success
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
 
     context 'when serverspec result is success' do
       let(:status_text){ServerspecStatus::Success}
       before{req}
       should_be_success
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
   end
 

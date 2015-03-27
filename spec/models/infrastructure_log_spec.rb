@@ -10,6 +10,8 @@ require_relative '../spec_helper'
 
 describe InfrastructureLog, :type => :model do
   let(:klass){InfrastructureLog}
+  let(:infra){create(:infrastructure)}
+  let(:user){create(:user)}
 
   it {is_expected.to respond_to(:infrastructure_id)}
   it {is_expected.to respond_to(:status)}
@@ -17,7 +19,6 @@ describe InfrastructureLog, :type => :model do
   it {is_expected.to respond_to(:user_id)}
 
   describe '.for_infra' do
-    let(:infra){create :infrastructure}
     let(:logs){create_list :infrastructure_log, 3, infrastructure: infra}
     subject{klass.for_infra(infra.id)}
 
@@ -33,7 +34,7 @@ describe InfrastructureLog, :type => :model do
     end
 
     it do
-      expect(klass.success(infrastructure_id: 1, details: 'details', user_id: 'user')).to be_kind_of klass
+      expect(klass.success(infrastructure_id: infra.id, details: 'details', user_id: user.id)).to be_kind_of klass
     end
   end
 
@@ -43,7 +44,7 @@ describe InfrastructureLog, :type => :model do
     end
 
     it do
-      expect(klass.fail(infrastructure_id: 1, details: 'details', user_id: 'user')).to be_kind_of klass
+      expect(klass.fail(infrastructure_id: infra.id, details: 'details', user_id: user.id)).to be_kind_of klass
     end
   end
 end
