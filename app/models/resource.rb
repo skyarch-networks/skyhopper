@@ -16,4 +16,16 @@ class Resource < ActiveRecord::Base
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
   scope :s3,  -> {where(type_name: 'AWS::S3::Bucket')}
   scope :elb,  -> {where(type_name: 'AWS::ElasticLoadBalancing::LoadBalancer')}
+
+  # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
+  # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
+  # @return [Array<Serverspec>]
+  def all_serverspecs
+    self.serverspecs | (self.dish.try(:serverspecs) || [])
+  end
+
+  # XXX: パフォーマンスがきになる. all_serverspecs のほうが relation を返せば pluck が使える
+  def all_serverspec_ids
+    all_serverspecs.map{|x|x.id}
+  end
 end

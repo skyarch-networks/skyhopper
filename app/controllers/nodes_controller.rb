@@ -275,7 +275,7 @@ class NodesController < ApplicationController
         Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
         infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
         ws.push_as_json({v: false})
-        next
+        return
       end
 
       Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)

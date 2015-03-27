@@ -95,11 +95,7 @@ class ServerspecsController < ApplicationController
     infra_id    = params.require(:infra_id)
 
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    dish = resource.dish
-    @selected_serverspec_ids = resource.serverspec_ids
-    if dish # when applied dish
-      @selected_serverspec_ids |= dish.serverspec_ids
-    end
+    @selected_serverspec_ids = resource.all_serverspec_ids
 
     serverspecs = Serverspec.for_infra(infra_id)
     @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
