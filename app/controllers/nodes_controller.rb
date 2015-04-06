@@ -138,7 +138,10 @@ class NodesController < ApplicationController
 
     infrastructure = Infrastructure.find(infra_id)
 
-    cook_nodes(infrastructure, physical_id)
+    Thread.new_with_db do
+      cook_node(infrastructure, physical_id)
+    end
+
     render text: I18n.t('nodes.msg.runlist_applying'), status: 202
   end
 
@@ -164,7 +167,10 @@ class NodesController < ApplicationController
       render text: ret[:message], status: 500 and return
     end
 
-    cook_nodes(infrastructure, physical_id)
+    Thread.new_with_db do
+      cook_node(infrastructure, physical_id)
+      ServerspecJob.perform_now(physical_id, infra_id, current_user.id)
+    end
 
     render text: I18n.t('nodes.msg.cook_started')
   end
@@ -252,36 +258,35 @@ class NodesController < ApplicationController
 
 
   # TODO: refactor
-  def cook_nodes(infrastructure, physical_id)
-    Thread.new_with_db(infrastructure, physical_id, current_user.id) do |infrastructure, physical_id, user_id|
-      infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+  def cook_node(infrastructure, physical_id)
+    user_id = current_user.id
+    infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
-      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
-      node = Node.new(physical_id)
-      node.wait_search_index
-      log = []
+    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
+    Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+    node = Node.new(physical_id)
+    node.wait_search_index
+    log = []
 
-      ws = WSConnector.new('cooks', physical_id)
+    ws = WSConnector.new('cooks', physical_id)
 
-      begin
-        node.cook(infrastructure) do |line|
-          ws.push_as_json({v: line})
-          Rails.logger.debug "cooking #{physical_id} > #{line}"
-          log << line
-        end
-      rescue => ex
-        Rails.logger.debug(ex)
-        Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
-        infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-        ws.push_as_json({v: false})
-        return
+    begin
+      node.cook(infrastructure) do |line|
+        ws.push_as_json({v: line})
+        Rails.logger.debug "cooking #{physical_id} > #{line}"
+        log << line
       end
-
-      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
-      infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-      ws.push_as_json({v: true})
+    rescue => ex
+      Rails.logger.debug(ex)
+      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
+      infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      ws.push_as_json({v: false})
+      return
     end
+
+    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
+    infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+    ws.push_as_json({v: true})
   end
 
   # TODO: DRY
