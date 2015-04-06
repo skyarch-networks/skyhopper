@@ -246,38 +246,56 @@ describe NodesController, :type => :controller do
   # TODO: 書き直したい。テストが網羅できてない。
   describe '#apply_dish' do
     let(:dish){create(:dish)}
-    let(:node){double(:node)}
-    let(:ret){{status: status, message: "message"}}
+    let(:req){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
 
-    let(:dish_apply_request){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
+    context "when dish's runlist is empty" do
+      let(:dish){create(:dish, runlist: [])}
+      before{req}
 
-    before do
-      allow(Dish).to receive(:find).with(dish.id.to_s).and_return(dish)
-      allow(Node).to receive(:new).with(physical_id).and_return(node)
-      allow(Thread).to receive(:new_with_db).and_yield
-      allow_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+      should_be_success
+
+      it 'should render message' do
+        expect(response.body).to eq 'Runlist is empty.'
+      end
     end
 
-    context "when runlist present?" do
+    context 'when not successfully update runlist' do
+      let(:msg){'error message'}
       before do
-        expect_any_instance_of(NodesController).to receive(:update_runlist)
-          .with(physical_id: physical_id, infrastructure: infra, runlist: dish.runlist, dish_id: dish.id.to_s).and_return(ret)
+        expect_any_instance_of(NodesController).to receive(:update_runlist).with(
+          physical_id: physical_id,
+          infrastructure: infra,
+          runlist: dish.runlist,
+          dish_id: dish.id.to_param
+        ).and_return({status: false, message: msg})
+        req
       end
 
-      context "unless ret[:status]" do
-        let(:status){nil}
+      should_be_failure
 
-        before do
-          dish_apply_request
-        end
+      it 'should render message' do
+        expect(response.body).to eq msg
+      end
+    end
 
-        it "should render text" do
-          expect(response.body).not_to be nil
-        end
+    context 'when successfully update runlist' do
+      before do
+        expect_any_instance_of(NodesController).to receive(:update_runlist).with(
+          physical_id: physical_id,
+          infrastructure: infra,
+          runlist: dish.runlist,
+          dish_id: dish.id.to_param
+        ).and_return({status: true})
+        expect(Thread).to receive(:new_with_db).and_yield
+        expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+        expect(ServerspecJob).to receive(:perform_now)
+        req
+      end
 
-        it "should return status code 500" do
-          expect(response.status).to eq 500
-        end
+      should_be_success
+
+      it 'should render message' do
+        expect(response.body).to eq I18n.t('nodes.msg.cook_started')
       end
     end
   end
