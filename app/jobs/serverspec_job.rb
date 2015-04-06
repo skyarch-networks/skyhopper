@@ -4,6 +4,7 @@ class ServerspecJob < ActiveJob::Base
   sidekiq_options retry: false
 
   # Serverspec を実行し、結果をインフラログに書き出す。
+  # また、Resource の Serverspec IDs を更新する。
   # @param [String] physical_id ID of EC2 Instance
   # @param [Integer] infra_id
   # @param [Integer] user_id このユーザーで Serverspec が実行される

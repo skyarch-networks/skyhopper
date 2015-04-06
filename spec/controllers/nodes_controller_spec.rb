@@ -154,7 +154,7 @@ describe NodesController, :type => :controller do
     let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
 
     before do
-      expect_any_instance_of(NodesController).to receive(:cook_nodes).with(infra, physical_id)
+      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
       cook_request
     end
 
@@ -252,7 +252,7 @@ describe NodesController, :type => :controller do
     before do
       allow(Dish).to receive(:find).with(dish.id.to_s).and_return(dish)
       allow(Node).to receive(:new).with(physical_id).and_return(node)
-      allow_any_instance_of(NodesController).to receive(:cook_nodes).with(infra, physical_id)
+      allow_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
     end
 
     context "when runlist present?" do
@@ -408,13 +408,13 @@ describe NodesController, :type => :controller do
     end
   end
 
-  describe '#cook_nodes' do
+  describe '#cook_node' do
     controller NodesController do
       def show
         physical_id = params.require(:id)
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
-        cook_nodes(infra, physical_id)
+        cook_node(infra, physical_id)
         render nothing: true
       end
     end

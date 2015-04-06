@@ -138,7 +138,7 @@ class NodesController < ApplicationController
 
     infrastructure = Infrastructure.find(infra_id)
 
-    cook_nodes(infrastructure, physical_id)
+    cook_node(infrastructure, physical_id)
     render text: I18n.t('nodes.msg.runlist_applying'), status: 202
   end
 
@@ -164,7 +164,7 @@ class NodesController < ApplicationController
       render text: ret[:message], status: 500 and return
     end
 
-    cook_nodes(infrastructure, physical_id)
+    cook_node(infrastructure, physical_id)
 
     render text: I18n.t('nodes.msg.cook_started')
   end
@@ -252,7 +252,7 @@ class NodesController < ApplicationController
 
 
   # TODO: refactor
-  def cook_nodes(infrastructure, physical_id)
+  def cook_node(infrastructure, physical_id)
     Thread.new_with_db(infrastructure, physical_id, current_user.id) do |infrastructure, physical_id, user_id|
       infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
