@@ -19,7 +19,6 @@ describe NodesController, :type => :controller do
     before do
       expect(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :dns_name).and_return(fqdn)
-      allow_any_instance_of(WSConnector).to receive(:push_as_json).with(any_args)
     end
 
     context 'when success' do
@@ -155,7 +154,8 @@ describe NodesController, :type => :controller do
     let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
 
     before do
-      expect_any_instance_of(NodesController).to receive(:cook_nodes).with(infra, physical_id)
+      allow(Thread).to receive(:new_with_db).and_yield
+      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
       cook_request
     end
 
@@ -245,37 +245,56 @@ describe NodesController, :type => :controller do
 
   describe '#apply_dish' do
     let(:dish){create(:dish)}
-    let(:node){double(:node)}
-    let(:ret){{status: status, message: "message"}}
+    let(:req){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
 
-    let(:dish_apply_request){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
+    context "when dish's runlist is empty" do
+      let(:dish){create(:dish, runlist: [])}
+      before{req}
 
-    before do
-      allow(Dish).to receive(:find).with(dish.id.to_s).and_return(dish)
-      allow(Node).to receive(:new).with(physical_id).and_return(node)
-      allow_any_instance_of(NodesController).to receive(:cook_nodes).with(infra, physical_id)
+      should_be_success
+
+      it 'should render message' do
+        expect(response.body).to eq 'Runlist is empty.'
+      end
     end
 
-    context "when runlist present?" do
+    context 'when not successfully update runlist' do
+      let(:msg){'error message'}
       before do
-        expect_any_instance_of(NodesController).to receive(:update_runlist)
-          .with(physical_id: physical_id, infrastructure: infra, runlist: dish.runlist, dish_id: dish.id.to_s).and_return(ret)
+        expect_any_instance_of(NodesController).to receive(:update_runlist).with(
+          physical_id: physical_id,
+          infrastructure: infra,
+          runlist: dish.runlist,
+          dish_id: dish.id.to_param
+        ).and_return({status: false, message: msg})
+        req
       end
 
-      context "unless ret[:status]" do
-        let(:status){nil}
+      should_be_failure
 
-        before do
-          dish_apply_request
-        end
+      it 'should render message' do
+        expect(response.body).to eq msg
+      end
+    end
 
-        it "should render text" do
-          expect(response.body).not_to be nil
-        end
+    context 'when successfully update runlist' do
+      before do
+        expect_any_instance_of(NodesController).to receive(:update_runlist).with(
+          physical_id: physical_id,
+          infrastructure: infra,
+          runlist: dish.runlist,
+          dish_id: dish.id.to_param
+        ).and_return({status: true})
+        expect(Thread).to receive(:new_with_db).and_yield
+        expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+        expect(ServerspecJob).to receive(:perform_now)
+        req
+      end
 
-        it "should return status code 500" do
-          expect(response.status).to eq 500
-        end
+      should_be_success
+
+      it 'should render message' do
+        expect(response.body).to eq I18n.t('nodes.msg.cook_started')
       end
     end
   end
@@ -363,8 +382,8 @@ describe NodesController, :type => :controller do
     let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
     let(:req){get :show, id: physical_id, infra_id: infra.id, dish_id: dish.id}
     before do
+      expect_any_instance_of(Node).to receive(:details).and_return({'run_list' => []})
       resource
-      allow_any_instance_of(NodesController).to receive(:infra_logger_update_runlist).with(kind_of(Node))
     end
 
     context 'when success' do
@@ -409,26 +428,24 @@ describe NodesController, :type => :controller do
     end
   end
 
-  describe '#cook_nodes' do
+  describe '#cook_node' do
     controller NodesController do
       def show
         physical_id = params.require(:id)
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
-        cook_nodes(infra, physical_id)
+        cook_node(infra, physical_id)
         render nothing: true
       end
     end
     let(:req){get :show, id: physical_id, infra_id: infra.id}
     before do
-      allow(Thread).to receive(:new_with_db).and_yield(infra, physical_id, current_user.id)
-      allow_any_instance_of(Node).to receive(:wait_search_index)
-      allow_any_instance_of(WSConnector).to receive(:push_as_json)
+      expect_any_instance_of(Node).to receive(:wait_search_index)
     end
 
     context 'when success' do
       before do
-        allow_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+       expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
         req
       end
       should_be_success

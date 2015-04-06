@@ -47,7 +47,7 @@ module SkyHopper
     config.session_store :redis_store, servers: 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
 
     config.filter_parameters += [:password, :apikey_secret]
-
+    config.active_job.queue_adapter = :sidekiq
   end
 end
 
