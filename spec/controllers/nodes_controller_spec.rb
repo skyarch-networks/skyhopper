@@ -154,6 +154,7 @@ describe NodesController, :type => :controller do
     let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
 
     before do
+      allow(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
       cook_request
     end
@@ -252,6 +253,7 @@ describe NodesController, :type => :controller do
     before do
       allow(Dish).to receive(:find).with(dish.id.to_s).and_return(dish)
       allow(Node).to receive(:new).with(physical_id).and_return(node)
+      allow(Thread).to receive(:new_with_db).and_yield
       allow_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
     end
 
@@ -420,13 +422,12 @@ describe NodesController, :type => :controller do
     end
     let(:req){get :show, id: physical_id, infra_id: infra.id}
     before do
-      allow(Thread).to receive(:new_with_db).and_yield(infra, physical_id, current_user.id)
-      allow_any_instance_of(Node).to receive(:wait_search_index)
+      expect_any_instance_of(Node).to receive(:wait_search_index)
     end
 
     context 'when success' do
       before do
-        allow_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+       expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
         req
       end
       should_be_success
