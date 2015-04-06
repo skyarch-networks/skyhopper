@@ -169,6 +169,7 @@ class NodesController < ApplicationController
 
     Thread.new_with_db do
       cook_node(infrastructure, physical_id)
+      ServerspecJob.perform_now(physical_id, infra_id, current_user.id)
     end
 
     render text: I18n.t('nodes.msg.cook_started')

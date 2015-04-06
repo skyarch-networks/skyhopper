@@ -243,6 +243,7 @@ describe NodesController, :type => :controller do
     end
   end
 
+  # TODO: 書き直したい。テストが網羅できてない。
   describe '#apply_dish' do
     let(:dish){create(:dish)}
     let(:node){double(:node)}
