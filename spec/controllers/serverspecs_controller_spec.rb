@@ -263,30 +263,37 @@ describe ServerspecsController, :type => :controller do
     let(:serverspec_ids){serverspecs.map(&:id)}
     let(:failure_count){0}
     let(:pending_count){0}
+    let(:status_text){ServerspecStatus::Success}
     let(:resp){{
-      summary: {failure_count: failure_count, pending_count: pending_count},
-      examples: [{status: 'pending', full_description: 'hogefuga'}]
+      examples: [{status: 'pending', full_description: 'hogefuga'}],
+      status: true,
+      status_text: status_text,
     }}
     let(:req){post :run, physical_id: physical_id, infra_id: infra.id, serverspec_ids: serverspec_ids}
-    let(:status){Rails.cache.read(ServerspecStatus::TagName + physical_id)}
 
     before do
       resource
-      allow_any_instance_of(Node).to receive(:run_serverspec).and_return(resp)
+      allow(ServerspecJob).to receive(:perform_now).and_return(resp)
     end
 
     context 'when selected auto generated' do
       let(:serverspec_ids){serverspecs.map(&:id).push('-1')}
 
       it 'should call run_serverspec with auto generated flag true' do
-        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), true)
+        expect(ServerspecJob).to receive(:perform_now).with(
+          physical_id, infra.id.to_param, kind_of(Integer),
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true,
+        )
         req
       end
     end
 
     context 'when not selected auto generated' do
       it 'should call run_serverspec with auto generated flag false' do
-        expect_any_instance_of(Node).to receive(:run_serverspec).with(infra.id.to_s, serverspecs.map(&:id).map(&:to_s), false)
+        expect(ServerspecJob).to receive(:perform_now).with(
+          physical_id, infra.id.to_param, kind_of(Integer),
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false,
+        )
         req
       end
     end
@@ -294,14 +301,10 @@ describe ServerspecsController, :type => :controller do
     context 'when Serverspec command is failed' do
       let(:err_msg){'This is Error <3'}
       before do
-        allow_any_instance_of(Node).to receive(:run_serverspec).and_raise(err_msg)
+        allow(ServerspecJob).to receive(:perform_now).and_raise(err_msg)
         req
       end
       should_be_failure
-
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Failed
-      end
 
       it 'should render message' do
         expect(response.body).to eq err_msg
@@ -309,41 +312,21 @@ describe ServerspecsController, :type => :controller do
     end
 
     context 'when serverspec result is fail' do
-      let(:failure_count){1}
+      let(:status_text){ServerspecStatus::Failed}
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Failed
-      end
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
 
     context 'when serverspec result is pending' do
-      let(:pending_count){1}
+      let(:status_text){ServerspecStatus::Pending}
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Pending
-      end
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
 
     context 'when serverspec result is success' do
+      let(:status_text){ServerspecStatus::Success}
       before{req}
       should_be_success
-      it 'should write serverspec status' do
-        expect(status).to eq ServerspecStatus::Success
-      end
-      it 'should be updated Resource#serverspecs' do
-        resource.reload
-        expect(resource.serverspec_ids).to eq serverspec_ids
-      end
     end
   end
 

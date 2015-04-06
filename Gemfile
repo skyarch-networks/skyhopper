@@ -59,6 +59,7 @@ gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'knife-solo', require: false
 gem 'highline'
+gem 'sidekiq' # for Active Job
 
 group :development, :test do
   # debug
