@@ -243,7 +243,6 @@ describe NodesController, :type => :controller do
     end
   end
 
-  # TODO: 書き直したい。テストが網羅できてない。
   describe '#apply_dish' do
     let(:dish){create(:dish)}
     let(:req){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
