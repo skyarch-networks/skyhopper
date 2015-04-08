@@ -3,7 +3,7 @@
 
 http://www.skyarch.net/blog/?p=2709
 
-[![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg)](https://travis-ci.org/skyarch-networks/skyhopper)
+[![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
 
 ## デプロイ手順フロー
 
