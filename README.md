@@ -9,7 +9,7 @@ http://www.skyarch.net/blog/?p=2709
 
 ### アプリケーションのデプロイ
 
-`doc/installation/skyhopper.md`
+[doc/installation/skyhopper.md](doc/installation/skyhopper.md)
 
 1. rubyのインストール
 1. node.jsのインストール
@@ -25,15 +25,15 @@ http://www.skyarch.net/blog/?p=2709
 
 ### Cookbook/Roleのアップロード
 
-`doc/installation/upload_cookbooks.md`
+[doc/installation/upload_cookbooks.md](doc/installation/upload_cookbooks.md)
 
 
 ### SkyHopperで使用するZabbix Serverのデプロイ手順
 
-`doc/installation/zabbix_server.md`
+[doc/installation/zabbix_server.md](doc/installation/zabbix_server.md)
 
 
 
 ## 既知の問題
 
-`doc/known_issues.md`
+[doc/known_issues.md](doc/known_issues.md)
