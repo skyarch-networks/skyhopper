@@ -912,7 +912,7 @@
         return this.recipes[this.selected_cookbook] || [];
       },
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -957,7 +957,7 @@
     },
     computed: {
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -996,7 +996,7 @@
     },
     computed: {
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -1031,8 +1031,8 @@
           add_modify: null,
           insert_cf_params: {},
         },
-        tabpaneID: 'default',
-        current_physical_id: null,
+        tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
+        tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
         loading: true,  // trueにすると、loading-tabpaneが表示される。
       },
       methods:{
@@ -1060,7 +1060,7 @@
           this.loading = true;
           // XXX: Globalな変数で気持ち悪い.
           // For edit_runlist, edit_attributes and serverspec tabpanes
-          this.current_physical_id = physical_id;
+          this.tabpaneGroupID = physical_id;
         },
         show_rds: function (physical_id) {
           this.show_tabpane(physical_id);
@@ -1149,7 +1149,7 @@
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
-          self.current_physical_id = null;
+          self.tabpaneGroupID = null;
           // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
           self.tabpaneID = null;
           Vue.nextTick(function () {
