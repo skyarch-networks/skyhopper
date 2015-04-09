@@ -1056,22 +1056,23 @@
           return resp;
         },
         show_ec2: function (physical_id) {
-          this.show_tabpane(physical_id);
+          this.show_tabpane('ec2');
           this.loading = true;
-          // XXX: Globalな変数で気持ち悪い.
-          // For edit_runlist, edit_attributes and serverspec tabpanes
           this.tabpaneGroupID = physical_id;
         },
         show_rds: function (physical_id) {
-          this.show_tabpane(physical_id);
+          this.show_tabpane('rds');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_elb: function (physical_id) {
-          this.show_tabpane(physical_id);
+          this.show_tabpane('elb');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_s3: function (physical_id) {
-          this.show_tabpane(physical_id);
+          this.show_tabpane('s3');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_add_modify: function () {
