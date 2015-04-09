@@ -141,7 +141,7 @@
         self.$set('params', data);
         self.$set('result', {});
         _.each(data, function (val, key) {
-          self.result[key] = val.Default;
+          self.result.$add(key, val.Default);
         });
         self.$set('loading', false);
         app.loading = false;

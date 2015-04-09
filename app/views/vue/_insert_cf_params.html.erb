@@ -1,4 +1,4 @@
-<%# 
+<%#
 Arguments
 
 params
@@ -19,8 +19,7 @@ params
       <label class="col-sm-3 control-label" v-attr="for: $key" v-text="$key"></label>
 
       <div class="col-md-7">
-        <select v-if="p.AllowedValues" id="{{$key}}" v-model="result[$key]" class="form-control" required="">
-          <option v-repeat="p.AllowedValues">{{$value}}</option>
+        <select v-if="p.AllowedValues" id="{{$key}}" v-model="result[$key]" options="p.AllowedValues" class="form-control" required="">
         </select>
 
         <input v-if="!p.AllowedValues" id="{{$key}}" v-model="result[$key]" class="form-control" type="text" required="">
