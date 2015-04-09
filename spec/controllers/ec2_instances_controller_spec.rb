@@ -83,12 +83,15 @@ describe Ec2InstancesController, :type => :controller do
   end
 
   describe '#serverspec_status' do
-    let(:req){get :serverspec_status, id: physical_id, infra_id: infra.id}
+    let(:resource){create(:resource)}
+    let(:req){get :serverspec_status, id: resource.physical_id, infra_id: infra.id}
     subject{JSON.parse(response.body)['status']}
 
     context 'when status failed' do
       before do
-        Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::Failed)
+        st = resource.status.serverspec
+        st.value = ResourceStatus::Failed
+        st.save!
         req
       end
 
@@ -96,10 +99,12 @@ describe Ec2InstancesController, :type => :controller do
       it{expect(subject).to be false}
     end
 
-    [ServerspecStatus::Success, ServerspecStatus::Pending, ServerspecStatus::UnExecuted].each do |status|
+    [ResourceStatus::Success, ResourceStatus::Pending, ResourceStatus::UnExecuted].each do |status|
       context "when status #{status}" do
         before do
-          Rails.cache.write(ServerspecStatus::TagName + physical_id, status)
+          st = resource.status.serverspec
+          st.value = status
+          st.save!
           req
         end
 
