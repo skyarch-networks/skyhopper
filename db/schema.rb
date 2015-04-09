@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326065023) do
+ActiveRecord::Schema.define(version: 20150409062137) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20150326065023) do
     t.string   "zabbix_pass",        limit: 255
   end
 
-  add_index "app_settings", ["ec2_private_key_id"], name: "app_settings_ec2_private_key_id_fk", using: :btree
+  add_index "app_settings", ["ec2_private_key_id"], name: "fk_rails_cab00b44e4", using: :btree
 
   create_table "cf_templates", force: :cascade do |t|
     t.integer  "infrastructure_id", limit: 4
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20150326065023) do
     t.integer  "ec2_private_key_id", limit: 4
   end
 
-  add_index "infrastructures", ["ec2_private_key_id"], name: "infrastructures_ec2_private_key_id_fk", using: :btree
+  add_index "infrastructures", ["ec2_private_key_id"], name: "fk_rails_0e13016c7c", using: :btree
   add_index "infrastructures", ["project_id"], name: "infrastructures_project_id_fk", using: :btree
   add_index "infrastructures", ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true, using: :btree
 
@@ -132,6 +132,14 @@ ActiveRecord::Schema.define(version: 20150326065023) do
   create_table "resource_serverspecs", force: :cascade do |t|
     t.integer  "resource_id",   limit: 4, null: false
     t.integer  "serverspec_id", limit: 4, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  create_table "resource_statuses", force: :cascade do |t|
+    t.integer  "resource_id", limit: 4
+    t.string   "kind",        limit: 255
+    t.string   "value",       limit: 255
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
@@ -185,11 +193,11 @@ ActiveRecord::Schema.define(version: 20150326065023) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  add_foreign_key "app_settings", "ec2_private_keys", name: "app_settings_ec2_private_key_id_fk", on_delete: :cascade
-  add_foreign_key "cf_templates", "infrastructures", name: "manage_jsons_infrastructure_id_fk", on_delete: :cascade
-  add_foreign_key "infrastructures", "ec2_private_keys", name: "infrastructures_ec2_private_key_id_fk", on_delete: :cascade
-  add_foreign_key "infrastructures", "projects", name: "infrastructures_project_id_fk", on_delete: :cascade
-  add_foreign_key "projects", "clients", name: "projects_client_id_fk", on_delete: :cascade
-  add_foreign_key "user_projects", "projects", name: "user_projects_project_id_fk", on_delete: :cascade
-  add_foreign_key "user_projects", "users", name: "user_projects_user_id_fk", on_delete: :cascade
+  add_foreign_key "app_settings", "ec2_private_keys", on_delete: :cascade
+  add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade
+  add_foreign_key "infrastructures", "ec2_private_keys", on_delete: :cascade
+  add_foreign_key "infrastructures", "projects", on_delete: :cascade
+  add_foreign_key "projects", "clients", on_delete: :cascade
+  add_foreign_key "user_projects", "projects", on_delete: :cascade
+  add_foreign_key "user_projects", "users", on_delete: :cascade
 end

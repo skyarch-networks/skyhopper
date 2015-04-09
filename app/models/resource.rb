@@ -11,6 +11,7 @@ class Resource < ActiveRecord::Base
   belongs_to :dish
   has_many :resource_serverspecs
   has_many :serverspecs, through: :resource_serverspecs
+  has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
