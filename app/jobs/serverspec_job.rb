@@ -33,11 +33,11 @@ class ServerspecJob < ActiveJob::Base
     end
 
     case resp[:status_text]
-    when ServerspecStatus::Success
+    when ResourceStatus::Success
       log_msg    = "serverspec for #{physical_id} is successfully finished."
-    when ServerspecStatus::Pending
+    when ResourceStatus::Pending
       log_msg    = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{resp[:message]}"
-    when ServerspecStatus::Failed
+    when ResourceStatus::Failed
       log_msg    = "serverspec for #{physical_id} is failed. failure specs: \n#{resp[:message]}"
     end
 
