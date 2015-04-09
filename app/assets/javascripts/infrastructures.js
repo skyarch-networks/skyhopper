@@ -704,15 +704,15 @@
         });
       },
       edit_runlist: function () {
-        this.$parent.current_infra.tabpaneID = 'edit_runlist';
+        this.$parent.tabpaneID = 'edit_runlist';
         this._loading();
       },
       edit_attr: function () {
-        this.$parent.current_infra.tabpaneID = 'edit_attr';
+        this.$parent.tabpaneID = 'edit_attr';
         this._loading();
       },
       select_serverspec: function () {
-        this.$parent.current_infra.tabpaneID = 'serverspec';
+        this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
       _show_ec2: function () {
@@ -1028,10 +1028,10 @@
           stack: stack,
           resources : {},
           events: [],
-          tabpaneID: 'default',
           add_modify: null,
           insert_cf_params: {},
         },
+        tabpaneID: 'default',
         current_physical_id: null,
         loading: true,  // trueにすると、loading-tabpaneが表示される。
       },
@@ -1144,16 +1144,16 @@
           return this.current_infra.stack.status.type === 'NG';
         },
         tabpane_active: function (id) {
-          return this.current_infra.tabpaneID === id;
+          return this.tabpaneID === id;
         },
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
           self.current_physical_id = null;
           // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
-          self.current_infra.tabpaneID = null;
+          self.tabpaneID = null;
           Vue.nextTick(function () {
-            self.current_infra.tabpaneID = id;
+            self.tabpaneID = id;
           });
         },
         update_serverspec_status: function (physical_id) {
