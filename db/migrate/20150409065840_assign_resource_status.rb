@@ -1,8 +1,8 @@
 class AssignResourceStatus < ActiveRecord::Migration
-  def change
+  def up
     Resource.all.each do |r|
-      next unless ResourceStatus.where(resource_id: r.id).empty?
-      r.initialize_status
+      next if ResourceStatus.where(resource_id: r.id).count != 0
+      r.initialize_statuses
     end
   end
 end

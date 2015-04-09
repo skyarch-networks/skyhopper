@@ -89,9 +89,10 @@ class NodesController < ApplicationController
     end
 
     @info = {}
-    @info[:cook_status]       = Rails.cache.read(CookStatus::TagName + physical_id)       || 'UnExecuted'
-    @info[:serverspec_status] = Rails.cache.read(ServerspecStatus::TagName + physical_id) || 'UnExecuted'
-    @info[:update_status]     = Rails.cache.read(UpdateStatus::TagName + physical_id)     || 'UnExecuted'
+    status = Resource.find_by(physical_id: physical_id).status
+    @info[:cook_status]       = status.cook.value       || 'UnExecuted'
+    @info[:serverspec_status] = status.serverspec.value || 'UnExecuted'
+    @info[:update_status]     = status.yum.value        || 'UnExecuted'
 
     @dishes = Dish.valid_dishes(infra.project_id)
   end
@@ -249,8 +250,8 @@ class NodesController < ApplicationController
     end
 
     # change cookstatus to unexected
-    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::UnExecuted)
-    Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+    r.status.cook.update(value: ResourceStatus::UnExecuted)
+    r.status.serverspec.update(value: ResourceStatus::UnExecuted)
 
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
@@ -262,8 +263,9 @@ class NodesController < ApplicationController
     user_id = current_user.id
     infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
-    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::InProgress)
-    Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+    r = infrastructure.resource(physical_id)
+    r.status.cook.update(value: ResourceStatus::InProgress)
+    r.status.serverspec.update(value: ResourceStatus::UnExecuted)
     node = Node.new(physical_id)
     node.wait_search_index
     log = []
@@ -278,13 +280,13 @@ class NodesController < ApplicationController
       end
     rescue => ex
       Rails.logger.debug(ex)
-      Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Failed)
+      r.status.cook.update(value: ResourceStatus::Failed)
       infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
       ws.push_as_json({v: false})
       return
     end
 
-    Rails.cache.write(CookStatus::TagName + physical_id, CookStatus::Success)
+    r.status.cook.update(value: ResourceStatus::Success)
     infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
   end
@@ -298,8 +300,9 @@ class NodesController < ApplicationController
       yum_screen_name << " update"
       infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
 
-      Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::InProgress)
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, ServerspecStatus::UnExecuted)
+      r = infra.resource(physical_id)
+      r.status.yum.update(value: ResourceStatus::InProgress)
+      r.status.serverspec.update(value: ResourceStatus::UnExecuted)
 
       node = Node.new(physical_id)
 
@@ -316,11 +319,11 @@ class NodesController < ApplicationController
       rescue => ex
         Rails.logger.debug(ex)
         infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
-        Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Failed)
+        r.status.yum.update(value: ResourceStatus::Failed)
         ws.push_as_json({v: false})
       else
         infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
-        Rails.cache.write(UpdateStatus::TagName + physical_id, UpdateStatus::Success)
+        r.status.yum.update(value: ResourceStatus::Success)
         ws.push_as_json({v: true})
       end
     end

@@ -40,8 +40,8 @@ describe NodesController, :type => :controller do
   end
 
   describe "#show" do
-
-    let(:request){get :show, infra_id: infra.id, id: physical_id, format: 'json'}
+    let(:resource){create(:resource, infrastructure: infra, dish: dish)}
+    let(:request){get :show, infra_id: infra.id, id: resource.physical_id, format: 'json'}
 
     # mocks
     let(:instance){double('instance')}
@@ -49,13 +49,13 @@ describe NodesController, :type => :controller do
     let(:instance_summary){{status: instance_status}}
     let(:cook_status){'Success'}
     let(:serverspec_status){'UnExecuted'}
-    let(:update_status){'Failed'}
+    let(:yum_status){'Failed'}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
       allow(instance).to receive(:summary).and_return(instance_summary)
-      Rails.cache.write(CookStatus::TagName       + physical_id, cook_status)
-      Rails.cache.write(ServerspecStatus::TagName + physical_id, serverspec_status)
-      Rails.cache.write(UpdateStatus::TagName     + physical_id, update_status)
+      resource.status.cook.update(value: cook_status)
+      resource.status.serverspec.update(value: serverspec_status)
+      resource.status.yum.update(value: yum_status)
     end
 
     let(:chef_server){double('chef-server')}
@@ -70,7 +70,6 @@ describe NodesController, :type => :controller do
       "run_list" => ['a', 'b', 'f'],
     }}
     before do
-      create(:resource, physical_id: physical_id, infrastructure: infra, dish: dish)
       allow_any_instance_of(Node).to receive(:details).and_return(details)
     end
 
@@ -141,7 +140,7 @@ describe NodesController, :type => :controller do
         expect(assigns[:info]).to be_a Hash
         expect(assigns[:info][:cook_status]).to eq cook_status
         expect(assigns[:info][:serverspec_status]).to eq serverspec_status
-        expect(assigns[:info][:update_status]).to eq update_status
+        expect(assigns[:info][:update_status]).to eq yum_status
       end
 
       it 'should assigns @dishes' do
@@ -388,8 +387,6 @@ describe NodesController, :type => :controller do
 
     context 'when success' do
       before do
-        Rails.cache.write(CookStatus::TagName + physical_id, nil)
-        Rails.cache.write(ServerspecStatus::TagName + physical_id, nil)
         expect_any_instance_of(Node).to receive(:update_runlist)
         req
       end
@@ -402,8 +399,8 @@ describe NodesController, :type => :controller do
       end
 
       it 'should update cook and serverspec status' do
-        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::UnExecuted
-        expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::UnExecuted
+        expect(resource.status.cook.value).to eq ResourceStatus::UnExecuted
+        expect(resource.status.serverspec.value).to eq ResourceStatus::UnExecuted
       end
 
       it 'resource should have dish' do
@@ -438,7 +435,8 @@ describe NodesController, :type => :controller do
         render nothing: true
       end
     end
-    let(:req){get :show, id: physical_id, infra_id: infra.id}
+    let(:resource){create(:resource, infrastructure: infra)}
+    let(:req){get :show, id: resource.physical_id, infra_id: infra.id}
     before do
       expect_any_instance_of(Node).to receive(:wait_search_index)
     end
@@ -451,7 +449,7 @@ describe NodesController, :type => :controller do
       should_be_success
 
       it 'should cook status is Success' do
-        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::Success
+        expect(resource.status.cook.value).to eq ResourceStatus::Success
       end
     end
 
@@ -463,7 +461,7 @@ describe NodesController, :type => :controller do
       should_be_success
 
       it 'should cook status is Failed' do
-        expect(Rails.cache.read(CookStatus::TagName + physical_id)).to eq CookStatus::Failed
+        expect(resource.status.cook.value).to eq ResourceStatus::Failed
       end
     end
   end

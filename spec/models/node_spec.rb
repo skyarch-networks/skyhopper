@@ -158,8 +158,9 @@ describe Node, :type => :model do
   describe '#run_serverspec' do
     subject{ Node.new(physical_id) }
     let(:infra){create(:infrastructure)}
+    let(:resource){create(:resource, infrastructure: infra)}
     let(:serverspec){create(:serverspec)}
-    let(:physical_id){SecureRandom.hex(10)}
+    let(:physical_id){resource.physical_id}
 
     before do
       status = double()
@@ -191,7 +192,7 @@ describe Node, :type => :model do
     it 'should update status' do
       serverspecs = [serverspec.id]
       subject.run_serverspec(infra.id, serverspecs, false)
-      expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Success
+      expect(resource.status.serverspec.value).to eq ResourceStatus::Success
     end
 
     context 'when command fail' do
@@ -202,7 +203,7 @@ describe Node, :type => :model do
       it 'should update status' do
         serverspecs = [serverspec.id]
         expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
-        expect(Rails.cache.read(ServerspecStatus::TagName + physical_id)).to eq ServerspecStatus::Failed
+        expect(resource.status.serverspec.value).to eq ResourceStatus::Failed
       end
     end
   end
