@@ -20,7 +20,7 @@ class Project < ActiveRecord::Base
 
   before_destroy :detach_zabbix
 
-  ForDishTestCodeName  = 'Test'.freeze
+  ForDishTestCodeName  = 'DishTest'.freeze
   ChefServerCodeName   = 'ChefServer'.freeze
   ZabbixServerCodeName = 'ZabbixServer'.freeze
 

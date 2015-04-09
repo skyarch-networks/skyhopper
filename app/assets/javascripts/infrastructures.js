@@ -34,10 +34,6 @@
   };
 
   // Utilities
-  var set_tabpane_func = function (physical_id, data) {
-    app.$set('current_infra.tabpanes.' + physical_id.replace('-', ''), data);
-  };
-
   var alert_success = function (callback) {
     return function (msg) {
       var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg);
@@ -145,7 +141,7 @@
         self.$set('params', data);
         self.$set('result', {});
         _.each(data, function (val, key) {
-          self.result[key] = val.Default;
+          self.result.$add(key, val.Default);
         });
         self.$set('loading', false);
         app.loading = false;
@@ -708,15 +704,15 @@
         });
       },
       edit_runlist: function () {
-        this.$parent.show_tabpane('edit_runlist');
+        this.$parent.tabpaneID = 'edit_runlist';
         this._loading();
       },
       edit_attr: function () {
-        this.$parent.show_tabpane('edit_attr');
+        this.$parent.tabpaneID = 'edit_attr';
         this._loading();
       },
       select_serverspec: function () {
-        this.$parent.show_tabpane('serverspec');
+        this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
       _show_ec2: function () {
@@ -916,7 +912,7 @@
         return this.recipes[this.selected_cookbook] || [];
       },
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -961,7 +957,7 @@
     },
     computed: {
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -1000,7 +996,7 @@
     },
     computed: {
       physical_id: function () {
-        return this.$parent.current_physical_id;
+        return this.$parent.tabpaneGroupID;
       },
       ec2: function () {
         return new EC2Instance(current_infra, this.physical_id);
@@ -1032,12 +1028,11 @@
           stack: stack,
           resources : {},
           events: [],
-          tabpaneID: 'default',
           add_modify: null,
           insert_cf_params: {},
-          tabpanes: {},
         },
-        current_physical_id: null,
+        tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
+        tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
         loading: true,  // trueにすると、loading-tabpaneが表示される。
       },
       methods:{
@@ -1061,32 +1056,29 @@
           return resp;
         },
         show_ec2: function (physical_id) {
-          this.show_tabpane(physical_id);
+          this.show_tabpane('ec2');
           this.loading = true;
-          // XXX: Globalな変数で気持ち悪い.
-          // For edit_runlist, edit_attributes and serverspec tabpanes
-          this.current_physical_id = physical_id;
+          this.tabpaneGroupID = physical_id;
         },
         show_rds: function (physical_id) {
-          this.show_tabpane(physical_id);
-          this.current_physical_id = null;
+          this.show_tabpane('rds');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_elb: function (physical_id) {
-          this.show_tabpane(physical_id);
-          this.current_physical_id = null;
+          this.show_tabpane('elb');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_s3: function (physical_id) {
-          this.show_tabpane(physical_id);
-          this.current_physical_id = null;
+          this.show_tabpane('s3');
+          this.tabpaneGroupID = physical_id;
           this.loading = true;
         },
         show_add_modify: function () {
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
-          this.current_physical_id = null;
 
           var cft = new CFTemplate(current_infra);
           cft.new().done(function (data) {
@@ -1099,11 +1091,9 @@
         },
         show_add_ec2: function () {
           this.show_tabpane('add-ec2');
-          this.current_physical_id = null;
         },
         show_cf_history: function () {
           var self = this;
-          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
 
@@ -1115,7 +1105,6 @@
         },
         show_event_logs: function () {
           if (this.no_stack()) {return;}
-          this.current_physical_id = null;
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
@@ -1127,7 +1116,6 @@
         },
         show_infra_logs: function () {
           var self = this;
-          this.current_physical_id = null;
           self.loading = true;
           self.$event.preventDefault();
           current_infra.logs().done(function (data) {
@@ -1137,7 +1125,6 @@
         },
         show_monitoring: function () {
           if (this.no_stack()) {return;}
-          this.current_physical_id = null;
           var self = this;
           self.show_tabpane('monitoring');
           self.loading = true;
@@ -1145,7 +1132,6 @@
         show_edit_monitoring: function () {
           if (this.no_stack()) {return;}
           var self = this;
-          this.current_physical_id = null;
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
@@ -1159,15 +1145,16 @@
           return this.current_infra.stack.status.type === 'NG';
         },
         tabpane_active: function (id) {
-          return this.current_infra.tabpaneID === id;
+          return this.tabpaneID === id;
         },
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
+          self.tabpaneGroupID = null;
           // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
-          self.current_infra.tabpaneID = null;
+          self.tabpaneID = null;
           Vue.nextTick(function () {
-            self.current_infra.tabpaneID = id;
+            self.tabpaneID = id;
           });
         },
         update_serverspec_status: function (physical_id) {

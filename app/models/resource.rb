@@ -11,11 +11,16 @@ class Resource < ActiveRecord::Base
   belongs_to :dish
   has_many :resource_serverspecs
   has_many :serverspecs, through: :resource_serverspecs
+  has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
+
+  validates :physical_id, uniqueness: true
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
   scope :s3,  -> {where(type_name: 'AWS::S3::Bucket')}
   scope :elb,  -> {where(type_name: 'AWS::ElasticLoadBalancing::LoadBalancer')}
+
+  after_create :initialize_statuses
 
   # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
@@ -27,5 +32,13 @@ class Resource < ActiveRecord::Base
   # XXX: パフォーマンスがきになる. all_serverspecs のほうが relation を返せば pluck が使える
   def all_serverspec_ids
     all_serverspecs.map{|x|x.id}
+  end
+
+  def initialize_statuses
+    ResourceStatus.import([
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindCook),
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindServerspec),
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindYum),
+    ])
   end
 end

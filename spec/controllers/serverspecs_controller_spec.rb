@@ -263,7 +263,7 @@ describe ServerspecsController, :type => :controller do
     let(:serverspec_ids){serverspecs.map(&:id)}
     let(:failure_count){0}
     let(:pending_count){0}
-    let(:status_text){ServerspecStatus::Success}
+    let(:status_text){ResourceStatus::Success}
     let(:resp){{
       examples: [{status: 'pending', full_description: 'hogefuga'}],
       status: true,
@@ -312,19 +312,19 @@ describe ServerspecsController, :type => :controller do
     end
 
     context 'when serverspec result is fail' do
-      let(:status_text){ServerspecStatus::Failed}
+      let(:status_text){ResourceStatus::Failed}
       before{req}
       should_be_success
     end
 
     context 'when serverspec result is pending' do
-      let(:status_text){ServerspecStatus::Pending}
+      let(:status_text){ResourceStatus::Pending}
       before{req}
       should_be_success
     end
 
     context 'when serverspec result is success' do
-      let(:status_text){ServerspecStatus::Success}
+      let(:status_text){ResourceStatus::Success}
       before{req}
       should_be_success
     end

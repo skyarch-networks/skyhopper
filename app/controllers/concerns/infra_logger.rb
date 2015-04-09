@@ -9,15 +9,6 @@
 module Concerns::InfraLogger
   private
 
-  def infra_logger(details, status, user_id: nil, infrastructure_id: nil)
-
-    if status
-      infra_logger_success(details, user_id: user_id, infrastructure_id: infrastructure_id)
-    else
-      infra_logger_fail(details, user_id: user_id, infrastructure_id: infrastructure_id)
-    end
-  end
-
   def infra_logger_success(details, user_id: nil, infrastructure_id: nil)
     user_id, infrastructure_id = _set_args(user_id: user_id, infrastructure_id: infrastructure_id)
     ws_send(details, true)

@@ -97,7 +97,7 @@ class Ec2InstancesController < ApplicationController
   # @return [String] JSON. {status: Boolean}
   def serverspec_status
     physical_id = params.require(:id)
-    status = Rails.cache.read(ServerspecStatus::TagName + physical_id) != ServerspecStatus::Failed
+    status = ! Resource.find_by(physical_id: physical_id).status.serverspec.failed?
 
     render json: {status: status}
   end
