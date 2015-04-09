@@ -35,8 +35,10 @@ class Resource < ActiveRecord::Base
   end
 
   def initialize_statuses
-    ResourceStatus.create(resource: self, kind: ResourceStatus::KindCook)
-    ResourceStatus.create(resource: self, kind: ResourceStatus::KindServerspec)
-    ResourceStatus.create(resource: self, kind: ResourceStatus::KindYum)
+    ResourceStatus.import([
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindCook),
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindServerspec),
+      ResourceStatus.new(resource: self, kind: ResourceStatus::KindYum),
+    ])
   end
 end
