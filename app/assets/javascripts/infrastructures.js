@@ -34,10 +34,6 @@
   };
 
   // Utilities
-  var set_tabpane_func = function (physical_id, data) {
-    app.$set('current_infra.tabpanes.' + physical_id.replace('-', ''), data);
-  };
-
   var alert_success = function (callback) {
     return function (msg) {
       var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg);
@@ -1035,7 +1031,6 @@
           tabpaneID: 'default',
           add_modify: null,
           insert_cf_params: {},
-          tabpanes: {},
         },
         current_physical_id: null,
         loading: true,  // trueにすると、loading-tabpaneが表示される。
