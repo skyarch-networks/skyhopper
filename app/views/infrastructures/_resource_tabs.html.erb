@@ -1,7 +1,7 @@
 <!-- resources TABs -->
 <%# TODO: DRY %>
 
-<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpane_active(ec2.physical_id) || tabpaneGroupID === ec2.physical_id" v-on="click: show_ec2(ec2.physical_id)">
+<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpaneGroupID === ec2.physical_id" v-on="click: show_ec2(ec2.physical_id)">
   <a href="#">
     <span class="label label-warning">EC2</span>&nbsp;
     <small>{{screen_name(ec2)}}</small>
@@ -11,7 +11,7 @@
   </a>
 </li>
 
-<li v-repeat="rds: current_infra.resources.rds_instances" v-class="active: tabpane_active(rds.physical_id)" v-on="click: show_rds(rds.physical_id)">
+<li v-repeat="rds: current_infra.resources.rds_instances" v-class="active: tabpaneGroupID === rds.physical_id" v-on="click: show_rds(rds.physical_id)">
   <a href="#">
     <span class="label label-info">RDS</span>&nbsp;
     <small>{{screen_name(rds)}}</small>
@@ -19,7 +19,7 @@
   </a>
 </li>
 
-<li v-repeat="elb: current_infra.resources.elb_instances" v-class="active: tabpane_active(elb.physical_id)" v-on="click: show_elb(elb.physical_id)">
+<li v-repeat="elb: current_infra.resources.elb_instances" v-class="active: tabpaneGroupID === elb.physical_id" v-on="click: show_elb(elb.physical_id)">
   <a href="#">
     <span class="label label-warning">ELB</span>&nbsp;
     <small>{{screen_name(elb)}}</small>
@@ -27,7 +27,7 @@
   </a>
 </li>
 
-<li v-repeat="s3: current_infra.resources.s3_buckets" v-class="active: tabpane_active(s3.physical_id)" v-on="click: show_s3(s3.physical_id)">
+<li v-repeat="s3: current_infra.resources.s3_buckets" v-class="active: tabpaneGroupID === s3.physical_id" v-on="click: show_s3(s3.physical_id)">
   <a href="#">
     <span class="label label-danger">S3</span>&nbsp;
     <small>{{screen_name(s3)}}</small>&nbsp;
