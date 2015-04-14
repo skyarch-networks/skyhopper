@@ -237,7 +237,7 @@
         self.creating = true;
         this.monitoring.create_host().done(function () {
           alert_success(function () {
-            self.$parent.show_monitoring();
+            self.$parent.show_edit_monitoring();
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
