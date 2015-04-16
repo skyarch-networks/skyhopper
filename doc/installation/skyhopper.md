@@ -200,7 +200,7 @@ default: &default
 
 ```yaml
 production:
-  <<: #default
+  <<: *default
   database: SkyHopperProduction
   username: skyhopper_prod
   password: 'fugafuga' #先ほど設定したproductionのパスワード
