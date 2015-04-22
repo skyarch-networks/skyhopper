@@ -16,11 +16,18 @@ describe AppSettingsController, :type => :controller do
   end
 
   describe '#show' do
-    before do
-      get :show
+    let(:req){get :show}
+
+    context 'when success' do
+      before{req}
+      should_be_success
     end
 
-    should_be_success
+    context 'when AppSetting already set' do
+      before{create(:app_setting)}
+      before{req}
+      it {is_expected.to redirect_to root_path}
+    end
   end
 
   describe '#create' do
@@ -28,10 +35,10 @@ describe AppSettingsController, :type => :controller do
       aws_region: 'ap-northeast-1',
       log_directory: '/foo'
     }}
+    let(:ec2key){create(:ec2_private_key)}
+    let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
 
     context 'when valid settings' do
-      let(:ec2key){create(:ec2_private_key)}
-      let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
 
       before do
         allow(Thread).to receive(:new_with_db)
@@ -54,30 +61,67 @@ describe AppSettingsController, :type => :controller do
       end
     end
 
-    context 'when invalid settings' do
+    context 'when without ec2 key' do
       before do
-        allow(AppSetting).to receive(:validate).and_raise(AppSetting::ValidateError)
+        post :create, settings: settings.to_json
       end
 
-      it 'should not be success' do
-        post :create, settings: settings.to_json
-        expect(response).not_to be_success
+      should_be_failure
+    end
+
+    context 'when invalid setting' do
+      before do
+        allow(AppSetting).to receive(:validate).and_raise(AppSetting::ValidateError)
+        post :create, settings: settings_with_ec2_key_id.to_json
       end
+
+      should_be_failure
     end
   end
 
-  describe '#chef_create' do
-    skip
-    # let(:stack_name){'foo'}
-    # let(:region){'REGION_FOOO'}
-    # let(:keypair_name){'KEYPAIR_NAME_FOO'}
-    # let(:keypair_value){'KEYPAIR_VALUE_FOO'}
-    #
-    #
-    # it 'should call ChefServer.create' do
-    #   expect(ChefServer).to receive(:create).with(stack_name, region, keypair_name, keypair_value)
-    #
-    #   post :chef_create, stack_name: stack_name, region: region, keypair_name: keypair_name, keypair_value: keypair_value
-    # end
+  describe '#edit_zabbix' do
+    let(:set){create(:app_setting)}
+    before{set}
+    before{get :edit_zabbix}
+
+    should_be_success
+    it {is_expected.to render_template 'zabbix_server'}
+    it 'should assign @app_setting' do
+      expect(assigns[:app_setting]).to eq set
+    end
+  end
+
+  describe '#update_zabbix' do
+    let(:set){create(:app_setting)}
+    before{set}
+    let(:zabbix_user){SecureRandom.hex(20)}
+    let(:zabbix_pass){SecureRandom.hex(20)}
+    let(:req){post :update_zabbix, zabbix_user: zabbix_user, zabbix_pass: zabbix_pass}
+
+    context 'when success' do
+      before{req}
+
+      it {is_expected.to redirect_to clients_path}
+
+      it 'should update AppSetting' do
+        expect(AppSetting.get.zabbix_user).to eq zabbix_user
+        expect(AppSetting.get.zabbix_pass).to eq zabbix_pass
+      end
+    end
+
+    context 'when failure' do
+      before do
+        allow_any_instance_of(AppSetting).to receive(:update!).and_raise
+        req
+      end
+
+      should_be_failure
+
+      it 'should not update AppSetting' do
+        AppSetting.clear_cache
+        expect(AppSetting.get.zabbix_user).not_to eq zabbix_user
+        expect(AppSetting.get.zabbix_pass).not_to eq zabbix_pass
+      end
+    end
   end
 end
