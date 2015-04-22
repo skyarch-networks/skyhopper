@@ -382,7 +382,7 @@ ja:
     btn:
       new: '鍵ペアを新しく生成'
     confirm:
-      create: 'AWSに鍵ペアを生成しますか??'
+      create: 'AWSに鍵ペアを生成しますか?'
 
   resources:
     screen_name: '表示名'
