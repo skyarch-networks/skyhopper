@@ -78,6 +78,7 @@ class AppSettingsController < ApplicationController
     render text: I18n.t('app_settings.msg.created') and return
   end
 
+  # GET /app_settings/edit_zabbix
   def edit_zabbix
     @app_setting = AppSetting.get
     render 'zabbix_server'
@@ -85,11 +86,11 @@ class AppSettingsController < ApplicationController
 
   def update_zabbix
     app_setting = AppSetting.get
-    app_setting.zabbix_user = params.require(:zabbix_user)
-    app_setting.zabbix_pass = params.require(:zabbix_pass)
+    user = params.require(:zabbix_user)
+    pass = params.require(:zabbix_pass)
 
     begin
-      app_setting.save!
+      app_setting.update!(zabbix_user: user, zabbix_pass: pass)
       AppSetting.clear_cache
     rescue => ex
       render text: ex.message, status: 500 and return

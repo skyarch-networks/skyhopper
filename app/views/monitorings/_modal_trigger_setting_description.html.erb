@@ -7,12 +7,12 @@
         <h4 class="modal-title"><%= t 'monitoring.explanation_triggers' %></h4>
       </div>
       <div class="modal-body">
-        <% MasterMonitoring.all.each do |monitoring| %>
+        <% MasterMonitoring.pluck(:name, :trigger_expression).each do |name, trigger_expression| %>
           <blockquote>
-            <p><%= monitoring.name %></p>
-            <small><%= t "monitoring.explanations.#{monitoring.name.downcase.delete(' ')}" %></small>
-            <% if monitoring.trigger_expression.present? %>
-              <code><%= monitoring.trigger_expression %>value</code>
+            <p><%= name %></p>
+            <small><%= t "monitoring.explanations.#{name.downcase.delete(' ')}" %></small>
+            <% if trigger_expression.present? %>
+              <code><%= trigger_expression %>value</code>
             <% end %>
           </blockquote>
         <% end %>

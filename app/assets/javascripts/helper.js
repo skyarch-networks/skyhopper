@@ -64,6 +64,11 @@ var modal = function (title, message, modal_type, status) {
       )
     )
   );
+
+  modal_base.on('hidden.bs.modal', function (e) {
+    modal_base.remove();
+  });
+
   modal_base.appendTo("body").modal("show");
 
   return dfd.promise();
