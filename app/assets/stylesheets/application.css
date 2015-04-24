@@ -49,7 +49,7 @@
 }
 
 body {
-  font-family: "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Noto Sans Japanese", "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   padding-top: 60px !important;
   padding-bottom: 60px !important;
 }
@@ -63,7 +63,7 @@ html {
 }
 
 input, button, select, textarea {
-  font-family: "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Noto Sans Japanese", "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 
 img.gravatar-icon {
