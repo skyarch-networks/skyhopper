@@ -1,6 +1,6 @@
 <script id="monitoring-tabpane-template" type="text/template">
 
-<div class="row" v-if="before_register">
+<div v-if="before_register">
   <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
   <div class="alert alert-warning">
     <%= t 'monitoring.msg.before_create_host' %>
