@@ -1288,40 +1288,45 @@
   // for infrastructures#new
   var new_ec2_key = function () {
     bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
-      var name   = $('#keypair_name').val();
-      if(!name){
-        bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
-        return;
-      }
-      var region_input = $('#infrastructure_region');
-      var region = region_input.val();
-      var project_id = $('#infrastructure_project_id').val();
+      bootstrap_prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
+        if(!name){
+          bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+          return;
+        }
 
-      $.ajax({
-        url: '/ec2_private_keys',
-        type: 'POST',
-        data: {
-          name:       name,
-          region:     region,
-          project_id: project_id,
-        },
-      }).done(function (key) {
-        var value = key.value;
-        var textarea = $('#keypair_value');
-        textarea.val(value);
-        textarea.attr('readonly', true);
-        region_input.attr('readonly', true);
+        var region_input = $('#infrastructure_region');
+        var region = region_input.val();
+        var project_id = $('#infrastructure_project_id').val();
 
-        // download file.
-        var file = new File([value], name + '.pem');
-        var url = window.URL.createObjectURL(file);
-        var a = document.createElement('a');
-        a.href = url;
-        a.setAttribute('download', file.name);
-        document.body.appendChild(a);
-        a.click();
-      }).fail(function (xhr) {
-        bootstrap_alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+        $.ajax({
+          url: '/ec2_private_keys',
+          type: 'POST',
+          data: {
+            name:       name,
+            region:     region,
+            project_id: project_id,
+          },
+        }).done(function (key) {
+          var value = key.value;
+          var textarea = $('#keypair_value');
+          var keypair_name = $('#keypair_name');
+          textarea.val(value);
+          textarea.attr('readonly', true);
+          keypair_name.val(name);
+          keypair_name.attr('readonly', true);
+          region_input.attr('readonly', true);
+
+          // download file.
+          var file = new File([value], name + '.pem');
+          var url = window.URL.createObjectURL(file);
+          var a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', file.name);
+          document.body.appendChild(a);
+          a.click();
+        }).fail(function (xhr) {
+          bootstrap_alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+        });
       });
     });
   };
