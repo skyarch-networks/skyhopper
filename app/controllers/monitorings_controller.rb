@@ -153,7 +153,7 @@ class MonitoringsController < ApplicationController
 
     # TODO: Zabbix Server側の状態の更新
     # TODO: I18n
-    render text: "Monitoring configuration updated."
+    render text: I18n.t('monitoring.msg.updated')
   end
 
   # POST /monitorings/:id/create_host
