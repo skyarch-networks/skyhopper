@@ -18,6 +18,15 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt;
   };
 
 
+  /**
+   * @method modal
+   * @param {String} title
+   * @param {String} message
+   * @param {String} modal_type If 'confirm', modal have cancel button.
+   * @param {String} status warning, danger(optional)
+   * @param {func($.Deferred) => func()} resolve_func
+   * @return {$.Deferred}
+   */
   var modal = function (title, message, modal_type, status, resolve_func) {
     var modal_footer = $("<div>", {class: "modal-footer"});
 
@@ -33,15 +42,11 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt;
     if (modal_type === "confirm") {
       modal_footer.append(
         $("<button>", {class: "btn btn-default", "data-dismiss": "modal", text: "Cancel"})
-      ).append(
-        $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
       );
     }
-    else {
-      modal_footer.append(
-        $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
-      );
-    }
+    modal_footer.append(
+      $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
+    );
 
     var additional_class;
     if (status === "warning") {
