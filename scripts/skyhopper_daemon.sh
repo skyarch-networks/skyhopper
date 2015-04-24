@@ -41,6 +41,9 @@ start() {
   pid=$!
   echo -n $pid > ./tmp/pids/ws_proxy.pid
 
+  echo -e "\e[1m=====\e[32m Start Sidekiq as daemon\e[m"
+  bundle exec sidekiq -e production -d
+
   echo -e "\e[1m=====\e[32m Start Rails Server as daemon\e[m"
   bundle exec unicorn_rails -E production -D -p3000
 }
@@ -48,6 +51,9 @@ start() {
 stop() {
   echo -e "\e[1m=====\e[32m Kill Websocket Server daemon\e[m"
   kill $(cat ./tmp/pids/ws_proxy.pid)
+
+  echo -e "\e[1m=====\e[32m Kill Sidekiq daemon\e[m"
+  kill $(cat ./tmp/pids/sidekiq.pid)
 
   pid=$(get_pid)
   echo -e "\e[1m=====\e[32m Kill Rails Server daemon\e[m"
