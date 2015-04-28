@@ -8,6 +8,7 @@
 
 class CfTemplatesController < ApplicationController
   before_action :set_cf_template, only: [:show, :edit, :update, :destroy]
+  before_action :new_cf_template, only: [:insert_cf_params, :create, :create_and_send]
 
   # --------------- auth
   before_action :authenticate_user!
@@ -103,18 +104,16 @@ class CfTemplatesController < ApplicationController
 
   # POST /cf_templates/insert_cf_params
   def insert_cf_params
-    params = cf_template_params
-    cf_template = CfTemplate.new(params)
-    infra = Infrastructure.find(params[:infrastructure_id])
+    infra = Infrastructure.find(cf_template_params[:infrastructure_id])
 
     begin
-      @tpl = JSON.parse(cf_template.value)
+      @tpl = JSON.parse(@cf_template.value)
     rescue JSON::ParserError => ex
       render text: ex.message, status: 400 and return
     end
 
     begin
-      cf_template.validate_template
+      @cf_template.validate_template
     rescue Aws::CloudFormation::Errors::ValidationError => ex
       render text: ex.message, status: 400 and return
     end
@@ -133,8 +132,6 @@ class CfTemplatesController < ApplicationController
   # POST /cf_templates
   # POST /cf_templates.json
   def create
-    @cf_template = CfTemplate.new(cf_template_params)
-
     begin
       @cf_template.validate_template
     rescue => ex
@@ -159,10 +156,9 @@ class CfTemplatesController < ApplicationController
   # POST /cf_template/create_and_send
   # Create cf_template and send template to cloudformation for creating stack
   def create_and_send
-    cf_template = CfTemplate.new(cf_template_params)
-    cf_template.user_id = current_user.id
+    @cf_template.user_id = current_user.id
 
-    res = send_cloudformation_template(cf_template, params[:cf_template][:cfparams])
+    res = send_cloudformation_template(@cf_template, params[:cf_template][:cfparams])
 
     if res[:status]
       render text: res[:message] and return
@@ -205,6 +201,10 @@ class CfTemplatesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_cf_template
     @cf_template = CfTemplate.find(params.require(:id))
+  end
+
+  def new_cf_template
+    @cf_template = CfTemplate.new(cf_template_params)
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
