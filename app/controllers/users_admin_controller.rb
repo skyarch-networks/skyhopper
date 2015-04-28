@@ -15,7 +15,7 @@ class UsersAdminController < ApplicationController
 
   before_action :with_zabbix_or_back, only: [:new, :create, :destroy]
   before_action :with_zabbix_or_render, only: [:edit, :update, :sync_zabbix]
-  before_action :set_zabbix, only: [:update, :destroy]
+  before_action :set_zabbix, only: [:destroy]
 
   # user management
   # GET /users_admin
@@ -119,7 +119,8 @@ class UsersAdminController < ApplicationController
       render text: user.errors.full_messages.join(' '), status: 500 and return
     end
 
-    z = @zabbix
+    s = AppSetting.get
+    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
     zabbix_user_id = z.get_user_id(user.email)
 
     if set_password

@@ -15,7 +15,7 @@ describe Ec2InstancesController, :type => :controller do
   let(:infra){create(:infrastructure)}
 
   describe '#change_scale' do
-    let(:type){'t1.micro'}
+    let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
 
     let(:instance){double(:instance,

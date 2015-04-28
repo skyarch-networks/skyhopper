@@ -9,7 +9,8 @@
 module NotificationsHelper
   def create_notification(text, status, timestamp)
     klass = ['notification-panel', 'bs-callout', "bs-callout-#{status ? 'success' : 'danger'}"]
+    text = simple_format(truncate(text, length: 140))
     content = content_tag('h5', timestamp) + content_tag('p', text)
-    return content_tag('div', simple_format(content), class: klass.join(' '))
+    return content_tag('div', content, class: klass.join(' '))
   end
 end

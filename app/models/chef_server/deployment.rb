@@ -35,6 +35,8 @@ class ChefServer::Deployment
     error:          {percentage: nil, status: :error}
   }.freeze
 
+  class Error < StandardError; end
+
 
   class << self
     # chef_serverを作成し、自身のインスタンスを返す。
@@ -43,6 +45,10 @@ class ChefServer::Deployment
       __yield :creating_infra, &block
 
       prj = Project.for_chef_server
+      unless prj
+        raise Error, "Project for Chef Server not found. Did you run db:seed? If didn't run, execute `bundle exec rake db:seed`"
+      end
+
       infra = Infrastructure.create_with_ec2_private_key(
         project_id:    prj.id,
         stack_name:    stack_name,

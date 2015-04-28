@@ -16,10 +16,13 @@ class CfTemplate < ActiveRecord::Base
   belongs_to :infrastructure
   belongs_to :user
 
-  def self.for_infra(infrastructure_id)
-    where(infrastructure_id: infrastructure_id).order('created_at DESC')
+  # @param [String|Integer] infra_id ID of Infrastructure
+  # @return [Array<CfTemplate>]
+  def self.for_infra(infra_id)
+    where(infrastructure_id: infra_id).order('created_at DESC')
   end
 
+  # @return [Array<CfTemplate>]
   def self.global
     where(infrastructure_id: nil)
   end
@@ -41,11 +44,13 @@ class CfTemplate < ActiveRecord::Base
     @params_not_json = parameters.compact
   end
 
+  # @raise [Aws::CloudFormation::Errors::ValidationError] when invalid as cf_template
   def validate_template
     s = Stack.new(Project.for_chef_server.infrastructures.first)
     s.validate_template(self.value)
   end
 
+  # @return [Hash<String => String>]
   def parsed_cfparams
     @params_not_json || JSON::parse(self.params)
   end

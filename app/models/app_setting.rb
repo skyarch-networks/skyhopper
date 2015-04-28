@@ -14,29 +14,38 @@ class AppSetting < ActiveRecord::Base
   class ValidateError < StandardError; end
 
   class << self
+    # @return [AppSetting] 使用すべき設定を返す
     # XXX: 現状ではシングルトンだが、複数の設定を切り替えられるようにする?
     def get
       @@get ||= self.first
     end
 
+    # @return [Boolean] セッティング済みかどうかを返す
     def set?
       self.count != 0 and not self.get.dummy?
     end
 
+    # 全てのダミーセッティングを削除する
     # XXX: 遅そう
     def clear_dummy
       self.all.select(&:dummy?).each(&:destroy)
     end
 
+    # AppSetting.get 用のキャッシュを削除する。
+    # 設定を更新した場合などにする必要がある
     def clear_cache
       @@get = nil
     end
 
+    # AppSetting が持つ attributes の一覧を返す。
+    # TODO: 使われていないメソッドな気がするので、後で調査して削除する
     def attrs
       @@attrs ||= self.column_names.reject{|x| ['created_at', 'updated_at', 'id'].include?(x)}.map(&:to_sym)
     end
 
-    # setting is Symbol key Hash
+    # @param [Hash<Symbol => Any>] setting Validate する対象
+    # @return [TrueClass]
+    # @raise [ValidateError] バリデーションに失敗した場合に発生する
     def validate(setting)
       [:log_directory].each do |col|
         begin
@@ -57,12 +66,18 @@ class AppSetting < ActiveRecord::Base
       return true
     end
 
+    # パスとして期待しているものかどうかを返す
+    # @param [String] parh
+    # @return [Boolean]
     def is_pathname?(path)
       path =~ /^~?\//
     end
     private :is_pathname?
   end
 
+  # ダミー設定かどうかを返す
+  # kind_of? で String のみを見ないと warning が出る(将来的にはエラー?) https://github.com/rails/rails/pull/18365
+  # @return [Boolean]
   def dummy?
     attributes.any?{|key, val| val.kind_of?(String) && val == DummyText}
   end

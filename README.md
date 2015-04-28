@@ -14,11 +14,12 @@ http://www.skyarch.net/blog/?p=2709
 1. rubyのインストール
 1. node.jsのインストール
 1. SkyHopperに必要なパッケージをインストール
-1. MySQLのセットアップ
+1. リバースプロキシの設定
+1. サービスの起動
 1. SkyHopperのダウンロード
+1. MySQLのセットアップ
 1. SkyHopperのセットアップ
 1. DBのセットアップ
-1. リバースプロキシの設定
 1. SkyHopperの初期設定
 1. Chef Serverの鍵を設置
 
