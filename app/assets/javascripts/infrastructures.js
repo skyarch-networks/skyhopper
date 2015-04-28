@@ -133,6 +133,9 @@
           self.loading = false;
         }));
       },
+      back: function () {
+        app.show_tabpane('add_modify');
+      },
     },
     created: function () {
       var self = this;
@@ -146,7 +149,7 @@
         self.$set('loading', false);
         app.loading = false;
       }).fail(alert_danger(function () {
-        app.show_tabpane('add_modify');
+        self.back();
       }));
     },
   });

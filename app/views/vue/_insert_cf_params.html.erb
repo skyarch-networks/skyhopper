@@ -30,6 +30,7 @@ params
 
   <div v-if="!loading" class="form-actions-top">
     <button v-on="click: submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
+    <button v-on="click: back()"   class="btn btn-default"><%= t 'helper.links.action.back' %></button>
   </div>
   <div v-if="loading" class="form-actions-top">
     <div-loader></div-loader>
