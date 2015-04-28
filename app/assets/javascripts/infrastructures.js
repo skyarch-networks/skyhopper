@@ -145,7 +145,9 @@
         });
         self.$set('loading', false);
         app.loading = false;
-      });
+      }).fail(alert_danger(function () {
+        app.show_tabpane('add_modify');
+      }));
     },
   });
 

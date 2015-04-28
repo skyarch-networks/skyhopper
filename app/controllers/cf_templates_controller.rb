@@ -110,13 +110,19 @@ class CfTemplatesController < ApplicationController
     begin
       @tpl = JSON.parse(cf_template.value)
     rescue JSON::ParserError => ex
-      render text: ex.message, status: 500 and return
+      render text: ex.message, status: 400 and return
+    end
+
+    begin
+      cf_template.validate_template
+    rescue Aws::CloudFormation::Errors::ValidationError => ex
+      render text: ex.message, status: 400 and return
     end
 
     # create EC2 instance ?
     if @tpl["Parameters"].include?("KeyName")
       unless infra.ec2_private_key_id
-        render text: I18n.t('cf_templates.msg.keypair_missing'), status: 500 and return
+        render text: I18n.t('cf_templates.msg.keypair_missing'), status: 400 and return
       end
       @tpl["Parameters"].delete("KeyName")
     end
@@ -192,6 +198,7 @@ class CfTemplatesController < ApplicationController
     infra_id = params.require(:infrastructure_id)
     @histories = CfTemplate.for_infra(infra_id)
   end
+
 
   private
 
