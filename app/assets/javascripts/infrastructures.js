@@ -642,7 +642,8 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
 
-        var dfd = ec2[method_name](params).fail(
+        var dfd = ec2[method_name](params);
+        dfd.fail(
           // cook start fail
           alert_danger(self._show_ec2)
         ).progress(function (state, msg) {
@@ -651,13 +652,29 @@
 
           alert_success(function () {
             self.inprogress = true;
+            Vue.nextTick(function () {
+              self.watch_cook(dfd);
+            });
           })(msg);
         });
-        self.watch_cook(dfd);
       },
       watch_cook: function (dfd) {
         var self = this;
         var infra_id = current_infra.id;
+        var el = document.getElementById("cook-status");
+
+        // 更新されるたびにスクロールすると、scrollHeight 等が重い処理なのでブラウザが固まってしまう。
+        // そのため、100msに1回スクロールするようにしている。
+        (function () {
+          var scroll = function () {
+            Vue.nextTick(function () {
+              el.scrollTop = el.scrollHeight;
+              if (self.inprogress) { setTimeout(scroll, 100); }
+            });
+          };
+          scroll();
+        })();
+
         dfd.done(function () {
           if(infra_id !== current_infra.id){return;}
           // cook end
@@ -669,10 +686,6 @@
           if(infra_id !== current_infra.id){return;}
 
           self.chef_console_text += msg;
-          Vue.nextTick(function () {
-            var el = document.getElementById("cook-status");
-            el.scrollTop = el.scrollHeight;
-          });
         });
       },
       apply_dish: function () {
