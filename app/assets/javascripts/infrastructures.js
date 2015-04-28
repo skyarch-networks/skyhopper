@@ -323,6 +323,7 @@
         self.showing_url = false;
         self.loading_graph = true;
         this.monitoring.show_cloudwatch_graph(physical_id).done(function (data) {
+          self.error_message = null;
           self.loading_graph = false;
           Vue.nextTick(function () {
             self.drawChart(data, physical_id, 'NetworkInOut', ['NetworkIn', 'NetworkOut', 'Sum']);
