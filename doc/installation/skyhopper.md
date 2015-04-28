@@ -47,7 +47,7 @@ $ sudo npm install bower --global
 
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
-$ sudo yum install ruby21-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server mysql-client nginx
+$ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server mysql-client nginx
 $ sudo yum --enablerepo=epel install redis
 ```
 
