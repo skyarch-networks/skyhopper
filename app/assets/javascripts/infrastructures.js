@@ -601,9 +601,9 @@
   });
 
   Vue.component('serverspec-status-badge', {
-    template: '<span class="badge progress-bar-danger" data-toggle="tooltip" title="Serverspec failed" data-original-title="Serverspec failed">!</span>',
+    template: '<span class="badge progress-bar-danger" data-toggle="tooltip" data-original-title="Serverspec failed">!</span>',
     compiled: function () {
-      $(this.$el).children().tooltip();
+      $(this.$el.querySelector('[data-toggle="tooltip"]')).tooltip();
     },
   });
 
