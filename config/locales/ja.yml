@@ -137,6 +137,7 @@ ja:
     runlist:            'Runlist'
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
+    serverspec_failed:  'Serverspec が失敗しています'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'

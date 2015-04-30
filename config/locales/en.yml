@@ -137,6 +137,7 @@ en:
     runlist:            'Runlist'
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
+    serverspec_failed:  'Serverspec failed'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
