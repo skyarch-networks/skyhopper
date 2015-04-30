@@ -47,10 +47,12 @@ ja:
 
     server_status:
       zabbix:
-        title:         'Zabbix Server の設定'
+        title:         'Zabbix Server の電源管理'
         confirm_start: 'Zabbix Server を起動しますか?'
         confirm_stop:  'Zabbix Server を停止しますか?'
+        tooltip:       'ステータスを変更する'
       chef:
-        title:         'Chef Server の設定'
+        title:         'Chef Server の電源管理'
         confirm_start: 'Chef Server を起動しますか?'
         confirm_stop:  'Chef Server を停止しますか?'
+        tooltip:       'ステータスを変更する'

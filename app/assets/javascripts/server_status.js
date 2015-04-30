@@ -171,6 +171,12 @@
             return 'btn-warning';
           }
         },
+        tooltip: function () {
+          if (!this.is_inprogress) {
+            return model.msgs().tooltip;
+          }
+          return;
+        },
       },
       created: function () {
         this.$set('state', null);
