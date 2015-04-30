@@ -253,7 +253,7 @@ describe NodesController, :type => :controller do
       should_be_success
 
       it 'should render message' do
-        expect(response.body).to eq 'Runlist is empty.'
+        expect(response.body).to eq I18n.t('nodes.msg.runlist_empty')
       end
     end
 
