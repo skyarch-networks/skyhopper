@@ -6,6 +6,8 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
+require 'sidekiq/api'
+
 class ServerspecsController < ApplicationController
   include Concerns::BeforeAuth
   include Concerns::InfraLogger
@@ -101,6 +103,8 @@ class ServerspecsController < ApplicationController
     @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
     node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
+
+    @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
   end
 
   # TODO: refactor
@@ -155,6 +159,27 @@ class ServerspecsController < ApplicationController
     Serverspec.create_rds(rds, username, password, infra_id, database)
 
     render text: I18n.t('serverspecs.msg.generated'), status: 201 and return
+  end
+
+  # POST /serverspecs/schedule
+  def schedule
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
+    schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
+
+    ss = ServerspecSchedule.find_by(physical_id: physical_id)
+    ss.update_attributes(schedule)
+
+    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == physical_id }
+    jobs.each(&:delete)
+
+    if ss.enabled?
+      PeriodicServerspecJob.set(
+        wait_until: ss.next_run
+      ).perform_later(physical_id, infra_id, current_user.id)
+    end
+
+    render text: I18n.t('serverspec_schedules.msg.updated'), status: 200 and return
   end
 
 

@@ -63,6 +63,7 @@ SkyHopper::Application.routes.draw do
       get  'select'
       post 'run'
       put  'create_for_rds'
+      post 'schedule'
     end
   end
 
