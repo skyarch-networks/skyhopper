@@ -600,6 +600,13 @@
     },
   });
 
+  Vue.component('serverspec-status-badge', {
+    template: '<span class="badge progress-bar-danger" data-toggle="tooltip" title="Serverspec failed" data-original-title="Serverspec failed">!</span>',
+    compiled: function () {
+      $(this.$el).children().tooltip();
+    },
+  });
+
   Vue.component('ec2-tabpane', {
     template: '#ec2-tabpane-template',
     methods: {
