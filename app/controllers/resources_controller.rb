@@ -35,7 +35,7 @@ class ResourcesController < ApplicationController
     infra_id    = params.require(:infra_id)
     physical_id = params.require(:physical_id)
     screen_name = params[:screen_name] || physical_id
-    type_name   = 'AWS::EC2::Instance' # TODO: 決め打ち
+    type_name   = 'AWS::EC2::Instance' # XXX: 決め打ち
 
     infra = Infrastructure.find(infra_id)
     unless infra.create_complete?

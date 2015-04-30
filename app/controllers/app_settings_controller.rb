@@ -96,8 +96,7 @@ class AppSettingsController < ApplicationController
       render text: ex.message, status: 500 and return
     end
 
-    # TODO: I18n
-    redirect_to clients_path, notice: 'Zabbix Setting was successfully updated.'
+    redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
   end
 
 

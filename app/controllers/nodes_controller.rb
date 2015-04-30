@@ -158,8 +158,7 @@ class NodesController < ApplicationController
 
     runlist = dish.runlist
     if runlist.blank?
-      # TODO: I18n
-      render text: 'Runlist is empty.' and return
+      render text: I18n.t('nodes.msg.runlist_empty') and return
     end
 
     ret = update_runlist(physical_id: physical_id, infrastructure: infrastructure, runlist: runlist, dish_id: dish_id)
