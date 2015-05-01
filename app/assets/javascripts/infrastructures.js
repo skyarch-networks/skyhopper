@@ -1030,6 +1030,7 @@
         }).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
+          $(document.body).css('padding-right', '');
           alert_success()(msg);
         }).fail(function (msg) {
           self.loading_s = false;
