@@ -90,6 +90,8 @@ group :development, :test do
   gem 'railroady'
   gem 'autodoc'
   gem 'yard'
+  gem 'redcarpet'
+  gem 'github-markup'
 end
 
 # for Login

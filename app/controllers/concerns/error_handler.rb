@@ -1,3 +1,39 @@
+=begin
+@markup markdown
+ErrorHandler is module of controller error handling.
+
+## コントローラーでのエラーハンドリングの方法
+
+コントローラーで`raise`された`StandardError`以下のエラーは、`#rescue_exception`によって処理されます。
+もし、リクエストがAjaxでなければ、通常通り例外が吐かれます。
+リクエストがAjaxであれば、適切にフォーマットされたJSONとして`render`されます。
+
+### フォーマットの方法
+
+特に指定のない例外クラスの場合、以下の様な書式で例外が吐かれます。また、ステータスコードは500固定です。
+
+```json
+{
+  "error": {
+    "message": "ex.message",
+    "kind":    "ex.class.to_s"
+  }
+}
+```
+
+この挙動は、例外クラスに`#format_error`と`#status_code`メソッドを定義することによって変更することが出来ます。
+
+`#format_error`ではレスポンスの`error`の中身を返します。
+少なくとも`message`と`kind`の2つのキーを持った`Hash`を返すようにしてください。
+
+`#status_code`ではステータスコードを返します。
+
+
+### クライアント側での処理の仕方
+
+クライアント側では、`modal_for_ajax_std_error`メソッドを使用することで簡単にエラーを表示することが出来ます。
+詳細は`helper.js`を参照してください。
+=end
 module Concerns::ErrorHandler
   extend ActiveSupport::Concern
 
