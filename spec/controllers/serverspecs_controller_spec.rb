@@ -236,6 +236,10 @@ describe ServerspecsController, :type => :controller do
       it 'assigns @global_serverspecs' do
         expect(assigns[:global_serverspecs]).to match_array([])
       end
+
+      it 'assigns @serverspec_schedule' do
+        expect(assigns[:serverspec_schedule]).to be_a ServerspecSchedule
+      end
     end
 
     context 'when have auto_generated' do
