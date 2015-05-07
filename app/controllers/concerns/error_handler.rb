@@ -19,13 +19,13 @@ module Concerns::ErrorHandler
   def rescue_exception(ex)
     raise ex unless ajax?
 
-    if ex.respond_to?(:format_error)
-      render json: ex.format_error and return
+    if ex.respond_to?(:format_error) and ex.respond_to?(:status_code)
+      render json: ex.format_error, status: ex.status_code and return
     end
 
     render json: { error: {
         message: ex.message,
         kind:    ex.class.to_s,
-    }}
+    }}, status: 500
   end
 end

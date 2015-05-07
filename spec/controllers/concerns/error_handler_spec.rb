@@ -46,15 +46,21 @@ describe Concerns::ErrorHandler do
       context 'when defined format_error' do
         class E < StandardError
           def format_error
-            return { error: {
+            return {error: {
               message: 'hoge',
               kind:    'fuga',
             }}
+          end
+          def status_code
+            return 500
           end
         end
 
         let(:ex){'E.new("hoge")'}
         before{req}
+
+        should_be_failure
+
         it 'should render formated error' do
           expect(JSON.parse(response.body, symbolize_names: true)).to eq({error:{
             message: 'hoge',
@@ -67,6 +73,8 @@ describe Concerns::ErrorHandler do
         let(:ex){'StandardError.new("Poyo")'}
         before{req}
         let(:err){JSON.parse(response.body, symbolize_names: true)[:error]}
+
+        should_be_failure
 
         it 'message should Poyo' do
           expect(err[:message]).to eq 'Poyo'
@@ -81,6 +89,7 @@ describe Concerns::ErrorHandler do
     context 'when not ajax' do
       let(:ex){'StandardError.new("hoge")'}
       before{req}
+
       it 'should raise error' do
         expect(response.body).to eq 'rescue'
       end
