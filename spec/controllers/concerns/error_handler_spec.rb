@@ -10,22 +10,25 @@ describe Concerns::ErrorHandler do
         render nothing: true
       end
     end
-    before{req}
+    let(:req){get :index}
 
     context 'when ajax' do
-      let(:req){request.env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';get :index}
-
+      request_as_ajax
+      before{req}
       it do
         expect(assigns[:ajax]).to be true
       end
     end
 
     context 'when not ajax' do
-      let(:req){get :index}
-
+      before{req}
       it do
         expect(assigns[:ajax]).to be false
       end
     end
+  end
+
+  describe '#rescue_exception' do
+
   end
 end
