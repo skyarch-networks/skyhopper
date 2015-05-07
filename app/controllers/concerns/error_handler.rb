@@ -20,7 +20,7 @@ module Concerns::ErrorHandler
     raise ex unless ajax?
 
     if ex.respond_to?(:format_error) and ex.respond_to?(:status_code)
-      render json: ex.format_error, status: ex.status_code and return
+      render json: {error: ex.format_error}, status: ex.status_code and return
     end
 
     render json: { error: {

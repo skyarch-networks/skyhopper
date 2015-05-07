@@ -46,10 +46,10 @@ describe Concerns::ErrorHandler do
       context 'when defined format_error' do
         class E < StandardError
           def format_error
-            return {error: {
+            return {
               message: 'hoge',
               kind:    'fuga',
-            }}
+            }
           end
           def status_code
             return 500
