@@ -1279,9 +1279,7 @@
         bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
           location.reload();
         });
-      }).fail(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
-      }).always(l.$destroy);
+      }).fail(modal_for_ajax_std_error()).always(l.$destroy);
     });
   };
 
@@ -1295,11 +1293,9 @@
           show_infra(infra_id);
         });
         // TODO: reload
-      }).fail(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger').done(function () {
-          show_infra(infra_id);
-        });
-      }).always(l.$destroy);
+      }).fail(modal_for_ajax_std_error(function () {
+        show_infra(infra_id);
+      })).always(l.$destroy);
     });
   };
 

@@ -275,6 +275,7 @@ describe InfrastructuresController, :type => :controller do
     stubize_zabbix
     stubize_infra
     run_zabbix_server
+    request_as_ajax
 
     context 'when delete successfully' do
       before{req}
@@ -303,6 +304,7 @@ describe InfrastructuresController, :type => :controller do
     stubize_zabbix
     stubize_infra
     run_zabbix_server
+    request_as_ajax
 
     let(:delete_stack_request){post :delete_stack, id: infra.id}
 

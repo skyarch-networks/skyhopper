@@ -158,23 +158,14 @@ class InfrastructuresController < ApplicationController
   # DELETE /infrastructures/1.json
   ## detach
   def destroy
-    begin
-      @infrastructure.destroy!
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
+    @infrastructure.destroy!
 
     render text: I18n.t('infrastructures.msg.detached')
   end
 
   # POST /infrastructures/1/delete_stack
   def delete_stack
-    begin
-      @infrastructure.detach_zabbix
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
-
+    @infrastructure.detach_zabbix
     @infrastructure.detach_chef
 
     begin
@@ -187,7 +178,7 @@ class InfrastructuresController < ApplicationController
       @infrastructure.save!
       infra_logger_fail("Deleting stack is failed. \n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
 
-      render text: I18n.t('infrastructures.msg.delete_stack_failed'), status: 500 and return
+      raise ex
     end
 
     infra_logger_success("Deleting stack is successfully started.")

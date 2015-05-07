@@ -127,7 +127,8 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
   // Example: $.ajax().done(...).fail(modal_for_ajax_std_error(function(){doSomething();}));
   modal_for_ajax_std_error = function (callback) {
     return function (xhr) {
-      var ex = JSON.parse(xhr.responseText).error;
+      var t = typeof xhr === "string" ? xhr : xhr.responseText;
+      var ex = JSON.parse(t).error;
       var dfd = bootstrap_alert(ex.kind, ex.message, 'danger');
       if (callback) { dfd.done(callback); }
     };
