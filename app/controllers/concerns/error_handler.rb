@@ -12,4 +12,19 @@ module Concerns::ErrorHandler
   def ajax?
     return request.headers[:HTTP_X_REQUESTED_WITH] == 'XMLHttpRequest'
   end
+
+  def rescue_exception(ex)
+    raise ex unless ajax?
+
+    if ex.respond_to?(:format_error)
+      render json: ex.format_error and return
+    end
+
+    render json: {
+      error: {
+        message: ex.message,
+        kind:    ex.class.to_s,
+      }
+    }
+  end
 end
