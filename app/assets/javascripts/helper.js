@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt;
+var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, modal_for_ajax_std_error;
 (function () {
   "use strict";
 
@@ -123,4 +123,12 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt;
       $(this.$el.querySelector('[data-toggle="tooltip"]')).tooltip();
     },
   });
+
+  modal_for_ajax_std_error = function (callback) {
+    return function (xhr) {
+      var ex = JSON.parse(xhr.responseText).error;
+      var dfd = bootstrap_alert(ex.kind, ex.message, 'danger');
+      if (callback) { dfd.done(callback); }
+    };
+  };
 })();
