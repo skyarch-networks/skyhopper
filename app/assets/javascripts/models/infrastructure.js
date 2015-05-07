@@ -34,7 +34,7 @@ var Infrastructure = function (infra_id) {
       id: self.id
     }).done(function (data, status, xhr) {
       dfd.resolve(data);
-    }).fail(function (data, status, xhr) {
+    }).fail(function (xhr) {
       dfd.reject(xhr.responseText);
     });
 
