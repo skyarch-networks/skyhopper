@@ -301,6 +301,9 @@ describe NodesController, :type => :controller do
   describe '#update_attributes' do
     let(:attributes){JSON.generate({'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'})}
     let(:req){put :update_attributes, id: physical_id, infra_id: infra.id, attributes: attributes}
+    before do
+      create(:resource, physical_id: physical_id)
+    end
 
     context 'update success' do
       before do

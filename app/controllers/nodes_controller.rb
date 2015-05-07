@@ -196,6 +196,7 @@ class NodesController < ApplicationController
       render text: e.message, status: 500 and return
     end
 
+    Resource.find_by(physical_id: physical_id).status.cook.update(value: ResourceStatus::UnExecuted)
     render text: I18n.t('nodes.msg.attribute_updated') and return
   end
 
