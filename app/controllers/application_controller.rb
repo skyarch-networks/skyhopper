@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
   before_action :restore_locale
   before_action :set_notifications
 
+  include Concerns::ErrorHandler
+
   def default_url_options(option={})
     {lang: I18n.locale}
   end
