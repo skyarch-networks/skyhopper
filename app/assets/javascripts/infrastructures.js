@@ -717,9 +717,11 @@
 
             alert_success(function () {
               self.inprogress = true;
+              Vue.nextTick(function () {
+                self.watch_cook(dfd);
+              });
             })(msg);
           });
-          self.watch_cook(dfd);
         });
       },
       edit_runlist: function () {
