@@ -152,7 +152,6 @@ class MonitoringsController < ApplicationController
     infra_logger_success("Monitoring Options updated")
 
     # TODO: Zabbix Server側の状態の更新
-    # TODO: I18n
     render text: I18n.t('monitoring.msg.updated')
   end
 

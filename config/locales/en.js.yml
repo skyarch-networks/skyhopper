@@ -49,10 +49,12 @@ en:
 
     server_status:
       zabbix:
-        title:         'Zabbix Server Settings'
+        title:         'Power management of Zabbix Server'
         confirm_start: 'Do you want to start Zabbix Server?'
         confirm_stop:  'Do you want to stop Zabbix Server?'
+        tooltip:       'Change status'
       chef:
-        title:         'Chef Server Settings'
+        title:         'Power management of Chef Server'
         confirm_start: 'Do you want to start Chef Server?'
         confirm_stop:  'Do you want to stop Chef Server?'
+        tooltip:       'Change status'

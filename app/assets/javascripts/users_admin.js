@@ -82,9 +82,7 @@
       btn.after(frag);
       ajax_users_admin.sync_zabbix().done(function (data) {
         bootstrap_alert(t('users.title'), data).done(reload);
-      }).fail(function (xhr) {
-        bootstrap_alert(t('users.title'), xhr.responseText, "danger").done(reload);
-      });
+      }).fail(modal_for_ajax_std_error(reload));
     };
 
     bootstrap_confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);

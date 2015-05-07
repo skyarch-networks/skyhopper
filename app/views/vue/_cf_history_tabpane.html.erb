@@ -8,9 +8,11 @@ Arguments:
   <div class="col-md-3 col-sm-3">
     <h4 class="page-header">History</h4>
     <div class="list-group">
-      <a href="#" class="list-group-item" v-class="active: active(h.id)" v-repeat="h: histories" v-on="click: get(h.id)" rel="tooltip" title="{{h.detail}}">
-        <h4 class="list-group-item-heading">{{h.name}}</h4>
-        <p class="list-group-item-text">{{h.created_at | toLocaleString}}</p>
+      <a href="#" class="list-group-item" v-repeat="histories" v-class="active: active(id)" v-on="click: get(id)">
+        <bootstrap-tooltip v-with="title: detail">
+          <h4 class="list-group-item-heading">{{name}}</h4>
+          <p class="list-group-item-text">{{created_at | toLocaleString}}</p>
+        </bootstrap-tooltip>
       </a>
     </div>
   </div>

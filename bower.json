@@ -10,15 +10,15 @@
     "tests"
   ],
   "dependencies": {
-    "favico.js": "~0.3.5",
-    "bootstrap": "~3.3.1",
+    "favico.js": "~0.3.7",
+    "bootstrap": "~3.3.4",
     "ajax_set.js": "https://github.com/pocke/ajax_set.js.git",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
-    "noty": "~2.3.1",
-    "animate.css": "~3.2.0",
-    "jquery": "~2.1.1",
-    "jquery-ujs": "~1.0.2",
-    "vue": "~0.11.5",
-    "lodash": "~3.1.0"
+    "noty": "~2.3.5",
+    "animate.css": "~3.2.6",
+    "jquery": "~2.1.4",
+    "jquery-ujs": "~1.0.3",
+    "vue": "~0.11.8",
+    "lodash": "~3.7.0"
   }
 }

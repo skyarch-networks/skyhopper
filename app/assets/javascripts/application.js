@@ -20,19 +20,19 @@
 //
 
 // libraries
-//= require jquery.min
+//= require jquery
 //= require rails
 //= require ajax_set
 //= require i18n
 //= require_tree ./i18n
-//= require bootstrap.min
+//= require bootstrap
 //= require favico
-//= require jquery.noty.packaged.min
-//= require vue.min
-//= require lodash.min
+//= require jquery.noty.packaged
+//= require vue
+//= require lodash
 
 // app/assets/javascripts/*
-//= require bootstrap
+//= require bootstrap_trigger
 //= require helper
 //= require share
 //= require utils

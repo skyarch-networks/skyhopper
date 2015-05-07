@@ -7,17 +7,11 @@
 #
 
 module InfrastructuresHelper
-  def button_show_infra(infra = nil)
-    if infra
-      return link_to t("helpers.links.show"), "#", {
-        :class               => "btn btn-xs btn-info show-infra",
-        :"infrastructure-id" => infra.id
-      }
-
-    else
-      return link_to "Show Stack", "#", class: "btn btn-xs btn-info disabled"
-
-    end
+  def button_show_infra(infra)
+    return link_to t("helpers.links.show"), "#", {
+      :class               => "btn btn-xs btn-info show-infra",
+      :"infrastructure-id" => infra.id
+    }
   end
 
   def button_serverspecs(infra_id)
@@ -68,24 +62,6 @@ module InfrastructuresHelper
     link_to t('infrastructures.btn.add'),
       new_infrastructure_path(project_id: project.id),
       class: 'btn btn-primary btn-sm'
-  end
-
-  def label_stack_status(infra = nil)
-    if infra.status == nil || infra.status == "" || infra.updated_at == nil
-      return "<span class=\"label label-default\">NO STACK INFO</span>".html_safe
-
-    else
-      add_class_attr = if Stack.complete?(infra.status)
-        "label-success"
-      elsif Stack.failed?(infra.status)
-        "label-danger"
-      else
-        "label-default"
-      end
-
-      return "<span class=\"tooltip-updated-at\" href=\"#\" data-toggle=\"tooltip\" title=\"#{infrastructure.updated_at}\"><span class=\"label #{add_class_attr}\">#{infrastructure.status}</span></span>".html_safe
-
-    end
   end
 
 

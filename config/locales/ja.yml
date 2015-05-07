@@ -79,6 +79,7 @@ ja:
       secret_access_key: 'SkyHopper のシステムが使用する AWS の Secret Access Key（個別のインフラの管理には使用されません）'
       aws_region:        'SkyHopper のシステムが使用する AWS のリージョン'
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
+      zabbix_updated:    'Zabbix の設定は正常に更新されました。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -136,6 +137,7 @@ ja:
     runlist:            'Runlist'
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
+    serverspec_failed:  'Serverspec が失敗しています'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -194,6 +196,7 @@ ja:
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
+      runlist_empty:      'Runlist は空です'
 
 
   dishes:

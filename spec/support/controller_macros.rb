@@ -23,6 +23,13 @@ module ControllerMacros
     end
   end
 
+  # Ajax としてリクエストする
+  def request_as_ajax
+    before do
+      request.env['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest'
+    end
+  end
+
   def should_be_success
     it do
       expect(response).to be_success

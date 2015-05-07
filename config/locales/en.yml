@@ -79,6 +79,7 @@ en:
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
+      zabbix_updated:    'Zabbix Setting was successfully updated.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -136,6 +137,7 @@ en:
     runlist:            'Runlist'
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
+    serverspec_failed:  'Serverspec failed'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -194,6 +196,7 @@ en:
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
+      runlist_empty:      'Runlist is empty'
 
 
   dishes:

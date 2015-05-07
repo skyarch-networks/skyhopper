@@ -145,13 +145,14 @@ describe CfTemplatesController, :type => :controller do
       },
       infrastructure_id: infra.id
     }}
-
+    let(:value){JSON[{Parameters: {}}]}
+    let(:req){post :insert_cf_params, http_params}
     before do
-      post :insert_cf_params, http_params
+      allow_any_instance_of(CfTemplate).to receive(:validate_template)
     end
 
     context 'when valid as JSON' do
-      let(:value){JSON[{Parameters: {}}]}
+      before{req}
 
       context 'when create EC2 instance' do
         let(:value){JSON[{Parameters: {KeyName: ''}}]}
@@ -159,16 +160,16 @@ describe CfTemplatesController, :type => :controller do
         context 'when infra not has ec2_private_key' do
           let(:infra){ create(:infrastructure, ec2_private_key: nil) }
 
-          it do
-            expect(response).not_to be_success
-          end
+          should_be_failure
         end
 
+        should_be_success
         it '@tpl should not has key "KeyName"' do
           expect(assigns[:tpl]).not_to be_has_key 'KeyName'
         end
       end
 
+      should_be_success
       it 'should assign @tpl' do
         expect(assigns[:tpl]).to be_kind_of Hash
       end
@@ -176,9 +177,26 @@ describe CfTemplatesController, :type => :controller do
 
     context 'when invalid as JSON' do
       let(:value){'fooo'}
+      before{req}
 
+      should_be_failure
       it do
         expect(response).not_to be_success
+      end
+    end
+
+    context 'when invalid as CloudFormation template' do
+      let(:err_msg){'THIS IS ERROR!'}
+      before do
+        allow_any_instance_of(CfTemplate).to receive(:validate_template)
+          .and_raise(Aws::CloudFormation::Errors::ValidationError.new('foo', err_msg))
+        req
+      end
+
+      should_be_failure
+
+      it 'should render error message' do
+        expect(response.body).to eq err_msg
       end
     end
   end
