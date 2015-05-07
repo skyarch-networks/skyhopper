@@ -23,11 +23,9 @@ module Concerns::ErrorHandler
       render json: ex.format_error and return
     end
 
-    render json: {
-      error: {
+    render json: { error: {
         message: ex.message,
         kind:    ex.class.to_s,
-      }
-    }
+    }}
   end
 end
