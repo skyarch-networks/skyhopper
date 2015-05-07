@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
   before_action :restore_locale
   before_action :set_notifications
 
+  include Concerns::ErrorHandler
+
   def default_url_options(option={})
     {lang: I18n.locale}
   end
@@ -74,11 +76,5 @@ class ApplicationController < ActionController::Base
 
   def appsetting_controller
     controller_name == 'app_settings'
-  end
-
-  # Ajax での通信かどうかを判定し、True/False で返す。
-  # @return [Boolean]
-  def ajax?
-    return request.headers[:HTTP_X_REQUESTED_WITH] == 'XMLHttpRequest'
   end
 end
