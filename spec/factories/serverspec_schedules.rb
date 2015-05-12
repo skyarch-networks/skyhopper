@@ -15,5 +15,6 @@ FactoryGirl.define do
     frequency   'weekly'
     day_of_week ServerspecSchedule::day_of_weeks.keys.sample
     time        { rand(0..23) }
+    resource
   end
 end
