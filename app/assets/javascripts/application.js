@@ -19,19 +19,7 @@
 // about supported directives.
 //
 
-// libraries
-//= require jquery
-//= require rails
-//= require ajax_set
-//= require i18n
-//= require_tree ./i18n
-//= require bootstrap
-//= require favico
-//= require jquery.noty.packaged
-//= require vue
-//= require lodash
 
-// app/assets/javascripts/*
 //= require bootstrap_trigger
 //= require helper
 //= require share

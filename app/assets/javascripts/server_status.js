@@ -172,10 +172,10 @@
           }
         },
         tooltip: function () {
-          if (!this.is_inprogress) {
-            return model.msgs().tooltip;
+          if (this.is_inprogress) {
+            return;
           }
-          return;
+          return model.msgs().tooltip;
         },
       },
       created: function () {
