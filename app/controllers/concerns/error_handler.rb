@@ -21,7 +21,7 @@ ErrorHandler is module of controller error handling.
 }
 ```
 
-この挙動は、例外クラスに`#format_error`と`#status_code`メソッドを定義することによって変更することが出来ます。
+この挙動は、例外クラスの`#format_error`と`#status_code`メソッドをオーバーライドすることによって変更することが出来ます。
 
 `#format_error`ではレスポンスの`error`の中身を返します。
 少なくとも`message`と`kind`の2つのキーを持った`Hash`を返すようにしてください。
@@ -55,13 +55,6 @@ module Concerns::ErrorHandler
   def rescue_exception(ex)
     raise ex unless ajax?
 
-    if ex.respond_to?(:format_error) and ex.respond_to?(:status_code)
-      render json: {error: ex.format_error}, status: ex.status_code and return
-    end
-
-    render json: { error: {
-        message: ex.message,
-        kind:    ex.class.to_s,
-    }}, status: 500
+    render json: {error: ex.format_error}, status: ex.status_code and return
   end
 end

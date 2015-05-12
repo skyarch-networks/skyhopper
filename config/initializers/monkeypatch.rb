@@ -43,3 +43,16 @@ class Thread
     end
   end
 end
+
+class StandardError
+  def format_error
+    return {
+      message: self.message,
+      kind:    self.class.to_s,
+    }
+  end
+
+  def status_code
+    return 500
+  end
+end
