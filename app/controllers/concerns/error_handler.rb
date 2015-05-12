@@ -36,6 +36,7 @@ ErrorHandler is module of controller error handling.
 =end
 module Concerns::ErrorHandler
   extend ActiveSupport::Concern
+  using ErrorHandlize
 
   included do
     rescue_from StandardError, with: :rescue_exception
