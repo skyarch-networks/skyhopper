@@ -116,7 +116,9 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
   };
 
 
-  // <bootstrap-tooltip v-with="title: 'tooltip title'">  <div>Your content</div>  </bootstrap-tooltip>
+  // <bootstrap-tooltip v-with="title: 'tooltip title'">
+  //   <div>Your content</div>
+  // </bootstrap-tooltip>
   Vue.component('bootstrap-tooltip', {
     template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content></content></span>',
     compiled: function () {

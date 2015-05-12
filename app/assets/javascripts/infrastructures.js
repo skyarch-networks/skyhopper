@@ -107,13 +107,15 @@
         self.$set('value',  cft.value);
       },
       submit: function () {
-        if (jsonParseErr(this.value)) {return;}
+        if (this.jsonParseErr) {return;}
         app.show_tabpane('insert-cf-params');
         app.loading = true;
       },
     },
-    filters: {
-      jsonParseErr: jsonParseErr,
+    computed: {
+      jsonParseErr: function () {
+        return jsonParseErr(this.value);
+      },
     },
     created: function () {
       this.$set('selected_cft_id', null);

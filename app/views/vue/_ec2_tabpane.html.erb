@@ -28,16 +28,18 @@ Arguments:
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <div class="btn-group">
-              <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
-                <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
-                <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
-                <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
-              </ul>
-            </div>
+            <bootstrap-tooltip v-with="title: 'Change EC2 status'">
+              <div class="btn-group">
+                <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
+                  <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
+                </ul>
+              </div>
+            </bootstrap-tooltip>
           </td>
         </tr>
         <tr>
