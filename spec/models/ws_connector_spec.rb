@@ -52,4 +52,12 @@ describe WSConnector do
       instance.push_as_json(data)
     end
   end
+
+  describe '#push_error' do
+    let(:ex){StandardError.new('hoge')}
+    it 'should call Redis#publish' do
+      expect(redis).to receive(:publish).with(instance.instance_variable_get(:@endpoint), kind_of(String))
+      instance.push_error(ex)
+    end
+  end
 end
