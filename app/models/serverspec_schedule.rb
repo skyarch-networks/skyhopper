@@ -1,5 +1,5 @@
 class ServerspecSchedule < ActiveRecord::Base
-  belongs_to :resource
+  belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   enum frequency:   %i[daily weekly]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
