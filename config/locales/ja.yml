@@ -243,6 +243,25 @@ ja:
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
 
 
+  serverspec_schedules:
+    change_schedule:  'スケジュールの変更'
+    run_periodically: '定期的に実行'
+    frequency:
+      weekly:     '毎週'
+      daily:      '毎日'
+    day_of_week:
+      sunday:     '日曜'
+      monday:     '月曜'
+      tuesday:    '火曜'
+      wednesday:  '水曜'
+      thursday:   '木曜'
+      friday:     '金曜'
+      saturday:   '土曜'
+    o_clock:      '時'
+    msg:
+      updated:    'Serverspec の定期実行スケジュールが更新されました'
+
+
   cf_templates:
     cf_templates: 'CloudFormation テンプレート'
     cf_template:  'CloudFormation テンプレート'

@@ -501,10 +501,10 @@
         var rds = new RDSInstance(current_infra, this.physical_id);
         rds.change_scale(this.change_scale_type_to).done(function (msg) {
           alert_success(self.reload)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self.reload)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         });
       },
       gen_serverspec: function () {
@@ -512,10 +512,10 @@
         var rds = new RDSInstance(current_infra, this.physical_id);
         rds.gen_serverspec(this.serverspec).done(function (msg) {
           alert_success(self.reload)(msg);
-          $('#rds-serverspec-modal').modal().hide();
+          $('#rds-serverspec-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self.reload)(msg);
-          $('#rds-serverspec-modal').modal().hide();
+          $('#rds-serverspec-modal').modal('hide');
         });
       },
       reload: function () {
@@ -771,10 +771,10 @@
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         ec2.change_scale(self.change_scale_type_to).done(function (msg) {
           alert_success(self._show_ec2)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self._show_ec2)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         });
       },
     },
@@ -1016,6 +1016,24 @@
           self.$parent.update_serverspec_status(self.physical_id);
         }).fail(alert_danger(self.show_ec2));
       },
+      change_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        self.ec2.schedule_serverspec({
+          enabled: self.enabled,
+          frequency: self.frequency,
+          day_of_week: self.day_of_week,
+          time: self.time
+        }).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          $(document.body).css('padding-right', '');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      }
     },
     computed: {
       physical_id: function () {
@@ -1034,11 +1052,17 @@
     created: function () {
       var self = this;
       self.ec2.select_serverspec().done(function (data) {
+        var schedule = data.schedule;
         self.$set('available_auto_generated', data.available_auto_generated);
         self.$set('individuals', data.individuals || []);
         self.$set('globals', data.globals || []);
         self.$set('loading', false);
         self.$parent.loading = false;
+        self.$set('loading_s', false);
+        self.$set('enabled', schedule.enabled);
+        self.$set('frequency', schedule.frequency);
+        self.$set('day_of_week', schedule.day_of_week);
+        self.$set('time', schedule.time);
       }).fail(alert_danger(self.show_ec2));
     }
   });
