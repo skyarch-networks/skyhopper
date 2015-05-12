@@ -24,11 +24,11 @@ Arguments:
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" v-with="text: 'Changing EC2 status'"></div-loader>
+            <div-loader v-if="ec2_status_changing" v-with="text: '<%= t('ec2_instances.changing_status') %>'"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <bootstrap-tooltip v-with="title: 'Change EC2 status'">
+            <bootstrap-tooltip v-with="title: '<%= t('ec2_instances.change_status') %>'">
               <div class="btn-group">
                 <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>

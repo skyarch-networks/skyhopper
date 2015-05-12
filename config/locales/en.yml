@@ -367,8 +367,10 @@ en:
       not_running:    'Zabbix Server is not running.'
 
   ec2_instances:
-    description: 'Description'
-    settings:    'Settings'
+    description:     'Description'
+    settings:        'Settings'
+    change_status:   'Change status of EC2 instance'
+    changing_status: 'Changing status of EC2 instance...'
     msg:
       registered_to_elb:    'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'

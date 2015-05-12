@@ -367,8 +367,10 @@ ja:
       not_running:    'Zabbix Server が起動していません'
 
   ec2_instances:
-    description: '詳細'
-    settings:    '設定'
+    description:     '詳細'
+    settings:        '設定'
+    change_status:   'EC2 インスタンスのステータスを変更する'
+    changing_status: 'EC2 インスタンスのステータスを変更しています...'
     msg:
       registered_to_elb:    'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
