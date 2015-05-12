@@ -45,8 +45,8 @@ class ServerStatusController < ApplicationController
       10.times do |i|
         status = @server.latest_status
         ws.push(status)
-        break if status == "running" && before_status == "pending"
-        break if status == "stopped" && before_status == "stopping"
+        break if status == :running && before_status == :pending
+        break if status == :stopped && before_status == :stopping
         before_status = status
         sleep(8)
       end
