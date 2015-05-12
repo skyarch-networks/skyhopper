@@ -170,13 +170,13 @@ describe Ec2InstancesController, :type => :controller do
 
     context 'when instance error' do
       let(:instance){double('instance', physical_id: physical_id)}
-      let(:err_msg){'this is error.'}
+      let(:ex){StandardError.new('hoge')}
       before do
-        expect(instance).to receive(:wait_status).with(status).and_raise(err_msg)
+        expect(instance).to receive(:wait_status).with(status).and_raise(ex)
       end
 
       it 'should push error message' do
-        expect_any_instance_of(WSConnector).to receive(:push_as_json).with(error: err_msg)
+        expect_any_instance_of(WSConnector).to receive(:push_error).with(ex)
         req
       end
     end

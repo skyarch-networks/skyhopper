@@ -256,7 +256,7 @@ var EC2Instance = function (infra, physical_id) {
       ws.onmessage = function (msg) {
         var d = JSON.parse(msg.data);
         if (d.error) {
-          dfd.reject(d.error);
+          dfd.reject(d.error.message);
         } else {
           dfd.resolve(d.msg);
         }

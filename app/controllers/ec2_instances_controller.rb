@@ -147,7 +147,7 @@ class Ec2InstancesController < ApplicationController
         instance.wait_status(status)
         ws.push_as_json(error: nil, msg: "#{instance.physical_id} status is #{status}")
       rescue => ex
-        ws.push_as_json(error: ex.message)
+        ws.push_error(ex)
       end
     end
   end

@@ -7,6 +7,8 @@
 #
 
 class WSConnector
+  using ErrorHandlize
+
   def initialize(kind, id)
     @kind = kind
     @id = id
@@ -19,6 +21,10 @@ class WSConnector
   end
 
   def push_as_json(data)
-    @redis.publish(@endpoint, data.to_json)
+    push(data.to_json)
+  end
+
+  def push_error(ex)
+    push_as_json(error: ex.format_error)
   end
 end
