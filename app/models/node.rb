@@ -166,25 +166,25 @@ knife bootstrap #{fqdn} \
     result[:status] = result[:summary][:failure_count] == 0
     result[:status_text] = if result[:status]
       if result[:summary][:pending_count] == 0
-        ResourceStatus::Success
+        'success'
       else
-        ResourceStatus::Pending
+        'pending'
       end
     else
-      ResourceStatus::Failed
+      'failed'
     end
 
     case result[:status_text]
-    when ResourceStatus::Pending
+    when 'pending'
       result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}.join("\n")
-    when ResourceStatus::Failed
+    when 'failed'
       result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
 
     Resource.find_by(physical_id: @name).status.serverspec.update(value: result[:status_text])
     return result
   rescue => ex
-    Resource.find_by(physical_id: @name).status.serverspec.update(value: ResourceStatus::Failed)
+    Resource.find_by(physical_id: @name).status.serverspec.failed!
     raise ex
   ensure
     ec2key.close_temp

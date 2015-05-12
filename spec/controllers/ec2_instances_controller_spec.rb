@@ -90,8 +90,7 @@ describe Ec2InstancesController, :type => :controller do
     context 'when status failed' do
       before do
         st = resource.status.serverspec
-        st.value = ResourceStatus::Failed
-        st.save!
+        st.failed!
         req
       end
 
@@ -99,7 +98,7 @@ describe Ec2InstancesController, :type => :controller do
       it{expect(subject).to be false}
     end
 
-    [ResourceStatus::Success, ResourceStatus::Pending, ResourceStatus::UnExecuted].each do |status|
+    ['success', 'pending', 'un_executed'].each do |status|
       context "when status #{status}" do
         before do
           st = resource.status.serverspec

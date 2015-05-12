@@ -37,10 +37,10 @@ class Resource < ActiveRecord::Base
   end
 
   def initialize_statuses
-    ResourceStatus.import([
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindCook),
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindServerspec),
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindYum),
-    ])
+    ResourceStatus.kinds.map{|_, k| ResourceStatus.create(
+      resource: self,
+      kind: k,
+      value: 'un_executed',
+    )}
   end
 end

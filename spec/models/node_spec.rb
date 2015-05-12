@@ -192,7 +192,7 @@ describe Node, :type => :model do
     it 'should update status' do
       serverspecs = [serverspec.id]
       subject.run_serverspec(infra.id, serverspecs, false)
-      expect(resource.status.serverspec.value).to eq ResourceStatus::Success
+      expect(resource.status.serverspec.success?).to be true
     end
 
     context 'when command fail' do
@@ -203,7 +203,7 @@ describe Node, :type => :model do
       it 'should update status' do
         serverspecs = [serverspec.id]
         expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
-        expect(resource.status.serverspec.value).to eq ResourceStatus::Failed
+        expect(resource.status.serverspec.failed?).to be true
       end
     end
   end

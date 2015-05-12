@@ -132,11 +132,11 @@ class ServerspecsController < ApplicationController
     end
 
     case resp[:status_text]
-    when ResourceStatus::Success
+    when 'success'
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
-    when ResourceStatus::Pending
+    when 'pending'
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
-    when ResourceStatus::Failed
+    when 'failed'
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
