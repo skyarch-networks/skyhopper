@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150424055233) do
+ActiveRecord::Schema.define(version: 20150512062146) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -138,10 +138,10 @@ ActiveRecord::Schema.define(version: 20150424055233) do
 
   create_table "resource_statuses", force: :cascade do |t|
     t.integer  "resource_id", limit: 4
-    t.string   "kind",        limit: 255
-    t.string   "value",       limit: 255
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "value",       limit: 4, null: false
+    t.integer  "kind",        limit: 4, null: false
   end
 
   create_table "resources", force: :cascade do |t|
