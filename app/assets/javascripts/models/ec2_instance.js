@@ -246,7 +246,7 @@ var EC2Instance = function (infra, physical_id) {
     }).fail(rejectXHR(dfd));
 
     return dfd.promise();
-  }
+  };
 
   this.change_scale = function (type) {
     var dfd = $.Deferred();
