@@ -27,14 +27,6 @@ class Node
   def self.exec_command(command, ex_class=RuntimeError)
     out, err, status = Open3.capture3(command)
     unless status.success?
-      Rails.logger.error <<-EOS
-command: #{command}
-status: #{status}
-out:
-#{out}
-err:
-#{err}
-      EOS
       raise ex_class, out + err
     end
     return out, err, status

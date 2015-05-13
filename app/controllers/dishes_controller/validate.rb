@@ -152,11 +152,15 @@ module DishesController::Validate
     retry_count  = 9     # 20 * 9 = 180 sec
     begin
       @node = Node.bootstrap(fqdn, @physical_id, infrastructure)
-    rescue
-      sleep 20
+    rescue => ex
       retry_count -= 1
-      retry if retry_count >= 0
-      raise 'Bootstrap Timeout'
+      if retry_count < 0
+        raise 'Bootstrap Timeout'
+      end
+
+      sleep 20
+      Rails.logger.info("Retry bootstrap...")
+      retry
     end
   end
 
