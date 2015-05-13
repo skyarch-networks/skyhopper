@@ -55,7 +55,7 @@ describe Ec2PrivateKey do
       it{is_expected.to be_a String}
 
       it 'file should exist' do
-        expect(File.exists?(subject)).to be true
+        expect(File.exist?(subject)).to be true
       end
     end
   end
@@ -73,9 +73,9 @@ describe Ec2PrivateKey do
 
       it 'file should not exist' do
         path = key.path_temp
-        expect(File.exists?(path)).to be true
+        expect(File.exist?(path)).to be true
         key.close_temp
-        expect(File.exists?(path)).to be false
+        expect(File.exist?(path)).to be false
       end
     end
   end

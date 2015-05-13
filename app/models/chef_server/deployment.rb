@@ -223,7 +223,7 @@ class ChefServer::Deployment
     # TODO: 直接~/.chef/下に鍵を作る path = Pathname.new(File.expand_path('~/.chef/'))
     #       開発環境で上書きされないようにするのはどうする?
     path = Rails.root.join('tmp', 'chef')
-    FileUtils.mkdir_p(path) unless Dir.exists?(path)
+    FileUtils.mkdir_p(path) unless Dir.exist?(path)
 
     exec_scp("/tmp/#{User}.pem", path)
     File.chmod(0600, path.join("#{User}.pem"))
@@ -232,7 +232,7 @@ class ChefServer::Deployment
     File.chmod(0600, path.join("#{Org}.pem"))
 
     crt_path = path.join('trusted_certs')
-    Dir.mkdir(crt_path) unless Dir.exists?(crt_path)
+    Dir.mkdir(crt_path) unless Dir.exist?(crt_path)
     exec_scp("/tmp/#{fqdn}.crt", crt_path)
 
 
