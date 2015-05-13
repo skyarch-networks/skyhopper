@@ -37,12 +37,6 @@ class AppSetting < ActiveRecord::Base
       @@get = nil
     end
 
-    # AppSetting が持つ attributes の一覧を返す。
-    # TODO: 使われていないメソッドな気がするので、後で調査して削除する
-    def attrs
-      @@attrs ||= self.column_names.reject{|x| ['created_at', 'updated_at', 'id'].include?(x)}.map(&:to_sym)
-    end
-
     # @param [Hash<Symbol => Any>] setting Validate する対象
     # @return [TrueClass]
     # @raise [ValidateError] バリデーションに失敗した場合に発生する

@@ -86,17 +86,6 @@ describe AppSetting, :type => :model do
     end
   end
 
-  describe '.attrs' do
-    it do
-      expect(klass.attrs).to be_kind_of Array
-    end
-
-    it 'should memolize' do
-      klass.attrs
-      expect(klass.class_variable_get(:@@attrs)).to eq klass.attrs
-    end
-  end
-
   describe '.validate' do
     context 'when invalid path' do
       let(:arg){{log_directory: ''}}
