@@ -32,7 +32,7 @@ module TemplateBuildersHelper
       "panel-default"
     end
 
-    group = <<-EOS
+    return <<-EOS
     <div class="panel #{extra_klass}">
       #{accordion_heading(property, accordion_name: accordion_name)}
       #{accordion_body(property)}
@@ -44,7 +44,7 @@ module TemplateBuildersHelper
   def accordion_heading(property, accordion_name: nil)
     return nil unless accordion_name
 
-    heading = <<-EOS
+    return <<-EOS
     <div class="panel-heading">
       <h4 class="panel-title">
         <a class=\"accordion-toggle property-heading\" data-toggle=\"collapse\" data-parent=\"##{accordion_name}\" href=\"#collapse-#{property.name}\" property-type=\"#{property.name}\">#{property.name}</a>
@@ -56,7 +56,7 @@ module TemplateBuildersHelper
 
   #### Parts of Accordion Body
   def accordion_body(property)
-    body = <<-EOS
+    return <<-EOS
     <div id="collapse-#{property.name}" class="panel-collapse collapse">
       <div class="panel-body">
         #{checkbox_enable_property(property)}

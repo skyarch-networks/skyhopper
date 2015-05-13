@@ -11,8 +11,6 @@ module StackStub
 
   # opt = {METHOD_NAME: ACTION}
   def stubize_stack(opt = {})
-
-    klass = Stack
     let(:_cf){double('@cloud_formation')}
     let(:_stack){double('@stack')}
     let(:cf_validate_error){Aws::CloudFormation::Errors::ValidationError.new('CONTEXT', 'MESSAGE')}

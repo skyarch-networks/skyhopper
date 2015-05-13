@@ -16,13 +16,13 @@ describe ServerState, type: :model do
     unless Project.for_chef_server
       p = create(:project, code: Project::ChefServerCodeName)
       i = create(:infrastructure, project: p)
-      r = create(:ec2_resource, infrastructure: i)
+      create(:ec2_resource, infrastructure: i)
     end
 
     unless Project.for_zabbix_server
       p = create(:project, code: Project::ZabbixServerCodeName)
       i = create(:infrastructure, project: p)
-      r = create(:ec2_resource, infrastructure: i)
+      create(:ec2_resource, infrastructure: i)
     end
   end
   before do

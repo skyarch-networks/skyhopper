@@ -154,7 +154,6 @@ class NodesController < ApplicationController
 
     infrastructure = Infrastructure.find(infra_id)
     dish           = Dish.find(dish_id)
-    node           = Node.new(physical_id)
 
     runlist = dish.runlist
     if runlist.blank?

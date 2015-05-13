@@ -56,7 +56,7 @@ class Serverspec < ActiveRecord::Base
       description = "Check connection to RDS host:#{host[/^([^\.]+)\./, 1]} as user:#{user}"
       description << ", database:#{db_name}" if db_name
 
-      rds_spec = self.create(
+      return self.create(
         infrastructure_id: infra_id,
         name:              "RDS connection to #{host[/^([^\.]+)\./, 1]}",
         value:             spec_value,

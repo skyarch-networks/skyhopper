@@ -111,7 +111,7 @@ class MonitoringsController < ApplicationController
     expr_nums       = JSON.parse(params[:expressions])
     # hash -> {master_monitoring_id: rds_hostname}
     host_mysql      = JSON.parse(params[:host_mysql])
-    host_postgresql = JSON.parse(params[:host_postgresql])
+    # host_postgresql = JSON.parse(params[:host_postgresql])
 
     infra.master_monitoring_ids = monitoring_ids
     master_monitorings = MasterMonitoring.all
@@ -190,7 +190,7 @@ class MonitoringsController < ApplicationController
   def set_zabbix
     begin
       @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError => ex
+    rescue Zabbix::ConnectError
       #flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
     end
   end

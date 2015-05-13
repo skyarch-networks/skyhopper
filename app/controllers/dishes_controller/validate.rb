@@ -15,7 +15,7 @@ module DishesController::Validate
 
 
     # dishのテスト
-    validation = Thread.new_with_db(dish) do |dish|
+    Thread.new_with_db(dish) do |dish|
       begin
         @ws = WSConnector.new('dish_validate', dish.id)
 
@@ -37,7 +37,7 @@ module DishesController::Validate
         validate_section(:applying, dish) do
           begin
             apply_dish_for_test(@infrastructure, dish)
-          rescue Node::CookError => ex
+          rescue Node::CookError
             update_validate_status(dish, :failure)
             Thread.current.exit
           end
@@ -124,8 +124,8 @@ module DishesController::Validate
     parameters = cf_template.create_cfparams_set(infrastructure)
 
     begin
-      action = @stack.apply_template(cf_template.value, parameters)
-    rescue => ex
+      @stack.apply_template(cf_template.value, parameters)
+    rescue
       # Stack Create failed
       #render text: ex.message, status: 500
     else

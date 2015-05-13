@@ -226,7 +226,7 @@ knife bootstrap #{fqdn} \
 
   # TODO: role が role を include している場合
   def all_role(run_list = details['run_list'])
-    recipes, roles = run_list.partition{|x| x[/^recipe/]}
+    _recipes, roles = run_list.partition{|x| x[/^recipe/]}
 
     roles
   end

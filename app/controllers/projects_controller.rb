@@ -130,7 +130,6 @@ class ProjectsController < ApplicationController
   def destroy
     go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
 
-    s = AppSetting.get
     begin
       @project.destroy!
     rescue => ex

@@ -99,7 +99,7 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
-    rescue Aws::CloudFormation::Errors::ValidationError => ex # stack does not exist
+    rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
     end
 
     render json: {
