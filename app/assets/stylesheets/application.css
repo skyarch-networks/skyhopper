@@ -52,9 +52,6 @@ body {
   font-family: "Noto Sans Japanese", "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   padding-top: 60px !important;
   padding-bottom: 60px !important;
-}
-
-body.modal-open {
   padding-right: 0 !important;
 }
 
