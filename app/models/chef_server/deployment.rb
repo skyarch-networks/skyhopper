@@ -8,6 +8,7 @@
 
 require 'pathname'
 require "json"
+require 'open3'
 
 class ChefServer::Deployment
   PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.5-1.el6.x86_64.rpm".freeze
@@ -273,7 +274,8 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
     ssh_key = @infra.ec2_private_key
     ssh_key.output_temp
     scp_cmd = "scp -i #{ssh_key.path_temp} #{EC2User}@#{fqdn}:#{src} #{dst}"
-    system(scp_cmd)
+    out, status = Open3.capture2e(scp_cmd)
+    raise out unless status.success?
   ensure
     ssh_key.close_temp
   end
