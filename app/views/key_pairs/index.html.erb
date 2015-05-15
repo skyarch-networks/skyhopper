@@ -1,0 +1,47 @@
+<div class="page-header">
+  <h2>
+    <%= t 'key_pairs.key_pairs' %>
+    <small>
+      <%= ('for '+ link_to(@project.name, projects_path(client_id: @project.client_id, project_id: @project_id))).html_safe if @project_id %>
+    </small>
+  </h2>
+</div>
+
+<div id="key-pairs-page">
+  <div class="col-md-2">
+    <div class="panel-group">
+      <h5>Regions</h5>
+      <div class="panel panel-primary">
+        <div class="list-group">
+          <a v-on="click: on_click" v-repeat="region : regions" class="list-group-item {{region.selected ? 'active' : ''}}">{{region.name}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-10">
+    <div-loader v-if="loading"></div-loader>
+    <table class="table table-hover" v-if="!loading">
+      <thead>
+        <tr>
+          <th><%= t('key_pairs.name') %></th>
+          <th><%= t('key_pairs.fingerprint') %></th>
+          <th><%= t('key_pairs.region') %></th>
+          <th><%= t('key_pairs.destroy') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-repeat="key_pair : key_pairs" v-show="selected === 'All' || selected === key_pair.region">
+          <td>{{ key_pair.name }}</td>
+          <td>{{ key_pair.fingerprint }}</td>
+          <td>{{ key_pair.region }}</td>
+          <td>
+            <a href="#" v-on="click: destroy(key_pair)">
+              <span class="glyphicon glyphicon-trash"></span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

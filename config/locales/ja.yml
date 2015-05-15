@@ -413,3 +413,7 @@ ja:
     screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'
+
+
+  key_pairs:
+    key_pairs: 'Key Pairs'
