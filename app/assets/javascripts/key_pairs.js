@@ -1,4 +1,5 @@
 (function () {
+  //'use strict'
 
   var Loader = Vue.extend({
     template: '<span><div class="loader"></div>{{text | format}}</span>',
@@ -74,8 +75,18 @@
           return region.name === e.target.text;
         }).selected = true;
       },
-      destroy: function (key_pair) {
-
+      delete_key_pair: function (key_pair) {
+        var self = this;
+        if (!confirm(t('key_pairs.msg.confirm', {name: key_pair.name}))) {return};
+        $.ajax({
+          type: 'DELETE',
+          url: 'key_pairs/' + key_pair.region + '/' + key_pair.name
+        }).done(function () {
+          index = self.key_pairs.indexOf(key_pair);
+          $('.table > tbody > tr:nth-child(' + (index + 1) + ')').fadeOut('normal', function () {
+            self.key_pairs.$remove(key_pair);
+          });
+        });
       },
       reload: function () {
         var self = this;
@@ -85,11 +96,6 @@
           self.loading = false;
         });
       },
-      select_key_pairs_by_region: function (region) {
-        return _.select(this.key_pairs, function (key_pair) {
-          return region === key_pair.region;
-        });
-      }
     },
     created: function () {
       this.reload();

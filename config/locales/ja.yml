@@ -416,4 +416,10 @@ ja:
 
 
   key_pairs:
-    key_pairs: 'Key Pairs'
+    key_pairs:   '鍵ペア'
+    name:        '鍵ペア名'
+    fingerprint: '指紋'
+    region:      'リージョン'
+    using:       '使用中'
+    msg:
+      confirm:    '鍵ペア "%{name}" を削除しますか?'

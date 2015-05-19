@@ -14,7 +14,7 @@ SkyHopper::Application.routes.draw do
   resources :projects, except: :show do
     member do
       get 'key_pairs', to: 'key_pairs#index'
-      delete 'key_pairs/:region/:name', to: 'key_pairs#destroy'
+      delete 'key_pairs/:region/:name', to: 'key_pairs#delete_key_pair'
     end
   end
 

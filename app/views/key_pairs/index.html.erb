@@ -10,7 +10,9 @@
 <div id="key-pairs-page">
   <div class="col-md-2">
     <div class="panel-group">
-      <h5>Regions</h5>
+      <h5>Regions
+        <button v-attr="disabled: loading" v-on="click: reload"><span class="glyphicon glyphicon-refresh"></span></button>
+      </h5>
       <div class="panel panel-primary">
         <div class="list-group">
           <a v-on="click: on_click" v-repeat="region : regions" class="list-group-item {{region.selected ? 'active' : ''}}">{{region.name}}</a>
@@ -26,16 +28,18 @@
           <th><%= t('key_pairs.name') %></th>
           <th><%= t('key_pairs.fingerprint') %></th>
           <th><%= t('key_pairs.region') %></th>
-          <th><%= t('key_pairs.destroy') %></th>
+          <th><%= t('key_pairs.using') %></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr v-repeat="key_pair : key_pairs" v-show="selected === 'All' || selected === key_pair.region">
-          <td>{{ key_pair.name }}</td>
-          <td>{{ key_pair.fingerprint }}</td>
-          <td>{{ key_pair.region }}</td>
+          <td>{{key_pair.name}}</td>
+          <td>{{key_pair.fingerprint}}</td>
+          <td>{{key_pair.region}}</td>
+          <td>{{key_pair.using ? '○' : ''}}</td>
           <td>
-            <a href="#" v-on="click: destroy(key_pair)">
+            <a href="#" v-on="click: delete_key_pair(key_pair)">
               <span class="glyphicon glyphicon-trash"></span>
             </a>
           </td>
@@ -44,4 +48,3 @@
     </table>
   </div>
 </div>
-
