@@ -1007,18 +1007,6 @@
             return res.physical_id;
           }
         },
-        status_label_class: function () {
-          var resp = "label-";
-          var type = this.current_infra.stack.status.type;
-          if (type === "OK") {
-            resp += 'success';
-          } else if (type === "NG") {
-            resp += "danger";
-          } else {
-            resp += "default";
-          }
-          return resp;
-        },
         show_ec2: function (physical_id) {
           this.show_tabpane('ec2');
           this.loading = true;
@@ -1133,6 +1121,19 @@
         no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
         in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
         stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
+
+        status_label_class: function () {
+          var resp = "label-";
+          var type = this.current_infra.stack.status.type;
+          if (type === "OK") {
+            resp += 'success';
+          } else if (type === "NG") {
+            resp += "danger";
+          } else {
+            resp += "default";
+          }
+          return resp;
+        },
       },
       ready: function () {
         var self = this;

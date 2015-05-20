@@ -4,7 +4,7 @@
 <div v-cloak v-show="current_infra.stack">
   <h3><%= t 'infrastructures.stack_info' %>
     <small>#{{current_infra.stack.name}} :
-      <span v-class="'label', status_label_class()">{{current_infra.stack.status.name}}</span>
+      <span v-class="'label', status_label_class">{{current_infra.stack.status.name}}</span>
     </small>
   </h3>
 
