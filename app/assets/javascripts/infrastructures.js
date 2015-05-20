@@ -758,6 +758,10 @@
 
       running: function () { return this.ec2.status === 'running'; },
       stopped: function () { return this.ec2.status === 'stopped'; },
+
+      dish_option: function () { return [{text: 'Select!', value: '0'}].concat(this.ec2.dishes.map(function (dish) {
+        return {text: dish.name, value: dish.id};
+      }));},
     },
     created: function () {
       this.$set('loading', false);
@@ -772,7 +776,7 @@
       ec2.show().done(function (data) {
         self.$set('ec2', data);
 
-        var dish_id = null;
+        var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
         }

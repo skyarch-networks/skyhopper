@@ -77,7 +77,7 @@ class NodesController < ApplicationController
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
-      @selected_dish = infra.resource(physical_id).dish_id
+      @selected_dish = infra.resource(physical_id).dish
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true

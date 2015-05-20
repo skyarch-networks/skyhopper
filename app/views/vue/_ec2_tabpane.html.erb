@@ -166,13 +166,10 @@ Arguments:
         </span>
 
         <div v-if="!dishes_empty" class="input-group">
-          <select class="form-control input-sm" v-model="selected_dish">
-            <option>Select!</option>
-            <option v-repeat="dish: ec2.dishes" value="{{dish.id}}">{{dish.name}}</option>
-          </select>
+          <select class="form-control input-sm" v-model="selected_dish" options="dish_option"></select>
 
           <div class="input-group-btn">
-            <button class="btn btn-info btn-sm" v-on="click: apply_dish()">
+            <button class="btn btn-info btn-sm" v-class="disabled: selected_dish === '0'" v-on="click: apply_dish()">
               <%= t 'nodes.btn.apply_dish' %>
             </button>
           </div>
