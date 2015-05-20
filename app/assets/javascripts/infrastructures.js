@@ -1068,7 +1068,7 @@
           }).fail(alert_and_show_infra);
         },
         show_event_logs: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
@@ -1088,22 +1088,17 @@
           }).fail(alert_and_show_infra);
         },
         show_monitoring: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.show_tabpane('monitoring');
           self.loading = true;
         },
         show_edit_monitoring: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
-
-        // XXX: これ computed でいいとおもう
-        no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
-        in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
-        stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
 
         tabpane_active: function (id) { return this.tabpaneID === id; },
 
@@ -1133,6 +1128,11 @@
           var date = new Date(datetext);
           return date.toLocaleString();
         }
+      },
+      computed: {
+        no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
+        in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
+        stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
       },
       ready: function () {
         var self = this;
