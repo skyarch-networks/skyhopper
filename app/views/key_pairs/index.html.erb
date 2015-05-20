@@ -29,7 +29,9 @@
           <th><%= t('key_pairs.fingerprint') %></th>
           <th><%= t('key_pairs.region') %></th>
           <th><%= t('key_pairs.using') %></th>
-          <th></th>
+          <% if @allow_change %>
+            <th></th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
@@ -38,11 +40,13 @@
           <td>{{key_pair.fingerprint}}</td>
           <td>{{key_pair.region}}</td>
           <td>{{key_pair.using ? '○' : ''}}</td>
-          <td>
-            <a href="#" v-on="click: delete_key_pair(key_pair)">
-              <span class="glyphicon glyphicon-trash"></span>
-            </a>
-          </td>
+          <% if @allow_change %>
+            <td>
+              <a href="#" v-on="click: delete_key_pair(key_pair)">
+                <span class="glyphicon glyphicon-trash"></span>
+              </a>
+            </td>
+          <% end %>
         </tr>
       </tbody>
     </table>
