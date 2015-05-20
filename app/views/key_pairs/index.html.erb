@@ -7,15 +7,16 @@
   </h2>
 </div>
 
-<div id="key-pairs-page">
+<div id="key-pairs-page" v-cloak>
   <div class="col-md-2">
     <div class="panel-group">
-      <h5>Regions
-        <button v-attr="disabled: loading" v-on="click: reload"><span class="glyphicon glyphicon-refresh"></span></button>
-      </h5>
+      <div class="form-group">
+        <label><%= t('key_pairs.region') %></label>
+        <button class="btn btn-default btn-sm" style="float: right" v-attr="disabled: loading" v-on="click: reload"><span class="glyphicon glyphicon-refresh"></span></button>
+      </div>
       <div class="panel panel-primary">
         <div class="list-group">
-          <a v-on="click: on_click" v-repeat="region : regions" class="list-group-item {{region.selected ? 'active' : ''}}">{{region.name}}</a>
+          <a v-on="click: on_click" v-repeat="region : regions" v-class="active: region.selected" class="list-group-item">{{region.name}}</a>
         </div>
       </div>
     </div>
