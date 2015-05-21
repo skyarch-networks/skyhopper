@@ -161,12 +161,11 @@ describe ClientsController, :type => :controller do
     controller ClientsController do
       before_action :set_client
       before_action :not_for_system
-      def test
+      def index
         render text: 'success!'
       end
     end
-    before{routes.draw{resources(:clients){collection{get :test}}}}
-    let(:req){get :test, id: client.id}
+    let(:req){get :index, id: client.id}
     let(:client){create(:client)}
 
     context 'when client is not system' do
@@ -186,12 +185,11 @@ describe ClientsController, :type => :controller do
   describe '#client_exist' do
     controller ClientsController do
       before_action :client_exist
-      def test
+      def index
         render text: 'success!'
       end
     end
-    before{routes.draw{resources(:clients){collection{get :test}}}}
-    let(:req){get :test, id: client.id}
+    let(:req){get :index, id: client.id}
     let(:client){create(:client)}
 
     context 'when not have id' do

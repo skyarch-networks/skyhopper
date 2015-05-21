@@ -16,10 +16,13 @@ class ClientsController < ApplicationController
 
   before_action :set_client, only: [:edit, :update, :destroy]
   before_action :not_for_system, only: [:edit, :update, :destroy]
-  include Concerns::BeforeAuth
 
   before_action do
-    master(projects_path)
+    begin
+      authorize Client.new
+    rescue
+      redirect_to projects_path
+    end
   end
 
   before_action :with_zabbix_or_back, only: :destroy
