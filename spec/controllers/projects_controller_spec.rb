@@ -8,12 +8,6 @@
 
 require_relative '../spec_helper'
 
-# XXX: Pundit hack
-ProjectPolicy
-class ProjectPolicy
-  def test?;true end
-end
-
 describe ProjectsController, :type => :controller do
   login_user
 
@@ -200,6 +194,7 @@ describe ProjectsController, :type => :controller do
   describe '#client_exist' do
     controller ProjectsController do
       before_action :client_exist
+      def authorize(*args)end #XXX: pundit hack
       def test
         render text: 'success!!!'
       end
@@ -230,6 +225,7 @@ describe ProjectsController, :type => :controller do
   describe '#project_exist' do
     controller ProjectsController do
       before_action :project_exist
+      def authorize(*args)end #XXX: pundit hack
       def test
         render text: 'success!!!'
       end
