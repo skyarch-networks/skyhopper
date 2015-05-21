@@ -11,7 +11,13 @@ class UsersAdminController < ApplicationController
   include Concerns::BeforeAuth
 
   before_action :authenticate_user!
-  before_action :master
+  before_action do
+    begin
+      authorize User.new
+    rescue
+      redirect_to root_path
+    end
+  end
 
   before_action :with_zabbix_or_back, only: [:new, :create, :destroy]
   before_action :with_zabbix_or_render, only: [:edit, :update, :sync_zabbix]
