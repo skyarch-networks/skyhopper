@@ -14,6 +14,10 @@ describe Ec2InstancesController, :type => :controller do
   let(:physical_id){'i-fugahoge'}
   let(:infra){create(:infrastructure)}
 
+  before do
+    current_user.projects = [infra.project]
+  end
+
   describe '#change_scale' do
     let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
@@ -151,6 +155,7 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
+      def authorize(*args)end # pudit hack
       def test
         instance = double_instance()
         status   = params.require(:status)
