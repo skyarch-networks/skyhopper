@@ -6,33 +6,36 @@ class ApplicationPolicy
     @record = record
   end
 
-  def index?
-    read?
+  class << self
+    # 引数に渡したアクションは、master を持ったユーザーでのみ許可されるようになる。
+    # @param [Array<Symbol>] actions
+    def master(*actions)
+      actions.each do |action|
+        define_method(action){user.master?}
+      end
+    end
+
+    # 引数に渡したアクションは、admin を持ったユーザーでのみ許可されるようになる。
+    # @param [Array<Symbol>] actions
+    def admin(*actions)
+      actions.each do |action|
+        define_method(action){user.admin?}
+      end
+    end
+
+    # 引数に渡したアクションは、master と admin を両方持ったユーザーでのみ許可されるようになる。
+    # @param [Array<Symbol>] actions
+    def master_admin(*actions)
+      actions.each do |action|
+        define_method(action){user.master? and user.admin?}
+      end
+    end
+
+    private :master, :admin, :master_admin
   end
 
-  def show?
-    scope.where(:id => record.id).exists?
-  end
-
-  def create?
-    write?
-  end
-
-  def new?
-    create?
-  end
-
-  def update?
-    write?
-  end
-
-  def edit?
-    update?
-  end
-
-  def destroy?
-    write?
-  end
+  master :index?, :show?
+  admin :create?, :new?, :update?, :edit?, :destroy?
 
   def scope
     Pundit.policy_scope!(user, record.class)
@@ -49,16 +52,5 @@ class ApplicationPolicy
     def resolve
       scope
     end
-  end
-
-
-  private
-
-  def read?
-    user.master?
-  end
-
-  def write?
-    user.admin?
   end
 end
