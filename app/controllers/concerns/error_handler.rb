@@ -37,6 +37,7 @@ ErrorHandler is module of controller error handling.
 module Concerns::ErrorHandler
   extend ActiveSupport::Concern
   using ErrorHandlize
+  include Concerns::ControllerUtil
 
   included do
     rescue_from StandardError, with: :rescue_exception
@@ -54,8 +55,11 @@ module Concerns::ErrorHandler
   # Ajax のアクセスであれば、例外を JSON に整形して render する
   # @param [Exception] ex
   def rescue_exception(ex)
-    raise ex unless ajax?
-
-    render json: {error: ex.format_error}, status: ex.status_code and return
+    if ajax?
+      render json: {error: ex.format_error}, status: ex.status_code and return
+    else
+      flash[:alert] = ex.format_error[:message]
+      redirect_to_back_or_root
+    end
   end
 end
