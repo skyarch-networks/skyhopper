@@ -8,7 +8,7 @@ describe Ec2InstancePolicy do
       context 'when allow' do
         let(:infra){create(:infrastructure)}
         let(:project){infra.project}
-        let(:user){create(:user, projects: [project])}
+        let(:user){create(:user, projects: [project], master: false)}
 
         it 'should be permit' do
           is_expected.to permit(user, infra)
@@ -16,7 +16,7 @@ describe Ec2InstancePolicy do
       end
 
       context 'when not allow' do
-        let(:user){create(:user)}
+        let(:user){create(:user, master: false)}
         let(:infra){create(:infrastructure)}
         it 'should not be permit' do
           is_expected.not_to permit(user, infra)

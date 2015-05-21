@@ -37,6 +37,7 @@ class User < ActiveRecord::Base
   end
 
   def allow?(project_or_infra)
+    return true if master?
     return case project_or_infra
     when Project
       self.project_ids.include?(project_or_infra.id)
