@@ -12,11 +12,7 @@ class UsersAdminController < ApplicationController
 
   before_action :authenticate_user!
   before_action do
-    begin
-      authorize User.new
-    rescue
-      redirect_to root_path
-    end
+    authorize User.new
   end
 
   before_action :with_zabbix_or_back, only: [:new, :create, :destroy]

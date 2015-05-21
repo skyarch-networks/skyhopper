@@ -18,11 +18,7 @@ class ClientsController < ApplicationController
   before_action :not_for_system, only: [:edit, :update, :destroy]
 
   before_action do
-    begin
-      authorize Client.new
-    rescue
-      redirect_to projects_path
-    end
+    authorize Client.new
   end
 
   before_action :with_zabbix_or_back, only: :destroy
