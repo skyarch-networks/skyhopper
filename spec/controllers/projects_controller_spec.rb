@@ -8,6 +8,12 @@
 
 require_relative '../spec_helper'
 
+# XXX: Pundit hack
+ProjectPolicy
+class ProjectPolicy
+  def test?;true end
+end
+
 describe ProjectsController, :type => :controller do
   login_user
 
@@ -191,40 +197,15 @@ describe ProjectsController, :type => :controller do
     end
   end
 
-  describe '#not_for_system' do
-    controller ProjectsController do
-      before_action :set_project
-      before_action :not_for_system
-      def foo
-        render text: 'success!!!'
-      end
-    end
-    before{routes.draw{resources(:projects){collection{get :foo}}}}
-    let(:req){get :foo, id: project.id}
-
-    context 'when project is not system' do
-      before{req}
-      should_be_success
-    end
-
-    context 'when project is system' do
-      before do
-        allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
-        req
-      end
-      it {is_expected.to redirect_to projects_path(client_id: client.id)}
-    end
-  end
-
   describe '#client_exist' do
     controller ProjectsController do
       before_action :client_exist
-      def foo
+      def test
         render text: 'success!!!'
       end
     end
-    before{routes.draw{resources(:projects){collection{get :foo}}}}
-    let(:req){get :foo, client_id: client.id}
+    before{routes.draw{resources(:projects){collection{get :test}}}}
+    let(:req){get :test, client_id: client.id}
 
     context 'when client_id is blank' do
       let(:client){double('client', id: nil)}
@@ -249,12 +230,12 @@ describe ProjectsController, :type => :controller do
   describe '#project_exist' do
     controller ProjectsController do
       before_action :project_exist
-      def foo
+      def test
         render text: 'success!!!'
       end
     end
-    before{routes.draw{resources(:projects){collection{get :foo}}}}
-    let(:req){get :foo, id: project.id}
+    before{routes.draw{resources(:projects){collection{get :test}}}}
+    let(:req){get :test, id: project.id}
 
     context 'when id is blank' do
       let(:project){double('project', id: nil)}
