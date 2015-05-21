@@ -7,9 +7,6 @@
 #
 
 class UsersAdminController < ApplicationController
-
-  include Concerns::BeforeAuth
-
   before_action :authenticate_user!
   before_action do
     authorize User.new
