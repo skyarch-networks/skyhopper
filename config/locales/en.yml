@@ -418,8 +418,9 @@ en:
   key_pairs:
     key_pairs:   'Key Pairs'
     name:        'Key pair name'
-    fingerprint: 'fingerprint'
+    fingerprint: 'Fingerprint'
     region:      'Region'
     using:       'Using'
     msg:
-      confirm:    'Are you sure to delete KeyPair "%{name}"?'
+      confirm:    'Are you sure to delete the KeyPair "%{name}"?'
+      deleted:    'KeyPair "%{name}" has been deleted successfully.'
