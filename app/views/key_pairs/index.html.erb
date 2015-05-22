@@ -16,7 +16,7 @@
       </div>
       <div class="panel panel-primary">
         <div class="list-group">
-          <a v-on="click: on_click" v-repeat="region : regions" v-class="active: region.selected" class="list-group-item">{{region.name}}</a>
+          <a v-on="click: switch_region" v-repeat="region : regions" v-class="active: region.selected" class="list-group-item">{{region.name}}</a>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
           <td>{{key_pair.name}}</td>
           <td>{{key_pair.fingerprint}}</td>
           <td>{{key_pair.region}}</td>
-          <td>{{key_pair.using ? '○' : ''}}</td>
+          <td>{{key_pair.using_sign}}</td>
           <% if @allow_change %>
             <td>
               <a href="#" v-on="click: delete_key_pair(key_pair)">
