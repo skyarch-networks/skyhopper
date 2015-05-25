@@ -11,10 +11,11 @@ SkyHopper::Application.routes.draw do
 
   resources :clients, except: :show
 
-  resources :projects, except: :show do
-    member do
-      get 'key_pairs', to: 'key_pairs#index'
-      delete 'key_pairs/:region/:name', to: 'key_pairs#delete_key_pair'
+  resources :projects, except: :show
+
+  resources :key_pairs, only: [:index, :destroy], param: :name do
+    collection do
+      get  'retrieve'
     end
   end
 
