@@ -21,17 +21,36 @@
       loading: true,
     },
     methods: {
-      switch_region: function (e) {
+      switch_region: function (region_name) {
+        if (this.number_of_key_pairs(region_name) === 0) {return;}
+
         var selected = this.selected;
         _.find(this.regions, function (region) {
           return region.name === selected;
         }).selected = false;
 
-        this.selected = e.target.text;
+        this.selected = region_name;
 
         _.find(this.regions, function (region) {
-          return region.name === e.target.text;
+          return region.name === region_name;
         }).selected = true;
+      },
+      key_pairs_by_region: function (region_name) {
+        return _.select(this.key_pairs, function (key_pair) {
+          return key_pair.region === region_name;
+        });
+      },
+      number_of_key_pairs: function (region_name) {
+        return (( region_name === 'All' )
+              ? ( this.key_pairs.length )
+              : ( this.key_pairs_by_region(region_name).length )
+        );
+      },
+      no_key_pairs_belong_to_region: function (region_name) {
+        return this.number_of_key_pairs(region_name) === 0;
+      },
+      belongs_to_region: function (region_name) {
+        return this.selected === 'All' || this.selected === region_name;
       },
       delete_key_pair: function (key_pair) {
         var self = this;
@@ -61,11 +80,11 @@
           _.forEach(data.key_pairs, function (key_pair) {
             key_pair.using_sign = key_pair.using ? '✔' : '';
           });
+          self.$set('selected', 'All');
           self.$set('regions', [{
             name: 'All',
             selected: true,
           }]);
-          self.$set('selected', 'All');
           _.forEach(data.regions, function (region) {
             self.regions.push({
               name: region,
@@ -76,8 +95,15 @@
         });
       },
     },
+    computed: {
+    },
     created: function () {
       this.reload();
+    },
+    filters: {
+      zero_as_blank: function (str) {
+        return (str == 0) ? null : str;
+      }
     }
   });
 })();
