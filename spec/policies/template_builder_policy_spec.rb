@@ -7,10 +7,10 @@ describe TemplateBuilderPolicy do
 
   %i[new? resource_properties? create?].each do |action|
     permissions action do
-      let(:master_admin){create(:user, master: true,  admin: true)}
-      let(:master){      create(:user, master: true,  admin: false)}
-      let(:admin){       create(:user, master: false, admin: true)}
-      let(:normal){      create(:user, master: false, admin: false)}
+      let(:master_admin){build(:user, master: true,  admin: true)}
+      let(:master){      build(:user, master: true,  admin: false)}
+      let(:admin){       build(:user, master: false, admin: true)}
+      let(:normal){      build(:user, master: false, admin: false)}
 
       it 'should grant only master and admin' do
         is_expected.to     permit(master_admin, builder)
