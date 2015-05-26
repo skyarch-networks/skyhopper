@@ -41,15 +41,14 @@
         });
       },
       number_of_key_pairs: function (region_name) {
-        return (( region_name === 'All' )
-              ? ( this.key_pairs.length )
-              : ( this.key_pairs_by_region(region_name).length )
-        );
+        return ( region_name === 'All' )
+             ? ( this.key_pairs.length )
+             : ( this.key_pairs_by_region(region_name).length )
       },
-      no_key_pairs_belong_to_region: function (region_name) {
+      has_no_key_pairs: function (region_name) {
         return this.number_of_key_pairs(region_name) === 0;
       },
-      belongs_to_region: function (region_name) {
+      is_selected: function (region_name) {
         return this.selected === 'All' || this.selected === region_name;
       },
       delete_key_pair: function (key_pair) {
