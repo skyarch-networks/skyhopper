@@ -149,6 +149,7 @@ var Monitoring = function (infra) {
     ajax_monitoring.show_zabbix_graph({
       physical_id: physical_id,
       item_key:    item_key,
+      id:          infra.id,
     }).done(dfd.resolve).fail(rejectXHR(dfd));
 
     return dfd.promise();

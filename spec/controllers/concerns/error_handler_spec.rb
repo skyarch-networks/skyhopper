@@ -36,19 +36,20 @@ describe Concerns::ErrorHandler do
       end
     end
 
+    let(:ex){"StandardError.new('#{error_msg}')"}
+    let(:error_msg){SecureRandom.hex(10)}
     let(:req){get :index, ex: ex}
 
     context 'when ajax' do
       request_as_ajax
 
-      let(:ex){'StandardError.new("Poyo")'}
       before{req}
       let(:err){JSON.parse(response.body, symbolize_names: true)[:error]}
 
       should_be_failure
 
-      it 'message should Poyo' do
-        expect(err[:message]).to eq 'Poyo'
+      it 'message should set' do
+        expect(err[:message]).to eq error_msg
       end
 
       it 'kind should StandardError' do
@@ -57,10 +58,10 @@ describe Concerns::ErrorHandler do
     end
 
     context 'when not ajax' do
-      let(:ex){'StandardError.new("hoge")'}
-
-      it 'should raise error' do
-        expect{req}.to raise_error(StandardError)
+      before{req}
+      it {is_expected.to redirect_to root_path}
+      it 'should set flash.alert' do
+        expect(request.flash[:alert]).to eq error_msg
       end
     end
   end

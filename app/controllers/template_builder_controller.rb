@@ -11,13 +11,9 @@ class TemplateBuilderController < ApplicationController
 # --------------- auth
   before_action :authenticate_user!
 
-  include Concerns::BeforeAuth
-
-# global
   before_action do
-    master and admin
+    authorize TemplateBuilder.new
   end
-
 
   # GET /template_builder/new
   def new

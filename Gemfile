@@ -96,8 +96,7 @@ end
 
 # for Login
 gem 'devise'
-
-# gem 'foreigner'
+gem 'pundit'
 
 # pagination
 gem 'kaminari'

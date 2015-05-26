@@ -13,38 +13,11 @@ class CfTemplatesController < ApplicationController
   # --------------- auth
   before_action :authenticate_user!
 
+  before_action do
+    authorize(@cf_template || CfTemplate.new(params[:infra_id] || params[:cf_template].try(:[], :infrastructure_id)))
+  end
+
   include Concerns::InfraLogger
-  include Concerns::BeforeAuth
-
-  # global or infra local
-  before_action only: [:edit, :update, :destroy] do
-    if infra_id = @cf_template.infrastructure_id
-      allowed_infrastructure(infra_id)
-    else
-      master and admin
-    end
-  end
-
-  # global
-  before_action only: [:new, :create] do
-    master and admin
-  end
-
-  # infra local
-  before_action only: [:new_for_creating_stack, :insert_cf_params, :create_and_send, :history] do
-    infra_id = params[:infrastructure_id] || params[:cf_template][:infrastructure_id]
-
-    allowed_infrastructure(infra_id)
-  end
-
-  # allow all user if global
-  before_action only: [:show] do
-    infra_id = @cf_template.infrastructure_id
-    if infra_id
-      allowed_infrastructure(infra_id)
-    end
-  end
-
 
   # GET /cf_templates
   # GET /cf_templates.json
