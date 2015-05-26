@@ -65,12 +65,16 @@
           var index = self.key_pairs.indexOf(key_pair);
           $('.table > tbody > tr:nth-child(' + (index + 1) + ')').fadeOut('normal', function () {
             self.key_pairs.$remove(key_pair);
+            if (self.has_no_key_pairs(key_pair.region)) {
+              self.switch_region('All');
+            }
           });
         });
       },
       reload: function () {
         var self = this;
         self.loading = true;
+        self.$set('key_pairs', []);
         $.ajax({
           url: '/key_pairs/retrieve' + location.search
         }).done(function (data) {
