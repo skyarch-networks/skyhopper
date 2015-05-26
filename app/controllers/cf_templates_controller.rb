@@ -14,7 +14,8 @@ class CfTemplatesController < ApplicationController
   before_action :authenticate_user!
 
   before_action do
-    authorize(@cf_template || CfTemplate.new(params[:infra_id] || params[:cf_template].try(:[], :infrastructure_id)))
+    infra_id = params[:infra_id] || params[:cf_template][:infrastructure_id] rescue nil
+    authorize(@cf_template || CfTemplate.new(infrastructure_id: infra_id))
   end
 
   include Concerns::InfraLogger
