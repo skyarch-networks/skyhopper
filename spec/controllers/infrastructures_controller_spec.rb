@@ -476,6 +476,7 @@ describe InfrastructuresController, :type => :controller do
       def foo
         render text: 'success!!!'
       end
+      def authorize(*args)end #XXX: pundit hack
       def allowed_infrastructure(_);end #skip
     end
     before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
@@ -526,6 +527,7 @@ describe InfrastructuresController, :type => :controller do
       def foo
         render text: 'success!!!'
       end
+      def authorize(*args)end #XXX: pundit hack
       def allowed_infrastructure(_);end #skip
     end
     before{routes.draw{resources(:infrastructures){collection{get :foo}}}}

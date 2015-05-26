@@ -7,7 +7,6 @@
 #
 
 class InfrastructuresController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
   # --------------- Auth
@@ -20,30 +19,15 @@ class InfrastructuresController < ApplicationController
 
   before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
-  # admin
-  before_action only: [:new, :create, :edit, :update, :destroy, :delete_stack] do
-    project_id = params[:project_id] || (params[:infrastructure][:project_id] rescue nil) || @infrastructure.project_id
-    admin(infrastructures_path(project_id: project_id))
+  before_action do
+    infra = @infrastructure || (
+      project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
+      Infrastructure.new(project_id: project_id)
+    )
+
+    authorize(infra)
   end
 
-  # admin でも new, create はできる？
-  # master
-  # before_action only: [:new, :create] do
-  #   project_id = params[:project_id] || params[:infrastructure][:project_id]
-  #   master(infrastructures_path(project_id: project_id))
-  # end
-
-  # project
-  before_action only: [:index] do
-    project_id = params[:project_id]
-    allowed_project(project_id)
-  end
-
-  # infra
-  before_action except: [:index, :new, :create] do
-    infra_id = params[:infra_id] || params[:infrastructure_id] || params[:id]
-    allowed_infrastructure(infra_id)
-  end
 
   before_action :with_zabbix_or_render, only: [:destroy, :delete_stack]
 
