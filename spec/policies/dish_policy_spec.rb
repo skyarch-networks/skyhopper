@@ -46,7 +46,7 @@ describe DishPolicy do
     end
   end
 
-  %i[edit? update? new? create? destroy?].each do |action|
+  %i[edit? update? new? create? destroy? validate?].each do |action|
     permissions action do
       context 'when dish with project' do
         context 'when user allowed' do

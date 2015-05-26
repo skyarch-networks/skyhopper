@@ -8,7 +8,7 @@ class DishPolicy < ApplicationPolicy
   end
 
 
-  %i[edit? update? new? create? destroy?].each do |action|
+  %i[edit? update? new? create? destroy? validate?].each do |action|
     define_method(action) do
       if record.project
         user.allow?(record.project) and user.admin?
