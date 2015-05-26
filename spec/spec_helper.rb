@@ -86,11 +86,6 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.before do
-    #XXX view の時だけ実行したい
-    allow(view).to receive(:paginate) rescue nil
-  end
-
-  config.before do
     allow(Redis).to receive(:new).and_return(double('redis', publish: true))
   end
 end
