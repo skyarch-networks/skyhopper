@@ -18,7 +18,27 @@ module InfrastructuresHelper
     return link_to t('serverspecs.serverspecs'), serverspecs_path(infrastructure_id: infra_id), class: 'btn btn-default btn-xs'
   end
 
-  def button_detach_stack(infra = nil)
+  def button_edit_infra(infra)
+    return nil unless Pundit.policy(current_user, infra).edit?
+
+    klass = 'btn btn-default btn-xs'
+    if infra.status.present?
+      path = '#'
+      klass << ' disabled'
+    else
+      path = edit_infrastructure_path(infra)
+    end
+
+    return link_to(
+      t('.edit', default: t("helpers.links.edit")),
+      path,
+      class: klass,
+    )
+  end
+
+  def button_detach_stack(infra)
+    return nil unless Pundit.policy(current_user, infra).destroy?
+
     if !infra || deleting?(infra.status)
       return link_to t('helpers.links.detach'), "#", class: "btn btn-xs btn-warning disabled"
     end
@@ -29,7 +49,9 @@ module InfrastructuresHelper
     }
   end
 
-  def button_delete_stack(infra = nil)
+  def button_delete_stack(infra)
+    return nil unless Pundit.policy(current_user, infra).delete_stack?
+
     btn_text = t('infrastructures.btn.delete_stack') + '&nbsp;' + content_tag(:span, '', class: 'caret')
 
     if !infra || deleting?(infra.status) || infra.status.blank?
@@ -55,9 +77,8 @@ module InfrastructuresHelper
     return ret
   end
 
-  def button_add_infra(client = nil, project = nil)
-    return nil unless client && project
-    return nil if client.is_for_system?
+  def button_add_infra(project)
+    return nil unless Pundit.policy(current_user, Infrastructure.new(project: project)).new?
 
     link_to t('infrastructures.btn.add'),
       new_infrastructure_path(project_id: project.id),

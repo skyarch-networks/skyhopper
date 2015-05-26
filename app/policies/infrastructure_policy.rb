@@ -11,4 +11,10 @@ class InfrastructurePolicy < ApplicationPolicy
       user.admin? and user.allow?(record)
     end
   end
+
+  %i[new? create?].each do |action|
+    define_method(action) do
+      user.admin? and user.allow?(record) and not record.project.client.is_for_system?
+    end
+  end
 end
