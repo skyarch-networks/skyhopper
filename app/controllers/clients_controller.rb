@@ -15,10 +15,9 @@ class ClientsController < ApplicationController
   before_action :client_exist, only: [:edit, :update, :destroy]
 
   before_action :set_client, only: [:edit, :update, :destroy]
-  before_action :not_for_system, only: [:edit, :update, :destroy]
 
   before_action do
-    authorize Client.new
+    authorize(@client || Client.new)
   end
 
   before_action :with_zabbix_or_back, only: :destroy
@@ -88,13 +87,6 @@ class ClientsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def client_params
     params.require(:client).permit(:code, :name)
-  end
-
-  # do not allowed to change client for system
-  def not_for_system
-    if @client.is_for_system?
-      redirect_to clients_path, alert: I18n.t('clients.msg.cant_change_system')
-    end
   end
 
   def client_exist

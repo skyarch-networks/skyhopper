@@ -54,7 +54,7 @@
             <small><%= current_user.email %></small>&nbsp;<%= gravatar(current_user.email) %> <b class="caret"></b>
           </a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-  <% if current_user.admin? && current_user.master? %>
+  <% if Pundit.policy(current_user, User).index? %>
             <li role="presentation"><%= link_to t('common.btn.user_management'), users_admin_index_path %></li>
             <li class="divider"></li>
   <% end %>
