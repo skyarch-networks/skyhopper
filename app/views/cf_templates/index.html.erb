@@ -19,16 +19,8 @@
         <td><%= json.detail %></td>
         <td>
           <%= link_to t('helpers.links.show'), '#', class: 'btn btn-xs btn-info show-template' %>
-          <% if master_admin %>
-            <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
-              edit_cf_template_path(json),
-              class:  'btn btn-default btn-xs' %>
-            <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
-              cf_template_path(json),
-              method: :delete,
-              data:   { confirm: t('.confirm', default: t("helpers.links.confirm")) },
-              class:  'btn btn-xs btn-danger' %>
-          <% end %>
+          <%= button_edit_cft(json) %>
+          <%= button_destroy_cft(json) %>
         </td>
       </tr>
     <% end %>
@@ -40,15 +32,8 @@
 </div>
 
 
-<% if master_admin %>
-  <%= link_to t('.new', default: t('cf_templates.btn.add')),
-    new_cf_template_path,
-    class: 'btn btn-primary btn-sm' %>
-
-  <%= link_to t('template_builder.template_builder'),
-    new_template_builder_path,
-    class: 'btn btn-primary btn-sm' %>
-<% end %>
+<%= button_add_cft %>
+<%= button_template_builder %>
 
 <div class="page-header"></div>
 
