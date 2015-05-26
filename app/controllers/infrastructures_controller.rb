@@ -254,46 +254,6 @@ class InfrastructuresController < ApplicationController
   end
 
 
-  def events
-    infrastructure = Infrastructure.find( params.require(:infrastructure_id) )
-    stack = Stack.new( infrastructure )
-    begin
-      render json: stack.events.to_json and return
-    rescue Aws::CloudFormation::Errors::ValidationError => ex # stack does not exist
-      render json: { error: ex.message }, status: 500 and return
-    end
-  end
-
-  # Check Current cloudformation Status
-  def cloudformation_status
-    infrastructure = Infrastructure.find( params.require(:infrastructure_id) )
-    stack = Stack.new( infrastructure )
-    begin
-      # TODO: Refactor
-      # TODO: InfraLogの整形
-      case
-      when stack.in_progress?
-        render json: stack.events.to_json and return
-      when stack.complete?
-        infra_logger_success("Creating stack complete.\n" + JSON.pretty_generate(stack.events))
-        render nothing: true, status: 201 and return
-      when stack.create_failed?
-        infra_logger_fail("Creating stack failed.\n" + JSON.pretty_generate(stack.events))
-        render text: I18n.t('infrastructures.msg.create_stack_failed'), status: 500 and return
-      when stack.failed?
-        infra_logger_fail("Creating stack failed.\n" + JSON.pretty_generate(stack.events))
-        render text: stack.status[:status], status: 500 and return
-      else
-        render nothing: true, status: 201 and return
-      end
-    rescue Aws::CloudFormation::Errors::ValidationError => ex
-      # in many cases, delete complete
-      # TODO: handle delete complete as success
-      render text: ex.message, status: 201 and return
-    end
-  end
-
-
   private
 
   # Use callbacks to share common setup or constraints between actions.
