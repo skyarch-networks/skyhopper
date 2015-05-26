@@ -9,7 +9,6 @@
 # for Node model and Chef
 
 class NodesController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
 
