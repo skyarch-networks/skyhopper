@@ -56,7 +56,7 @@ describe CfTemplatePolicy do
     end
   end
 
-  %i[new_for_creating_stack? insert_cf_params? create_and_send? history? show?].each do |action|
+  %i[new_for_creating_stack? insert_cf_params? create_and_send? history? show? index?].each do |action|
     permissions action do
       let(:cft){build(:cf_template)}
       let(:infra){cft.infrastructure}

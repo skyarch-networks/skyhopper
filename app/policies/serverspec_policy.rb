@@ -4,7 +4,7 @@ class ServerspecPolicy < ApplicationPolicy
       if record.infrastructure
         user.allow?(record.infrastructure)
       else
-        user.master?
+        true
       end
     end
   end

@@ -24,11 +24,11 @@ describe ServerspecPolicy do
       end
 
       context "serverspec doesn't have infra" do
-        it 'should grant only master user' do
-          is_expected.to     permit(master_admin, serverspec_without_infra)
-          is_expected.to     permit(master,       serverspec_without_infra)
-          is_expected.not_to permit(admin,        serverspec_without_infra)
-          is_expected.not_to permit(normal,       serverspec_without_infra)
+        it 'should grant all user' do
+          is_expected.to permit(master_admin, serverspec_without_infra)
+          is_expected.to permit(master,       serverspec_without_infra)
+          is_expected.to permit(admin,        serverspec_without_infra)
+          is_expected.to permit(normal,       serverspec_without_infra)
         end
       end
     end
