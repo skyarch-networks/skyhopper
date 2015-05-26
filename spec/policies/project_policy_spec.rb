@@ -17,7 +17,7 @@ describe ProjectPolicy do
     end
   end
 
-  %i[edit? update? destroy?].each do |action|
+  %i[edit? update?].each do |action|
     permissions action do
       it 'grants access only admin user' do
         is_expected.to     permit(admin_user,  project)
@@ -28,22 +28,23 @@ describe ProjectPolicy do
     end
   end
 
-  permissions :destroy? do
-    before do
-      allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
-    end
-    it 'denies access if project is system' do
-      is_expected.not_to permit(strong_user, project)
-    end
-  end
-
-  %i[new? create?].each do |action|
+  %i[new? create? destroy?].each do |action|
     permissions action do
       it 'grants access only admin and master user' do
         is_expected.not_to permit(admin_user,  project)
         is_expected.not_to permit(master_user, project)
         is_expected.not_to permit(normal_user, project)
         is_expected.to     permit(strong_user, project)
+      end
+
+      context 'when client is for system' do
+        before do
+          allow(project.client).to receive(:is_for_system?).and_return(true)
+        end
+
+        it 'should deny' do
+          is_expected.not_to permit(strong_user, project)
+        end
       end
     end
   end

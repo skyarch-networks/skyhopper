@@ -23,7 +23,8 @@ class ProjectsController < ApplicationController
 
   before_action :set_project, only: [:edit, :update, :destroy]
   before_action do
-    authorize(@project || Project.new)
+    client_id = params[:client_id] || params[:project][:client_id] rescue nil
+    authorize(@project || Project.new(client_id: client_id))
   end
 
   before_action :with_zabbix_or_back, only: [:destroy, :create, :new]
