@@ -1,6 +1,5 @@
 class KeyPairsController < ApplicationController
   include Concerns::InfraLogger
-  include Concerns::BeforeAuth
   # --------------- Auth
   before_action :authenticate_user!
 
@@ -11,11 +10,13 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs
   def index
     @project = Project.find(@project_id)
-    @allow_change = current_user.admin? and allowed_project(@project_id)
+    @allow_change = current_user.admin? and current_user.allow?(@project)
   end
 
   # GET /key_pairs/retrieve
   def retrieve
+    @regions   = AWS::Regions
+    @key_pairs = KeyPair.all(@project_id)
   end
 
   # DELETE /key_pairs/:name
