@@ -7,10 +7,16 @@ class KeyPairsController < ApplicationController
     @project_id = params.require(:project_id)
   end
 
+  before_action do
+    project = Project.find(@project_id)
+    def project.policy_class; KeyPairPolicy; end
+    authorize(project)
+  end
+
   # GET /key_pairs
   def index
     @project = Project.find(@project_id)
-    @allow_change = current_user.admin? and current_user.allow?(@project)
+    @allow_change = KeyPairPolicy.new(current_user, @project).destroy?
   end
 
   # GET /key_pairs/retrieve
@@ -21,11 +27,6 @@ class KeyPairsController < ApplicationController
 
   # DELETE /key_pairs/:name
   def destroy
-    unless current_user.admin?
-      ws_send(t('common.msg.no_permission'), false)
-      render nothing: true, status: 403 and return
-    end
-
     @region     = params.require(:region)
     @key_name   = params.require(:name)
 
