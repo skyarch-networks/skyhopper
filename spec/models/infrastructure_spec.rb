@@ -201,12 +201,12 @@ describe Infrastructure, :type => :model do
   describe '#create_complete?' do
     subject{infra.create_complete?}
     context 'when create complete' do
-      let(:infra){create(:infrastructure, status: 'CREATE_COMPLETE')}
+      let(:infra){build(:infrastructure, status: 'CREATE_COMPLETE')}
       it{is_expected.to be true}
     end
 
     context 'when not create complete' do
-      let(:infra){create(:infrastructure, status: 'ROLLBACK_COMPLETE')}
+      let(:infra){build(:infrastructure, status: 'ROLLBACK_COMPLETE')}
       it{is_expected.to be false}
     end
   end

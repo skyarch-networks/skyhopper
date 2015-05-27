@@ -141,9 +141,9 @@ describe AppSetting, :type => :model do
     end
   end
 
-  describe 'dummy?' do
+  describe '#dummy?' do
     context 'when dummy' do
-      subject{create(:app_setting, aws_region: ::DummyText)}
+      subject{build(:app_setting, aws_region: ::DummyText)}
 
       it 'should return true' do
         expect(subject.dummy?).to be true
@@ -151,7 +151,7 @@ describe AppSetting, :type => :model do
     end
 
     context 'when not dummy' do
-      subject{create(:app_setting)}
+      subject{build(:app_setting)}
 
       it 'should return false' do
         expect(subject.dummy?).to be false

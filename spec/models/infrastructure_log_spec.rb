@@ -10,8 +10,8 @@ require_relative '../spec_helper'
 
 describe InfrastructureLog, :type => :model do
   let(:klass){InfrastructureLog}
-  let(:infra){create(:infrastructure)}
-  let(:user){create(:user)}
+  let(:infra){build_stubbed(:infrastructure)}
+  let(:user){build_stubbed(:user)}
 
   it {is_expected.to respond_to(:infrastructure_id)}
   it {is_expected.to respond_to(:status)}
@@ -33,8 +33,12 @@ describe InfrastructureLog, :type => :model do
       expect(defined? klass.success).to eq 'method'
     end
 
-    it do
-      expect(klass.success(infrastructure_id: infra.id, details: 'details', user_id: user.id)).to be_kind_of klass
+    subject{klass.success(infrastructure_id: infra.id, details: 'details', user_id: user.id)}
+
+    it {is_expected.to be_kind_of klass}
+
+    it 'should be success' do
+      expect(subject.status).to be true
     end
   end
 
@@ -43,8 +47,12 @@ describe InfrastructureLog, :type => :model do
       expect(defined? klass.fail).to eq 'method'
     end
 
-    it do
-      expect(klass.fail(infrastructure_id: infra.id, details: 'details', user_id: user.id)).to be_kind_of klass
+    subject{klass.fail(infrastructure_id: infra.id, details: 'details', user_id: user.id)}
+
+    it {is_expected.to be_kind_of klass}
+
+    it 'should be success' do
+      expect(subject.status).to be false
     end
   end
 end

@@ -17,10 +17,10 @@ describe Node, :type => :model do
       expect(Open3).to receive(:capture3).and_return(['out','err', status])
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
-      expect(Node.bootstrap("hoge", "fuga", infra)).to be_truthy
+      expect(Node.bootstrap("hoge", "fuga", infra)).to be_a Node
     end
   end
 
@@ -31,7 +31,7 @@ describe Node, :type => :model do
       allow(IO).to receive(:popen)
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
       expect(subject.cook(infra)).to be_truthy

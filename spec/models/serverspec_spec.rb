@@ -14,7 +14,7 @@ describe Serverspec, :type => :model do
 
   describe 'with validation' do
     describe 'column value' do
-      let(:serverspec){create(:serverspec)}
+      let(:serverspec){build(:serverspec)}
       it 'should be ruby code' do
         serverspec.value = 'invalid as ruby code{{{'
         expect(serverspec.save).to be false

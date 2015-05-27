@@ -10,7 +10,7 @@ require_relative '../spec_helper'
 
 describe Stack, :type => :model do
   let(:stack_name){'StackName'}
-  let(:infra){create(:infrastructure, stack_name: stack_name)}
+  let(:infra){build_stubbed(:infrastructure, stack_name: stack_name)}
   subject {Stack.new(infra)}
 
   it{expect(subject.inspect).to eq "#<Stack: #{stack_name}>"}
