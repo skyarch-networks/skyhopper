@@ -48,8 +48,6 @@ RSpec.configure do |config|
   #     --seed 1234
   #config.order = "random"
 
-  config.include Capybara::DSL, :type => :feature
-
   config.include FactoryGirl::Syntax::Methods
   config.include Devise::TestHelpers, type: :controller
   config.include Devise::TestHelpers, type: :view
