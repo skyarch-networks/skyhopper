@@ -13,6 +13,12 @@ SkyHopper::Application.routes.draw do
 
   resources :projects, except: :show
 
+  resources :key_pairs, only: [:index, :destroy], param: :name do
+    collection do
+      get  'retrieve'
+    end
+  end
+
   resources :infrastructures do
     member do
       post 'change_rds_scale'

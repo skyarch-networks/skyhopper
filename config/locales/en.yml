@@ -413,3 +413,14 @@ en:
     screen_name: 'Screen Name'
     msg:
       created: 'Resource was successfully created.'
+
+
+  key_pairs:
+    key_pairs:   'Key Pairs'
+    name:        'Key pair name'
+    fingerprint: 'Fingerprint'
+    region:      'Region'
+    using:       'Using'
+    msg:
+      confirm:    'Are you sure to delete the KeyPair "%{name}"?'
+      deleted:    'KeyPair "%{name}" has been deleted successfully.'

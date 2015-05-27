@@ -32,7 +32,8 @@
             </a>
             <ul class="dropdown-menu">
               <li>
-                <%= link_to "Dishes", dishes_path(project_id: project.id) %>
+                <%= link_to t('dishes.dishes'), dishes_path(project_id: project.id) %>
+                <%= link_to t('key_pairs.key_pairs'), key_pairs_path(project_id: project.id) %>
               </li>
             </ul>
           </div>
