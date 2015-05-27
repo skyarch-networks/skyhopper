@@ -41,9 +41,11 @@
         });
       },
       number_of_key_pairs: function (region_name) {
-        return ( region_name === 'All' )
-             ? ( this.key_pairs.length )
-             : ( this.key_pairs_by_region(region_name).length )
+        if (region_name === 'All') {
+          return this.key_pairs.length;
+        } else {
+          return this.key_pairs_by_region(region_name).length;
+        }
       },
       has_no_key_pairs: function (region_name) {
         return this.number_of_key_pairs(region_name) === 0;
@@ -105,7 +107,7 @@
     },
     filters: {
       zero_as_blank: function (str) {
-        return (str == 0) ? null : str;
+        return (str === 0) ? null : str;
       }
     }
   });
