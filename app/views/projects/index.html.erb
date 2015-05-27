@@ -32,7 +32,8 @@
             </a>
             <ul class="dropdown-menu">
               <li>
-                <%= link_to "Dishes", dishes_path(project_id: project.id) %>
+                <%= link_to t('dishes.dishes'), dishes_path(project_id: project.id) %>
+                <%= link_to t('key_pairs.key_pairs'), key_pairs_path(project_id: project.id) %>
               </li>
             </ul>
           </div>
@@ -43,7 +44,7 @@
               edit_project_path(project),
               class: 'btn btn-default btn-xs' %>
 
-            <%= button_delete_project(project, @selected_client || project.client) %>
+            <%= button_delete_project(project) %>
 
           <% end %>
 
@@ -58,6 +59,6 @@
 </div>
 
 
-<%= button_add_project(@selected_client) if current_user.admin? %>
+<%= button_add_project(@selected_client) %>
 
 <div class="page-header"></div>

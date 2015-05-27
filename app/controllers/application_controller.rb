@@ -16,6 +16,8 @@ class ApplicationController < ActionController::Base
   before_action :set_notifications
 
   include Concerns::ErrorHandler
+  include Concerns::ControllerUtil
+  include Pundit
 
   def default_url_options(option={})
     {lang: I18n.locale}

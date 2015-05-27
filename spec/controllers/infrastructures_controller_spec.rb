@@ -433,30 +433,6 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
-  describe "#events" do
-    let(:request_events){get :events, infrastructure_id: infra.id}
-
-    context "when stack.events success" do
-      stubize_stack
-
-      before do
-        request_events
-      end
-
-      should_be_success
-    end
-
-    context "when stack.events fail" do
-      stubize_stack(events: :error)
-
-      before do
-        request_events
-      end
-
-      should_be_failure
-    end
-  end
-
   describe '#change_rds_scale' do
     let(:type){'db.m1.small'}
 
@@ -494,68 +470,13 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
-  describe '#CloudFormation Status' do
-    let(:infra){create(:infrastructure)}
-    let(:cfstatus_request){get :cloudformation_status,  infrastructure_id: infra.id}
-
-    stubize_stack
-
-    ["progress", "complete", "create_failed", "failed"].each do |status|
-      context "when #{status}" do
-        let(:progress_status){status == "progress"}
-        let(:complete_status){status == "complete"}
-        let(:create_failed){status == "create_failed"}
-        let(:failed_status){status == "failed"}
-
-      before do
-        allow_any_instance_of(Stack).to receive(:in_progress?).and_return(progress_status)
-        allow_any_instance_of(Stack).to receive(:complete?).and_return(complete_status)
-        allow_any_instance_of(Stack).to receive(:create_failed?).and_return(create_failed)
-        allow_any_instance_of(Stack).to receive(:failed?).and_return(failed_status)
-      end
-
-        before do
-          cfstatus_request
-        end
-
-        status_code =
-        case status
-        when "progress"
-          200
-        when "complete"
-          201
-        when "create_failed"
-          500
-        when "failed"
-          500
-        else
-          201
-        end
-
-        it "should return status code:#{status_code}" do
-          expect(response.status).to eq status_code
-        end
-      end
-    end
-
-    context "when error" do
-      before do
-        allow_any_instance_of(Stack).to receive(:in_progress?).and_raise(Aws::CloudFormation::Errors::ValidationError.new('CONTEXT', 'MESSAGE'))
-        cfstatus_request
-      end
-
-      it "should render stauts" do
-        expect(response.status).to eq 201
-      end
-    end
-  end
-
   describe '#project_exist' do
     controller InfrastructuresController do
       before_action :project_exist
       def foo
         render text: 'success!!!'
       end
+      def authorize(*args)end #XXX: pundit hack
       def allowed_infrastructure(_);end #skip
     end
     before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
@@ -606,6 +527,7 @@ describe InfrastructuresController, :type => :controller do
       def foo
         render text: 'success!!!'
       end
+      def authorize(*args)end #XXX: pundit hack
       def allowed_infrastructure(_);end #skip
     end
     before{routes.draw{resources(:infrastructures){collection{get :foo}}}}

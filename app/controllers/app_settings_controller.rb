@@ -7,8 +7,6 @@
 #
 
 class AppSettingsController < ApplicationController
-  include Concerns::BeforeAuth
-
   before_action except: [:edit_zabbix, :update_zabbix] do
     if AppSetting.set?
       redirect_to root_path

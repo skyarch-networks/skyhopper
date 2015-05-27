@@ -413,3 +413,14 @@ ja:
     screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'
+
+
+  key_pairs:
+    key_pairs:   'キーペア'
+    name:        'キーペア名'
+    fingerprint: '指紋'
+    region:      'リージョン'
+    using:       '使用中'
+    msg:
+      confirm:    'キーペア "%{name}" を削除しますか?'
+      deleted:    'キーペア "%{name}" が正常に削除されました'

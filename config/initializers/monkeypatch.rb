@@ -57,4 +57,18 @@ module ErrorHandlize
       return 500
     end
   end
+
+  refine Pundit::NotAuthorizedError do
+    def format_error
+      return {
+        # TODO: I18n
+        message: self.message,
+        kind:    self.class.to_s,
+      }
+    end
+
+    def status_code
+      403
+    end
+  end
 end
