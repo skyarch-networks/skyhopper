@@ -18,8 +18,8 @@ module InfrastructuresHelper
     return link_to t('serverspecs.serverspecs'), serverspecs_path(infrastructure_id: infra_id), class: 'btn btn-default btn-xs'
   end
 
-  def button_edit_infra(infra)
-    return nil unless Pundit.policy(current_user, infra).edit?
+  def button_edit_infra(infra, user: current_user)
+    return nil unless Pundit.policy(user, infra).edit?
 
     klass = 'btn btn-default btn-xs'
     if infra.status.present?
@@ -36,10 +36,10 @@ module InfrastructuresHelper
     )
   end
 
-  def button_detach_stack(infra)
-    return nil unless Pundit.policy(current_user, infra).destroy?
+  def button_detach_stack(infra, user: current_user)
+    return nil unless Pundit.policy(user, infra).destroy?
 
-    if !infra || deleting?(infra.status)
+    if deleting?(infra.status)
       return link_to t('helpers.links.detach'), "#", class: "btn btn-xs btn-warning disabled"
     end
 
@@ -49,12 +49,12 @@ module InfrastructuresHelper
     }
   end
 
-  def button_delete_stack(infra)
-    return nil unless Pundit.policy(current_user, infra).delete_stack?
+  def button_delete_stack(infra, user: current_user)
+    return nil unless Pundit.policy(user, infra).delete_stack?
 
     btn_text = t('infrastructures.btn.delete_stack') + '&nbsp;' + content_tag(:span, '', class: 'caret')
 
-    if !infra || deleting?(infra.status) || infra.status.blank?
+    if deleting?(infra.status) || infra.status.blank?
       return link_to btn_text.html_safe, "#", class: "btn btn-xs btn-danger disabled"
     end
 
@@ -77,8 +77,8 @@ module InfrastructuresHelper
     return ret
   end
 
-  def button_add_infra(project)
-    return nil unless Pundit.policy(current_user, Infrastructure.new(project: project)).new?
+  def button_add_infra(project, user: current_user)
+    return nil unless Pundit.policy(user, Infrastructure.new(project: project)).new?
 
     link_to t('infrastructures.btn.add'),
       new_infrastructure_path(project_id: project.id),
