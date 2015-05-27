@@ -22,22 +22,12 @@ class ProjectsController < ApplicationController
   end
 
   before_action :set_project, only: [:edit, :update, :destroy]
-  before_action :not_for_system, only: [:destroy]
-  include Concerns::BeforeAuth
-
-  before_action only: [:new, :create, :edit, :update, :destroy] do
-    client_id = params[:client_id] || (params[:project][:client_id] rescue nil) || @project.client_id
-    admin(projects_path(client_id: client_id))
-  end
-
-  before_action only: [:new, :create] do
-    master(projects_path)
+  before_action do
+    client_id = params[:client_id] || params[:project][:client_id] rescue nil
+    authorize(@project || Project.new(client_id: client_id))
   end
 
   before_action :with_zabbix_or_back, only: [:destroy, :create, :new]
-
-
-
 
 
   # GET /projects
@@ -151,13 +141,6 @@ class ProjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
     params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id)
-  end
-
-  # do not allow to change "SkyHopper" project
-  def not_for_system
-    if @project.client.is_for_system?
-      redirect_to projects_path(client_id: @project.client_id), alert: I18n.t('projects.msg.cant_delete_system')
-    end
   end
 
   # redirect to clients#index if specified client does not exist

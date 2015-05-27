@@ -10,7 +10,7 @@ require_relative '../spec_helper'
 
 describe User, :type => :model do
   let(:klass){User}
-  let(:user){create(:user)}
+  let(:user){create(:user, master: false)}
 
   describe '#allow?' do
     context 'when receive project' do

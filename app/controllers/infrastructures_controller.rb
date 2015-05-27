@@ -7,7 +7,6 @@
 #
 
 class InfrastructuresController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
   # --------------- Auth
@@ -20,30 +19,15 @@ class InfrastructuresController < ApplicationController
 
   before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
-  # admin
-  before_action only: [:new, :create, :edit, :update, :destroy, :delete_stack] do
-    project_id = params[:project_id] || (params[:infrastructure][:project_id] rescue nil) || @infrastructure.project_id
-    admin(infrastructures_path(project_id: project_id))
+  before_action do
+    infra = @infrastructure || (
+      project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
+      Infrastructure.new(project_id: project_id)
+    )
+
+    authorize(infra)
   end
 
-  # admin でも new, create はできる？
-  # master
-  # before_action only: [:new, :create] do
-  #   project_id = params[:project_id] || params[:infrastructure][:project_id]
-  #   master(infrastructures_path(project_id: project_id))
-  # end
-
-  # project
-  before_action only: [:index] do
-    project_id = params[:project_id]
-    allowed_project(project_id)
-  end
-
-  # infra
-  before_action except: [:index, :new, :create] do
-    infra_id = params[:infra_id] || params[:infrastructure_id] || params[:id]
-    allowed_infrastructure(infra_id)
-  end
 
   before_action :with_zabbix_or_render, only: [:destroy, :delete_stack]
 
@@ -251,46 +235,6 @@ class InfrastructuresController < ApplicationController
     @s3 = S3.new(infrastructure, @bucket_name)
 
     render partial: 'show_s3'
-  end
-
-
-  def events
-    infrastructure = Infrastructure.find( params.require(:infrastructure_id) )
-    stack = Stack.new( infrastructure )
-    begin
-      render json: stack.events.to_json and return
-    rescue Aws::CloudFormation::Errors::ValidationError => ex # stack does not exist
-      render json: { error: ex.message }, status: 500 and return
-    end
-  end
-
-  # Check Current cloudformation Status
-  def cloudformation_status
-    infrastructure = Infrastructure.find( params.require(:infrastructure_id) )
-    stack = Stack.new( infrastructure )
-    begin
-      # TODO: Refactor
-      # TODO: InfraLogの整形
-      case
-      when stack.in_progress?
-        render json: stack.events.to_json and return
-      when stack.complete?
-        infra_logger_success("Creating stack complete.\n" + JSON.pretty_generate(stack.events))
-        render nothing: true, status: 201 and return
-      when stack.create_failed?
-        infra_logger_fail("Creating stack failed.\n" + JSON.pretty_generate(stack.events))
-        render text: I18n.t('infrastructures.msg.create_stack_failed'), status: 500 and return
-      when stack.failed?
-        infra_logger_fail("Creating stack failed.\n" + JSON.pretty_generate(stack.events))
-        render text: stack.status[:status], status: 500 and return
-      else
-        render nothing: true, status: 201 and return
-      end
-    rescue Aws::CloudFormation::Errors::ValidationError => ex
-      # in many cases, delete complete
-      # TODO: handle delete complete as success
-      render text: ex.message, status: 201 and return
-    end
   end
 
 

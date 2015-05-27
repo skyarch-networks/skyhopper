@@ -7,9 +7,6 @@
 #
 
 class ServerStatusController < ApplicationController
-  # TODO: 必要な権限は何?
-  include Concerns::BeforeAuth
-
   before_action :authenticate_user!
   before_action :set_server
 

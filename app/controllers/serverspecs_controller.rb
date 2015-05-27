@@ -9,7 +9,6 @@
 require 'sidekiq/api'
 
 class ServerspecsController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
   before_action :set_serverspec, only: [:update, :show, :edit, :destroy]
@@ -17,20 +16,9 @@ class ServerspecsController < ApplicationController
   # --------------- Auth
   before_action :authenticate_user!
 
-  before_action except: [:index, :show] do
-    if infra_id = have_infra?
-      allowed_infrastructure(infra_id)
-    else
-      master and admin
-    end
+  before_action do
+    authorize(@serverspec || Serverspec.new(infrastructure_id: have_infra?))
   end
-
-  before_action only: [:index, :show] do
-    if infra_id = have_infra?
-      allowed_infrastructure(infra_id)
-    end
-  end
-
 
   # GET /serverspecs
   def index
@@ -194,7 +182,7 @@ class ServerspecsController < ApplicationController
   end
 
   def have_infra?
-    return params[:infra_id] || params[:infrastructure_id] || (@serverspec.infrastructure_id rescue nil) || params[:serverspec][:infrastructure_id]
+    return params[:infra_id] || params[:infrastructure_id] || params[:serverspec][:infrastructure_id]
   rescue
     return nil
   end

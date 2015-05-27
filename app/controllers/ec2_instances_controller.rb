@@ -9,7 +9,6 @@
 # for Ec2 instance
 
 class Ec2InstancesController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
 
@@ -17,10 +16,10 @@ class Ec2InstancesController < ApplicationController
   before_action :authenticate_user!
 
   before_action do
-    infra_id = params.require(:infra_id)
-    allowed_infrastructure(infra_id)
+    infra = Infrastructure.find(params.require(:infra_id))
+    def infra.policy_class;Ec2InstancePolicy end
+    authorize infra
   end
-
 
   # TODO: use websocket
   # POST /ec2_instances/i-0b8e7f12/change_scale

@@ -60,9 +60,15 @@ var CFTemplate = function (infra) {
       dfd.reject(t('infrastructures.msg.empty_subject'));
     }
 
-    data.infrastructure_id = infra.id;
+    var req = {cf_template: {
+      name:              data.name,
+      detail:            data.detail,
+      value:             data.value,
+      params:            data.params,
+      infrastructure_id: infra.id,
+    }};
 
-    ajax_cf_template.insert_cf_params({cf_template: data}).done(function (data, status, xhr) {
+    ajax_cf_template.insert_cf_params(req).done(function (data, status, xhr) {
       dfd.resolve(data);
     }).fail(function (xhr) {
       dfd.reject(xhr.responseText);

@@ -8,7 +8,6 @@ var Infrastructure = function (infra_id) {
   var ajax_infra = new AjaxSet.Resources('infrastructures');
   ajax_infra.add_member('delete_stack', 'POST');
   ajax_infra.add_member('stack_events', 'GET');
-  ajax_infra.add_collection('cloudformation_status', 'GET');
   ajax_infra.add_member('show_elb', 'GET');
 
   var ajax_resources = new AjaxSet.Resources('resources');

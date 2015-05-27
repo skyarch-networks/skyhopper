@@ -44,7 +44,7 @@
               edit_project_path(project),
               class: 'btn btn-default btn-xs' %>
 
-            <%= button_delete_project(project, @selected_client || project.client) %>
+            <%= button_delete_project(project) %>
 
           <% end %>
 
@@ -59,6 +59,6 @@
 </div>
 
 
-<%= button_add_project(@selected_client) if current_user.admin? %>
+<%= button_add_project(@selected_client) %>
 
 <div class="page-header"></div>

@@ -133,7 +133,7 @@ describe NodesController, :type => :controller do
       end
 
       it 'should assigns @selected_dish' do
-        expect(assigns[:selected_dish]).to eq dish.id
+        expect(assigns[:selected_dish]).to eq dish
       end
 
       it 'should assigns @info' do

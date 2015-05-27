@@ -81,9 +81,10 @@ RSpec.describe MonitoringsController, :type => :controller do
   # TODO: context mysql.login
   describe '#show_zabbix_graph' do
     let(:item_key){SecureRandom.base64(10)}
-    let(:req){get :show_zabbix_graph, physical_id: physical_id, item_key: item_key}
+    let(:req){get :show_zabbix_graph, physical_id: physical_id, item_key: item_key, id: infra.id}
     let(:history){['foo', 'bar', 'hoge']}
     before do
+      create(:resource, infrastructure: infra, physical_id: physical_id)
       allow(_zabbix).to receive(:get_history).and_return(history)
       req
     end
