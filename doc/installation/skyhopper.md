@@ -164,7 +164,6 @@ default: &default
   pool: 5
   username: skyhopper_dev
   password: 'hogehoge' #先ほど設定したdevelopmentのパスワード
-  socket: /var/lib/mysql/mysql.sock
 ```
 
 #### production
