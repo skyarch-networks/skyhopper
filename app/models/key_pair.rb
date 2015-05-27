@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
 KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
   class << self
     def all(project_id)

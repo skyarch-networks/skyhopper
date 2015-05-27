@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
 class InfrastructurePolicy < ApplicationPolicy
 
   %i[index? show? stack_events? show_rds? show_s3? show_elb?].each do |action|
