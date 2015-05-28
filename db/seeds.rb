@@ -55,13 +55,6 @@ end
 EOS
 
 
-# ---------------------- AppSetting
-unless AppSetting.get
-  AppSetting.create(
-    aws_region: DummyText,
-    log_directory: DummyText,
-  )
-end
 
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system
