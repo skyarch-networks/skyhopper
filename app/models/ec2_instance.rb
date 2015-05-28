@@ -89,12 +89,15 @@ class EC2Instance
   end
 
   def summary
-    {
-      status: status,
-      instance_type: instance_type,
-      public_dns: dns_name,
-      elastic_ip: elastic_ip,
-      public_ip: public_ip_address,
+    c = @instance.client
+    res = c.describe_instances(instance_ids: [physical_id]).reservation_set.first[:instances_set].first
+
+    return {
+      status:        res.instance_state.name,
+      instance_type: res.instance_type,
+      public_dns:    res.dns_name,
+      elastic_ip:    elastic_ip,
+      public_ip:     res.ip_address,
     }
   end
 
