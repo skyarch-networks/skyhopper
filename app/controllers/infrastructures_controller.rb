@@ -105,7 +105,7 @@ class InfrastructuresController < ApplicationController
   # スタック情報が取得できない場合のみ
   def edit
     if @infrastructure.status.present?
-      redirect_to ( infrastructures_path(project_id: @infrastructure.project_id) ),
+      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
         alert: I18n.t('infrastructures.msg.not_necessary')
     end
 

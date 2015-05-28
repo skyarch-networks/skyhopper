@@ -84,7 +84,7 @@ describe Node, :type => :model do
 
   describe "#fqdn" do
     context "only fqdn is configured" do
-      let (:details) do
+      let(:details) do
         {
           "automatic" => {
             "fqdn" => "example.com"
@@ -106,7 +106,7 @@ describe Node, :type => :model do
     end
 
     context "both fqdn and public_dns is configured" do
-      let (:details) do
+      let(:details) do
         {
           "automatic" => {
             "fqdn" => "example.com"
