@@ -71,10 +71,11 @@ class NodesController < ApplicationController
       return
     end
 
+    resource = @infra.resource(physical_id)
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
-      @selected_dish = @infra.resource(physical_id).dish
+      @selected_dish = resource.dish
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true
@@ -86,7 +87,7 @@ class NodesController < ApplicationController
     end
 
     @info = {}
-    status = Resource.find_by(physical_id: physical_id).status
+    status = resource.status
     @info[:cook_status]       = status.cook.value.camelize
     @info[:serverspec_status] = status.serverspec.value.camelize
     @info[:update_status]     = status.yum.value.camelize
