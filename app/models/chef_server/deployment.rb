@@ -61,7 +61,7 @@ class ChefServer::Deployment
       #TODO: jsでバインドする前に投げちゃって拾えない＞＜；だから直したい
       __yield :creating_stack, &block
 
-      stack = create_stack(infra)
+      stack = create_stack(infra, 'Chef Server', params: {InstanceType: 't2.small'})
 
 
       wait_creation(stack)
@@ -103,7 +103,7 @@ class ChefServer::Deployment
         keypair_value: keypair_value,
         region:        region
       )
-      stack = create_stack(infra)
+      stack = create_stack(infra, 'Zabbix Server')
       wait_creation(stack)
 
       physical_id = stack.instances.first.physical_resource_id
@@ -116,8 +116,9 @@ class ChefServer::Deployment
 
     private
 
-    def create_stack(infra, name = 'Chef Server')
+    def create_stack(infra, name, params: {})
       template = File.read(TemplatePath)
+      params[:InstanceName] = name
 
       cf_template = CfTemplate.new(
         infrastructure_id: infra.id,
@@ -125,7 +126,7 @@ class ChefServer::Deployment
         detail:            "#{name} auto generated",
         value:             template
       )
-      cf_template.create_cfparams_set(infra)
+      cf_template.create_cfparams_set(infra, params)
       cf_template.update_cfparams
       cf_template.save!
 
@@ -193,9 +194,6 @@ class ChefServer::Deployment
       ssh.shell do |sh|
         sh.execute! 'cd /tmp/'
         sh.execute! "sudo rpm -Uvh #{PackageURL}"
-        sh.execute! "sudo dd if=/dev/zero of=/swap bs=1M count=600"
-        sh.execute! "sudo mkswap /swap"
-        sh.execute! "sudo swapon /swap"
         sh.execute! 'sudo chef-server-ctl reconfigure'
         sh.execute! 'sudo chef-server-ctl start'
         Rails.logger.debug("exec user-create")

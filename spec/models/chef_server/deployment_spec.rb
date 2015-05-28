@@ -43,7 +43,7 @@ describe ChefServer::Deployment, :type => :model do
     end
 
     it 'should call methods' do
-      expect(klass).to receive(:create_stack).with(infra).and_return(stack)
+      expect(klass).to receive(:create_stack).with(infra, String, Hash).and_return(stack)
       expect(klass).to receive(:wait_creation).with(stack)
 
       expect(chef_server).to receive(:wait_init_ec2).with(no_args)
@@ -75,11 +75,11 @@ describe ChefServer::Deployment, :type => :model do
         allow(Stack).to receive(:new).and_return(stack)
       end
 
-      subject{klass.__send__(:create_stack, infra)}
+      subject{klass.__send__(:create_stack, infra, 'Chef Server')}
 
 
       it 'should call methods' do
-        expect(cf_template).to receive(:create_cfparams_set).with(infra)
+        expect(cf_template).to receive(:create_cfparams_set).with(infra, Hash)
         expect(cf_template).to receive(:update_cfparams).with(no_args)
         expect(cf_template).to receive(:save!).with(no_args)
         expect(stack).to       receive(:create).with(any_args)
