@@ -11,7 +11,7 @@ require "json"
 require 'open3'
 
 class ChefServer::Deployment
-  PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.5-1.el6.x86_64.rpm".freeze
+  PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.8-1.el6.x86_64.rpm".freeze
 
   TemplatePath = Rails.root.join("lib/cf_templates/chef_server.json").freeze
   EC2User      = "ec2-user".freeze
