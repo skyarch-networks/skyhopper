@@ -100,18 +100,4 @@ class EC2Instance
       public_ip:     res.ip_address,
     }
   end
-
-  def is_status_running?
-    self.status === :running
-  end
-
-  def is_status_in_progress?
-    case self.status
-
-    when :pending, :stopping
-      return true
-    else
-      return false
-    end
-  end
 end
