@@ -17,7 +17,7 @@ class AppSetting < ActiveRecord::Base
     # @return [AppSetting] 使用すべき設定を返す
     # XXX: 現状ではシングルトンだが、複数の設定を切り替えられるようにする?
     def get
-      @@get ||= self.first
+      Rails.cache.fetch('app_setting'){self.first}
     end
 
     # @return [Boolean] セッティング済みかどうかを返す
@@ -34,7 +34,7 @@ class AppSetting < ActiveRecord::Base
     # AppSetting.get 用のキャッシュを削除する。
     # 設定を更新した場合などにする必要がある
     def clear_cache
-      @@get = nil
+      Rails.cache.clear('app_setting')
     end
 
     # @param [Hash<Symbol => Any>] setting Validate する対象

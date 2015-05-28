@@ -24,7 +24,7 @@ describe AppSetting, :type => :model do
 
     it 'should memolize' do
       subject
-      expect(klass.class_variable_get(:@@get)).to be_kind_of klass
+      expect(Rails.cache.read('app_setting')).to be_a klass
     end
   end
 
@@ -36,7 +36,7 @@ describe AppSetting, :type => :model do
 
       subject{klass.set?}
 
-      it{is_expected.to be_truthy}
+      it{is_expected.to be true}
     end
 
     context 'when have not setting' do
@@ -55,7 +55,7 @@ describe AppSetting, :type => :model do
         create(:app_setting, aws_region: ::DummyText)
       end
 
-      subject{klass.class_variable_set(:@@get, nil);klass.set?}
+      subject{klass.clear_cache;klass.set?}
 
       it{is_expected.to be_falsey}
     end
@@ -74,15 +74,15 @@ describe AppSetting, :type => :model do
 
   describe '.clear_cache' do
     before do
-      klass.class_variable_set(:@@get, 'foo')
+      Rails.cache.write('app_setting', 'foo')
     end
 
     subject{klass.clear_cache}
 
     it 'should clear cache' do
-      expect(klass.class_variable_get(:@@get)).not_to be_nil
+      expect(Rails.cache.read('app_setting')).not_to be_nil
       subject
-      expect(klass.class_variable_get(:@@get)).to be_nil
+      expect(Rails.cache.read('app_setting')).to be_nil
     end
   end
 
