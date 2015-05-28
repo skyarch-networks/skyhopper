@@ -40,14 +40,13 @@ describe ServerState, type: :model do
 
     context 'when invalid kind' do
       subject{ServerState.new('invalid as kind')}
-      it do
-        expect{subject}.to raise_error(ArgumentError)
-      end
+      it {expect{subject}.to raise_error(ArgumentError)}
     end
   end
 
   let(:chef){ServerState.new('chef')}
   let(:zabbix){ServerState.new('zabbix')}
+  let(:server_status){{'chef' => chef, 'zabbix' => zabbix}}
 
   let(:status){SecureRandom.base64(10)}
   before do
@@ -61,20 +60,20 @@ describe ServerState, type: :model do
       context "when #{kind}" do
         context 'when not cached' do
           before do
-            Rails.cache.clear("serverstate-#{eval(kind).kind}")
+            Rails.cache.clear("serverstate-#{kind}")
           end
 
           it 'should return status' do
-            expect(eval(kind).status).to eq status
+            expect(server_status[kind].status).to eq status
           end
         end
         context 'when cached' do
           before do
-            Rails.cache.write("serverstate-#{eval(kind).kind}", status)
+            Rails.cache.write("serverstate-#{kind}", status)
           end
 
           it 'should return cached status' do
-            expect(eval(kind).status).to eq status
+            expect(server_status[kind].status).to eq status
           end
         end
       end
@@ -84,16 +83,16 @@ describe ServerState, type: :model do
   describe '#latest_status' do
     servers.each do |kind|
       before do
-        Rails.cache.clear("serverstate-#{eval(kind).kind}")
+        Rails.cache.clear("serverstate-#{kind}")
       end
 
       it 'should update cache' do
-        eval(kind).latest_status
-        expect(Rails.cache.read("serverstate-#{eval(kind).kind}")).to eq status
+        server_status[kind].latest_status
+        expect(Rails.cache.read("serverstate-#{kind}")).to eq status
       end
 
       it 'should return status' do
-        expect(eval(kind).latest_status).to eq status
+        expect(server_status[kind].latest_status).to eq status
       end
     end
   end
@@ -103,7 +102,7 @@ describe ServerState, type: :model do
       context "when server is #{kind}" do
         it 'should call @server.start' do
           expect(server).to receive(:start)
-          eval(kind).start
+          server_status[kind].start
         end
       end
     end
@@ -114,7 +113,7 @@ describe ServerState, type: :model do
       context "when server is #{kind}" do
         it 'should call @server.stop' do
           expect(server).to receive(:stop)
-          eval(kind).stop
+          server_status[kind].stop
         end
       end
     end
@@ -123,7 +122,7 @@ describe ServerState, type: :model do
   describe '#is_running?' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject{eval(kind).is_running?}
+        subject{server_status[kind].is_running?}
 
         context 'when isnot running' do
           it{is_expected.to be false}
@@ -141,7 +140,7 @@ describe ServerState, type: :model do
   describe '#is_in_progress?' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject{eval(kind).is_in_progress?}
+        subject{server_status[kind].is_in_progress?}
 
         %w[pending stopping].each do |s|
           context "when #{s}" do
