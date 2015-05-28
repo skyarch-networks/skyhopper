@@ -45,9 +45,11 @@
 
   var alert_danger = function (callback) {
     return function (msg) {
-      var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
-      if (callback) {
-        dfd.done(callback);
+      if (!jsonParseErr(msg) && JSON.parse(msg).error) {
+        modal_for_ajax_std_error(callback)(msg);
+      } else {
+        var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
+        if (callback) { dfd.done(callback); }
       }
     };
   };
