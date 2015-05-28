@@ -34,8 +34,6 @@ class AppSettingsController < ApplicationController
 
     settings[:ec2_private_key_id] = ec2key.id
 
-    AppSetting.validate(settings)
-
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
     app_setting.zabbix_fqdn = DummyText

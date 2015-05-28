@@ -11,6 +11,30 @@ require_relative '../spec_helper'
 describe AppSetting, :type => :model do
   let(:klass){AppSetting}
 
+  describe 'with validation' do
+    let(:set){build(:app_setting)}
+
+    describe 'column log_directory' do
+      it 'should be pathname' do
+        set.log_directory = 'hogehoge'
+        expect(set.valid?).to be false
+        set.log_directory = '~/hogehoge'
+        expect(set.valid?).to be true
+      end
+    end
+
+    describe 'column aws_region' do
+      it 'should include regions' do
+        AWS::Regions.each do |region|
+          set.aws_region = region
+          expect(set.valid?).to be true
+        end
+        set.aws_region = 'invalid-as-region'
+        expect(set.valid?).to be false
+      end
+    end
+  end
+
   describe '.get' do
     before do
       create(:app_setting)
@@ -83,61 +107,6 @@ describe AppSetting, :type => :model do
       expect(Rails.cache.read('app_setting')).not_to be_nil
       subject
       expect(Rails.cache.read('app_setting')).to be_nil
-    end
-  end
-
-  describe '.validate' do
-    context 'when invalid path' do
-      let(:arg){{log_directory: ''}}
-
-      before do
-        allow(klass).to receive(:is_pathname?).and_return(false)
-      end
-
-      it do
-        expect{klass.validate(arg)}.to raise_error klass::ValidateError
-      end
-    end
-
-    context 'when invalid region' do
-      let(:arg){{aws_region: 'hoge-region'}}
-
-      it do
-        expect{klass.validate(arg)}.to raise_error klass::ValidateError
-      end
-    end
-
-    context 'when valid setting' do
-      let(:arg){{log_directory: '/foo/bar'}}
-
-      it 'should return true' do
-        expect(klass.validate(arg)).to be_truthy
-      end
-    end
-  end
-
-  describe '.is_pathname?' do
-    describe 'should private method' do
-      subject{klass.is_pathname?('foo')}
-      it do
-        expect{subject}.to raise_error NoMethodError
-      end
-    end
-
-    context 'when valid path' do
-      it 'should return true' do
-        expect(klass.__send__(:is_pathname?, '/foo/bar/')).to be_truthy
-      end
-
-      it 'should return true' do
-        expect(klass.__send__(:is_pathname?, '~/foo/bar/')).to be_truthy
-      end
-    end
-
-    context 'when invalid path' do
-      it 'should return false' do
-        expect(klass.__send__(:is_pathname?, 'foo/bar')).to be_falsy
-      end
     end
   end
 

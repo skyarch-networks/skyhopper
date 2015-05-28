@@ -11,6 +11,9 @@ require 'uri'
 class AppSetting < ActiveRecord::Base
   belongs_to :ec2_private_key, dependent: :delete
 
+  validates :log_directory, format: {with: /\A~?\//}
+  validates :aws_region, inclusion: {in: AWS::Regions | [DummyText]}
+
   class ValidateError < StandardError; end
 
   class << self
@@ -36,37 +39,6 @@ class AppSetting < ActiveRecord::Base
     def clear_cache
       Rails.cache.clear('app_setting')
     end
-
-    # @param [Hash<Symbol => Any>] setting Validate する対象
-    # @return [TrueClass]
-    # @raise [ValidateError] バリデーションに失敗した場合に発生する
-    def validate(setting)
-      [:log_directory].each do |col|
-        begin
-          val = setting.fetch(col)
-        rescue KeyError
-          next
-        end
-        raise ValidateError, "#{col} must be a pathname!" unless is_pathname?(val)
-      end
-
-      begin
-        val = setting.fetch(:aws_region)
-      rescue KeyError
-      else
-        raise ValidateError, "aws_region must be an aws region" unless AWS::Regions.include?(val)
-      end
-
-      return true
-    end
-
-    # パスとして期待しているものかどうかを返す
-    # @param [String] parh
-    # @return [Boolean]
-    def is_pathname?(path)
-      path =~ /^~?\//
-    end
-    private :is_pathname?
   end
 
   # ダミー設定かどうかを返す
