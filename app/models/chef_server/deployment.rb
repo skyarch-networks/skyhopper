@@ -103,7 +103,8 @@ class ChefServer::Deployment
         keypair_value: keypair_value,
         region:        region
       )
-      stack = create_stack(infra, 'Zabbix Server')
+      template_path = Rails.root.join('lib/cf_templates/zabbix_server.json')
+      stack = create_stack(infra, 'Zabbix Server', template: File.read(template_path))
       wait_creation(stack)
 
       physical_id = stack.instances.first.physical_resource_id
@@ -116,8 +117,7 @@ class ChefServer::Deployment
 
     private
 
-    def create_stack(infra, name, params: {})
-      template = File.read(TemplatePath)
+    def create_stack(infra, name, params: {}, template: File.read(TemplatePath))
       params[:InstanceName] = name
 
       cf_template = CfTemplate.new(
