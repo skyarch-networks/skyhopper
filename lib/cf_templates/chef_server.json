@@ -28,7 +28,19 @@
       "Description" : "Name of EC2 Instance",
       "Type" : "String",
       "Default": "Chef Server for SkyHopper"
-    }
+    },
+
+    "ChefPackageURL": { "Type" : "String" },
+    "ChefUser":       { "Type" : "String" },
+    "ChefFullName":   { "Type" : "String" },
+    "ChefEmail":      { "Type" : "String" },
+    "ChefPassword":   { "Type" : "String" },
+    "ChefOrg":        { "Type" : "String" },
+    "ChefFullOrg":    { "Type" : "String" },
+
+    "UserPemID":         { "Type": "String" },
+    "OrgPemID":          { "Type": "String" },
+    "TrustedCertsPemID": { "Type": "String" }
   },
 
   "Mappings" : {
@@ -78,7 +90,50 @@
         ],
         "SecurityGroupIds" : [
           { "Ref" : "SecurityGroup" }
-        ]
+        ],
+        "UserData": {"Fn::Base64": {"Fn::Join": ["", [
+          "#! /bin/bash -v\n",
+
+          "sleep 60\n",
+          "PublicDnsName=\"$(curl http://169.254.169.254/latest/meta-data/public-hostname)\"\n",
+          "export HOME=/root/\n",
+
+          "echo '*** Fix Hostname ***'\n",
+          "hostname ${PublicDnsName}", "\n",
+          "sed -i -E \"s/^HOSTNAME=.+$/HOSTNAME=${PublicDnsName}/g\" /etc/sysconfig/network\n",
+          "service network restart\n",
+
+          "echo '*** Install Chef ***'\n",
+          "cd /tmp/\n",
+          "rpm -Uvh ", {"Ref": "ChefPackageURL"}, "\n",
+          "chef-server-ctl reconfigure\n",
+          "chef-server-ctl start\n",
+          "chef-server-ctl user-create ",
+              {"Ref": "ChefUser"},     " ",
+              {"Ref": "ChefFullName"}, " ",
+              {"Ref": "ChefEmail"},    " ",
+              {"Ref": "ChefPassword"}, " ",
+              "--filename ", {"Ref": "ChefUser"}, ".pem\n",
+          "chef-server-ctl org-create ",
+              {"Ref": "ChefOrg"},     " ",
+              {"Ref": "ChefFullOrg"}, " ",
+              "--association_user ", {"Ref": "ChefUser"}, " ",
+              "--filename ",         {"Ref": "ChefOrg"},  ".pem\n",
+
+          "echo '*** Output files ***'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "UserPemID"},                     " ",
+              "--data \"$(cat ", {"Ref": "ChefUser"}, ".pem)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "OrgPemID"},                     " ",
+              "--data \"$(cat ", {"Ref": "ChefOrg"}, ".pem)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "TrustedCertsPemID"}, " ",
+              "--data \"$(cat /var/opt/opscode/nginx/ca/${PublicDnsName}.crt)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n"
+        ]]}}
       }
     },
     "EIP" : {
@@ -86,6 +141,23 @@
       "Properties" : {
         "InstanceId" : { "Ref" : "EC2Instance" }
       }
+    },
+
+    "wchPemFiles": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcPemFiles": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchPemFiles"},
+        "Count":   "3",
+        "Timeout": "900"
+      }
+    }
+  },
+
+  "Outputs": {
+    "PemFiles": {
+      "Value": {"Fn::GetAtt": ["wcPemFiles", "Data"]}
     }
   }
 }
