@@ -14,11 +14,9 @@ class ServerspecSchedule < ActiveRecord::Base
   enum frequency:   %i[daily weekly]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 
-  after_destroy do
-    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == self.physical_id }
-    jobs.each(&:delete)
-  end
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
+
+  after_destroy :delete_enqueued_jobs
 
   def next_run
     case self.frequency
@@ -30,5 +28,10 @@ class ServerspecSchedule < ActiveRecord::Base
       tmp = tmp.tomorrow if tmp.past?
     end
     tmp
+  end
+
+  def delete_enqueued_jobs
+    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == self.physical_id }
+    jobs.each(&:delete)
   end
 end

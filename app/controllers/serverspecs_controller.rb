@@ -6,8 +6,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'sidekiq/api'
-
 class ServerspecsController < ApplicationController
   include Concerns::InfraLogger
 
@@ -158,8 +156,7 @@ class ServerspecsController < ApplicationController
     ss = ServerspecSchedule.find_by(physical_id: physical_id)
     ss.update_attributes(schedule)
 
-    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == physical_id }
-    jobs.each(&:delete)
+    ss.delete_enqueued_jobs
 
     if ss.enabled?
       PeriodicServerspecJob.set(
