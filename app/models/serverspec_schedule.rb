@@ -18,6 +18,7 @@ class ServerspecSchedule < ActiveRecord::Base
     jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == self.physical_id }
     jobs.each(&:delete)
   end
+  validates :frequency, inclusion: { in: frequencies }, if: :enabled
 
   def next_run
     case self.frequency
