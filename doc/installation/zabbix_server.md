@@ -57,5 +57,9 @@ Cookが終了したら Zabbix Server のデプロイは終了です。
 username と password を入力してください。
 デフォルト値は、admin, ilikerandompasswords です。
 
+最後に SkyHopper 上のユーザーと Zabbix のユーザーの情報の同期を行います。
+右上のユーザー名をクリックし、ユーザー管理のページに行ってください。
+そのページの `Zabbix Server と同期`ボタンを押すと、ユーザーが同期されます。
 
-ユーザー情報の登録が完了したら、Zabbix Server の設定は完了です。
+
+以上で Zabbix Server の設定は完了です。

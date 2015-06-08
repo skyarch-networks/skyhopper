@@ -15,7 +15,7 @@ class Infrastructure < ActiveRecord::Base
 
   has_many :infrastructure_logs, dependent: :delete_all
   has_many :serverspecs, dependent: :delete_all
-  has_many :resources, dependent: :delete_all
+  has_many :resources, dependent: :destroy
   has_many :monitorings, dependent: :delete_all
   has_many :master_monitorings, through: :monitorings
 
