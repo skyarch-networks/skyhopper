@@ -114,13 +114,11 @@ class UsersAdminController < ApplicationController
       z.update_user(zabbix_user_id, password: user.encrypted_password)
     end
 
-    if user.master && user.admin
-      z.update_user(zabbix_user_id, usergroup_ids: [z.get_default_usergroup_id], type: Zabbix::UserTypeSuperAdmin)
-    elsif user.master
-      z.update_user(zabbix_user_id, usergroup_ids: [z.get_master_usergroup_id])
+    usergroup_ids = [z.get_group_id_by_user(user)]
+    if user.master
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
     else
       hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
-      usergroup_ids = [z.get_default_usergroup_id]
       if hostgroup_names.present?
         usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
       end

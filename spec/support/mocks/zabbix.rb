@@ -40,6 +40,8 @@ module ZabbixStub
       allow(_zabbix).to receive(:delete_hosts_by_infra).with(kind_of(Infrastructure))
       allow(_zabbix).to receive(:get_item_info).with(str, str, str).and_return([{'key_' => 'KEY'}])
       allow(_zabbix).to receive(:get_history).with(str, str).and_return([['foo', 'bar']])
+      allow(_zabbix).to receive(:get_group_id_by_user).with(User).and_return('1')
+      allow(_zabbix).to receive(:get_user_type_by_user).with(User).and_return('1')
     end
   end
 end
