@@ -20,7 +20,7 @@ module ZabbixStub
       allow(_zabbix).to receive(:create_usergroup).with(str, any_args)
       allow(_zabbix).to receive(:get_hostgroup_ids).and_return(["1", "2", "3"]) # .with(String or Array of String)
       allow(_zabbix).to receive(:change_mastergroup_rights).with(array_including(str))
-      allow(_zabbix).to receive(:create_user).with(str, str).and_return('1')
+      allow(_zabbix).to receive(:create_user).with(kind_of(User)).and_return('1')
       allow(_zabbix).to receive(:create_host).with(kind_of(Infrastructure), str)
       allow(_zabbix).to receive(:templates_link_host).with(str, array_including(str))
       allow(_zabbix).to receive(:create_cpu_usage_item).with(str).and_return(_cpu_item)

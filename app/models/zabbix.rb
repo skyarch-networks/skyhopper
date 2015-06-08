@@ -318,18 +318,32 @@ class Zabbix
     return get_hostgroup_ids(group_name).first
   end
 
-  # @param [String] username email of SkyHopper user
-  # @param [String] password encrypted_password of SkyHopper user
+  # @param [User] User of SkyHopper
   # @return [String] ID of created user
-  def create_user(username, password)
+  def create_user(user)
+    type =
+      if user.master? and user.admin?
+        UserTypeSuperAdmin
+      else
+        UserTypeDefault
+      end
+
+    group =
+      if user.master? and not user.admin?
+        get_master_usergroup_id
+      else
+        get_default_usergroup_id
+      end
+
     return @zabbix.query(
       method: 'user.create',
       params: {
-        alias: username,
-        passwd: password,
+        alias: user.email,
+        passwd: user.encrypted_password,
         usrgrps: [
-          usrgrpid: get_default_usergroup_id,
+          usrgrpid: group,
         ],
+        type: type,
       },
     )['userids'].first
   end

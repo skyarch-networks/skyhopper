@@ -56,13 +56,7 @@ class UsersAdminController < ApplicationController
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
       s = AppSetting.get
       z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      user_id_z = z.create_user(@user.email, @user.encrypted_password)
-
-      if @user.master && @user.admin
-        z.update_user(user_id_z, type: Zabbix::UserTypeSuperAdmin)
-      elsif @user.master
-        z.update_user(user_id_z, usergroup_ids: [z.get_master_usergroup_id])
-      end
+      z.create_user(@user)
     rescue => ex
       @user.destroy
       e.(ex) and return
@@ -151,13 +145,7 @@ class UsersAdminController < ApplicationController
     users.each do |user|
       next if z.user_exists?(user.email)
 
-      # XXX: DRY. Same as create of this controller.
-      user_id_z = z.create_user(user.email, user.encrypted_password)
-      if user.master && user.admin
-        z.update_user(user_id_z, type: Zabbix::UserTypeSuperAdmin)
-      elsif user.master
-        z.update_user(user_id_z, usergroup_ids: [z.get_master_usergroup_id])
-      end
+      z.create_user(user)
     end
 
     render text: I18n.t('users.msg.synced'); return
