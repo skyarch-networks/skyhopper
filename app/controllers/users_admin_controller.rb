@@ -110,6 +110,8 @@ class UsersAdminController < ApplicationController
     z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
     zabbix_user_id = z.get_user_id(user.email)
 
+    z.create_user(user) unless z.user_exists?(user.email)
+
     if set_password
       z.update_user(zabbix_user_id, password: user.encrypted_password)
     end
