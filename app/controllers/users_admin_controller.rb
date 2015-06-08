@@ -99,10 +99,6 @@ class UsersAdminController < ApplicationController
     user.admin = admin
 
     if password && password_confirm
-      unless password == password_confirm
-        render text: 'Password confirmation does not match Password', status: 500 and return
-      end
-
       user.password = password
       user.password_confirmation = password_confirm
       set_password = true
