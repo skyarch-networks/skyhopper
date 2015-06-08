@@ -26,6 +26,7 @@ var EC2Instance = function (infra, physical_id) {
   var ajax_serverspec = new AjaxSet.Resources('serverspecs');
   ajax_serverspec.add_collection('select', 'GET');
   ajax_serverspec.add_collection("run", "POST");
+  ajax_serverspec.add_collection('schedule', 'POST');
 
 
   var rejectXHR = function (dfd) {
@@ -233,6 +234,20 @@ var EC2Instance = function (infra, physical_id) {
     return dfd.promise();
   };
 
+  this.schedule_serverspec = function (schedule) {
+    var dfd = $.Deferred();
+
+    ajax_serverspec.schedule({
+      physical_id: physical_id,
+      infra_id: infra.id,
+      schedule: schedule,
+    }).done(function (msg) {
+      dfd.resolve(msg);
+    }).fail(rejectXHR(dfd));
+
+    return dfd.promise();
+  };
+
   this.change_scale = function (type) {
     var dfd = $.Deferred();
 
@@ -256,7 +271,7 @@ var EC2Instance = function (infra, physical_id) {
       ws.onmessage = function (msg) {
         var d = JSON.parse(msg.data);
         if (d.error) {
-          dfd.reject(d.error);
+          dfd.reject(d.error.message);
         } else {
           dfd.resolve(d.msg);
         }

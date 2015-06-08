@@ -15,7 +15,7 @@ module DishesController::Validate
 
 
     # dishのテスト
-    validation = Thread.new_with_db(dish) do |dish|
+    Thread.new_with_db(dish) do |dish|
       begin
         @ws = WSConnector.new('dish_validate', dish.id)
 
@@ -37,7 +37,7 @@ module DishesController::Validate
         validate_section(:applying, dish) do
           begin
             apply_dish_for_test(@infrastructure, dish)
-          rescue Node::CookError => ex
+          rescue Node::CookError
             update_validate_status(dish, :failure)
             Thread.current.exit
           end
@@ -124,8 +124,8 @@ module DishesController::Validate
     parameters = cf_template.create_cfparams_set(infrastructure)
 
     begin
-      action = @stack.apply_template(cf_template.value, parameters)
-    rescue => ex
+      @stack.apply_template(cf_template.value, parameters)
+    rescue
       # Stack Create failed
       #render text: ex.message, status: 500
     else
@@ -152,11 +152,15 @@ module DishesController::Validate
     retry_count  = 9     # 20 * 9 = 180 sec
     begin
       @node = Node.bootstrap(fqdn, @physical_id, infrastructure)
-    rescue
-      sleep 20
+    rescue => ex
       retry_count -= 1
-      retry if retry_count >= 0
-      raise 'Bootstrap Timeout'
+      if retry_count < 0
+        raise 'Bootstrap Timeout'
+      end
+
+      sleep 20
+      Rails.logger.info("Retry bootstrap...")
+      retry
     end
   end
 
@@ -181,6 +185,7 @@ module DishesController::Validate
   def serverspec_for_test(dish, infrastructure)
     svrspecs    = dish.serverspecs
     return true if svrspecs.empty?
+    @infrastructure.resources_or_create
     svrspec_res = @node.run_serverspec(infrastructure.id, svrspecs.map(&:id), false)
 
     return svrspec_res[:summary][:failure_count] == 0

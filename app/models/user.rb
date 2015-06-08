@@ -6,6 +6,8 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
+require 'digest/sha2'
+
 class User < ActiveRecord::Base
   has_many :cf_templates,         dependent: :nullify
   has_many :infrastructure_logs,  dependent: :nullify
@@ -35,6 +37,7 @@ class User < ActiveRecord::Base
   end
 
   def allow?(project_or_infra)
+    return true if master?
     return case project_or_infra
     when Project
       self.project_ids.include?(project_or_infra.id)
@@ -58,8 +61,9 @@ class User < ActiveRecord::Base
     return prj
   end
 
+  # WebSocket のエンドポイントに使用する文字列を返す
+  # @return [String]
   def ws_key
-    require 'digest/sha2'
     Digest::SHA256.hexdigest(self.email + self.encrypted_password + self.current_sign_in_at.to_s)
   end
 end

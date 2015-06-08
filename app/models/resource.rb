@@ -13,6 +13,8 @@ class Resource < ActiveRecord::Base
   has_many :serverspecs, through: :resource_serverspecs
   has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
 
+  has_one :serverspec_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
+
   validates :physical_id, uniqueness: true
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
@@ -35,10 +37,10 @@ class Resource < ActiveRecord::Base
   end
 
   def initialize_statuses
-    ResourceStatus.import([
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindCook),
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindServerspec),
-      ResourceStatus.new(resource: self, kind: ResourceStatus::KindYum),
-    ])
+    ResourceStatus.kinds.map{|_, k| ResourceStatus.create(
+      resource: self,
+      kind: k,
+      value: 'un_executed',
+    )}
   end
 end

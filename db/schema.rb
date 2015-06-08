@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409065840) do
+ActiveRecord::Schema.define(version: 20150512062146) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -138,10 +138,10 @@ ActiveRecord::Schema.define(version: 20150409065840) do
 
   create_table "resource_statuses", force: :cascade do |t|
     t.integer  "resource_id", limit: 4
-    t.string   "kind",        limit: 255
-    t.string   "value",       limit: 255
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "value",       limit: 4, null: false
+    t.integer  "kind",        limit: 4, null: false
   end
 
   create_table "resources", force: :cascade do |t|
@@ -155,6 +155,16 @@ ActiveRecord::Schema.define(version: 20150409065840) do
   end
 
   add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree
+
+  create_table "serverspec_schedules", force: :cascade do |t|
+    t.boolean  "enabled",     limit: 1,   default: false, null: false
+    t.integer  "frequency",   limit: 4
+    t.integer  "day_of_week", limit: 4
+    t.integer  "time",        limit: 4
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.string   "physical_id", limit: 255
+  end
 
   create_table "serverspecs", force: :cascade do |t|
     t.integer  "infrastructure_id", limit: 4

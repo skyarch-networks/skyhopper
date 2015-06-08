@@ -14,6 +14,10 @@ describe Ec2InstancesController, :type => :controller do
   let(:physical_id){'i-fugahoge'}
   let(:infra){create(:infrastructure)}
 
+  before do
+    current_user.projects = [infra.project]
+  end
+
   describe '#change_scale' do
     let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
@@ -90,8 +94,7 @@ describe Ec2InstancesController, :type => :controller do
     context 'when status failed' do
       before do
         st = resource.status.serverspec
-        st.value = ResourceStatus::Failed
-        st.save!
+        st.failed!
         req
       end
 
@@ -99,7 +102,7 @@ describe Ec2InstancesController, :type => :controller do
       it{expect(subject).to be false}
     end
 
-    [ResourceStatus::Success, ResourceStatus::Pending, ResourceStatus::UnExecuted].each do |status|
+    ['success', 'pending', 'un_executed'].each do |status|
       context "when status #{status}" do
         before do
           st = resource.status.serverspec
@@ -152,6 +155,7 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
+      def authorize(*args)end # XXX: pundit hack
       def test
         instance = double_instance()
         status   = params.require(:status)
@@ -170,13 +174,13 @@ describe Ec2InstancesController, :type => :controller do
 
     context 'when instance error' do
       let(:instance){double('instance', physical_id: physical_id)}
-      let(:err_msg){'this is error.'}
+      let(:ex){StandardError.new('hoge')}
       before do
-        expect(instance).to receive(:wait_status).with(status).and_raise(err_msg)
+        expect(instance).to receive(:wait_status).with(status).and_raise(ex)
       end
 
       it 'should push error message' do
-        expect_any_instance_of(WSConnector).to receive(:push_as_json).with(error: err_msg)
+        expect_any_instance_of(WSConnector).to receive(:push_error).with(ex)
         req
       end
     end

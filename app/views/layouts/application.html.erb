@@ -38,13 +38,14 @@
 
     <!-- Javascripts ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <%= javascript_include_tag "application" %>
-    <%= javascript_include_tag controller.controller_name %>
-
+    <%# Library をロード、I18n の設定、アプリケーションコードのロードの順に行わないと、
+      I18n の言語指定がされないままアプリケーションコードが実行されてしまうため、このように読み込む。 %>
+    <%= javascript_include_tag "libraries" %>
     <script type="text/javascript">
       I18n.defaultLocale = "<%= I18n.default_locale %>";
       I18n.locale = "<%= I18n.locale %>";
     </script>
-
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag controller.controller_name %>
   </body>
 </html>

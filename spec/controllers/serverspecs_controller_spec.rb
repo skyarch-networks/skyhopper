@@ -236,6 +236,10 @@ describe ServerspecsController, :type => :controller do
       it 'assigns @global_serverspecs' do
         expect(assigns[:global_serverspecs]).to match_array([])
       end
+
+      it 'assigns @serverspec_schedule' do
+        expect(assigns[:serverspec_schedule]).to be_a ServerspecSchedule
+      end
     end
 
     context 'when have auto_generated' do
@@ -263,7 +267,7 @@ describe ServerspecsController, :type => :controller do
     let(:serverspec_ids){serverspecs.map(&:id)}
     let(:failure_count){0}
     let(:pending_count){0}
-    let(:status_text){ResourceStatus::Success}
+    let(:status_text){'success'}
     let(:resp){{
       examples: [{status: 'pending', full_description: 'hogefuga'}],
       status: true,
@@ -312,19 +316,19 @@ describe ServerspecsController, :type => :controller do
     end
 
     context 'when serverspec result is fail' do
-      let(:status_text){ResourceStatus::Failed}
+      let(:status_text){'failed'}
       before{req}
       should_be_success
     end
 
     context 'when serverspec result is pending' do
-      let(:status_text){ResourceStatus::Pending}
+      let(:status_text){'pending'}
       before{req}
       should_be_success
     end
 
     context 'when serverspec result is success' do
-      let(:status_text){ResourceStatus::Success}
+      let(:status_text){'success'}
       before{req}
       should_be_success
     end
@@ -354,6 +358,36 @@ describe ServerspecsController, :type => :controller do
 
     it "should be success" do
       expect(response).to be_success
+    end
+  end
+
+  describe "#schedule" do
+    let(:serverspec_schedule) { create(:serverspec_schedule) }
+    let(:physical_id) { serverspec_schedule.physical_id }
+    let(:infra_id) { infrastructure.id }
+    let(:schedule) { attributes_for(:serverspec_schedule) }
+    let(:req){post(:schedule, {physical_id: physical_id, infra_id: infra_id, schedule: schedule})}
+
+    before do
+      allow(Sidekiq::ScheduledSet).to receive_message_chain(:new, :select).and_return([])
+    end
+
+    context "when enabled" do
+      before do
+        expect(PeriodicServerspecJob).to receive_message_chain(:set, :perform_later)
+        req
+      end
+
+      should_be_success
+    end
+
+    context "when disabled" do
+      before do
+        schedule[:enabled] = false
+        req
+      end
+
+      should_be_success
     end
   end
 end

@@ -7,8 +7,6 @@
 #
 
 class AppSettingsController < ApplicationController
-  include Concerns::BeforeAuth
-
   before_action except: [:edit_zabbix, :update_zabbix] do
     if AppSetting.set?
       redirect_to root_path
@@ -119,19 +117,17 @@ class AppSettingsController < ApplicationController
       ws = WSConnector.new('chef_server_deployment', 'status')
 
       begin
-        chef_server = ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
+        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
           Rails.logger.debug("ChefServer creating > #{data} #{msg}")
           ws.push(build_ws_message(data, msg))
         end
 
         Rails.logger.debug("ChefServer creating > complete")
         ws.push(build_ws_message(:complete))
-
       rescue => ex
         Rails.logger.error(ex.message)
         Rails.logger.error(ex.backtrace)
         ws.push(build_ws_message(:error, ex.message))
-
       end
     end
 

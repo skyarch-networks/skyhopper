@@ -9,17 +9,17 @@
 # for Node model and Chef
 
 class NodesController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
 
   # --------------- Auth
   before_action :authenticate_user!
+  before_action :set_infra, except: [:recipes]
 
   # infra
   before_action except: [:recipes] do
-    infra_id = params.require(:infra_id)
-    allowed_infrastructure(infra_id)
+    def @infra.policy_class; NodePolicy;end
+    authorize(@infra)
   end
 
 
@@ -30,15 +30,14 @@ class NodesController < ApplicationController
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
-      infra       = Infrastructure.find(params.require(:infra_id))
-      fqdn        = infra.instance(physical_id).dns_name || infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
+      fqdn        = @infra.instance(physical_id).dns_name || @infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 
       ws = WSConnector.new('bootstrap', physical_id)
 
       begin
-        Node.bootstrap(fqdn, physical_id, infra)
+        Node.bootstrap(fqdn, physical_id, @infra)
       rescue => ex
         logger.error ex
         infra_logger_fail("Bootstrapping for #{physical_id} is failed. \n #{ex.message}")
@@ -56,10 +55,8 @@ class NodesController < ApplicationController
   def show
     # TODO: before_action
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
 
-    infra             = Infrastructure.find(infra_id)
-    instance          = infra.instance(physical_id)
+    instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
 
     case @instance_summary[:status]
@@ -77,7 +74,7 @@ class NodesController < ApplicationController
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
-      @selected_dish = infra.resource(physical_id).dish_id
+      @selected_dish = @infra.resource(physical_id).dish
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true
@@ -90,11 +87,11 @@ class NodesController < ApplicationController
 
     @info = {}
     status = Resource.find_by(physical_id: physical_id).status
-    @info[:cook_status]       = status.cook.value       || 'UnExecuted'
-    @info[:serverspec_status] = status.serverspec.value || 'UnExecuted'
-    @info[:update_status]     = status.yum.value        || 'UnExecuted'
+    @info[:cook_status]       = status.cook.value.camelize
+    @info[:serverspec_status] = status.serverspec.value.camelize
+    @info[:update_status]     = status.yum.value.camelize
 
-    @dishes = Dish.valid_dishes(infra.project_id)
+    @dishes = Dish.valid_dishes(@infra.project_id)
   end
 
   # GET /nodes/i-0b8e7f12/edit
@@ -117,13 +114,10 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12
   def update
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
     runlist     = params[:runlist] || []
 
-    infrastructure = Infrastructure.find(infra_id)
 
-
-    ret = update_runlist(physical_id: physical_id, infrastructure: infrastructure, runlist: runlist)
+    ret = update_runlist(physical_id: physical_id, infrastructure: @infra, runlist: runlist)
 
     if ret[:status]
       render text: I18n.t('nodes.msg.runlist_updated') and return
@@ -135,12 +129,9 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12/cook
   def cook
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
-
-    infrastructure = Infrastructure.find(infra_id)
 
     Thread.new_with_db do
-      cook_node(infrastructure, physical_id)
+      cook_node(@infra, physical_id)
     end
 
     render text: I18n.t('nodes.msg.runlist_applying'), status: 202
@@ -149,27 +140,24 @@ class NodesController < ApplicationController
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
     dish_id     = params.require(:dish_id)
 
-    infrastructure = Infrastructure.find(infra_id)
     dish           = Dish.find(dish_id)
-    node           = Node.new(physical_id)
 
     runlist = dish.runlist
     if runlist.blank?
       render text: I18n.t('nodes.msg.runlist_empty') and return
     end
 
-    ret = update_runlist(physical_id: physical_id, infrastructure: infrastructure, runlist: runlist, dish_id: dish_id)
+    ret = update_runlist(physical_id: physical_id, infrastructure: @infra, runlist: runlist, dish_id: dish_id)
 
     unless ret[:status]
       render text: ret[:message], status: 500 and return
     end
 
     Thread.new_with_db do
-      cook_node(infrastructure, physical_id)
-      ServerspecJob.perform_now(physical_id, infra_id, current_user.id)
+      cook_node(@infra, physical_id)
+      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
     end
 
     render text: I18n.t('nodes.msg.cook_started')
@@ -196,6 +184,7 @@ class NodesController < ApplicationController
       render text: e.message, status: 500 and return
     end
 
+    Resource.find_by(physical_id: physical_id).status.cook.un_executed!
     render text: I18n.t('nodes.msg.attribute_updated') and return
   end
 
@@ -216,13 +205,10 @@ class NodesController < ApplicationController
   # PUT /nodes/:id/yum_update
   def yum_update
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
     security    = params.require(:security) == "security"
     exec        = params.require(:exec) == "exec"
 
-    infra = Infrastructure.find(infra_id)
-
-    exec_yum_update(infra, physical_id, security, exec)
+    exec_yum_update(@infra, physical_id, security, exec)
     render text: I18n.t('nodes.msg.yum_update_started'), status: 202
   end
 
@@ -249,8 +235,8 @@ class NodesController < ApplicationController
     end
 
     # change cookstatus to unexected
-    r.status.cook.update(value: ResourceStatus::UnExecuted)
-    r.status.serverspec.update(value: ResourceStatus::UnExecuted)
+    r.status.cook.un_executed!
+    r.status.serverspec.un_executed!
 
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
@@ -263,8 +249,8 @@ class NodesController < ApplicationController
     infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
     r = infrastructure.resource(physical_id)
-    r.status.cook.update(value: ResourceStatus::InProgress)
-    r.status.serverspec.update(value: ResourceStatus::UnExecuted)
+    r.status.cook.inprogress!
+    r.status.serverspec.un_executed!
     node = Node.new(physical_id)
     node.wait_search_index
     log = []
@@ -279,13 +265,13 @@ class NodesController < ApplicationController
       end
     rescue => ex
       Rails.logger.debug(ex)
-      r.status.cook.update(value: ResourceStatus::Failed)
+      r.status.cook.failed!
       infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
       ws.push_as_json({v: false})
       return
     end
 
-    r.status.cook.update(value: ResourceStatus::Success)
+    r.status.cook.success!
     infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
   end
@@ -300,8 +286,8 @@ class NodesController < ApplicationController
       infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
 
       r = infra.resource(physical_id)
-      r.status.yum.update(value: ResourceStatus::InProgress)
-      r.status.serverspec.update(value: ResourceStatus::UnExecuted)
+      r.status.yum.inprogress!
+      r.status.serverspec.un_executed!
 
       node = Node.new(physical_id)
 
@@ -318,13 +304,17 @@ class NodesController < ApplicationController
       rescue => ex
         Rails.logger.debug(ex)
         infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
-        r.status.yum.update(value: ResourceStatus::Failed)
+        r.status.yum.failed!
         ws.push_as_json({v: false})
       else
         infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
-        r.status.yum.update(value: ResourceStatus::Success)
+        r.status.yum.success!
         ws.push_as_json({v: true})
       end
     end
+  end
+
+  def set_infra
+    @infra = Infrastructure.find(params.require(:infra_id))
   end
 end

@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
 class ServerspecJob < ActiveJob::Base
   queue_as :default
   include Sidekiq::Worker
@@ -33,11 +41,11 @@ class ServerspecJob < ActiveJob::Base
     end
 
     case resp[:status_text]
-    when ResourceStatus::Success
+    when 'success'
       log_msg    = "serverspec for #{physical_id} is successfully finished."
-    when ResourceStatus::Pending
+    when 'pending'
       log_msg    = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{resp[:message]}"
-    when ResourceStatus::Failed
+    when 'failed'
       log_msg    = "serverspec for #{physical_id} is failed. failure specs: \n#{resp[:message]}"
     end
 

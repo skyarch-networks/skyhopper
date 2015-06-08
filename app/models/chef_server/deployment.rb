@@ -8,6 +8,7 @@
 
 require 'pathname'
 require "json"
+require 'open3'
 
 class ChefServer::Deployment
   PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.5-1.el6.x86_64.rpm".freeze
@@ -222,7 +223,7 @@ class ChefServer::Deployment
     # TODO: 直接~/.chef/下に鍵を作る path = Pathname.new(File.expand_path('~/.chef/'))
     #       開発環境で上書きされないようにするのはどうする?
     path = Rails.root.join('tmp', 'chef')
-    FileUtils.mkdir_p(path) unless Dir.exists?(path)
+    FileUtils.mkdir_p(path) unless Dir.exist?(path)
 
     exec_scp("/tmp/#{User}.pem", path)
     File.chmod(0600, path.join("#{User}.pem"))
@@ -231,7 +232,7 @@ class ChefServer::Deployment
     File.chmod(0600, path.join("#{Org}.pem"))
 
     crt_path = path.join('trusted_certs')
-    Dir.mkdir(crt_path) unless Dir.exists?(crt_path)
+    Dir.mkdir(crt_path) unless Dir.exist?(crt_path)
     exec_scp("/tmp/#{fqdn}.crt", crt_path)
 
 
@@ -273,7 +274,8 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
     ssh_key = @infra.ec2_private_key
     ssh_key.output_temp
     scp_cmd = "scp -i #{ssh_key.path_temp} #{EC2User}@#{fqdn}:#{src} #{dst}"
-    system(scp_cmd)
+    out, status = Open3.capture2e(scp_cmd)
+    raise out unless status.success?
   ensure
     ssh_key.close_temp
   end

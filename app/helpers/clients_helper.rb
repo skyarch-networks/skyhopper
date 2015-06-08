@@ -7,18 +7,16 @@
 #
 
 module ClientsHelper
-  def button_edit_client(client = nil)
-    return nil unless client
-    return nil if client.is_for_system?
+  def button_edit_client(client)
+    return nil unless Pundit.policy(current_user, client).edit?
 
     link_to t('.edit', default: t("helpers.links.edit").html_safe),
       edit_client_path(client),
       class: 'btn btn-default btn-xs'
   end
 
-  def button_delete_client(client = nil)
-    return nil unless client
-    return nil if client.is_for_system?
+  def button_delete_client(client)
+    return nil unless Pundit.policy(current_user, client).destroy?
 
     link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
       client_path(client),

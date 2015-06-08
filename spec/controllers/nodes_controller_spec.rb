@@ -47,9 +47,9 @@ describe NodesController, :type => :controller do
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
     let(:instance_summary){{status: instance_status}}
-    let(:cook_status){'Success'}
-    let(:serverspec_status){'UnExecuted'}
-    let(:yum_status){'Failed'}
+    let(:cook_status){'success'}
+    let(:serverspec_status){'un_executed'}
+    let(:yum_status){'failed'}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
       allow(instance).to receive(:summary).and_return(instance_summary)
@@ -133,14 +133,14 @@ describe NodesController, :type => :controller do
       end
 
       it 'should assigns @selected_dish' do
-        expect(assigns[:selected_dish]).to eq dish.id
+        expect(assigns[:selected_dish]).to eq dish
       end
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:cook_status]).to eq cook_status
-        expect(assigns[:info][:serverspec_status]).to eq serverspec_status
-        expect(assigns[:info][:update_status]).to eq yum_status
+        expect(assigns[:info][:cook_status]).to eq cook_status.camelize
+        expect(assigns[:info][:serverspec_status]).to eq serverspec_status.camelize
+        expect(assigns[:info][:update_status]).to eq yum_status.camelize
       end
 
       it 'should assigns @dishes' do
@@ -301,6 +301,9 @@ describe NodesController, :type => :controller do
   describe '#update_attributes' do
     let(:attributes){JSON.generate({'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'})}
     let(:req){put :update_attributes, id: physical_id, infra_id: infra.id, attributes: attributes}
+    before do
+      create(:resource, physical_id: physical_id)
+    end
 
     context 'update success' do
       before do
@@ -399,8 +402,8 @@ describe NodesController, :type => :controller do
       end
 
       it 'should update cook and serverspec status' do
-        expect(resource.status.cook.value).to eq ResourceStatus::UnExecuted
-        expect(resource.status.serverspec.value).to eq ResourceStatus::UnExecuted
+        expect(resource.status.cook.value).to eq 'un_executed'
+        expect(resource.status.serverspec.value).to eq 'un_executed'
       end
 
       it 'resource should have dish' do
@@ -449,7 +452,7 @@ describe NodesController, :type => :controller do
       should_be_success
 
       it 'should cook status is Success' do
-        expect(resource.status.cook.value).to eq ResourceStatus::Success
+        expect(resource.status.cook.success?).to be true
       end
     end
 
@@ -461,7 +464,7 @@ describe NodesController, :type => :controller do
       should_be_success
 
       it 'should cook status is Failed' do
-        expect(resource.status.cook.value).to eq ResourceStatus::Failed
+        expect(resource.status.cook.failed?).to be true
       end
     end
   end

@@ -15,10 +15,12 @@ class Client < ActiveRecord::Base
 
   ForSystemCodeName = 'SkyHopper'.freeze
 
+  # @return [Client]
   def self.for_system
     find_by(code: ForSystemCodeName)
   end
 
+  # @return [Boolean]
   def is_for_system?
     self.code == ForSystemCodeName
   end

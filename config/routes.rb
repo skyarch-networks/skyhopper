@@ -13,11 +13,13 @@ SkyHopper::Application.routes.draw do
 
   resources :projects, except: :show
 
-  resources :infrastructures do
+  resources :key_pairs, only: [:index, :destroy], param: :name do
     collection do
-      get  'cloudformation_status'
-      get  'events'
+      get  'retrieve'
     end
+  end
+
+  resources :infrastructures do
     member do
       post 'change_rds_scale'
       get  'show_rds'
@@ -63,6 +65,7 @@ SkyHopper::Application.routes.draw do
       get  'select'
       post 'run'
       put  'create_for_rds'
+      post 'schedule'
     end
   end
 

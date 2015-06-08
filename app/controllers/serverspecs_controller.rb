@@ -6,8 +6,9 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
+require 'sidekiq/api'
+
 class ServerspecsController < ApplicationController
-  include Concerns::BeforeAuth
   include Concerns::InfraLogger
 
   before_action :set_serverspec, only: [:update, :show, :edit, :destroy]
@@ -15,20 +16,9 @@ class ServerspecsController < ApplicationController
   # --------------- Auth
   before_action :authenticate_user!
 
-  before_action except: [:index, :show] do
-    if infra_id = have_infra?
-      allowed_infrastructure(infra_id)
-    else
-      master and admin
-    end
+  before_action do
+    authorize(@serverspec || Serverspec.new(infrastructure_id: have_infra?))
   end
-
-  before_action only: [:index, :show] do
-    if infra_id = have_infra?
-      allowed_infrastructure(infra_id)
-    end
-  end
-
 
   # GET /serverspecs
   def index
@@ -101,6 +91,8 @@ class ServerspecsController < ApplicationController
     @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
     node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
+
+    @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
   end
 
   # TODO: refactor
@@ -128,11 +120,11 @@ class ServerspecsController < ApplicationController
     end
 
     case resp[:status_text]
-    when ResourceStatus::Success
+    when 'success'
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
-    when ResourceStatus::Pending
+    when 'pending'
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
-    when ResourceStatus::Failed
+    when 'failed'
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
@@ -157,6 +149,27 @@ class ServerspecsController < ApplicationController
     render text: I18n.t('serverspecs.msg.generated'), status: 201 and return
   end
 
+  # POST /serverspecs/schedule
+  def schedule
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
+    schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
+
+    ss = ServerspecSchedule.find_by(physical_id: physical_id)
+    ss.update_attributes(schedule)
+
+    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == physical_id }
+    jobs.each(&:delete)
+
+    if ss.enabled?
+      PeriodicServerspecJob.set(
+        wait_until: ss.next_run
+      ).perform_later(physical_id, infra_id, current_user.id)
+    end
+
+    render text: I18n.t('serverspec_schedules.msg.updated'), status: 200 and return
+  end
+
 
   private
 
@@ -169,7 +182,7 @@ class ServerspecsController < ApplicationController
   end
 
   def have_infra?
-    return params[:infra_id] || params[:infrastructure_id] || (@serverspec.infrastructure_id rescue nil) || params[:serverspec][:infrastructure_id]
+    return params[:infra_id] || params[:infrastructure_id] || params[:serverspec][:infrastructure_id]
   rescue
     return nil
   end

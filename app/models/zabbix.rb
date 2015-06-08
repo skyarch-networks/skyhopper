@@ -611,7 +611,7 @@ class Zabbix
     application_ids = get_application_ids_by_names(["MySQL"], host_id)
     interfaceid = get_hostinterface_id(host_id)
 
-    item_info_mysql = @zabbix.query(
+    @zabbix.query(
       method: "item.create",
       params: {
         name: "Original Item: MySQL Login Check",

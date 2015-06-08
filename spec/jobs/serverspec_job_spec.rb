@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
 require_relative '../spec_helper'
 
 RSpec.describe ServerspecJob, type: :job do
@@ -7,11 +15,11 @@ RSpec.describe ServerspecJob, type: :job do
     let(:serverspecs){create_list(:serverspec, 3)}
     let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra, serverspecs: serverspecs)}
     let(:user){create(:user)}
-    let(:status_text){ResourceStatus::Success}
+    let(:status_text){'success'}
     let(:resp){{
       status_text: status_text,
       message: 'Success!',
-      status: status_text != ResourceStatus::Failed,
+      status: status_text != 'failed',
     }}
     let(:job){ServerspecJob.perform_now(physical_id, infra.id, user.id)}
 
@@ -55,7 +63,7 @@ RSpec.describe ServerspecJob, type: :job do
     end
 
     context 'when status success' do
-      let(:status_text){ResourceStatus::Success}
+      let(:status_text){'success'}
 
       it 'should create infra log' do
         expect{job}.to change(InfrastructureLog, :count).by(1)
@@ -68,7 +76,7 @@ RSpec.describe ServerspecJob, type: :job do
     end
 
     context 'when status pending' do
-      let(:status_text){ResourceStatus::Pending}
+      let(:status_text){'pending'}
 
       it 'should create infra log' do
         expect{job}.to change(InfrastructureLog, :count).by(1)
@@ -81,7 +89,7 @@ RSpec.describe ServerspecJob, type: :job do
     end
 
     context 'when status pending' do
-      let(:status_text){ResourceStatus::Failed}
+      let(:status_text){'failed'}
 
       it 'should create infra log' do
         expect{job}.to change(InfrastructureLog, :count).by(1)

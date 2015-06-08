@@ -7,8 +7,8 @@
 #
 
 module ProjectsHelper
-  def button_delete_project(project, client)
-    return nil if client.is_for_system?
+  def button_delete_project(project)
+    return nil unless Pundit.policy(current_user, project).destroy?
 
     link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
       project_path(project),
@@ -17,9 +17,9 @@ module ProjectsHelper
       class:  'btn btn-xs btn-danger'
   end
 
-  def button_add_project(client = nil)
+  def button_add_project(client)
     return nil unless client
-    return nil if client.is_for_system?
+    return nil unless Pundit.policy(current_user, Project.new(client: client)).new?
 
     link_to t('projects.btn.add'),
       new_project_path(client_id: client.id),

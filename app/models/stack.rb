@@ -176,7 +176,7 @@ class Stack
         screen_name = tags['Name']
       end
 
-      r = Resource.new(
+      Resource.new(
         physical_id: aws_resource.physical_resource_id,
         type_name: aws_resource.resource_type,
         infrastructure_id: @infra.id,

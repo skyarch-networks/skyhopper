@@ -1,3 +1,11 @@
+#
+# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+#
+# This software is released under the MIT License.
+#
+# http://opensource.org/licenses/mit-license.php
+#
+
 require_relative '../../spec_helper'
 
 describe Concerns::ErrorHandler do
@@ -33,65 +41,35 @@ describe Concerns::ErrorHandler do
       include Concerns::ErrorHandler
       def index
         rescue_exception(eval(params[:ex])) and return
-      rescue =>ex
-        render text: 'rescue'
       end
     end
 
+    let(:ex){"StandardError.new('#{error_msg}')"}
+    let(:error_msg){SecureRandom.hex(10)}
     let(:req){get :index, ex: ex}
 
     context 'when ajax' do
       request_as_ajax
 
-      context 'when defined format_error' do
-        class E < StandardError
-          def format_error
-            return {
-              message: 'hoge',
-              kind:    'fuga',
-            }
-          end
-          def status_code
-            return 500
-          end
-        end
+      before{req}
+      let(:err){JSON.parse(response.body, symbolize_names: true)[:error]}
 
-        let(:ex){'E.new("hoge")'}
-        before{req}
+      should_be_failure
 
-        should_be_failure
-
-        it 'should render formated error' do
-          expect(JSON.parse(response.body, symbolize_names: true)).to eq({error:{
-            message: 'hoge',
-            kind:    'fuga',
-          }})
-        end
+      it 'message should set' do
+        expect(err[:message]).to eq error_msg
       end
 
-      context 'when not defined format_error' do
-        let(:ex){'StandardError.new("Poyo")'}
-        before{req}
-        let(:err){JSON.parse(response.body, symbolize_names: true)[:error]}
-
-        should_be_failure
-
-        it 'message should Poyo' do
-          expect(err[:message]).to eq 'Poyo'
-        end
-
-        it 'kind should StandardError' do
-          expect(err[:kind]).to eq StandardError.to_s
-        end
+      it 'kind should StandardError' do
+        expect(err[:kind]).to eq StandardError.to_s
       end
     end
 
     context 'when not ajax' do
-      let(:ex){'StandardError.new("hoge")'}
       before{req}
-
-      it 'should raise error' do
-        expect(response.body).to eq 'rescue'
+      it {is_expected.to redirect_to root_path}
+      it 'should set flash.alert' do
+        expect(request.flash[:alert]).to eq error_msg
       end
     end
   end

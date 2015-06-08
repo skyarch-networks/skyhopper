@@ -57,9 +57,6 @@ describe Serverspec, :type => :model do
   end
 
   describe '.create_rds' do
-    engine_type = 'mysql'
-    endpoint_address = 'example.com'
-
     let(:rds){double('rds', {engine_type: '', endpoint_address: ''})}
     user = 'hoge'
     pass = 'passwd'

@@ -243,6 +243,25 @@ en:
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
 
 
+  serverspec_schedules:
+    change_schedule:  'Change schedule'
+    run_periodically: 'Run periodically'
+    frequency:
+      weekly:     'Weekly'
+      daily:      'Daily'
+    day_of_week:
+      sunday:     'Sunday'
+      monday:     'Monday'
+      tuesday:    'Tuesday'
+      wednesday:  'Wednesday'
+      thursday:   'Thursday'
+      friday:     'Friday'
+      saturday:   'Saturday'
+    o_clock:      "o'clock"
+    msg:
+      updated:    'Periodic run schedule of Serverspec has updated.'
+
+
   cf_templates:
     cf_templates: 'CloudFormation Templates'
     cf_template:  'CloudFormation Template'
@@ -367,8 +386,10 @@ en:
       not_running:    'Zabbix Server is not running.'
 
   ec2_instances:
-    description: 'Description'
-    settings:    'Settings'
+    description:     'Description'
+    settings:        'Settings'
+    change_status:   'Change status of EC2 instance'
+    changing_status: 'Changing status of EC2 instance...'
     msg:
       registered_to_elb:    'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
@@ -392,3 +413,14 @@ en:
     screen_name: 'Screen Name'
     msg:
       created: 'Resource was successfully created.'
+
+
+  key_pairs:
+    key_pairs:   'Key Pairs'
+    name:        'Key pair name'
+    fingerprint: 'Fingerprint'
+    region:      'Region'
+    using:       'Using'
+    msg:
+      confirm:    'Are you sure to delete the KeyPair "%{name}"?'
+      deleted:    'KeyPair "%{name}" has been deleted successfully.'

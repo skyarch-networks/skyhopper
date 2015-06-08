@@ -8,24 +8,16 @@
 
 #TODO: Rails.logger
 class DishesController < ApplicationController
-  include Concerns::BeforeAuth
   include DishesController::Validate
 
   # --------------- Auth
   before_action :authenticate_user!
 
-  before_action except: [:index, :show] do
-    if project_id = have_project?
-      allowed_project(project_id)
-    else
-      master and admin
-    end
-  end
+  before_action :set_dish, only: [:show, :edit, :update, :destroy, :runlist]
 
-  before_action only: [:index, :show] do
-    if project_id = have_project?
-      allowed_project(project_id)
-    end
+  before_action do
+    project_id = params[:project_id] || (params[:dish][:project_id] rescue nil)
+    authorize(@dish || Dish.new(project_id: project_id))
   end
 
   # GET /dishes
@@ -39,7 +31,6 @@ class DishesController < ApplicationController
 
   # GET /dishes/1
   def show
-    @dish = Dish.find(params.require(:id))
     @selected_serverspecs = @dish.serverspecs
     @runlist = @dish.runlist
 
@@ -48,30 +39,24 @@ class DishesController < ApplicationController
 
   # GET /dishes/1/edit
   def edit
-    id = params.require(:id)
-    dish = Dish.find(id)
-
     @global_serverspecs = Serverspec.global
 
     @cookbooks = ChefAPI.index(:cookbook).keys
     @roles     = ChefAPI.index(:role).map(&:name)
 
-    @runlist = dish.runlist
-    @selected_serverspecs = dish.serverspecs
+    @runlist = @dish.runlist
+    @selected_serverspecs = @dish.serverspecs
 
     render partial: 'edit'
   end
 
   # PUT /dishes/1
   def update
-    dish_id = params.require(:id)
-    runlist = params[:runlist] || []
+    runlist        = params[:runlist]     || []
     serverspec_ids = params[:serverspecs] || []
 
-    dish = Dish.find(dish_id)
-
     # TODO error handling
-    dish.update(
+    @dish.update(
       runlist:     runlist,
       serverspec_ids: serverspec_ids,
       status:      nil
@@ -104,20 +89,15 @@ class DishesController < ApplicationController
 
   # DELETE /dishes/1
   def destroy
-    id = params.require(:id)
-    dish = Dish.find(id)
-    project_id = dish.project_id
-    dish.destroy
+    project_id = @dish.project_id
+    @dish.destroy
 
     redirect_to dishes_path(project_id: project_id), notice: I18n.t('dishes.msg.deleted')
   end
 
   # GET /dishes/1/runlist.json
   def runlist
-    id   = params.require(:id)
-    dish = Dish.find(id)
-
-    @runlist = dish.runlist
+    @runlist = @dish.runlist
   end
 
   private
@@ -134,5 +114,9 @@ class DishesController < ApplicationController
     rescue
       return nil
     end
+  end
+
+  def set_dish
+    @dish = Dish.find(params.require(:id))
   end
 end

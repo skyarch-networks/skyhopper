@@ -62,9 +62,7 @@
       this.$set('text', t('common.msg.loading'));
     },
     filters: {
-      format: function (str) {
-        return ' ' + str;
-      }
+      format: function (str) { return ' ' + str; }
     }
   });
   Vue.component('div-loader', Loader);
@@ -73,22 +71,15 @@
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
-        if (status === "CREATE_COMPLETE") {
-          return "success";
-        }
-        else if (status.indexOf("FAILED") !== -1) {
-          return "danger";
-        }
-        else if (status.indexOf("DELETE") !== -1) {
-          return "warning";
-        }
+        if      (status === "CREATE_COMPLETE")    { return "success"; }
+        else if (status.indexOf("FAILED") !== -1) { return "danger"; }
+        else if (status.indexOf("DELETE") !== -1) { return "warning"; }
         return '';
       },
     },
     created: function () {
       var self = this;
       this.$watch('events', function () {
-        // XXX: jquery
         $(self.$el).hide().fadeIn(800);
       });
     },
@@ -107,13 +98,13 @@
         self.$set('value',  cft.value);
       },
       submit: function () {
-        if (jsonParseErr(this.value)) {return;}
+        if (this.jsonParseErr) {return;}
         app.show_tabpane('insert-cf-params');
         app.loading = true;
       },
     },
-    filters: {
-      jsonParseErr: jsonParseErr,
+    computed: {
+      jsonParseErr: function () { return jsonParseErr(this.value); },
     },
     created: function () {
       this.$set('selected_cft_id', null);
@@ -176,9 +167,8 @@
   Vue.component("cf-history-tabpane", {
     template: '#cf-history-tabpane-template',
     methods: {
-      active: function (id) {
-        return this.id === id;
-      },
+      active: function (id) { return this.id === id; },
+
       get: function (id) {
         var self = this;
         self.id = id;
@@ -190,9 +180,7 @@
       },
     },
     computed: {
-      currentExists: function () {
-        return !_.isEmpty(this.current);
-      },
+      currentExists: function () { return !_.isEmpty(this.current); },
     },
     created: function () {
       this.$set('id', -1);
@@ -203,12 +191,8 @@
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
     methods: {
-      status_class: function (status) {
-        return status ? 'label-success' : 'label-danger';
-      },
-      status_text: function (status) {
-        return status ? 'SUCCESSED' : 'FAILED';
-      },
+      status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
+      status_text: function (status)  { return status ? 'SUCCESSED' : 'FAILED'; },
     },
     created: function () {
       this.$watch('infra_logs', function (newVal, oldVal) {
@@ -332,15 +316,9 @@
       },
     },
     computed: {
-      monitoring: function () {
-        return new Monitoring(current_infra);
-      },
-      no_problem: function () {
-        return _.isEmpty(this.problems);
-      },
-      before_setting: function() {
-        return this.commons.length === 0 && this.uncommons.length === 0;
-      }
+      monitoring: function ()    { return new Monitoring(current_infra); },
+      no_problem: function ()    { return _.isEmpty(this.problems); },
+      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; }
     },
     created: function () {
       var self = this;
@@ -368,9 +346,8 @@
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
     methods: {
-      type: function (master) {
-        return this.monitoring.type(master);
-      },
+      type: function (master) { return this.monitoring.type(master); },
+
       delete_step: function (step) {
         this.web_scenarios = _.filter(this.web_scenarios, function (s) {
           return s[0] !== step[0];
@@ -431,9 +408,7 @@
       },
     },
     computed: {
-      monitoring: function () {
-        return new Monitoring(current_infra);
-      },
+      monitoring: function () { return new Monitoring(current_infra); },
     },
     created: function () {
       var self = this;
@@ -499,10 +474,10 @@
         var rds = new RDSInstance(current_infra, this.physical_id);
         rds.change_scale(this.change_scale_type_to).done(function (msg) {
           alert_success(self.reload)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self.reload)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         });
       },
       gen_serverspec: function () {
@@ -510,15 +485,13 @@
         var rds = new RDSInstance(current_infra, this.physical_id);
         rds.gen_serverspec(this.serverspec).done(function (msg) {
           alert_success(self.reload)(msg);
-          $('#rds-serverspec-modal').modal().hide();
+          $('#rds-serverspec-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self.reload)(msg);
-          $('#rds-serverspec-modal').modal().hide();
+          $('#rds-serverspec-modal').modal('hide');
         });
       },
-      reload: function () {
-        this.$parent.show_rds(this.physical_id);
-      },
+      reload: function () { this.$parent.show_rds(this.physical_id); },
     },
     computed: {
       gen_serverspec_enable: function () {
@@ -541,9 +514,8 @@
   Vue.component('elb-tabpane', {
     template: '#elb-tabpane-template',
     methods: {
-      show_ec2: function (physical_id) {
-        this.$parent.show_ec2(physical_id);
-      },
+      show_ec2: function (physical_id) { this.$parent.show_ec2(physical_id); },
+
       deregister: function (physical_id) {
         // TODO: confirm
         var self = this;
@@ -570,10 +542,8 @@
         });
       },
       state: function (state){
-        if (state === 'InService') {
-          return 'success';
-        }
-        return 'danger';
+        if (state === 'InService') { return 'success'; }
+        else                       { return 'danger'; }
       },
     },
     compiled: function () {
@@ -694,12 +664,10 @@
           self.chef_console_text += msg;
         });
       },
-      apply_dish: function () {
-        this._cook('apply_dish', this.selected_dish);
-      },
-      cook: function () {
-        this._cook('cook');
-      },
+
+      apply_dish: function () { this._cook('apply_dish', this.selected_dish); },
+      cook:       function () { this._cook('cook'); },
+
       yum_update: function (security, exec) {
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
@@ -717,9 +685,11 @@
 
             alert_success(function () {
               self.inprogress = true;
+              Vue.nextTick(function () {
+                self.watch_cook(dfd);
+              });
             })(msg);
           });
-          self.watch_cook(dfd);
         });
       },
       edit_runlist: function () {
@@ -734,9 +704,9 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
-      _show_ec2: function () {
-        this.$parent.show_ec2(this.physical_id);
-      },
+
+      _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
+
       _label_class: function (status) {
         if ( status === 'Success') {
           return 'label-success';
@@ -748,29 +718,23 @@
           return 'label-default';
         }
       },
-      is_role: function (run) {
-        return run.indexOf("role") !== -1;
-      },
-      runlist_type: function (run) {
-        return run.replace(/\[.+\]$/, "");
-      },
-      runlist_name: function (run) {
-        return run.replace(/^.+\[(.+)\]$/, "$1");
-      },
-      _loading: function () {
-        // show loading tabpane
-        this.$parent.loading = true;
-      },
+
+      is_role:      function (run) { return run.indexOf("role") !== -1; },
+      runlist_type: function (run) { return run.replace(/\[.+\]$/, ""); },
+      runlist_name: function (run) { return run.replace(/^.+\[(.+)\]$/, "$1"); },
+
+      _loading: function () { this.$parent.loading = true; },
+
       change_scale: function () {
         var self = this;
         self.loading = true;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         ec2.change_scale(self.change_scale_type_to).done(function (msg) {
           alert_success(self._show_ec2)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         }).fail(function (msg) {
           alert_danger(self._show_ec2)(msg);
-          $('#change-scale-modal').modal().hide();
+          $('#change-scale-modal').modal('hide');
         });
       },
     },
@@ -781,41 +745,23 @@
         }
         return 'btn-default';
       },
-      cook_status_class: function () {
-        var s = this.ec2.info.cook_status;
-        return this._label_class(s);
-      },
-      serverspec_status_class: function () {
-        var s = this.ec2.info.serverspec_status;
-        return this._label_class(s);
-      },
-      update_status_class: function () {
-        var s = this.ec2.info.update_status;
-        return this._label_class(s);
-      },
-      cook_status: function () {
-        return this.ec2.info.cook_status;
-      },
-      serverspec_status: function () {
-        return this.ec2.info.serverspec_status;
-      },
-      update_status: function () {
-        return this.ec2.info.update_status;
-      },
-      runlist_empty: function () {
-        return _.isEmpty(this.ec2.runlist);
-      },
-      dishes_empty: function () {
-        return _.isEmpty(this.ec2.dishes);
-      },
-      running: function () {
-        return this.ec2.status === 'running';
-      },
-      stopped: function () {
-        return this.ec2.status === 'stopped';
-      }
-    },
-    filters: {
+      cook_status_class:       function () { return this._label_class(this.ec2.info.cook_status); },
+      serverspec_status_class: function () { return this._label_class(this.ec2.info.serverspec_status); },
+      update_status_class:     function () { return this._label_class(this.ec2.info.update_status); },
+
+      cook_status:       function () { return this.ec2.info.cook_status; },
+      serverspec_status: function () { return this.ec2.info.serverspec_status; },
+      update_status:     function () { return this.ec2.info.update_status; },
+
+      runlist_empty: function () { return _.isEmpty(this.ec2.runlist); },
+      dishes_empty:  function () { return _.isEmpty(this.ec2.dishes); },
+
+      running: function () { return this.ec2.status === 'running'; },
+      stopped: function () { return this.ec2.status === 'stopped'; },
+
+      dish_option: function () { return [{text: 'Select!', value: '0'}].concat(this.ec2.dishes.map(function (dish) {
+        return {text: dish.name, value: dish.id};
+      }));},
     },
     created: function () {
       this.$set('loading', false);
@@ -830,7 +776,7 @@
       ec2.show().done(function (data) {
         self.$set('ec2', data);
 
-        var dish_id = null;
+        var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
         }
@@ -873,9 +819,9 @@
           .done(alert_success(self.show_ec2))
           .fail(alert_danger(self.show_ec2));
       },
-      show_ec2: function () {
-        this.$parent.show_ec2(this.physical_id);
-      },
+
+      show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
+
       add_recipe: function () {
         var self = this;
         _.forEach(self.selected_recipes, function (recipe) {
@@ -927,15 +873,9 @@
       }
     },
     computed: {
-      current_recipes: function () {
-        return this.recipes[this.selected_cookbook] || [];
-      },
-      physical_id: function () {
-        return this.$parent.tabpaneGroupID;
-      },
-      ec2: function () {
-        return new EC2Instance(current_infra, this.physical_id);
-      },
+      current_recipes: function () { return this.recipes[this.selected_cookbook] || []; },
+      physical_id:     function () { return this.$parent.tabpaneGroupID; },
+      ec2:             function () { return new EC2Instance(current_infra, this.physical_id); },
     },
     created: function () {
       var self = this;
@@ -965,25 +905,15 @@
           .done(alert_success(self.show_ec2))
           .fail(alert_danger(self.show_ec2));
       },
-      show_ec2: function () {
-        this.$parent.show_ec2(this.physical_id);
-      },
+      show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
     },
     filters: {
-      toID: function (name) {
-        return name.replace(/\//g, '-');
-      },
+      toID: function (name) { return name.replace(/\//g, '-'); },
     },
     computed: {
-      physical_id: function () {
-        return this.$parent.tabpaneGroupID;
-      },
-      ec2: function () {
-        return new EC2Instance(current_infra, this.physical_id);
-      },
-      empty: function () {
-        return _.isEmpty(this.attributes);
-      },
+      physical_id: function () { return this.$parent.tabpaneGroupID; },
+      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      empty:       function () { return _.isEmpty(this.attributes); },
     },
     created: function () {
       var self = this;
@@ -1012,29 +942,44 @@
           self.$parent.update_serverspec_status(self.physical_id);
         }).fail(alert_danger(self.show_ec2));
       },
+      change_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        self.ec2.schedule_serverspec({
+          enabled: self.enabled,
+          frequency: self.frequency,
+          day_of_week: self.day_of_week,
+          time: self.time
+        }).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      }
     },
     computed: {
-      physical_id: function () {
-        return this.$parent.tabpaneGroupID;
-      },
-      ec2: function () {
-        return new EC2Instance(current_infra, this.physical_id);
-      },
-      all_spec: function () {
-        return this.globals.concat(this.individuals);
-      },
-      can_run: function () {
-        return !!_.find(this.all_spec, function(s){return s.checked;}) || this.checked_auto_generated;
-      },
+      physical_id: function () { return this.$parent.tabpaneGroupID; },
+      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      all_spec:    function () { return this.globals.concat(this.individuals); },
+      can_run:     function () { return !!_.find(this.all_spec, function(s){return s.checked;}) || this.checked_auto_generated; },
     },
     created: function () {
       var self = this;
       self.ec2.select_serverspec().done(function (data) {
+        var schedule = data.schedule;
         self.$set('available_auto_generated', data.available_auto_generated);
         self.$set('individuals', data.individuals || []);
         self.$set('globals', data.globals || []);
         self.$set('loading', false);
         self.$parent.loading = false;
+        self.$set('loading_s', false);
+        self.$set('enabled', schedule.enabled);
+        self.$set('frequency', schedule.frequency);
+        self.$set('day_of_week', schedule.day_of_week);
+        self.$set('time', schedule.time);
       }).fail(alert_danger(self.show_ec2));
     }
   });
@@ -1061,18 +1006,6 @@
           } else {
             return res.physical_id;
           }
-        },
-        status_label_class: function () {
-          var resp = "label-";
-          var type = this.current_infra.stack.status.type;
-          if (type === "OK") {
-            resp += 'success';
-          } else if (type === "NG") {
-            resp += "danger";
-          } else {
-            resp += "default";
-          }
-          return resp;
         },
         show_ec2: function (physical_id) {
           this.show_tabpane('ec2');
@@ -1108,9 +1041,9 @@
             self.show_tabpane('add_modify');
           }).fail(alert_danger());
         },
-        show_add_ec2: function () {
-          this.show_tabpane('add-ec2');
-        },
+
+        show_add_ec2: function () { this.show_tabpane('add-ec2'); },
+
         show_cf_history: function () {
           var self = this;
           self.loading = true;
@@ -1123,7 +1056,7 @@
           }).fail(alert_and_show_infra);
         },
         show_event_logs: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.loading = true;
           self.$event.preventDefault();
@@ -1143,29 +1076,20 @@
           }).fail(alert_and_show_infra);
         },
         show_monitoring: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.show_tabpane('monitoring');
           self.loading = true;
         },
         show_edit_monitoring: function () {
-          if (this.no_stack()) {return;}
+          if (this.no_stack) {return;}
           var self = this;
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
-        no_stack: function () {
-          return this.current_infra.stack.status.type === 'NONE';
-        },
-        in_progress: function () {
-          return this.current_infra.stack.status.type === 'IN_PROGRESS';
-        },
-        stack_fail: function () {
-          return this.current_infra.stack.status.type === 'NG';
-        },
-        tabpane_active: function (id) {
-          return this.tabpaneID === id;
-        },
+
+        tabpane_active: function (id) { return this.tabpaneID === id; },
+
         show_tabpane: function (id) {
           var self = this;
           self.loading = false;
@@ -1192,6 +1116,24 @@
           var date = new Date(datetext);
           return date.toLocaleString();
         }
+      },
+      computed: {
+        no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
+        in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
+        stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
+
+        status_label_class: function () {
+          var resp = "label-";
+          var type = this.current_infra.stack.status.type;
+          if (type === "OK") {
+            resp += 'success';
+          } else if (type === "NG") {
+            resp += "danger";
+          } else {
+            resp += "default";
+          }
+          return resp;
+        },
       },
       ready: function () {
         var self = this;
@@ -1279,9 +1221,7 @@
         bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
           location.reload();
         });
-      }).fail(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
-      }).always(l.$destroy);
+      }).fail(modal_for_ajax_std_error()).always(l.$destroy);
     });
   };
 
@@ -1295,11 +1235,9 @@
           show_infra(infra_id);
         });
         // TODO: reload
-      }).fail(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger').done(function () {
-          show_infra(infra_id);
-        });
-      }).always(l.$destroy);
+      }).fail(modal_for_ajax_std_error(function () {
+        show_infra(infra_id);
+      })).always(l.$destroy);
     });
   };
 

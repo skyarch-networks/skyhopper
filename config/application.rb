@@ -51,4 +51,11 @@ module SkyHopper
   end
 end
 
+# To disable automatic retry
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    chain.remove Sidekiq::Middleware::Server::RetryJobs
+  end
+end
+
 DummyText = 'This is dummy!'.freeze

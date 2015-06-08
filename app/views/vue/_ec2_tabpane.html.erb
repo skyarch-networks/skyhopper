@@ -24,20 +24,22 @@ Arguments:
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" v-with="text: 'Changing EC2 status'"></div-loader>
+            <div-loader v-if="ec2_status_changing" v-with="text: '<%= t('ec2_instances.changing_status') %>'"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <div class="btn-group">
-              <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
-                <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
-                <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
-                <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
-              </ul>
-            </div>
+            <bootstrap-tooltip v-with="title: '<%= t('ec2_instances.change_status') %>'">
+              <div class="btn-group">
+                <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
+                  <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
+                </ul>
+              </div>
+            </bootstrap-tooltip>
           </td>
         </tr>
         <tr>
@@ -164,13 +166,10 @@ Arguments:
         </span>
 
         <div v-if="!dishes_empty" class="input-group">
-          <select class="form-control input-sm" v-model="selected_dish">
-            <option>Select!</option>
-            <option v-repeat="dish: ec2.dishes" value="{{dish.id}}">{{dish.name}}</option>
-          </select>
+          <select class="form-control input-sm" v-model="selected_dish" options="dish_option"></select>
 
           <div class="input-group-btn">
-            <button class="btn btn-info btn-sm" v-on="click: apply_dish()">
+            <button class="btn btn-info btn-sm" v-class="disabled: selected_dish === '0'" v-on="click: apply_dish()">
               <%= t 'nodes.btn.apply_dish' %>
             </button>
           </div>
