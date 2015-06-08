@@ -41,6 +41,12 @@ module ControllerMacros
       expect(response).not_to be_success
     end
   end
+
+  def should_be_json
+    it 'response body should be json' do
+      expect{JSON.parse(response.body)}.not_to raise_error
+    end
+  end
 end
 
 module ControllerMacrosInclude

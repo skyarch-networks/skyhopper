@@ -147,6 +147,8 @@ describe UsersAdminController, :type => :controller do
   end
 
   describe '#update' do
+    request_as_ajax
+
     let(:master){true}
     let(:admin){true}
     let(:allowed_projects){nil}
@@ -160,20 +162,13 @@ describe UsersAdminController, :type => :controller do
         let(:password_confirm){'fuga'}
         before{req}
         should_be_failure
+        should_be_json
       end
 
       context 'when password match' do
         before{req}
         should_be_success
       end
-    end
-
-    context 'when user save failure' do
-      before do
-        allow_any_instance_of(User).to receive(:save).and_return(false)
-        req
-      end
-      should_be_failure
     end
 
     context 'when master' do

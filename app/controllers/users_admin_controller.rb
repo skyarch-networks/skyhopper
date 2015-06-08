@@ -104,9 +104,7 @@ class UsersAdminController < ApplicationController
       set_password = true
     end
 
-    unless user.save
-      render text: user.errors.full_messages.join(' '), status: 500 and return
-    end
+    user.save!
 
     s = AppSetting.get
     z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
