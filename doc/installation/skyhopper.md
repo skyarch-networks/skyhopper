@@ -20,7 +20,7 @@ Ruby 2.1系以上の Ruby をインストール
 $ sudo yum remove ruby ruby20
 $ sudo yum install ruby22
 $ ruby -v
-ruby 2.1.5p273 (2014-11-13 revision 48405) [x86_64-linux-gnu]
+ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
 ```
 
 ## Bundler のインストール
@@ -210,18 +210,17 @@ $ bundle exec rake db:seed RAILS_ENV=production
 SkyHopper の実行は以下
 
 ```sh
-# development
-$ ./scripts/dev_server.sh
-# 終了は Ctrl + C
-```
-
-```sh
 # production
 $ ./scripts/skyhopper_daemon.sh start
 # usage start|stop|status
 # daemon モードで起動
 ```
 
+```sh
+# developmentの場合は下記
+$ ./scripts/dev_server.sh
+# 終了は Ctrl + C
+```
 
 ## SkyHopper の初期設定
 

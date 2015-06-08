@@ -167,7 +167,7 @@ class InfrastructuresController < ApplicationController
 
     infra_logger_success("Deleting stack is successfully started.")
 
-    @infrastructure.resources.delete_all
+    @infrastructure.resources.destroy_all
     @infrastructure.monitorings.delete_all
 
     render text: I18n.t('infrastructures.msg.delete_stack_started'), status: 202 and return
