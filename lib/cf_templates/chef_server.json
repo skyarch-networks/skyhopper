@@ -30,13 +30,13 @@
       "Default": "Chef Server for SkyHopper"
     },
 
-    "ChefPackageURL": { "Type" : "String" },
-    "ChefUser":       { "Type" : "String" },
-    "ChefFullName":   { "Type" : "String" },
-    "ChefEmail":      { "Type" : "String" },
-    "ChefPassword":   { "Type" : "String" },
-    "ChefOrg":        { "Type" : "String" },
-    "ChefFullOrg":    { "Type" : "String" },
+    "ChefPackageURL": { "Type" : "String", "Default": "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.8-1.el6.x86_64.rpm" },
+    "ChefUser":       { "Type" : "String", "Default": "skyhopper" },
+    "ChefFullName":   { "Type" : "String", "Default": "anakin skyhopper" },
+    "ChefEmail":      { "Type" : "String", "Default": "skyhopper@example.com" },
+    "ChefPassword":   { "Type" : "String", "Default": "ilikerandompasswords" },
+    "ChefOrg":        { "Type" : "String", "Default": "skyarch" },
+    "ChefFullOrg":    { "Type" : "String", "Default": "Skyarch Networks Inc." },
 
     "UserPemID":         { "Type": "String" },
     "OrgPemID":          { "Type": "String" },
