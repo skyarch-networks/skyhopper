@@ -12,7 +12,7 @@
     <div class="form-group">
       <%= f.label :password, class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
-        <%= f.password_field :password, {class: "form-control"} %>
+        <%= f.password_field :password, {class: "form-control", pattern: '[^\s]+'} %>
       </div>
     </div>
 
