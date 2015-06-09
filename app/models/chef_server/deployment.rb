@@ -105,6 +105,7 @@ class ChefServer::Deployment
       set = AppSetting.get
       set.zabbix_fqdn = infra.ec2.instances[physical_id].public_dns_name
       set.save!
+      AppSetting.clear_cache
     end
 
     private
