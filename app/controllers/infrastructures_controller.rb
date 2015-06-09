@@ -62,13 +62,13 @@ class InfrastructuresController < ApplicationController
     unless stack.status[:available] # in many cases, it will be when stack does not exist.
       @infrastructure.status = ""
       @infrastructure.save!
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
 
       resp[:message] = stack.status[:message]
     end
 
     if stack.update_complete?
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
     end
 
     @infrastructure.status = stack.status[:status]
