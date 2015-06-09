@@ -22,12 +22,12 @@
   src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
 
-input:invalid {
+input:invalid, textarea:invalid {
   border-color: #a94442;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
-input:focus:invalid {
+input:focus:invalid, textarea:focus:invalid {
   border-color: #843534;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 6px #ce8483;
 }
