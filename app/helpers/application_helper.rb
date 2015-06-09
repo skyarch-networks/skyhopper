@@ -90,7 +90,7 @@ module ApplicationHelper
   end
 
   def uneditable_input(content)
-    return "<span class=\"input-large uneditable-input form-control\" disabled>#{content}</span>".html_safe
+    return "<span class=\"input-large uneditable-input form-control\" readonly>#{content}</span>".html_safe
   end
 
   def admin_label
