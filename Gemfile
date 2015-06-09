@@ -1,7 +1,5 @@
 source 'https://rubygems.org'
-#source 'http://bundler-api.herokuapp.com'
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-#gem 'rails', '4.0.1'
+
 gem 'rails', '~> 4'
 
 # Use mysql as the database for Active Record
@@ -33,23 +31,13 @@ group :doc do
   gem 'sdoc', require: false
 end
 
-# Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
-
 # Use unicorn as the app server
 gem 'unicorn-rails'
 
-# Use Capistrano for deployment
-# gem 'capistrano', group: :development
 
-# Use debugger
-# gem 'debugger', group: [:development, :test]
-
-# gem 'twitter-bootstrap-rails', '~> 2.2'
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
 gem 'ridley'
-gem "date_validator"
 gem "net-ssh"
 gem "net-ssh-shell", git: "https://github.com/9peso/net-ssh-shell"
 gem "net-scp"
@@ -57,7 +45,6 @@ gem "net-scp"
 gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
-gem 'knife-solo', require: false
 gem 'highline'
 gem 'sidekiq' # for Active Job
 
@@ -77,7 +64,6 @@ group :development, :test do
 
   # test
   gem "rspec-rails"
-  gem "capybara"
   gem "factory_girl_rails"
   gem "database_cleaner"
   gem 'guard-rspec'
@@ -112,6 +98,3 @@ gem 'redis'
 gem 'hiredis'
 
 gem 'zabbixapi', '~> 2.2.0'
-
-# Database Backup
-gem 'backup'
