@@ -12,7 +12,7 @@ Array of CfTemplate instance.
   <fieldset>
     <div class="form-group">
       <label for="add_modify_name"><%= t('cf_templates.subject') %></label>
-      <input v-model="name" type="text" id="add_modify_name" class="form-control">
+      <input v-model="name" type="text" id="add_modify_name" class="form-control" required>
     </div>
 
     <div class="form-group">
@@ -22,7 +22,7 @@ Array of CfTemplate instance.
 
     <div class="form-group">
       <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
-      <textarea v-model="value" id="add_modify_value" class="form-control" cols="20" rows="15"></textarea>
+      <textarea v-model="value" id="add_modify_value" class="form-control" cols="20" rows="15" required></textarea>
     </div>
     <div class="alert alert-danger" v-show="jsonParseErr">{{jsonParseErr}}</div>
   </fieldset>
