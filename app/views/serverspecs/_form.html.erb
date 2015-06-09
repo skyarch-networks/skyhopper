@@ -12,7 +12,7 @@
   <div class="form-group">
     <%= f.label :name, t('serverspecs.name'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
-      <%= f.text_field :name, class: 'form-control'%>
+      <%= f.text_field :name, class: 'form-control', required: true%>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
   <div class="form-group">
     <%= f.label :value, t('serverspecs.value'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
-      <%= f.text_area :value, class: 'form-control'%>
+      <%= f.text_area :value, class: 'form-control', required: true%>
     </div>
   </div>
 

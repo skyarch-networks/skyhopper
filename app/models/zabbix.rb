@@ -318,18 +318,21 @@ class Zabbix
     return get_hostgroup_ids(group_name).first
   end
 
-  # @param [String] username email of SkyHopper user
-  # @param [String] password encrypted_password of SkyHopper user
+  # @param [User] User of SkyHopper
   # @return [String] ID of created user
-  def create_user(username, password)
+  def create_user(user)
+    type  = get_user_type_by_user(user)
+    group = get_group_id_by_user(user)
+
     return @zabbix.query(
       method: 'user.create',
       params: {
-        alias: username,
-        passwd: password,
+        alias: user.email,
+        passwd: user.encrypted_password,
         usrgrps: [
-          usrgrpid: get_default_usergroup_id,
+          usrgrpid: group,
         ],
+        type: type,
       },
     )['userids'].first
   end
@@ -383,6 +386,24 @@ class Zabbix
 
   def get_default_usergroup_id
     @@default_usergroup_id ||= get_usergroup_ids(DefaultUsergroupName).first
+  end
+
+  # @param [User] user is a Skyhopper user.
+  def get_group_id_by_user(user)
+    if user.master? and not user.admin?
+      return get_master_usergroup_id
+    else
+      return get_default_usergroup_id
+    end
+  end
+
+  # @param [User] user is a Skyhopper user.
+  def get_user_type_by_user(user)
+    if user.master? and user.admin?
+      return UserTypeSuperAdmin
+    else
+      return UserTypeDefault
+    end
   end
 
   #Item_keyはItemの情報を得る為に使われる

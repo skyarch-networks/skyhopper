@@ -179,9 +179,7 @@
       bootstrap_alert(t('users.title'), data).done(function () {
         location.reload();
       });
-    }).fail(function (xhr, status, error) {
-      bootstrap_alert(t('users.title'), xhr.responseText, "danger");
-    });
+    }).fail(modal_for_ajax_std_error());
   });
 
   $(document).on('click', '#sync_zabbix', function () {

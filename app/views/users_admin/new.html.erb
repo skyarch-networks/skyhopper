@@ -6,21 +6,21 @@
   <div class="form-group">
     <%= f.label :email, class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.email_field :email, autofocus: true, class: "form-control" %>
+      <%= f.email_field :email, autofocus: true, class: "form-control", required: true %>
     </div>
   </div>
 
   <div class="form-group">
     <%= f.label :password, class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.password_field :password, class: "form-control" %>
+      <%= f.password_field :password, class: "form-control", required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 
   <div class="form-group">
     <%= f.label :password_confirmation, class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.password_field :password_confirmation, class: "form-control" %>
+      <%= f.password_field :password_confirmation, class: "form-control", required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 
