@@ -11,19 +11,12 @@ require "json"
 require 'open3'
 
 class ChefServer::Deployment
-  PackageURL   = "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.8-1.el6.x86_64.rpm".freeze
-
   TemplatePath = Rails.root.join("lib/cf_templates/chef_server.json").freeze
   EC2User      = "ec2-user".freeze
 
   # TODO: receive from controller
   User     = 'skyhopper'.freeze
-  FullName = 'anakin skyhopper'.freeze
-  EMail    = 'skyhopper@example.com'.freeze
-  PassWord = 'ilikerandompasswords'.freeze
-
   Org      = 'skyarch'.freeze
-  FullOrg  = 'Skyarch Networks Inc.'.freeze
 
   # TODO: Refactor
   Progress = {
@@ -35,6 +28,10 @@ class ChefServer::Deployment
     complete:       {percentage: 100, status: :complete},
     error:          {percentage: nil, status: :error}
   }.freeze
+
+  UserPemID         = 'User'
+  OrgPemID          = 'Org'
+  TrustedCertsPemID = "TrustedCerts"
 
   class Error < StandardError; end
 
@@ -61,7 +58,12 @@ class ChefServer::Deployment
       #TODO: jsでバインドする前に投げちゃって拾えない＞＜；だから直したい
       __yield :creating_stack, &block
 
-      stack = create_stack(infra, 'Chef Server', params: {InstanceType: 't2.small'})
+      stack = create_stack(infra, 'Chef Server', params: {
+        InstanceType:      't2.small',
+        UserPemID:         UserPemID,
+        OrgPemID:          OrgPemID,
+        TrustedCertsPemID: TrustedCertsPemID,
+      })
 
 
       wait_creation(stack)
@@ -69,15 +71,6 @@ class ChefServer::Deployment
       physical_id = stack.instances.first.physical_resource_id
       chef_server = self.new(infra, physical_id)
 
-      __yield :init_ec2, &block
-
-      chef_server.wait_init_ec2
-
-
-      __yield :install_chef, &block
-
-      chef_server.fix_hostname
-      chef_server.install_chef
 
       __yield :setting_chef, &block
 
@@ -85,7 +78,6 @@ class ChefServer::Deployment
 
 
       return chef_server
-
     rescue => ex
       Rails.logger.error(ex.message)
       __yield :error, ex.message, &block
@@ -154,12 +146,44 @@ class ChefServer::Deployment
     @fqdn ||= @infra.ec2.instances[@physical_id].public_dns_name
   end
 
-  def ip_addr
-    @ip_addr ||= @infra.ec2.instances[@physical_id].ip_address
-  end
-
   def url
     "https://#{fqdn}/organizations/#{Org}"
+  end
+
+  def init_knife_rb
+    stack = Stack.new(@infra)
+    output = JSON.parse(stack.outputs.first.output_value)
+
+    # TODO: 直接~/.chef/下に鍵を作る path = Pathname.new(File.expand_path('~/.chef/'))
+    #       開発環境で上書きされないようにするのはどうする?
+    path = Rails.root.join('tmp', 'chef')
+    FileUtils.mkdir_p(path) unless Dir.exist?(path)
+
+    user_pem = path.join("#{User}.pem")
+    File.write(user_pem, output[UserPemID])
+    File.chmod(0600, user_pem)
+
+    org_pem = path.join("#{Org}.pem")
+    File.write(org_pem, output[OrgPemID])
+    File.chmod(0600, org_pem)
+
+    crt_path = path.join('trusted_certs')
+    Dir.mkdir(crt_path) unless Dir.exist?(crt_path)
+    File.write(crt_path.join("#{fqdn}.crt"), output[TrustedCertsPemID])
+
+
+    File.open(path.join('knife.rb'), 'w') do |f|
+      f.write <<-EOF
+log_level                :info
+log_location             STDOUT
+node_name                '#{User}'
+client_key               '~/.chef/#{User}.pem'
+validation_client_name   '#{Org}-validator'
+validation_key           '~/.chef/#{Org}.pem'
+chef_server_url          '#{url}'
+syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
+      EOF
+    end
   end
 
   def wait_init_ec2
@@ -175,106 +199,9 @@ class ChefServer::Deployment
     end
   end
 
-  def fix_hostname
-    exec_ssh do |ssh|
-      ssh.shell do |sh|
-        sh.execute! "sudo hostname #{fqdn}"
-        sh.execute! %!sudo sed -i -E "s/^HOSTNAME=.+$/HOSTNAME=#{fqdn}/g" /etc/sysconfig/network!
-        sh.execute! 'sudo service network restart'
-        sh.close!
-        sh.execute! 'exit'
-      end
-    end
-  end
-
-  def install_chef
-    log = -> (process) { process.on_output{|pr, data| Rails.logger.debug("sh out > #{data}")} }
-
-    exec_ssh do |ssh|
-      ssh.shell do |sh|
-        sh.execute! 'cd /tmp/'
-        sh.execute! "sudo rpm -Uvh #{PackageURL}"
-        sh.execute! 'sudo chef-server-ctl reconfigure'
-        sh.execute! 'sudo chef-server-ctl start'
-        Rails.logger.debug("exec user-create")
-        sh.execute! "sudo chef-server-ctl user-create #{User} #{FullName} #{EMail} #{PassWord} --filename #{User}.pem", &log
-        Rails.logger.debug("exec org-create")
-        sh.execute! "sudo chef-server-ctl org-create #{Org} #{FullOrg} --association_user #{User} --filename #{Org}.pem", &log
-        Rails.logger.debug("done")
-        sh.close!
-        sh.execute! 'exit'
-      end
-    end
-  end
-
-  def init_knife_rb
-    exec_ssh do |ssh|
-      ssh.shell do |sh|
-        sh.execute! 'cd /tmp/'
-        sh.execute! "sudo cp /var/opt/opscode/nginx/ca/#{fqdn}.crt ./"
-
-        sh.close!
-        sh.execute! 'exit'
-      end
-    end
-
-    # TODO: 直接~/.chef/下に鍵を作る path = Pathname.new(File.expand_path('~/.chef/'))
-    #       開発環境で上書きされないようにするのはどうする?
-    path = Rails.root.join('tmp', 'chef')
-    FileUtils.mkdir_p(path) unless Dir.exist?(path)
-
-    exec_scp("/tmp/#{User}.pem", path)
-    File.chmod(0600, path.join("#{User}.pem"))
-
-    exec_scp("/tmp/#{Org}.pem", path)
-    File.chmod(0600, path.join("#{Org}.pem"))
-
-    crt_path = path.join('trusted_certs')
-    Dir.mkdir(crt_path) unless Dir.exist?(crt_path)
-    exec_scp("/tmp/#{fqdn}.crt", crt_path)
-
-
-    File.open(path.join('knife.rb'), 'w') do |f|
-      f.write <<-EOF
-log_level                :info
-log_location             STDOUT
-node_name                '#{User}'
-client_key               '~/.chef/#{User}.pem'
-validation_client_name   '#{Org}-validator'
-validation_key           '~/.chef/#{Org}.pem'
-chef_server_url          '#{url}'
-syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
-      EOF
-    end
-
-    exec_ssh do |ssh|
-      ssh.shell do |sh|
-        sh.execute! 'cd /tmp/'
-        sh.execute! "sudo rm -f #{User}.pem"
-        sh.execute! "sudo rm -f #{Org}.pem"
-        sh.execute! "sudo rm -f #{fqdn}.crt"
-        sh.close!
-        sh.execute! 'exit'
-      end
-    end
-  end
-
-
   private
 
   def exec_ssh(opt = {}, &block)
     Net::SSH.start(fqdn, EC2User, {key_data: [@infra.ec2_private_key.value]}.merge(opt), &block)
-  end
-
-  # @param [String] src File Source
-  # @param [String] dst File Destination
-  def exec_scp(src, dst)
-    ssh_key = @infra.ec2_private_key
-    ssh_key.output_temp
-    scp_cmd = "scp -i #{ssh_key.path_temp} #{EC2User}@#{fqdn}:#{src} #{dst}"
-    out, status = Open3.capture2e(scp_cmd)
-    raise out unless status.success?
-  ensure
-    ssh_key.close_temp
   end
 end
