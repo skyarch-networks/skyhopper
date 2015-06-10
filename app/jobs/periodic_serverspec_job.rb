@@ -17,6 +17,9 @@ class PeriodicServerspecJob < ActiveJob::Base
       wait_until: schedule.next_run
     ).perform_later(physical_id, infra_id, user_id)
 
-    ServerspecJob.perform_now(physical_id, infra_id, user_id)
+    status = schedule.resource.infrastructure.ec2.instances[physical_id].status
+    if status == :running
+      ServerspecJob.perform_now(physical_id, infra_id, user_id)
+    end
   end
 end
