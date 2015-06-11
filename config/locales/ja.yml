@@ -249,6 +249,7 @@ ja:
     frequency:
       weekly:     '毎週'
       daily:      '毎日'
+      intervals:  '任意の間隔'
     day_of_week:
       sunday:     '日曜'
       monday:     '月曜'
@@ -258,6 +259,8 @@ ja:
       friday:     '金曜'
       saturday:   '土曜'
     o_clock:      '時'
+    hours:        '時間毎'
+    next_run:     '次は {{next_run}} 時に実行されます'
     msg:
       updated:    'Serverspec の定期実行スケジュールが更新されました'
 

@@ -965,15 +965,15 @@
       ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
       all_spec:    function () { return this.globals.concat(this.individuals); },
       can_run:     function () { return !!_.find(this.all_spec, function(s){return s.checked;}) || this.checked_auto_generated; },
+      next_run:    function () { return (new Date().getHours() + parseInt(this.time)) % 24; },
       all_filled:  function () {
         if (!this.enabled) return true;
         switch (this.frequency) {
           case 'weekly':
             return this.day_of_week && this.time;
           case 'daily':
+          case 'intervals':
             return this.time;
-          case 'hourly':
-            break;
           default:
             return false;
         }
