@@ -360,8 +360,8 @@ ja:
   chef_servers:
     msg:
       creating_infra: 'Chef Server 用のインフラを作成しています...'
-      creating_stack: 'Chef Server 用のスタックを作成しています...'
       init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
+      download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
       complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'

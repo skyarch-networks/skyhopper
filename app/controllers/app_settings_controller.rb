@@ -21,28 +21,18 @@ class AppSettingsController < ApplicationController
   # POST /app_settings/create
   def create
     settings = JSON.parse(params.require(:settings), symbolize_names: true)
+
     access_key        = settings.delete(:access_key)
     secret_access_key = settings.delete(:secret_access_key)
+    keypair_name      = settings.delete(:keypair_name)
+    keypair_value     = settings.delete(:keypair_value)
 
-    begin
-      ec2key = Ec2PrivateKey.create!(
-        name:  settings[:keypair_name],
-        value: settings[:keypair_value]
-      )
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
+    ec2key = Ec2PrivateKey.create!(
+      name:  keypair_name,
+      value: keypair_value,
+    )
 
     settings[:ec2_private_key_id] = ec2key.id
-    settings.delete(:keypair_name)
-    settings.delete(:keypair_value)
-
-    begin
-      AppSetting.validate(settings)
-    rescue AppSetting::ValidateError => ex
-      render text: ex.message, status: 500 and return
-    end
-
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
@@ -51,15 +41,9 @@ class AppSettingsController < ApplicationController
     AppSetting.clear_cache
 
 
-
-
     projects = Project.for_system
-    begin
-      projects.each do |project|
-        project.update!(access_key: access_key, secret_access_key: secret_access_key)
-      end
-    rescue => ex
-      render text: ex.message, status: 500 and return
+    projects.each do |project|
+      project.update!(access_key: access_key, secret_access_key: secret_access_key)
     end
 
     Thread.new_with_db do
@@ -87,12 +71,8 @@ class AppSettingsController < ApplicationController
     user = params.require(:zabbix_user)
     pass = params.require(:zabbix_pass)
 
-    begin
-      app_setting.update!(zabbix_user: user, zabbix_pass: pass)
-      AppSetting.clear_cache
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
+    app_setting.update!(zabbix_user: user, zabbix_pass: pass)
+    AppSetting.clear_cache
 
     redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
   end

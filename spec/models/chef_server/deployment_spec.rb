@@ -27,6 +27,7 @@ describe ChefServer::Deployment, :type => :model do
 
     before do
       allow(stack).to receive_message_chain(:instances, :first, :physical_resource_id).and_return(physical_id)
+      allow(stack).to receive(:wait_resource_status).with(String, String)
     end
 
     before do
@@ -43,12 +44,9 @@ describe ChefServer::Deployment, :type => :model do
     end
 
     it 'should call methods' do
-      expect(klass).to receive(:create_stack).with(infra).and_return(stack)
+      expect(klass).to receive(:create_stack).with(infra, String, Hash).and_return(stack)
       expect(klass).to receive(:wait_creation).with(stack)
 
-      expect(chef_server).to receive(:wait_init_ec2).with(no_args)
-      expect(chef_server).to receive(:fix_hostname).with(no_args)
-      expect(chef_server).to receive(:install_chef).with(no_args)
       expect(chef_server).to receive(:init_knife_rb).with(no_args)
 
       klass.create(
@@ -75,11 +73,11 @@ describe ChefServer::Deployment, :type => :model do
         allow(Stack).to receive(:new).and_return(stack)
       end
 
-      subject{klass.__send__(:create_stack, infra)}
+      subject{klass.__send__(:create_stack, infra, 'Chef Server')}
 
 
       it 'should call methods' do
-        expect(cf_template).to receive(:create_cfparams_set).with(infra)
+        expect(cf_template).to receive(:create_cfparams_set).with(infra, Hash)
         expect(cf_template).to receive(:update_cfparams).with(no_args)
         expect(cf_template).to receive(:save!).with(no_args)
         expect(stack).to       receive(:create).with(any_args)
@@ -138,53 +136,14 @@ describe ChefServer::Deployment, :type => :model do
     subject{klass.new(infra, physical_id)}
 
     it 'should call infra.ec2.instances[].ip_address' do
-      expect(infra).to receive_message_chain(:ec2, :instances, :[], :ip_address)
-      subject.ip_addr
+      expect(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      subject.fqdn
     end
 
     it 'should memolize' do
-      allow(infra).to receive_message_chain(:ec2, :instances, :[], :ip_address)
-      ip_addr = subject.ip_addr
-      expect(subject.instance_variable_get(:@ip_addr)).to eq ip_addr
-    end
-  end
-
-  describe '#fix_hostname' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-fugafuga'}
-    subject{klass.new(infra, physical_id)}
-
-    it 'should call exec_ssh' do
-      expect(subject).to receive(:exec_ssh).with(any_args)
-      subject.fix_hostname
-    end
-  end
-
-  describe '#install_chef' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-fugafuga'}
-    subject{klass.new(infra, physical_id)}
-
-    it 'should call exec_ssh' do
-      expect(subject).to receive(:exec_ssh).with(any_args)
-      subject.install_chef
-    end
-  end
-
-  describe '#init_knife_rb' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){'i-fugafuga'}
-    subject{klass.new(infra, physical_id)}
-
-    before do
-      allow(subject).to receive(:fqdn).and_return('ec2-xx-xx-x-xx.us-west-2.compute.amazonaws.com')
-      allow(subject).to receive(:exec_ssh).with(any_args)
-      allow(subject).to receive(:exec_scp).with(any_args)
-      allow(File).to receive(:chmod).with(kind_of(Integer), any_args)
-    end
-
-    it 'should not raise error' do
-      subject.init_knife_rb
+      allow(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      ip_addr = subject.fqdn
+      expect(subject.instance_variable_get(:@fqdn)).to eq ip_addr
     end
   end
 end

@@ -39,7 +39,6 @@ gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
 gem 'ridley'
 gem "net-ssh"
-gem "net-ssh-shell", git: "https://github.com/9peso/net-ssh-shell"
 gem "net-scp"
 
 gem "chef", "~> 12", require: false

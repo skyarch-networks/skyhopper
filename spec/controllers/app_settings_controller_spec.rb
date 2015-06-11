@@ -38,18 +38,11 @@ describe AppSettingsController, :type => :controller do
     let(:ec2key){create(:ec2_private_key)}
     let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
 
+    before{allow(Thread).to receive(:new_with_db)}
+
     context 'when valid settings' do
-
-      before do
-        allow(Thread).to receive(:new_with_db)
-      end
-
       before do
         allow_any_instance_of(Ec2PrivateKey).to receive(:id).and_return(ec2key.id)
-      end
-
-      before do
-        expect(AppSetting).to receive(:validate).with(settings.merge(ec2_private_key_id: ec2key.id))
       end
 
       it 'should create AppSetting' do
@@ -71,7 +64,7 @@ describe AppSettingsController, :type => :controller do
 
     context 'when invalid setting' do
       before do
-        allow(AppSetting).to receive(:validate).and_raise(AppSetting::ValidateError)
+        settings_with_ec2_key_id[:log_directory] = 'hogehoge'
         post :create, settings: settings_with_ec2_key_id.to_json
       end
 

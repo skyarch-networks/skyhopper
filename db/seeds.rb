@@ -55,22 +55,16 @@ end
 EOS
 
 
-# ---------------------- AppSetting
-unless AppSetting.get
-  AppSetting.create(
-    aws_region: DummyText,
-    log_directory: DummyText,
-  )
-end
 
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system
 if client_skyhopper.blank?
   client_skyhopper = Client.create(name: Client::ForSystemCodeName, code: Client::ForSystemCodeName)
 end
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ForDishTestCodeName, code: Project::ForDishTestCodeName, access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ChefServerCodeName,  code: Project::ChefServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
+aws = CloudProvider.aws
+Project.find_or_create_by(client: client_skyhopper, name: Project::ForDishTestCodeName,   code: Project::ForDishTestCodeName,   access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ChefServerCodeName,    code: Project::ChefServerCodeName,    access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
 
 
 # ----------------------- Global CF template
