@@ -16,6 +16,7 @@ class ServerspecSchedule < ActiveRecord::Base
 
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
 
+  before_update :delete_enqueued_jobs
   after_destroy :delete_enqueued_jobs
 
   def next_run

@@ -156,8 +156,6 @@ class ServerspecsController < ApplicationController
     ss = ServerspecSchedule.find_by(physical_id: physical_id)
     ss.update_attributes(schedule)
 
-    ss.delete_enqueued_jobs
-
     if ss.enabled?
       PeriodicServerspecJob.set(
         wait_until: ss.next_run
