@@ -109,7 +109,13 @@
 
           "echo '*** Install Chef ***'\n",
           "cd /tmp/\n",
+
+
+          "/opt/aws/bin/cfn-signal '", {"Ref": "wchDownloadChefPkg"}, "'\n",
           "rpm -Uvh ", {"Ref": "ChefPackageURL"}, "\n",
+
+
+          "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
           "chef-server-ctl reconfigure\n",
           "chef-server-ctl start\n",
           "chef-server-ctl user-create ",
@@ -154,6 +160,26 @@
       "Properties": {
         "Handle":  {"Ref": "wchPemFiles"},
         "Count":   "3",
+        "Timeout": "900"
+      }
+    },
+
+    "wchDownloadChefPkg": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcDownloadChefPkg": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchDownloadChefPkg"},
+        "Timeout": "900"
+      }
+    },
+
+    "wchInstallChef": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcInstallChef": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchInstallChef"},
         "Timeout": "900"
       }
     }
