@@ -63,6 +63,8 @@ module Concerns::ErrorHandler
   # Ajax のアクセスであれば、例外を JSON に整形して render する
   # @param [Exception] ex
   def rescue_exception(ex)
+    Rails.logger.error(ex.inspect + " from " + ex.backtrace.first)
+    Rails.logger.debug(ex.backtrace.join("\n"))
     if ajax?
       render json: {error: ex.format_error}, status: ex.status_code and return
     else
