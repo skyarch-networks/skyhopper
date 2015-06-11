@@ -180,9 +180,6 @@ describe CfTemplatesController, :type => :controller do
       before{req}
 
       should_be_failure
-      it do
-        expect(response).not_to be_success
-      end
     end
 
     context 'when invalid as CloudFormation template' do
