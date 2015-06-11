@@ -21,8 +21,8 @@ class ChefServer::Deployment
   # TODO: Refactor
   Progress = {
     creating_infra: {percentage:  10, status: :in_progress},
-    creating_stack: {percentage:  20, status: :in_progress},
-    init_ec2:       {percentage:  40, status: :in_progress},
+    init_ec2:       {percentage:  20, status: :in_progress},
+    download_chef:  {percentage:  40, status: :in_progress},
     install_chef:   {percentage:  60, status: :in_progress},
     setting_chef:   {percentage:  80, status: :in_progress},
     complete:       {percentage: 100, status: :complete},
@@ -55,9 +55,6 @@ class ChefServer::Deployment
         region:        region
       )
 
-      #TODO: jsでバインドする前に投げちゃって拾えない＞＜；だから直したい
-      __yield :creating_stack, &block
-
       stack = create_stack(infra, 'Chef Server', params: {
         InstanceType:      't2.small',
         UserPemID:         UserPemID,
@@ -65,14 +62,19 @@ class ChefServer::Deployment
         TrustedCertsPemID: TrustedCertsPemID,
       })
 
-
+      __yield :init_ec2, &block
+      stack.wait_resource_status('EC2Instance',       'CREATE_COMPLETE')
+      __yield :download_chef, &block
+      stack.wait_resource_status('wcDownloadChefPkg', 'CREATE_COMPLETE')
+      __yield :install_chef,  &block
+      stack.wait_resource_status('wcInstallChef',     'CREATE_COMPLETE')
+      __yield :setting_chef, &block
       wait_creation(stack)
 
       physical_id = stack.instances.first.physical_resource_id
       chef_server = self.new(infra, physical_id)
 
 
-      __yield :setting_chef, &block
 
       chef_server.init_knife_rb
 

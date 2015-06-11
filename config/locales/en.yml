@@ -360,8 +360,8 @@ en:
   chef_servers:
     msg:
       creating_infra: 'Creating Infrastructure...'
-      creating_stack: 'Creating Stack...'
       init_ec2:       'Initializing EC2 Instance...'
+      download_chef:  'Downloading package of Chef Server...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting Chef Server...'
       complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart the SkyHopper.'

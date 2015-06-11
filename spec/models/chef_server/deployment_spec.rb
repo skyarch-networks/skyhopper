@@ -27,6 +27,7 @@ describe ChefServer::Deployment, :type => :model do
 
     before do
       allow(stack).to receive_message_chain(:instances, :first, :physical_resource_id).and_return(physical_id)
+      allow(stack).to receive(:wait_resource_status).with(String, String)
     end
 
     before do
