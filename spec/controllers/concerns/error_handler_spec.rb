@@ -48,6 +48,7 @@ describe Concerns::ErrorHandler do
     let(:error_msg){SecureRandom.hex(10)}
     before do
       allow_any_instance_of(ApplicationController).to receive(:ex).and_return(ex)
+      allow(ex).to receive(:backtrace).and_return(['foo'])
     end
     let(:req){get :index}
 

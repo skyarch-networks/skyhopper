@@ -68,7 +68,15 @@ describe CfTemplate, :type => :model do
           v = JSON.parse(cft.value)
           v['Parameters'].delete('KeyName')
           cft.value = JSON.generate(v)
-          cft.save!
+        end
+        it {is_expected.to eq []}
+      end
+
+      context 'when not have Parameters field' do
+        before do
+          v = JSON.parse(cft.value)
+          v.delete('Parameters')
+          cft.value = JSON.generate(v)
         end
         it {is_expected.to eq []}
       end
