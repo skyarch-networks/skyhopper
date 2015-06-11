@@ -115,9 +115,9 @@
           "rpm -Uvh ", {"Ref": "ChefPackageURL"}, "\n",
 
 
-          "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
           "chef-server-ctl reconfigure\n",
           "chef-server-ctl start\n",
+          "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
           "chef-server-ctl user-create ",
               {"Ref": "ChefUser"},     " ",
               {"Ref": "ChefFullName"}, " ",
