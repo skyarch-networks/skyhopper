@@ -29,7 +29,7 @@ class CfTemplate < ActiveRecord::Base
 
   # create parameters set for cloudformation
   def create_cfparams_set(infrastructure, params_inserted = nil)
-    parameters = if JSON::parse(self.value)['Parameters'].include?("KeyName")
+    parameters = if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
       [{ parameter_key: "KeyName", parameter_value: infrastructure.keypairname }]
     else
       []
