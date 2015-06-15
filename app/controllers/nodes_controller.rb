@@ -92,6 +92,10 @@ class NodesController < ApplicationController
     @info[:update_status]     = status.yum.value.camelize
 
     @dishes = Dish.valid_dishes(@infra.project_id)
+
+    yum_check_log = InfrastructureLog.check_security_update.find_by(infrastructure_id: @infra.id)
+    /(?<num>\d+|No) package\(?s\)? needed for security/ =~ yum_check_log.details
+    @number_of_security_updates = (num == 'No') ? '' : num
   end
 
   # GET /nodes/i-0b8e7f12/edit
