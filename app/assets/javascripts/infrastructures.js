@@ -972,8 +972,9 @@
           case 'weekly':
             return this.day_of_week && this.time;
           case 'daily':
-          case 'intervals':
             return this.time;
+          case 'intervals':
+            return this.time != 0;
           default:
             return false;
         }

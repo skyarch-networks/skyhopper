@@ -15,6 +15,7 @@ class ServerspecSchedule < ActiveRecord::Base
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
+  validates :time, numericality: { greater_than: 0 }, if: -> { enabled && frequency == 'intervals' }
 
   before_update :delete_enqueued_jobs
   after_destroy :delete_enqueued_jobs

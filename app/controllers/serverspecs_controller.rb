@@ -154,7 +154,7 @@ class ServerspecsController < ApplicationController
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
 
     ss = ServerspecSchedule.find_by(physical_id: physical_id)
-    ss.update_attributes(schedule)
+    ss.update_attributes!(schedule)
 
     if ss.enabled?
       PeriodicServerspecJob.set(
