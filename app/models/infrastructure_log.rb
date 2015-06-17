@@ -10,7 +10,7 @@ class InfrastructureLog < ActiveRecord::Base
   belongs_to :infrastructure
   belongs_to :user
 
-  scope :check_security_update, -> { where('details LIKE ?', '%check security%finished%').order(created_at: :desc) }
+  scope :check_security_update, -> { where('details LIKE ?', '%check security%finished%') }
 
   class << self
     def for_infra(infra_id)
