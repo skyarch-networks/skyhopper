@@ -192,7 +192,7 @@
     template: '#infra-logs-tabpane-template',
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
-      status_text: function (status)  { return status ? 'SUCCESSED' : 'FAILED'; },
+      status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
     },
     created: function () {
       this.$watch('infra_logs', function (newVal, oldVal) {
