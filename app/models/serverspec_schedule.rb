@@ -11,7 +11,7 @@ require 'sidekiq/api'
 class ServerspecSchedule < ActiveRecord::Base
   belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
 
-  enum frequency:   %i[intervals daily weekly]
+  enum frequency:   %i[daily weekly intervals]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
