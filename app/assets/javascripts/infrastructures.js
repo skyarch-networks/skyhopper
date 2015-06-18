@@ -974,7 +974,7 @@
           case 'daily':
             return this.time;
           case 'intervals':
-            return this.time != 0;
+            return parseInt(this.time, 10);
           default:
             return false;
         }
