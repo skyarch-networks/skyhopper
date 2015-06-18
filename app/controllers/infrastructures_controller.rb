@@ -201,6 +201,7 @@ class InfrastructuresController < ApplicationController
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
+    @listeners     = elb.listeners
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}

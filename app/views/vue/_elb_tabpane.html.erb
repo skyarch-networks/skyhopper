@@ -5,6 +5,21 @@
   <h4 class="page-header">DNS name</h4>
   <a v-attr="href: 'http://' + dns_name" target="_blank">{{dns_name}}</a>
 
+  <h4 class="page-header">Listeners</h4>
+  <table class="table table-striped">
+    <thead>
+      <th>Protocol</th> <th>LoadBalancer Port</th> <th>Instance Protocol</th> <th>Instance Port</th>
+    </thead>
+
+    <tbody>
+      <tr v-repeat="listeners">
+        <td v-text="protocol"></td>
+        <td v-text="load_balancer_port"></td>
+        <td v-text="instance_protocol"></td>
+        <td v-text="instance_port"></td>
+      </tr>
+    </tbody>
+  </table>
 
   <h4 class="page-header">Instances</h4>
   <div class="col-md-4 col-sm-6 col-xs-12" v-repeat="e: ec2_instances">

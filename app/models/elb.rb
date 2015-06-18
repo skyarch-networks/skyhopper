@@ -28,6 +28,11 @@ class ELB
     return data.instance_states.map(&:to_hash)
   end
 
+  # @return [Array<Hash{Symbol => String}>]
+  def listeners
+    return details.listener_descriptions.map(&:listener).map(&:to_hash)
+  end
+
   # @return [String]
   def dns_name
     return details.dns_name
@@ -57,7 +62,7 @@ class ELB
 
   # @return [Struct]
   def details
-    data = @elb.describe_load_balancers
-    return data.load_balancer_descriptions.find{|x| x.load_balancer_name == @name}
+    data = @elb.describe_load_balancers(load_balancer_names: [@name])
+    return data.load_balancer_descriptions.first
   end
 end
