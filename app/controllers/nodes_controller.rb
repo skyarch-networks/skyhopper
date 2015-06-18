@@ -293,7 +293,7 @@ class NodesController < ApplicationController
 
       r = infra.resource(physical_id)
       r.status.yum.inprogress!
-      r.status.serverspec.un_executed!
+      r.status.serverspec.un_executed! if exec
 
       node = Node.new(physical_id)
 
