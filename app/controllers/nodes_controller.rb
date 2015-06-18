@@ -93,6 +93,12 @@ class NodesController < ApplicationController
     @info[:update_status]     = status.yum.value.camelize
 
     @dishes = Dish.valid_dishes(@infra.project_id)
+
+    yum_check_log = InfrastructureLog.where(infrastructure_id: @infra.id).check_security_update.last
+    if yum_check_log
+      /(?<num>\d+|No) package\(?s\)? needed for security/ =~ yum_check_log.details
+      @number_of_security_updates = (num == 'No') ? '' : num
+    end
   end
 
   # GET /nodes/i-0b8e7f12/edit
@@ -288,7 +294,7 @@ class NodesController < ApplicationController
 
       r = infra.resource(physical_id)
       r.status.yum.inprogress!
-      r.status.serverspec.un_executed!
+      r.status.serverspec.un_executed! if exec
 
       node = Node.new(physical_id)
 

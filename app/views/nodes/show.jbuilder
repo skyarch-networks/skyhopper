@@ -12,6 +12,8 @@ json.runlist       @runlist
 json.selected_dish @selected_dish
 json.dishes        @dishes
 
+json.number_of_security_updates @number_of_security_updates
+
 if @info
   json.info do
     json.cook_status       @info[:cook_status]

@@ -249,6 +249,7 @@ en:
     frequency:
       weekly:     'Weekly'
       daily:      'Daily'
+      intervals:  'Intervals'
     day_of_week:
       sunday:     'Sunday'
       monday:     'Monday'
@@ -258,6 +259,8 @@ en:
       friday:     'Friday'
       saturday:   'Saturday'
     o_clock:      "o'clock"
+    hours:        'hours'
+    next_run:     'Next run time is at {{next_run}}:00'
     msg:
       updated:    'Periodic run schedule of Serverspec has updated.'
 
