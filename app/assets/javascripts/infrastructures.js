@@ -33,6 +33,12 @@
     }
   };
 
+  var toLocaleString = function (datetext) {
+    var date = new Date(datetext);
+    return date.toLocaleString();
+  };
+
+
   // Utilities
   var alert_success = function (callback) {
     return function (msg) {
@@ -546,6 +552,12 @@
       state: function (state){
         if (state === 'InService') { return 'success'; }
         else                       { return 'danger'; }
+      },
+      expiration_date: function (date_str) {
+        if (!date_str) {
+          return "";
+        }
+        return toLocaleString(date_str);
       },
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
@@ -1119,10 +1131,7 @@
         },
       },
       filters: {
-        toLocaleString: function (datetext) {
-          var date = new Date(datetext);
-          return date.toLocaleString();
-        }
+        toLocaleString: toLocaleString,
       },
       computed: {
         no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },

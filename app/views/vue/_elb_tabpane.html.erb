@@ -1,3 +1,4 @@
+<%# TODO: I18n %>
 <script id="elb-tabpane-template" type="text/template">
 <h3 class="page-header">{{* physical_id}}</h3>
 
@@ -8,7 +9,9 @@
   <h4 class="page-header">Listeners</h4>
   <table class="table table-striped">
     <thead>
-      <th>Protocol</th> <th>LoadBalancer Port</th> <th>Instance Protocol</th> <th>Instance Port</th>
+      <tr>
+        <th>Protocol</th> <th>LoadBalancer Port</th> <th>Instance Protocol</th> <th>Instance Port</th> <th>Expiration date</th>
+      </tr>
     </thead>
 
     <tbody>
@@ -17,6 +20,7 @@
         <td v-text="load_balancer_port"></td>
         <td v-text="instance_protocol"></td>
         <td v-text="instance_port"></td>
+        <td v-text="expiration_date(expiration)"></td>
       </tr>
     </tbody>
   </table>
