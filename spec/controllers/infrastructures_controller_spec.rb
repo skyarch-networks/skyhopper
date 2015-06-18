@@ -236,38 +236,28 @@ describe InfrastructuresController, :type => :controller do
   end # end of Post #create
 
   describe 'PATCH #update' do
-    let(:infra_key_name){nil}
-    let(:infra_key_value){nil}
-    let(:delete_keys){[:project_id, :keypair_name, :keypair_value].each { |x| infra_hash.delete(x) }} #deleting unwanted hash keys
-    let(:update_request){delete_keys; patch :update, id: infra.id, infrastructure: infra_hash}
+    let(:params){{id: infra.id, infrastructure: attributes_for(:infrastructure)}}
+    let(:req){patch :update, params}
 
-    context 'when valid params' do
-      before do
-        update_request
-      end
+    context 'when update success' do
+      before{req}
 
-      it 'should update finely' do
-        i = Infrastructure.find(infra.id)
-        expect(i.stack_name).to eq(infra_stknm)
-        expect(i.region).to eq(infra_region)
-      end
-
-      it 'should redirect to infrastructure_path' do
-        expect(response).to redirect_to(infrastructures_path(project_id: infra.project_id))
-      end
+      it {is_expected.to redirect_to infrastructures_path(project_id: infra.project_id)}
     end
 
-    context 'when invalid params' do
+    context 'when update failure' do
       before do
-        allow_any_instance_of(Infrastructure).to receive(:update).and_return(false)
-        update_request
+        params[:infrastructure][:stack_name] = '1 Invalid as CFT Stack Name'
+        req
       end
 
-      it 'should render template edit' do
-        expect(response).to render_template :edit
+      should_be_failure
+
+      it 'should assign @regions' do
+        expect(assigns[:regions]).to eq AWS::Regions
       end
     end
-  end # end of update
+  end
 
   describe '#destroy' do
     let(:req){delete :destroy, id: infra.id}

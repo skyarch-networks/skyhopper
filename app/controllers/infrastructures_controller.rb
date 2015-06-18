@@ -130,12 +130,16 @@ class InfrastructuresController < ApplicationController
   # PATCH/PUT /infrastructures/1
   # PATCH/PUT /infrastructures/1.json
   def update
-    if @infrastructure.update(infrastructure_params)
-      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
-        notice: I18n.t('infrastructures.msg.updated')
-    else
-      render action: 'edit'
+    begin
+      @infrastructure.update!(infrastructure_params)
+    rescue => ex
+      @regions = @@regions
+      flash[:alert] = ex.message
+      render action: :edit, status: 400 and return
     end
+
+    redirect_to infrastructures_path(project_id: @infrastructure.project_id),
+      notice: I18n.t('infrastructures.msg.updated')
   end
 
   # DELETE /infrastructures/1
