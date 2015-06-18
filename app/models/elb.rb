@@ -25,7 +25,7 @@ class ELB
   # @return [Array<Hash{Symbol => String}>]
   def instances
     data = @elb.describe_instance_health(load_balancer_name: @name)
-    return data.first.instance_states.map(&:to_hash)
+    return data.instance_states.map(&:to_hash)
   end
 
   # @return [String]
