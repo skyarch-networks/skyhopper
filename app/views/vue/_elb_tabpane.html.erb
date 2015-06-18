@@ -23,7 +23,7 @@
 
   <h4 class="page-header">Instances</h4>
   <div class="col-md-4 col-sm-6 col-xs-12" v-repeat="e: ec2_instances">
-    <div class="panel panel-{{state(e.state)}}">
+    <div class="panel" v-class="panel_class(state)">
       <div class="panel-heading">
           <a href="#" v-on="click: show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
       </div>
@@ -31,7 +31,7 @@
         <tbody>
           <tr>
             <th>State</td>
-            <td><span class="label label-{{state(e.state)}}">{{* e.state}}</span></td>
+            <td><span class="label" v-class="label_class(state)">{{* e.state}}</span></td>
           </tr>
           <tr>
             <th>ReasonCode</td>

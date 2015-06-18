@@ -547,6 +547,9 @@
         if (state === 'InService') { return 'success'; }
         else                       { return 'danger'; }
       },
+
+      panel_class: function (state) { return 'panel-' + this.state(state);},
+      label_class: function (state) { return 'label-' + this.state(state);},
     },
     compiled: function () {
       var self = this;
@@ -557,6 +560,7 @@
         self.$set('listeners', data.listeners);
         self.$set('selected_ec2', null);
         self.$parent.loading = false;
+        console.log(self);
       }).fail(alert_and_show_infra);
     },
   });
