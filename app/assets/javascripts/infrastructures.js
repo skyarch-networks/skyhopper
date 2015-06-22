@@ -33,6 +33,12 @@
     }
   };
 
+  var toLocaleString = function (datetext) {
+    var date = new Date(datetext);
+    return date.toLocaleString();
+  };
+
+
   // Utilities
   var alert_success = function (callback) {
     return function (msg) {
@@ -543,10 +549,19 @@
             .fail(alert_danger(reload));
         });
       },
-      state: function (state){
-        if (state === 'InService') { return 'success'; }
-        else                       { return 'danger'; }
+      state: function (s){
+        if (s === 'InService') { return 'success'; }
+        else                   { return 'danger'; }
       },
+      expiration_date: function (date_str) {
+        if (!date_str) {
+          return "";
+        }
+        return toLocaleString(date_str);
+      },
+
+      panel_class: function (state) { return 'panel-' + this.state(state);},
+      label_class: function (state) { return 'label-' + this.state(state);},
     },
     compiled: function () {
       var self = this;
@@ -554,8 +569,10 @@
         self.$set('ec2_instances', data.ec2_instances);
         self.$set('unregistereds', data.unregistereds);
         self.$set('dns_name', data.dns_name);
+        self.$set('listeners', data.listeners);
         self.$set('selected_ec2', null);
         self.$parent.loading = false;
+        console.log(self);
       }).fail(alert_and_show_infra);
     },
   });
@@ -1128,10 +1145,7 @@
         },
       },
       filters: {
-        toLocaleString: function (datetext) {
-          var date = new Date(datetext);
-          return date.toLocaleString();
-        }
+        toLocaleString: toLocaleString,
       },
       computed: {
         no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },

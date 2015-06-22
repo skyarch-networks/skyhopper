@@ -389,10 +389,19 @@ ja:
       not_running:    'Zabbix Server が起動していません'
 
   ec2_instances:
-    description:     '詳細'
-    settings:        '設定'
-    change_status:   'EC2 インスタンスのステータスを変更する'
-    changing_status: 'EC2 インスタンスのステータスを変更しています...'
+    description:       '詳細'
+    settings:          '設定'
+    change_status:     'EC2 インスタンスのステータスを変更する'
+    changing_status:   'EC2 インスタンスのステータスを変更しています...'
+    listeners:          'リスナー'
+    protocol:          'プロトコル'
+    lb_port:           'ロードバランサ側ポート'
+    instance_protocol: 'インスタンス側プロトコル'
+    instance_port:     'インスタンス側ポート'
+    expiration_date:   'SSL証明書の有効期限'
+    instances:         'インスタンス'
+    state:             '状態'
+    reason_code:       '原因コード'
     msg:
       registered_to_elb:    'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
