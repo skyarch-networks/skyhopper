@@ -549,9 +549,9 @@
             .fail(alert_danger(reload));
         });
       },
-      state: function (state){
-        if (state === 'InService') { return 'success'; }
-        else                       { return 'danger'; }
+      state: function (s){
+        if (s === 'InService') { return 'success'; }
+        else                   { return 'danger'; }
       },
       expiration_date: function (date_str) {
         if (!date_str) {
