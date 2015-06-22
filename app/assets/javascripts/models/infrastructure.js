@@ -90,7 +90,6 @@ var Infrastructure = function (infra_id) {
   this.show_elb = function (physical_id) {
     var dfd = $.Deferred();
 
-    console.log(physical_id);
     ajax_infra.show_elb({
       id:          infra_id,
       physical_id: physical_id,
