@@ -1,3 +1,8 @@
+PATH
+  remote: /home/kuwabara/ghq/github.com/skyarch-networks/zabbix-ruby
+  specs:
+    sky_zabbix (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -507,6 +512,7 @@ DEPENDENCIES
   sdoc
   serverspec
   sidekiq
+  sky_zabbix!
   specinfra
   sqlite3
   tapp

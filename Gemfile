@@ -97,3 +97,4 @@ gem 'redis'
 gem 'hiredis'
 
 gem 'zabbixapi', '~> 2.2.0'
+gem 'sky_zabbix', path: ENV['SKY_ZABBIX_PATH']
