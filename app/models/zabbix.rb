@@ -27,6 +27,8 @@ class Zabbix
 
     begin
       @zabbix = ZabbixApi.connect(opt)
+      @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
+      @sky_zabbix.login(username, password)
     rescue => ex
       raise ConnectError, ex.message
     end
