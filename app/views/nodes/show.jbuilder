@@ -13,6 +13,7 @@ json.selected_dish @selected_dish
 json.dishes        @dishes
 
 json.number_of_security_updates @number_of_security_updates
+json.yum_schedule  @yum_schedule
 
 if @info
   json.info do
