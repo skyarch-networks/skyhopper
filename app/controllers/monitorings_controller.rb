@@ -191,10 +191,6 @@ class MonitoringsController < ApplicationController
   end
 
   def set_zabbix
-    begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError
-      #flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-    end
+    @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
   end
 end
