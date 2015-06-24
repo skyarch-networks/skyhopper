@@ -162,7 +162,7 @@ class ServerspecsController < ApplicationController
       ).perform_later(physical_id, infra_id, current_user.id)
     end
 
-    render text: I18n.t('serverspec_schedules.msg.updated'), status: 200 and return
+    render text: I18n.t('schedules.msg.serverspec_updated'), status: 200 and return
   end
 
 
