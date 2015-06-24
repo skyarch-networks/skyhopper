@@ -195,6 +195,23 @@ class NodesController < ApplicationController
     render text: I18n.t('nodes.msg.attribute_updated') and return
   end
 
+  # POST /nodes/i-hogehoge/schedule_yum
+  def schedule_yum
+    physical_id = params.require(:physical_id)
+    schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
+
+    ys = YumSchedule.find_by(physical_id: physical_id)
+    ys.update_attributes!(schedule)
+
+    if ys.enabled?
+      PeriodicYumJob.set(
+        wait_until: ys.next_run
+      ).perform_later(physical_id, @infra, current_user.id)
+    end
+
+    render text: I18n.t('schedules.msg.yum_updated'), status: 200 and return
+  end
+
   # ==== Route
   # GET /nodes/:id/edit_attributes
   # ==== params
