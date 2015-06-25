@@ -109,7 +109,7 @@ class Zabbix
         )
       end
     end.flatten
-    @sky_zabbix.batch(*reqs).each{|x|raise x if x.is_a? StandardError}
+    @sky_zabbix.batch(*reqs)
   end
 
   def update_expression(trigger_id, expression)
@@ -522,7 +522,7 @@ class Zabbix
         steps: s_array
       )
     end
-    @sky_zabbix.batch(*reqs).each{|x|raise x if x.is_a? StandardError}
+    @sky_zabbix.batch(*reqs)
   end
 
   # Zabbix上の関係  host has many scenarios. web scenario has many steps
