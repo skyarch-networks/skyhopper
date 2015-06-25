@@ -838,8 +838,14 @@
       }).fail(alert_and_show_infra);
 
       var client = new ZeroClipboard($(".zeroclipboard-button"));
-      client.on("ready");
-      client.on("aftercopy", function (event) {
+      client.on("ready", function (ready_event) {
+        client.on("aftercopy", function (event) {
+          var t = $(event.target).find('span.copied-hint');
+          t.text('Copied!');
+          setTimeout(function () {
+            t.text('Copy');
+          }, 1000);
+        });
       });
     },
   });

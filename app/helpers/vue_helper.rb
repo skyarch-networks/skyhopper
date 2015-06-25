@@ -25,7 +25,8 @@ module VueHelper
   def copy_to_clipboard_button(value)
     <<-EOS.html_safe
 <button role="button" class="btn btn-xs btn-default zeroclipboard-button" data-copied-hint="Copied!" data-clipboard-text="#{value}">
-  <span class="glyphicon glyphicon-copy"></span> Copy
+  <span class="glyphicon glyphicon-copy"></span>
+  <span class="copied-hint">Copy</span>
 </button>
     EOS
   end
