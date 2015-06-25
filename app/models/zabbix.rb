@@ -53,9 +53,12 @@ class Zabbix
   # @param [Array<String>] テンプレートの名前の配列
   def templates_link_host(physical_id, template_names)
     host_id = get_host_id(physical_id)
-    template_ids = @zabbix.query(method: 'template.get', params: {filter: {host: template_names}}).map{|x|x['templateid']}
+    template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
 
-    @zabbix.templates.mass_add(hosts_id: [host_id], templates_id: template_ids)
+    @sky_zabbix.template.massadd(
+      hosts: [{hostid: host_id}],
+      templates: template_ids.map{|x| {templateid: x}}
+    )
   end
 
   # トリガーのオンオフを切り替える
@@ -175,7 +178,7 @@ class Zabbix
     ec2 = infra.ec2.instances[physical_id]
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
-    @zabbix.hosts.create(
+    @sky_zabbix.host.create(
       host: physical_id,
       interfaces: [{
         type: 1,
@@ -197,7 +200,7 @@ class Zabbix
   def create_elb_host(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
-    @zabbix.hosts.create(
+    @sky_zabbix.host.create(
       host: infra_to_elb_hostname(infra),
       interfaces: [{
         type: 1,
@@ -299,13 +302,10 @@ class Zabbix
   # hostname string/array
   # hostgroupの名前の一覧から、hostgroupのIDの配列を返す。
   def get_hostgroup_ids(hostgroup_names)
-    hostgroup_info = @zabbix.query(
-      method: 'hostgroup.get',
-      params: {
-        output: 'extend',
-        filter: {
-          name: hostgroup_names
-        }
+    hostgroup_info = @sky_zabbix.hostgroup.get(
+      output: 'extend',
+      filter: {
+        name: hostgroup_names
       }
     )
 
@@ -617,31 +617,25 @@ class Zabbix
     application_ids = get_application_ids_by_names(["MySQL"], host_id)
     interfaceid = get_hostinterface_id(host_id)
 
-    @zabbix.query(
-      method: "item.create",
-      params: {
-        name: "Original Item: MySQL Login Check",
-        key_: "mysql.login",
-        hostid: host_id,
-        delay: 60,
-        type: 0,
-        value_type: 0,
-        applications: application_ids,
-        interfaceid: interfaceid
-      }
+    @sky_zabbix.item.create(
+      name: "Original Item: MySQL Login Check",
+      key_: "mysql.login",
+      hostid: host_id,
+      delay: 60,
+      type: 0,
+      value_type: 0,
+      applications: application_ids,
+      interfaceid: interfaceid
     )
   end
 
   def create_mysql_login_trigger(item_info, physical_id)
     item_id = item_info["itemids"].first
 
-    @zabbix.query(
-      method: "trigger.create",
-      params: {
-        description: "Can not login MySQL on {HOST.NAME}",
-        expression: "{#{physical_id}:mysql.login.last(0)}=1",
-        itemid: item_id
-      }
+    @sky_zabbix.trigger.create(
+      description: "Can not login MySQL on {HOST.NAME}",
+      expression: "{#{physical_id}:mysql.login.last(0)}=1",
+      itemid: item_id
     )
   end
 
@@ -650,19 +644,16 @@ class Zabbix
     host_id = get_host_id(physical_id)
     application_ids = get_application_ids_by_names(["CPU", "Performance"], host_id)
 
-    @zabbix.query(
-      method: "item.create",
-      params: {
-        name: "Original Item: CPU Total Usage",
-        key_: "system.cpu.util[,total,avg1]",
-        params: %Q[100-last("system.cpu.util[,idle]")],
-        hostid: host_id,
-        delay: 30,
-        type: 15,
-        value_type: 0,
-        applications: application_ids,
-        units: "%"
-      }
+    @sky_zabbix.item.create(
+      name: "Original Item: CPU Total Usage",
+      key_: "system.cpu.util[,total,avg1]",
+      params: %Q[100-last("system.cpu.util[,idle]")],
+      hostid: host_id,
+      delay: 30,
+      type: 15,
+      value_type: 0,
+      applications: application_ids,
+      units: "%"
     )
   end
 
@@ -671,21 +662,15 @@ class Zabbix
   def create_cpu_usage_trigger(item_info, hostname)
     id = item_info["itemids"].first
 
-    @zabbix.query(
-      method: "trigger.create",
-      params: {
-        description: "Calculated: CPU Usage is too high on {HOST.NAME}",
-        expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
-        itemid: id
-      }
+    @sky_zabbix.trigger.create(
+      description: "Calculated: CPU Usage is too high on {HOST.NAME}",
+      expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
+      itemid: id
     )
   end
 
   def delete_hosts(host_ids)
-    @zabbix.query(
-      method: "host.delete",
-      params: host_ids
-    )
+    @sky_zabbix.host.delete(host_ids)
   end
 
   def delete_hosts_by_infra(infra)
@@ -720,26 +705,20 @@ class Zabbix
   # MySQLログイン監視のアイテムを作成する際に使います
   # returns interfaceid integer
   def get_hostinterface_id(host_id)
-    interface_info = @zabbix.query(
-      method: "hostinterface.get",
-      params: {
-        output: "extend",
-        hostids: host_id
-      }
+    interface_info = @sky_zabbix.hostinterface.get(
+      output: "extend",
+      hostids: host_id
     )
 
     return interface_info.first["interfaceid"]
   end
 
   def get_application_ids_by_names(names, host_id)
-    application_ids = @zabbix.query(
-      method: "application.get",
-      params: {
-        output: [:applicationid ],
-        hostids: host_id,
-        filter: {
-          name: names
-        }
+    application_ids = @sky_zabbix.application.get(
+      output: [:applicationid ],
+      hostids: host_id,
+      filter: {
+        name: names
       }
     )
 
