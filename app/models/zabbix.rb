@@ -444,21 +444,18 @@ class Zabbix
   # View側でテーブル表示する為のフォーマットを作って
   # 値を返している
   def show_recent_problems(infra)
-    problems = @zabbix.query(
-      method: "trigger.get",
-      params: {
-        output: [
-          :triggerid,
-          :description,
-          :priority,
-          :lastchange,
-          :value,
-        ],
-        sortfield: "lastchange",
-        selectHosts: "refer",
-        only_true: true,
-        monitored: true
-      }
+    problems = @sky_zabbix.trigger.get(
+      output: [
+        :triggerid,
+        :description,
+        :priority,
+        :lastchange,
+        :value,
+      ],
+      sortfield: "lastchange",
+      selectHosts: "refer",
+      only_true: true,
+      monitored: true
     )
 
     ids = infra.resources.ec2.map{|ec2| ec2.physical_id }
@@ -806,14 +803,11 @@ class Zabbix
 
   #get host name from given hostid
   def get_host_name(hostid)
-    @zabbix.query(
-      method: 'host.get',
-      params: {
-        hostids: hostid,
-        output: [
-          :name
-        ]
-      }
+    @sky_zabbix.host.get(
+      hostids: hostid,
+      output: [
+        :name
+      ]
     )
   end
 
