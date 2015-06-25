@@ -16,6 +16,8 @@
 
   var current_infra = null;
 
+  ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'})
+
 // ================================================================
 // infrastructures
 // ================================================================
@@ -834,6 +836,11 @@
         }
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
+
+      var client = new ZeroClipboard($(".zeroclipboard-button"));
+      client.on("ready");
+      client.on("aftercopy", function (event) {
+      });
     },
   });
 
