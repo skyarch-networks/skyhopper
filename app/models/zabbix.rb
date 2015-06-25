@@ -237,20 +237,15 @@ class Zabbix
   # @param [Integer] permission    与える権限の種類。 PermissionRead, PermissionRead or PermissionReadWrite.
   # @return [String] ID of created usergroup.
   def create_usergroup(group_name, host_group_id = nil, permission = nil)
-    q = {
-      method: 'usergroup.create',
-      params: {
-        name: group_name,
-      }
-    }
+    q = { name: group_name }
     if host_group_id
-      q[:params][:rights] = {
+      q[:rights] = {
         permission: permission,
         id: host_group_id,
       }
     end
 
-    return @zabbix.query(q)["usrgrpids"].first
+    return @sky_zabbix.usergroup.create(q)["usrgrpids"].first
   end
 
   # master usergroup が読み取り権限を持つホストグループを、hostgroup_ids に変更する。
@@ -277,12 +272,9 @@ class Zabbix
   # グループIDの配列を返す
   # 引数のgroup_nameは配列で複数OK
   def get_usergroup_ids(group_name)
-    usergroup_info = @zabbix.query(
-      method: 'usergroup.get',
-      params: {
-        filter: {
-          name: group_name
-        }
+    usergroup_info = @sky_zabbix.usergroup.get(
+      filter: {
+        name: group_name
       }
     )
 
@@ -322,16 +314,13 @@ class Zabbix
     type  = get_user_type_by_user(user)
     group = get_group_id_by_user(user)
 
-    return @zabbix.query(
-      method: 'user.create',
-      params: {
-        alias: user.email,
-        passwd: user.encrypted_password,
-        usrgrps: [
-          usrgrpid: group,
-        ],
-        type: type,
-      },
+    return @sky_zabbix.user.create(
+      alias:  user.email,
+      passwd: user.encrypted_password,
+      usrgrps: [
+        usrgrpid: group,
+      ],
+      type: type,
     )['userids'].first
   end
 
