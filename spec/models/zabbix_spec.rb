@@ -19,6 +19,10 @@ describe Zabbix, :type => :model do
 
     before do
       allow(zabbix).to receive_message_chain(:hostgroups, :create)
+      expect_any_instance_of(SkyZabbix::Client).to receive(:login).with(
+        set.zabbix_user,
+        set.zabbix_pass,
+      )
     end
 
     subject{Zabbix.new(set.zabbix_user, set.zabbix_pass)}

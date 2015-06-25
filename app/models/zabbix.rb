@@ -144,19 +144,16 @@ class Zabbix
   # @param [String] hostname physical_id
   # @return [Array<Hash>]  item_key => trigger_expression
   def get_trigger_expressions_by_hostname(hostname)
-    data = @zabbix.query(
-      method: 'trigger.get',
-      params: {
-        output: [
-          "triggeid",
-          "expression"
-        ],
-        filter: {
-          host: hostname
-        },
-        expandExpression: true,
-        selectItems: [:key_]
-      }
+    data = @sky_zabbix.trigger.get(
+      output: [
+        "triggeid",
+        "expression"
+      ],
+      filter: {
+        host: hostname
+      },
+      expandExpression: true,
+      selectItems: [:key_]
     )
 
     # ホストネームの部分をHOSTNAMEと置換えている
@@ -850,7 +847,7 @@ class Zabbix
   # @param [String] physical_id
   # @return [String] host_id. example: "1"
   def get_host_id(physical_id)
-    return @zabbix.hosts.get_id(host: physical_id)
+    return @sky_zabbix.host.get_id(host: physical_id)
   end
 
   # host id の一覧を返す。

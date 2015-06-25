@@ -10,6 +10,9 @@ bundler_args: --jobs=4 --retry=3 --deployment
 sudo: false
 
 
+branches:
+  except: /^no-ci-.*$/
+
 before_script:
   - mkdir ~/.chef
   - cp .travis/knife.rb ~/.chef/knife.rb
