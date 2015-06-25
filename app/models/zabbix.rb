@@ -13,11 +13,8 @@ class Zabbix
   DefaultUsergroupName = "No access to the frontend"
   MasterUsergroupName = "master"
 
-  class ConnectError < StandardError; end
-
   # @param [String] username
   # @param [String] password
-  # @raise [ConnectError] if cannot connect zabbix, raise this.
   def initialize(username, password)
     s = AppSetting.get
     url = "http://#{s.zabbix_fqdn}/zabbix/api_jsonrpc.php"
@@ -25,13 +22,8 @@ class Zabbix
     opt = {url: url, user: username, password: password}
     opt[:debug] = true if Rails.env.development?
 
-    begin
-      @zabbix = ZabbixApi.connect(opt)
-      @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
-      @sky_zabbix.login(username, password)
-    rescue => ex
-      raise ConnectError, ex.message
-    end
+    @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
+    @sky_zabbix.login(username, password)
   end
 
   # ホストが存在するかをbooleanで返す
@@ -220,11 +212,8 @@ class Zabbix
   # @param [String] group_name
   # @return [String] ID of created hostgroup
   def add_hostgroup(group_name)
-    return @zabbix.query(
-      method: 'hostgroup.create',
-      params: {
-        name: group_name
-      }
+    return @sky_zabbix.hostgroup.create(
+      name: group_name
     )["groupids"].first
   end
 
@@ -260,10 +249,7 @@ class Zabbix
   # @param [String] group_name
   def delete_usergroup(group_name)
     usergroup_id = get_usergroup_ids(group_name)
-    @zabbix.query(
-      method: 'usergroup.delete',
-      params: usergroup_id
-    )
+    @sky_zabbix.usergroup.delete(usergroup_id)
   end
 
   # グループIDの配列を返す
@@ -282,10 +268,7 @@ class Zabbix
   # @param [String] group_name
   def delete_hostgroup(group_name)
     hostgroup_id = get_hostgroup_id(group_name)
-    @zabbix.query(
-      method: 'hostgroup.delete',
-      params: [hostgroup_id]
-    )
+    @sky_zabbix.hostgroup.delete([hostgroup_id])
   end
 
   # hostname string/array
