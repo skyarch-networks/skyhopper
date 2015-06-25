@@ -1,5 +1,5 @@
 PATH
-  remote: /home/kuwabara/ghq/github.com/skyarch-networks/zabbix-ruby
+  remote: /home/kuwabara/ghq/github.com/skyarch-networks/sky_zabbix
   specs:
     sky_zabbix (0.1.0)
 

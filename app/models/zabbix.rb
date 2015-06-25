@@ -772,15 +772,12 @@ class Zabbix
   end
 
   def get_all_web_scenarios(host_id)
-    @zabbix.query(
-      method: "httptest.get",
-      params: {
-        output: [:httptestid, :name],
-        selectSteps: "extend",
-        selectHosts: "hostid",
-        selectItems: "extend",
-        hostids: host_id.to_s
-      }
+    @sky_zabbix.httptest.get(
+      output: [:httptestid, :name],
+      selectSteps: "extend",
+      selectHosts: "hostid",
+      selectItems: "extend",
+      hostids: host_id.to_s
     )
   end
 
