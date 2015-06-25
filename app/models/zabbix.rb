@@ -45,7 +45,7 @@ class Zabbix
   # @param [String] user_name Email address of SkyHopper user
   # @return [TrueClass|FalseClass]
   def user_exists?(user_name)
-    return !!@zabbix.users.get_id(alias: user_name)
+    return !!@sky_zabbix.user.get_id(alias: user_name)
   end
 
   # ホストにテンプレートを追加する
@@ -251,12 +251,9 @@ class Zabbix
   # master usergroup が読み取り権限を持つホストグループを、hostgroup_ids に変更する。
   # @param [Array] hostgroup_ids master usergroup が読み取れるようにする hostgroup の ID 一覧
   def change_mastergroup_rights(hostgroup_ids)
-    @zabbix.query(
-      method: "usergroup.massupdate",
-      params: {
-        usrgrpids: [get_master_usergroup_id],
-        rights: hostgroup_ids.map{|id| {permission: PermissionRead, id: id}}
-      }
+    @sky_zabbix.usergroup.massupdate(
+      usrgrpids: [get_master_usergroup_id],
+      rights: hostgroup_ids.map{|id| {permission: PermissionRead, id: id}}
     )
   end
 
@@ -325,13 +322,8 @@ class Zabbix
   end
 
   def get_user_id(username)
-    user_info = @zabbix.query(
-      method: 'user.get',
-      params: {
-        filter: {
-          alias: username
-        }
-      }
+    user_info = @sky_zabbix.user.get(
+      filter: { alias: username }
     )
 
     return user_info.first['userid']
@@ -346,22 +338,16 @@ class Zabbix
   # @param [Integer] type
   # @param [String] password
   def update_user(user_id, usergroup_ids: nil, type: UserTypeDefault, password: nil)
-    @zabbix.query(
-      method: 'user.update',
-      params: {
-        userid:  user_id,
-        usrgrps: usergroup_ids,
-        passwd:  password,
-        type:    type,
-      }
+    @sky_zabbix.user.update(
+      userid:  user_id,
+      usrgrps: usergroup_ids,
+      passwd:  password,
+      type:    type,
     )
   end
 
   def delete_user(username)
-    @zabbix.query(
-      method: 'user.delete',
-      params: [get_user_id(username)]
-    )
+    @sky_zabbix.user.delete([get_user_id(username)])
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。
