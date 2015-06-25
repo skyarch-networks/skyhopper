@@ -14,11 +14,6 @@ describe Zabbix, :type => :model do
     let(:zabbix){double('method result')}
 
     before do
-      allow(ZabbixApi).to receive(:connect).and_return(zabbix)
-    end
-
-    before do
-      allow(zabbix).to receive_message_chain(:hostgroups, :create)
       expect_any_instance_of(SkyZabbix::Client).to receive(:login).with(
         set.zabbix_user,
         set.zabbix_pass,
@@ -26,18 +21,11 @@ describe Zabbix, :type => :model do
     end
 
     subject{Zabbix.new(set.zabbix_user, set.zabbix_pass)}
-    it 'should call ZabbixApi.connect' do
-      expect(ZabbixApi).to receive(:connect).with(
-        url: include(set.zabbix_fqdn),
-        user: set.zabbix_user,
-        password: set.zabbix_pass
-      )
-      subject
-    end
+    it {is_expected.to be_a Zabbix}
 
 
-    it 'should set @zabbix' do
-      expect(subject.instance_variable_get(:@zabbix)).to eq zabbix
+    it 'should set @sky_zabbix' do
+      expect(subject.instance_variable_get(:@sky_zabbix)).to be_a SkyZabbix::Client
     end
   end
 end
