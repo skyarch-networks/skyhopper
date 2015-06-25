@@ -554,29 +554,23 @@ class Zabbix
 
   def get_url_status_monitoring(infra)
     host_id = get_host_id(infra_to_elb_hostname(infra))
-    items = @zabbix.query(
-      method: "item.get",
-      params: {
-        hostids: host_id,
-        output: [
-          "key_",
-          "lastvalue",
-        ],
-        webitems: "true"
-      }
+    items_req = @sky_zabbix.item.build_get(
+      hostids: host_id,
+      output: [
+        "key_",
+        "lastvalue",
+      ],
+      webitems: "true"
     )
-
-    webscenario = @zabbix.query(
-      method: "httptest.get",
-      params: {
-        hostids: host_id,
-        selectSteps: [
-          "name",
-          "url"
-        ],
-        output: ["name"]
-      }
+    webscenario_req = @sky_zabbix.httptest.build_get(
+      hostids: host_id,
+      selectSteps: [
+        "name",
+        "url"
+      ],
+      output: ["name"]
     )
+    items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
 
     data_for_table = []
     webscenario.each do |scenario|
