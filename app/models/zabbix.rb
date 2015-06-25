@@ -98,22 +98,24 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
-    infra.resources.ec2.each do |r|
+    reqs = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
-      item_infos.each do |item|
+      item_infos.map do |item|
         updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-        update_expression(item["triggers"].first["triggerid"], updating_expr)
+
+        @sky_zabbix.trigger.build_update(
+          triggerid: item["triggers"].first["triggerid"],
+          expression: updating_expr,
+        )
       end
-    end
+    end.flatten
+    @sky_zabbix.batch(*reqs).each{|x|raise x if x.is_a? StandardError}
   end
 
   def update_expression(trigger_id, expression)
-    @zabbix.query(
-      method: "trigger.update",
-      params: {
-        expression: expression,
-        triggerid: trigger_id
-      }
+    @sky_zabbix.trigger.update(
+      expression: expression,
+      triggerid: trigger_id
     )
   end
 
@@ -128,12 +130,9 @@ class Zabbix
         host_key = ""
       end
 
-      @zabbix.query(
-        method: "item.update",
-        params: {
-          itemid: item_infos.first["itemid"],
-          key_: key + host_key
-        }
+      @sky_zabbix.item.update(
+        itemid: item_infos.first["itemid"],
+        key_: key + host_key
       )
 
       expression = "{#{r.physical_id}:mysql.login#{host_key}.last(0)}=1"
@@ -305,12 +304,12 @@ class Zabbix
       params: {
         output: 'extend',
         filter: {
-         name: hostgroup_names
+          name: hostgroup_names
         }
       }
     )
 
-   return hostgroup_info.map{|i| i["groupid"]}
+    return hostgroup_info.map{|i| i["groupid"]}
   end
 
   def get_hostgroup_id(group_name)
@@ -513,7 +512,7 @@ class Zabbix
     end
 
     # wh = {scenario_name => [[steps], [steps]]}
-    wh.each do |scenario_name, steps|
+    reqs = wh.map do |scenario_name, steps|
       step_category = [:name, :url, :required, :status_codes, :timeout, :no]
 
       # [{name: "NAME", url: "http://...", ..., no: 1..n}]
@@ -522,15 +521,13 @@ class Zabbix
         step_category.zip(step).to_h
       end
 
-      @zabbix.query(
-        method: "httptest.create",
-        params: {
-          name:  scenario_name,
-          hostid: host_id,
-          steps: s_array
-        }
+      @sky_zabbix.httptest.build_create(
+        name:  scenario_name,
+        hostid: host_id,
+        steps: s_array
       )
     end
+    @sky_zabbix.batch(*reqs).each{|x|raise x if x.is_a? StandardError}
   end
 
   # Zabbix上の関係  host has many scenarios. web scenario has many steps
@@ -713,18 +710,15 @@ class Zabbix
   # MySQL関連のアイテムを取得する際はkindが"search"になります
   # kind = search or filter
   def get_item_info(physical_id, item_keys, kind)
-    @zabbix.query(
-      method: 'item.get',
-      params: {
-        hostids: get_host_id(physical_id),
-        :"#{kind}" => {
-          key_: item_keys
-        },
-        output: [
-          :key_
-        ],
-        selectTriggers: 'shorten'
-      }
+    @sky_zabbix.item.get(
+      hostids: get_host_id(physical_id),
+      :"#{kind}" => {
+        key_: item_keys
+      },
+      output: [
+        :key_
+      ],
+      selectTriggers: 'shorten'
     )
   end
 
@@ -765,10 +759,7 @@ class Zabbix
   end
 
   def delete_all_web_scenario(web_scenario_ids)
-    @zabbix.query(
-      method: "httptest.delete",
-      params: web_scenario_ids
-    )
+    @sky_zabbix.httptest.delete(web_scenario_ids)
   end
 
   def get_all_web_scenarios(host_id)
@@ -782,12 +773,9 @@ class Zabbix
   end
 
   def get_web_scenario_id(host_id)
-    data = @zabbix.query(
-      method: "httptest.get",
-      params: {
-        output: [:httptestid],
-        hostids: host_id.to_s
-      }
+    data = @sky_zabbix.httptest.get(
+      output: [:httptestid],
+      hostids: host_id.to_s
     )
 
     return data.present? ? data.map{|scenario| scenario["httptestid"]} : nil
@@ -797,34 +785,23 @@ class Zabbix
   # @param [Infrastructure] infra
   # @return [Array<String>] Array of trigger ID
   def get_triggers_for_infra(infra)
-    host_ids = infra.resources.ec2.map do |r|
-      get_host_id(r.physical_id)
-    end
+    host_ids = get_host_ids(infra.resources.ec2.map{|e|e.physical_id})
 
-    return @zabbix.query(
-      method: 'trigger.get',
-      params: {
-        hostids: host_ids
-      }
-    ).map{|t|t['triggerid']}
+    return @sky_zabbix.trigger.get(
+      hostids: host_ids
+    ).map{|t|t[@sky_zabbix.trigger.pk]}
   end
 
   # status = 0 はトリガーオン
   def enable_trigger(trigger_ids)
     trigger_ids_set_status = trigger_ids.map{|id| {triggerid: id, status: 0}}
-    @zabbix.query(
-      method: 'trigger.update',
-      params: trigger_ids_set_status
-    )
+    @sky_zabbix.trigger.update(trigger_ids_set_status)
   end
 
   # status = 0 はトリガーオフ
   def disable_trigger(trigger_ids)
     trigger_ids_set_status = trigger_ids.map{|id| {triggerid: id, status: 1}}
-    @zabbix.query(
-      method: 'trigger.update',
-      params: trigger_ids_set_status
-    )
+    @sky_zabbix.trigger.update(trigger_ids_set_status)
   end
 
   #get host name from given hostid
@@ -851,6 +828,6 @@ class Zabbix
   # @param [Array<String>] host_names
   # @return [Array<String>] host_ids. example: ["1", "2"]
   def get_host_ids(host_names)
-    @zabbix.query(method: 'host.get', params: {filter: {host: host_names}}).map{|x|x['hostid']}
+    return @sky_zabbix.host.get_ids(host: host_names)
   end
 end
