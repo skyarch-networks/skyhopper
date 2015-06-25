@@ -55,7 +55,7 @@ class Zabbix
     host_id = get_host_id(physical_id)
     template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
 
-    @sky_zabbix.template.massadd(
+    return @sky_zabbix.template.build_massadd(
       hosts: [{hostid: host_id}],
       templates: template_ids.map{|x| {templateid: x}}
     )
@@ -200,7 +200,7 @@ class Zabbix
   def create_elb_host(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
-    @sky_zabbix.host.create(
+    return @sky_zabbix.host.build_create(
       host: infra_to_elb_hostname(infra),
       interfaces: [{
         type: 1,
@@ -632,7 +632,7 @@ class Zabbix
   def create_mysql_login_trigger(item_info, physical_id)
     item_id = item_info["itemids"].first
 
-    @sky_zabbix.trigger.create(
+    @sky_zabbix.trigger.build_create(
       description: "Can not login MySQL on {HOST.NAME}",
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
       itemid: item_id
@@ -662,7 +662,7 @@ class Zabbix
   def create_cpu_usage_trigger(item_info, hostname)
     id = item_info["itemids"].first
 
-    @sky_zabbix.trigger.create(
+    @sky_zabbix.trigger.build_create(
       description: "Calculated: CPU Usage is too high on {HOST.NAME}",
       expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
       itemid: id
@@ -698,6 +698,10 @@ class Zabbix
 
   def infra_to_elb_hostname(infra)
     return "#{infra.id}-#{infra.stack_name}-elb"
+  end
+
+  def batch(*reqs)
+    @sky_zabbix.batch(*reqs)
   end
 
   private
