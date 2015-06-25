@@ -412,23 +412,21 @@ class Zabbix
 
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
-    type = case item_key
-           when "vm.memory.size[available]", "net.tcp.service[http]", "net.tcp.service[smtp]"
-             3
-           else
-             0
-           end
+    type =
+      case item_key
+      when "vm.memory.size[available]", "net.tcp.service[http]", "net.tcp.service[smtp]"
+        3
+      else
+        0
+      end
 
-    history_all =  @zabbix.query(
-      method: 'history.get',
-      params: {
-        output: "extend",
-        history: type,
-        itemids: item_info.first["itemid"],
-        sortfield: 'clock',
-        sortorder: 'DESC',
-        limit: 30
-      }
+    history_all =  @sky_zabbix.history.get(
+      output: "extend",
+      history: type,
+      itemids: item_info.first["itemid"],
+      sortfield: 'clock',
+      sortorder: 'DESC',
+      limit: 30
     )
 
     # chart_data: ([time, value], [time, value])
