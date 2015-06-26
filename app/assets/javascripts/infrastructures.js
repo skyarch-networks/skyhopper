@@ -840,9 +840,16 @@
       var client = new ZeroClipboard($(".zeroclipboard-button"));
       client.on("ready", function (ready_event) {
         client.on("aftercopy", function (event) {
-          var t = $(event.target).find('span.copied-hint');
-          t.text('Copied!');
-          setTimeout(function () { t.text('Copy'); }, 1000);
+          var btn = $(event.target);
+          var target = btn.find('.copied-hint-target');
+          var hint_text = btn.attr('data-copied-hint');
+          var orig_text = target.attr('data-orig-text');
+          if (!orig_text) {
+            orig_text = target.text();
+            target.attr('data-orig-text', orig_text);
+          }
+          target.text(hint_text);
+          setTimeout(function () { target.text(orig_text); }, 1000);
         });
       });
     },
