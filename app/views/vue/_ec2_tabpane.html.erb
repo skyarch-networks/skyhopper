@@ -54,30 +54,18 @@ Arguments:
         </tr>
         <tr>
           <td>Public DNS</td>
-          <td>
-            <%= link_to '{{ec2.public_dns}}', '//{{ec2.public_dns}}', target: '_blank' %>
-          </td>
-          <td>
-            <%= copy_to_clipboard_button('{{ec2.public_dns}}') %>
-          </td>
+          <td><%= link_to '{{ec2.public_dns}}', '//{{ec2.public_dns}}', target: '_blank' %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.public_dns}}') %></td>
         </tr>
         <tr>
           <td>Elastic IP</td>
-          <td>
-            <%= link_and_dropdown_ssh('{{ec2.elastic_ip}}') %>
-          </td>
-          <td>
-            <%= copy_to_clipboard_button('{{ec2.elastic_ip}}') %>
-          </td>
+          <td><%= link_and_dropdown_ssh('{{ec2.elastic_ip}}') %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.elastic_ip}}') %></td>
         </tr>
         <tr>
           <td>Public IP</td>
-          <td>
-            <%= link_and_dropdown_ssh('{{ec2.public_ip}}') %>
-          </td>
-          <td>
-            <%= copy_to_clipboard_button('{{ec2.public_ip}}') %>
-          </td>
+          <td><%= link_and_dropdown_ssh('{{ec2.public_ip}}') %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.public_ip}}') %></td>
         </tr>
       </tbody>
     </table>

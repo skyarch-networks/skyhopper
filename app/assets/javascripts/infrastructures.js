@@ -842,9 +842,7 @@
         client.on("aftercopy", function (event) {
           var t = $(event.target).find('span.copied-hint');
           t.text('Copied!');
-          setTimeout(function () {
-            t.text('Copy');
-          }, 1000);
+          setTimeout(function () { t.text('Copy'); }, 1000);
         });
       });
     },
