@@ -88,9 +88,9 @@ class NodesController < ApplicationController
 
     @info = {}
     status = resource.status
-    @info[:cook_status]       = status.cook.value.camelize
-    @info[:serverspec_status] = status.serverspec.value.camelize
-    @info[:update_status]     = status.yum.value.camelize
+    @info[:cook_status]       = status.cook
+    @info[:serverspec_status] = status.serverspec
+    @info[:update_status]     = status.yum
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 

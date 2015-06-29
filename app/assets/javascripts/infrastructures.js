@@ -756,6 +756,8 @@
           $('#change-scale-modal').modal('hide');
         });
       },
+
+      capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
       ec2_btn_class: function () {
@@ -764,13 +766,17 @@
         }
         return 'btn-default';
       },
-      cook_status_class:       function () { return this._label_class(this.ec2.info.cook_status); },
-      serverspec_status_class: function () { return this._label_class(this.ec2.info.serverspec_status); },
-      update_status_class:     function () { return this._label_class(this.ec2.info.update_status); },
+      cook_status_class:       function () { return this._label_class(this.cook_status); },
+      serverspec_status_class: function () { return this._label_class(this.serverspec_status); },
+      update_status_class:     function () { return this._label_class(this.update_status); },
 
-      cook_status:       function () { return this.ec2.info.cook_status; },
-      serverspec_status: function () { return this.ec2.info.serverspec_status; },
-      update_status:     function () { return this.ec2.info.update_status; },
+      cook_status:       function () { return this.capitalize(this.ec2.info.cook_status.value); },
+      serverspec_status: function () { return this.capitalize(this.ec2.info.serverspec_status.value); },
+      update_status:     function () { return this.capitalize(this.ec2.info.update_status.value); },
+
+      cook_time:       function () { return this.cook_status       === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.cook_status.updated_at);},
+      serverspec_time: function () { return this.serverspec_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.serverspec_status.updated_at);},
+      update_time:     function () { return this.update_status     === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at);},
 
       runlist_empty: function () { return _.isEmpty(this.ec2.runlist); },
       dishes_empty:  function () { return _.isEmpty(this.ec2.dishes); },
