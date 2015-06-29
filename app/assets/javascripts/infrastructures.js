@@ -347,7 +347,7 @@
           self.show_problems();
         }
         self.$parent.loading = false;
-      });
+      }).fail(alert_and_show_infra);
     },
   });
 

@@ -403,6 +403,7 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    sky_zabbix (2.2.0.1.1)
     slop (3.6.0)
     specinfra (2.36.1)
       net-scp
@@ -452,8 +453,6 @@ GEM
       rack (>= 1.0)
     wmi-lite (1.0.0)
     yard (0.8.7.6)
-    zabbixapi (2.2.2)
-      json (~> 1.6, >= 1.6.0)
 
 PLATFORMS
   ruby
@@ -507,6 +506,7 @@ DEPENDENCIES
   sdoc
   serverspec
   sidekiq
+  sky_zabbix (~> 2.2.0)
   specinfra
   sqlite3
   tapp
@@ -514,4 +514,3 @@ DEPENDENCIES
   uglifier
   unicorn-rails
   yard
-  zabbixapi (~> 2.2.0)
