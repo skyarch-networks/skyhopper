@@ -96,4 +96,4 @@ gem 'redis-rails'
 gem 'redis'
 gem 'hiredis'
 
-gem 'sky_zabbix', path: ENV['SKY_ZABBIX_PATH']
+gem 'sky_zabbix', '~> 2.2.0'
