@@ -47,15 +47,12 @@ describe NodesController, :type => :controller do
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
     let(:instance_summary){{status: instance_status}}
-    let(:cook_status){'success'}
-    let(:serverspec_status){'un_executed'}
-    let(:yum_status){'failed'}
+    let(:cook_status){resource.status.cook}
+    let(:serverspec_status){resource.status.serverspec}
+    let(:yum_status){resource.status.yum}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
       allow(instance).to receive(:summary).and_return(instance_summary)
-      resource.status.cook.update(value: cook_status)
-      resource.status.serverspec.update(value: serverspec_status)
-      resource.status.yum.update(value: yum_status)
     end
 
     let(:chef_server){double('chef-server')}
@@ -138,9 +135,9 @@ describe NodesController, :type => :controller do
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:cook_status]).to eq cook_status.camelize
-        expect(assigns[:info][:serverspec_status]).to eq serverspec_status.camelize
-        expect(assigns[:info][:update_status]).to eq yum_status.camelize
+        expect(assigns[:info][:cook_status]).to eq cook_status
+        expect(assigns[:info][:serverspec_status]).to eq serverspec_status
+        expect(assigns[:info][:update_status]).to eq yum_status
       end
 
       it 'should assigns @dishes' do
