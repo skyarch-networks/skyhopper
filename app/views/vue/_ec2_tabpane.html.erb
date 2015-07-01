@@ -145,7 +145,7 @@ Arguments:
       <div class="dropup" style="display: inline-block">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
-          <span class="badge">{{ec2.number_of_security_updates}}</span>
+          <span class="badge">{{ec2.number_of_security_updates | zero_as_null}}</span>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">

@@ -94,11 +94,7 @@ class NodesController < ApplicationController
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 
-    yum_check_log = InfrastructureLog.where(infrastructure_id: @infra.id).check_security_update.last
-    if yum_check_log
-      /(?<num>\d+|No) package\(?s\)? needed for security/ =~ yum_check_log.details
-      @number_of_security_updates = (num == 'No') ? '' : num
-    end
+    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id)
 
     @yum_schedule = YumSchedule.find_or_create_by(physical_id: physical_id)
   end

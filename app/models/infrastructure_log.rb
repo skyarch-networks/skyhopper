@@ -10,7 +10,7 @@ class InfrastructureLog < ActiveRecord::Base
   belongs_to :infrastructure
   belongs_to :user
 
-  scope :check_security_update, -> { where('details LIKE ?', '%check security%finished%') }
+  scope :security_update, -> { where('details LIKE ?', 'yum%security%finished%') }
 
   class << self
     def for_infra(infra_id)
@@ -51,6 +51,18 @@ class InfrastructureLog < ActiveRecord::Base
           end
         end
       })
+    end
+
+    def number_of_security_updates(infra_id)
+      log = where(infrastructure_id: infra_id).security_update.last.details
+      if log
+        if /Complete!\Z/ === log
+          0
+        else
+          /(?<num>\d+|No) package\(?s\)? needed for security/ =~ log
+          (num == 'No') ? 0 : num
+        end
+      end
     end
   end
 end

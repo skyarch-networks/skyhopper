@@ -835,6 +835,11 @@
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+    filters: {
+      zero_as_null: function (str) {
+        return (str == 0) ? null : str;
+      },
+    },
   });
 
   Vue.component('edit-runlist-tabpane', {
