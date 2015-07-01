@@ -245,6 +245,7 @@
           // TODO: data が空の場合にエラー表示する
           // TODO: ポーリング
           self.url_status = data;
+          self.error_message = null;
           self.loading_graph = false;
           self.showing_url = true;
         }).fail(alert_and_show_infra);
