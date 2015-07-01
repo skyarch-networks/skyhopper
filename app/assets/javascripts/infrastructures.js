@@ -931,7 +931,9 @@
           .done(alert_success(self.show_ec2))
           .fail(alert_danger(self.show_ec2));
       },
-      show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
+
+      use_default: function (attr) { attr.value = attr.default; },
+      show_ec2:    function ()     { this.$parent.show_ec2(this.physical_id); },
     },
     filters: {
       toID: function (name) { return name.replace(/\//g, '-'); },

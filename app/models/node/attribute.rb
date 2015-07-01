@@ -66,12 +66,14 @@ module Node::Attribute
       :'zabbix/agent/servers' => {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
-        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com'
+        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
+        default:     AppSetting.get.zabbix_fqdn,
       },
       :'zabbix/agent/servers_active' => {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
-        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com'
+        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
+        default:     AppSetting.get.zabbix_fqdn,
       },
       :'zabbix/database/install_method' => {
         type: String,

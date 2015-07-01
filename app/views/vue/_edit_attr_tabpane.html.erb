@@ -7,7 +7,9 @@
   <div v-repeat="attr: attributes" class="form-group">
     <label for="{{* $key | toID}}" class="col-sm-3 control-label">{{* $key}}</label>
     <div class="col-sm-5">
-      <input v-model="attr.value" id="{{* $key | toID}}" type="{{* attr.input_type}}" class="node-attributes form-control">
+      <input v-model="attr.value" id="{{* $key | toID}}" type="{{* attr.input_type}}" class="form-control">
+      <%# TODO: Design is Muzukashii%>
+      <button v-if="attr.default" v-on="click: use_default(attr)" class="btn btn-default btn-sm" type="button">Use Default</button>
       <span class="help-block">{{* attr.description}}</span>
     </div>
   </div>
