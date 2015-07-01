@@ -94,7 +94,7 @@ class NodesController < ApplicationController
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 
-    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id)
+    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
     @yum_schedule = YumSchedule.find_or_create_by(physical_id: physical_id)
   end
