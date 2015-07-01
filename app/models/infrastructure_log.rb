@@ -54,12 +54,12 @@ class InfrastructureLog < ActiveRecord::Base
     end
 
     def number_of_security_updates(infra_id, physical_id)
-      log = where(infrastructure_id: infra_id).security_update(physical_id).last.details
+      log = where(infrastructure_id: infra_id).security_update(physical_id).last
       if log
-        if /Complete!\Z/ === log
+        if /Complete!\Z/ === log.details
           0
         else
-          /(?<num>\d+|No) package\(?s\)? needed for security/ =~ log
+          /(?<num>\d+|No) package\(?s\)? needed for security/ =~ log.details
           (num == 'No') ? 0 : num
         end
       end
