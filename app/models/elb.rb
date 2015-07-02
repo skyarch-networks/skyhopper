@@ -14,11 +14,13 @@ class ELB
 
     @name = elb_name
 
-    @elb = ::Aws::ElasticLoadBalancing::Client.new(
+    @aws_params = {
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
       region:            region,
-    )
+    }
+
+    @elb = ::Aws::ElasticLoadBalancing::Client.new(@aws_params)
   end
 
   # return instance description.
@@ -26,6 +28,18 @@ class ELB
   def instances
     data = @elb.describe_instance_health(load_balancer_name: @name)
     return data.instance_states.map(&:to_hash)
+  end
+
+  # @return [Array<Hash{Symbol => String}>]
+  def listeners
+    return details.listener_descriptions.map(&:listener).map(&:to_hash).map do |l|
+      crt_id = l[:ssl_certificate_id]
+      if crt_id
+        l.delete(:ssl_certificate_id)
+        l[:expiration] = ssl_expiration(crt_id)
+      end
+      l
+    end
   end
 
   # @return [String]
@@ -57,7 +71,18 @@ class ELB
 
   # @return [Struct]
   def details
-    data = @elb.describe_load_balancers
-    return data.load_balancer_descriptions.find{|x| x.load_balancer_name == @name}
+    return @details ||= (
+      data = @elb.describe_load_balancers(load_balancer_names: [@name])
+      data.load_balancer_descriptions.first
+    )
+  end
+
+  # @param [String] crt_id example: arn:aws:iam::000000000000:server-certificate/certName
+  # @return [Time] expiration date.
+  def ssl_expiration(crt_id)
+    id_body = crt_id[/\/(.+)$/, 1]
+    iam = Aws::IAM::Client.new(@aws_params)
+    res = iam.get_server_certificate(server_certificate_name: id_body)
+    return res.server_certificate.server_certificate_metadata.expiration
   end
 end

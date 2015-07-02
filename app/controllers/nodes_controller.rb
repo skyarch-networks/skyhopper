@@ -88,15 +88,17 @@ class NodesController < ApplicationController
 
     @info = {}
     status = resource.status
-    @info[:cook_status]       = status.cook.value.camelize
-    @info[:serverspec_status] = status.serverspec.value.camelize
-    @info[:update_status]     = status.yum.value.camelize
+    @info[:cook_status]       = status.cook
+    @info[:serverspec_status] = status.serverspec
+    @info[:update_status]     = status.yum
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 
     @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
     @yum_schedule = YumSchedule.find_or_create_by(physical_id: physical_id)
+
+    @attribute_set = n.attribute_set?
   end
 
   # GET /nodes/i-0b8e7f12/edit
@@ -134,6 +136,13 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12/cook
   def cook
     physical_id = params.require(:id)
+
+    node = Node.new(physical_id)
+
+    unless node.attribute_set?
+      render text: I18n.t('nodes.msg.should_set_attr'), status: 400
+      return
+    end
 
     Thread.new_with_db do
       cook_node(@infra, physical_id)

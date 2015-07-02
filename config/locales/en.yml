@@ -192,6 +192,7 @@ en:
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
       cook_started:       'Cook was successfully started'
+      should_set_attr:    "Cook wasn't started. You should set attribute"
       attribute_updated:  'Attribute was successfully updated.'
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
@@ -390,10 +391,19 @@ en:
       not_running:    'Zabbix Server is not running.'
 
   ec2_instances:
-    description:     'Description'
-    settings:        'Settings'
-    change_status:   'Change status of EC2 instance'
-    changing_status: 'Changing status of EC2 instance...'
+    description:       'Description'
+    settings:          'Settings'
+    change_status:     'Change status of EC2 instance'
+    changing_status:   'Changing status of EC2 instance...'
+    listeners:          'Listeners'
+    protocol:          'Protocol'
+    lb_port:           'LoadBalancer Port'
+    instance_protocol: 'Instance Protocol'
+    instance_port:     'Instance Port'
+    expiration_date:   'Expiration date of SSL certificate'
+    instances:         'Instances'
+    state:             'State'
+    reason_code:       'Reason Code'
     msg:
       registered_to_elb:    'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'

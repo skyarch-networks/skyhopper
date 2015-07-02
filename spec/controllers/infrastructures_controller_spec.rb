@@ -400,7 +400,8 @@ describe InfrastructuresController, :type => :controller do
     let(:req){get :show_elb, id: infra.id, physical_id: physical_id}
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name)}
+    let(:listeners){['hoge']}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners)}
 
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
@@ -416,6 +417,10 @@ describe InfrastructuresController, :type => :controller do
 
     it 'should assign @dns_name' do
       expect(assigns[:dns_name]).to eq dns_name
+    end
+
+    it 'should assign @listeners' do
+      expect(assigns[:listeners]).to eq listeners
     end
 
     it 'should assign @unregistereds' do

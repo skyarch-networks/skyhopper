@@ -48,28 +48,31 @@ var Monitoring = function (infra) {
   this.edit = function () {
     var dfd = $.Deferred();
 
-    ajax_monitoring.edit({id: infra.id})
-      .done(function (data) {
-        _.forEach(data.master_monitorings, function (m) {
-          var selected = !!_.find(data.selected_monitoring_ids, function (id) {
-            return id === m.id;
-          });
-          m.checked = selected;
-
-          if (self.type(m) === 'trigger') {
-            var expr = data.trigger_expressions[m.item];
-            var v = parseInt(expr.replace(m.trigger_expression, '').replace(/[A-Z]/, ''));
-            m.value = v;
-          }
+    ajax_monitoring.edit({id: infra.id}).done(function (data) {
+      _.forEach(data.master_monitorings, function (m) {
+        var selected = !!_.find(data.selected_monitoring_ids, function (id) {
+          return id === m.id;
         });
-        if (!data.web_scenarios) {
-          data.web_scenarios = [];
+        m.checked = selected;
+
+        var expr;
+        if (self.type(m) === 'trigger') {
+          expr = data.trigger_expressions[m.item];
+          var v = parseInt(expr.replace(m.trigger_expression, '').replace(/[A-Z]/, ''));
+          m.value = v;
+        } else if (self.type(m) === 'mysql') {
+          var re = /^mysql.login\[(.+)\]/;
+          var key = _.findKey(data.trigger_expressions, function (_, key) {return re.test(key);});
+          m.value = key.match(re)[1];
         }
-        dfd.resolve(data);
-      })
-      .fail(function (xhr) {
-        dfd.reject(xhr);
       });
+      if (!data.web_scenarios) {
+        data.web_scenarios = [];
+      }
+      dfd.resolve(data);
+    }).fail(function (xhr) {
+      dfd.reject(xhr);
+    });
 
     return dfd.promise();
   };

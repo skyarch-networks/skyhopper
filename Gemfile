@@ -96,4 +96,4 @@ gem 'redis-rails'
 gem 'redis'
 gem 'hiredis'
 
-gem 'zabbixapi', '~> 2.2.0'
+gem 'sky_zabbix', '~> 2.2.0'

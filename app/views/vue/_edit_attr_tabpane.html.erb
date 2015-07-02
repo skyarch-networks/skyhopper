@@ -7,17 +7,20 @@
   <div v-repeat="attr: attributes" class="form-group">
     <label for="{{* $key | toID}}" class="col-sm-3 control-label">{{* $key}}</label>
     <div class="col-sm-5">
-      <input v-model="attr.value" id="{{* $key | toID}}" type="{{* attr.input_type}}" class="node-attributes form-control">
+      <input v-model="attr.value" id="{{* $key | toID}}" type="{{* attr.input_type}}" class="form-control" v-attr="required: attr.required">
+      <%# TODO: Design is Muzukashii%>
+      <button v-if="attr.default" v-on="click: use_default(attr)" class="btn btn-default btn-sm" type="button">Use Default</button>
       <span class="help-block">{{* attr.description}}</span>
     </div>
   </div>
+
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: update()"   class="btn btn-sm btn-primary" v-attr="disabled: empty"><%= t 'common.btn.save_changes' %></button>
+    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
+  </div>
+  <div v-if="loading" class="form-actions-top">
+    <div-loader></div-loader>
+  </div>
 </form>
 
-<div v-if="!loading" class="form-actions-top">
-  <button v-on="click: update()"   class="btn btn-sm btn-primary" v-attr="disabled: empty"><%= t 'common.btn.save_changes' %></button>
-  <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
-</div>
-<div v-if="loading" class="form-actions-top">
-  <div-loader></div-loader>
-</div>
 </script>

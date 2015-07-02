@@ -35,6 +35,12 @@
     }
   };
 
+  var toLocaleString = function (datetext) {
+    var date = new Date(datetext);
+    return date.toLocaleString();
+  };
+
+
   // Utilities
   var alert_success = function (callback) {
     return function (msg) {
@@ -241,6 +247,7 @@
           // TODO: data が空の場合にエラー表示する
           // TODO: ポーリング
           self.url_status = data;
+          self.error_message = null;
           self.loading_graph = false;
           self.showing_url = true;
         }).fail(alert_and_show_infra);
@@ -343,7 +350,7 @@
           self.show_problems();
         }
         self.$parent.loading = false;
-      });
+      }).fail(alert_and_show_infra);
     },
   });
 
@@ -545,10 +552,19 @@
             .fail(alert_danger(reload));
         });
       },
-      state: function (state){
-        if (state === 'InService') { return 'success'; }
-        else                       { return 'danger'; }
+      state: function (s){
+        if (s === 'InService') { return 'success'; }
+        else                   { return 'danger'; }
       },
+      expiration_date: function (date_str) {
+        if (!date_str) {
+          return "";
+        }
+        return toLocaleString(date_str);
+      },
+
+      panel_class: function (state) { return 'panel-' + this.state(state);},
+      label_class: function (state) { return 'label-' + this.state(state);},
     },
     compiled: function () {
       var self = this;
@@ -556,8 +572,10 @@
         self.$set('ec2_instances', data.ec2_instances);
         self.$set('unregistereds', data.unregistereds);
         self.$set('dns_name', data.dns_name);
+        self.$set('listeners', data.listeners);
         self.$set('selected_ec2', null);
         self.$parent.loading = false;
+        console.log(self);
       }).fail(alert_and_show_infra);
     },
   });
@@ -754,6 +772,7 @@
           alert_danger()(msg);
         });
       },
+      capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
       ec2_btn_class: function () {
@@ -762,13 +781,17 @@
         }
         return 'btn-default';
       },
-      cook_status_class:       function () { return this._label_class(this.ec2.info.cook_status); },
-      serverspec_status_class: function () { return this._label_class(this.ec2.info.serverspec_status); },
-      update_status_class:     function () { return this._label_class(this.ec2.info.update_status); },
+      cook_status_class:       function () { return this._label_class(this.cook_status); },
+      serverspec_status_class: function () { return this._label_class(this.serverspec_status); },
+      update_status_class:     function () { return this._label_class(this.update_status); },
 
-      cook_status:       function () { return this.ec2.info.cook_status; },
-      serverspec_status: function () { return this.ec2.info.serverspec_status; },
-      update_status:     function () { return this.ec2.info.update_status; },
+      cook_status:       function () { return this.capitalize(this.ec2.info.cook_status.value); },
+      serverspec_status: function () { return this.capitalize(this.ec2.info.serverspec_status.value); },
+      update_status:     function () { return this.capitalize(this.ec2.info.update_status.value); },
+
+      cook_time:       function () { return this.cook_status       === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.cook_status.updated_at);},
+      serverspec_time: function () { return this.serverspec_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.serverspec_status.updated_at);},
+      update_time:     function () { return this.update_status     === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at);},
 
       runlist_empty: function () { return _.isEmpty(this.ec2.runlist); },
       dishes_empty:  function () { return _.isEmpty(this.ec2.dishes); },
@@ -966,7 +989,9 @@
           .done(alert_success(self.show_ec2))
           .fail(alert_danger(self.show_ec2));
       },
-      show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
+
+      use_default: function (attr) { attr.value = attr.default; },
+      show_ec2:    function ()     { this.$parent.show_ec2(this.physical_id); },
     },
     filters: {
       toID: function (name) { return name.replace(/\//g, '-'); },
@@ -1187,10 +1212,7 @@
         },
       },
       filters: {
-        toLocaleString: function (datetext) {
-          var date = new Date(datetext);
-          return date.toLocaleString();
-        }
+        toLocaleString: toLocaleString,
       },
       computed: {
         no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },

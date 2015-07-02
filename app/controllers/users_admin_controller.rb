@@ -171,7 +171,7 @@ class UsersAdminController < ApplicationController
   def set_zabbix
     begin
       @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError => ex
+    rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
       redirect_to users_admin_index_path
     end

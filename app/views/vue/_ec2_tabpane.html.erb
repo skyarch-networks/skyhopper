@@ -102,15 +102,21 @@ Arguments:
 
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_cook_status' %></h6>
-      <span v-class="cook_status_class" class="label">{{cook_status}}</span>
+      <bootstrap-tooltip v-with="title: cook_time">
+        <span v-class="cook_status_class" class="label">{{cook_status}}</span>
+      </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
-      <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
+      <bootstrap-tooltip v-with="title: serverspec_time">
+        <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
+      </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_update_status' %></h6>
-      <span v-class="update_status_class" class="label">{{update_status}}</span>
+      <bootstrap-tooltip v-with="title: update_time">
+        <span v-class="update_status_class" class="label">{{update_status}}</span>
+      </bootstrap-tooltip>
     </div>
   </div>
 
@@ -141,11 +147,11 @@ Arguments:
   <%# Buttons %>
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">
-      <button v-on="click: cook()" v-class="border-blink: cook_status === 'UnExecuted'" class="btn btn-sm btn-primary">
+      <button v-on="click: cook()" v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
         <%= t 'nodes.cook'%>
       </button>
       <button v-on="click: edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
-      <button v-on="click: edit_attr()" class="btn btn-sm btn-default"><%= t 'nodes.btn.instance_settings' %></button>
+      <button v-on="click: edit_attr()" class="btn btn-sm btn-default" v-class="border-blink: !ec2.attribute_set"><%= t 'nodes.btn.instance_settings' %></button>
       <div class="dropup" style="display: inline-block">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum

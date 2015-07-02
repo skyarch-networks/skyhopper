@@ -42,6 +42,7 @@ module ZabbixStub
       allow(_zabbix).to receive(:get_history).with(str, str).and_return([['foo', 'bar']])
       allow(_zabbix).to receive(:get_group_id_by_user).with(User).and_return('1')
       allow(_zabbix).to receive(:get_user_type_by_user).with(User).and_return('1')
+      allow(_zabbix).to receive(:batch).with(any_args)
     end
   end
 end
