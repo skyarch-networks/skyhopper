@@ -8,42 +8,21 @@
 
 class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
 
-  InstanceTypes = {
-    't1.micro'    => {           PV: true},
-    't2.micro'    => {HVM: true          },
-    't2.small'    => {HVM: true          },
-    't2.medium'   => {HVM: true          },
-    'm3.medium'   => {HVM: true, PV: true},
-    'm3.large'    => {HVM: true, PV: true},
-    'm3.xlarge'   => {HVM: true, PV: true},
-    'm3.2xlarge'  => {HVM: true, PV: true},
-    'm1.small'    => {           PV: true},
-    'm1.medium'   => {           PV: true},
-    'm1.large'    => {           PV: true},
-    'm1.xlarge'   => {           PV: true},
-    'c3.large'    => {HVM: true, PV: true},
-    'c3.xlarge'   => {HVM: true, PV: true},
-    'c3.2xlarge'  => {HVM: true, PV: true},
-    'c3.4xlarge'  => {HVM: true, PV: true},
-    'c3.8xlarge'  => {HVM: true, PV: true},
-    'c1.medium'   => {           PV: true},
-    'c1.xlarge'   => {           PV: true},
-    'g2.2xlarge'  => {HVM: true          },
-    'r3.large'    => {HVM: true          },
-    'r3.xlarge'   => {HVM: true          },
-    'r3.2xlarge'  => {HVM: true          },
-    'r3.4xlarge'  => {HVM: true          },
-    'r3.8xlarge'  => {HVM: true          },
-    'm2.xlarge'   => {           PV: true},
-    'm2.2xlarge'  => {           PV: true},
-    'm2.4xlarge'  => {           PV: true},
-    'i2.xlarge'   => {HVM: true          },
-    'i2.2xlarge'  => {HVM: true          },
-    'i2.4xlarge'  => {HVM: true          },
-    'i2.8xlarge'  => {HVM: true          },
-    'hi1.4xlarge' => {           PV: true},
-    'hs1.8xlarge' => {HVM: true, PV: true}
-  }.recursive_freeze
+
+  InstanceTypes = {}
+  AWS::InstanceTypes[:current].each do |type|
+    InstanceTypes[type.to_s] = {HVM: true}
+
+    group = type.to_s[/^([0-9a-z]+)./, 1].upcase.to_sym
+    if !AWS::InstanceTypes[:features][group][:hvm_only]
+      InstanceTypes[type.to_s][:PV] = true
+    end
+  end
+  AWS::InstanceTypes[:previous].each do |type|
+    InstanceTypes[type.to_s] = {PV: true}
+  end
+
+  InstanceTypes.recursive_freeze
 
   @@properties = [
     # API的にはrequiredではないが、requiredとして扱いたい
