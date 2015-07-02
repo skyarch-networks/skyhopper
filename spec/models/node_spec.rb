@@ -197,12 +197,12 @@ describe Node, :type => :model do
 
     context 'when command fail' do
       before do
-        expect(Node).to receive(:exec_command).and_raise
+        expect(Node).to receive(:exec_command).and_raise StandardError
       end
 
       it 'should update status' do
         serverspecs = [serverspec.id]
-        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
+        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
         expect(resource.status.serverspec.failed?).to be true
       end
     end
