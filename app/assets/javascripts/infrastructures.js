@@ -797,6 +797,7 @@
     },
     created: function () {
       this.$set('loading', false);
+      this.$set('loading_s', false);
       this.$set('inprogress', false); // for cook
       this.$set('ec2_status_changing', false);
       this.$set('chef_console_text', '');
