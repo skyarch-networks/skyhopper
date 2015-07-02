@@ -12,6 +12,7 @@ var EC2Instance = function (infra, physical_id) {
   ajax_node.add_member('apply_dish', 'POST');
   ajax_node.add_member('edit_attributes', 'GET');
   ajax_node.add_member('update_attributes', 'PUT');
+  ajax_node.add_member('schedule_yum', 'POST');
   ajax_node.add_collection('recipes', 'GET');
 
   var ajax_ec2 = new AjaxSet.Resources('ec2_instances');
@@ -180,6 +181,22 @@ var EC2Instance = function (infra, physical_id) {
     ).done(function (msg) {
       dfd.resolve(msg);
     }).fail(rejectXHR(dfd));
+    return dfd.promise();
+  };
+
+  this.schedule_yum = function (schedule) {
+    var dfd = $.Deferred();
+
+    ajax_node.schedule_yum(
+      _.merge(params, {
+        physical_id: physical_id,
+        infra_id: infra.id,
+        schedule: schedule,
+      })
+    ).done(function (msg) {
+      dfd.resolve(msg);
+    }).fail(rejectXHR(dfd));
+
     return dfd.promise();
   };
 

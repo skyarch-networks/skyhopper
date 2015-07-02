@@ -15,8 +15,9 @@ Arguments:
     <table class="table table-condensed table-striped">
       <thead>
         <tr>
-          <th><%= t 'infrastructures.genre' %></th>
-          <th colspan="2"><%= t 'common.value' %></th>
+          <th class="col-md-2"><%= t 'infrastructures.genre' %></th>
+          <th class="col-md-5"><%= t 'common.value' %></th>
+          <th class="col-md-5"><%= t 'common.actions' %></th>
         </tr>
       </thead>
       <tbody>
@@ -53,15 +54,18 @@ Arguments:
         </tr>
         <tr>
           <td>Public DNS</td>
-          <td colspan="2">{{ec2.public_dns}}</td>
+          <td><%= link_to '{{ec2.public_dns}}', '//{{ec2.public_dns}}', target: '_blank' %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.public_dns}}') %></td>
         </tr>
         <tr>
           <td>Elastic IP</td>
-          <td colspan="2">{{ec2.elastic_ip}}</td>
+          <td><%= link_and_dropdown_ssh('{{ec2.elastic_ip}}') %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.elastic_ip}}') %></td>
         </tr>
         <tr>
           <td>Public IP</td>
-          <td colspan="2">{{ec2.public_ip}}</td>
+          <td><%= link_and_dropdown_ssh('{{ec2.public_ip}}') %></td>
+          <td><%= copy_to_clipboard_button('{{ec2.public_ip}}') %></td>
         </tr>
       </tbody>
     </table>
@@ -151,7 +155,7 @@ Arguments:
       <div class="dropup" style="display: inline-block">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
-          <span class="badge">{{ec2.number_of_security_updates}}</span>
+          <span class="badge">{{ec2.number_of_security_updates | zero_as_null}}</span>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
@@ -159,6 +163,8 @@ Arguments:
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'exec')">Execute security update</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')">Check all updates</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')">Execute all update</a></li>
+          <li class="dropdown-header">Schedule</li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#change-schedule-modal" data-toggle="modal">Check security updates</a></li>
         </ul>
       </div>
       <button v-on="click: select_serverspec()" v-class="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
@@ -228,5 +234,57 @@ Arguments:
     </div>
   </div>
 
+</div>
+
+<%# modal for change yum check-update schedule %>
+<div id="change-schedule-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t 'schedules.change_schedule' %></h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" v-model="ec2.yum_schedule.enabled" v-attr="disabled: loading_s"><%= t 'schedules.run_periodically' %>
+          </label>
+        </div>
+        <form class="form-inline">
+          <div class="form-group" v-if="ec2.yum_schedule.enabled">
+            <select v-model="ec2.yum_schedule.frequency" v-attr="disabled: loading_s" class="form-control">
+              <% YumSchedule::frequencies.keys.each do |f| %>
+                <option value=<%= f %>><%= t "schedules.frequency.#{f}" %></option>
+              <% end %>
+            </select>
+            <select v-model="ec2.yum_schedule.day_of_week" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency === 'weekly'" class="form-control">
+              <% YumSchedule::day_of_weeks.keys.each do |e| %>
+                <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
+              <% end %>
+            </select>
+            <select v-model="ec2.yum_schedule.time" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency !== 'intervals'" class="form-control">
+              <% 0.upto(23) do |n| %>
+                <option><%= n %></option>
+              <% end %>
+            </select>
+            <label v-if="ec2.yum_schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
+            <input type="number" min="1" max="12" v-model="ec2.yum_schedule.time" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency === 'intervals'" class="form-control">
+            <label v-if="ec2.yum_schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
+            <div v-if="ec2.yum_schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <div v-if="!loading_s">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button v-on="click: change_schedule()" v-attr="disabled: !all_filled" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+        </div>
+        <div-loader v-if="loading_s"></div-loader>
+      </div>
+    </div>
+  </div>
 </div>
 </script>

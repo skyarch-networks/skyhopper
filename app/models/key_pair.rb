@@ -24,7 +24,11 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
           next if keypairs_resp.empty?
 
           instances_resp = ec2.describe_instances
-          using_keys = instances_resp.reservations.map { |e| e.instances[0].key_name }
+          using_keys = instances_resp.reservations.map { |e|
+            instance = e.instances[0]
+            next if instance.state.name == 'terminated'
+            instance.key_name
+          }
 
           keypairs_resp.each do |key_pair|
             using = using_keys.include?(key_pair.key_name)

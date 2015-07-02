@@ -244,7 +244,7 @@ ja:
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
 
 
-  serverspec_schedules:
+  schedules:
     change_schedule:  'スケジュールの変更'
     run_periodically: '定期的に実行'
     frequency:
@@ -263,7 +263,8 @@ ja:
     hours:        '時間毎'
     next_run:     '次は {{next_run}} 時に実行されます'
     msg:
-      updated:    'Serverspec の定期実行スケジュールが更新されました'
+      serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
+      yum_updated: 'Yum の定期実行スケジュールが更新されました'
 
 
   cf_templates:

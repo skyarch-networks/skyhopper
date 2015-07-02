@@ -16,6 +16,8 @@
 
   var current_infra = null;
 
+  ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'})
+
 // ================================================================
 // infrastructures
 // ================================================================
@@ -757,7 +759,19 @@
           $('#change-scale-modal').modal('hide');
         });
       },
-
+      change_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        ec2.schedule_yum(self.ec2.yum_schedule).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      },
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
@@ -788,9 +802,25 @@
       dish_option: function () { return [{text: 'Select!', value: '0'}].concat(this.ec2.dishes.map(function (dish) {
         return {text: dish.name, value: dish.id};
       }));},
+
+      next_run:    function () { return (new Date().getHours() + parseInt(this.ec2.yum_schedule.time, 10)) % 24; },
+      all_filled:  function () {
+        if (!this.ec2.yum_schedule.enabled) return true;
+        switch (this.ec2.yum_schedule.frequency) {
+          case 'weekly':
+            return this.ec2.yum_schedule.day_of_week && this.ec2.yum_schedule.time;
+          case 'daily':
+            return this.ec2.yum_schedule.time;
+          case 'intervals':
+            return parseInt(this.ec2.yum_schedule.time, 10);
+          default:
+            return false;
+        }
+      },
     },
     created: function () {
       this.$set('loading', false);
+      this.$set('loading_s', false);
       this.$set('inprogress', false); // for cook
       this.$set('ec2_status_changing', false);
       this.$set('chef_console_text', '');
@@ -801,6 +831,13 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.$set('ec2', data);
+
+        if (data.yum_schedule) {
+          self.$set('enabled', data.yum_schedule.enabled);
+          self.$set('frequency', data.yum_schedule.frequency);
+          self.$set('day_of_week', data.yum_schedule.day_of_week);
+          self.$set('time', data.yum_schedule.time);
+        };
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
@@ -823,6 +860,27 @@
         }
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
+
+      var client = new ZeroClipboard($(".zeroclipboard-button"));
+      client.on("ready", function (ready_event) {
+        client.on("aftercopy", function (event) {
+          var btn = $(event.target);
+          var target = btn.find('.copied-hint-target');
+          var hint_text = btn.attr('data-copied-hint');
+          var orig_text = target.attr('data-orig-text');
+          if (!orig_text) {
+            orig_text = target.text();
+            target.attr('data-orig-text', orig_text);
+          }
+          target.text(hint_text);
+          setTimeout(function () { target.text(orig_text); }, 1000);
+        });
+      });
+    },
+    filters: {
+      zero_as_null: function (str) {
+        return (str == 0) ? null : str;
+      },
     },
   });
 

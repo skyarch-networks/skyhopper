@@ -14,6 +14,7 @@ json.dishes        @dishes
 json.attribute_set @attribute_set
 
 json.number_of_security_updates @number_of_security_updates
+json.yum_schedule  @yum_schedule
 
 if @info
   json.info do

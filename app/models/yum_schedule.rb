@@ -6,10 +6,10 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServerspecSchedule < Schedule
+class YumSchedule < Schedule
   belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
 
-  @@job_class_name = PeriodicServerspecJob.to_s.freeze
+  @@job_class_name = PeriodicYumJob.to_s.freeze
 
   def job_class_name
     @@job_class_name
