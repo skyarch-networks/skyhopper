@@ -16,7 +16,7 @@
 
   var current_infra = null;
 
-  ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'})
+  ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
 
 // ================================================================
 // infrastructures
@@ -837,7 +837,7 @@
           self.$set('frequency', data.yum_schedule.frequency);
           self.$set('day_of_week', data.yum_schedule.day_of_week);
           self.$set('time', data.yum_schedule.time);
-        };
+        }
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
@@ -878,9 +878,7 @@
       });
     },
     filters: {
-      zero_as_null: function (str) {
-        return (str == 0) ? null : str;
-      },
+      zero_as_null: function (str) { return (str === 0) ? null : str; },
     },
   });
 
