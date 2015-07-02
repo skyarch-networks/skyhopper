@@ -33,6 +33,7 @@ module Node::Attribute
     return result
   end
 
+
   # attributes をアップデートする。
   # @param [Hash] attrs
   def update_attributes(attrs)
@@ -47,6 +48,15 @@ module Node::Attribute
   def enabled_attributes
     available_attributes.select do |name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
+    end
+  end
+
+  # 必須の attribute がセットされているかどうかを返す。
+  # @return [Boolean]
+  def attribute_set?
+    a = get_attributes
+    return enabled_attributes.select{|_, v|v[:required]}.keys.none? do |key|
+      a[key].nil?
     end
   end
 
@@ -70,12 +80,14 @@ module Node::Attribute
         recipes:     ['role[zabbix_agent]'],
         description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
         default:     AppSetting.get.zabbix_fqdn,
+        required:    true,
       },
       :'zabbix/agent/servers_active' => {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
         description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
         default:     AppSetting.get.zabbix_fqdn,
+        required:    true,
       },
       :'zabbix/database/install_method' => {
         type: String,

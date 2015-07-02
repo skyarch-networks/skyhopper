@@ -35,6 +35,7 @@ describe Node::Attribute do
       expect(subject.values.map{|x|x[:type]}).to be_all{|x|x.is_a?(Class) || x==:Boolean}
       expect(subject.values.map{|x|x[:recipes]}).to be_all{|x|x.is_a? Array}
       expect(subject.values.map{|x|x[:description]}).to be_all{|x|x.is_a? String}
+      expect(subject.values.map{|x|x[:required]}).to be_all{|x|x.nil? || x == true || x == false }
     end
   end
 

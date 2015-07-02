@@ -70,6 +70,10 @@ describe NodesController, :type => :controller do
       allow_any_instance_of(Node).to receive(:details).and_return(details)
     end
 
+    before do
+      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
+    end
+
 
     [:terminated, :stopped].each do |state|
       context "when instance #{state}" do
@@ -152,6 +156,7 @@ describe NodesController, :type => :controller do
     before do
       allow(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
       cook_request
     end
 
