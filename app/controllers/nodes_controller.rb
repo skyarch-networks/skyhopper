@@ -142,7 +142,7 @@ class NodesController < ApplicationController
     node = Node.new(physical_id)
 
     unless node.attribute_set?
-      render text: "Should set attributes", status: 400
+      render text: I18n.t('nodes.msg.should_set_attr'), status: 400
       return
     end
 

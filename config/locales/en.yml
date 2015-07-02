@@ -192,6 +192,7 @@ en:
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
       cook_started:       'Cook was successfully started'
+      should_set_attr:    "Cook wasn't started. You should set attribute"
       attribute_updated:  'Attribute was successfully updated.'
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'

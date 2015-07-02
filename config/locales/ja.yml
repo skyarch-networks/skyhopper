@@ -192,6 +192,7 @@ ja:
       runlist_updated:    'Runlist は正常に更新されました'
       runlist_applying:   'Runlist を適用中です...'
       cook_started:       'Cook が正常に開始されました'
+      should_set_attr:    "Cook は開始できませんでした。インスタンスの設定を行ってください"
       attribute_updated:  'Attribute が正常に更新されました'
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
