@@ -68,13 +68,10 @@ Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerC
 
 
 # ----------------------- Global CF template
-skyhopper_module_paths = Dir.glob(Rails.root.join('lib/cf_templates/modules/*')).sort
+path = Rails.root.join('lib/cf_templates/modules/ami_mappings_2014_09.json')
 skyhopper_modules = {}
-skyhopper_module_paths.each do |path|
-  value = File::read(path)
-  name  = File::basename(path, '.*')
-  skyhopper_modules[name.to_sym] = value
-end
+skyhopper_modules[:ami_mappings_2014_09]   = File.read(path)
+skyhopper_modules[:ec2_instance_types_hvm] = AWS::InstanceTypes[:current].to_json
 
 require 'erb'
 require 'json'
