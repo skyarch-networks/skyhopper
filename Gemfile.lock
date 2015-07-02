@@ -197,7 +197,7 @@ GEM
       less (~> 2.6.0)
       sprockets (> 2, < 4)
       tilt
-    libv8 (3.16.14.9)
+    libv8 (3.16.14.11)
     libyajl2 (1.2.0)
     listen (3.0.0)
       rb-fsevent (>= 0.9.3)
