@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150512062146) do
+ActiveRecord::Schema.define(version: 20150702041553) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -81,7 +81,7 @@ ActiveRecord::Schema.define(version: 20150512062146) do
 
   create_table "infrastructure_logs", force: :cascade do |t|
     t.integer  "infrastructure_id", limit: 4
-    t.boolean  "status",            limit: 1
+    t.boolean  "status"
     t.text     "details",           limit: 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -106,7 +106,7 @@ ActiveRecord::Schema.define(version: 20150512062146) do
     t.string  "name",               limit: 255
     t.string  "item",               limit: 255
     t.string  "trigger_expression", limit: 255
-    t.boolean "is_common",          limit: 1
+    t.boolean "is_common"
   end
 
   add_index "master_monitorings", ["name"], name: "index_master_monitorings_on_name", unique: true, using: :btree
@@ -140,8 +140,8 @@ ActiveRecord::Schema.define(version: 20150512062146) do
     t.integer  "resource_id", limit: 4
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
-    t.integer  "value",       limit: 4, null: false
-    t.integer  "kind",        limit: 4, null: false
+    t.integer  "value",       limit: 4
+    t.integer  "kind",        limit: 4
   end
 
   create_table "resources", force: :cascade do |t|
@@ -156,14 +156,15 @@ ActiveRecord::Schema.define(version: 20150512062146) do
 
   add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree
 
-  create_table "serverspec_schedules", force: :cascade do |t|
-    t.boolean  "enabled",     limit: 1,   default: false, null: false
+  create_table "schedules", force: :cascade do |t|
+    t.boolean  "enabled",                 default: false, null: false
     t.integer  "frequency",   limit: 4
     t.integer  "day_of_week", limit: 4
     t.integer  "time",        limit: 4
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
-    t.string   "physical_id", limit: 255
+    t.string   "physical_id", limit: 255,                 null: false
+    t.string   "type",        limit: 255,                 null: false
   end
 
   create_table "serverspecs", force: :cascade do |t|
@@ -196,8 +197,8 @@ ActiveRecord::Schema.define(version: 20150512062146) do
     t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin",                  limit: 1
-    t.boolean  "master",                 limit: 1
+    t.boolean  "admin"
+    t.boolean  "master"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

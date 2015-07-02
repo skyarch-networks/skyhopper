@@ -6,9 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class YumSchedule < ActiveRecord::Base
-  include Concerns::Schedule
-
+class YumSchedule < Schedule
   belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   @@job_class_name = PeriodicYumJob.to_s.freeze
