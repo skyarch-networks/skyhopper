@@ -1247,6 +1247,8 @@
               self.show_ec2(physical_id);
             } else if (instance.type_name === "AWS::RDS::DBInstance"){
               self.show_rds(physical_id);
+            } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
+              self.show_elb(physical_id);
             } else {  // S3
               self.show_s3(physical_id);
             }
