@@ -24,6 +24,9 @@ class User < ActiveRecord::Base
          :trackable,
          :validatable
 
+  extend Concerns::Cryptize
+  cryptize :mfa_secret_key
+
   def self.can_sign_up?
     self.where(admin: true, master: true).empty?
   end
