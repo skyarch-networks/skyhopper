@@ -96,4 +96,8 @@ gem 'redis-rails'
 gem 'redis'
 gem 'hiredis'
 
+# For mfa
+gem 'rotp'
+gem 'rqrcode'
+
 gem 'sky_zabbix', '~> 2.2.0'
