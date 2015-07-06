@@ -63,7 +63,11 @@ var Monitoring = function (infra) {
         } else if (self.type(m) === 'mysql') {
           var re = /^mysql.login\[(.+)\]/;
           var key = _.findKey(data.trigger_expressions, function (_, key) {return re.test(key);});
-          m.value = key.match(re)[1];
+          if (key) {
+            m.value = key.match(re)[1];
+          } else {
+            m.value = '';
+          }
         }
       });
       if (!data.web_scenarios) {
