@@ -6,7 +6,7 @@
         <h4 class="modal-title">Notifications</h4>
       </div>
       <div class="modal-body" id="notification">
-        <% @notifications_for_layout.each do |n| %>
+        <% @notifications_for_layout.try(:each)do |n| %>
           <%= create_notification(n.details, n.status, n.created_at) %>
         <% end %>
       </div>

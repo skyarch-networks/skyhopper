@@ -349,6 +349,7 @@ ja:
     edit:              '権限の編集'
     allowed_projects:  '管理する案件'
     unregistered:      '未登録'
+    mfa_token:         'MFA トークン'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'
@@ -360,6 +361,8 @@ ja:
       synced:              '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
       only_master:         'ユーザー管理は master ユーザーのみが行うことができます'
       confirm_sync_zabbix: 'Zabbix Server とユーザーを同期しますか?'
+      mfa_description:     'このユーザーは MFA によって保護されています。ワンタイムパスワードを入力してください。'
+      mfa_failure:         'ワンタイムパスワードが違います。'
 
 
   chef_servers:

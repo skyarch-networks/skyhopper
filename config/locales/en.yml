@@ -349,6 +349,7 @@ en:
     edit:              'Edit Permissions'
     allowed_projects:  'Allowed Projects'
     unregistered:      'Unregistered'
+    mfa_token:         'MFA Token'
     btn:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'
@@ -360,6 +361,8 @@ en:
       synced:              'All of accounts was successfully synchronized with Zabbix Server.'
       only_master:         'The feature of User Management is only permitted to Master users.'
       confirm_sync_zabbix: 'Do you want to synchronize users with Zabbix Server?'
+      mfa_description:     'This user is protected by MFA. Please enter one-time password.'
+      mfa_failure:         'Invalid one-time password'
 
 
   chef_servers:
