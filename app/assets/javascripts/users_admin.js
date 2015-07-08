@@ -16,56 +16,6 @@
     selected_user.addClass("info");
   };
 
-  var is_exist_in_allowed_projects = function (project_id) {
-    return ($("#allowed-projects").children("option[value='"+project_id+"']").length !== 0);
-  };
-
-  var set_projects_by_selected_client_id = function (client_id) {
-    $.ajax({
-      url      : "/projects.json",
-      data     : { client_id : client_id },
-      datatype : "json",
-    }).done(function(data) {
-      $("#projects").empty();
-      $.each(data, function(num) {
-        var option = $("<option>");
-        option.val(data[num].id);
-        option.text(data[num].name + "[" + data[num].code + "]");
-        $("#projects").append(option);
-      });
-
-      if (! $('#projects').children().size()) {
-        $('#projects').append($('<option>').html('&nbsp;'));
-      }
-    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-      bootstrap_alert(t('users.title'), textStatus, "danger");
-    });
-  };
-
-  var add_selected_projects_to_allowed_projects = function() {
-    if (!( $("#clients").val() && $("#projects").val() )) {
-      bootstrap_alert(t('users.title'), t('js.users.msg.project_not_select'), "danger");
-      return;
-    }
-
-    var client_name = $('#clients option:selected').text();
-
-    $.each($('#projects option:selected'), function () {
-      var project      = $(this);
-      var project_id   = project.val();
-      var project_name = project.text();
-
-      if (!is_exist_in_allowed_projects(project_id)) {
-        var title = client_name + ' / ' + project_name;
-
-        var option = $("<option>");
-        option.val(project_id);
-        option.text(title);
-        $("#allowed-projects").append(option);
-      }
-    });
-  };
-
   var sync_zabbix = function (btn) {
     var f = function () {
       var reload = function (){
@@ -88,56 +38,14 @@
     bootstrap_confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
   };
 
-  var remove_selected_allowed_projects = function () {
-    $("#allowed-projects option:selected").remove();
-  };
-
-  var start_mfa = function () {
-    $('#start-mfa-btn').remove();
-    $('#mfa-token').removeClass('hidden');
-  };
 
 
-  $(".edit-user-permission").click(function (e) {
-    e.preventDefault();
 
-    var user_id = $(this).attr("user-id");
-    highlight_user_row($(this).parent().parent());
 
-    ajax_users_admin.edit({
-      id: user_id
-    }).done(function (data, status, xhr) {
-      $("#user-permission-edit").html(data);
-    }).fail(function (xhr, status, error) {
-      console.error(xhr.responseText);
-    });
 
-  });
 
-  $(document).on("change", "#clients", function () {
-    var client_id = $(this).val();
-    set_projects_by_selected_client_id(client_id);
-  });
 
-  $(document).on("click", "#add-allowed-projects", function (e) {
-    e.preventDefault();
-    add_selected_projects_to_allowed_projects();
-  });
 
-  $(document).on("dblclick", "#projects", function (e) {
-    e.preventDefault();
-    add_selected_projects_to_allowed_projects();
-  });
-
-  $(document).on("click", "#remove-allowed-projects", function (e) {
-    e.preventDefault();
-    remove_selected_allowed_projects();
-  });
-
-  $(document).on("dblclick", "#allowed-projects", function (e) {
-    e.preventDefault();
-    remove_selected_allowed_projects();
-  });
 
   $(document).on("click", "#apply-permission-edit", function (e) {
     e.preventDefault();
@@ -196,30 +104,81 @@
     sync_zabbix($(this));
   });
 
-  $(document).on('click', '#start-mfa-btn', function () {
-    start_mfa();
+
+
+
+  // kokokara
+  var newVM = function (data) {
+    data.user.password = "";
+    data.user.password_confirmation = "";
+    data.selected_allowed_projects = null;
+    data.selected_client = null;
+    data.selected_projects = null;
+    data.projects = null;
+
+    return new Vue({
+      template: '#user-edit-template',
+      data: data,
+      methods: {
+        get_projects: function () {
+          var self = this;
+          self.projects = [];
+          $.ajax({
+            url: '/projects.json',
+            data: {client_id: self.selected_client},
+            datatype: 'json'
+          }).done(function (projects) {
+            self.projects = _.map(projects, function (project) {
+              var client_name = _.find(self.clients, function (c) {
+                return c.value.toString() === self.selected_client.toString();
+              }).text;
+              return {
+                value: project.id,
+                text: client_name + " / " + project.name + "["+project.code+"]",
+              };
+            });
+          }).fail(modal_for_ajax_std_error());
+        },
+
+        add: function () {
+          var self = this;
+          _.forEach(this.selected_projects, function (project_id) {
+            var project = _.find(self.projects, function (p) {return p.value == project_id;});
+            self.allowed_projects.push(project);
+            self.allowed_projects = _.uniq(self.allowed_projects, function (p) {return p.value;});
+          });
+        },
+
+        del: function () {
+          var self = this;
+          _.forEach(self.selected_allowed_projects, function (project_id) {
+            self.allowed_projects = _.reject(self.allowed_projects, function (p) {
+              return p.value.toString() === project_id.toString();
+            });
+          });
+        },
+      },
+      ready: function () {
+        console.log(this);
+      },
+    });
+  };
+  var app;
+
+  var show_edit = function (user_id) {
+    var l = new Loader();
+    l.$mount("#user-edit");
+    if (app) { app.$destroy(); }
+    ajax_users_admin.edit({id: user_id}).done(function (data) {
+      app = newVM(data);
+      l.$destroy();
+      app.$mount('#user-edit');
+    });
+  };
+
+  $(document).on('click', '.edit-user', function (e) {
+    e.preventDefault();
+    var user_id = $(this).attr('user-id');
+    show_edit(user_id);
   });
 })();
-
-$(document).ready(function () {
-  var checkValue = [];
-  var checkInput = $(".text_field");
-  var checkbutton = $("input[value='Create New User']");
-  checkbutton.attr('disabled', 'disabled');
-  checkInput.bind("keyup change", function () {
-    for (var i = 0; i < checkInput.length; i++) {
-      if (checkInput.eq(i).val().length === 0) {
-        checkValue[i] = 0;
-      }
-      else {
-        checkValue[i] = 1;
-      }
-    }
-    if ($.inArray(0, checkValue) === -1) {
-      checkbutton.attr('disabled', false);
-    }
-    else {
-      checkbutton.attr('disabled', 'disabled');
-    }
-  });
-});

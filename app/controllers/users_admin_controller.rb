@@ -68,20 +68,19 @@ class UsersAdminController < ApplicationController
 
   # GET /users_admin/1/edit
   def edit
-    @user    = User.find( params.require(:id) )
-    @clients = Client.all
-    allowed_projects = @user.projects.includes(:client)
-    @allowed_projects_title = allowed_projects.map do |project|
+    user     = User.find( params.require(:id) )
+    @user = user.trim_password
+    @clients = Client.all.map{|c|{value: c.id, text: c.name}}
+    allowed_projects = user.projects.includes(:client)
+    @allowed_projects = allowed_projects.map do |project|
       client_name = project.client.name
-      {project_id: project.id, title: "#{client_name} / #{project.name}[#{project.code}]"}
+      {value: project.id.to_s, text: "#{client_name} / #{project.name}[#{project.code}]"}
     end
 
     # 新しい MFA の鍵を生成する
     @mfa_key = ROTP::Base32.random_base32
-    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{@user.email}")
+    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{user.email}")
     @mfa_qrcode = RQRCode::QRCode.new(uri).as_html
-
-    render partial: 'edit'
   end
 
   # PUT /users_admin/1

@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, modal_for_ajax_std_error;
+var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, modal_for_ajax_std_error, Loader;
 (function () {
   "use strict";
 
@@ -125,6 +125,17 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
       $(this.$el.querySelector('[data-toggle="tooltip"]')).tooltip();
     },
   });
+
+  Loader = Vue.extend({
+    template: '<span><div class="loader"></div>{{text | format}}</span>',
+    created: function () {
+      this.$set('text', t('common.msg.loading'));
+    },
+    filters: {
+      format: function (str) { return ' ' + str; }
+    }
+  });
+  Vue.component('div-loader', Loader);
 
   // Example: $.ajax().done(...).fail(modal_for_ajax_std_error(function(){doSomething();}));
   modal_for_ajax_std_error = function (callback) {

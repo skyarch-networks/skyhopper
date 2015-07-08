@@ -1,51 +1,56 @@
+<script id="user-edit-template" type="text/template">
+
 <h3 class="page-header"><%= t('users.edit') %></h3>
 
-<%= hidden_field_tag "user-id", @user.id, id: "user-id" %>
 <div class="col-md-12 col-sm-12">
   <div class="col-md-3 col-sm-3">
     <h5 class="page-header"><%= t('users.role') %></h5>
     <div class="checkbox">
       <label>
-        <%= check_box_tag "user[master]", "master", @user.master %><%= master_label %>
+        <input type="checkbox" v-model="user.master"><%= master_label %>
       </label>
     </div>
     <div class="checkbox">
       <label>
-        <%= check_box_tag "user[admin]", "admin", @user.admin %><%= admin_label %>
+        <input type="checkbox" v-model="user.admin"><%= admin_label %>
       </label>
     </div>
   </div>
+
   <div class="col-sm-5 col-md-5">
     <h5 class="page-header">パスワードの変更</h5>
     <form class="form-horizontal">
       <div class="form-group">
         <label for="password" class="col-sm-3 control-label">Password</label>
         <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" id="password" placeholder="Enter new password if you want to change" autocomplete="off">
+          <input type="password" class="form-control input-sm" placeholder="Enter new password if you want to change" autocomplete="off" v-model="user.password">
         </div>
       </div>
       <div class="form-group">
         <label for="password_confirm" class="col-sm-3 control-label">Password Confirmation</label>
         <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" id="password_confirmation" autocomplete="off">
+          <input type="password" class="form-control input-sm" v-model="user.password_confirmation" autocomplete="off">
         </div>
       </div>
     </form>
   </div>
+
   <div class="col-sm-4 col-md-4">
     <h5 class="page-header">二段階認証</h5>
-    <% if @user.mfa_secret_key %>
+    <div v-if="true">
       すでに二段階認証が設定されています
       二段階認証しないチェックボックス
-    <% else %>
-      <button class="btn btn-sm btn-primary" id="start-mfa-btn">二段階認証を開始する</button>
-      <div class="hidden" id="mfa-token">
-        <p>Token: <code><%= @mfa_key %></code></p>
+    </div>
+
+    <div v-if="true">
+      <button class="btn btn-sm btn-primary">二段階認証を開始する</button>
+      <div v-if="true">
+        <p>Secret Key: <code>{{mfa_key}}</code></p>
         <div class="QRCode">
-          <%= raw @mfa_qrcode %>
+          {{{mfa_qrcode}}}
         </div>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
 
@@ -53,18 +58,17 @@
 <div class="col-md-7 col-sm-7">
   <div class="col-md-5 col-sm-5 form-group">
     <h5 class="page-header"><%= t('clients.client') %></h5>
-    <select size="2" id="clients" class="form-control admin-selectbox-height">
-      <%= options_from_collection_for_select(@clients, :id, :name) %>
+    <select size="2" v-model="selected_client" options="clients" class="form-control admin-selectbox-height" v-on="click: get_projects()">
     </select>
   </div>
   <div class="col-sm-7 col-md-7 form-group">
     <h5 class="page-header"><%= t('projects.project') %></h5>
-    <select multiple="multiple" id="projects" class="form-control admin-selectbox-height">
+    <select multiple="multiple" v-model="selected_projects" options="projects" class="form-control admin-selectbox-height" v-on="dblclick: add()">
     </select>
   </div>
   <div class="col-sm-12 col-md-12">
     <div class="form-group">
-      <button class="btn btn-default pull-right" id="add-allowed-projects">
+      <button class="btn btn-default pull-right" v-on="click: add()">
         <span class="glyphicon glyphicon-plus"></span>
       </button>
     </div>
@@ -78,17 +82,14 @@
 
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <select id="allowed-projects" multiple="multiple" class="form-control admin-selectbox-height">
-          <% @allowed_projects_title.each do |project| %>
-            <option value="<%= project[:project_id] %>"><%= project[:title] %></option>
-          <% end %>
+        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_projects" options="allowed_projects" v-on="dblclick: del()">
         </select>
       </div>
     </div>
 
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <button id="remove-allowed-projects" class="btn btn-default">
+        <button class="btn btn-default" v-on="click: del()">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
@@ -98,8 +99,10 @@
 
 <div class="col-md-12 col-sm-12">
   <div class="form-actions-top">
-    <button class="btn btn-primary btn-sm" id="apply-permission-edit">
+    <button class="btn btn-primary btn-sm">
       <%= t('common.btn.save_changes') %>
     </button>
   </div>
 </div>
+
+</script>

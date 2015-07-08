@@ -69,4 +69,12 @@ class User < ActiveRecord::Base
   def ws_key
     Digest::SHA256.hexdigest(self.email + self.encrypted_password + self.current_sign_in_at.to_s)
   end
+
+  # @return [Hash{Symbol => Any}] Attributes trimed password
+  def trim_password
+    ret = attributes.symbolize_keys
+    ret.delete(:encrypted_password)
+    ret.delete(:mfa_secret_key)
+    return ret
+  end
 end

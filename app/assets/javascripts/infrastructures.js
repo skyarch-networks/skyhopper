@@ -66,17 +66,6 @@
     show_infra(current_infra.id);
   });
 
-  var Loader = Vue.extend({
-    template: '<span><div class="loader"></div>{{text | format}}</span>',
-    created: function () {
-      this.$set('text', t('common.msg.loading'));
-    },
-    filters: {
-      format: function (str) { return ' ' + str; }
-    }
-  });
-  Vue.component('div-loader', Loader);
-
   Vue.component("stack-events-table", {
     template: '#stack-events-table-template',
     methods: {
