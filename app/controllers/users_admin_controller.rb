@@ -78,7 +78,7 @@ class UsersAdminController < ApplicationController
 
     # 新しい MFA の鍵を生成する
     @mfa_key = ROTP::Base32.random_base32
-    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri('skyhopper')
+    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{@user.email}")
     @mfa_qrcode = RQRCode::QRCode.new(uri).as_html
 
     render partial: 'edit'
