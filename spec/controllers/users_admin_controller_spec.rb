@@ -151,7 +151,8 @@ describe UsersAdminController, :type => :controller do
     let(:allowed_projects){nil}
     let(:password){nil}
     let(:password_confirm){password}
-    let(:req){put :update, id: user.id, master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm}
+    let(:mfa_secret_key){nil}
+    let(:req){put :update, id: user.id, master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm, mfa_secret_key: mfa_secret_key}
 
     context 'when set password' do
       let(:password){'hoge'}
@@ -165,6 +166,17 @@ describe UsersAdminController, :type => :controller do
       context 'when password match' do
         before{req}
         should_be_success
+      end
+    end
+
+    context 'when update mfa secret key' do
+      let(:mfa_secret_key){SecureRandom.hex(16)}
+      before{req}
+      should_be_success
+
+      it 'should update mfa secret key' do
+        user.reload
+        expect(user.mfa_secret_key).to eq mfa_secret_key
       end
     end
 

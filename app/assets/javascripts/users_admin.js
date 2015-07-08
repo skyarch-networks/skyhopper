@@ -180,6 +180,11 @@
       }
     }
 
+
+    if ($('#mfa-token.hidden').size() === 0) {
+      params.mfa_secret_key = $('#mfa-token code').text();
+    }
+
     ajax_users_admin.update(params).done(function (data, status, xhr) {
       bootstrap_alert(t('users.title'), data).done(function () {
         location.reload();

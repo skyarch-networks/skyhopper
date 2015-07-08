@@ -90,6 +90,8 @@ class UsersAdminController < ApplicationController
     allowed_projects = params[:allowed_projects]
     master           = params.require(:master) == 'true'
     admin            = params.require(:admin)  == 'true'
+    mfa_secret_key   = params[:mfa_secret_key]
+    mfa_token_remove = params[:mfa_token_remove]
     password         = params[:password]
     password_confirm = params[:password_confirmation]
 
@@ -108,6 +110,10 @@ class UsersAdminController < ApplicationController
       user.password_confirmation = password_confirm
       set_password = true
     end
+
+
+    user.mfa_secret_key = mfa_secret_key if mfa_secret_key
+    user.mfa_secret_key = nil            if mfa_token_remove
 
     user.save!
 
