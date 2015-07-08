@@ -126,12 +126,11 @@ describe UsersAdminController, :type => :controller do
 
     should_be_success
 
-    it 'should assign @user' do
+    it "should assign instance variables" do
       expect(assigns[:user]).to eq user
-    end
-
-    it 'should assigns @clients' do
       expect(assigns[:clients]).to eq Client.all
+      expect(assigns[:mfa_key]).to be_a String
+      expect(assigns[:mfa_qrcode]).to be_a String
     end
 
     it 'should assigns @allowed_projects_title' do
@@ -141,9 +140,7 @@ describe UsersAdminController, :type => :controller do
       expect(subject.first).to be_has_key :title
     end
 
-    it do
-      expect(response).to render_template('_edit')
-    end
+    it {is_expected.to render_template('_edit')}
   end
 
   describe '#update' do

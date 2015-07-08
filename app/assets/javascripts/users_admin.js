@@ -92,6 +92,11 @@
     $("#allowed-projects option:selected").remove();
   };
 
+  var start_mfa = function () {
+    $('#start-mfa-btn').remove();
+    $('#mfa-token').removeClass('hidden');
+  };
+
 
   $(".edit-user-permission").click(function (e) {
     e.preventDefault();
@@ -184,6 +189,10 @@
 
   $(document).on('click', '#sync_zabbix', function () {
     sync_zabbix($(this));
+  });
+
+  $(document).on('click', '#start-mfa-btn', function () {
+    start_mfa();
   });
 })();
 

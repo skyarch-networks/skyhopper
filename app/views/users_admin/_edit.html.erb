@@ -1,7 +1,7 @@
 <h3 class="page-header"><%= t('users.edit') %></h3>
 
 <%= hidden_field_tag "user-id", @user.id, id: "user-id" %>
-<div class="col-md-123 col-sm-12">
+<div class="col-md-12 col-sm-12">
   <div class="col-md-3 col-sm-3">
     <h5 class="page-header"><%= t('users.role') %></h5>
     <div class="checkbox">
@@ -15,7 +15,7 @@
       </label>
     </div>
   </div>
-  <div class="col-sm-9 col-md-9">
+  <div class="col-sm-5 col-md-5">
     <h5 class="page-header">パスワードの変更</h5>
     <form class="form-horizontal">
       <div class="form-group">
@@ -31,6 +31,21 @@
         </div>
       </div>
     </form>
+  </div>
+  <div class="col-sm-4 col-md-4">
+    <h5 class="page-header">二段階認証</h5>
+    <% if @user.mfa_secret_key %>
+      すでに二段階認証が設定されています
+      二段階認証しないチェックボックス
+    <% else %>
+      <button class="btn btn-sm btn-primary" id="start-mfa-btn">二段階認証を開始する</button>
+      <div class="hidden" id="mfa-token">
+        <p>Token: <code><%= @mfa_key %></code></p>
+        <div class="QRCode">
+          <%= raw @mfa_qrcode %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 
