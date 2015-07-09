@@ -156,7 +156,11 @@ describe UsersAdminController, :type => :controller do
     let(:password){nil}
     let(:password_confirm){password}
     let(:mfa_secret_key){nil}
-    let(:req){put :update, id: user.id, master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm, mfa_secret_key: mfa_secret_key}
+    let(:req){
+      put :update,
+        id: user.id,
+        body: {master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm, mfa_secret_key: mfa_secret_key}.to_json
+    }
 
     context 'when set password' do
       let(:password){'hoge'}

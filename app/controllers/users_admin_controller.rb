@@ -85,14 +85,15 @@ class UsersAdminController < ApplicationController
 
   # PUT /users_admin/1
   def update
+    body = JSON.parse(params.require(:body), symbolize_names: true)
     user_id          = params.require(:id)
-    allowed_projects = params[:allowed_projects]
-    master           = params.require(:master) == 'true'
-    admin            = params.require(:admin)  == 'true'
-    mfa_secret_key   = params[:mfa_secret_key]
-    remove_mfa_key   = params[:remove_mfa_key]
-    password         = params[:password]
-    password_confirm = params[:password_confirmation]
+    allowed_projects = body[:allowed_projects]
+    master           = body[:master]
+    admin            = body[:admin]
+    mfa_secret_key   = body[:mfa_secret_key]
+    remove_mfa_key   = body[:remove_mfa_key]
+    password         = body[:password]
+    password_confirm = body[:password_confirmation]
 
     user = User.find(user_id)
     if master

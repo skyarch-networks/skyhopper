@@ -7,7 +7,6 @@
 //
 
 (function () {        //  for file local scope
-
   var ajax_users_admin = new AjaxSet.Resources("users_admin");
   ajax_users_admin.add_collection('sync_zabbix', 'PUT');
 
@@ -39,75 +38,6 @@
   };
 
 
-
-
-
-
-
-
-
-
-  $(document).on("click", "#apply-permission-edit", function (e) {
-    e.preventDefault();
-
-    var user_id = $("#user-id").val();
-
-    var password = $("input#password").val();
-    var password_confirmation = $("input#password_confirmation").val();
-
-    var is_checked_master = $("#user_master").is(':checked');
-    var is_checked_admin  = $("#user_admin").is(':checked');
-
-    var allowed_projects = [];
-
-    if ($("#allowed-projects").children().size() > 0) {
-      allowed_projects = $("#allowed-projects").children();
-
-      allowed_projects = allowed_projects.map(function () {
-        return $(this).val();
-      });
-    }
-
-    allowed_projects = $.makeArray(allowed_projects);
-
-    var params = {
-      id: user_id,
-      master: is_checked_master,
-      admin: is_checked_admin,
-      allowed_projects: allowed_projects
-    };
-
-    if (password && password_confirmation) {
-      if (password === password_confirmation) {
-        params.password = password;
-        params.password_confirmation = password_confirmation;
-      }
-      else {
-        bootstrap_alert(t("users.title"), "Password confirmation does not match Password", "danger");
-        return;
-      }
-    }
-
-
-    if ($('#mfa-token.hidden').size() === 0) {
-      params.mfa_secret_key = $('#mfa-token code').text();
-    }
-
-    ajax_users_admin.update(params).done(function (data, status, xhr) {
-      bootstrap_alert(t('users.title'), data).done(function () {
-        location.reload();
-      });
-    }).fail(modal_for_ajax_std_error());
-  });
-
-  $(document).on('click', '#sync_zabbix', function () {
-    sync_zabbix($(this));
-  });
-
-
-
-
-  // kokokara
   var newVM = function (data) {
     data.user.password = "";
     data.user.password_confirmation = "";
@@ -163,11 +93,46 @@
         },
 
         update_mfa: function () { this.update_mfa_key = true; },
-        remove_mfa: function () { this.remove_mfa_key = true; }
+        remove_mfa: function () { this.remove_mfa_key = true; },
+
+        submit: function () {
+          var self = this;
+          var body = {};
+          body.allowed_projects = _.map(self.allowed_projects, function(p){return p.value;});
+          body.master = self.user.master;
+          body.admin = self.user.admin;
+          if (self.update_mfa_key) {
+            body.mfa_secret_key = self.mfa_key;
+          }
+          body.remove_mfa_key = self.remove_mfa_key;
+
+          var password = self.user.password;
+          var password_confirmation = self.user.password_confirmation;
+          if (password && password_confirmation) {
+            if (password === password_confirmation) {
+              body.password = password;
+              body.password_confirmation = password_confirmation;
+            }
+            else {
+              bootstrap_alert(t("users.title"), "Password confirmation does not match Password", "danger");
+              return;
+            }
+          }
+
+          ajax_users_admin.update({
+            id: self.user.id,
+            body: JSON.stringify(body),
+          }).done(function (data) {
+            bootstrap_alert(t('users.title'), data, true).done(function () {
+              show_edit(self.user.id);
+            });
+          }).fail(modal_for_ajax_std_error(function () {
+            show_edit(self.user.id);
+          }));
+        },
       },
-      ready: function () {
-        console.log(this);
-      },
+
+      ready: function () { console.log(this); },
     });
   };
   var app;
@@ -183,9 +148,15 @@
     });
   };
 
+
   $(document).on('click', '.edit-user', function (e) {
     e.preventDefault();
+    highlight_user_row($(this).parent().parent());
     var user_id = $(this).attr('user-id');
     show_edit(user_id);
+  });
+
+  $(document).on('click', '#sync_zabbix', function () {
+    sync_zabbix($(this));
   });
 })();
