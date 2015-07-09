@@ -145,7 +145,9 @@
       app = newVM(data);
       l.$destroy();
       app.$mount('#user-edit');
-    });
+    }).fail(modal_for_ajax_std_error(function () {
+      l.$destroy();
+    }));
   };
 
 
