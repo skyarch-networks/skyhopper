@@ -273,14 +273,15 @@ h6.page-header {
 
 [v-cloak] {display: none;}
 
-table {
+
+/*for QR code*/
+.QRCode table {
   border-width: 0;
   border-style: none;
   border-color: #0000ff;
   border-collapse: collapse;
 }
 
-/*for QR code*/
 .QRCode td {
   border-left: solid 3px #000;
   padding: 0;
