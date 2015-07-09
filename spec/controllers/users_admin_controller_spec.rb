@@ -128,14 +128,20 @@ describe UsersAdminController, :type => :controller do
 
     it "should assign instance variables" do
       expect(assigns[:user]).to be_a Hash
-      expect(assigns[:clients]).to eq Client.all
       expect(assigns[:mfa_key]).to be_a String
       expect(assigns[:mfa_qrcode]).to be_a String
     end
 
+    it 'should assign @clients' do
+      subject = assigns[:clients]
+      expect(subject).to be_a Array
+      expect(subject.first).to be_has_key :value
+      expect(subject.first).to be_has_key :text
+    end
+
     it 'should assigns @allowed_projects' do
       subject = assigns[:allowed_projects]
-      expect(subject).to be_kind_of Array
+      expect(subject).to be_a Array
       expect(subject.first).to be_has_key :value
       expect(subject.first).to be_has_key :text
     end
