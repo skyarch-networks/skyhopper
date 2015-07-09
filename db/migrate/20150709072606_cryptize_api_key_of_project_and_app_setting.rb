@@ -13,5 +13,6 @@ class CryptizeApiKeyOfProjectAndAppSetting < ActiveRecord::Migration
       x.zabbix_pass = p
       x.save!
     end
+    AppSetting.clear_cache
   end
 end
