@@ -7,6 +7,8 @@
 #
 
 class ServerState
+  class NotRunning < StandardError; end
+
   def initialize(kind)
     case kind
     when 'chef'
@@ -49,5 +51,13 @@ class ServerState
 
   def is_in_progress?
     status.to_s == "pending" || status.to_s == "stopping"
+  end
+
+  # @param [String] msg is an Error message.
+  # @raise [NotRunning]
+  def should_be_running!(msg)
+    unless self.is_running?
+      raise NotRunning, msg
+    end
   end
 end

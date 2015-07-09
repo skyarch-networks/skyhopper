@@ -29,7 +29,7 @@ class InfrastructuresController < ApplicationController
   end
 
 
-  before_action :with_zabbix_or_render, only: [:destroy, :delete_stack]
+  before_action :with_zabbix, only: [:destroy, :delete_stack]
 
   @@regions = AWS::Regions
 

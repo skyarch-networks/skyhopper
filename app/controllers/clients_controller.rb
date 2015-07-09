@@ -20,7 +20,7 @@ class ClientsController < ApplicationController
     authorize(@client || Client.new)
   end
 
-  before_action :with_zabbix_or_back, only: :destroy
+  before_action :with_zabbix, only: :destroy
 
 
 

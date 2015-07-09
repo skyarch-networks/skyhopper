@@ -18,7 +18,7 @@ module ControllerMacros
   # zabbix server が走っている状態になる
   def run_zabbix_server
     before do
-      zabbix = double('server-state-zabbix-running', is_running?: true)
+      zabbix = double('server-state-zabbix-running', should_be_running!: true)
       allow(ServerState).to receive(:new).with('zabbix').and_return(zabbix)
     end
   end

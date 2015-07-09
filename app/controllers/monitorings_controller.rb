@@ -20,7 +20,7 @@ class MonitoringsController < ApplicationController
     authorize(@infra)
   end
 
-  before_action :with_zabbix_or_render, expect: [:show_cloudwatch_graph]
+  before_action :with_zabbix, expect: [:show_cloudwatch_graph]
   before_action :set_zabbix, except: [:show_cloudwatch_graph]
 
 
