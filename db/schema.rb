@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150702041553) do
+ActiveRecord::Schema.define(version: 20150706081039) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -140,8 +140,8 @@ ActiveRecord::Schema.define(version: 20150702041553) do
     t.integer  "resource_id", limit: 4
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
-    t.integer  "value",       limit: 4
-    t.integer  "kind",        limit: 4
+    t.integer  "value",       limit: 4, null: false
+    t.integer  "kind",        limit: 4, null: false
   end
 
   create_table "resources", force: :cascade do |t|
@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(version: 20150702041553) do
     t.integer  "time",        limit: 4
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
-    t.string   "physical_id", limit: 255,                 null: false
+    t.string   "physical_id", limit: 255
     t.string   "type",        limit: 255,                 null: false
   end
 
@@ -199,6 +199,7 @@ ActiveRecord::Schema.define(version: 20150702041553) do
     t.datetime "updated_at"
     t.boolean  "admin"
     t.boolean  "master"
+    t.string   "mfa_secret_key",         limit: 255
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

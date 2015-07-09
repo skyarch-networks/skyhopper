@@ -67,25 +67,32 @@ class UsersAdminController < ApplicationController
 
   # GET /users_admin/1/edit
   def edit
-    @user    = User.find( params.require(:id) )
-    @clients = Client.all
-    allowed_projects = @user.projects.includes(:client)
-    @allowed_projects_title = allowed_projects.map do |project|
+    user = User.find(params.require(:id))
+    @user = user.trim_password
+    @clients = Client.all.map{|c|{value: c.id, text: c.name}}
+    allowed_projects = user.projects.includes(:client)
+    @allowed_projects = allowed_projects.map do |project|
       client_name = project.client.name
-      {project_id: project.id, title: "#{client_name} / #{project.name}[#{project.code}]"}
+      {value: project.id.to_s, text: "#{client_name} / #{project.name}[#{project.code}]"}
     end
 
-    render partial: 'edit'
+    # 新しい MFA の鍵を生成する
+    @mfa_key = ROTP::Base32.random_base32
+    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{user.email}")
+    @mfa_qrcode = RQRCode::QRCode.new(uri).as_html # XXX: ここが遅い(開発環境で100msぐらいはかかる)
   end
 
   # PUT /users_admin/1
   def update
+    body = JSON.parse(params.require(:body), symbolize_names: true)
     user_id          = params.require(:id)
-    allowed_projects = params[:allowed_projects]
-    master           = params.require(:master) == 'true'
-    admin            = params.require(:admin)  == 'true'
-    password         = params[:password]
-    password_confirm = params[:password_confirmation]
+    allowed_projects = body[:allowed_projects]
+    master           = body[:master]
+    admin            = body[:admin]
+    mfa_secret_key   = body[:mfa_secret_key]
+    remove_mfa_key   = body[:remove_mfa_key]
+    password         = body[:password]
+    password_confirm = body[:password_confirmation]
 
     user = User.find(user_id)
     if master
@@ -102,6 +109,10 @@ class UsersAdminController < ApplicationController
       user.password_confirmation = password_confirm
       set_password = true
     end
+
+
+    user.mfa_secret_key = mfa_secret_key if mfa_secret_key
+    user.mfa_secret_key = nil            if remove_mfa_key
 
     user.save!
 

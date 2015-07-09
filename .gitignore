@@ -43,3 +43,4 @@ vendor/bower_components
 /doc/javascripts/
 /doc/*.svg
 /.yardoc/
+/secrets/

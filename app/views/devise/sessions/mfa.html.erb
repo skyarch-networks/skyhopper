@@ -2,35 +2,28 @@
 
 <% if User.count != 0 %>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "form-horizontal", role: "form"}) do |f| %>
+    <input type="hidden" name="user[password]" value="<%= @password %>">
+
     <div class="form-group">
       <%= f.label :email, class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
-        <%= f.email_field :email,  {autofocus: true, class: "form-control", required: true} %>
+        <%= f.email_field :email,  {class: "form-control", required: true, readonly: true} %>
       </div>
     </div>
 
     <div class="form-group">
-      <%= f.label :password, class: 'control-label col-sm-2' %>
+      <%= f.label :mfa_token, I18n.t("users.mfa_token") , class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
-        <%= f.password_field :password, {class: "form-control", pattern: '[^\s]+', required: true} %>
+        <input id="mfa_token" type="text" pattern="\d{6,6}" required name="user[mfa_token]" class="form-control">
       </div>
     </div>
-
-    <% if devise_mapping.rememberable? -%>
-    <div class="form-group">
-      <div class="col-sm-5 col-sm-offset-2">
-        <div class="checkbox">
-          <%= f.check_box :remember_me %><%= f.label :remember_me %>
-        </div>
-      </div>
-    </div>
+    <p class="help-block col-sm-offset-2"><%= t('users.msg.mfa_description') %></p>
 
     <div class="form-actions-top">
       <div class="col-sm-5">
         <%= f.submit t('common.btn.login'), class: "btn btn-primary" %>
       </div>
     </div>
-    <% end -%>
   <% end %>
 <% end %>
 
