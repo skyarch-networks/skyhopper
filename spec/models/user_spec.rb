@@ -77,5 +77,19 @@ describe User, :type => :model do
     it {is_expected.not_to be_include(:mfa_secret_key)}
     it {is_expected.to be_a Hash}
     it {is_expected.to be_all{|key, _|key.is_a? Symbol}}
+
+    context 'when mfa use' do
+      let(:user){build_stubbed(:user, mfa_secret_key: 'hoge')}
+      it 'mfa_use should be true' do
+        expect(subject[:mfa_use]).to be true
+      end
+    end
+
+    context 'when not mfa use' do
+      let(:user){build_stubbed(:user, mfa_secret_key: nil)}
+      it 'mfa_use should not be true' do
+        expect(subject[:mfa_use]).to be false
+      end
+    end
   end
 end

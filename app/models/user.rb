@@ -75,6 +75,7 @@ class User < ActiveRecord::Base
     ret = attributes.symbolize_keys
     ret.delete(:encrypted_password)
     ret.delete(:mfa_secret_key)
+    ret[:mfa_use] = !mfa_secret_key.nil?
     return ret
   end
 end
