@@ -11,6 +11,9 @@ class Ec2PrivateKey < ActiveRecord::Base
   has_many :app_settings
   validates :value, rsa: true
 
+  extend Concerns::Cryptize
+  cryptize :value
+
   class << self
     # AWSに新たに鍵ペアを作成し, それを返す。
     # @param [String] name KeyPair name.
@@ -26,6 +29,7 @@ class Ec2PrivateKey < ActiveRecord::Base
       return self.new(name: name, value: key.private_key)
     end
   end
+
 
   ## テンポラリに鍵を書き出す
   def output_temp(prefix: "ec2key")

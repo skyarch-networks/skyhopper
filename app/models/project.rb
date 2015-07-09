@@ -20,6 +20,10 @@ class Project < ActiveRecord::Base
 
   before_destroy :detach_zabbix
 
+  extend Concerns::Cryptize
+  cryptize :access_key
+  cryptize :secret_access_key
+
   ForDishTestCodeName  = 'DishTest'.freeze
   ChefServerCodeName   = 'ChefServer'.freeze
   ZabbixServerCodeName = 'ZabbixServer'.freeze
