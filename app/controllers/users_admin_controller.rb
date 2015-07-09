@@ -68,7 +68,7 @@ class UsersAdminController < ApplicationController
 
   # GET /users_admin/1/edit
   def edit
-    user     = User.find( params.require(:id) )
+    user = User.find(params.require(:id))
     @user = user.trim_password
     @clients = Client.all.map{|c|{value: c.id, text: c.name}}
     allowed_projects = user.projects.includes(:client)
@@ -80,7 +80,7 @@ class UsersAdminController < ApplicationController
     # 新しい MFA の鍵を生成する
     @mfa_key = ROTP::Base32.random_base32
     uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{user.email}")
-    @mfa_qrcode = RQRCode::QRCode.new(uri).as_html
+    @mfa_qrcode = RQRCode::QRCode.new(uri).as_html # XXX: ここが遅い(開発環境で100msぐらいはかかる)
   end
 
   # PUT /users_admin/1

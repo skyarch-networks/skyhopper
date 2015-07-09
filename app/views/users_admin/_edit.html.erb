@@ -3,7 +3,7 @@
 <h3 class="page-header"><%= t('users.edit') %></h3>
 
 <div class="col-md-12 col-sm-12">
-  <div class="col-md-3 col-sm-3">
+  <div class="col-md-2 col-sm-2">
     <h5 class="page-header"><%= t('users.role') %></h5>
     <div class="checkbox">
       <label>
@@ -17,17 +17,17 @@
     </div>
   </div>
 
-  <div class="col-sm-5 col-md-5">
-    <h5 class="page-header">パスワードの変更</h5>
+  <div class="col-sm-6 col-md-6">
+    <h5 class="page-header"><%=t('users.change_password')%></h5>
     <form class="form-horizontal">
       <div class="form-group">
-        <label for="password" class="col-sm-3 control-label">Password</label>
+        <label for="password" class="col-sm-3 control-label"><%=t('users.password')%></label>
         <div class="col-sm-9">
           <input type="password" class="form-control input-sm" placeholder="Enter new password if you want to change" autocomplete="off" v-model="user.password">
         </div>
       </div>
       <div class="form-group">
-        <label for="password_confirm" class="col-sm-3 control-label">Password Confirmation</label>
+        <label for="password_confirm" class="col-sm-3 control-label"><%=t('users.password_confirm')%></label>
         <div class="col-sm-9">
           <input type="password" class="form-control input-sm" v-model="user.password_confirmation" autocomplete="off">
         </div>
@@ -36,26 +36,27 @@
   </div>
 
   <div class="col-sm-4 col-md-4">
-    <h5 class="page-header">二段階認証</h5>
+    <h5 class="page-header"><%=t('users.mfa')%></h5>
     <div v-if="user.mfa_use">
-      <p>すでに二段階認証が設定されています</p>
-      <button class="btn btn-sm btn-default" v-on="click: update_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key">秘密鍵を変更する</button>
-      <button class="btn btn-sm btn-danger"  v-on="click: remove_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key">二段階認証を取り止める</button>
+      <p><%=t('users.msg.mfa_used')%></p>
+      <button class="btn btn-sm btn-default" v-on="click: update_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key"><%=t('users.change_mfa_secret')%></button>
+      <button class="btn btn-sm btn-danger"  v-on="click: remove_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key"><%=t('users.use_stop_mfa')%></button>
     </div>
 
     <div v-if="!user.mfa_use">
-      <button class="btn btn-sm btn-primary" v-on="click: update_mfa()">二段階認証を開始する</button>
+      <button class="btn btn-sm btn-primary" v-on="click: update_mfa()"><%=t('users.use_start_mfa')%></button>
     </div>
 
     <div v-if="update_mfa_key">
-      <p>Secret Key: <code>{{mfa_key}}</code></p>
+      <p><%=t('users.mfa_secret')%>: <code>{{mfa_key}}</code></p>
       <div class="QRCode">
         {{{mfa_qrcode}}}
       </div>
+      <p><%=t('users.msg.mfa_start_description')%></p>
     </div>
 
     <div v-if="remove_mfa_key">
-      <div class="alert alert-danger" role="alert">二段階認証を取りやめます。</div>
+      <div class="alert alert-danger" role="alert"><%=t('users.msg.use_stop_mfa')%></div>
     </div>
   </div>
 </div>
