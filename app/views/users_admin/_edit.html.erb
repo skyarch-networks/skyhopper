@@ -37,19 +37,25 @@
 
   <div class="col-sm-4 col-md-4">
     <h5 class="page-header">二段階認証</h5>
-    <div v-if="true">
-      すでに二段階認証が設定されています
-      二段階認証しないチェックボックス
+    <div v-if="user.mfa_use">
+      <p>すでに二段階認証が設定されています</p>
+      <button class="btn btn-sm btn-default" v-on="click: update_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key">秘密鍵を変更する</button>
+      <button class="btn btn-sm btn-danger"  v-on="click: remove_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key">二段階認証を取り止める</button>
     </div>
 
-    <div v-if="true">
-      <button class="btn btn-sm btn-primary">二段階認証を開始する</button>
-      <div v-if="true">
-        <p>Secret Key: <code>{{mfa_key}}</code></p>
-        <div class="QRCode">
-          {{{mfa_qrcode}}}
-        </div>
+    <div v-if="!user.mfa_use">
+      <button class="btn btn-sm btn-primary" v-on="click: update_mfa()">二段階認証を開始する</button>
+    </div>
+
+    <div v-if="update_mfa_key">
+      <p>Secret Key: <code>{{mfa_key}}</code></p>
+      <div class="QRCode">
+        {{{mfa_qrcode}}}
       </div>
+    </div>
+
+    <div v-if="remove_mfa_key">
+      <div class="alert alert-danger" role="alert">二段階認証を取りやめます。</div>
     </div>
   </div>
 </div>

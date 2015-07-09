@@ -111,10 +111,14 @@
   var newVM = function (data) {
     data.user.password = "";
     data.user.password_confirmation = "";
+
     data.selected_allowed_projects = null;
     data.selected_client = null;
     data.selected_projects = null;
     data.projects = null;
+
+    data.update_mfa_key = false;
+    data.remove_mfa_key = false;
 
     return new Vue({
       template: '#user-edit-template',
@@ -157,6 +161,9 @@
             });
           });
         },
+
+        update_mfa: function () { this.update_mfa_key = true; },
+        remove_mfa: function () { this.remove_mfa_key = true; }
       },
       ready: function () {
         console.log(this);
