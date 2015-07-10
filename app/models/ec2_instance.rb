@@ -97,7 +97,7 @@ class EC2Instance
       instance_type: res.instance_type,
       public_dns:    res.dns_name,
       elastic_ip:    elastic_ip,
-      public_ip:     res.ip_address,
+      public_ip:     res[:ip_address],
     }
   end
 end
