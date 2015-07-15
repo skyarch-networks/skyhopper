@@ -162,7 +162,7 @@
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#change-schedule-modal" data-toggle="modal">Check security updates</a></li>
         </ul>
       </div>
-      <button v-on="click: select_serverspec()" v-class="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
+      <button v-on="click: select_serverspec()" v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
 
       <div class="pull-right">
 
