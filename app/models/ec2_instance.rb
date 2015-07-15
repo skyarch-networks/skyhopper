@@ -91,8 +91,8 @@ class EC2Instance < SimpleDelegator
   end
 
   def elastic_ip
-    # [FIXME]
-    nil
+    resp = client.describe_addresses(filters: [{name: 'instance-id', values: [instance_id]}])
+    resp.addresses.first.public_ip unless resp.addresses.empty?
   end
 
   def tags_by_hash
