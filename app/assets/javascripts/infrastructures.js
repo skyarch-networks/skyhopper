@@ -530,12 +530,19 @@
 
   // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
+    props: ['physical_id'],
+    data: function () {return {
+      ec2_instances: [],
+      unregistereds: [],
+      dns_name: "",
+      listeners: [],
+      selected_ec2: null,
+    };},
     template: '#elb-tabpane-template',
     methods: {
       show_ec2: function (physical_id) { this.$parent.show_ec2(physical_id); },
 
       deregister: function (physical_id) {
-        // TODO: confirm
         var self = this;
         bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, physical_id);
@@ -564,9 +571,8 @@
         else                   { return 'danger'; }
       },
       expiration_date: function (date_str) {
-        if (!date_str) {
-          return "";
-        }
+        if (!date_str) { return ""; }
+
         return toLocaleString(date_str);
       },
 
@@ -576,11 +582,11 @@
     compiled: function () {
       var self = this;
       current_infra.show_elb(this.physical_id).done(function (data) {
-        self.$set('ec2_instances', data.ec2_instances);
-        self.$set('unregistereds', data.unregistereds);
-        self.$set('dns_name', data.dns_name);
-        self.$set('listeners', data.listeners);
-        self.$set('selected_ec2', null);
+        self.ec2_instances = data.ec2_instances;
+        self.unregistereds = data.unregistereds;
+        self.dns_name = data.dns_name;
+        self.listeners = data.listeners;
+
         self.$parent.loading = false;
         console.log(self);
       }).fail(alert_and_show_infra);

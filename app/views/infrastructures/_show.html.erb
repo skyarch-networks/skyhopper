@@ -89,9 +89,9 @@
         <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane> <%# TODO %>
         <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       v-with="infra_logs: current_infra.infra_logs"></infra-logs-tabpane> <%# TODO %>
         <ec2-tabpane             v-if="tabpane_active('ec2')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
-        <rds-tabpane             v-if="tabpane_active('rds')"              v-with="physical_id: tabpaneGroupID"></rds-tabpane>
-        <elb-tabpane             v-if="tabpane_active('elb')"              v-with="physical_id: tabpaneGroupID"></elb-tabpane>
-        <s3-tabpane              v-if="tabpane_active('s3')"               v-with="physical_id: tabpaneGroupID"></s3-tabpane>
+        <rds-tabpane             v-if="tabpane_active('rds')"              v-with="physical_id: tabpaneGroupID"></rds-tabpane> <%# TODO %>
+        <elb-tabpane             v-if="tabpane_active('elb')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
+        <s3-tabpane              v-if="tabpane_active('s3')"               v-with="physical_id: tabpaneGroupID"></s3-tabpane> <%# TODO %>
         <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
         <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
