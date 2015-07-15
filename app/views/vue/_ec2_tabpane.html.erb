@@ -20,7 +20,7 @@
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" v-with="text: '<%= t('ec2_instances.changing_status') %>'"></div-loader>
+            <div-loader v-if="ec2_status_changing" text="<%= t('ec2_instances.changing_status') %>"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
@@ -190,7 +190,7 @@
   <%# Cook in-progress console %>
   <div class="col-xs-12" v-if="inprogress">
     <div class="form-actions-top">
-      <div-loader v-with="text: '<%= t 'nodes.msg.cooking'%>'"></div-loader>
+      <div-loader text="<%= t 'nodes.msg.cooking'%>"></div-loader>
     </div>
     <div>
       <%# わざと一行で書いてます %>
