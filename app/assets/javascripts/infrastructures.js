@@ -600,6 +600,7 @@
   });
 
   Vue.component('ec2-tabpane', {
+    props: ['physical_id'],
     template: '#ec2-tabpane-template',
     methods: {
       bootstrap: function () {
@@ -834,6 +835,7 @@
     },
     ready: function () {
       var self = this;
+      console.log(self);
 
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
