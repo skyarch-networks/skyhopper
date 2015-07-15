@@ -9,7 +9,7 @@ Arguments:
     <h4 class="page-header">History</h4>
     <div class="list-group">
       <a href="#" class="list-group-item" v-repeat="histories" v-class="active: active(id)" v-on="click: get(id)">
-        <bootstrap-tooltip v-with="title: detail">
+        <bootstrap-tooltip title="detail">
           <h4 class="list-group-item-heading">{{name}}</h4>
           <p class="list-group-item-text">{{created_at | toLocaleString}}</p>
         </bootstrap-tooltip>

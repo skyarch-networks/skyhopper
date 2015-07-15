@@ -29,7 +29,7 @@ Arguments:
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <bootstrap-tooltip v-with="title: '<%= t('ec2_instances.change_status') %>'">
+            <bootstrap-tooltip title="'<%= t('ec2_instances.change_status') %>'">
               <div class="btn-group">
                 <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
@@ -102,19 +102,19 @@ Arguments:
 
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_cook_status' %></h6>
-      <bootstrap-tooltip v-with="title: cook_time">
+      <bootstrap-tooltip title="cook_time">
         <span v-class="cook_status_class" class="label">{{cook_status}}</span>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
-      <bootstrap-tooltip v-with="title: serverspec_time">
+      <bootstrap-tooltip title="serverspec_time">
         <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_update_status' %></h6>
-      <bootstrap-tooltip v-with="title: update_time">
+      <bootstrap-tooltip title="update_time">
         <span v-class="update_status_class" class="label">{{update_status}}</span>
       </bootstrap-tooltip>
     </div>
