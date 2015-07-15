@@ -187,8 +187,9 @@
 
   var build = function (kind) {
     var vm = new_toggle_button(new ServerStatus(kind));
-    var fragment = document.createDocumentFragment();
-    vm.$mount(fragment);
+    // XXX: fragment を使うとうまく動かない
+    var e = document.createElement('div');
+    vm.$mount(e);
     vm.$after(TEMPLATE_ID);
   };
 
