@@ -999,6 +999,10 @@
 
   Vue.component("edit-attr-tabpane", {
     template: '#edit-attr-tabpane-template',
+    data: function () {return {
+      attributes: null,
+      loading:    false,
+    };},
     methods: {
       update: function () {
         var self = this;
@@ -1022,8 +1026,7 @@
     created: function () {
       var self = this;
       self.ec2.edit_attributes().done(function (data) {
-        self.$set('attributes', data);
-        self.$set('loading', false);
+        self.attributes = data;
         self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
     },
