@@ -609,6 +609,12 @@
       chef_console_text:   '',
       selected_dish:       null,
       ec2:                 {},
+
+      // TODO: 階層を分けたい
+      enabled: false,
+      frequency: null,
+      day_of_week: null,
+      time: null,
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -844,10 +850,10 @@
         self.ec2 = data;
 
         if (data.yum_schedule) {
-          self.$set('enabled', data.yum_schedule.enabled);
-          self.$set('frequency', data.yum_schedule.frequency);
-          self.$set('day_of_week', data.yum_schedule.day_of_week);
-          self.$set('time', data.yum_schedule.time);
+          self.enabled     = data.yum_schedule.enabled;
+          self.frequency   = data.yum_schedule.frequency;
+          self.day_of_week = data.yum_schedule.day_of_week;
+          self.time        = data.yum_schedule.time;
         }
 
         var dish_id = '0';
