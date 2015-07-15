@@ -76,6 +76,7 @@
         else if (status.indexOf("DELETE") !== -1) { return "warning"; }
         return '';
       },
+      toLocaleString: toLocaleString,
     },
     created: function () {
       var self = this;
@@ -84,7 +85,6 @@
         $(self.$el).hide().fadeIn(800);
       });
     },
-    filters: {toLocaleString: toLocaleString},
   });
 
   Vue.component("add-modify-tabpane", {
