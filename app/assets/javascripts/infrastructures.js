@@ -601,6 +601,15 @@
 
   Vue.component('ec2-tabpane', {
     props: ['physical_id'],
+    data: function () {return {
+      loading:             false,
+      loading_s:           false,
+      inprogress:          false, // for cook
+      ec2_status_changing: false,
+      chef_console_text:   '',
+      selected_dish:       null,
+      ec2:                 {},
+    };},
     template: '#ec2-tabpane-template',
     methods: {
       bootstrap: function () {
@@ -826,20 +835,13 @@
         }
       },
     },
-    created: function () {
-      this.$set('loading', false);
-      this.$set('loading_s', false);
-      this.$set('inprogress', false); // for cook
-      this.$set('ec2_status_changing', false);
-      this.$set('chef_console_text', '');
-    },
     ready: function () {
       var self = this;
       console.log(self);
 
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
-        self.$set('ec2', data);
+        self.ec2 = data;
 
         if (data.yum_schedule) {
           self.$set('enabled', data.yum_schedule.enabled);
@@ -852,7 +854,7 @@
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
         }
-        self.$set('selected_dish', dish_id);
+        self.selected_dish = dish_id;
 
         self.$watch('selected_dish', function (dish_id) {
           var dish = new Dish();
