@@ -173,8 +173,14 @@
 
   Vue.component("cf-history-tabpane", {
     template: '#cf-history-tabpane-template',
+    data: function () {return {
+      id: -1,
+      current: null,
+      history: [],
+    };},
     methods: {
       active: function (id) { return this.id === id; },
+      toLocaleString: toLocaleString,
 
       get: function (id) {
         var self = this;
@@ -187,11 +193,15 @@
       },
     },
     computed: {
-      currentExists: function () { return !_.isEmpty(this.current); },
+      currentExists: function () { return !!this.current; },
     },
     created: function () {
-      this.$set('id', -1);
-      this.$set('current', {});
+      var self = this;
+      var cft = new CFTemplate(current_infra);
+      cft.history().done(function (data) {
+        self.history = data;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
     },
   });
 
@@ -1140,14 +1150,9 @@
 
         show_cf_history: function () {
           var self = this;
-          self.loading = true;
           self.$event.preventDefault();
-
-          var cft = new CFTemplate(current_infra);
-          cft.history().done(function (data) {
-            self.current_infra.cf_history = data;
-            self.show_tabpane('cf_history');
-          }).fail(alert_and_show_infra);
+          self.show_tabpane('cf_history');
+          self.loading = true;
         },
         show_event_logs: function () {
           if (this.no_stack) {return;}
