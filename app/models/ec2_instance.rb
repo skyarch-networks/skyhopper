@@ -6,7 +6,11 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class EC2Instance
+require 'delegate'
+
+class EC2Instance < SimpleDelegator
+  Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
+
   class ChangeScaleError < StandardError; end
 
   def initialize(arg, physical_id: nil)
@@ -21,29 +25,10 @@ class EC2Instance
       raise ArgumentError, "Invalid Argument: #{arg.inspect}"
     end
 
-    @instance = @ec2.instances[physical_id]
+    @instance = Aws::EC2::Instance.new(physical_id, client: @ec2)
+    __setobj__(@instance)
   end
   attr_reader :physical_id
-
-  %w[
-    instance_type
-    status
-    start
-    stop
-    reboot
-    tags
-    dns_name
-    public_ip_address
-    elastic_ip
-  ].each do |name|
-    define_method(name) do
-      @instance.__send__(name)
-    end
-  end
-
-  def instance_type=(type)
-    @instance.instance_type = type
-  end
 
   # status が変化するのを待つ
   # ==== Args
@@ -69,19 +54,19 @@ class EC2Instance
     return type if instance_type == type
 
     stop
-    until status == :stopped
-      sleep 10
+    wait_until(delay: 10) do |instance|
+      instance.state.name == 'stopped'
     end
 
     begin
-      self.instance_type = type
-    rescue AWS::EC2::Errors::InvalidInstanceAttributeValue => ex
+      modify_attribute(attribute: 'instanceType', value: type)
+    rescue Aws::EC2::Errors::ClientInvalidParameterValue => ex
       start
       raise ChangeScaleError, ex.message
     end
 
-    until instance_type == type
-      sleep 3
+    wait_until(delay: 3) do |instance|
+      instance.instance_type == type
     end
     start
 
@@ -89,15 +74,20 @@ class EC2Instance
   end
 
   def summary
-    c = @instance.client
-    res = c.describe_instances(instance_ids: [physical_id]).reservation_set.first[:instances_set].first
-
+    reload
     return {
-      status:        res.instance_state.name,
-      instance_type: res.instance_type,
-      public_dns:    res.dns_name,
-      elastic_ip:    elastic_ip,
-      public_ip:     res[:ip_address],
+      status:        state.name,
+      instance_type: instance_type,
+      public_dns:    public_dns_name,
+      # [FIXME]
+      # elastic_ip:    elastic_ip,
+      public_ip:     public_ip_address,
     }
+  end
+
+  # for compatibility
+  def status
+    reload
+    state.name.to_sym
   end
 end

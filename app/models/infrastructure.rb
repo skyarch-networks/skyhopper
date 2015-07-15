@@ -149,9 +149,9 @@ class Infrastructure < ActiveRecord::Base
 
 
   # @todo 闇がある
-  # @return [AWS::EC2]
+  # @return [Aws::EC2::Client]
   def ec2
-    ::AWS::EC2.new(
+    ::Aws::EC2::Client.new(
       access_key_id:     self.access_key,
       secret_access_key: self.secret_access_key,
       region:            self.region
