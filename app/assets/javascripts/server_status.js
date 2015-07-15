@@ -102,6 +102,7 @@
   var new_toggle_button = function (model) {
     return new Vue({
       template: TEMPLATE_ID,
+      data: {state: ""},
       methods: {
         // confirm and start server.
         start: function () {
@@ -179,7 +180,6 @@
         },
       },
       created: function () {
-        this.$set('state', null);
         this.status();
       },
     });
