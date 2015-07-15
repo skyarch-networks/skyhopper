@@ -91,7 +91,7 @@
         <ec2-tabpane             v-if="tabpane_active('ec2')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
         <rds-tabpane             v-if="tabpane_active('rds')"              v-with="physical_id: tabpaneGroupID"></rds-tabpane> <%# TODO %>
         <elb-tabpane             v-if="tabpane_active('elb')"              physical_id="{{* tabpaneGroupID}}"></elb-tabpane>
-        <s3-tabpane              v-if="tabpane_active('s3')"               v-with="physical_id: tabpaneGroupID"></s3-tabpane> <%# TODO %>
+        <s3-tabpane              v-if="tabpane_active('s3')"               physical_id="{{* tabpaneGroupID}}"></s3-tabpane>
         <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
         <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>

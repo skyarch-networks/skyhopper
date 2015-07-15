@@ -595,11 +595,13 @@
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
+    props: ['physical_id'],
+    data: function () {return {html: ""};},
     compiled: function () {
       var self = this;
       var s3 = new S3Bucket(current_infra, this.physical_id);
       s3.show().done(function (res) {
-        self.$set('html', res);
+        self.html = res;
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
