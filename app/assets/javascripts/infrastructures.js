@@ -901,12 +901,22 @@
 
   Vue.component('edit-runlist-tabpane', {
     template: '#edit-runlist-tabpane-template',
+    data: function () {return {
+      recipes:           {},
+      selected_cookbook: null,
+      selected_recipes:  null,
+      selected_roles:    null,
+      selected_runlist:  null,
+      loading:           false,
+      runlist:           null,
+      cookbooks:         null,
+      roles:             null,
+    };},
     methods: {
       get_recipes: function () {
         var self = this;
-        if (self.recipes[self.selected_cookbook]) {
-          return;
-        }
+        if (self.recipes[self.selected_cookbook]) { return; }
+
         self.ec2.recipes(self.selected_cookbook).done(function (data) {
           self.recipes.$add(self.selected_cookbook, data);
         }).fail(alert_danger());
@@ -937,9 +947,7 @@
         });
       },
       _add: function (run) {
-        if (_.include(this.runlist, run)) {
-          return;
-        }
+        if (_.include(this.runlist, run)) { return; }
         this.runlist.push(run);
       },
       del: function () {
@@ -978,17 +986,12 @@
     },
     created: function () {
       var self = this;
-      self.$set('recipes', {});
-      self.$set('selected_cookbook', null);
-      self.$set('selected_recipes',  null);
-      self.$set('selected_roles',    null);
-      self.$set('selected_runlist',  null);
-      self.$set('loading', false);
+      console.log(self);
 
       self.ec2.edit().done(function (data) {
-        self.$set('runlist',   data.runlist);
-        self.$set('cookbooks', data.cookbooks);
-        self.$set('roles',     data.roles);
+        self.runlist   = data.runlist;
+        self.cookbooks = data.cookbooks;
+        self.roles     = data.roles;
         self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
     }
