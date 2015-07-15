@@ -101,19 +101,20 @@
 </div>
 </script>
 
-<%= render 'vue/stack_events_table' %>
-<%= render 'vue/add_modify_tabpane' %> <%= render 'vue/insert_cf_params' %>
-<%= render 'vue/add_ec2_tabpane' %>
-<%= render 'vue/cf_history_tabpane' %>
-<%= render 'vue/infra_logs_tabpane'  %>
-<%= render 'vue/monitoring_tabpane' %>
-<%= render 'vue/edit_monitoring_tabpane' %>
-<%= render 'vue/rds_tabpane'  %>
-<%= render 'vue/elb_tabpane'  %>
-<%= render 'vue/s3_tabpane'  %>
-<%= render 'vue/vue_paginator' %>
+<script id="stack-events-table-template"      type="text/template"> <%= render 'vue/stack_events_table' %> </script>
+<script id="add-modify-tabpane-template"      type="text/template"> <%= render 'vue/add_modify_tabpane' %> </script>
+<script id="insert-cf-params-template"        type="text/template"> <%= render 'vue/insert_cf_params' %> </script>
+<script id="add-ec2-tabpane-template"         type="text/template"> <%= render 'vue/add_ec2_tabpane' %> </script>
+<script id="cf-history-tabpane-template"      type="text/template"> <%= render 'vue/cf_history_tabpane' %> </script>
+<script id="infra-logs-tabpane-template"      type="text/template"> <%= render 'vue/infra_logs_tabpane'  %> </script>
+<script id="monitoring-tabpane-template"      type="text/template"> <%= render 'vue/monitoring_tabpane' %> </script>
+<script id="edit-monitoring-tabpane-template" type="text/template"> <%= render 'vue/edit_monitoring_tabpane' %> </script>
+<script id="rds-tabpane-template"             type="text/template"> <%= render 'vue/rds_tabpane'  %> </script>
+<script id="elb-tabpane-template"             type="text/template"> <%= render 'vue/elb_tabpane'  %> </script>
+<script id="s3-tabpane-template"              type="text/template"> <%= render 'vue/s3_tabpane'  %> </script>
+<script id="vue-paginator-template"           type="text/template"> <%= render 'vue/vue_paginator' %> </script>
 
-<%= render 'vue/ec2_tabpane' %>
-<%= render 'vue/edit_runlist_tabpane' %>
-<%= render 'vue/edit_attr_tabpane' %>
-<%= render 'vue/serverspec_tabpane' %>
+<script id="ec2-tabpane-template"             type="text/template"> <%= render 'vue/ec2_tabpane' %> </script>
+<script id="edit-runlist-tabpane-template"    type="text/template"> <%= render 'vue/edit_runlist_tabpane' %> </script>
+<script id="edit-attr-tabpane-template"       type="text/template"> <%= render 'vue/edit_attr_tabpane' %> </script>
+<script id="serverspec-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_tabpane' %> </script>

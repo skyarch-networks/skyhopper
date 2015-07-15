@@ -3,7 +3,6 @@ Arguments:
   current: Integer
   max:     Integer
 -->
-<script id="vue-paginator-template" type="text/template">
 <div class="text-center">
   <ul class="pagination">
     <li v-on="click: show(0)" v-class="disabled: isDisable(0)"><a href="#"><%= raw(t 'views.pagination.first') %></a></li>
@@ -17,4 +16,3 @@ Arguments:
     <li v-on="click: show(max)" v-class="disabled: isDisable(max)"><a href="#"><%= raw(t 'views.pagination.last') %></a></li>
   </ul>
 </div>
-</script>
