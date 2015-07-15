@@ -76,7 +76,7 @@
         </div>
 
         <%# Stack Event Table %>
-        <stack-events-table v-with="events: current_infra.events"></stack-events-table>
+        <stack-events-table events="{{current_infra.events}}"></stack-events-table>
       </div>
 
       <add-modify-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('add_modify')"       v-with="current_infra.add_modify"></add-modify-tabpane>

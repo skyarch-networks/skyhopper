@@ -67,6 +67,7 @@
   });
 
   Vue.component("stack-events-table", {
+    props: ["events"],
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
@@ -78,6 +79,7 @@
     },
     created: function () {
       var self = this;
+      console.log(self);
       this.$watch('events', function () {
         $(self.$el).hide().fadeIn(800);
       });
