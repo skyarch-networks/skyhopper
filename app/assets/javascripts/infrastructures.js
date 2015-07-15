@@ -1034,6 +1034,17 @@
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
+    data: function () {return {
+      available_auto_generated: null,
+      individuals: null,
+      globals: null,
+      loading: false,
+      loading_s: false,
+      enabled: null,
+      frequency: null,
+      day_of_week: null,
+      time: null,
+    };},
     methods: {
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -1091,16 +1102,15 @@
       var self = this;
       self.ec2.select_serverspec().done(function (data) {
         var schedule = data.schedule;
-        self.$set('available_auto_generated', data.available_auto_generated);
-        self.$set('individuals', data.individuals || []);
-        self.$set('globals', data.globals || []);
-        self.$set('loading', false);
+        self.available_auto_generated = data.available_auto_generated;
+        self.individuals = data.individuals || [];
+        self.globals = data.globals || [];
+        self.enabled = schedule.enabled;
+        self.frequency = schedule.frequency;
+        self.day_of_week = schedule.day_of_week;
+        self.time = schedule.time;
+
         self.$parent.loading = false;
-        self.$set('loading_s', false);
-        self.$set('enabled', schedule.enabled);
-        self.$set('frequency', schedule.frequency);
-        self.$set('day_of_week', schedule.day_of_week);
-        self.$set('time', schedule.time);
       }).fail(alert_danger(self.show_ec2));
     }
   });
