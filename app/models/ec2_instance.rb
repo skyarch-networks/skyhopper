@@ -79,8 +79,7 @@ class EC2Instance < SimpleDelegator
       status:        state.name,
       instance_type: instance_type,
       public_dns:    public_dns_name,
-      # [FIXME]
-      # elastic_ip:    elastic_ip,
+      elastic_ip:    elastic_ip,
       public_ip:     public_ip_address,
     }
   end
@@ -89,5 +88,14 @@ class EC2Instance < SimpleDelegator
   def status
     reload
     state.name.to_sym
+  end
+
+  def elastic_ip
+    # [FIXME]
+    nil
+  end
+
+  def tags_by_hash
+    tags.map { |e| [e.key, e.value] }.to_h
   end
 end
