@@ -87,16 +87,23 @@
   });
 
   Vue.component("add-modify-tabpane", {
+    props: ['templates'],
+    data: function(){return{
+      name: "",
+      detail: "",
+      value: "",
+      selected_cft_id: null,
+    };},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
         var self = this;
-        var cft = _.find(self.histories.concat(self.globals), function (c) {
+        var cft = _.find(self.templates.histories.concat(self.templates.globals), function (c) {
           return c.id === self.selected_cft_id;
         });
-        self.$set('name',   cft.name);
-        self.$set('detail', cft.detail);
-        self.$set('value',  cft.value);
+        self.name = cft.name;
+        self.detail = cft.detail;
+        self.value = cft.value;
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
@@ -108,7 +115,7 @@
       jsonParseErr: function () { return jsonParseErr(this.value); },
     },
     created: function () {
-      this.$set('selected_cft_id', null);
+      console.log(this);
     }
   });
 
@@ -1081,7 +1088,7 @@
           stack: stack,
           resources : {},
           events: [],
-          add_modify: null,
+          templates: {histories: null, globals: null},
           insert_cf_params: {},
         },
         tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
@@ -1123,9 +1130,8 @@
 
           var cft = new CFTemplate(current_infra);
           cft.new().done(function (data) {
-            self.$set('current_infra.add_modify', {});
-            self.$set('current_infra.add_modify.histories', data.histories);
-            self.$set('current_infra.add_modify.globals', data.globals);
+            self.current_infra.templates.histories = data.histories;
+            self.current_infra.templates.globals = data.globals;
 
             self.show_tabpane('add_modify');
           }).fail(alert_danger());
@@ -1223,6 +1229,7 @@
       },
       ready: function () {
         var self = this;
+        console.log(self);
         if (stack.status.type === 'OK') {
           var res = new Resource(current_infra);
           res.index().done(function (resources) {
