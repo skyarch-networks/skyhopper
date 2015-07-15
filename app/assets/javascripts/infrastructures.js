@@ -84,16 +84,12 @@
         $(self.$el).hide().fadeIn(800);
       });
     },
+    filters: {toLocaleString: toLocaleString},
   });
 
   Vue.component("add-modify-tabpane", {
-    props: ['templates'],
-    data: function(){return{
-      name: "",
-      detail: "",
-      value: "",
-      selected_cft_id: null,
-    };},
+    props: ['templates', 'result'],
+    data: function(){return{selected_cft_id: null};},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
@@ -101,9 +97,9 @@
         var cft = _.find(self.templates.histories.concat(self.templates.globals), function (c) {
           return c.id === self.selected_cft_id;
         });
-        self.name = cft.name;
-        self.detail = cft.detail;
-        self.value = cft.value;
+        self.result.name   = cft.name;
+        self.result.detail = cft.detail;
+        self.result.value  = cft.value;
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
@@ -112,7 +108,7 @@
       },
     },
     computed: {
-      jsonParseErr: function () { return jsonParseErr(this.value); },
+      jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
     created: function () {
       console.log(this);
@@ -121,6 +117,11 @@
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',
+    data: function () {return {
+      params: {},
+      result: {},
+      loading: false,
+    };},
     methods: {
       submit: function () {
         this.loading = true;
@@ -132,20 +133,18 @@
           self.loading = false;
         }));
       },
-      back: function () {
-        app.show_tabpane('add_modify');
-      },
+
+      back: function () { app.show_tabpane('add_modify'); },
     },
     created: function () {
       var self = this;
+      console.log(self);
       var cft = new CFTemplate(current_infra);
       cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
-        self.$set('params', data);
-        self.$set('result', {});
+        self.params = data;
         _.each(data, function (val, key) {
           self.result.$add(key, val.Default);
         });
-        self.$set('loading', false);
         app.loading = false;
       }).fail(alert_danger(function () {
         self.back();
@@ -1089,7 +1088,7 @@
           resources : {},
           events: [],
           templates: {histories: null, globals: null},
-          insert_cf_params: {},
+          add_modify: {name: "", detail: "", value: ""},
         },
         tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
         tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
