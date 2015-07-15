@@ -486,6 +486,11 @@
   });
 
   Vue.component('rds-tabpane', {
+    props: ['physical_id'],
+    data: function () {return {
+      rds: null,
+      serverspec: {},
+    };},
     template: '#rds-tabpane-template',
     methods: {
       change_scale: function () {
@@ -521,9 +526,8 @@
       var self = this;
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
-        self.$set('rds', data.rds);
+        self.rds = data.rds;
         self.$parent.loading = false;
-        self.$set('serverspec', {});
       }).fail(alert_and_show_infra);
     },
   });
