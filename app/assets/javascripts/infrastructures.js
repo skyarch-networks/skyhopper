@@ -67,6 +67,7 @@
   });
 
   Vue.component("stack-events-table", {
+    props: ["events"],
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
@@ -75,9 +76,11 @@
         else if (status.indexOf("DELETE") !== -1) { return "warning"; }
         return '';
       },
+      toLocaleString: toLocaleString,
     },
     created: function () {
       var self = this;
+      console.log(self);
       this.$watch('events', function () {
         $(self.$el).hide().fadeIn(800);
       });
@@ -85,16 +88,18 @@
   });
 
   Vue.component("add-modify-tabpane", {
+    props: ['templates', 'result'],
+    data: function(){return{selected_cft_id: null};},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
         var self = this;
-        var cft = _.find(self.histories.concat(self.globals), function (c) {
+        var cft = _.find(self.templates.histories.concat(self.templates.globals), function (c) {
           return c.id === self.selected_cft_id;
         });
-        self.$set('name',   cft.name);
-        self.$set('detail', cft.detail);
-        self.$set('value',  cft.value);
+        self.result.name   = cft.name;
+        self.result.detail = cft.detail;
+        self.result.value  = cft.value;
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
@@ -103,15 +108,20 @@
       },
     },
     computed: {
-      jsonParseErr: function () { return jsonParseErr(this.value); },
+      jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
     created: function () {
-      this.$set('selected_cft_id', null);
+      console.log(this);
     }
   });
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',
+    data: function () {return {
+      params: {},
+      result: {},
+      loading: false,
+    };},
     methods: {
       submit: function () {
         this.loading = true;
@@ -123,20 +133,18 @@
           self.loading = false;
         }));
       },
-      back: function () {
-        app.show_tabpane('add_modify');
-      },
+
+      back: function () { app.show_tabpane('add_modify'); },
     },
     created: function () {
       var self = this;
+      console.log(self);
       var cft = new CFTemplate(current_infra);
       cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
-        self.$set('params', data);
-        self.$set('result', {});
+        self.params = data;
         _.each(data, function (val, key) {
           self.result.$add(key, val.Default);
         });
-        self.$set('loading', false);
         app.loading = false;
       }).fail(alert_danger(function () {
         self.back();
@@ -146,6 +154,10 @@
 
   Vue.component('add-ec2-tabpane', {
     template: '#add-ec2-tabpane-template',
+    data: function () {return {
+      physical_id: '',
+      screen_name: '',
+    };},
     methods: {
       submit: function () {
         var res = new Resource(current_infra);
@@ -156,17 +168,19 @@
           .fail(alert_and_show_infra);
       },
     },
-    computed: {},
-    created: function () {
-      this.$set('physical_id', '');
-      this.$set('screen_name', '');
-    }
+    created: function () {console.log(this);},
   });
 
   Vue.component("cf-history-tabpane", {
     template: '#cf-history-tabpane-template',
+    data: function () {return {
+      id: -1,
+      current: null,
+      history: [],
+    };},
     methods: {
       active: function (id) { return this.id === id; },
+      toLocaleString: toLocaleString,
 
       get: function (id) {
         var self = this;
@@ -179,21 +193,38 @@
       },
     },
     computed: {
-      currentExists: function () { return !_.isEmpty(this.current); },
+      currentExists: function () { return !!this.current; },
     },
     created: function () {
-      this.$set('id', -1);
-      this.$set('current', {});
+      var self = this;
+      var cft = new CFTemplate(current_infra);
+      cft.history().done(function (data) {
+        self.history = data;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
     },
   });
 
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
+    data: function () {return {
+      logs: [],
+      page: null,
+    };},
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
       status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
+      toLocaleString: toLocaleString,
     },
     created: function () {
+      var self = this;
+      console.log(self);
+      current_infra.logs().done(function (data) {
+        self.logs = data.logs;
+        self.page = data.page;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+
       this.$watch('infra_logs', function (newVal, oldVal) {
         $(".popovermore").popover().click( function(e) {
           e.preventDefault();
@@ -201,9 +232,9 @@
       });
 
       this.$on('show', function (page) {
-        var self = this;
         current_infra.logs(page).done(function (data) {
-          self.infra_logs = data;
+          self.logs = data.logs;
+          self.page = data.page;
         }).fail(alert_and_show_infra);
       });
     },
@@ -212,6 +243,19 @@
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
     template: "#monitoring-tabpane-template",
+    data: function () {return {
+      problems: null,
+      creating: false,
+      before_register: false,
+      commons: [],
+      uncommons: [],
+      resources: [],
+      error_message: null,
+      loading_graph: false,
+      url_status: [],
+      showing_url: false,
+      loading_problems: true,
+    };},
     methods: {
       show_problems: function () {
         var self = this;
@@ -322,20 +366,13 @@
     },
     created: function () {
       var self = this;
-      self.$set('problems', null);
-      self.$set('creating', false);
       var monitoring = new Monitoring(current_infra);
       monitoring.show().done(function (data) {
-        self.$set('before_register', data.before_register);
-        self.$set('commons', data.monitor_selected_common);
-        self.$set('uncommons', data.monitor_selected_uncommon);
-        self.$set('resources', data.resources);
+        self.before_register = data.before_register;
+        self.commons         = data.monitor_selected_common;
+        self.uncommons       = data.monitor_selected_uncommon;
+        self.resources       = data.resources;
         if (!this.before_register) {
-          self.$set('error_message', null);
-          self.$set('loading_graph', false);
-          self.$set('url_status', []);
-          self.$set('showing_url', false);
-          self.$set('loading_problems', true);
           self.show_problems();
         }
         self.$parent.loading = false;
@@ -345,6 +382,15 @@
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
+    data: function () {return {
+      master_monitorings: [],
+      selected_monitoring_ids: [],
+      web_scenarios: [],
+      mysql_rds_host: null,
+      postgresql_rds_host: null,
+      add_scenario: {},
+      loading: false,
+    };},
     methods: {
       type: function (master) { return this.monitoring.type(master); },
 
@@ -413,14 +459,11 @@
     created: function () {
       var self = this;
       this.monitoring.edit().done(function (data) {
-        self.$set("master_monitorings",      data.master_monitorings);
-        self.$set("selected_monitoring_ids", data.selected_monitoring_ids);
-        self.$set("web_scenarios",           data.web_scenarios);
-        self.$set("mysql_rds_host",          null);
-        self.$set("postgresql_rds_host",     null);
-
-        self.$set('add_scenario', {});
-        self.$set('loading', false);
+        self.master_monitorings      = data.master_monitorings;
+        self.selected_monitoring_ids = data.selected_monitoring_ids;
+        self.web_scenarios           = data.web_scenarios;
+        self.mysql_rds_host          = null;
+        self.postgresql_rds_host     = null;
 
         self.$parent.loading = false;
       }).fail(function (xhr) {
@@ -434,20 +477,21 @@
   });
 
   Vue.component("vue-paginator", {
+    props: ['page'],
     template: '#vue-paginator-template',
     methods: {
       isDisable: function (i) {
-        if (this.current <= i) {
-          return this.current === this.max;
+        if (this.page.current <= i) {
+          return this.page.current === this.page.max;
         } else {
-          return this.current === 1;
+          return this.page.current === 1;
         }
       },
       visibleTruncate: function (type) {
         if (type === 'next') {
-          return this.current + 4 < this.max ;
+          return this.page.current + 4 < this.page.max ;
         } else { // 'prev'
-          return 0 < this.current - 5;
+          return 0 < this.page.current - 5;
         }
       },
       show: function (page) {
@@ -456,18 +500,24 @@
         this.$dispatch('show', page);
       },
     },
-    filters: {
-      visibleNum: function (array) {
+    computed: {
+      visibleNum: function () {
         var self = this;
-        return _.filter(array, function (n) {
-          var i = n + self.current - 4;
-          return 0 < i && i <= self.max;
+        return _.filter([0, 1, 2, 3, 4, 5, 6, 7, 8], function (n) {
+          var i = n + self.page.current - 4;
+          return 0 < i && i <= self.page.max;
         });
       },
-    }
+    },
+    created: function () { console.log(this); },
   });
 
   Vue.component('rds-tabpane', {
+    props: ['physical_id'],
+    data: function () {return {
+      rds: null,
+      serverspec: {},
+    };},
     template: '#rds-tabpane-template',
     methods: {
       change_scale: function () {
@@ -503,21 +553,27 @@
       var self = this;
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
-        self.$set('rds', data.rds);
+        self.rds = data.rds;
         self.$parent.loading = false;
-        self.$set('serverspec', {});
       }).fail(alert_and_show_infra);
     },
   });
 
   // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
+    props: ['physical_id'],
+    data: function () {return {
+      ec2_instances: [],
+      unregistereds: [],
+      dns_name: "",
+      listeners: [],
+      selected_ec2: null,
+    };},
     template: '#elb-tabpane-template',
     methods: {
       show_ec2: function (physical_id) { this.$parent.show_ec2(physical_id); },
 
       deregister: function (physical_id) {
-        // TODO: confirm
         var self = this;
         bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, physical_id);
@@ -546,9 +602,8 @@
         else                   { return 'danger'; }
       },
       expiration_date: function (date_str) {
-        if (!date_str) {
-          return "";
-        }
+        if (!date_str) { return ""; }
+
         return toLocaleString(date_str);
       },
 
@@ -558,11 +613,11 @@
     compiled: function () {
       var self = this;
       current_infra.show_elb(this.physical_id).done(function (data) {
-        self.$set('ec2_instances', data.ec2_instances);
-        self.$set('unregistereds', data.unregistereds);
-        self.$set('dns_name', data.dns_name);
-        self.$set('listeners', data.listeners);
-        self.$set('selected_ec2', null);
+        self.ec2_instances = data.ec2_instances;
+        self.unregistereds = data.unregistereds;
+        self.dns_name = data.dns_name;
+        self.listeners = data.listeners;
+
         self.$parent.loading = false;
         console.log(self);
       }).fail(alert_and_show_infra);
@@ -571,17 +626,35 @@
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
+    props: ['physical_id'],
+    data: function () {return {html: ""};},
     compiled: function () {
       var self = this;
       var s3 = new S3Bucket(current_infra, this.physical_id);
       s3.show().done(function (res) {
-        self.$set('html', res);
+        self.html = res;
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
   });
 
   Vue.component('ec2-tabpane', {
+    props: ['physical_id'],
+    data: function () {return {
+      loading:             false,
+      loading_s:           false,
+      inprogress:          false, // for cook
+      ec2_status_changing: false,
+      chef_console_text:   '',
+      selected_dish:       null,
+      ec2:                 {},
+
+      // TODO: 階層を分けたい
+      enabled: false,
+      frequency: null,
+      day_of_week: null,
+      time: null,
+    };},
     template: '#ec2-tabpane-template',
     methods: {
       bootstrap: function () {
@@ -807,32 +880,26 @@
         }
       },
     },
-    created: function () {
-      this.$set('loading', false);
-      this.$set('loading_s', false);
-      this.$set('inprogress', false); // for cook
-      this.$set('ec2_status_changing', false);
-      this.$set('chef_console_text', '');
-    },
     ready: function () {
       var self = this;
+      console.log(self);
 
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
-        self.$set('ec2', data);
+        self.ec2 = data;
 
         if (data.yum_schedule) {
-          self.$set('enabled', data.yum_schedule.enabled);
-          self.$set('frequency', data.yum_schedule.frequency);
-          self.$set('day_of_week', data.yum_schedule.day_of_week);
-          self.$set('time', data.yum_schedule.time);
+          self.enabled     = data.yum_schedule.enabled;
+          self.frequency   = data.yum_schedule.frequency;
+          self.day_of_week = data.yum_schedule.day_of_week;
+          self.time        = data.yum_schedule.time;
         }
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
         }
-        self.$set('selected_dish', dish_id);
+        self.selected_dish = dish_id;
 
         self.$watch('selected_dish', function (dish_id) {
           var dish = new Dish();
@@ -873,12 +940,22 @@
 
   Vue.component('edit-runlist-tabpane', {
     template: '#edit-runlist-tabpane-template',
+    data: function () {return {
+      recipes:           {},
+      selected_cookbook: null,
+      selected_recipes:  null,
+      selected_roles:    null,
+      selected_runlist:  null,
+      loading:           false,
+      runlist:           null,
+      cookbooks:         null,
+      roles:             null,
+    };},
     methods: {
       get_recipes: function () {
         var self = this;
-        if (self.recipes[self.selected_cookbook]) {
-          return;
-        }
+        if (self.recipes[self.selected_cookbook]) { return; }
+
         self.ec2.recipes(self.selected_cookbook).done(function (data) {
           self.recipes.$add(self.selected_cookbook, data);
         }).fail(alert_danger());
@@ -909,9 +986,7 @@
         });
       },
       _add: function (run) {
-        if (_.include(this.runlist, run)) {
-          return;
-        }
+        if (_.include(this.runlist, run)) { return; }
         this.runlist.push(run);
       },
       del: function () {
@@ -950,17 +1025,12 @@
     },
     created: function () {
       var self = this;
-      self.$set('recipes', {});
-      self.$set('selected_cookbook', null);
-      self.$set('selected_recipes',  null);
-      self.$set('selected_roles',    null);
-      self.$set('selected_runlist',  null);
-      self.$set('loading', false);
+      console.log(self);
 
       self.ec2.edit().done(function (data) {
-        self.$set('runlist',   data.runlist);
-        self.$set('cookbooks', data.cookbooks);
-        self.$set('roles',     data.roles);
+        self.runlist   = data.runlist;
+        self.cookbooks = data.cookbooks;
+        self.roles     = data.roles;
         self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
     }
@@ -968,6 +1038,10 @@
 
   Vue.component("edit-attr-tabpane", {
     template: '#edit-attr-tabpane-template',
+    data: function () {return {
+      attributes: null,
+      loading:    false,
+    };},
     methods: {
       update: function () {
         var self = this;
@@ -991,8 +1065,7 @@
     created: function () {
       var self = this;
       self.ec2.edit_attributes().done(function (data) {
-        self.$set('attributes', data);
-        self.$set('loading', false);
+        self.attributes = data;
         self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
     },
@@ -1000,6 +1073,17 @@
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
+    data: function () {return {
+      available_auto_generated: null,
+      individuals: null,
+      globals: null,
+      loading: false,
+      loading_s: false,
+      enabled: null,
+      frequency: null,
+      day_of_week: null,
+      time: null,
+    };},
     methods: {
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -1057,16 +1141,15 @@
       var self = this;
       self.ec2.select_serverspec().done(function (data) {
         var schedule = data.schedule;
-        self.$set('available_auto_generated', data.available_auto_generated);
-        self.$set('individuals', data.individuals || []);
-        self.$set('globals', data.globals || []);
-        self.$set('loading', false);
+        self.available_auto_generated = data.available_auto_generated;
+        self.individuals = data.individuals || [];
+        self.globals = data.globals || [];
+        self.enabled = schedule.enabled;
+        self.frequency = schedule.frequency;
+        self.day_of_week = schedule.day_of_week;
+        self.time = schedule.time;
+
         self.$parent.loading = false;
-        self.$set('loading_s', false);
-        self.$set('enabled', schedule.enabled);
-        self.$set('frequency', schedule.frequency);
-        self.$set('day_of_week', schedule.day_of_week);
-        self.$set('time', schedule.time);
       }).fail(alert_danger(self.show_ec2));
     }
   });
@@ -1079,8 +1162,8 @@
           stack: stack,
           resources : {},
           events: [],
-          add_modify: null,
-          insert_cf_params: {},
+          templates: {histories: null, globals: null},
+          add_modify: {name: "", detail: "", value: ""},
         },
         tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
         tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
@@ -1121,9 +1204,8 @@
 
           var cft = new CFTemplate(current_infra);
           cft.new().done(function (data) {
-            self.$set('current_infra.add_modify', {});
-            self.$set('current_infra.add_modify.histories', data.histories);
-            self.$set('current_infra.add_modify.globals', data.globals);
+            self.current_infra.templates.histories = data.histories;
+            self.current_infra.templates.globals = data.globals;
 
             self.show_tabpane('add_modify');
           }).fail(alert_danger());
@@ -1133,14 +1215,9 @@
 
         show_cf_history: function () {
           var self = this;
-          self.loading = true;
           self.$event.preventDefault();
-
-          var cft = new CFTemplate(current_infra);
-          cft.history().done(function (data) {
-            self.current_infra.cf_history = data;
-            self.show_tabpane('cf_history');
-          }).fail(alert_and_show_infra);
+          self.show_tabpane('cf_history');
+          self.loading = true;
         },
         show_event_logs: function () {
           if (this.no_stack) {return;}
@@ -1155,12 +1232,9 @@
         },
         show_infra_logs: function () {
           var self = this;
-          self.loading = true;
           self.$event.preventDefault();
-          current_infra.logs().done(function (data) {
-            self.current_infra.infra_logs = data;
-            self.show_tabpane('infra_logs');
-          }).fail(alert_and_show_infra);
+          self.show_tabpane('infra_logs');
+          self.loading = true;
         },
         show_monitoring: function () {
           if (this.no_stack) {return;}
@@ -1221,6 +1295,7 @@
       },
       ready: function () {
         var self = this;
+        console.log(self);
         if (stack.status.type === 'OK') {
           var res = new Resource(current_infra);
           res.index().done(function (resources) {

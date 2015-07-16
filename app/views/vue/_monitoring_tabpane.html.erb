@@ -1,5 +1,3 @@
-<script id="monitoring-tabpane-template" type="text/template">
-
 <div v-if="before_register">
   <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
   <div class="alert alert-warning">
@@ -23,16 +21,18 @@
     <div style="margin-top:30px">
       <div class="col-md-2 col-sm-3">
         <div class="panel-group">
-          <div class="panel panel-default" v-repeat="r: resources" v-if="uncommons.length !== 0">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-              <a class="accordion-toggle" data-toggle="collapse" href="#monitorings-{{*r.physical_id}}">{{*r.physical_id}}</a>
-              </h4>
-            </div>
-            <div class="panel-collapse collapse" id="monitorings-{{r.physical_id}}">
-              <div class="list-group">
-                <a href="#" v-repeat="uncommons" class="list-group-item" v-on="click: show_zabbix_graph(r.physical_id, item)">{{*name}}</a>
-                <a href="#" v-on="click: show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
+          <div v-if="uncommons.length !== 0">
+            <div class="panel panel-default" v-repeat="r: resources">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" href="#monitorings-{{*r.physical_id}}">{{*r.physical_id}}</a>
+                </h4>
+              </div>
+              <div class="panel-collapse collapse" id="monitorings-{{r.physical_id}}">
+                <div class="list-group">
+                  <a href="#" v-repeat="uncommons" class="list-group-item" v-on="click: show_zabbix_graph(r.physical_id, item)">{{*name}}</a>
+                  <a href="#" v-on="click: show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
+                </div>
               </div>
             </div>
           </div>
@@ -124,6 +124,3 @@
     </div>
   </div>
 </div>
-
-
-</script>

@@ -102,6 +102,7 @@
   var new_toggle_button = function (model) {
     return new Vue({
       template: TEMPLATE_ID,
+      data: {state: ""},
       methods: {
         // confirm and start server.
         start: function () {
@@ -179,7 +180,6 @@
         },
       },
       created: function () {
-        this.$set('state', null);
         this.status();
       },
     });
@@ -187,8 +187,9 @@
 
   var build = function (kind) {
     var vm = new_toggle_button(new ServerStatus(kind));
-    var fragment = document.createDocumentFragment();
-    vm.$mount(fragment);
+    // XXX: fragment を使うとうまく動かない
+    var e = document.createElement('div');
+    vm.$mount(e);
     vm.$after(TEMPLATE_ID);
   };
 

@@ -1,8 +1,3 @@
-<%#
-Arguments:
-  ec2
-%>
-<script id="ec2-tabpane-template" type="text/template">
 <div>
   <h3 class="page-header">
     {{physical_id}}&nbsp;<small>{{ec2.public_ip}}</small>
@@ -25,11 +20,11 @@ Arguments:
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" v-with="text: '<%= t('ec2_instances.changing_status') %>'"></div-loader>
+            <div-loader v-if="ec2_status_changing" text="<%= t('ec2_instances.changing_status') %>"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <bootstrap-tooltip v-with="title: '<%= t('ec2_instances.change_status') %>'">
+            <bootstrap-tooltip title="<%= t('ec2_instances.change_status') %>">
               <div class="btn-group">
                 <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
@@ -102,19 +97,19 @@ Arguments:
 
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_cook_status' %></h6>
-      <bootstrap-tooltip v-with="title: cook_time">
+      <bootstrap-tooltip title="{{* cook_time}}">
         <span v-class="cook_status_class" class="label">{{cook_status}}</span>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
-      <bootstrap-tooltip v-with="title: serverspec_time">
+      <bootstrap-tooltip title="{{* serverspec_time}}">
         <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_update_status' %></h6>
-      <bootstrap-tooltip v-with="title: update_time">
+      <bootstrap-tooltip title="{{* update_time}}">
         <span v-class="update_status_class" class="label">{{update_status}}</span>
       </bootstrap-tooltip>
     </div>
@@ -167,7 +162,7 @@ Arguments:
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#change-schedule-modal" data-toggle="modal">Check security updates</a></li>
         </ul>
       </div>
-      <button v-on="click: select_serverspec()" v-class="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
+      <button v-on="click: select_serverspec()" v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
 
       <div class="pull-right">
 
@@ -195,7 +190,7 @@ Arguments:
   <%# Cook in-progress console %>
   <div class="col-xs-12" v-if="inprogress">
     <div class="form-actions-top">
-      <div-loader v-with="text: '<%= t 'nodes.msg.cooking'%>'"></div-loader>
+      <div-loader text="<%= t 'nodes.msg.cooking'%>"></div-loader>
     </div>
     <div>
       <%# わざと一行で書いてます %>
@@ -287,4 +282,3 @@ Arguments:
     </div>
   </div>
 </div>
-</script>

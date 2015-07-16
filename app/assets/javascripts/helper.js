@@ -116,21 +116,22 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
   };
 
 
-  // <bootstrap-tooltip v-with="title: 'tooltip title'">
+  // <bootstrap-tooltip title="tooltip title">
   //   <div>Your content</div>
   // </bootstrap-tooltip>
   Vue.component('bootstrap-tooltip', {
+    props: ['title'],
     template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content></content></span>',
     compiled: function () {
-      $(this.$el.querySelector('[data-toggle="tooltip"]')).tooltip();
+      console.log(this);
+      $(this.$el).tooltip();
     },
   });
 
   Loader = Vue.extend({
     template: '<span><div class="loader"></div>{{text | format}}</span>',
-    created: function () {
-      this.$set('text', t('common.msg.loading'));
-    },
+    props: ['text'],
+    data: function () {return {text: t('common.msg.loading')};},
     filters: {
       format: function (str) { return ' ' + str; }
     }
