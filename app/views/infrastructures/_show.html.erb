@@ -17,7 +17,7 @@
       <li class="active">
         <a v-if="no_stack"    v-on="click: show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
         <a v-if="in_progress" v-on="click: show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
-        <a v-if="stack_fail"  v-on="click: show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a> <%# TODO: I18n %>
+        <a v-if="stack_fail"  v-on="click: show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
       </li>
 
 
@@ -85,8 +85,8 @@
         <add-ec2-tabpane         v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
         <cf-history-tabpane      v-if="tabpane_active('cf_history')"       ></cf-history-tabpane>
         <stack-events-table      v-if="tabpane_active('event_logs')"       events="{{* current_infra.events}}"></stack-events-table>
-        <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane> <%# TODO %>
-        <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane> <%# TODO %>
+        <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
+        <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
         <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>
         <ec2-tabpane             v-if="tabpane_active('ec2')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
         <rds-tabpane             v-if="tabpane_active('rds')"              physical_id="{{* tabpaneGroupID}}"></rds-tabpane>
