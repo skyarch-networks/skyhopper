@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "declaration": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noLib": false
+  },
+  "filesGlob": [
+    "./src/**/*.ts"
+  ]
+}
