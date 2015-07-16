@@ -218,7 +218,7 @@
     template: '#infra-logs-tabpane-template',
     data: function () {return {
       logs: [],
-      page: null,
+      page: {},
     };},
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
