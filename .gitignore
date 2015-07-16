@@ -44,3 +44,5 @@ vendor/bower_components
 /doc/*.svg
 /.yardoc/
 /secrets/
+
+/frontend/dest/
