@@ -46,4 +46,4 @@ vendor/bower_components
 /secrets/
 
 /frontend/dest/
-/node_modules/
+/frontend/node_modules/
