@@ -243,6 +243,19 @@
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
     template: "#monitoring-tabpane-template",
+    data: function () {return {
+      problems: null,
+      creating: false,
+      before_register: false,
+      commons: [],
+      uncommons: [],
+      resources: [],
+      error_message: null,
+      loading_graph: false,
+      url_status: [],
+      showing_url: false,
+      loading_problems: true,
+    };},
     methods: {
       show_problems: function () {
         var self = this;
@@ -353,20 +366,13 @@
     },
     created: function () {
       var self = this;
-      self.$set('problems', null);
-      self.$set('creating', false);
       var monitoring = new Monitoring(current_infra);
       monitoring.show().done(function (data) {
-        self.$set('before_register', data.before_register);
-        self.$set('commons', data.monitor_selected_common);
-        self.$set('uncommons', data.monitor_selected_uncommon);
-        self.$set('resources', data.resources);
+        self.before_register = data.before_register;
+        self.commons         = data.monitor_selected_common;
+        self.uncommons       = data.monitor_selected_uncommon;
+        self.resources       = data.resources;
         if (!this.before_register) {
-          self.$set('error_message', null);
-          self.$set('loading_graph', false);
-          self.$set('url_status', []);
-          self.$set('showing_url', false);
-          self.$set('loading_problems', true);
           self.show_problems();
         }
         self.$parent.loading = false;
@@ -376,6 +382,15 @@
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
+    data: function () {return {
+      master_monitorings: [],
+      selected_monitoring_ids: [],
+      web_scenarios: [],
+      mysql_rds_host: null,
+      postgresql_rds_host: null,
+      add_scenario: {},
+      loading: false,
+    };},
     methods: {
       type: function (master) { return this.monitoring.type(master); },
 
@@ -444,14 +459,11 @@
     created: function () {
       var self = this;
       this.monitoring.edit().done(function (data) {
-        self.$set("master_monitorings",      data.master_monitorings);
-        self.$set("selected_monitoring_ids", data.selected_monitoring_ids);
-        self.$set("web_scenarios",           data.web_scenarios);
-        self.$set("mysql_rds_host",          null);
-        self.$set("postgresql_rds_host",     null);
-
-        self.$set('add_scenario', {});
-        self.$set('loading', false);
+        self.master_monitorings      = data.master_monitorings;
+        self.selected_monitoring_ids = data.selected_monitoring_ids;
+        self.web_scenarios           = data.web_scenarios;
+        self.mysql_rds_host          = null;
+        self.postgresql_rds_host     = null;
 
         self.$parent.loading = false;
       }).fail(function (xhr) {
