@@ -9,7 +9,8 @@
 require 'delegate'
 
 class EC2Instance < SimpleDelegator
-  require_relative 'ec2_instance/types'
+  # instance_types を取得するAPIがなさそう?
+  Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
 
   class ChangeScaleError < StandardError; end
 
