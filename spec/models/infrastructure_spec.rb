@@ -165,10 +165,10 @@ describe Infrastructure, :type => :model do
     subject{build(:infrastructure)}
 
 
-    it 'return AWS::EC2' do
+    it 'return Aws::EC2::Client' do
       result = double('result')
 
-      expect(::AWS::EC2).to receive(:new).with(
+      expect(::Aws::EC2::Client).to receive(:new).with(
         access_key_id: subject.access_key,
         secret_access_key: subject.secret_access_key,
         region: subject.region

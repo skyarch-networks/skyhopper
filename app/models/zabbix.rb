@@ -167,7 +167,7 @@ class Zabbix
   # @param [Infrastructure] infra
   # @param [String] physical_id
   def create_host(infra, physical_id)
-    ec2 = infra.ec2.instances[physical_id]
+    ec2 = infra.instance(physical_id)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
     @sky_zabbix.host.create(

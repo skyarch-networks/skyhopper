@@ -105,7 +105,7 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.get
-      set.zabbix_fqdn = infra.ec2.instances[physical_id].public_dns_name
+      set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
       set.save!
       AppSetting.clear_cache
     end
@@ -146,7 +146,7 @@ class ChefServer::Deployment
   end
 
   def fqdn
-    @fqdn ||= @infra.ec2.instances[@physical_id].public_dns_name
+    @fqdn ||= @infra.instance(@physical_id).public_dns_name
   end
 
   def url
