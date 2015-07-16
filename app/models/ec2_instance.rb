@@ -9,7 +9,7 @@
 require 'delegate'
 
 class EC2Instance < SimpleDelegator
-  Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
+  require_relative 'ec2_instance/types'
 
   class ChangeScaleError < StandardError; end
 
