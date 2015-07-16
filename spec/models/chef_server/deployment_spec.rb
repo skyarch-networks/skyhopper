@@ -118,13 +118,13 @@ describe ChefServer::Deployment, :type => :model do
     let(:physical_id){'i-fugafuga'}
     subject{klass.new(infra, physical_id)}
 
-    it 'should call infra.ec2.instances[].public_dns_name' do
-      expect(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+    it 'should call infra.instance.public_dns_name' do
+      expect(infra).to receive_message_chain(:instance, :public_dns_name)
       subject.fqdn
     end
 
     it 'should memolize' do
-      allow(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      allow(infra).to receive_message_chain(:instance, :public_dns_name)
       fqdn = subject.fqdn
       expect(subject.instance_variable_get(:@fqdn)).to eq fqdn
     end
@@ -136,12 +136,12 @@ describe ChefServer::Deployment, :type => :model do
     subject{klass.new(infra, physical_id)}
 
     it 'should call infra.ec2.instances[].ip_address' do
-      expect(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      expect(infra).to receive_message_chain(:instance, :public_dns_name)
       subject.fqdn
     end
 
     it 'should memolize' do
-      allow(infra).to receive_message_chain(:ec2, :instances, :[], :public_dns_name)
+      allow(infra).to receive_message_chain(:instance, :public_dns_name)
       ip_addr = subject.fqdn
       expect(subject.instance_variable_get(:@fqdn)).to eq ip_addr
     end
