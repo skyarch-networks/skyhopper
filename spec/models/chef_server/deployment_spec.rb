@@ -135,7 +135,7 @@ describe ChefServer::Deployment, :type => :model do
     let(:physical_id){'i-fugafuga'}
     subject{klass.new(infra, physical_id)}
 
-    it 'should call infra.ec2.instances[].ip_address' do
+    it 'should call infra.instance.public_ip_address' do
       expect(infra).to receive_message_chain(:instance, :public_dns_name)
       subject.fqdn
     end
