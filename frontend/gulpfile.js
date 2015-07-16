@@ -11,18 +11,18 @@ gulp.task('tsd', function (callback) {
 
 
 gulp.task('ts', function () {
-  gulp.src(['./frontend/src/**/*.ts'])
+  gulp.src(['./src/**/*.ts'])
     .pipe(ts({
       target: "ES6",
       removeComments: true,
       noImplicitAny: true,
     }))
     .js
-    .pipe(gulp.dest('./frontend/dest/'));
+    .pipe(gulp.dest('./dest/'));
 });
 
 gulp.task('watch', function () {
-  gulp.watch('./frontend/src/**/*.ts', ['ts']);
+  gulp.watch('./src/**/*.ts', ['ts']);
 });
 
 gulp.task('default', ['ts', 'watch']);

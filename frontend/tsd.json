@@ -5,5 +5,8 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
+    "jquery/jquery.d.ts": {
+      "commit": "69303fd9e52d8e0e97a92d096966aea5fb7630c5"
+    }
   }
 }
