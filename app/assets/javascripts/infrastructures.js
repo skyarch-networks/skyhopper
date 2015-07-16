@@ -207,11 +207,24 @@
 
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
+    data: function () {return {
+      logs: [],
+      page: null,
+    };},
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
       status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
+      toLocaleString: toLocaleString,
     },
     created: function () {
+      var self = this;
+      console.log(self);
+      current_infra.logs().done(function (data) {
+        self.logs = data.logs;
+        self.page = data.page;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+
       this.$watch('infra_logs', function (newVal, oldVal) {
         $(".popovermore").popover().click( function(e) {
           e.preventDefault();
@@ -219,9 +232,9 @@
       });
 
       this.$on('show', function (page) {
-        var self = this;
         current_infra.logs(page).done(function (data) {
-          self.infra_logs = data;
+          self.logs = data.logs;
+          self.page = data.page;
         }).fail(alert_and_show_infra);
       });
     },
@@ -452,20 +465,21 @@
   });
 
   Vue.component("vue-paginator", {
+    props: ['page'],
     template: '#vue-paginator-template',
     methods: {
       isDisable: function (i) {
-        if (this.current <= i) {
-          return this.current === this.max;
+        if (this.page.current <= i) {
+          return this.page.current === this.page.max;
         } else {
-          return this.current === 1;
+          return this.page.current === 1;
         }
       },
       visibleTruncate: function (type) {
         if (type === 'next') {
-          return this.current + 4 < this.max ;
+          return this.page.current + 4 < this.page.max ;
         } else { // 'prev'
-          return 0 < this.current - 5;
+          return 0 < this.page.current - 5;
         }
       },
       show: function (page) {
@@ -474,15 +488,16 @@
         this.$dispatch('show', page);
       },
     },
-    filters: {
-      visibleNum: function (array) {
+    computed: {
+      visibleNum: function () {
         var self = this;
-        return _.filter(array, function (n) {
-          var i = n + self.current - 4;
-          return 0 < i && i <= self.max;
+        return _.filter([0, 1, 2, 3, 4, 5, 6, 7, 8], function (n) {
+          var i = n + self.page.current - 4;
+          return 0 < i && i <= self.page.max;
         });
       },
-    }
+    },
+    created: function () { console.log(this); },
   });
 
   Vue.component('rds-tabpane', {
@@ -1205,12 +1220,9 @@
         },
         show_infra_logs: function () {
           var self = this;
-          self.loading = true;
           self.$event.preventDefault();
-          current_infra.logs().done(function (data) {
-            self.current_infra.infra_logs = data;
-            self.show_tabpane('infra_logs');
-          }).fail(alert_and_show_infra);
+          self.show_tabpane('infra_logs');
+          self.loading = true;
         },
         show_monitoring: function () {
           if (this.no_stack) {return;}

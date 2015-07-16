@@ -6,13 +6,13 @@ Arguments:
 <div class="text-center">
   <ul class="pagination">
     <li v-on="click: show(0)" v-class="disabled: isDisable(0)"><a href="#"><%= raw(t 'views.pagination.first') %></a></li>
-    <li v-on="click: show(current - 1)" v-class="disabled: isDisable(current - 1)"><a href="#"><%= raw(t 'views.pagination.previous') %></a></li>
+    <li v-on="click: show(page.current - 1)" v-class="disabled: isDisable(page.current - 1)"><a href="#"><%= raw(t 'views.pagination.previous') %></a></li>
     <li v-if="visibleTruncate('prev')" class="disabled"><span><%= raw(t 'views.pagination.truncate') %></span></li>
-    <li v-repeat="[0, 1, 2, 3, 4, 5, 6, 7, 8] | visibleNum" v-on="click: show(current + $value - 4)" v-class="active: $value === 4">
-      <a href="#" v-text="current + $value - 4"></a>
+    <li v-repeat="visibleNum" v-on="click: show(page.current + $value - 4)" v-class="active: $value === 4">
+      <a href="#" v-text="page.current + $value - 4"></a>
     </li>
     <li v-if="visibleTruncate('next')" class="disabled"><span><%= raw(t 'views.pagination.truncate') %></span></li>
-    <li v-on="click: show(current + 1)" v-class="disabled: isDisable(current + 1)"><a href="#"><%= raw(t 'views.pagination.next') %></a></li>
-    <li v-on="click: show(max)" v-class="disabled: isDisable(max)"><a href="#"><%= raw(t 'views.pagination.last') %></a></li>
+    <li v-on="click: show(page.current + 1)" v-class="disabled: isDisable(page.current + 1)"><a href="#"><%= raw(t 'views.pagination.next') %></a></li>
+    <li v-on="click: show(page.max)" v-class="disabled: isDisable(page.max)"><a href="#"><%= raw(t 'views.pagination.last') %></a></li>
   </ul>
 </div>
