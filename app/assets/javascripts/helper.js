@@ -134,16 +134,15 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
   });
 
   Loader = Vue.extend({
-    template: '<span><div class="loader"></div>{{text | format}}</span>',
+    template: '<span><div class="loader"></div> {{text}}</span>',
     props: {
       text: {
         type: String,
-        default: t('common.msg.loading'),
       },
     },
-    filters: {
-      format: function (str) { return ' ' + str; }
-    }
+    data: function () {return {
+        text: t('common.msg.loading'),
+    };},
   });
   Vue.component('div-loader', Loader);
 
