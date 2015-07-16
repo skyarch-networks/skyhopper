@@ -174,7 +174,7 @@
         },
         tooltip: function () {
           if (this.is_inprogress) {
-            return;
+            return "";
           }
           return model.msgs().tooltip;
         },

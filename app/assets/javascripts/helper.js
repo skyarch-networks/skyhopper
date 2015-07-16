@@ -120,7 +120,12 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
   //   <div>Your content</div>
   // </bootstrap-tooltip>
   Vue.component('bootstrap-tooltip', {
-    props: ['title'],
+    props: {
+      title: {
+        type: String,
+        required: true,
+      },
+    },
     template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content></content></span>',
     compiled: function () {
       console.log(this);
@@ -130,8 +135,12 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
 
   Loader = Vue.extend({
     template: '<span><div class="loader"></div>{{text | format}}</span>',
-    props: ['text'],
-    data: function () {return {text: t('common.msg.loading')};},
+    props: {
+      text: {
+        type: String,
+        default: t('common.msg.loading'),
+      },
+    },
     filters: {
       format: function (str) { return ' ' + str; }
     }

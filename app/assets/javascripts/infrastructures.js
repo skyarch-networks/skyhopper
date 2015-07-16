@@ -67,7 +67,7 @@
   });
 
   Vue.component("stack-events-table", {
-    props: ["events"],
+    props: { events: Array, },
     template: '#stack-events-table-template',
     methods: {
       event_tr_class: function (status) {
@@ -88,7 +88,16 @@
   });
 
   Vue.component("add-modify-tabpane", {
-    props: ['templates', 'result'],
+    props: {
+      templates: {
+        type: Object,
+        required: true,
+      },
+      result: {
+        type: Object,
+        required: true,
+      },
+    },
     data: function(){return{selected_cft_id: null};},
     template: '#add-modify-tabpane-template',
     methods: {
@@ -477,7 +486,12 @@
   });
 
   Vue.component("vue-paginator", {
-    props: ['page'],
+    props: {
+      page: {
+        type: Object,
+        required: true,
+      },
+    },
     template: '#vue-paginator-template',
     methods: {
       isDisable: function (i) {
@@ -513,7 +527,12 @@
   });
 
   Vue.component('rds-tabpane', {
-    props: ['physical_id'],
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
     data: function () {return {
       rds: null,
       serverspec: {},
@@ -561,7 +580,12 @@
 
   // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
-    props: ['physical_id'],
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
     data: function () {return {
       ec2_instances: [],
       unregistereds: [],
@@ -626,7 +650,12 @@
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
-    props: ['physical_id'],
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
     data: function () {return {html: ""};},
     compiled: function () {
       var self = this;
@@ -639,7 +668,12 @@
   });
 
   Vue.component('ec2-tabpane', {
-    props: ['physical_id'],
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
     data: function () {return {
       loading:             false,
       loading_s:           false,
