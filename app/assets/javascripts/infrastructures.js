@@ -154,6 +154,10 @@
 
   Vue.component('add-ec2-tabpane', {
     template: '#add-ec2-tabpane-template',
+    data: function () {return {
+      physical_id: '',
+      screen_name: '',
+    };},
     methods: {
       submit: function () {
         var res = new Resource(current_infra);
@@ -164,11 +168,7 @@
           .fail(alert_and_show_infra);
       },
     },
-    computed: {},
-    created: function () {
-      this.$set('physical_id', '');
-      this.$set('screen_name', '');
-    }
+    created: function () {console.log(this);},
   });
 
   Vue.component("cf-history-tabpane", {
