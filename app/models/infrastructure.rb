@@ -148,7 +148,6 @@ class Infrastructure < ActiveRecord::Base
   end
 
 
-  # @todo 闇がある
   # @return [Aws::EC2::Client]
   def ec2
     ::Aws::EC2::Client.new(

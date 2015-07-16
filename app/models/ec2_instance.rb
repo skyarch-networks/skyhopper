@@ -14,37 +14,13 @@ class EC2Instance < SimpleDelegator
 
   class ChangeScaleError < StandardError; end
 
-  def initialize(arg, physical_id: nil)
-    raise ArgumentError unless physical_id
-
-    @physical_id = physical_id
-
-    case arg
-    when Infrastructure
-      @ec2 = arg.ec2
-    else
-      raise ArgumentError, "Invalid Argument: #{arg.inspect}"
-    end
-
-    @instance = Aws::EC2::Instance.new(physical_id, client: @ec2)
-    __setobj__(@instance)
-  end
   attr_reader :physical_id
 
-  # status が変化するのを待つ
-  # ==== Args
-  # [status] :running or :stopped
-  def wait_status(status)
-    loop do
-      case s = self.status
-      when status
-        break
-      when :pending, :stopping
-        sleep 5
-      else
-        raise StandardError, "#{s} is not expected status."
-      end
-    end
+  def initialize(infra, physical_id:)
+    @physical_id = physical_id
+
+    @instance = Aws::EC2::Instance.new(physical_id, client: infra.ec2)
+    __setobj__(@instance)
   end
 
   def change_scale(type)
