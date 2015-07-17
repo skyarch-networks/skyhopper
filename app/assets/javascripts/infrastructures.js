@@ -868,6 +868,19 @@
           alert_danger()(msg);
         });
       },
+      is_root_device: function (device_name) {
+        return this.ec2.root_device_name === device_name;
+      },
+      create_snapshot: function (volume_id) {
+        var self = this;
+        bootstrap_confirm('Create Snapshot', 'Are you sure to create snapshot?').done(function () {
+          var snapshot = new Snapshot(current_infra.id);
+
+          snapshot.create(volume_id, self.physical_id).done(function (msg) {
+            alert_success()(msg);
+          });
+        });
+      },
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {

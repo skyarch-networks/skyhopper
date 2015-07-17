@@ -14,16 +14,32 @@ class SnapshotsController < ApplicationController
   # end
 
 
-  def create
-    volume_id = params.require(:volume_id)
-    infra     = Infrastructure.find(params.require(:infra_id))
-    project   = infra.project
+  def index
+    infra = Infrastructure.find(params.require(:infra_id))
+    ec2   = infra.ec2
 
-    ec2 = Aws::EC2::Client.new(
-      access_key_id:     project.access_key,
-      secret_access_key: project.secret_access_key,
-      region:            infra.region
-    )
-    render json: ec2.create_snapshot(volume_id: volume_id)
+    resp = ec2.describe_snapshots({owner_ids: ['self']})
+
+    render json: resp.to_h
+  end
+
+  def create
+    volume_id   = params.require(:volume_id)
+    physical_id = params.require(:physical_id)
+    infra       = Infrastructure.find(params.require(:infra_id))
+    ec2         = infra.ec2
+
+    resp = ec2.create_snapshot(volume_id: volume_id)
+    ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
+
+    render text: 'Snapshot creation succeeded!'
+  end
+
+  def destroy
+
+  end
+
+  def restore
+
   end
 end

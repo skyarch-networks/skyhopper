@@ -5,12 +5,13 @@ var Snapshot = function (infra_id) {
 
   var ajax_snapshot = new AjaxSet.Resources('snapshots');
 
-  this.create = function (volume_id) {
+  this.create = function (volume_id, physical_id) {
     var dfd = $.Deferred();
 
     ajax_snapshot.create({
       infra_id: infra_id,
-      volume_id, volume_id
+      volume_id, volume_id,
+      physical_id: physical_id
     }).done(function (data) {
       dfd.resolve(data);
     });

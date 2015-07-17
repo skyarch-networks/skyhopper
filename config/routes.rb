@@ -1,4 +1,8 @@
+require 'sidekiq/web'
+
 SkyHopper::Application.routes.draw do
+  mount Sidekiq::Web, at: '/sidekiq'
+
   resources :users_admin, except: :show do
     collection do
       put 'sync_zabbix'
@@ -18,6 +22,12 @@ SkyHopper::Application.routes.draw do
   resources :key_pairs, only: [:index, :destroy], param: :name do
     collection do
       get  'retrieve'
+    end
+  end
+
+  resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
+    member do
+      post 'restore'
     end
   end
 
