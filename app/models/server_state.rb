@@ -21,7 +21,7 @@ class ServerState
 
     resources = infra.resources_or_create
     physical_id = resources.first.physical_id
-    @server = infra.ec2.instances[physical_id]
+    @server = infra.instance(physical_id)
     @kind = kind
   end
 

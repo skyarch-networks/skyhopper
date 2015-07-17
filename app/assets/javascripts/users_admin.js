@@ -42,10 +42,10 @@
     data.user.password = "";
     data.user.password_confirmation = "";
 
-    data.selected_allowed_projects = null;
-    data.selected_client = null;
-    data.selected_projects = null;
-    data.projects = null;
+    data.selected_allowed_projects = [];
+    data.selected_client = [];
+    data.selected_projects = [];
+    data.projects = [];
 
     data.update_mfa_key = false;
     data.remove_mfa_key = false;
@@ -139,14 +139,14 @@
 
   var show_edit = function (user_id) {
     var l = new Loader();
-    l.$mount("#user-edit");
-    if (app) { app.$destroy(); }
+    l.$mount().$appendTo('#user-edit');
+    if (app) { app.$remove(); }
     ajax_users_admin.edit({id: user_id}).done(function (data) {
+      l.$remove();
       app = newVM(data);
-      l.$destroy();
-      app.$mount('#user-edit');
+      app.$mount().$appendTo('#user-edit');
     }).fail(modal_for_ajax_std_error(function () {
-      l.$destroy();
+      l.$remove();
     }));
   };
 

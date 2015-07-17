@@ -26,11 +26,11 @@ describe Ec2InstancesController, :type => :controller do
       stop:                nil,
       status:              :stopped,
       instance_type:       type,
-      :'instance_type=' => nil,
       start:               nil,
     )}
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return(instance)
+      allow(Aws::EC2::Instance).to receive(:new).and_return(instance)
+      allow(instance).to receive(:wait_until).and_return(nil)
     end
 
     before{req}

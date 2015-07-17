@@ -5,7 +5,7 @@
     <div class="navbar-text pull-right">
       <script id="toggle-button-template" type="text/template">
       <span v-show="state">
-        <bootstrap-tooltip v-with="title: tooltip">
+        <bootstrap-tooltip title="{{* tooltip}}">
           <button href="#" class="btn btn-xs" v-attr="disabled: is_inprogress" v-on="click: toggle()" v-class="btn_class">
             <span v-class="blinking: is_inprogress" class="glyphicon glyphicon-off"></span>&nbsp;
             <span v-text="status_text"></span>

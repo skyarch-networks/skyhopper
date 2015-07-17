@@ -1,28 +1,18 @@
-<%# Argumants
-==============
-
-- histories
-- globals
-
-Array of CfTemplate instance.
-
-%>
-<script id="add-modify-tabpane-template" type="text/template">
 <div class="col-md-8 col-sm-8">
   <fieldset>
     <div class="form-group">
       <label for="add_modify_name"><%= t('cf_templates.subject') %></label>
-      <input v-model="name" type="text" id="add_modify_name" class="form-control" required>
+      <input v-model="result.name" type="text" id="add_modify_name" class="form-control" required>
     </div>
 
     <div class="form-group">
       <label for="add_modify_detail"><%= t('cf_templates.details') %></label>
-      <input v-model="detail" type="text" id="add_modify_detail" class="form-control">
+      <input v-model="result.detail" type="text" id="add_modify_detail" class="form-control">
     </div>
 
     <div class="form-group">
       <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
-      <textarea v-model="value" id="add_modify_value" class="form-control" cols="20" rows="15" required></textarea>
+      <textarea v-model="result.value" id="add_modify_value" class="form-control" cols="20" rows="15" required></textarea>
     </div>
     <div class="alert alert-danger" v-show="jsonParseErr">{{jsonParseErr}}</div>
   </fieldset>
@@ -37,12 +27,12 @@ Array of CfTemplate instance.
   <div class="tab-content">
     <div class="tab-pane active" id="history-json-tab">
       <select class="form-control" size="20" v-model="selected_cft_id" number v-on="dblclick: select_cft()">
-        <option v-repeat="t: histories" value="{{t.id}}" v-text="t.name"></option>
+        <option v-repeat="t: templates.histories" value="{{t.id}}" v-text="t.name"></option>
       </select>
     </div>
     <div class="tab-pane" id="global-json-tab">
       <select class="form-control" size="20" v-model="selected_cft_id" number v-on="dblclick: select_cft()">
-        <option v-repeat="t: globals"   value="{{t.id}}" v-text="t.name"></option>
+        <option v-repeat="t: templates.globals"   value="{{t.id}}" v-text="t.name"></option>
       </select>
     </div>
   </div>
@@ -57,4 +47,3 @@ Array of CfTemplate instance.
     <%= t 'cf_templates.insert_parameters' %>
   </button>
 </div>
-</script>
