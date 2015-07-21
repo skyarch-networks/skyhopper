@@ -50,16 +50,18 @@
         <tr>
           <td>EBS</td>
           <td colspan="2">
-            <span v-repeat="block_device: ec2.block_devices" class="dropdown" data-toggle="tooltip" data-placement="top" title="Device name: {{block_device.device_name}}">
-              <a v-on="click: load_snapshots(block_device.ebs.volume_id)" v-class="btn-primary: is_root_device(block_device.device_name)" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                {{block_device.ebs.volume_id}}
-                <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header">Device name: {{block_device.device_name}}</li>
-                <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#">Create Snapshot</a></li>
-              </ul>
+            <span v-repeat="block_device: ec2.block_devices" class="dropdown">
+              <bootstrap-tooltip title="Device name: {{block_device.device_name}}">
+                <a v-on="click: load_snapshots(block_device.ebs.volume_id)" v-class="btn-primary: is_root_device(block_device.device_name)" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  {{block_device.ebs.volume_id}}
+                  <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#">Create Snapshot</a></li>
+                  <li><a v-on="click: schedule_snapshot(block_device.ebs.volume_id)" href="#">Schedule Snapshot</a></li>
+                </ul>
+              </bootstrap-tooltip>
             </span>
           </td>
         </tr>
