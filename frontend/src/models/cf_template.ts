@@ -11,7 +11,7 @@ class CFTemplate {
    * @return {$.Promise}
    */
   new(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>CFTemplate.ajax).new_for_creating_stack({
       infrastructure_id: this.infra.id,
@@ -27,7 +27,7 @@ class CFTemplate {
    * @return {$.Promise}
    */
   show(id: number): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
     $.ajax({
       url: '/cf_templates/' + id,
       dataType: 'json',
@@ -48,13 +48,13 @@ class CFTemplate {
     value:  string;
     params: Array<any>; // XXX: Array だっけ?
   }): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     if (data.name === "") {
       dfd.reject(t('infrastructures.msg.empty_subject'));
     }
 
-    var req = {cf_template: {
+    const req = {cf_template: {
       name:              data.name,
       detail:            data.detail,
       value:             data.value,
@@ -90,9 +90,9 @@ class CFTemplate {
       [s: string]: string;
     }
   ): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
-    var req = {cf_template: {
+    const req = {cf_template: {
       infrastructure_id: this.infra.id,
       name:              cft.name,
       detail:            cft.detail,
@@ -112,7 +112,7 @@ class CFTemplate {
    * @return {$.Promise}
    */
   history(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>CFTemplate.ajax).history({
       infrastructure_id: this.infra.id,

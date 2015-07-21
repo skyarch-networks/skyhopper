@@ -8,7 +8,7 @@ class S3Bucket {
 
 
   show(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>S3Bucket.ajax).show_s3({
       bucket_name: this.pyhsical_id,

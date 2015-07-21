@@ -128,9 +128,9 @@ class EC2Instance {
     return dfd.promise();
   }
 
-  update_attributes(attributes: {[key:string]: {value: any}}): JQueryPromise<any> {
+  update_attributes(attributes: {[key: string]: {value: any}}): JQueryPromise<any> {
     const dfd = $.Deferred();
-    const req: {[key:string]: any} = {};
+    const req: {[key: string]: any} = {};
     _.forEach(attributes, (v, key) => {
       req[key] = v.value;
     });
@@ -236,15 +236,15 @@ class EC2Instance {
     return () => {
       const ws = ws_connector('ec2_status', this.physical_id);
       ws.onmessage = function (msg) {
-        var d = JSON.parse(msg.data);
+        const d = JSON.parse(msg.data);
         if (d.error) {
           dfd.reject(d.error.message);
         } else {
           dfd.resolve(d.msg);
         }
         ws.close();
-      }
-    }
+      };
+    };
   }
 
   start_ec2(): JQueryPromise<any> {

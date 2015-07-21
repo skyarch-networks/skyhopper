@@ -8,7 +8,7 @@ class Infrastructure {
 
 
   show(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     Infrastructure.ajax_infra.show({
       id: this.id,
@@ -19,7 +19,7 @@ class Infrastructure {
   }
 
   detach(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     Infrastructure.ajax_infra.destroy({
       id: this.id,
@@ -30,7 +30,7 @@ class Infrastructure {
   }
 
   delete_stack(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>Infrastructure.ajax_infra).delete_stack({
       id: this.id,
@@ -41,7 +41,7 @@ class Infrastructure {
   }
 
   stack_events(): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>Infrastructure.ajax_infra).stack_events({
       id: this.id,
@@ -52,7 +52,7 @@ class Infrastructure {
   }
 
   logs(page = 1): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     $.ajax({
       url: '/infrastructure_logs',
@@ -67,7 +67,7 @@ class Infrastructure {
   }
 
   show_elb(physical_id: string): JQueryPromise<any> {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>Infrastructure.ajax_infra).show_elb({
       id:          this.id,

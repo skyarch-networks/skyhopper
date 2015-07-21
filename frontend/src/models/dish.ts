@@ -5,7 +5,7 @@ class Dish {
 
 
   runlist(id: number) {
-    var dfd = $.Deferred();
+    const dfd = $.Deferred();
 
     (<any>Dish.ajax).runlist({
       id: id,
