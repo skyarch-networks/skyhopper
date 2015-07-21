@@ -7,6 +7,7 @@
 //
 
 //= require_tree ./models/.
+//= require models/base
 //= require models/cf_template
 //= require models/infrastructure
 //= require models/s3_bucket

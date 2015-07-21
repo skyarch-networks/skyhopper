@@ -1,8 +1,8 @@
 /// <reference path="../../declares.d.ts" />
 /// <reference path="infrastructure.ts" />
 
-class CFTemplate {
-  constructor(private infra: Infrastructure) {}
+class CFTemplate extends ModelBase {
+  constructor(private infra: Infrastructure) {super(); }
 
   static ajax = new AjaxSet.Resources('cf_templates');
 
@@ -11,14 +11,11 @@ class CFTemplate {
    * @return {$.Promise}
    */
   new(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>CFTemplate.ajax).new_for_creating_stack({
-      infrastructure_id: this.infra.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>CFTemplate.ajax).new_for_creating_stack({
+        infrastructure_id: this.infra.id,
+      })
+    );
   }
 
   /**
@@ -27,14 +24,12 @@ class CFTemplate {
    * @return {$.Promise}
    */
   show(id: number): JQueryPromise<any> {
-    const dfd = $.Deferred();
-    $.ajax({
-      url: '/cf_templates/' + id,
-      dataType: 'json',
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      $.ajax({
+        url: '/cf_templates/' + id,
+        dataType: 'json',
+      })
+    );
   }
 
   /**
@@ -48,25 +43,21 @@ class CFTemplate {
     value:  string;
     params: Array<any>; // XXX: Array だっけ?
   }): JQueryPromise<any> {
-    const dfd = $.Deferred();
+    return this.WrapAndResolveReject((dfd) => {
+      if (data.name === "") {
+        dfd.reject(t('infrastructures.msg.empty_subject'));
+      }
 
-    if (data.name === "") {
-      dfd.reject(t('infrastructures.msg.empty_subject'));
-    }
+      const req = {cf_template: {
+        name:              data.name,
+        detail:            data.detail,
+        value:             data.value,
+        params:            data.params,
+        infrastructure_id: this.infra.id,
+      }};
 
-    const req = {cf_template: {
-      name:              data.name,
-      detail:            data.detail,
-      value:             data.value,
-      params:            data.params,
-      infrastructure_id: this.infra.id,
-    }};
-
-    (<any>CFTemplate.ajax).insert_cf_params(req)
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+      return (<any>CFTemplate.ajax).insert_cf_params(req);
+    });
   }
 
   /**
@@ -90,21 +81,17 @@ class CFTemplate {
       [s: string]: string;
     }
   ): JQueryPromise<any> {
-    const dfd = $.Deferred();
+    return this.WrapAndResolveReject(() => {
+      const req = {cf_template: {
+        infrastructure_id: this.infra.id,
+        name:              cft.name,
+        detail:            cft.detail,
+        value:             cft.value,
+        cfparams:          params,
+      }};
 
-    const req = {cf_template: {
-      infrastructure_id: this.infra.id,
-      name:              cft.name,
-      detail:            cft.detail,
-      value:             cft.value,
-      cfparams:          params,
-    }};
-
-    (<any>CFTemplate.ajax).create_and_send(req)
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+      return (<any>CFTemplate.ajax).create_and_send(req);
+    });
   }
 
   /**
@@ -112,23 +99,9 @@ class CFTemplate {
    * @return {$.Promise}
    */
   history(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>CFTemplate.ajax).history({
-      infrastructure_id: this.infra.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
-  }
-
-  // TODO: DRY
-  private resolveF(dfd: JQueryDeferred<any>) {
-    return (data: any) => dfd.resolve(data);
-  }
-
-  private rejectF(dfd: JQueryDeferred<any>) {
-    return (xhr: XMLHttpRequest) => dfd.reject(xhr.responseText);
+    return this.WrapAndResolveReject(() =>
+      (<any>CFTemplate.ajax).history({infrastructure_id: this.infra.id})
+    );
   }
 }
 

@@ -1,88 +1,56 @@
 /// <reference path="../../declares.d.ts" />
+/// <reference path="./base.ts" />
 
-class Infrastructure {
-  constructor(public id: string) {}
+class Infrastructure extends ModelBase {
+  constructor(public id: string) {super(); }
 
   static ajax_infra    = new AjaxSet.Resources('infrastructures');
   static ajax_resource = new AjaxSet.Resources('resources');
 
 
   show(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    Infrastructure.ajax_infra.show({
-      id: this.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.progress();
+    return this.WrapAndResolveReject(() =>
+      Infrastructure.ajax_infra.show({id: this.id})
+    );
   }
 
   detach(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    Infrastructure.ajax_infra.destroy({
-      id: this.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      Infrastructure.ajax_infra.destroy({ id: this.id, })
+    );
   }
 
   delete_stack(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>Infrastructure.ajax_infra).delete_stack({
-      id: this.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>Infrastructure.ajax_infra).delete_stack({ id: this.id, })
+    );
   }
 
   stack_events(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>Infrastructure.ajax_infra).stack_events({
-      id: this.id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>Infrastructure.ajax_infra).stack_events({ id: this.id, })
+    );
   }
 
   logs(page = 1): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    $.ajax({
-      url: '/infrastructure_logs',
-      data: {
-        infrastructure_id: this.id,
-        page: page,
-      },
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      $.ajax({
+        url: '/infrastructure_logs',
+        data: {
+          infrastructure_id: this.id,
+          page: page,
+        },
+      })
+    );
   }
 
   show_elb(physical_id: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>Infrastructure.ajax_infra).show_elb({
-      id:          this.id,
-      pyhsical_id: physical_id,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-    return dfd.promise();
-  }
-
-  private resolveF(dfd: JQueryDeferred<any>) {
-    return (data: any) => dfd.resolve(data);
-  }
-
-  private rejectF(dfd: JQueryDeferred<any>) {
-    return (xhr: XMLHttpRequest) => dfd.reject(xhr.responseText);
+    return this.WrapAndResolveReject(() =>
+      (<any>Infrastructure.ajax_infra).show_elb({
+        id:          this.id,
+        pyhsical_id: physical_id,
+      })
+    );
   }
 }
 
