@@ -1,5 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../ajax_set.d.ts" />
+/// <reference path="../../declares.d.ts" />
 
 class Infrastructure {
   constructor(public id: string) {}

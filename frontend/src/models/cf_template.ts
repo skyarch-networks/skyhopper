@@ -1,5 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../ajax_set.d.ts" />
+/// <reference path="../../declares.d.ts" />
 /// <reference path="infrastructure.ts" />
 
 class CFTemplate {
@@ -51,7 +50,11 @@ class CFTemplate {
   }): JQueryPromise<any> {
     var dfd = $.Deferred();
 
-    var req = {cf_templates: {
+    if (data.name === "") {
+      dfd.reject(t('infrastructures.msg.empty_subject'));
+    }
+
+    var req = {cf_template: {
       name:              data.name,
       detail:            data.detail,
       value:             data.value,
@@ -89,7 +92,7 @@ class CFTemplate {
   ): JQueryPromise<any> {
     var dfd = $.Deferred();
 
-    var req = {cf_templates: {
+    var req = {cf_template: {
       infrastructure_id: this.infra.id,
       name:              cft.name,
       detail:            cft.detail,

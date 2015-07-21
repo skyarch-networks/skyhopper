@@ -1,5 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../ajax_set.d.ts" />
+/// <reference path="../../declares.d.ts" />
 /// <reference path="infrastructure.ts" />
 
 class S3Bucket {
