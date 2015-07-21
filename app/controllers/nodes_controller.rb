@@ -30,7 +30,7 @@ class NodesController < ApplicationController
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
-      fqdn        = @infra.instance(physical_id).dns_name || @infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
+      fqdn        = @infra.instance(physical_id).public_dns_name || @infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 

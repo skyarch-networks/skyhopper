@@ -24,8 +24,7 @@ describe Ec2PrivateKey do
 
   describe '.new_from_aws' do
     let(:ec2){double('ec2')}
-    let(:key_pairs){double('key pairs')}
-    let(:key){double('key', private_key: attributes_for(:ec2_private_key)[:value])}
+    let(:key){double('key', key_material: attributes_for(:ec2_private_key)[:value])}
 
     let(:name){'foobar'}
     let(:project){create(:project)}
@@ -35,8 +34,7 @@ describe Ec2PrivateKey do
 
     before do
       allow_any_instance_of(Infrastructure).to receive(:ec2).and_return(ec2)
-      allow(ec2).to receive(:key_pairs).and_return(key_pairs)
-      allow(key_pairs).to receive(:create).with(name).and_return(key)
+      allow(ec2).to receive(:create_key_pair).and_return(key)
     end
 
     it{is_expected.to be_a Ec2PrivateKey}

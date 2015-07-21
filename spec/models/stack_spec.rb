@@ -115,7 +115,7 @@ describe Stack, :type => :model do
     ]}
     before do
       allow(subject).to receive(:instances_for_resources).and_return(instances)
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[], :tags)
+      allow_any_instance_of(Infrastructure).to receive_message_chain(:instance, :tags_by_hash)
         .and_return({'Name' => 'SCREEN_NAME'})
     end
 

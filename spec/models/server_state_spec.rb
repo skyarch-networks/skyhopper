@@ -26,7 +26,7 @@ describe ServerState, type: :model do
     end
   end
   before do
-    allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return server
+    allow_any_instance_of(Infrastructure).to receive(:instance).and_return server
   end
 
 
