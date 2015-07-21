@@ -1,6 +1,5 @@
 class YumJob < ActiveJob::Base
   queue_as :default
-  include Sidekiq::Worker
 
   def perform(physical_id, infra, user_id, cook=false, security=true, exec=false)
     ws = WSConnector.new('notifications', User.find(user_id).ws_key)
