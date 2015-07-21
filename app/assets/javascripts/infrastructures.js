@@ -11,6 +11,7 @@
 //= require models/infrastructure
 //= require models/s3_bucket
 //= require models/dish
+//= require models/ec2_instance
 
 
 (function () {

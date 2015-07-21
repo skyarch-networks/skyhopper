@@ -10,7 +10,7 @@ class Dish {
     (<any>Dish.ajax).runlist({
       id: id,
     }).done(dfd.resolve)
-      .fail((xhr: XMLHttpRequest) => {dfd.reject(xhr.responseText);});
+      .fail((xhr: XMLHttpRequest) => {dfd.reject(xhr.responseText); });
 
     return dfd.promise();
   }
