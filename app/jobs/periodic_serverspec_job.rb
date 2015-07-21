@@ -8,7 +8,6 @@
 
 class PeriodicServerspecJob < ActiveJob::Base
   queue_as :default
-  include Sidekiq::Worker
 
   def perform(physical_id, infra_id, user_id)
     schedule = ServerspecSchedule.find_by(physical_id: physical_id)

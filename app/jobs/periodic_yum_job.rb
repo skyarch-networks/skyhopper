@@ -1,6 +1,5 @@
 class PeriodicYumJob < ActiveJob::Base
   queue_as :default
-  include Sidekiq::Worker
 
   def perform(physical_id, infra, user_id)
     schedule = YumSchedule.find_by(physical_id: physical_id)
