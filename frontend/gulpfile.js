@@ -13,7 +13,7 @@ gulp.task('tsd', function (callback) {
 gulp.task('ts', function () {
   gulp.src(['./src/**/*.ts'])
     .pipe(ts({
-      target: "ES6",
+      target: "ES5",
       removeComments: true,
       noImplicitAny: true,
     }))
