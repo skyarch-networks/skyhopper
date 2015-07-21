@@ -4,6 +4,10 @@
 class Infrastructure {
   constructor(public id: string) {}
 
+  static ajax_infra    = new AjaxSet.Resources('infrastructures');
+  static ajax_resource = new AjaxSet.Resources('resources');
+
+
   show(): JQueryPromise<any> {
     var dfd = $.Deferred();
 
@@ -73,9 +77,6 @@ class Infrastructure {
       .fail(this.rejectF(dfd));
     return dfd.promise();
   }
-
-  static ajax_infra    = new AjaxSet.Resources('infrastructures');
-  static ajax_resource = new AjaxSet.Resources('resources');
 
   private resolveF(dfd: JQueryDeferred<any>) {
     return (data: any) => dfd.resolve(data);

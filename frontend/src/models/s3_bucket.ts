@@ -7,6 +7,7 @@ class S3Bucket {
 
   static ajax = new AjaxSet.Resources('infrastructures');
 
+
   show(): JQueryPromise<any> {
     var dfd = $.Deferred();
 
