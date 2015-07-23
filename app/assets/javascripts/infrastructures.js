@@ -677,11 +677,14 @@
     data: function () {return {
       loading:             false,
       loading_s:           false,
+      loading_snapshots:   false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
       selected_dish:       null,
       ec2:                 {},
+      volume_selected:     '',
+      snapshots:           {},
 
       // TODO: 階層を分けたい
       enabled: false,
@@ -881,6 +884,24 @@
           });
         });
       },
+      schedule_snapshot: function (volume_id) {
+      },
+      load_snapshots: function (e) {
+        var self = this;
+        var snapshot = new Snapshot(current_infra.id);
+        this.loading_snapshots = true;
+        snapshot.index(this.volume_selected).done(function (data) {
+          self.snapshots = data.snapshots;
+          self.loading_snapshots = false;
+        });
+      },
+      snapshot_status: function (snapshot) {
+        if (snapshot.state === 'pending') {
+          return snapshot.state + '(' + snapshot.progress + ')';
+        }
+        return snapshot.state;
+      },
+      toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
@@ -979,6 +1000,8 @@
           setTimeout(function () { target.text(orig_text); }, 1000);
         });
       });
+
+      $('#snapshots-modal').on('show.bs.modal', this.load_snapshots);
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },

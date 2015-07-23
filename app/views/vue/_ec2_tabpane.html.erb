@@ -52,7 +52,7 @@
           <td colspan="2">
             <span v-repeat="block_device: ec2.block_devices" class="dropdown">
               <bootstrap-tooltip title="Device name: {{block_device.device_name}}">
-                <a v-on="click: load_snapshots(block_device.ebs.volume_id)" v-class="btn-primary: is_root_device(block_device.device_name)" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <a v-on="click: volume_selected = block_device.ebs.volume_id" v-class="btn-primary: is_root_device(block_device.device_name)" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   {{block_device.ebs.volume_id}}
                   <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
                   <span class="caret"></span>
@@ -60,6 +60,7 @@
                 <ul class="dropdown-menu">
                   <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#">Create Snapshot</a></li>
                   <li><a v-on="click: schedule_snapshot(block_device.ebs.volume_id)" href="#">Schedule Snapshot</a></li>
+                  <li><a href="#snapshots-modal" data-toggle="modal" data-backdrop="static">Snapshots</a></li>
                 </ul>
               </bootstrap-tooltip>
             </span>
@@ -296,6 +297,51 @@
           <button v-on="click: change_schedule()" v-attr="disabled: !all_filled" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# snapshots modal %>
+<div id="snapshots-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <button class="close" style="margin-right: 10px;" v-on="click: load_snapshots()" v-attr="disabled: loading_snapshots"><small><span class="glyphicon glyphicon-refresh"></span></small></button>
+        <h4 class="modal-title">Snapshots of {{volume_selected}}</h4>
+      </div>
+
+      <div class="modal-body">
+        <div-loader v-if="loading_snapshots"></div-loader>
+        <table v-if="!loading_snapshots" class="table table-condensed table-hover">
+          <thead>
+            <th>Date</th>
+            <th>ID</th>
+            <th>State</th>
+            <th>Encrypted</th>
+          </thead>
+          <tbody>
+            <tr v-repeat="snapshot: snapshots">
+              <td v-text="toLocaleString(snapshot.start_time)"></td>
+              <td v-text="snapshot.snapshot_id"></td>
+              <td v-text="snapshot_status(snapshot)"></td>
+              <td v-text="snapshot.encrypted"></td>
+            </tr>
+            <tr v-if="!snapshots.length">
+              <td colspan="4">No snapshots available.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <div v-if="!loading">
+          <button v-on="" v-attr="disabled: !selected" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+        </div>
+        <div-loader v-if="loading"></div-loader>
       </div>
     </div>
   </div>
