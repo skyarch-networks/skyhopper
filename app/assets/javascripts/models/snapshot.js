@@ -32,4 +32,17 @@ var Snapshot = function (infra_id) {
     return dfd.promise();
   }
 
+  this.destroy = function (snapshot_id) {
+    var dfd = $.Deferred();
+
+    ajax_snapshot.destroy({
+      infra_id: infra_id,
+      id: snapshot_id,
+    }).done(function (data) {
+      dfd.resolve(data);
+    });
+
+    return dfd.promise();
+  }
+
 };

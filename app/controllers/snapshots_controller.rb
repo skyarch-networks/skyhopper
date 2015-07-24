@@ -23,7 +23,13 @@ class SnapshotsController < ApplicationController
     parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id
     resp = ec2.describe_snapshots(parameters)
 
-    render json: resp.to_h
+    snapshots = resp.snapshots.map { |snapshot|
+      tags_hash = snapshot.tags.map { |tag| [tag.key, tag.value] }.to_h
+      snapshot.tags = tags_hash
+      snapshot
+    }
+
+    render json: {snapshots: snapshots}
   end
 
   # POST /snapshots
@@ -44,7 +50,7 @@ class SnapshotsController < ApplicationController
 
   # DELETE /snapshots/:snapshot_id
   def destroy
-    infra_id    = params.require(:infra_id)
+    infra       = Infrastructure.find(params.require(:infra_id))
     snapshot_id = params.require(:snapshot_id)
 
     snapshot = Snapshot.new(infra, snapshot_id)

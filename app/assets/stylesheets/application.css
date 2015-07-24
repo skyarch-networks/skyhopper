@@ -292,3 +292,9 @@ h6.page-header {
 
 .QRCode td.black { border-color: #000; }
 .QRCode td.white { border-color: #fff; }
+
+
+.caret.caret-reversed {
+  border-top-width: 0;
+  border-bottom: 4px solid #000000;
+}

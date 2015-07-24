@@ -685,6 +685,8 @@
       ec2:                 {},
       volume_selected:     '',
       snapshots:           {},
+      sort_key:            '',
+      sort_order:          false,
 
       // TODO: 階層を分けたい
       enabled: false,
@@ -891,8 +893,27 @@
         var snapshot = new Snapshot(current_infra.id);
         this.loading_snapshots = true;
         snapshot.index(this.volume_selected).done(function (data) {
-          self.snapshots = data.snapshots;
+          self.snapshots = _.map(data.snapshots, function (s) {
+            s.selected = false;
+            return s;
+          });
+          self.sort_key = '';
+          self.sort_by('start_time');
           self.loading_snapshots = false;
+        });
+      },
+      delete_selected_snapshots: function () {
+        var self = this;
+        var snapshots    = _.select(this.snapshots, 'selected', true)
+        var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
+        bootstrap_confirm('Delete Snapshot', 'Are you sure to delete the following snapshots?<br>- ' + snapshot_ids.join('<br>- ')).done(function () {
+          var s = new Snapshot(current_infra.id);
+
+          _.each(snapshots, function (snapshot) {
+            s.destroy(snapshot.snapshot_id).done(function (msg) {
+              self.snapshots.$remove(snapshot);
+            });
+          });
         });
       },
       snapshot_status: function (snapshot) {
@@ -900,6 +921,21 @@
           return snapshot.state + '(' + snapshot.progress + ')';
         }
         return snapshot.state;
+      },
+      select_snapshot: function (snapshot) {
+        snapshot.selected = !snapshot.selected;
+      },
+      sort_by: function (key) {
+        if (this.sort_key === key) {
+          this.sort_order = !this.sort_order;
+        } else {
+          this.sort_order = false;
+          this.sort_key = key;
+        }
+        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_order);
+      },
+      sorting_by: function (key) {
+        return this.sort_key == key;
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
@@ -947,6 +983,7 @@
             return false;
         }
       },
+      selected_any: function () { return _.any(this.snapshots, 'selected', true); },
     },
     ready: function () {
       var self = this;
@@ -1519,7 +1556,11 @@
     });
   };
 
-
+  Vue.transition('fade', {
+    leave: function (el, done) {
+      $(el).fadeOut('normal');
+    }
+  });
 
 
 // ================================================================

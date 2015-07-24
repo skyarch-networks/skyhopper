@@ -317,20 +317,24 @@
         <div-loader v-if="loading_snapshots"></div-loader>
         <table v-if="!loading_snapshots" class="table table-condensed table-hover">
           <thead>
-            <th>Date</th>
-            <th>ID</th>
-            <th>State</th>
-            <th>Encrypted</th>
+            <th><input type="checkbox"></th>
+            <th class="" v-on="click: sort_by('tags.Name')">Name<span v-class="caret: sorting_by('tags.Name'), caret-reversed: sort_order"></span></th>
+            <th class="col-md-2" v-on="click: sort_by('snapshot_id')">ID<span v-class="caret: sorting_by('snapshot_id'), caret-reversed: sort_order"></span></th>
+            <th class="col-md-2" v-on="click: sort_by('state')">State<span v-class="caret: sorting_by('state'), caret-reversed: sort_order"></span></th>
+            <th class="" v-on="click: sort_by('start_time')">Date<span v-class="caret: sorting_by('start_time'), caret-reversed: sort_order"></span></th>
+            <th class="col-md-1" v-on="click: sort_by('encrypted')">Encrypted<span v-class="caret: sorting_by('encrypted'), caret-reversed: sort_order"></span></th>
           </thead>
           <tbody>
-            <tr v-repeat="snapshot: snapshots">
-              <td v-text="toLocaleString(snapshot.start_time)"></td>
+            <tr v-repeat="snapshot: snapshots" v-on="click: select_snapshot(snapshot)" v-class="info: snapshot.selected" v-transition="fade">
+              <td><input v-model="snapshot.selected" type="checkbox"></td>
+              <td v-text="snapshot.tags.Name"></td>
               <td v-text="snapshot.snapshot_id"></td>
               <td v-text="snapshot_status(snapshot)"></td>
+              <td v-text="toLocaleString(snapshot.start_time)"></td>
               <td v-text="snapshot.encrypted"></td>
             </tr>
             <tr v-if="!snapshots.length">
-              <td colspan="4">No snapshots available.</td>
+              <td colspan="8">No snapshots available.</td>
             </tr>
           </tbody>
         </table>
@@ -338,7 +342,7 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
-          <button v-on="" v-attr="disabled: !selected" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
+          <button v-on="click: delete_selected_snapshots()" v-attr="disabled: !selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
