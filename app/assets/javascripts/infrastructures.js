@@ -1038,10 +1038,11 @@
         });
       });
 
-      $('#snapshots-modal').on('show.bs.modal', this.load_snapshots);
-      $("#snapshots-modal").draggable({
-        handle: ".modal-dialog",
+      $('#snapshots-modal').on('show.bs.modal', function (e) {
+        $(e.target).children().css({left: '0px', top: '0px'});
+        self.load_snapshots();
       });
+      $("#snapshots-modal >").draggable({cursor: "move"});
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
