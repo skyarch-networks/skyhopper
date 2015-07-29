@@ -1039,7 +1039,7 @@
       });
 
       $('#snapshots-modal').on('show.bs.modal', function (e) {
-        $(e.target).children().css({left: '0px', top: '0px'});
+        $(e.target).children().attr('style', null);
         self.load_snapshots();
       });
       $("#snapshots-modal >").draggable({cursor: "move"});
