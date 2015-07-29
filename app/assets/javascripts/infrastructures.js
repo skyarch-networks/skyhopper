@@ -1039,6 +1039,9 @@
       });
 
       $('#snapshots-modal').on('show.bs.modal', this.load_snapshots);
+      $("#snapshots-modal").draggable({
+        handle: ".modal-dialog",
+      });
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
