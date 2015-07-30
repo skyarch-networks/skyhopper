@@ -15,9 +15,6 @@ class Schedule < ActiveRecord::Base
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
   validates :time, numericality: { greater_than: 0 }, if: -> { enabled && frequency == 'intervals' }
 
-  before_update :delete_enqueued_jobs
-  after_destroy :delete_enqueued_jobs
-
   def next_run
     case self.frequency
     when 'weekly'
@@ -30,18 +27,5 @@ class Schedule < ActiveRecord::Base
       ntime = Time.current.beginning_of_hour + self.time.hours
     end
     ntime
-  end
-
-  def delete_enqueued_jobs
-    jobs = Sidekiq::ScheduledSet.new.select { |job|
-      args = job.args[0]
-      args['job_class'] == job_class_name && args['arguments'][0] == self.physical_id
-    }
-    jobs.each(&:delete)
-  end
-
-  private
-
-  def job_class_name
   end
 end
