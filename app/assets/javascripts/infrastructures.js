@@ -881,9 +881,9 @@
         bootstrap_confirm('Create Snapshot', 'Are you sure to create snapshot?').done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
-          snapshot.create(volume_id, self.physical_id).done(function (msg) {
-            alert_success()(msg);
-          });
+          snapshot.create(volume_id, self.physical_id)
+            .done(alert_success())
+            .fail(alert_danger());
         });
       },
       schedule_snapshot: function (volume_id) {
@@ -900,7 +900,7 @@
           self.sort_key = '';
           self.sort_by('start_time');
           self.loading_snapshots = false;
-        });
+        }).fail(alert_danger());
       },
       delete_selected_snapshots: function () {
         var self = this;

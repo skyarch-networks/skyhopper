@@ -13,6 +13,8 @@ var Snapshot = function (infra_id) {
       volume_id: volume_id
     }).done(function (data) {
       dfd.resolve(data);
+    }).fail(function (xhr) {
+      dfd.reject(xhr.responseText);
     });
 
     return dfd.promise();
@@ -27,6 +29,8 @@ var Snapshot = function (infra_id) {
       physical_id: physical_id
     }).done(function (data) {
       dfd.resolve(data);
+    }).fail(function (xhr) {
+      dfd.reject(xhr.responseText);
     });
 
     return dfd.promise();
@@ -40,6 +44,8 @@ var Snapshot = function (infra_id) {
       id: snapshot_id,
     }).done(function (data) {
       dfd.resolve(data);
+    }).fail(function (xhr) {
+      dfd.reject(xhr.responseText);
     });
 
     return dfd.promise();
