@@ -157,6 +157,7 @@ $ cd frontend/
 $ npm i
 $ gulp tsd
 $ gulp ts
+$ cd ..
 ```
 
 ### database.yml
