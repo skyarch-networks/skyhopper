@@ -149,6 +149,16 @@ $ bundle install --path vendor/bundle
 $ bower install
 ```
 
+### TypeScript のコンパイル
+
+```sh
+$ npm i -g gulp
+$ cd frontend/
+$ npm i
+$ gulp tsd
+$ gulp ts
+```
+
 ### database.yml
 
 ```sh
