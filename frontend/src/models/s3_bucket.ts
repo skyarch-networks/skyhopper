@@ -1,22 +1,20 @@
 /// <reference path="../../declares.d.ts" />
-/// <reference path="infrastructure.ts" />
+/// <reference path="./infrastructure.ts" />
+/// <reference path="./base.ts" />
 
-class S3Bucket {
-  constructor(private infra: Infrastructure, private pyhsical_id: string) {}
+class S3Bucket extends ModelBase {
+  constructor(private infra: Infrastructure, private physical_id: string) {super(); }
 
   static ajax = new AjaxSet.Resources('infrastructures');
 
 
   show(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>S3Bucket.ajax).show_s3({
-      bucket_name: this.pyhsical_id,
-      id: this.infra.id,
-    }).done((data: any) => dfd.resolve(data))
-      .fail((xhr: XMLHttpRequest) => dfd.reject(xhr.responseText));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>S3Bucket.ajax).show_s3({
+        bucket_name: this.physical_id,
+        id: this.infra.id,
+      })
+    );
   }
 }
 

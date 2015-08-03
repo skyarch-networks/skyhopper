@@ -1,9 +1,11 @@
 /// <reference path="../../declares.d.ts" />
 /// <reference path="./infrastructure.ts" />
+/// <reference path="./base.ts" />
 
-class EC2Instance {
+class EC2Instance extends ModelBase {
   private params: {id: string; infra_id: string};
   constructor(private infra: Infrastructure, private physical_id: string) {
+    super();
     this.params = {id: physical_id, infra_id: infra.id};
   }
 
@@ -13,23 +15,15 @@ class EC2Instance {
 
 
   show(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    EC2Instance.ajax_node.show(this.params)
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      EC2Instance.ajax_node.show(this.params)
+    );
   }
 
   update(runlist: Array<any>): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    EC2Instance.ajax_node.update(_.merge(this.params, {runlist: runlist}))
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      EC2Instance.ajax_node.update(_.merge(this.params, {runlist: runlist}))
+    );
   }
 
   bootstrap(): JQueryPromise<any> {
@@ -104,13 +98,9 @@ class EC2Instance {
   }
 
   edit(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    EC2Instance.ajax_node.edit(this.params)
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      EC2Instance.ajax_node.edit(this.params)
+    );
   }
 
   edit_attributes(): JQueryPromise<any> {
@@ -129,43 +119,33 @@ class EC2Instance {
   }
 
   update_attributes(attributes: {[key: string]: {value: any}}): JQueryPromise<any> {
-    const dfd = $.Deferred();
     const req: {[key: string]: any} = {};
     _.forEach(attributes, (v, key) => {
       req[key] = v.value;
     });
 
-    (<any>EC2Instance.ajax_node).update_attributes(
-      _.merge(this.params, {attributes: JSON.stringify(req)})
-    ).done(this.resolveF(dfd))
-     .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).update_attributes(
+        _.merge(this.params, {attributes: JSON.stringify(req)})
+      )
+    );
   }
 
   // XXX: schedule ってどんな型?
   schedule_yum(schedule: any): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_node).schedule_yum(_.merge(this.params, {
-      physical_id: this.physical_id,
-      infra_id:    this.infra.id,
-      schedule:    schedule,
-    })).done(this.resolveF(dfd))
-       .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).schedule_yum(_.merge(this.params, {
+        physical_id: this.physical_id,
+        infra_id:    this.infra.id,
+        schedule:    schedule,
+      }))
+    );
   }
 
   recipes(cookbook: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_node).recipes({
-      cookbook: cookbook,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).recipes({ cookbook: cookbook })
+    );
   }
 
   select_serverspec(): JQueryPromise<any> {
@@ -198,37 +178,31 @@ class EC2Instance {
       ids.push(-1);
     }
 
-    (<any>EC2Instance.ajax_serverspec).run({
-      physical_id:    this.physical_id,
-      infra_id:       this.infra.id,
-      serverspec_ids: ids,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_serverspec).run({
+        physical_id:    this.physical_id,
+        infra_id:       this.infra.id,
+        serverspec_ids: ids,
+      })
+    );
   }
 
   schedule_serverspec(schedule: any): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_serverspec).schedule({
-      physical_id: this.physical_id,
-      infra_id:    this.infra.id,
-      schedule:    schedule,
-    }).done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_serverspec).schedule({
+        physical_id: this.physical_id,
+        infra_id:    this.infra.id,
+        schedule:    schedule,
+      })
+    );
   }
 
   change_scale(type: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_ec2).change_scale(_.merge(this.params, {instance_type: type}))
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).change_scale(
+        _.merge(this.params, {instance_type: type})
+      )
+    );
   }
 
   // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
@@ -248,23 +222,15 @@ class EC2Instance {
   }
 
   start_ec2(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_ec2).start(this.params)
-      .done(this.wait_change_status(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).start(this.params)
+    );
   }
 
   stop_ec2(): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_ec2).stop(this.params)
-      .done(this.wait_change_status(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).stop(this.params)
+    );
   }
 
   reboot_ec2(): JQueryPromise<any> {
@@ -288,32 +254,15 @@ class EC2Instance {
   }
 
   register(elb_name: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_ec2).register_to_elb(_.merge(this.params, {elb_name: elb_name}))
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).register_to_elb(_.merge(this.params, {elb_name: elb_name}))
+    );
   }
 
   deregister(elb_name: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-
-    (<any>EC2Instance.ajax_ec2).deregister_from_elb(_.merge(this.params, {elb_name: elb_name}))
-      .done(this.resolveF(dfd))
-      .fail(this.rejectF(dfd));
-
-    return dfd.promise();
-  }
-
-
-  private resolveF(dfd: JQueryDeferred<any>) {
-    return (data: any) => dfd.resolve(data);
-  }
-
-  private rejectF(dfd: JQueryDeferred<any>) {
-    return (xhr: XMLHttpRequest) => dfd.reject(xhr.responseText);
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).deregister_from_elb(_.merge(this.params, {elb_name: elb_name}))
+    );
   }
 }
 

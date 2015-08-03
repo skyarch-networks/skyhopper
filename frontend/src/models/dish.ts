@@ -1,18 +1,16 @@
 /// <reference path="../../declares.d.ts" />
+/// <reference path="./base.ts" />
 
-class Dish {
+class Dish  extends ModelBase {
+  constructor(public id: string) {super(); }
+
   static ajax = new AjaxSet.Resources('dishes');
 
 
-  runlist(id: number) {
-    const dfd = $.Deferred();
-
-    (<any>Dish.ajax).runlist({
-      id: id,
-    }).done(dfd.resolve)
-      .fail((xhr: XMLHttpRequest) => {dfd.reject(xhr.responseText); });
-
-    return dfd.promise();
+  runlist(id: number): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>Dish.ajax).runlist({id: id})
+    );
   }
 }
 Dish.ajax.add_member('runlist', 'GET');
