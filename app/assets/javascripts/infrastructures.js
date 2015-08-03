@@ -14,6 +14,7 @@
 //= require models/dish
 //= require models/ec2_instance
 //= require models/monitoring
+//= require models/rds_instance
 
 
 (function () {
