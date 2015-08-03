@@ -6,7 +6,15 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require_tree ./models/.
+//= require models/base
+//= require models/cf_template
+//= require models/infrastructure
+//= require models/s3_bucket
+//= require models/dish
+//= require models/ec2_instance
+//= require models/monitoring
+//= require models/rds_instance
+//= require models/resource
 
 
 (function () {
@@ -401,7 +409,7 @@
       loading: false,
     };},
     methods: {
-      type: function (master) { return this.monitoring.type(master); },
+      type: function (master) { return Monitoring.type(master); },
 
       delete_step: function (step) {
         this.web_scenarios = _.filter(this.web_scenarios, function (s) {
