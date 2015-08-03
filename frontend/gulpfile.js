@@ -11,12 +11,9 @@ gulp.task('tsd', function (callback) {
 
 
 gulp.task('ts', function () {
-  gulp.src(['./src/**/*.ts'])
-    .pipe(ts({
-      target: "ES5",
-      removeComments: true,
-      noImplicitAny: true,
-    }))
+  var tsProject = ts.createProject('tsconfig.json');
+  return tsProject.src()
+    .pipe(ts(tsProject))
     .js
     .pipe(gulp.dest('./dest/'));
 });
