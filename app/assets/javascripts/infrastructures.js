@@ -6,7 +6,6 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require_tree ./models/.
 //= require models/base
 //= require models/cf_template
 //= require models/infrastructure
