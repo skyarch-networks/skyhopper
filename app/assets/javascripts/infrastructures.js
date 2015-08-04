@@ -1068,7 +1068,10 @@
         $(e.target).children().attr('style', null);
         self.load_snapshots();
       });
-      $("#snapshots-modal >").draggable({cursor: "move"});
+      $("#snapshots-modal >").draggable({
+        cursor: "move",
+        containment: ".modal-backdrop",
+      });
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
