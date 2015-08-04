@@ -82,6 +82,11 @@ var loadGif, glyphicon, bootstrap_confirm, bootstrap_alert, bootstrap_prompt, mo
 
     modal_base.appendTo("body").modal("show");
 
+    modal_base.find('.modal-content').draggable({
+      cursor: "move",
+      containment: ".modal-backdrop",
+    });
+
     return dfd.promise();
   };
 
