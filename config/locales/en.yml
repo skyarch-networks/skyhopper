@@ -453,3 +453,13 @@ en:
     msg:
       confirm:    'Are you sure to delete the KeyPair "%{name}"?'
       deleted:    'KeyPair "%{name}" has been deleted successfully.'
+
+  snapshots:
+    snapshot:          'Snapshot'
+    create_snapshot:   'Create Snapshot'
+    delete_snapshot:   'Delete Snapshot'
+    schedule_snapshot: 'Schedule Snapshot Creation'
+    list_of_snapshots: 'List of Snapshots'
+    msg:
+      create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
+      delete_snapshot: 'Are you sure you want to delete following snapshots?'

@@ -453,3 +453,14 @@ ja:
     msg:
       confirm:    'キーペア "%{name}" を削除しますか?'
       deleted:    'キーペア "%{name}" が正常に削除されました'
+
+  snapshots:
+    snapshot:          'スナップショット'
+    create_snapshot:   'スナップショットの作成'
+    delete_snapshot:   'スナップショットの削除'
+    schedule_snapshot: '作成スケジュールの変更'
+    list_of_snapshots: 'スナップショットの一覧'
+    msg:
+      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot: '以下のスナップショットを削除しますか?'
+

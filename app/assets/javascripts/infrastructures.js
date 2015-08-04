@@ -901,7 +901,7 @@
       },
       create_snapshot: function (volume_id) {
         var self = this;
-        bootstrap_confirm('Create Snapshot', 'Are you sure to create snapshot?').done(function () {
+        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
           snapshot.create(volume_id, self.physical_id)
@@ -938,7 +938,8 @@
         var self = this;
         var snapshots    = _.select(this.snapshots, 'selected', true)
         var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
-        bootstrap_confirm('Delete Snapshot', 'Are you sure to delete the following snapshots?<br>- ' + snapshot_ids.join('<br>- ')).done(function () {
+        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ')
+        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
           var s = new Snapshot(current_infra.id);
 
           _.each(snapshots, function (snapshot) {

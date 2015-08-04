@@ -58,9 +58,10 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#">Create Snapshot</a></li>
-                  <li><a v-on="click: open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#">Schedule Snapshot</a></li>
-                  <li><a href="#snapshots-modal" data-toggle="modal">Snapshots</a></li>
+                  <li class="dropdown-header"><%= t('snapshots.snapshot') %></li>
+                  <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#"><%= t('snapshots.create_snapshot') %></a></li>
+                  <li><a href="#snapshots-modal" data-toggle="modal"><%= t('snapshots.list_of_snapshots') %></a></li>
+                  <li><a v-on="click: open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
                 </ul>
               </bootstrap-tooltip>
             </span>
