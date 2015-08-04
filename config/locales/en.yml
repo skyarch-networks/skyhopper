@@ -265,6 +265,7 @@ en:
     msg:
       serverspec_updated: 'Periodic run schedule of Serverspec has updated.'
       yum_updated: 'Periodic run schedule of Yum has updated.'
+      snapshot_updated: 'Periodic run schedule for creating snapshot has updated.'
 
 
   cf_templates:

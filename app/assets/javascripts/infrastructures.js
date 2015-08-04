@@ -688,11 +688,11 @@
       sort_key:            '',
       sort_order:          false,
 
-      // TODO: 階層を分けたい
-      enabled: false,
-      frequency: null,
-      day_of_week: null,
-      time: null,
+      schedule_type:       '',
+      schedule:            {},
+      yum_schedule:        {},
+      snapshot_schedule:   {},
+
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -861,10 +861,33 @@
         });
       },
       change_schedule: function () {
+        switch (this.schedule_type) {
+        case 'yum':
+          this.change_yum_schedule();
+          break;
+        case 'snapshot':
+          this.change_snapshot_schedule();
+          break;
+        }
+      },
+      change_yum_schedule: function () {
         var self = this;
         self.loading_s = true;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        ec2.schedule_yum(self.ec2.yum_schedule).done(function (msg) {
+        ec2.schedule_yum(self.schedule).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      },
+      change_snapshot_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        var s = new Snapshot(current_infra.id);
+        s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
           alert_success()(msg);
@@ -886,7 +909,16 @@
             .fail(alert_danger());
         });
       },
-      schedule_snapshot: function (volume_id) {
+      open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
+      open_yum_schedule_modal: function () {
+        this.schedule_type = "yum";
+        this.schedule = this.yum_schedule;
+        this.open_schedule_modal();
+      },
+      open_snapshot_schedule_modal: function (volume_id) {
+        this.schedule_type = "snapshot";
+        this.schedule = this.snapshot_schedule;
+        this.open_schedule_modal();
       },
       load_snapshots: function (e) {
         var self = this;
@@ -969,16 +1001,16 @@
         return {text: dish.name, value: dish.id};
       }));},
 
-      next_run:    function () { return (new Date().getHours() + parseInt(this.ec2.yum_schedule.time, 10)) % 24; },
-      all_filled:  function () {
-        if (!this.ec2.yum_schedule.enabled) return true;
-        switch (this.ec2.yum_schedule.frequency) {
+      next_run:    function () { return (new Date().getHours() + parseInt(this.schedule.time, 10)) % 24; },
+      filled_all:  function () {
+        if (!this.schedule.enabled) return true;
+        switch (this.schedule.frequency) {
           case 'weekly':
-            return this.ec2.yum_schedule.day_of_week && this.ec2.yum_schedule.time;
+            return this.schedule.day_of_week && this.schedule.time;
           case 'daily':
-            return this.ec2.yum_schedule.time;
+            return this.schedule.time;
           case 'intervals':
-            return parseInt(this.ec2.yum_schedule.time, 10);
+            return parseInt(this.schedule.time, 10);
           default:
             return false;
         }

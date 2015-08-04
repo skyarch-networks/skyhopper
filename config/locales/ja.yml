@@ -265,6 +265,7 @@ ja:
     msg:
       serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
       yum_updated: 'Yum の定期実行スケジュールが更新されました'
+      snapshot_updated: '定期的なスナップショット作成のスケジュールが更新されました'
 
 
   cf_templates:

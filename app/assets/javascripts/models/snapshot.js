@@ -4,6 +4,7 @@ var Snapshot = function (infra_id) {
   var self = this;
 
   var ajax_snapshot = new AjaxSet.Resources('snapshots');
+  ajax_snapshot.add_collection('schedule', 'POST');
 
   this.index = function (volume_id) {
     var dfd = $.Deferred();
@@ -42,6 +43,23 @@ var Snapshot = function (infra_id) {
     ajax_snapshot.destroy({
       infra_id: infra_id,
       id: snapshot_id,
+    }).done(function (data) {
+      dfd.resolve(data);
+    }).fail(function (xhr) {
+      dfd.reject(xhr.responseText);
+    });
+
+    return dfd.promise();
+  }
+
+  this.schedule = function (volume_id, physical_id, schedule) {
+    var dfd = $.Deferred();
+
+    ajax_snapshot.schedule({
+      infra_id: infra_id,
+      volume_id, volume_id,
+      physical_id: physical_id,
+      schedule, schedule
     }).done(function (data) {
       dfd.resolve(data);
     }).fail(function (xhr) {

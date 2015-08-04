@@ -63,19 +63,19 @@ class SnapshotsController < ApplicationController
   def schedule
     volume_id   = params.require(:volume_id)
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:infra_id)
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
+    infra       = Infrastructure.find(params.require(:infra_id))
 
-    ss = SnapshotSchedule.find_by(volume_id: volume_id)
+    ss = SnapshotSchedule.find_or_create_by(volume_id: volume_id)
     ss.update_attributes!(schedule)
 
     if ss.enabled?
       PeriodicSnapshotJob.set(
         wait_until: ss.next_run
-      ).perform_later(volume_id, infra_id, current_user.id)
+      ).perform_later(volume_id, physical_id, infra, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.updated'), status: 200 and return
+    render text: I18n.t('schedules.msg.snapshot_updated'), status: 200 and return
   end
 
   def restore

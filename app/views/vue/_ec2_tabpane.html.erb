@@ -59,7 +59,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#">Create Snapshot</a></li>
-                  <li><a v-on="click: schedule_snapshot(block_device.ebs.volume_id)" href="#">Schedule Snapshot</a></li>
+                  <li><a v-on="click: open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#">Schedule Snapshot</a></li>
                   <li><a href="#snapshots-modal" data-toggle="modal">Snapshots</a></li>
                 </ul>
               </bootstrap-tooltip>
@@ -178,7 +178,7 @@
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')">Check all updates</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')">Execute all update</a></li>
           <li class="dropdown-header">Schedule</li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#change-schedule-modal" data-toggle="modal">Check security updates</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" v-on="click: open_yum_schedule_modal()">Check security updates</a></li>
         </ul>
       </div>
       <button v-on="click: select_serverspec()" v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
@@ -250,7 +250,7 @@
 
 </div>
 
-<%# modal for change yum check-update schedule %>
+<%# modal for change schedule %>
 <div id="change-schedule-modal" class="modal fade" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -263,30 +263,30 @@
       <div class="modal-body">
         <div class="checkbox">
           <label>
-            <input type="checkbox" v-model="ec2.yum_schedule.enabled" v-attr="disabled: loading_s"><%= t 'schedules.run_periodically' %>
+            <input type="checkbox" v-model="schedule.enabled" v-attr="disabled: loading_s"><%= t 'schedules.run_periodically' %>
           </label>
         </div>
         <form class="form-inline">
-          <div class="form-group" v-if="ec2.yum_schedule.enabled">
-            <select v-model="ec2.yum_schedule.frequency" v-attr="disabled: loading_s" class="form-control">
-              <% YumSchedule::frequencies.keys.each do |f| %>
+          <div class="form-group" v-if="schedule.enabled">
+            <select v-model="schedule.frequency" v-attr="disabled: loading_s" class="form-control">
+              <% Schedule::frequencies.keys.each do |f| %>
                 <option value=<%= f %>><%= t "schedules.frequency.#{f}" %></option>
               <% end %>
             </select>
-            <select v-model="ec2.yum_schedule.day_of_week" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency === 'weekly'" class="form-control">
-              <% YumSchedule::day_of_weeks.keys.each do |e| %>
+            <select v-model="schedule.day_of_week" v-attr="disabled: loading_s" v-if="schedule.frequency === 'weekly'" class="form-control">
+              <% Schedule::day_of_weeks.keys.each do |e| %>
                 <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
               <% end %>
             </select>
-            <select v-model="ec2.yum_schedule.time" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency !== 'intervals'" class="form-control">
+            <select v-model="schedule.time" v-attr="disabled: loading_s" v-if="schedule.frequency !== 'intervals'" class="form-control">
               <% 0.upto(23) do |n| %>
                 <option><%= n %></option>
               <% end %>
             </select>
-            <label v-if="ec2.yum_schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
-            <input type="number" min="1" max="12" v-model="ec2.yum_schedule.time" v-attr="disabled: loading_s" v-if="ec2.yum_schedule.frequency === 'intervals'" class="form-control">
-            <label v-if="ec2.yum_schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
-            <div v-if="ec2.yum_schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
+            <label v-if="schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
+            <input type="number" min="1" max="12" v-model="schedule.time" v-attr="disabled: loading_s" v-if="schedule.frequency === 'intervals'" class="form-control">
+            <label v-if="schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
+            <div v-if="schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
           </div>
         </form>
       </div>
@@ -294,7 +294,7 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: change_schedule()" v-attr="disabled: !all_filled" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button v-on="click: change_schedule()" v-attr="disabled: !filled_all" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>
