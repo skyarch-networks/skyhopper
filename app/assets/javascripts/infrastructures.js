@@ -1025,13 +1025,6 @@
       ec2.show().done(function (data) {
         self.ec2 = data;
 
-        if (data.yum_schedule) {
-          self.enabled     = data.yum_schedule.enabled;
-          self.frequency   = data.yum_schedule.frequency;
-          self.day_of_week = data.yum_schedule.day_of_week;
-          self.time        = data.yum_schedule.time;
-        }
-
         var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
