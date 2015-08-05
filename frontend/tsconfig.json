@@ -9,6 +9,7 @@
     "outDir": "dest/"
   },
   "files": [
+    "src/server_status.ts",
     "src/models/base.ts",
     "src/models/cf_template.ts",
     "src/models/dish.ts",
