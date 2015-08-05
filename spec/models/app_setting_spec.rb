@@ -21,6 +21,11 @@ describe AppSetting, :type => :model do
         set.log_directory = '~/hogehoge'
         expect(set.valid?).to be true
       end
+
+      it 'or should be DummyText' do
+        set.log_directory = DummyText
+        expect(set.valid?).to be true
+      end
     end
 
     describe 'column aws_region' do

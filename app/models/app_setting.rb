@@ -11,7 +11,7 @@ require 'uri'
 class AppSetting < ActiveRecord::Base
   belongs_to :ec2_private_key, dependent: :delete
 
-  validates :log_directory, format: {with: /\A~?\//}
+  validates :log_directory, format: {with: /\A(~?\/)|(#{Regexp.escape(DummyText)}$)/}
   validates :aws_region, inclusion: {in: AWS::Regions | [DummyText]}
 
   extend Concerns::Cryptize

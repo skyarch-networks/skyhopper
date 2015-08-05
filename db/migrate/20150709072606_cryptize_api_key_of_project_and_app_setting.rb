@@ -13,6 +13,7 @@ class CryptizeApiKeyOfProjectAndAppSetting < ActiveRecord::Migration
       x.zabbix_pass = p
       x.save!
     end
+    AppSetting.get # if AppSetting.get has been naver called, clear_cache raises error!
     AppSetting.clear_cache
   end
 end
