@@ -169,12 +169,7 @@ class NodesController < ApplicationController
       render text: ret[:message], status: 500 and return
     end
 
-    Thread.new_with_db do
-      cook_node(@infra, physical_id)
-      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
-    end
-
-    render text: I18n.t('nodes.msg.cook_started')
+    render text: I18n.t('nodes.msg.dish_applied')
   end
 
 
@@ -305,6 +300,10 @@ class NodesController < ApplicationController
     r.status.cook.success!
     infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
+
+    if r.dish_id # if resource has dish
+      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
+    end
   end
 
   # TODO: DRY

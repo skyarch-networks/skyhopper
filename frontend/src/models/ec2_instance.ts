@@ -94,7 +94,9 @@ class EC2Instance extends ModelBase {
 
   apply_dish(dish_id: number) {
     const params = _.merge(this.params, dish_id ? {dish_id: dish_id} : {});
-    return this._cook('apply_dish', params);
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).apply_dish(params)
+    );
   }
 
   edit(): JQueryPromise<any> {

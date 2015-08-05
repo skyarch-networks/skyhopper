@@ -791,7 +791,12 @@
         });
       },
 
-      apply_dish: function () { this._cook('apply_dish', this.selected_dish); },
+      apply_dish: function () {
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        ec2.apply_dish(this.selected_dish)
+          .done(alert_success(this._show_ec2))
+          .fail(alert_danger(this._show_ec2));
+      },
       cook:       function () { this._cook('cook'); },
 
       yum_update: function (security, exec) {

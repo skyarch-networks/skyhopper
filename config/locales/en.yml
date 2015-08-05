@@ -198,7 +198,7 @@ en:
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
       runlist_empty:      'Runlist is empty'
-
+      dish_applied:       'Dish was applied.'
 
   dishes:
     dishes:            'Dishes'
