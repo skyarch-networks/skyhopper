@@ -12,6 +12,8 @@ class Schedule < ActiveRecord::Base
   enum frequency:   %i[daily weekly intervals]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 
+  scope :essentials, -> {select(:enabled, :frequency, :day_of_week, :time)}
+
   validates :frequency, inclusion: { in: frequencies }, if: :enabled
   validates :time, numericality: { greater_than: 0 }, if: -> { enabled && frequency == 'intervals' }
 

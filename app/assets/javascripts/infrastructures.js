@@ -690,8 +690,6 @@
 
       schedule_type:       '',
       schedule:            {},
-      yum_schedule:        {},
-      snapshot_schedule:   {},
 
     };},
     template: '#ec2-tabpane-template',
@@ -912,12 +910,12 @@
       open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
       open_yum_schedule_modal: function () {
         this.schedule_type = "yum";
-        this.schedule = this.yum_schedule;
+        this.schedule = this.ec2.yum_schedule;
         this.open_schedule_modal();
       },
       open_snapshot_schedule_modal: function (volume_id) {
         this.schedule_type = "snapshot";
-        this.schedule = this.snapshot_schedule;
+        this.schedule = this.ec2.snapshot_schedules[volume_id];
         this.open_schedule_modal();
       },
       load_snapshots: function (e) {
