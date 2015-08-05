@@ -43,10 +43,10 @@ module Modal {
       modal_footer.append(
         $('<button>', {class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel'})
       );
-      modal_footer.append(
-        $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
-      );
     }
+    modal_footer.append(
+      $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
+    );
 
     let additional_class = "";
     if (status === "warning") {
