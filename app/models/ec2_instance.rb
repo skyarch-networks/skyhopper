@@ -23,6 +23,22 @@ class EC2Instance < SimpleDelegator
     __setobj__(@instance)
   end
 
+  # status が変化するのを待つ
+  # ==== Args
+  # [status] :running or :stopped
+  def wait_status(status)
+    loop do
+      case s = self.status
+      when status
+        break
+      when :pending, :stopping
+        sleep 5
+      else
+        raise StandardError, "#{s} is not expected status."
+      end
+    end
+  end
+
   def change_scale(type)
     unless EC2Instance::Types.include?(type)
       raise ChangeScaleError, "Invalid type name: #{type}"
