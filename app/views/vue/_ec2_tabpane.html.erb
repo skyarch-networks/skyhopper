@@ -343,6 +343,7 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
+          <button v-on="click: create_snapshot(volume_selected)" class="btn btn-primary"><%= t('snapshots.btn.create') %></button>
           <button v-on="click: delete_selected_snapshots()" v-attr="disabled: !selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
