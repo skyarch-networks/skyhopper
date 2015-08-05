@@ -6,7 +6,7 @@ declare module AjaxSet {
   }
 
   class RailsBase extends Base {
-    add_member(action: string, type: string): void;
+    add_member(action: string, type: string, param?: string): void;
     add_collection(action: string, type: string): void;
   }
 
