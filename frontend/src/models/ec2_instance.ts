@@ -30,7 +30,7 @@ class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
 
     (<any>EC2Instance.ajax_node).run_bootstrap(this.params)
-      .done(function (data: any) {
+      .done((data: any) => {
         const ws = ws_connector('bootstrap', this.physical_id);
         ws.onmessage = function (msg) {
           ws.close();
