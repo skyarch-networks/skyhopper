@@ -902,9 +902,12 @@
         bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
-          snapshot.create(volume_id, self.physical_id)
-            .done(alert_success())
-            .fail(alert_danger());
+          snapshot.create(volume_id, self.physical_id).done(function (msg) {
+            if ($('#snapshots-modal.in').length) {
+              self.load_snapshots();
+            }
+            alert_success()(msg);
+          }).fail(alert_danger());
         });
       },
       open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
@@ -918,7 +921,7 @@
         this.schedule = this.ec2.snapshot_schedules[volume_id];
         this.open_schedule_modal();
       },
-      load_snapshots: function (e) {
+      load_snapshots: function () {
         var self = this;
         var snapshot = new Snapshot(current_infra.id);
         this.loading_snapshots = true;
