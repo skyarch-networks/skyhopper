@@ -45,7 +45,7 @@ class SnapshotsController < ApplicationController
 
     snapshot = Snapshot.create(infra, volume_id, physical_id)
 
-    render text: 'Snapshot creation succeeded!'
+    render text: I18n.t('snapshots.msg.creation_started')
   end
 
   # DELETE /snapshots/:snapshot_id

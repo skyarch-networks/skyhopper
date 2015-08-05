@@ -465,3 +465,4 @@ en:
     msg:
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
       delete_snapshot: 'Are you sure you want to delete following snapshots?'
+      creation_started: 'Snapshot creation has started.'
