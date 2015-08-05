@@ -10,6 +10,7 @@
   },
   "files": [
     "src/server_status.ts",
+    "src/helper.ts",
     "src/models/base.ts",
     "src/models/cf_template.ts",
     "src/models/dish.ts",

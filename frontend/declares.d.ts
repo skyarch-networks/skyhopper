@@ -5,5 +5,3 @@
 declare function t(path: string): string;
 
 declare function ws_connector(kind: string, id: string): WebSocket;
-
-declare function bootstrap_confirm(title: string, message: string, status?: string): JQueryDeferred<any>;
