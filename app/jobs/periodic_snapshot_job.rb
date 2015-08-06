@@ -16,6 +16,10 @@ class PeriodicSnapshotJob < ActiveJob::Base
       wait_until: schedule.next_run
     ).perform_later(volume_id, physical_id, infra, user_id)
 
-    Snapshot.create(infra, volume_id, physical_id)
+    begin
+      Snapshot.create(infra, volume_id, physical_id)
+    rescue Snapshot::VolumeNotFoundError, Snapshot::VolumeRetiredError => e
+      schedule.destroy
+    end
   end
 end

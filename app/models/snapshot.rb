@@ -1,13 +1,21 @@
 require 'delegate'
 
 class Snapshot < SimpleDelegator
+  class VolumeNotFoundError < StandardError; end
+  class VolumeRetiredError < StandardError; end
 
   class << self
     def create(infra, volume_id, physical_id)
       ec2 = infra.ec2
 
-      resp = ec2.create_snapshot(volume_id: volume_id)
-      ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
+      begin
+        resp = ec2.create_snapshot(volume_id: volume_id)
+        ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
+      rescue Aws::EC2::Errors::IncorrectState => e
+        raise VolumeRetiredError if e.message =~ /retired/
+      rescue Aws::EC2::Errors::InvalidVolumeNotFound => e
+        raise VolumeNotFoundError
+      end
 
       new(infra, resp.snapshot_id)
     end
