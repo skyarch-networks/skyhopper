@@ -1,6 +1,7 @@
-var gulp = require('gulp');
-var ts   = require('gulp-typescript');
-var tsd  = require('gulp-tsd');
+var gulp     = require('gulp');
+var ts       = require('gulp-typescript');
+var tsd      = require('gulp-tsd');
+var tsconfig = require('gulp-tsconfig-files');
 
 gulp.task('tsd', function (callback) {
   tsd({
@@ -20,6 +21,11 @@ gulp.task('ts', function () {
 
 gulp.task('watch', function () {
   gulp.watch('./src/**/*.ts', ['ts']);
+});
+
+gulp.task('tsconfig', function () {
+  gulp.src(['src/**/*.ts'])
+    .pipe(tsconfig());
 });
 
 gulp.task('default', ['ts', 'watch']);
