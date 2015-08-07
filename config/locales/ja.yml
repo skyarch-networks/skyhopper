@@ -80,6 +80,7 @@ ja:
       aws_region:        'SkyHopper のシステムが使用する AWS のリージョン'
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
+      eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'

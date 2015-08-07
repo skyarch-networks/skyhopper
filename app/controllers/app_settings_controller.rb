@@ -27,6 +27,8 @@ class AppSettingsController < ApplicationController
     keypair_name      = settings.delete(:keypair_name)
     keypair_value     = settings.delete(:keypair_value)
 
+    check_eip_limit!(settings[:aws_region], access_key, secret_access_key)
+
     ec2key = Ec2PrivateKey.create!(
       name:  keypair_name,
       value: keypair_value,
@@ -128,5 +130,21 @@ class AppSettingsController < ApplicationController
     hash = ChefServer::Deployment::Progress[status].dup
     hash[:message] = msg || I18n.t("chef_servers.msg.#{status}")
     return JSON.generate(hash)
+  end
+
+  class EIPLimitError < StandardError; end
+
+  # @param [String] region
+  # @param [String] access_key_id
+  # @param [String] secret_access_key
+  # @raise [EIPLimitError] raise error when cann't allocate EIP.
+  def check_eip_limit!(region, access_key_id, secret_access_key)
+    e = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
+    a = e.describe_account_attributes
+    limit = a.account_attributes.find{|x| x.attribute_name == 'vpc-max-elastic-ips'}.attribute_values.first.attribute_value.to_i
+    n = e.describe_addresses.addresses.size
+    if limit - n < 2
+      raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
+    end
   end
 end
