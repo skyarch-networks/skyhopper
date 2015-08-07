@@ -1,8 +1,6 @@
 /// <reference path="../declares.d.ts" />
 
 module ServerStatus {
-  const TEMPLATE_ID = '#toggle-button-template';
-
   class Server {
     // Parameter for Ajax.
     private params: {kind: string};
@@ -78,12 +76,14 @@ module ServerStatus {
 
 
   class App extends Vue {
+    static TEMPLATE_ID = '#toggle-button-template';
+
     private state: string;
     constructor(private model: Server) {
       super();
       this._init({
         data: {state: this.state},
-        template: TEMPLATE_ID,
+        template: App.TEMPLATE_ID,
         methods: {
           start:  this.start,
           stop:   this.stop,
@@ -187,11 +187,11 @@ module ServerStatus {
     const vm = new App(new Server(kind));
     const e = document.createElement('div');
     vm.$mount(e);
-    vm.$after(TEMPLATE_ID);
+    vm.$after(App.TEMPLATE_ID);
   };
 
   export const available = function (): boolean {
-    return !!document.querySelector(TEMPLATE_ID);
+    return !!document.querySelector(App.TEMPLATE_ID);
   };
 }
 
