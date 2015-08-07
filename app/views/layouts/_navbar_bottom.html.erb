@@ -1,6 +1,7 @@
 <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
   <div class="container" id="vue-navbar-bottom">
     <a class="navbar-text btn btn-link btn-xs" href="http://www.skyarch.net/">&copy; 2013-2015 SKYARCH NETWORKS INC.</a>
+    <span class="navbar-text btn-xs"><%= SkyHopper::Application.config.my_version %></span>
 <% if user_signed_in? %>
     <div class="navbar-text pull-right">
       <script id="toggle-button-template" type="text/template">

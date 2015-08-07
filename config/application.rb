@@ -49,6 +49,10 @@ module SkyHopper
 
     config.filter_parameters += [:password, :apikey_secret]
     config.active_job.queue_adapter = :sidekiq
+    
+    # Version information
+    config.my_version = 'Version 2015-08-devel'
+    
   end
 end
 
