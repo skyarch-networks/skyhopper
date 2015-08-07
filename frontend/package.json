@@ -6,6 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-tsconfig-files": "git@github.com:pocke/gulp-tsconfig-files.git",
     "gulp-tsd": "0.0.4",
     "gulp-typescript": "^2.7.8",
     "tsd": "^0.6.3",

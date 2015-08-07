@@ -134,8 +134,6 @@ module ServerStatus {
 
     // toggle server state.
     toggle(): void {
-      // XXX
-      (<any>this).$event.preventDefault();
       if (this.running) {
         this.stop();
       } else if (this.stopped) {
