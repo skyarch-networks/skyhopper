@@ -104,10 +104,12 @@ class ChefServer::Deployment
       physical_id = stack.instances.first.physical_resource_id
       server = self.new(infra, physical_id)
       server.wait_init_ec2
-      set = AppSetting.get
+      set = AppSetting.first
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
       set.save!
       AppSetting.clear_cache
+    rescue => ex
+      Rails.logger.error(ex)
     end
 
     private

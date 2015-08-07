@@ -50,6 +50,7 @@ class AppSettingsController < ApplicationController
       # おまじない
       ChefServer
       ChefServer::Deployment
+      CfTemplate
 
       set = AppSetting.get
       stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.to_s)}"
@@ -92,6 +93,7 @@ class AppSettingsController < ApplicationController
     # おまじない
     ChefServer
     ChefServer::Deployment
+    CfTemplate
 
     Thread.new_with_db do
       ws = WSConnector.new('chef_server_deployment', 'status')
