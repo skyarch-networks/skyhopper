@@ -139,17 +139,23 @@ Vue.component('bootstrap-tooltip', {
   },
 });
 
-const Loader = Vue.extend({
-  template: '<span><div class="loader"></div> {{text}}</span>',
-  props: {
-    text: {
-      type: String,
-    },
-  },
-  data: function () {return {
-      text: t('common.msg.loading'),
-  }; },
-});
+class Loader extends Vue {
+  constructor() {
+    super();
+    this._init({
+      template: '<span><div class="loader"></div> {{text}}</span>',
+      props: {
+        text: {
+          type: String,
+        },
+      },
+      data: () => {return {
+        text: t('common.msg.loading'),
+      }; },
+    });
+  }
+}
+
 Vue.component('div-loader', Loader);
 
 // Example: $.ajax().done(...).fail(modal_for_ajax_std_error(function(){doSomething();}));

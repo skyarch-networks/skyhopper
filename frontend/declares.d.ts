@@ -5,3 +5,4 @@
 declare function t(path: string): string;
 
 declare function ws_connector(kind: string, id: string): WebSocket;
+declare function show_loading(target: JQuery): void;

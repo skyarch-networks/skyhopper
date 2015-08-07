@@ -73,7 +73,7 @@ class UsersAdminController < ApplicationController
     allowed_projects = user.projects.includes(:client)
     @allowed_projects = allowed_projects.map do |project|
       client_name = project.client.name
-      {value: project.id.to_s, text: "#{client_name} / #{project.name}[#{project.code}]"}
+      {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
 
     # 新しい MFA の鍵を生成する
