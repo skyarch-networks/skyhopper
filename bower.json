@@ -18,7 +18,7 @@
     "animate.css": "~3.3.0",
     "jquery": "~2.1.4",
     "jquery-ujs": "~1.0.3",
-    "vue": "~0.12.7",
+    "vue": "~0.12.9",
     "lodash": "~3.9.3",
     "zeroclipboard": "~2.2.0"
   }
