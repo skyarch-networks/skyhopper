@@ -28,7 +28,7 @@ module Modal {
     modal_type: ModalType,
     status: string,
     resolve_func?: (_dfd: JQueryDeferred<any>) => (() => void)
-  ): JQueryPromise<any> {
+  ): JQueryDeferred<any> {
     const modal_footer = $('<div>', {class: 'modal-footer'});
     const dfd = $.Deferred();
 
@@ -81,7 +81,7 @@ module Modal {
 
     modal_base.appendTo('body').modal('show');
 
-    return dfd.promise();
+    return dfd;
   };
 
   export const confirm = function (title: string, message: string, status?: string): JQueryPromise<any> {
@@ -111,7 +111,19 @@ module Modal {
       };
     };
 
-    return modal(title, input, ModalType.confirm, status, resolve_func);
+    const dfd = modal(title, input, ModalType.confirm, status, resolve_func);
+
+    input.on('keypress', function (e) {
+      const ENTER = 13;
+      if ((e.which && e.which === ENTER) || (e.keyCode && e.keyCode === ENTER)) {
+        input.closest('.modal').modal('hide');
+        resolve_func(dfd)();
+        return false;
+      }
+      return true;
+    });
+
+    return dfd;
   };
 }
 
