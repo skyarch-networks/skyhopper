@@ -25,7 +25,7 @@ gulp.task('watch', function () {
 
 gulp.task('tsconfig', function () {
   gulp.src(['src/**/*.ts'])
-    .pipe(tsconfig());
+    .pipe(tsconfig({newline_eof: true}));
 });
 
 gulp.task('default', ['ts', 'watch']);
