@@ -40,7 +40,8 @@ describe ChefServer::Deployment, :type => :model do
     end
 
     before do
-      create(:project, code: Project::ChefServerCodeName)
+      c = create(:client, code: Client::ForSystemCodeName)
+      create(:project, code: Project::ChefServerCodeName, client: c)
     end
 
     it 'should call methods' do
