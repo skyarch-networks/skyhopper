@@ -149,9 +149,9 @@ class Loader extends Vue {
           type: String,
         },
       },
-      data: () => {return {
+      data: {
         text: t('common.msg.loading'),
-      }; },
+      },
     });
   }
 }
