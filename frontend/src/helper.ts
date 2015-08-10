@@ -139,22 +139,17 @@ Vue.component('bootstrap-tooltip', {
   },
 });
 
-class Loader extends Vue {
-  constructor() {
-    super();
-    this._init({
-      template: '<span><div class="loader"></div> {{text}}</span>',
-      props: {
-        text: {
-          type: String,
-        },
-      },
-      data: {
-        text: t('common.msg.loading'),
-      },
-    });
-  }
-}
+const Loader = Vue.extend({
+  template: '<span><div class="loader"></div> {{text}}</span>',
+  props: {
+    text: {
+      type: String,
+    },
+  },
+  data: () => {return {
+    text: t('common.msg.loading'),
+  }; },
+});
 
 Vue.component('div-loader', Loader);
 
