@@ -48,7 +48,7 @@ class Infrastructure extends ModelBase {
     return this.WrapAndResolveReject(() =>
       (<any>Infrastructure.ajax_infra).show_elb({
         id:          this.id,
-        pyhsical_id: physical_id,
+        physical_id: physical_id,
       })
     );
   }
