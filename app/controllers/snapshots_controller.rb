@@ -11,15 +11,16 @@ class SnapshotsController < ApplicationController
 
   before_action :authenticate_user!
 
-  # before_action do
-  #   authorize()
-  # end
+  before_action do
+    set_infra
+    def @infra.policy_class; SnapshotPolicy; end
+    authorize(@infra)
+  end
 
   # GET /snapshots
   def index
-    infra     = Infrastructure.find(params.require(:infra_id))
     volume_id = params[:volume_id]
-    ec2       = infra.ec2
+    ec2       = @infra.ec2
 
     parameters = { owner_ids: ['self'] }
     parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id
@@ -38,23 +39,21 @@ class SnapshotsController < ApplicationController
   def create
     volume_id   = params.require(:volume_id)
     physical_id = params.require(:physical_id)
-    infra       = Infrastructure.find(params.require(:infra_id))
 
     # 作成前に fsfreeze したい
-    snapshot = Snapshot.create(infra, volume_id, physical_id)
+    snapshot = Snapshot.create(@infra, volume_id, physical_id)
     infra_logger_success("Snapshot creation for #{volume_id} has started.\n Snapshot ID: #{snapshot.snapshot_id}")
 
-    notify_progress(Snapshot.new(infra, snapshot.snapshot_id))
+    notify_progress(Snapshot.new(@infra, snapshot.snapshot_id))
 
     render json: snapshot.data
   end
 
   # DELETE /snapshots/:snapshot_id
   def destroy
-    infra       = Infrastructure.find(params.require(:infra_id))
     snapshot_id = params.require(:snapshot_id)
 
-    snapshot = Snapshot.new(infra, snapshot_id)
+    snapshot = Snapshot.new(@infra, snapshot_id)
     snapshot.delete
 
     render nothing: true, status: 200
@@ -65,7 +64,6 @@ class SnapshotsController < ApplicationController
     volume_id   = params.require(:volume_id)
     physical_id = params.require(:physical_id)
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
-    infra       = Infrastructure.find(params.require(:infra_id))
 
     ss = SnapshotSchedule.find_or_create_by(volume_id: volume_id)
     ss.update_attributes!(schedule)
@@ -73,15 +71,15 @@ class SnapshotsController < ApplicationController
     if ss.enabled?
       PeriodicSnapshotJob.set(
         wait_until: ss.next_run
-      ).perform_later(volume_id, physical_id, infra, current_user.id)
+      ).perform_later(volume_id, physical_id, @infra, current_user.id)
     end
 
     render text: I18n.t('schedules.msg.snapshot_updated'), status: 200 and return
   end
 
-  def restore
+  # def restore
 
-  end
+  # end
 
   private
 
@@ -102,5 +100,9 @@ class SnapshotsController < ApplicationController
       ws = WSConnector.new('snapshot_status', snapshot.snapshot_id)
       ws.push('completed')
     end
+  end
+
+  def set_infra
+    @infra = Infrastructure.find(params.require(:infra_id))
   end
 end
