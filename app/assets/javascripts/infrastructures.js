@@ -1072,6 +1072,7 @@
       $("#snapshots-modal >").draggable({
         cursor: "move",
         containment: ".modal-backdrop",
+        handle: ".modal-header"
       });
     },
     filters: {
