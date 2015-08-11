@@ -1,35 +1,16 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Simple Pattern (EC2x1, S3x1)",
+    "Description": "Simple Pattern (EC2x1)",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
             "Type": "String"
         },
-        "S3BucketBucketName": {
-            "Description": "The name of S3Bucket",
-            "Type": "String",
-            "Default": "backup"
-        },
-        "S3BucketAccessControl": {
-            "Description": "grants predefined permissions to the bucket.",
-            "Type": "String",
-            "Default": "Private",
-            "AllowedValues": [
-                "Private",
-                "PublicRead",
-                "PublicReadWrite",
-                "AuthenticatedRead",
-                "LogDeliveryWrite",
-                "BucketOwnerRead",
-                "BucketOwnerFullControl"
-            ]
-        },
-        "EC2InstanceType": {
+        "InstanceType": {
             "Description": "EC2 Instance Type",
             "Type": "String",
             "Default": "t2.micro",
-            "AllowedValues": <%= skyhopper_modules[:ec2_instance_types_hvm] %>,
+            "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
             "ConstraintDescription": "must be a valid EC2 instance type."
         },
         "BlockDeviceVolumeSize": {
@@ -48,20 +29,13 @@
         }
     },
     "Mappings": {
-        "RegionMap": <%= skyhopper_modules[:ami_mappings_2014_09] %>
+        "RegionMap": <%= fragment(:ami_mappings) %>
     },
     "Resources": {
-        "S3Bucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-                "AccessControl": { "Ref": "S3BucketAccessControl" },
-                "BucketName":    { "Ref": "S3BucketBucketName" }
-            }
-        },
         "EC2Instance": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
-                "InstanceType": { "Ref": "EC2InstanceType" },
+                "InstanceType": { "Ref": "InstanceType" },
                 "KeyName": { "Ref": "KeyName" },
                 "ImageId": {
                     "Fn::FindInMap": [

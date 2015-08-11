@@ -12,7 +12,7 @@
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
       "Default" : "t2.small",
-      "AllowedValues" : ["t2.micro", "t2.small", "t2.medium"],
+      "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
     "SSHLocation" : {
@@ -26,17 +26,8 @@
     }
   },
 
-  "Mappings" : {
-    "RegionMap" : {
-      "us-east-1"      : { "AMI" : "ami-b66ed3de" },
-      "us-west-1"      : { "AMI" : "ami-4b6f650e" },
-      "us-west-2"      : { "AMI" : "ami-b5a7ea85" },
-      "eu-west-1"      : { "AMI" : "ami-6e7bd919" },
-      "sa-east-1"      : { "AMI" : "ami-8737829a" },
-      "ap-southeast-1" : { "AMI" : "ami-ac5c7afe" },
-      "ap-southeast-2" : { "AMI" : "ami-63f79559" },
-      "ap-northeast-1" : { "AMI" : "ami-4985b048" }
-    }
+  "Mappings": {
+    "RegionMap": <%= fragment(:ami_mappings) %>
   },
 
   "Resources" : {

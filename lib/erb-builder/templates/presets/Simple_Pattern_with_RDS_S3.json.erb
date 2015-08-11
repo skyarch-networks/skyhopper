@@ -29,7 +29,7 @@
             "Description": "EC2 Instance Type",
             "Type": "String",
             "Default": "t2.micro",
-            "AllowedValues": <%= skyhopper_modules[:ec2_instance_types_hvm] %>,
+            "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
             "ConstraintDescription": "must be a valid EC2 instance type."
         },
         "RDSInstanceDBName": {
@@ -114,7 +114,7 @@
         }
     },
     "Mappings": {
-        "RegionMap": <%= skyhopper_modules[:ami_mappings_2014_09] %>
+        "RegionMap": <%= fragment(:ami_mappings) %>
     },
     "Resources": {
         "S3Bucket": {
