@@ -33,6 +33,7 @@ $ sudo gem install bundler
 
 ```sh
 $ sudo yum install nodejs npm --enablerepo=epel
+$ sudo npm update -g npm
 $ node -v
 v0.10.33
 ```
@@ -152,7 +153,7 @@ $ bower install
 ### TypeScript のコンパイル
 
 ```sh
-$ npm i -g gulp
+$ sudo npm i -g gulp
 $ cd frontend/
 $ npm i
 $ gulp tsd
