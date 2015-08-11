@@ -14,7 +14,7 @@ Amazon Linux へのインストール方法しか記載していませんが、�
 
 ## ruby のインストール
 
-Ruby 2.1系以上の Ruby をインストール
+Ruby 2.2系以上の Ruby をインストール
 
 ```sh
 $ sudo yum remove ruby ruby20
