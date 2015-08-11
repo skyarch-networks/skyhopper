@@ -10,7 +10,7 @@
             "Description": "WebServer EC2 instance type",
             "Type": "String",
             "Default": "m3.medium",
-            "AllowedValues": <%= skyhopper_modules[:ec2_instance_types_hvm] %>,
+            "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
             "ConstraintDescription": "must be a valid EC2 instance type."
         },
         "S3BucketBucketName": {
@@ -48,7 +48,7 @@
         }
     },
     "Mappings": {
-        "RegionMap": <%= skyhopper_modules[:ami_mappings_2014_09] %>
+        "RegionMap": <%= fragment(:ami_mappings_2014_09) %>
     },
     "Resources": {
         "ElasticLoadBalancer" : {

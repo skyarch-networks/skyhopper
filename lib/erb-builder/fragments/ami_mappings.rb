@@ -1,3 +1,4 @@
+# Amazon Linux 2015.03
 {
     "us-east-1": {
         "AMI": "ami-1ecae776"
