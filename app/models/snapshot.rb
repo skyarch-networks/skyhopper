@@ -36,4 +36,19 @@ class Snapshot < SimpleDelegator
     client.create_volume(availability_zone: az, snapshot_id: snapshot_id)
   end
 
+  def latest_status
+    # owner_ids: ['self'] を指定しないと最新の state が降ってこないような気がする
+    # パラメータによってレスポンスの state が異なることがある
+    resp = client.describe_snapshots(
+      owner_ids: ['self'],
+      snapshot_ids: [snapshot_id],
+      filters: [
+        { name: 'volume-id', values: [volume_id] },
+        { name: 'snapshot-id', values: [snapshot_id]}
+      ]
+    )
+
+    resp.snapshots.first.state
+  end
+
 end

@@ -7,6 +7,8 @@
 #
 
 class SnapshotsController < ApplicationController
+  include Concerns::InfraLogger
+
   before_action :authenticate_user!
 
   # before_action do
@@ -37,15 +39,14 @@ class SnapshotsController < ApplicationController
     volume_id   = params.require(:volume_id)
     physical_id = params.require(:physical_id)
     infra       = Infrastructure.find(params.require(:infra_id))
-    # ec2         = infra.ec2
 
-    # # 作成前に fsfreeze したい
-    # resp = ec2.create_snapshot(volume_id: volume_id)
-    # ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
-
+    # 作成前に fsfreeze したい
     snapshot = Snapshot.create(infra, volume_id, physical_id)
+    infra_logger_success("Snapshot creation for #{volume_id} has started.\n Snapshot ID: #{snapshot.snapshot_id}")
 
-    render text: I18n.t('snapshots.msg.creation_started')
+    notify_progress(Snapshot.new(infra, snapshot.snapshot_id))
+
+    render json: snapshot.data
   end
 
   # DELETE /snapshots/:snapshot_id
@@ -80,5 +81,26 @@ class SnapshotsController < ApplicationController
 
   def restore
 
+  end
+
+  private
+
+  def notify_progress(snapshot)
+    Thread.new do
+      sleep(2)
+      begin
+        15.times do
+          break if snapshot.latest_status == 'completed'
+          sleep(15)
+        end
+      rescue => ex
+        infra_logger_fail("Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
+        raise ex
+      end
+
+      infra_logger_success("Snapshot creation for #{snapshot.volume_id} has completed.\n Snapshot ID: #{snapshot.snapshot_id}")
+      ws = WSConnector.new('snapshot_status', snapshot.snapshot_id)
+      ws.push('completed')
+    end
   end
 end

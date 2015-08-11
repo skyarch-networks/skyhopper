@@ -19,7 +19,19 @@ var Snapshot = function (infra_id) {
     });
 
     return dfd.promise();
-  }
+  };
+
+  var watch_snapshot_progress = function (dfd) {
+    return function (data) {
+      var ws = ws_connector('snapshot_status', data.snapshot_id);
+      ws.onmessage = function (msg) {
+        if (msg.data === 'completed') {
+          dfd.resolve(data);
+          ws.close();
+        };
+      };
+    };
+  };
 
   this.create = function (volume_id, physical_id) {
     var dfd = $.Deferred();
@@ -29,13 +41,13 @@ var Snapshot = function (infra_id) {
       volume_id, volume_id,
       physical_id: physical_id
     }).done(function (data) {
-      dfd.resolve(data);
+      watch_snapshot_progress(dfd)(data);
     }).fail(function (xhr) {
       dfd.reject(xhr.responseText);
     });
 
     return dfd.promise();
-  }
+  };
 
   this.destroy = function (snapshot_id) {
     var dfd = $.Deferred();
@@ -50,7 +62,7 @@ var Snapshot = function (infra_id) {
     });
 
     return dfd.promise();
-  }
+  };
 
   this.schedule = function (volume_id, physical_id, schedule) {
     var dfd = $.Deferred();
@@ -67,6 +79,6 @@ var Snapshot = function (infra_id) {
     });
 
     return dfd.promise();
-  }
+  };
 
 };
