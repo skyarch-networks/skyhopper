@@ -1,7 +1,7 @@
 require_relative '../../spec_helper.rb'
 
 describe ERB::Builder do
-  let(:builder){ERB::Builder.new('presets/Simple_Pattern.json')}
+  let(:builder){ERB::Builder.new('presets/Simple_Pattern')}
   describe '.new' do
     it 'should not raise error' do
       builder
