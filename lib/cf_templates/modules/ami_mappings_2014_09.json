@@ -1,26 +1,29 @@
 {
     "us-east-1": {
-        "AMI": "ami-b66ed3de"
+        "AMI": "ami-1ecae776"
     },
     "us-west-1": {
-        "AMI": "ami-4b6f650e"
+        "AMI": "ami-d114f295"
     },
     "us-west-2": {
-        "AMI": "ami-b5a7ea85"
+        "AMI": "ami-e7527ed7"
     },
     "eu-west-1": {
-        "AMI": "ami-6e7bd919"
+        "AMI": "ami-a10897d6"
+    },
+    "eu-central-1": {
+        "AMI": "ami-a8221fb5"
     },
     "sa-east-1": {
-        "AMI": "ami-8737829a"
+        "AMI": "ami-b52890a8"
     },
     "ap-southeast-1": {
-        "AMI": "ami-ac5c7afe"
+        "AMI": "ami-68d8e93a"
     },
     "ap-southeast-2": {
-        "AMI": "ami-63f79559"
+        "AMI": "ami-fd9cecc7"
     },
     "ap-northeast-1": {
-        "AMI": "ami-4985b048"
+        "AMI": "ami-cbf90ecb"
     }
 }
