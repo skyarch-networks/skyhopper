@@ -6,8 +6,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'delegate'
-
 class EC2Instance < SimpleDelegator
   # instance_types を取得するAPIがなさそう?
   Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
