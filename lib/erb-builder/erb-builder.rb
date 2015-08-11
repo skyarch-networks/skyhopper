@@ -4,7 +4,7 @@ class ERB::Builder
 
   # @param [String] name
   def initialize(name)
-    fname = TemplateRoot.join("#{name}.erb")
+    fname = TemplateRoot.join("#{name}.json.erb")
     @value = File.read(fname)
   end
 
