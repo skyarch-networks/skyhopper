@@ -421,7 +421,9 @@ ja:
     state:             '状態'
     reason_code:       '原因コード'
     msg:
-      registered_to_elb:    'ELB に EC2 インスタンスを登録しました'
+      start_ec2:             'EC2 インスタンスの起動が開始されました'
+      stop_ec2:              'EC2 インスタンスの停止が開始されました'
+      registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
     btn:
       register:   'インスタンスを登録'
