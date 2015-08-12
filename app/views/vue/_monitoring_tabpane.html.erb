@@ -1,11 +1,13 @@
 <div v-if="before_register">
   <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
   <div class="alert alert-warning">
-    <%= t 'monitoring.msg.before_create_host' %> test message Joeper
+    <%= t 'monitoring.msg.before_create_host' %>
   </div>
-  <button v-if="!creating" v-on="click: create()"class="btn btn-primary"><%= t 'monitoring.btn.create' %> test reg joeper</button>
+  <button v-if="!creating"  data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
   <div-loader v-if="creating"></div-loader>
 </div>
+
+<%= render 'monitorings/modal_register_description' %>
 
 
 <div v-if="!before_register">
