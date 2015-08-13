@@ -294,9 +294,7 @@
         }).fail(alert_and_show_infra);
       },
       checkVal: function(){
-        if(this.templates.$value){
           alert(this.templates.$value);
-        }
       },
       show_url: function () {
         var self = this;

@@ -13,7 +13,7 @@
           <form>
               <div class="checkbox" v-repeat="templates">
                   <label class="checkbox">
-                    <input type="checkbox" v-on="click: checkVal()" v-model="$value.checked" id="inputEmail3">{{$value}}
+                    <input type="checkbox" v-on="click: checkVal()" v-model="templates.$value.checked" id="inputEmail3">{{$value}}
                   </label>
               </div>
           </form>
