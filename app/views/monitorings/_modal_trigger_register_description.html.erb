@@ -8,18 +8,11 @@
       </div>
       <div class="modal-body">
 
-        <div class="col-md-12 col-sm-12" v-if="before_setting">
-          <h4 class="page-header"></h4>
-                <tr v-repeat="templates">
-                  <td>{{$value}}</td>
-                </tr>
-          </div>
-        </div>
+
         <div class="col-md-12 col-sm-12">
-            templates: {{template}}
-            <ul>
-              <li><span v-repeat="templates">{{$value}}</span></li>
-            </ul>
+            <i v-repeat="templates">
+              <input class="form-control input-sm" type="checkbox" value="{{$value}}">{{$value}}
+            </i>
         </div>
 
 
@@ -29,4 +22,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>
