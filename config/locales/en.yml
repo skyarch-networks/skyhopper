@@ -308,7 +308,7 @@ en:
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
-    before_reg_title:     'Please select a zabbix template before proceeding.'
+    before_reg_title:     'Please select template before proceeding.'
     btn:
       create: 'Register'
       add:    'Add'
