@@ -246,8 +246,12 @@ en:
 
 
   schedules:
+    schedule:         'schedule'
     change_schedule:  'Change schedule'
     run_periodically: 'Run periodically'
+    o_clock:          "o'clock"
+    hours:            'hours'
+    next_run:         'Next run time is at {{next_run}}:00'
     frequency:
       weekly:     'Weekly'
       daily:      'Daily'
@@ -260,9 +264,6 @@ en:
       thursday:   'Thursday'
       friday:     'Friday'
       saturday:   'Saturday'
-    o_clock:      "o'clock"
-    hours:        'hours'
-    next_run:     'Next run time is at {{next_run}}:00'
     msg:
       serverspec_updated: 'Periodic run schedule of Serverspec has updated.'
       yum_updated: 'Periodic run schedule of Yum has updated.'
@@ -428,6 +429,10 @@ en:
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
+      check_security_update: 'Check security updates'
+      exec_security_update:  'Execute security update'
+      check_all_update:      'Check all updates'
+      exec_all_update:       'Execute all update'
     confirm:
       register:   'Do you want to register EC2 instance with ELB?'
       deregister: 'Do you want to release registration of EC2 instance from ELB?'

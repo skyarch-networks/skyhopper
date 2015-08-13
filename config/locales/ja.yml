@@ -247,8 +247,12 @@ ja:
 
 
   schedules:
+    schedule:         'スケジュール'
     change_schedule:  'スケジュールの変更'
     run_periodically: '定期的に実行'
+    o_clock:          '時'
+    hours:            '時間毎'
+    next_run:         '次は {{next_run}} 時に実行されます'
     frequency:
       weekly:     '毎週'
       daily:      '毎日'
@@ -261,9 +265,6 @@ ja:
       thursday:   '木曜'
       friday:     '金曜'
       saturday:   '土曜'
-    o_clock:      '時'
-    hours:        '時間毎'
-    next_run:     '次は {{next_run}} 時に実行されます'
     msg:
       serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
       yum_updated: 'Yum の定期実行スケジュールが更新されました'
@@ -426,8 +427,12 @@ ja:
       registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
     btn:
-      register:   'インスタンスを登録'
-      deregister: 'インスタンスの登録を解除'
+      register:       'インスタンスを登録'
+      deregister:     'インスタンスの登録を解除'
+      check_security_update: 'セキュリティアップデートを確認する'
+      exec_security_update:  'セキュリティアップデートを実行する'
+      check_all_update:      '全てのアップデートを確認する'
+      exec_all_update:       '全てのアップデートを実行する'
     confirm:
       register:   'EC2 インスタンスを ELB に登録しますか?'
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
