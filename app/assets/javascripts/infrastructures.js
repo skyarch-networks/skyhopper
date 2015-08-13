@@ -285,11 +285,16 @@
       create: function () {
         var self = this;
         self.creating = true;
-        this.monitoring.create_host().done(function () {
+        this.monitoring.create_host(
+          this.templates
+        ).done(function () {
           alert_success(function () {
             self.$parent.show_edit_monitoring();
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
+      },
+      checkVal: function(){
+        alert(this.templates);
       },
       show_url: function () {
         var self = this;
