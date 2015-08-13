@@ -294,8 +294,8 @@
         }).fail(alert_and_show_infra);
       },
       checkVal: function(){
-        if(this.templates.$value.checked){
-          alert(this.templates.$value.checked);
+        if(this.templates.$value){
+          alert(this.templates.$value);
         }
       },
       show_url: function () {
