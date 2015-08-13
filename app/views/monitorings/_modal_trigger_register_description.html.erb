@@ -11,9 +11,9 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-              <div class="checkbox" v-repeat="s: templates">
+              <div class="checkbox" v-repeat="templates">
                   <label class="checkbox">
-                    <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{$value}}
+                    <input type="checkbox" v-on="click: checkVal()" v-model="$value.checked" id="inputEmail3">{{$value}}
                   </label>
               </div>
           </form>
