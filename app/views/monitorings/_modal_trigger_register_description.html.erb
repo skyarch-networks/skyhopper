@@ -1,21 +1,14 @@
 <!-- modal for trigger setting -->
-<div id="register-warning" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
+<div id="register-warning" class="modal fade bs-example-modal-lg",  tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"><%= t 'monitoring.explanation_triggers' %></h4>
+        <h4 class="modal-title"><%= t 'monitoring.before_reg_title' %></h4>
       </div>
       <div class="modal-body">
-        <% MasterMonitoring.pluck(:name, :trigger_expression).each do |name, trigger_expression| %>
-          <blockquote>
-            <p><%= name %></p>
-            <small><%= t "monitoring.explanations.#{name.downcase.delete(' ')}" %></small>
-            <% if trigger_expression.present? %>
-              <code><%= trigger_expression %>value</code>
-            <% end %>
-          </blockquote>
-        <% end %>
+        <div v-if="templates">
+          {{templates}}
       </div>
       <div class="modal-footer">
         <button v-on="click: create()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>

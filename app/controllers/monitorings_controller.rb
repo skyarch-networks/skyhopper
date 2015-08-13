@@ -37,6 +37,18 @@ class MonitoringsController < ApplicationController
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
     @resources = @infra.resources.ec2
+
+    #get/load zabbix templates
+    #
+    z = @zabbix
+
+    # begin
+    #   templates = []
+    #   resources.each do |resource|
+    #     z.create_host(@infra, resource.physical_id)
+    # end
+    @templates = z.template.get();
+    logger.debug(templates)
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
