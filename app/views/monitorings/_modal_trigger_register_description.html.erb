@@ -7,13 +7,12 @@
         <h4 class="modal-title"><%= t 'monitoring.before_reg_title' %></h4>
       </div>
       <div class="modal-body">
-        <div v-model="templates">
-          <ul v-repeat="templates">
-            <li>{{templates}}</li>
-          </ul>
-      </div>
+          <div v-repeat="templates">
+            {{$value}}
+          </div>
       <div class="modal-footer">
-        <button v-on="click: create()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button v-on="click: create()" type="button" class="btn btn-primary" data-dismiss="modal">Register</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
