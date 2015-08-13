@@ -31,6 +31,11 @@ class MonitoringsController < ApplicationController
       # すべてのec2が登録されていなければ
       # Only show those hosts that are registered
       @before_register = true
+
+      #get/load available zabbix templates.
+      z = @zabbix
+      @templates = z.template.get()
+      infra_logger_success(templates)
       return
     end
 
@@ -38,17 +43,6 @@ class MonitoringsController < ApplicationController
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
     @resources = @infra.resources.ec2
 
-    #get/load zabbix templates
-    #
-    z = @zabbix
-
-    # begin
-    #   templates = []
-    #   resources.each do |resource|
-    #     z.create_host(@infra, resource.physical_id)
-    # end
-    @templates = z.template.get();
-    logger.debug(templates)
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
