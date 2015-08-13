@@ -385,6 +385,7 @@
       var self = this;
       var monitoring = new Monitoring(current_infra);
       monitoring.show().done(function (data) {
+        console.log(data.templates);
         self.before_register = data.before_register;
         self.commons         = data.monitor_selected_common;
         self.uncommons       = data.monitor_selected_uncommon;
