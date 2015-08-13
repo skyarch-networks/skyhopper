@@ -11,11 +11,15 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-            <div class="form-group" v-repeat="templates">
-              <div class="col-sm-2">
-                <input type="checkbox" value="{{$value}}" id="inputEmail3">
+            <div class="form-group">
+              <div class="row" v-repeat="templates">
+                <div class="col-sm-2">
+                  <input type="checkbox" value="{{$value}}" id="inputEmail3">
+                </div>
+                <div class="col-sm-8">
+                  <label for="inputEmail3" class=" control-label">{{$value}}</label>
+                </div>
               </div>
-              <label for="inputEmail3" class="col-sm-8 control-label">{{$value}}</label>
             </div>
           </form>
         </div>
