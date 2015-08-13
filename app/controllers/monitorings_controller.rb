@@ -34,7 +34,7 @@ class MonitoringsController < ApplicationController
 
       #get/load available zabbix templates.
       z = @zabbix
-      templates = z.template.get()
+      templates = z.get_available_templates(r.physical_id)
       render json: templates
       return
     end
