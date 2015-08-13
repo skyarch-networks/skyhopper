@@ -34,8 +34,8 @@ class MonitoringsController < ApplicationController
 
       #get/load available zabbix templates.
       z = @zabbix
-      @templates = z.template.get()
-      infra_logger_success(templates)
+      templates = z.template.get()
+      render json: templates
       return
     end
 
