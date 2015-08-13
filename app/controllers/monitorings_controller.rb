@@ -33,7 +33,8 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates.
-      templates = @sky_zabbix.template.get()
+      template_names = ['Template OS Linux','Template OS Windows']
+      templates = @sky_zabbix.template.get(filter: {host: template_names})
       render json: templates
       return
     end
@@ -144,7 +145,7 @@ class MonitoringsController < ApplicationController
 
     #TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
-    z.create_web_scenario(@infra, web_scenario)Template OS Windows
+    z.create_web_scenario(@infra, web_scenario)
   end
 
   # POST /monitorings/:id/create_host
