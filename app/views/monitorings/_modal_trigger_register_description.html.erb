@@ -7,8 +7,10 @@
         <h4 class="modal-title"><%= t 'monitoring.before_reg_title' %></h4>
       </div>
       <div class="modal-body">
-        <div v-if="templates">
-          {{templates}}
+        <div v-model="templates">
+          <ul v-repeat="templates">
+            <li>{{templates}}</li>
+          </ul>
       </div>
       <div class="modal-footer">
         <button v-on="click: create()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>

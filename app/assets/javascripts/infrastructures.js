@@ -393,6 +393,7 @@
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
         self.templates       = data.templates;
+        
         if (!this.before_register) {
           self.show_problems();
         }

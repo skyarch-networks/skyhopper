@@ -32,10 +32,25 @@ class MonitoringsController < ApplicationController
       # Only show those hosts that are registered
       @before_register = true
 
-      #get/load available zabbix templates.
-      template_names = ['Template OS Linux','Template OS Windows']
-      templates = @sky_zabbix.template.get(filter: {host: template_names})
-      render json: templates
+      #get/load available zabbix templates set to static first.
+      template_names = ['Template App FTP Service',
+        'Template App HTTP Service',
+        'Template App HTTPS Service',
+        'Template App IMAP Service',
+        'Template App LDAP Service',
+        'Template App MySQL',
+        'Template App NNTP Service',
+        'Template App NTP Service',
+        'Template App POP Service',
+        'Template App SMTP Service',
+        'Template App SSH Service',
+        'Template App Telnet Service',
+        'Template App Zabbix Agent',
+        'Template App Zabbix Proxy',
+        'Template App Zabbix Server',
+        'Template OS Linux'
+      ]
+      @templates = template_names #@sky_zabbix.template.get(filter: {host: template_names})
       return
     end
 
