@@ -267,6 +267,7 @@
       commons: [],
       uncommons: [],
       resources: [],
+      templates: [],
       error_message: null,
       loading_graph: false,
       url_status: [],
@@ -393,7 +394,7 @@
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
         self.templates       = data.templates;
-        
+
         if (!this.before_register) {
           self.show_problems();
         }
