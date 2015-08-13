@@ -11,23 +11,18 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-            <div class="form-group">
-              <div class="row" v-repeat="templates">
-                <div class="col-sm-2">
-                  <input type="checkbox" value="{{$value}}" id="inputEmail3">
-                </div>
-                <div class="col-sm-8">
-                  <label for="inputEmail3" class=" control-label">{{$value}}</label>
-                </div>
+              <div class="checkbox" v-repeat="templates">
+                  <label class="checkbox">
+                    <input type="checkbox" value="{{$value}}" id="inputEmail3">{{$value}}
+                  </label>
               </div>
-            </div>
           </form>
         </div>
 
 
       <div class="modal-footer">
         <button v-on="click: create()" type="button" class="btn btn-primary" data-dismiss="modal">Register</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
