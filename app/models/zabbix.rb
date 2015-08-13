@@ -758,13 +758,4 @@ class Zabbix
     return @sky_zabbix.host.get_ids(host: host_names)
   end
 
-  def get_available_templates()
-    templates = @sky_zabbix.template.get()
-    return templates
-    # return @sky_zabbix.template.build_massadd(
-    #   hosts: [{hostid: host_id}],
-    #   templates: template_ids.map{|x| {templateid: x}}
-    # )
-  end
-
 end
