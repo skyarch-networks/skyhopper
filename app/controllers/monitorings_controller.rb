@@ -181,30 +181,30 @@ class MonitoringsController < ApplicationController
       end
     end
     puts selected
-    # z = @zabbix
-    #
-    # begin
-    #   reqs = []
-    #   resources.each do |resource|
-    #     z.create_host(@infra, resource.physical_id)
-    #
-    #     # TODO: Batch request
-    #     reqs.push z.templates_link_host(resource.physical_id, selected)
-    #     item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
-    #     item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-    #     reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
-    #     reqs.push z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
-    #   end
-    #   reqs.push z.create_elb_host(@infra)
-    #   z.batch(*reqs)
-    # rescue => ex
-    #   @infra.detach_zabbix()
-    #
-    #   render text: ex.message, status: 500 and return
-    # end
-    #
-    # infra_logger_success("Infrastructure registerd to zabbix")
-    # render nothing: true and return
+    z = @zabbix
+
+    begin
+      reqs = []
+      resources.each do |resource|
+        z.create_host(@infra, resource.physical_id)
+
+        # TODO: Batch request
+        reqs.push z.templates_link_host(resource.physical_id, selected)
+        item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
+        item_info_mysql = z.create_mysql_login_item(resource.physical_id)
+        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
+        reqs.push z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
+      end
+      reqs.push z.create_elb_host(@infra)
+      z.batch(*reqs)
+    rescue => ex
+      @infra.detach_zabbix()
+
+      render text: ex.message, status: 500 and return
+    end
+
+    infra_logger_success("Infrastructure registerd to zabbix")
+    render nothing: true and return
   end
 
 
