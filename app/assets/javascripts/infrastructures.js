@@ -273,6 +273,7 @@
       url_status: [],
       showing_url: false,
       loading_problems: true,
+      has_selected: false,
     };},
     methods: {
       show_problems: function () {
@@ -294,27 +295,13 @@
         }).fail(alert_and_show_infra);
       },
       checkVal: function(){
+        var counter = 0;
         $.each(this.templates, function(i, item) {
           if(item.checked == true){
-            console.log("name: ", item.name, "checked: ", item.checked);
+            counter+1;
           }
         });
-      },
-      set_default: function(){
-        // Todo set to default values.
-        console.log(this.templates);
-        $.each(this.templates, function(i, item) {
-          if(item.name == 'Template OS Linux'){
-            //this.templates[i].checked = true;
-            console.log(this.templates[i])
-          }else if(item.name == 'Template App SMTP Service'){
-            //this.templates[i].checked = true;
-            console.log(this.templates[i])
-          }else if(item.name == 'Template App HTTPS Service'){
-            //this.templates[i].checked = true;
-            console.log(this.templates[i])
-          }
-        });
+        self.has_selected (counter > 0) ? true : false;
       },
       show_url: function () {
         var self = this;
