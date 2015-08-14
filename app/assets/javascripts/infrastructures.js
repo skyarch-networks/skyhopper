@@ -302,10 +302,11 @@
         var self = this;
         $.each(this.templates, function(i, item) {
           if(item.checked == true){
-            counter+1;
+            counter++;
           }
         });
         self.has_selected = (counter > 0) ? true : false;
+        console.log(counter);
         console.log(self.has_selected);
       },
       show_url: function () {
