@@ -306,7 +306,7 @@
           }
         });
         self.has_selected = (counter > 0) ? true : false;
-        console.console.log(self.has_selected);
+        console.log(self.has_selected);
       },
       show_url: function () {
         var self = this;
