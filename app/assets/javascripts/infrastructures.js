@@ -302,13 +302,17 @@
       },
       set_default: function(){
         // Todo set to default values.
+        var new_templates = {};
         $.each(this.templates, function(i, item) {
           if(item.name == 'Template OS Linux'){
-            this.templates[i].checked = true;
+            //this.templates[i].checked = true;
+            console.log(this.templates[i])
           }else if(item.name == 'Template App SMTP Service'){
-            this.templates[i].checked = true;
+            //this.templates[i].checked = true;
+            console.log(this.templates[i])
           }else if(item.name == 'Template App HTTPS Service'){
-            this.templates[i].checked = true;
+            //this.templates[i].checked = true;
+            console.log(this.templates[i])
           }
         });
       },
