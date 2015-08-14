@@ -48,7 +48,7 @@ class MonitoringsController < ApplicationController
         'Template App Zabbix Agent', false,
         'Template App Zabbix Proxy', false,
         'Template App Zabbix Server', false,
-        'Template OS Linux', true,
+        'Template OS Linux', false,
       ]
       new_array = []
 

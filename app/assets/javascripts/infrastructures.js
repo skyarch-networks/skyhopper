@@ -302,10 +302,9 @@
       },
       set_default: function(){
         // Todo set to default values.
-        // if(this.templates['Template OS Linux']){
-        //   this.
-        // }
-      },
+        this.templates.name['Template OS Linux'].checked = true;
+        this.templates.name['Template App SMTP Service'].checked = true;
+
       show_url: function () {
         var self = this;
         self.loading_graph = true;
