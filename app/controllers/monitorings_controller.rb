@@ -175,8 +175,9 @@ class MonitoringsController < ApplicationController
     templates    = JSON.parse(params.require(:templates))
     selected = []
     templates.each do |template|
-      if template.checked == 'true'
-        selected.push(template.name)
+      infra_logger_success(template)
+      if template['checked'] == 'true'
+        selected.push(template['name'])
       end
     end
     z = @zabbix
