@@ -289,7 +289,7 @@
           self.creating = true;
           console.log(self.templates);
           this.monitoring.create_host(
-            self.templates
+            this.templates
           ).done(function () {
             alert_success(function () {
               self.$parent.show_edit_monitoring();
