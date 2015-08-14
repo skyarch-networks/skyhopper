@@ -177,7 +177,8 @@ class MonitoringsController < ApplicationController
     templates.each do |template|
       if template.checked == 'true'
         selected.push(template.name)
-
+      end
+    end
     z = @zabbix
 
     begin
