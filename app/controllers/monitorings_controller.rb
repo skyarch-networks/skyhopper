@@ -172,6 +172,11 @@ class MonitoringsController < ApplicationController
   # POST /monitorings/:id/create_host
   def create_host
     resources = @infra.resources.ec2
+    templates       = JSON.parse(params[:templates])
+    selected = []
+    templates.each do |template|
+      if template.checked == 'true'
+        selected.push(template.name)
 
     z = @zabbix
 
@@ -181,7 +186,7 @@ class MonitoringsController < ApplicationController
         z.create_host(@infra, resource.physical_id)
 
         # TODO: Batch request
-        reqs.push z.templates_link_host(resource.physical_id, ['Template OS Linux', 'Template App HTTP Service', 'Template App SMTP Service'])
+        reqs.push z.templates_link_host(resource.physical_id, selected)
         item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
         item_info_mysql = z.create_mysql_login_item(resource.physical_id)
         reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
