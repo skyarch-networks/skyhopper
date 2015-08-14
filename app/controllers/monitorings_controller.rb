@@ -33,24 +33,29 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates set to static first.
-      template_names = ['Template App FTP Service',
-        'Template App HTTP Service',
-        'Template App HTTPS Service',
-        'Template App IMAP Service',
-        'Template App LDAP Service',
-        'Template App MySQL',
-        'Template App NNTP Service',
-        'Template App NTP Service',
-        'Template App POP Service',
-        'Template App SMTP Service',
-        'Template App SSH Service',
-        'Template App Telnet Service',
-        'Template App Zabbix Agent',
-        'Template App Zabbix Proxy',
-        'Template App Zabbix Server',
-        'Template OS Linux'
+      template_names = ['Template App FTP Service', false,
+        'Template App HTTP Service', false,
+        'Template App HTTPS Service', true,
+        'Template App IMAP Service', false,
+        'Template App LDAP Service', false,
+        'Template App MySQL', false,
+        'Template App NNTP Service', false,
+        'Template App NTP Service', false,
+        'Template App POP Service', false,
+        'Template App SMTP Service', true,
+        'Template App SSH Service', false,
+        'Template App Telnet Service', false,
+        'Template App Zabbix Agent', false,
+        'Template App Zabbix Proxy', false,
+        'Template App Zabbix Server', false,
+        'Template OS Linux', true,
       ]
-      @templates = template_names #@sky_zabbix.template.get(filter: {host: template_names})
+
+      template_names.each_slice(2) do |value|
+        formatted_array << {:name => value[0], :checked => value[1]}
+      end
+
+      @templates = formatted_array #@sky_zabbix.template.get(filter: {host: template_names})
       return
     end
 
