@@ -176,8 +176,8 @@ class MonitoringsController < ApplicationController
     selected = []
 
     templates.each do |k,v|
-      puts "Mother key" + k
-      puts "Mother value" + v
+      puts "Mother key " + k
+      puts v
       v.each do |key,value|
         puts "key" + k
         puts "value" + v
