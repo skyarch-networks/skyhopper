@@ -176,13 +176,11 @@ class MonitoringsController < ApplicationController
     selected = []
 
     templates.each do |k,v|
-      puts "Mother key " + k
-      puts v
-      v.each do |key,value|
-        puts "key" + k
-        puts "value" + v
+      if v["checked"] == "true"
+        selected.push(v["name"])
       end
     end
+    puts selected
     # z = @zabbix
     #
     # begin
