@@ -174,10 +174,11 @@ class MonitoringsController < ApplicationController
     resources = @infra.resources.ec2
     templates    = params.require(:templates)
     selected = []
-    infra_logger_success(templates)
+
     templates.each do |k,v|
       puts "Mother key" + k
-      value.each do |key,value|
+      puts "Mother value" + v
+      v.each do |key,value|
         puts "key" + k
         puts "value" + v
       end
