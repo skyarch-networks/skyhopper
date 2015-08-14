@@ -50,12 +50,12 @@ class MonitoringsController < ApplicationController
         'Template App Zabbix Server', false,
         'Template OS Linux', true,
       ]
-
+      new_array = []
       template_names.each_slice(2) do |value|
-        formatted_array << {:name => value[0], :checked => value[1]}
+        new_array << {:name => value[0], :checked => value[1]}
       end
 
-      @templates = formatted_array #@sky_zabbix.template.get(filter: {host: template_names})
+      @templates = new_array #@sky_zabbix.template.get(filter: {host: template_names})
       return
     end
 
