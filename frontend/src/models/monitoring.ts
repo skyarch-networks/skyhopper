@@ -10,7 +10,6 @@ type MasterMonitoring = {
   is_common: boolean,
   value: any,
   checked: boolean,
-  templates: any,
 };
 
 class Monitoring extends ModelBase {
@@ -31,11 +30,11 @@ class Monitoring extends ModelBase {
     return 'trigger';
   }
 
-  create_host(): JQueryPromise<any> {
+  create_host(templates: any): JQueryPromise<any> {
 
     return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).create_host({
-      templates: this.templates,
+      templates: templates,
       id: this.infra.id
       })
     );
