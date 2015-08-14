@@ -37,10 +37,6 @@ class Monitoring extends ModelBase {
       return v.cheked;
     }).pluck('name').value();
 
-    if (auto){
-      names.push(-1);
-    }
-
     return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).create_host({
       templates: names,
