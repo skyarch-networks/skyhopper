@@ -31,15 +31,11 @@ class Monitoring extends ModelBase {
   }
 
   create_host(templates: any[] = []): JQueryPromise<any> {
-    const dfd = $.Deferred();
 
-    const names = _(templates).filter((v: any) => {
-      return v.cheked;
-    }).pluck('name').value();
 
     return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).create_host({
-      templates: names,
+      templates: templates,
       id: this.infra.id
       })
     );
