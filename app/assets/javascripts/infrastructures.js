@@ -296,12 +296,15 @@
       checkVal: function(){
         $.each(this.templates, function(i, item) {
           if(item.checked == true){
-            console.log(item.checked);
+            console.log("name: ", item.name, "checked: ", item.checked);
           }
         });;
       },
-      default: function(){
+      set_default: function(){
         // Todo set to default values.
+        // if(this.templates['Template OS Linux']){
+        //   this.
+        // }
       },
       show_url: function () {
         var self = this;
