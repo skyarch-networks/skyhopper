@@ -174,8 +174,9 @@ class MonitoringsController < ApplicationController
     resources = @infra.resources.ec2
     templates    = JSON.parse(params.require(:templates))
     selected = []
+    infra_logger_debug(templates)
     templates.each do |template|
-      infra_logger_success(template)
+
       if template['checked'] == 'true'
         selected.push(template['name'])
       end
