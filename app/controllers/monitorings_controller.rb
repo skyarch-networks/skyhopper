@@ -172,7 +172,7 @@ class MonitoringsController < ApplicationController
   # POST /monitorings/:id/create_host
   def create_host
     resources = @infra.resources.ec2
-    templates = JSON.parse(params[:templates])
+    templates    = JSON.parse(params.require(:templates))
     selected = []
     templates.each do |template|
       if template.checked == 'true'
