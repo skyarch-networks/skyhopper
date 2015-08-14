@@ -21,7 +21,7 @@
 
 
       <div class="modal-footer">
-        <button v-on="click: create()" type="button" class="btn btn-primary {{has_selected ? '' : 'disabled'}}" data-dismiss="modal">Submit</button>
+        <button v-on="click: create()" type="button" class="btn btn-primary {{has_selected ? '' : 'disabled'}}" {{has_selected ? '' : 'disabled'}} data-dismiss="modal">Submit</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
