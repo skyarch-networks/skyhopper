@@ -301,7 +301,7 @@
             counter+1;
           }
         });
-        self.has_selected (counter > 0) ? true : false;
+        this.has_selected (counter > 0) ? true : false;
       },
       show_url: function () {
         var self = this;
