@@ -287,6 +287,7 @@
         if(this.has_selected == true){
           var self = this;
           self.creating = true;
+          console.log(self.templates);
           this.monitoring.create_host(
             self.templates
           ).done(function () {

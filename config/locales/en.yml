@@ -315,6 +315,8 @@ en:
       add:    'Add'
       edit:   'Edit'
       delete: 'Delete'
+      done:   'Done'
+      cancel: 'Cancel'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
