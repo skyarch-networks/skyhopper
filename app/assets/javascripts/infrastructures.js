@@ -294,7 +294,14 @@
         }).fail(alert_and_show_infra);
       },
       checkVal: function(){
-          console.log(this.templates.checked);
+        $.each(this.templates, function(i, item) {
+          if(item.checked == true){
+            console.log(item.checked);
+          }
+        });;
+      },
+      default: function(){
+        // Todo set to default values.
       },
       show_url: function () {
         var self = this;

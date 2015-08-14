@@ -51,6 +51,7 @@ class MonitoringsController < ApplicationController
         'Template OS Linux', true,
       ]
       new_array = []
+
       template_names.each_slice(2) do |value|
         new_array << {:name => value[0], :checked => value[1]}
       end
