@@ -302,7 +302,7 @@
       },
       set_default: function(){
         // Todo set to default values.
-        var new_templates = {};
+        console.log(this.templates);
         $.each(this.templates, function(i, item) {
           if(item.name == 'Template OS Linux'){
             //this.templates[i].checked = true;
