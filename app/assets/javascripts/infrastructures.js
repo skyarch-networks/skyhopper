@@ -298,13 +298,19 @@
           if(item.checked == true){
             console.log("name: ", item.name, "checked: ", item.checked);
           }
-        });;
+        });
       },
       set_default: function(){
         // Todo set to default values.
-        this.templates.name['Template OS Linux'].checked = true;
-        this.templates.name['Template App SMTP Service'].checked = true;
-        this.templates.name['Template App HTTPS Service'].checked = true;
+        $.each(this.templates, function(i, item) {
+          if(item.name == 'Template OS Linux'){
+            this.templates[i].checked = true;
+          }else if(item.name == 'Template App SMTP Service'){
+            this.templates[i].checked = true;
+          }else if(item.name == 'Template App HTTPS Service'){
+            this.templates[i].checked = true;
+          }
+        });
       },
       show_url: function () {
         var self = this;
