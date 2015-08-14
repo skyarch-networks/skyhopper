@@ -304,7 +304,8 @@
         // Todo set to default values.
         this.templates.name['Template OS Linux'].checked = true;
         this.templates.name['Template App SMTP Service'].checked = true;
-
+        this.templates.name['Template App HTTPS Service'].checked = true;
+      },
       show_url: function () {
         var self = this;
         self.loading_graph = true;
