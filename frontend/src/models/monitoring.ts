@@ -30,9 +30,14 @@ class Monitoring extends ModelBase {
     return 'trigger';
   }
 
-  create_host(specs: any, auto: boolean): JQueryPromise<any> {
+  create_host(templates: any, auto: boolean): JQueryPromise<any> {
 
-
+    return this.WrapAndResolveReject(() =>
+      (<any>Monitoring.ajax).create_host({
+      templates: templates,
+      id: this.infra.id
+      })
+    );
   }
 
   edit(): JQueryPromise<any> {
