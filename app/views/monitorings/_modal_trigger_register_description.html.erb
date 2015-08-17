@@ -11,9 +11,17 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-              <div class="checkbox" v-repeat="s: templates">
+            <input type="text" v-model="searchText">
+              <div class="checkbox" v-repeat="s: templates | filterBy searchText">
                   <label class="checkbox">
-                    <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
+                    <div class="row">
+                      <div class="col-sm-6" v-if="{{s.count === 19 }}">
+                        <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
+                      </div>
+                      <div class="col-sm-6">
+                        <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
+                      </div>
+                    </div>
                   </label>
               </div>
           </form>
