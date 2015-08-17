@@ -89,4 +89,10 @@ class EC2Instance < SimpleDelegator
   def tags_by_hash
     tags.map { |e| [e.key, e.value] }.to_h
   end
+
+  def fqdn_or_ip
+    return self.public_dns_name.presence ||
+           self.elastic_ip.presence ||
+           self.private_dns_name
+  end
 end
