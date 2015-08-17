@@ -83,55 +83,6 @@ describe Node, :type => :model do
     end
   end
 
-  describe "#fqdn" do
-    context "only fqdn is configured" do
-      let(:details) do
-        {
-          "automatic" => {
-            "fqdn" => "example.com"
-          }
-        }
-      end
-
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_return(details)
-      end
-
-      subject do
-        Node.new("test")
-      end
-
-      it "acquires fqdn from details" do
-        expect(subject.__send__(:fqdn)).to eq('example.com')
-      end
-    end
-
-    context "both fqdn and public_dns is configured" do
-      let(:details) do
-        {
-          "automatic" => {
-            "fqdn" => "example.com"
-          },
-          "normal" => {
-            "public_dns" => "foo.example.com"
-          }
-        }
-      end
-
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_return(details)
-      end
-
-      subject do
-        Node.new("test")
-      end
-
-      it "returns public_dns" do
-        expect(subject.__send__(:fqdn)).to eq('foo.example.com')
-      end
-    end
-  end
-
   describe 'have_auto_generated' do
     subject { Node.new("test") }
 
@@ -182,7 +133,7 @@ describe Node, :type => :model do
       EOS
       allow(status).to receive(:success?).and_return(true)
       allow(Open3).to receive(:capture3).and_return([out, 'err', status])
-      expect(subject).to receive(:fqdn).and_return('example.com')
+      allow_any_instance_of(EC2Instance).to receive(:fqdn_or_ip).and_return("fqdn")
     end
 
     it 'return hash' do

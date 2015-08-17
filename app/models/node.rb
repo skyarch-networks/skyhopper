@@ -59,9 +59,9 @@ knife bootstrap #{fqdn} \
     ec2key.close_temp
   end
 
-  def initialize(name, user: nil)
+  def initialize(name, user: ChefDefaultUser)
     @name = name
-    @user = user || ChefDefaultUser
+    @user = user
   end
   attr_reader :name
 
@@ -117,8 +117,10 @@ knife bootstrap #{fqdn} \
 
     raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
 
+    fqdn = infra.instance(@name).fqdn_or_ip
+
     if selected_auto_generated
-      local_path = scp_specs(ec2key.path_temp)
+      local_path = scp_specs(ec2key.path_temp, fqdn)
     end
 
     run_spec_list_path = serverspec_ids.map do |spec|
@@ -216,17 +218,8 @@ knife bootstrap #{fqdn} \
     roles
   end
 
-  def fqdn
-    if details["normal"] && details["normal"][SSHConnectionAttribute]
-      return details["normal"][SSHConnectionAttribute]
-    elsif automatic = details["automatic"]
-      return automatic["fqdn"]
-    else
-      return nil
-    end
-  end
-
-  def scp_specs(sshkey_path)
+  # @param [String] fqdn
+  def scp_specs(sshkey_path, fqdn)
     d = details
     remote_path =
       begin
