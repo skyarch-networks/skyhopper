@@ -307,7 +307,8 @@
           }
         });
         self.has_selected = (counter > 0) ? true : false;
-        
+        console.log(counter);
+        console.log(self.has_selected);
       },
       show_url: function () {
         var self = this;
