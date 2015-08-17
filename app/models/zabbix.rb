@@ -13,6 +13,45 @@ class Zabbix
   DefaultUsergroupName = "No access to the frontend"
   MasterUsergroupName = "master"
 
+  AvailableTemplates = ['Template App FTP Service',
+      'Template App HTTP Service',
+      'Template App HTTPS Service',
+      'Template App IMAP Service',
+      'Template App LDAP Service',
+      'Template App MySQL',
+      'Template App NNTP Service',
+      'Template App NTP Service',
+      'Template App POP Service',
+      'Template App SMTP Service',
+      'Template App SSH Service',
+      'Template App Telnet Service',
+      'Template App Zabbix Agent',
+      'Template App Zabbix Proxy',
+      'Template App Zabbix Server',
+      'Template ICMP Ping',
+      'Template IPMI Intel SR1530',
+      'Template IPMI Intel SR1630',
+      'Template JMX Generic',
+      'Template JMX Tomcat',
+      'Template OS AIX',
+      'Template OS FreeBSD',
+      'Template OS HP-UX',
+      'Template OS Linux',
+      'Template OS Mac OS X',
+      'Template OS OpenBSD',
+      'Template OS Solaris',
+      'Template OS Windows',
+      'Template SNMP Device',
+      'Template SNMP Disks',
+      'Template SNMP Generic',
+      'Template SNMP Interfaces',
+      'Template SNMP OS Linux',
+      'Template SNMP OS Windows',
+      'Template SNMP Processors',
+      'Template Virt VMware',
+      'Template Virt VMware Guest',
+      'Template Virt VMware Hypervisor',]
+
   # @param [String] username
   # @param [String] password
   def initialize(username, password)
@@ -757,4 +796,5 @@ class Zabbix
   def get_host_ids(host_names)
     return @sky_zabbix.host.get_ids(host: host_names)
   end
+
 end

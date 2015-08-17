@@ -267,6 +267,7 @@
       commons: [],
       uncommons: [],
       resources: [],
+      templates: [],
       error_message: null,
       loading_graph: false,
       url_status: [],
@@ -282,9 +283,17 @@
         });
       },
       create: function () {
+        if(!this.has_selected) {return;}
+
         var self = this;
         self.creating = true;
-        this.monitoring.create_host().done(function () {
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.name;
+        }).value();
+
+        this.monitoring.create_host(templates).done(function () {
           alert_success(function () {
             self.$parent.show_edit_monitoring();
           })(t('monitoring.msg.created'));
@@ -379,7 +388,12 @@
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
       no_problem: function ()    { return _.isEmpty(this.problems); },
-      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; }
+      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
     },
     created: function () {
       var self = this;
@@ -389,6 +403,8 @@
         self.commons         = data.monitor_selected_common;
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
+        self.templates       = data.templates;
+
         if (!this.before_register) {
           self.show_problems();
         }

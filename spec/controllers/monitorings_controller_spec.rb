@@ -175,7 +175,7 @@ RSpec.describe MonitoringsController, :type => :controller do
     before do
       create(:ec2_resource, infrastructure: infra)
     end
-    let(:req){post :create_host, id: infra.id}
+    let(:req){post :create_host, id: infra.id, templates: ['Template OS Linux']}
 
     context 'when success' do
       before{req}

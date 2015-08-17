@@ -309,11 +309,14 @@ en:
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
+    before_reg_title:     'Please select template before proceeding.'
     btn:
       create: 'Register'
       add:    'Add'
       edit:   'Edit'
       delete: 'Delete'
+      done:   'Done'
+      cancel: 'Cancel'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
