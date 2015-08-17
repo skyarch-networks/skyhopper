@@ -268,6 +268,7 @@
       uncommons: [],
       resources: [],
       templates: [],
+      linked_templates: [],
       error_message: null,
       loading_graph: false,
       url_status: [],
@@ -404,6 +405,7 @@
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
         self.templates       = data.templates;
+	self.linked_templates = data.linked_templates;
 
         if (!this.before_register) {
           self.show_problems();

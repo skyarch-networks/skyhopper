@@ -123,4 +123,11 @@
       </table>
     </div>
   </div>
+
+  <div class="col-md-12 col-sm-12" v-if="!before_setting">
+    <h4 class="page-header">Linked Templates</h4>
+    <ul v-repeat="l: linked_templates">
+      <li>{{l.name}}</li>
+    </ul>
+  </div>
 </div>
