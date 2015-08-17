@@ -391,11 +391,9 @@
       no_problem: function ()    { return _.isEmpty(this.problems); },
       before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
       has_selected: function() {
-          if(this.templates !== [] || this.templates !== null){
  			      return _.some(this.templates, function(c){
                 return c.checked
             });
-          }
         },
     },
     created: function () {
