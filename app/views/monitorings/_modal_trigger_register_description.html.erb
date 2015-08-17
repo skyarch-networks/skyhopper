@@ -13,14 +13,7 @@
           <form>
               <div class="checkbox" v-repeat="s: templates">
                   <label class="checkbox">
-                    <div class="row">
-                      <div class="col-sm-6" v-if="{{s.count == 19 }}">
                         <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
-                      </div>
-                      <div class="col-sm-6">
-                        <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
-                      </div>
-                    </div>
                   </label>
               </div>
           </form>
