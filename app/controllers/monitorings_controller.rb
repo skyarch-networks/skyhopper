@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -33,7 +34,8 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates set to static first.
-      @templates = Zabbix::AvailableTemplates.map{|t| {name: t, checked: false}}
+      load =  @zabbix.available_templates().map{|t| {name: t, checked: false}}
+      @templates = load
       return
     end
 
