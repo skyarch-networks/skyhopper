@@ -273,7 +273,6 @@
       url_status: [],
       showing_url: false,
       loading_problems: true,
-      has_selected: false,
     };},
     methods: {
       show_problems: function () {
@@ -391,10 +390,10 @@
       no_problem: function ()    { return _.isEmpty(this.problems); },
       before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
       has_selected: function() {
- 			      return _.some(this.templates, function(c){
-                return c.checked
-            });
-        },
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
     },
     created: function () {
       var self = this;
