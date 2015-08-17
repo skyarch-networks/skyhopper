@@ -45,11 +45,11 @@ RSpec.describe ServerspecJob, type: :job do
 
     context 'when raise error' do
       before do
-        allow_any_instance_of(Node).to receive(:run_serverspec).and_raise
+        allow_any_instance_of(Node).to receive(:run_serverspec).and_raise StandardError
       end
 
       it 'should raise error' do
-        expect{job}.to raise_error
+        expect{job}.to raise_error StandardError
       end
 
       it 'should create infra log' do

@@ -17,7 +17,7 @@
       <li class="active">
         <a v-if="no_stack"    v-on="click: show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
         <a v-if="in_progress" v-on="click: show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
-        <a v-if="stack_fail"  v-on="click: show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a> <%# TODO: I18n %>
+        <a v-if="stack_fail"  v-on="click: show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
       </li>
 
 
@@ -54,14 +54,14 @@
 
 
     <%# create tab-panes %>
-    <div>
+    <div class="tab-pane">
 
       <%# loading tabpane %>
-      <div class="tab-pane" v-if="loading">
+      <div v-if="loading">
         <div-loader></div-loader>
       </div>
 
-      <div class="tab-pane" v-show="!loading" v-if="tabpane_active('default')">
+      <div v-show="!loading" v-if="tabpane_active('default')">
         <%# No stack %>
         <div v-if="no_stack">
           <div id="initTop" class="initialization">
@@ -76,42 +76,45 @@
         </div>
 
         <%# Stack Event Table %>
-        <stack-events-table v-with="events: current_infra.events"></stack-events-table>
+        <stack-events-table events="{{current_infra.events}}"></stack-events-table>
       </div>
 
-      <add-modify-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('add_modify')"       v-with="current_infra.add_modify"></add-modify-tabpane>
-      <insert-cf-params        class="tab-pane" v-show="!loading" v-if="tabpane_active('insert-cf-params')" v-with="current_infra.insert_cf_params"></insert-cf-params>
-      <add-ec2-tabpane         class="tab-pane" v-show="!loading" v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
-      <cf-history-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('cf_history')"       v-with="histories: current_infra.cf_history"></cf-history-tabpane>
-      <stack-events-table      class="tab-pane" v-show="!loading" v-if="tabpane_active('event_logs')"       v-with="events: current_infra.events"></stack-events-table>
-      <monitoring-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
-      <edit-monitoring-tabpane class="tab-pane" v-show="!loading" v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
-      <infra-logs-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('infra_logs')"       v-with="infra_logs: current_infra.infra_logs"></infra-logs-tabpane>
-      <ec2-tabpane             class="tab-pane" v-show="!loading" v-if="tabpane_active('ec2')"              v-with="physical_id: tabpaneGroupID"></ec2-tabpane>
-      <rds-tabpane             class="tab-pane" v-show="!loading" v-if="tabpane_active('rds')"              v-with="physical_id: tabpaneGroupID"></rds-tabpane>
-      <elb-tabpane             class="tab-pane" v-show="!loading" v-if="tabpane_active('elb')"              v-with="physical_id: tabpaneGroupID"></elb-tabpane>
-      <s3-tabpane              class="tab-pane" v-show="!loading" v-if="tabpane_active('s3')"               v-with="physical_id: tabpaneGroupID"></s3-tabpane>
-      <edit-runlist-tabpane    class="tab-pane" v-show="!loading" v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
-      <edit-attr-tabpane       class="tab-pane" v-show="!loading" v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
-      <serverspec-tabpane      class="tab-pane" v-show="!loading" v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
+      <div v-show="!loading">
+        <add-modify-tabpane      v-if="tabpane_active('add_modify')"       templates="{{* current_infra.templates}}" result="{{@ current_infra.add_modify}}"></add-modify-tabpane>
+        <insert-cf-params        v-if="tabpane_active('insert-cf-params')" ></insert-cf-params>
+        <add-ec2-tabpane         v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
+        <cf-history-tabpane      v-if="tabpane_active('cf_history')"       ></cf-history-tabpane>
+        <stack-events-table      v-if="tabpane_active('event_logs')"       events="{{* current_infra.events}}"></stack-events-table>
+        <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
+        <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
+        <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>
+        <ec2-tabpane             v-if="tabpane_active('ec2')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
+        <rds-tabpane             v-if="tabpane_active('rds')"              physical_id="{{* tabpaneGroupID}}"></rds-tabpane>
+        <elb-tabpane             v-if="tabpane_active('elb')"              physical_id="{{* tabpaneGroupID}}"></elb-tabpane>
+        <s3-tabpane              v-if="tabpane_active('s3')"               physical_id="{{* tabpaneGroupID}}"></s3-tabpane>
+        <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
+        <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
+        <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
+      </div>
     </div>
   </div>
 </div>
 </script>
 
-<%= render 'vue/stack_events_table' %>
-<%= render 'vue/add_modify_tabpane' %> <%= render 'vue/insert_cf_params' %>
-<%= render 'vue/add_ec2_tabpane' %>
-<%= render 'vue/cf_history_tabpane' %>
-<%= render 'vue/infra_logs_tabpane'  %>
-<%= render 'vue/monitoring_tabpane' %>
-<%= render 'vue/edit_monitoring_tabpane' %>
-<%= render 'vue/rds_tabpane'  %>
-<%= render 'vue/elb_tabpane'  %>
-<%= render 'vue/s3_tabpane'  %>
-<%= render 'vue/vue_paginator' %>
+<script id="stack-events-table-template"      type="text/template"> <%= render 'vue/stack_events_table' %> </script>
+<script id="add-modify-tabpane-template"      type="text/template"> <%= render 'vue/add_modify_tabpane' %> </script>
+<script id="insert-cf-params-template"        type="text/template"> <%= render 'vue/insert_cf_params' %> </script>
+<script id="add-ec2-tabpane-template"         type="text/template"> <%= render 'vue/add_ec2_tabpane' %> </script>
+<script id="cf-history-tabpane-template"      type="text/template"> <%= render 'vue/cf_history_tabpane' %> </script>
+<script id="infra-logs-tabpane-template"      type="text/template"> <%= render 'vue/infra_logs_tabpane'  %> </script>
+<script id="monitoring-tabpane-template"      type="text/template"> <%= render 'vue/monitoring_tabpane' %> </script>
+<script id="edit-monitoring-tabpane-template" type="text/template"> <%= render 'vue/edit_monitoring_tabpane' %> </script>
+<script id="rds-tabpane-template"             type="text/template"> <%= render 'vue/rds_tabpane'  %> </script>
+<script id="elb-tabpane-template"             type="text/template"> <%= render 'vue/elb_tabpane'  %> </script>
+<script id="s3-tabpane-template"              type="text/template"> <%= render 'vue/s3_tabpane'  %> </script>
+<script id="vue-paginator-template"           type="text/template"> <%= render 'vue/vue_paginator' %> </script>
 
-<%= render 'vue/ec2_tabpane' %>
-<%= render 'vue/edit_runlist_tabpane' %>
-<%= render 'vue/edit_attr_tabpane' %>
-<%= render 'vue/serverspec_tabpane' %>
+<script id="ec2-tabpane-template"             type="text/template"> <%= render 'vue/ec2_tabpane' %> </script>
+<script id="edit-runlist-tabpane-template"    type="text/template"> <%= render 'vue/edit_runlist_tabpane' %> </script>
+<script id="edit-attr-tabpane-template"       type="text/template"> <%= render 'vue/edit_attr_tabpane' %> </script>
+<script id="serverspec-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_tabpane' %> </script>

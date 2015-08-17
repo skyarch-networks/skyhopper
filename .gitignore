@@ -43,3 +43,8 @@ vendor/bower_components
 /doc/javascripts/
 /doc/*.svg
 /.yardoc/
+/secrets/
+
+/frontend/dest/
+/frontend/node_modules/
+/frontend/typings/

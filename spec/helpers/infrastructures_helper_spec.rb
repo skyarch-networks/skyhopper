@@ -75,7 +75,7 @@ describe InfrastructuresHelper do
   end
 
   describe '#button_add_infra' do
-    let(:project){build_stubbed(:project)}
+    let(:project){create(:project)}
     subject{helper.button_add_infra(project, user: user)}
 
     context 'when addable uesr' do

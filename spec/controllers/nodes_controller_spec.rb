@@ -18,7 +18,7 @@ describe NodesController, :type => :controller do
     let(:fqdn){'sky.example.com'}
     before do
       expect(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :dns_name).and_return(fqdn)
+      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :public_dns_name).and_return(fqdn)
     end
 
     context 'when success' do
@@ -47,15 +47,12 @@ describe NodesController, :type => :controller do
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
     let(:instance_summary){{status: instance_status}}
-    let(:cook_status){'success'}
-    let(:serverspec_status){'un_executed'}
-    let(:yum_status){'failed'}
+    let(:cook_status){resource.status.cook}
+    let(:serverspec_status){resource.status.serverspec}
+    let(:yum_status){resource.status.yum}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
       allow(instance).to receive(:summary).and_return(instance_summary)
-      resource.status.cook.update(value: cook_status)
-      resource.status.serverspec.update(value: serverspec_status)
-      resource.status.yum.update(value: yum_status)
     end
 
     let(:chef_server){double('chef-server')}
@@ -71,6 +68,10 @@ describe NodesController, :type => :controller do
     }}
     before do
       allow_any_instance_of(Node).to receive(:details).and_return(details)
+    end
+
+    before do
+      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
     end
 
 
@@ -138,9 +139,9 @@ describe NodesController, :type => :controller do
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:cook_status]).to eq cook_status.camelize
-        expect(assigns[:info][:serverspec_status]).to eq serverspec_status.camelize
-        expect(assigns[:info][:update_status]).to eq yum_status.camelize
+        expect(assigns[:info][:cook_status]).to eq cook_status
+        expect(assigns[:info][:serverspec_status]).to eq serverspec_status
+        expect(assigns[:info][:update_status]).to eq yum_status
       end
 
       it 'should assigns @dishes' do
@@ -155,6 +156,7 @@ describe NodesController, :type => :controller do
     before do
       allow(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
       cook_request
     end
 
@@ -284,16 +286,13 @@ describe NodesController, :type => :controller do
           runlist: dish.runlist,
           dish_id: dish.id.to_param
         ).and_return({status: true})
-        expect(Thread).to receive(:new_with_db).and_yield
-        expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
-        expect(ServerspecJob).to receive(:perform_now)
         req
       end
 
       should_be_success
 
       it 'should render message' do
-        expect(response.body).to eq I18n.t('nodes.msg.cook_started')
+        expect(response.body).to eq I18n.t('nodes.msg.dish_applied')
       end
     end
   end
@@ -438,7 +437,8 @@ describe NodesController, :type => :controller do
         render nothing: true
       end
     end
-    let(:resource){create(:resource, infrastructure: infra)}
+    let(:dish){create(:dish)}
+    let(:resource){create(:resource, infrastructure: infra, dish: dish)}
     let(:req){get :show, id: resource.physical_id, infra_id: infra.id}
     before do
       expect_any_instance_of(Node).to receive(:wait_search_index)
@@ -446,7 +446,8 @@ describe NodesController, :type => :controller do
 
     context 'when success' do
       before do
-       expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+        expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+        expect(ServerspecJob).to receive(:perform_now)
         req
       end
       should_be_success

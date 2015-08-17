@@ -17,10 +17,10 @@ describe Node, :type => :model do
       expect(Open3).to receive(:capture3).and_return(['out','err', status])
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
-      expect(Node.bootstrap("hoge", "fuga", infra)).to be_truthy
+      expect(Node.bootstrap("hoge", "fuga", infra)).to be_a Node
     end
   end
 
@@ -31,7 +31,7 @@ describe Node, :type => :model do
       allow(IO).to receive(:popen)
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
       expect(subject.cook(infra)).to be_truthy
@@ -84,7 +84,7 @@ describe Node, :type => :model do
 
   describe "#fqdn" do
     context "only fqdn is configured" do
-      let (:details) do
+      let(:details) do
         {
           "automatic" => {
             "fqdn" => "example.com"
@@ -106,7 +106,7 @@ describe Node, :type => :model do
     end
 
     context "both fqdn and public_dns is configured" do
-      let (:details) do
+      let(:details) do
         {
           "automatic" => {
             "fqdn" => "example.com"
@@ -197,12 +197,12 @@ describe Node, :type => :model do
 
     context 'when command fail' do
       before do
-        expect(Node).to receive(:exec_command).and_raise
+        expect(Node).to receive(:exec_command).and_raise StandardError
       end
 
       it 'should update status' do
         serverspecs = [serverspec.id]
-        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
+        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
         expect(resource.status.serverspec.failed?).to be true
       end
     end

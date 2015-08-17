@@ -24,7 +24,7 @@
         <td>
           <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
             "#",
-            class: 'btn btn-xs btn-default edit-user-permission', :"user-id" => user.id %>
+            class: 'btn btn-xs btn-default edit-user', :"user-id" => user.id %>
           <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
             users_admin_path(user),
             method: :delete,
@@ -44,4 +44,8 @@
 <button class="btn btn-sm btn-default" id="sync_zabbix"><%= t('users.btn.sync') %></button>
 
 <div class="page-header"></div>
-<div id="user-permission-edit" style="padding-bottom: 70px;"></div>
+<div id="user-edit" style="padding-bottom: 70px;"></div>
+
+<script id="user-edit-template" type="text/template">
+<%= render 'edit' %>
+</script>

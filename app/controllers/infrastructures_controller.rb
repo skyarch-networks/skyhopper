@@ -29,7 +29,7 @@ class InfrastructuresController < ApplicationController
   end
 
 
-  before_action :with_zabbix_or_render, only: [:destroy, :delete_stack]
+  before_action :with_zabbix, only: [:destroy, :delete_stack]
 
   @@regions = AWS::Regions
 
@@ -62,13 +62,13 @@ class InfrastructuresController < ApplicationController
     unless stack.status[:available] # in many cases, it will be when stack does not exist.
       @infrastructure.status = ""
       @infrastructure.save!
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
 
       resp[:message] = stack.status[:message]
     end
 
     if stack.update_complete?
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
     end
 
     @infrastructure.status = stack.status[:status]
@@ -105,7 +105,7 @@ class InfrastructuresController < ApplicationController
   # スタック情報が取得できない場合のみ
   def edit
     if @infrastructure.status.present?
-      redirect_to ( infrastructures_path(project_id: @infrastructure.project_id) ),
+      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
         alert: I18n.t('infrastructures.msg.not_necessary')
     end
 
@@ -130,12 +130,16 @@ class InfrastructuresController < ApplicationController
   # PATCH/PUT /infrastructures/1
   # PATCH/PUT /infrastructures/1.json
   def update
-    if @infrastructure.update(infrastructure_params)
-      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
-        notice: I18n.t('infrastructures.msg.updated')
-    else
-      render action: 'edit'
+    begin
+      @infrastructure.update!(infrastructure_params)
+    rescue => ex
+      @regions = @@regions
+      flash[:alert] = ex.message
+      render action: :edit, status: 400 and return
     end
+
+    redirect_to infrastructures_path(project_id: @infrastructure.project_id),
+      notice: I18n.t('infrastructures.msg.updated')
   end
 
   # DELETE /infrastructures/1
@@ -197,6 +201,7 @@ class InfrastructuresController < ApplicationController
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
+    @listeners     = elb.listeners
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}

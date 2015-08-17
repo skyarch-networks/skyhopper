@@ -8,7 +8,7 @@
 
 class CloudProvider < ActiveRecord::Base
   has_many :projects
-  validates_uniqueness_of :name
+  validates :name, uniqueness: true
 
   class << self
     def aws

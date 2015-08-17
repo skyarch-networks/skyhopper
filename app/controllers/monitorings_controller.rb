@@ -20,7 +20,7 @@ class MonitoringsController < ApplicationController
     authorize(@infra)
   end
 
-  before_action :with_zabbix_or_render, expect: [:show_cloudwatch_graph]
+  before_action :with_zabbix, expect: [:show_cloudwatch_graph]
   before_action :set_zabbix, except: [:show_cloudwatch_graph]
 
 
@@ -31,12 +31,61 @@ class MonitoringsController < ApplicationController
       # すべてのec2が登録されていなければ
       # Only show those hosts that are registered
       @before_register = true
+
+      #get/load available zabbix templates set to static first.
+      template_names = ['Template App FTP Service', false,
+        'Template App HTTP Service', false,
+        'Template App HTTPS Service', false,
+        'Template App IMAP Service', false,
+        'Template App LDAP Service', false,
+        'Template App MySQL', false,
+        'Template App NNTP Service', false,
+        'Template App NTP Service', false,
+        'Template App POP Service', false,
+        'Template App SMTP Service', false,
+        'Template App SSH Service', false,
+        'Template App Telnet Service', false,
+        'Template App Zabbix Agent', false,
+        'Template App Zabbix Proxy', false,
+        'Template App Zabbix Server', false,
+        'Template ICMP Ping', false,
+        'Template IPMI Intel SR1530', false,
+        'Template IPMI Intel SR1630', false,
+        'Template JMX Generic', false,
+        'Template JMX Tomcat', false,
+        'Template OS AIX', false,
+        'Template OS FreeBSD', false,
+        'Template OS HP-UX', false,
+        'Template OS Linux', false,
+        'Template OS Mac OS X', false,
+        'Template OS OpenBSD', false,
+        'Template OS Solaris', false,
+        'Template OS Windows', false,
+        'Template SNMP Device', false,
+        'Template SNMP Disks', false,
+        'Template SNMP Generic', false,
+        'Template SNMP Interfaces', false,
+        'Template SNMP OS Linux', false,
+        'Template SNMP OS Windows', false,
+        'Template SNMP Processors', false,
+        'Template Virt VMware', false,
+        'Template Virt VMware Guest', false,
+        'Template Virt VMware Hypervisor', false,
+      ]
+      new_array = []
+
+      template_names.each_slice(2) do |value|
+        new_array << {:name => value[0], :checked => value[1]}
+      end
+
+      @templates = new_array #@sky_zabbix.template.get(filter: {host: template_names})
       return
     end
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
     @resources = @infra.resources.ec2
+
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -140,39 +189,36 @@ class MonitoringsController < ApplicationController
     #TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
     z.create_web_scenario(@infra, web_scenario)
-
-    # zabbix側でmysqlに関するitemとtrigger expressionをアップデートする
-    z.update_mysql(@infra, host_mysql["host"])
-
-    # if there are any triggers to update then do so
-    if expr_nums.present?
-      z.update_trigger_expression(@infra, trigger_exprs)
-    end
-
-    infra_logger_success("Monitoring Options updated")
-
-    # TODO: Zabbix Server側の状態の更新
-    render text: I18n.t('monitoring.msg.updated')
   end
 
   # POST /monitorings/:id/create_host
   def create_host
     resources = @infra.resources.ec2
+    templates    = params.require(:templates)
+    selected = []
 
+    templates.each do |k,v|
+      if v["checked"] == "true"
+        selected.push(v["name"])
+      end
+    end
+    puts selected
     z = @zabbix
 
     begin
+      reqs = []
       resources.each do |resource|
         z.create_host(@infra, resource.physical_id)
 
-        #TODO put these templates in array and update in once
-        z.templates_link_host(resource.physical_id, ['Template OS Linux', 'Template App HTTP Service', 'Template App SMTP Service'])
-        item_info_cpu = z.create_cpu_usage_item(resource.physical_id)
-        z.create_cpu_usage_trigger(item_info_cpu, resource.physical_id)
+        # TODO: Batch request
+        reqs.push z.templates_link_host(resource.physical_id, selected)
+        item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
         item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-        z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
+        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
+        reqs.push z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
       end
-      z.create_elb_host(@infra)
+      reqs.push z.create_elb_host(@infra)
+      z.batch(*reqs)
     rescue => ex
       @infra.detach_zabbix()
 
@@ -191,10 +237,6 @@ class MonitoringsController < ApplicationController
   end
 
   def set_zabbix
-    begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError
-      #flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-    end
+    @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
   end
 end

@@ -80,6 +80,7 @@ en:
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
+      eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -192,12 +193,13 @@ en:
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
       cook_started:       'Cook was successfully started'
+      should_set_attr:    "Cook wasn't started. You should set attribute"
       attribute_updated:  'Attribute was successfully updated.'
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
       runlist_empty:      'Runlist is empty'
-
+      dish_applied:       'Dish was applied.'
 
   dishes:
     dishes:            'Dishes'
@@ -243,12 +245,17 @@ en:
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
 
 
-  serverspec_schedules:
+  schedules:
+    schedule:         'schedule'
     change_schedule:  'Change schedule'
     run_periodically: 'Run periodically'
+    o_clock:          "o'clock"
+    hours:            'hours'
+    next_run:         'Next run time is at {{next_run}}:00'
     frequency:
       weekly:     'Weekly'
       daily:      'Daily'
+      intervals:  'Intervals'
     day_of_week:
       sunday:     'Sunday'
       monday:     'Monday'
@@ -257,9 +264,9 @@ en:
       thursday:   'Thursday'
       friday:     'Friday'
       saturday:   'Saturday'
-    o_clock:      "o'clock"
     msg:
-      updated:    'Periodic run schedule of Serverspec has updated.'
+      serverspec_updated: 'Periodic run schedule of Serverspec has updated.'
+      yum_updated: 'Periodic run schedule of Yum has updated.'
 
 
   cf_templates:
@@ -302,11 +309,14 @@ en:
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
+    before_reg_title:     'Please select template before proceeding.'
     btn:
       create: 'Register'
       add:    'Add'
       edit:   'Edit'
       delete: 'Delete'
+      done:   'Done'
+      cancel: 'Cancel'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
@@ -339,29 +349,43 @@ en:
     user:              'User'
     role:              'Role'
     email:             'E-Mail'
+    password:          'Password'
+    password_confirm:  'Password Confirmation'
     last_signed_in_at: 'Last signed in at'
     you:               'YOU'
     edit:              'Edit Permissions'
     allowed_projects:  'Allowed Projects'
     unregistered:      'Unregistered'
+    mfa_token:         'MFA Token'
+    mfa:               'Multi Factor Authentication'
+    change_password:   'Change Password'
+    change_mfa_secret: 'Change secret key of MFA'
+    use_start_mfa:     'Use start MFA'
+    use_stop_mfa:      'Use stop MFA'
+    mfa_secret:        'Secret key of MFA'
     btn:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'
     msg:
-      role:                'Master users can see all of infrastructures. Admin users can change assigned infrastructures.'
-      created:             'An account was successfully created.'
-      updated:             'An account was successfully updated.'
-      deleted:             'An account was successfully deleted.'
-      synced:              'All of accounts was successfully synchronized with Zabbix Server.'
-      only_master:         'The feature of User Management is only permitted to Master users.'
-      confirm_sync_zabbix: 'Do you want to synchronize users with Zabbix Server?'
+      role:                  'Master users can see all of infrastructures. Admin users can change assigned infrastructures.'
+      created:               'An account was successfully created.'
+      updated:               'An account was successfully updated.'
+      deleted:               'An account was successfully deleted.'
+      synced:                'All of accounts was successfully synchronized with Zabbix Server.'
+      only_master:           'The feature of User Management is only permitted to Master users.'
+      confirm_sync_zabbix:   'Do you want to synchronize users with Zabbix Server?'
+      mfa_description:       'This user is protected by MFA. Please enter one-time password.'
+      mfa_failure:           'Invalid one-time password'
+      mfa_used:              'MFA is already used.'
+      mfa_start_description: 'Enter secret key to MFA device. Or Scan QR code.'
+      use_stop_mfa:          'If save changes, use stop MFA.'
 
 
   chef_servers:
     msg:
       creating_infra: 'Creating Infrastructure...'
-      creating_stack: 'Creating Stack...'
       init_ec2:       'Initializing EC2 Instance...'
+      download_chef:  'Downloading package of Chef Server...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting Chef Server...'
       complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart the SkyHopper.'
@@ -386,16 +410,31 @@ en:
       not_running:    'Zabbix Server is not running.'
 
   ec2_instances:
-    description:     'Description'
-    settings:        'Settings'
-    change_status:   'Change status of EC2 instance'
-    changing_status: 'Changing status of EC2 instance...'
+    description:       'Description'
+    settings:          'Settings'
+    change_status:     'Change status of EC2 instance'
+    changing_status:   'Changing status of EC2 instance...'
+    listeners:          'Listeners'
+    protocol:          'Protocol'
+    lb_port:           'LoadBalancer Port'
+    instance_protocol: 'Instance Protocol'
+    instance_port:     'Instance Port'
+    expiration_date:   'Expiration date of SSL certificate'
+    instances:         'Instances'
+    state:             'State'
+    reason_code:       'Reason Code'
     msg:
-      registered_to_elb:    'EC2 instance was successfully registered to ELB.'
+      start_ec2:             'Start to turn on the power EC2 instance.'
+      stop_ec2:              'Start to turn off the power EC2 instance.'
+      registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
+      check_security_update: 'Check security updates'
+      exec_security_update:  'Execute security update'
+      check_all_update:      'Check all updates'
+      exec_all_update:       'Execute all update'
     confirm:
       register:   'Do you want to register EC2 instance with ELB?'
       deregister: 'Do you want to release registration of EC2 instance from ELB?'
