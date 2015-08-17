@@ -8,7 +8,6 @@
       </div>
       <div class="modal-body">
 
-
         <div class="col-md-12 col-sm-12">
           <form>
               <div class="checkbox" v-repeat="s: templates">
@@ -19,9 +18,8 @@
           </form>
         </div>
 
-
       <div class="modal-footer">
-        <button v-on="click: create()" type="button" class="btn btn-primary {{has_selected ? '' : 'disabled'}}" {{has_selected ? '' : 'disabled'}} data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
+        <button v-on="click: create()" type="button" v-class="disabled: !has_selected" v-attr="disabled: !has_selected class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.cancel' %></button>
       </div>
     </div>
