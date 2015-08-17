@@ -28,7 +28,8 @@ describe Node, :type => :model do
     subject { Node.new("test") }
 
     before do
-      allow(IO).to receive(:popen)
+      allow(Open3).to receive(:popen3)
+      allow_any_instance_of(EC2Instance).to receive(:fqdn_or_ip).and_return("fqdn")
     end
 
     let(:infra){build(:infrastructure)}

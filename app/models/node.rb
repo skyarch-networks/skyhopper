@@ -6,13 +6,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'tempfile'
-require 'open3'
-require 'fileutils'
-require 'net/scp'
-require 'tmpdir'
-require 'rbconfig'
-
 class Node
   include ::Node::Attribute
 
@@ -275,32 +268,22 @@ knife bootstrap #{fqdn} \
   def exec_knife_ssh(command, infra)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
+    fqdn = infra.instance(@name).fqdn_or_ip
 
-    cmd = <<-EOS
-knife ssh \
-'name:#{@name}' \
-'#{command}' \
---identity-file #{ec2key.path_temp} \
---ssh-user #{@user} \
---attribute #{SSHConnectionAttribute}
-    EOS
+    cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
-    IO.popen(cmd) do |io|
-      while line = io.gets
-        line.gsub!(/\x1b[^m]*m/, '')    # remove ANSI escape
-        line.sub!(/^[^ ]+ /, '')       # remove hostname
+    Open3.popen3(cmd) do |stdin, stdout, stderr, w|
+      while line = stdout.gets
+        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!
 
         yield line
       end
-      io.close
 
-      status = $?.success?
-      raise CookError unless status
+      Rails.logger.warn(stderr.read)
+      raise CookError unless w.value.success?
     end
     return true
-
-
   ensure
     ec2key.close_temp
   end
