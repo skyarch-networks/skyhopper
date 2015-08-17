@@ -33,52 +33,7 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates set to static first.
-      template_names = ['Template App FTP Service', false,
-        'Template App HTTP Service', false,
-        'Template App HTTPS Service', false,
-        'Template App IMAP Service', false,
-        'Template App LDAP Service', false,
-        'Template App MySQL', false,
-        'Template App NNTP Service', false,
-        'Template App NTP Service', false,
-        'Template App POP Service', false,
-        'Template App SMTP Service', false,
-        'Template App SSH Service', false,
-        'Template App Telnet Service', false,
-        'Template App Zabbix Agent', false,
-        'Template App Zabbix Proxy', false,
-        'Template App Zabbix Server', false,
-        'Template ICMP Ping', false,
-        'Template IPMI Intel SR1530', false,
-        'Template IPMI Intel SR1630', false,
-        'Template JMX Generic', false,
-        'Template JMX Tomcat', false,
-        'Template OS AIX', false,
-        'Template OS FreeBSD', false,
-        'Template OS HP-UX', false,
-        'Template OS Linux', false,
-        'Template OS Mac OS X', false,
-        'Template OS OpenBSD', false,
-        'Template OS Solaris', false,
-        'Template OS Windows', false,
-        'Template SNMP Device', false,
-        'Template SNMP Disks', false,
-        'Template SNMP Generic', false,
-        'Template SNMP Interfaces', false,
-        'Template SNMP OS Linux', false,
-        'Template SNMP OS Windows', false,
-        'Template SNMP Processors', false,
-        'Template Virt VMware', false,
-        'Template Virt VMware Guest', false,
-        'Template Virt VMware Hypervisor', false,
-      ]
-      new_array = []
-
-      template_names.each_slice(2) do |value|
-        new_array << {:name => value[0], :checked => value[1]}
-      end
-
-      @templates = new_array #@sky_zabbix.template.get(filter: {host: template_names})
+      @templates = Zabbix::AvailableTemplates.map{|t| {name: t, checked: false}}
       return
     end
 
