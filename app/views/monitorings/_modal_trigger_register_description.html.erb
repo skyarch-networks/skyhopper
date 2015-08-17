@@ -11,11 +11,10 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-            <input type="text" v-model="searchText">
-              <div class="checkbox" v-repeat="s: templates | filterBy searchText">
+              <div class="checkbox" v-repeat="s: templates">
                   <label class="checkbox">
                     <div class="row">
-                      <div class="col-sm-6" v-if="{{s.count === 19 }}">
+                      <div class="col-sm-6" v-if="{{s.count == 19 }}">
                         <input type="checkbox" v-on="click: checkVal()" v-model="s.checked" id="inputEmail3">{{s.name}}
                       </div>
                       <div class="col-sm-6">
