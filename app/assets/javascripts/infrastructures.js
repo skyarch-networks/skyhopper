@@ -300,17 +300,6 @@
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
-      checkVal: function(){
-        var counter = 0;
-        var self = this;
-        $.each(this.templates, function(i, item) {
-          if(item.checked === true){
-            counter++;
-          }
-        });
-        self.has_selected = (counter > 0) ? true : false;
-
-      },
       show_url: function () {
         var self = this;
         self.loading_graph = true;
@@ -401,6 +390,7 @@
       monitoring: function ()    { return new Monitoring(current_infra); },
       no_problem: function ()    { return _.isEmpty(this.problems); },
       before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; }
+      has_selected: function () {return _.some(this.checks, function(c){ return c. checked});}
     },
     created: function () {
       var self = this;
