@@ -316,7 +316,7 @@ ja:
       add:    '追加'
       edit:   '編集'
       delete: '削除'
-      done:   '終わりました'
+      done:   '完了'
       cancel: 'キャンセル'
     msg:
       host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
