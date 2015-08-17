@@ -202,7 +202,6 @@ class MonitoringsController < ApplicationController
         selected.push(v["name"])
       end
     end
-    puts selected
     z = @zabbix
 
     begin

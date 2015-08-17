@@ -302,13 +302,12 @@
         var counter = 0;
         var self = this;
         $.each(this.templates, function(i, item) {
-          if(item.checked == true){
+          if(item.checked === true){
             counter++;
           }
         });
         self.has_selected = (counter > 0) ? true : false;
-        console.log(counter);
-        console.log(self.has_selected);
+
       },
       show_url: function () {
         var self = this;
@@ -405,9 +404,6 @@
       var self = this;
       var monitoring = new Monitoring(current_infra);
       monitoring.show().done(function (data) {
-        console.log("Monitoring data==>>", data);
-        console.log("Zabbix templates==>>", data.templates);
-
         self.before_register = data.before_register;
         self.commons         = data.monitor_selected_common;
         self.uncommons       = data.monitor_selected_uncommon;
