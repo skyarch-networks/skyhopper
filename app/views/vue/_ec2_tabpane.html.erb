@@ -319,11 +319,11 @@
         <table v-if="!loading_snapshots" class="table table-condensed table-hover">
           <thead>
             <th></th>
-            <th class="" v-on="click: sort_by('tags.Name')">Name<span v-class="caret: sorting_by('tags.Name'), caret-reversed: sort_order"></span></th>
-            <th class="col-md-2" v-on="click: sort_by('snapshot_id')">ID<span v-class="caret: sorting_by('snapshot_id'), caret-reversed: sort_order"></span></th>
-            <th class="col-md-2" v-on="click: sort_by('state')">State<span v-class="caret: sorting_by('state'), caret-reversed: sort_order"></span></th>
-            <th class="" v-on="click: sort_by('start_time')">Date<span v-class="caret: sorting_by('start_time'), caret-reversed: sort_order"></span></th>
-            <th class="" v-on="click: sort_by('encrypted')">Encrypted<span v-class="caret: sorting_by('encrypted'), caret-reversed: sort_order"></span></th>
+            <th class="" v-on="click: sort_by('tags.Name')">Name<span v-class="caret: sorting_by('tags.Name'), caret-reversed: sort_asc"></span></th>
+            <th class="col-md-2" v-on="click: sort_by('snapshot_id')">ID<span v-class="caret: sorting_by('snapshot_id'), caret-reversed: sort_asc"></span></th>
+            <th class="col-md-2" v-on="click: sort_by('state')">State<span v-class="caret: sorting_by('state'), caret-reversed: sort_asc"></span></th>
+            <th class="" v-on="click: sort_by('start_time')">Date<span v-class="caret: sorting_by('start_time'), caret-reversed: sort_asc"></span></th>
+            <th class="" v-on="click: sort_by('encrypted')">Encrypted<span v-class="caret: sorting_by('encrypted'), caret-reversed: sort_asc"></span></th>
           </thead>
           <tbody>
             <tr v-repeat="snapshot: snapshots" v-on="click: select_snapshot(snapshot)" v-class="info: snapshot.selected" v-transition="fade">
