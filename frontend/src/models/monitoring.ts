@@ -65,7 +65,7 @@ class Monitoring extends ModelBase {
         data.web_scenarios = [];
       }
       dfd.resolve(data);
-    }).fail(this.rejectF);
+    }).fail(dfd.reject);
 
     return dfd.promise();
   }

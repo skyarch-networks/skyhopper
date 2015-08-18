@@ -144,6 +144,19 @@ class MonitoringsController < ApplicationController
     #TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
     z.create_web_scenario(@infra, web_scenario)
+
+    # zabbix側でmysqlに関するitemとtrigger expressionをアップデートする
+    z.update_mysql(@infra, host_mysql["host"])
+
+    # if there are any triggers to update then do so
+    if expr_nums.present?
+      z.update_trigger_expression(@infra, trigger_exprs)
+    end
+
+    infra_logger_success("Monitoring Options updated")
+
+    # TODO: Zabbix Server側の状態の更新
+    render text: I18n.t('monitoring.msg.updated')
   end
 
   # POST /monitorings/:id/create_host
