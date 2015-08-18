@@ -1,5 +1,5 @@
 class SnapshotPolicy < ApplicationPolicy
-  def index
+  def index?
     user.allow?(record)
   end
 
