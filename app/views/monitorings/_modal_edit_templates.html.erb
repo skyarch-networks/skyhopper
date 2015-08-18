@@ -1,5 +1,5 @@
 <!-- modal for trigger setting -->
-<div id="register-warning" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
+<div id="edit-templates" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -10,16 +10,16 @@
 
         <div class="col-md-12 col-sm-12">
           <form>
-            <div class="checkbox" v-repeat="s: templates">
+            <div class="checkbox" v-repeat="t: templates">
               <label class="checkbox">
-                <input type="checkbox" v-model="s.checked" id="inputEmail3">{{s.name}}
+                <input type="checkbox" v-attr="checked: t.checked" v-model="t.checked" id="inputEmail3">{{t.name}}
               </label>
             </div>
           </form>
         </div>
 
 	<div class="modal-footer">
-          <button v-on="click: create()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
+          <button v-on="click: edit_templates()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
           <button type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.cancel' %></button>
 	</div>
       </div>

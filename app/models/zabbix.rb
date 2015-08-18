@@ -55,9 +55,11 @@ class Zabbix
     )
   end
 
-  #get available tempaltes from zabbix
-  def available_templates()
-    templates = @sky_zabbix.template.get(output: "extend", filter: {name: ""}).map{|x|x['name']}
+  # get available tempaltes from zabbix
+  # @param  request the contents of the return templates from zabbix
+  # @return [Array<String>]
+  def available_templates
+    templates = @sky_zabbix.template.get(['name'])
 
     return templates
   end
@@ -65,9 +67,9 @@ class Zabbix
   #get the seleted/link templates of the seleted host
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    selected_templates = @sky_zabbix.template.get(output: ["name"], hostids: host_id).map{|x|x['name']}
+    selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id)
+    puts selected_templates
 
-    
     return selected_templates
   end
 

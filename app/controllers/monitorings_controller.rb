@@ -34,19 +34,33 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates set to static first.
-      @templates = @zabbix.available_templates().map{|t| {name: t, checked: false}}
+      @templates = @zabbix.available_templates.map{|t| {name: t, checked: false}}
       return
     end
     
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
-
+    merged = []
     resources = @infra.resources.ec2
-    resources.each do |resource|
-      @linked_templates = @zabbix.get_linked_templates(resource.physical_id).map{|t| {name: t}}
+    linked = @zabbix.get_linked_templates(resources.last.physical_id)
+    unlinked = @zabbix.available_templates
+    
+    unlinked.each do |link|
+      if linked.include?(link)
+        merged.push({name: link, checked: true})
+      else
+        merged.push({name: link, checked: false})
+      end
     end
+    
+    @templates = merged
 
     @resources = @infra.resources.ec2
+
+  end
+
+  # GET /monitorings/:id/edit_templates
+  def edit_templates
 
   end
 
