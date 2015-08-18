@@ -87,8 +87,7 @@ class SnapshotsController < ApplicationController
     Thread.new do
       sleep(2)
       begin
-        15.times do
-          break if snapshot.latest_status == 'completed'
+        until snapshot.latest_status == 'completed'
           sleep(15)
         end
       rescue => ex
