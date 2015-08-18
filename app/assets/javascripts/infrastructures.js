@@ -686,8 +686,7 @@
       volume_selected:     '',
       snapshots:           {},
       sort_key:            '',
-      sort_order:          false,
-
+      sort_asc:            false,
       schedule_type:       '',
       schedule:            {},
 
@@ -962,12 +961,12 @@
       },
       sort_by: function (key) {
         if (this.sort_key === key) {
-          this.sort_order = !this.sort_order;
+          this.sort_asc = !this.sort_asc;
         } else {
-          this.sort_order = false;
+          this.sort_asc = false;
           this.sort_key = key;
         }
-        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_order);
+        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
       },
       sorting_by: function (key) {
         return this.sort_key == key;
