@@ -146,8 +146,9 @@ describe DishesController, :type => :controller do
   end
 
   describe '#new' do
+    let(:project){nil}
     before do
-      get :new, project_id: (project.id rescue nil)
+      get :new, project_id: project.try(:id)
     end
 
     context 'when have project' do
