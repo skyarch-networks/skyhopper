@@ -335,7 +335,7 @@
               <td v-text="snapshot.encrypted"></td>
             </tr>
             <tr v-if="!snapshots.length">
-              <td colspan="8">No snapshots available.</td>
+              <td colspan="8"><%= t('snapshots.msg.no_snapshots') %></td>
             </tr>
           </tbody>
         </table>

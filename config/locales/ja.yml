@@ -463,6 +463,7 @@ ja:
     btn:
       create:          '作成'
     msg:
+      no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
       delete_snapshot: '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'

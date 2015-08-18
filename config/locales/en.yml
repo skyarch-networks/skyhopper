@@ -463,6 +463,7 @@ en:
     btn:
       create:          'Create'
     msg:
+      no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
       delete_snapshot: 'Are you sure you want to delete following snapshots?'
       creation_started: 'Snapshot creation has started.'
