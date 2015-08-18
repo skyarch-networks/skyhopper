@@ -11,8 +11,8 @@ class Stack
 
   # Stack.new(infra)
   def initialize(infra)
-    @infra             = infra
-    @name              = infra.stack_name
+    @infra            = infra
+    @name             = infra.stack_name
     access_key_id     = infra.access_key
     secret_access_key = infra.secret_access_key
     region            = infra.region

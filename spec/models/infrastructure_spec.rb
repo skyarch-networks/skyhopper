@@ -210,4 +210,10 @@ describe Infrastructure, :type => :model do
       it{is_expected.to be false}
     end
   end
+
+  describe '#client' do
+    let(:infra){create(:infrastructure)}
+    subject{infra.client}
+    it {is_expected.to eq infra.project.client}
+  end
 end

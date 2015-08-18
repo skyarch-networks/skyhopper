@@ -13,14 +13,17 @@ describe ServerState, type: :model do
 
   let(:server){double('@server')}
   before(:all) do
+    unless Client.for_system
+      c = create(:client, code: Client::ForSystemCodeName)
+    end
     unless Project.for_chef_server
-      p = create(:project, code: Project::ChefServerCodeName)
+      p = create(:project, code: Project::ChefServerCodeName, client: c)
       i = create(:infrastructure, project: p)
       create(:ec2_resource, infrastructure: i)
     end
 
     unless Project.for_zabbix_server
-      p = create(:project, code: Project::ZabbixServerCodeName)
+      p = create(:project, code: Project::ZabbixServerCodeName, client: c)
       i = create(:infrastructure, project: p)
       create(:ec2_resource, infrastructure: i)
     end

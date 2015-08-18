@@ -80,6 +80,7 @@ en:
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
+      eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -198,7 +199,7 @@ en:
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
       runlist_empty:      'Runlist is empty'
-
+      dish_applied:       'Dish was applied.'
 
   dishes:
     dishes:            'Dishes'
@@ -245,8 +246,12 @@ en:
 
 
   schedules:
+    schedule:         'schedule'
     change_schedule:  'Change schedule'
     run_periodically: 'Run periodically'
+    o_clock:          "o'clock"
+    hours:            'hours'
+    next_run:         'Next run time is at {{next_run}}:00'
     frequency:
       weekly:     'Weekly'
       daily:      'Daily'
@@ -259,9 +264,6 @@ en:
       thursday:   'Thursday'
       friday:     'Friday'
       saturday:   'Saturday'
-    o_clock:      "o'clock"
-    hours:        'hours'
-    next_run:     'Next run time is at {{next_run}}:00'
     msg:
       serverspec_updated: 'Periodic run schedule of Serverspec has updated.'
       yum_updated: 'Periodic run schedule of Yum has updated.'
@@ -308,11 +310,14 @@ en:
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
+    before_reg_title:     'Please select template before proceeding.'
     btn:
       create: 'Register'
       add:    'Add'
       edit:   'Edit'
       delete: 'Delete'
+      done:   'Done'
+      cancel: 'Cancel'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
@@ -420,11 +425,17 @@ en:
     state:             'State'
     reason_code:       'Reason Code'
     msg:
-      registered_to_elb:    'EC2 instance was successfully registered to ELB.'
+      start_ec2:             'Start to turn on the power EC2 instance.'
+      stop_ec2:              'Start to turn off the power EC2 instance.'
+      registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
+      check_security_update: 'Check security updates'
+      exec_security_update:  'Execute security update'
+      check_all_update:      'Check all updates'
+      exec_all_update:       'Execute all update'
     confirm:
       register:   'Do you want to register EC2 instance with ELB?'
       deregister: 'Do you want to release registration of EC2 instance from ELB?'

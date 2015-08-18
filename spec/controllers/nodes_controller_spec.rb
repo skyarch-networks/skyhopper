@@ -286,16 +286,13 @@ describe NodesController, :type => :controller do
           runlist: dish.runlist,
           dish_id: dish.id.to_param
         ).and_return({status: true})
-        expect(Thread).to receive(:new_with_db).and_yield
-        expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
-        expect(ServerspecJob).to receive(:perform_now)
         req
       end
 
       should_be_success
 
       it 'should render message' do
-        expect(response.body).to eq I18n.t('nodes.msg.cook_started')
+        expect(response.body).to eq I18n.t('nodes.msg.dish_applied')
       end
     end
   end
@@ -440,7 +437,8 @@ describe NodesController, :type => :controller do
         render nothing: true
       end
     end
-    let(:resource){create(:resource, infrastructure: infra)}
+    let(:dish){create(:dish)}
+    let(:resource){create(:resource, infrastructure: infra, dish: dish)}
     let(:req){get :show, id: resource.physical_id, infra_id: infra.id}
     before do
       expect_any_instance_of(Node).to receive(:wait_search_index)
@@ -448,7 +446,8 @@ describe NodesController, :type => :controller do
 
     context 'when success' do
       before do
-       expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+        expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
+        expect(ServerspecJob).to receive(:perform_now)
         req
       end
       should_be_success

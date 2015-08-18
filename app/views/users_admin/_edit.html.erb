@@ -63,12 +63,12 @@
 <div class="col-md-7 col-sm-7">
   <div class="col-md-5 col-sm-5 form-group">
     <h5 class="page-header"><%= t('clients.client') %></h5>
-    <select size="2" v-model="selected_client" options="clients" class="form-control admin-selectbox-height" v-on="click: get_projects()">
+    <select size="2" v-model="selected_client" number options="clients" class="form-control admin-selectbox-height" v-on="click: get_projects()">
     </select>
   </div>
   <div class="col-sm-7 col-md-7 form-group">
     <h5 class="page-header"><%= t('projects.project') %></h5>
-    <select multiple="multiple" v-model="selected_projects" options="projects" class="form-control admin-selectbox-height" v-on="dblclick: add()">
+    <select multiple="multiple" v-model="selected_projects" number options="projects" class="form-control admin-selectbox-height" v-on="dblclick: add()">
     </select>
   </div>
   <div class="col-sm-12 col-md-12">
@@ -87,7 +87,7 @@
 
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_projects" options="allowed_projects" v-on="dblclick: del()">
+        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_projects" number options="allowed_projects" v-on="dblclick: del()">
         </select>
       </div>
     </div>

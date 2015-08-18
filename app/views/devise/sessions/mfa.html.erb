@@ -14,7 +14,7 @@
     <div class="form-group">
       <%= f.label :mfa_token, I18n.t("users.mfa_token") , class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
-        <input id="mfa_token" type="text" pattern="\d{6,6}" required name="user[mfa_token]" class="form-control">
+        <input id="mfa_token" type="text" pattern="\d{6,6}" autofocus required name="user[mfa_token]" class="form-control">
       </div>
     </div>
     <p class="help-block col-sm-offset-2"><%= t('users.msg.mfa_description') %></p>

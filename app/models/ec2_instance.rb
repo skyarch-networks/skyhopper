@@ -6,8 +6,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'delegate'
-
 class EC2Instance < SimpleDelegator
   # instance_types を取得するAPIがなさそう?
   Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
@@ -21,6 +19,22 @@ class EC2Instance < SimpleDelegator
 
     @instance = Aws::EC2::Instance.new(physical_id, client: infra.ec2)
     __setobj__(@instance)
+  end
+
+  # status が変化するのを待つ
+  # ==== Args
+  # [status] :running or :stopped
+  def wait_status(status)
+    loop do
+      case s = self.status
+      when status
+        break
+      when :pending, :stopping
+        sleep 5
+      else
+        raise StandardError, "#{s} is not expected status."
+      end
+    end
   end
 
   def change_scale(type)

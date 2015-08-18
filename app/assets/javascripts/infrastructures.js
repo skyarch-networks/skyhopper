@@ -6,7 +6,15 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require_tree ./models/.
+//= require models/base
+//= require models/cf_template
+//= require models/infrastructure
+//= require models/s3_bucket
+//= require models/dish
+//= require models/ec2_instance
+//= require models/monitoring
+//= require models/rds_instance
+//= require models/resource
 
 
 (function () {
@@ -259,6 +267,7 @@
       commons: [],
       uncommons: [],
       resources: [],
+      templates: [],
       error_message: null,
       loading_graph: false,
       url_status: [],
@@ -274,9 +283,17 @@
         });
       },
       create: function () {
+        if(!this.has_selected) {return;}
+
         var self = this;
         self.creating = true;
-        this.monitoring.create_host().done(function () {
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.name;
+        }).value();
+
+        this.monitoring.create_host(templates).done(function () {
           alert_success(function () {
             self.$parent.show_edit_monitoring();
           })(t('monitoring.msg.created'));
@@ -371,7 +388,12 @@
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
       no_problem: function ()    { return _.isEmpty(this.problems); },
-      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; }
+      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
     },
     created: function () {
       var self = this;
@@ -381,6 +403,8 @@
         self.commons         = data.monitor_selected_common;
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
+        self.templates       = data.templates;
+
         if (!this.before_register) {
           self.show_problems();
         }
@@ -401,7 +425,7 @@
       loading: false,
     };},
     methods: {
-      type: function (master) { return this.monitoring.type(master); },
+      type: function (master) { return Monitoring.type(master); },
 
       delete_step: function (step) {
         this.web_scenarios = _.filter(this.web_scenarios, function (s) {
@@ -785,7 +809,12 @@
         });
       },
 
-      apply_dish: function () { this._cook('apply_dish', this.selected_dish); },
+      apply_dish: function () {
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        ec2.apply_dish(this.selected_dish)
+          .done(alert_success(this._show_ec2))
+          .fail(alert_danger(this._show_ec2));
+      },
       cook:       function () { this._cook('cook'); },
 
       yum_update: function (security, exec) {

@@ -174,12 +174,12 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'check')">Check security updates</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'exec')">Execute security update</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')">Check all updates</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')">Execute all update</a></li>
-          <li class="dropdown-header">Schedule</li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" v-on="click: open_yum_schedule_modal()">Check security updates</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'check')"><%=t('ec2_instances.btn.check_security_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'exec')"><%=t('ec2_instances.btn.exec_security_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')"><%=t('ec2_instances.btn.check_all_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')"><%=t('ec2_instances.btn.exec_all_update')%></a></li>
+          <li class="dropdown-header"><%=t('schedules.schedule')%></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" v-on="click: open_yum_schedule_modal()"><%=t('schedules.change_schedule')%></a></li>
         </ul>
       </div>
       <button v-on="click: select_serverspec()" v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>

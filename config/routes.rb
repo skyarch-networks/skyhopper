@@ -80,7 +80,7 @@ SkyHopper::Application.routes.draw do
 
   resources :infrastructure_logs, only: :index
 
-  resources :monitorings, only: [:show, :edit, :update] do
+  resources :monitorings, only: [:create, :show, :edit, :update] do
     member do
       post 'create_host'
       get 'show_cloudwatch_graph'

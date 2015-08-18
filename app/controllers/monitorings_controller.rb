@@ -31,12 +31,16 @@ class MonitoringsController < ApplicationController
       # すべてのec2が登録されていなければ
       # Only show those hosts that are registered
       @before_register = true
+
+      #get/load available zabbix templates set to static first.
+      @templates = Zabbix::AvailableTemplates.map{|t| {name: t, checked: false}}
       return
     end
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
     @resources = @infra.resources.ec2
+
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -157,6 +161,7 @@ class MonitoringsController < ApplicationController
 
   # POST /monitorings/:id/create_host
   def create_host
+    templates = params.require(:templates)
     resources = @infra.resources.ec2
 
     z = @zabbix
@@ -167,7 +172,7 @@ class MonitoringsController < ApplicationController
         z.create_host(@infra, resource.physical_id)
 
         # TODO: Batch request
-        reqs.push z.templates_link_host(resource.physical_id, ['Template OS Linux', 'Template App HTTP Service', 'Template App SMTP Service'])
+        reqs.push z.templates_link_host(resource.physical_id, templates)
         item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
         item_info_mysql = z.create_mysql_login_item(resource.physical_id)
         reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)

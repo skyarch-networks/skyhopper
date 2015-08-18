@@ -27,7 +27,7 @@
       data: {
         settings: JSON.stringify(settings)
       },
-    }).fail(modal_for_ajax_std_error);
+    }).fail(modal_for_ajax_std_error());
   };
 
   var chef_create = function () {
@@ -41,7 +41,7 @@
       },
       dataType: "json",
 
-    }).fail(modal_for_ajax_std_error);
+    }).fail(modal_for_ajax_std_error());
   };
 
 
