@@ -37,7 +37,7 @@ class MonitoringsController < ApplicationController
       @templates = @zabbix.available_templates().map{|t| {name: t, checked: false}}
       return
     end
-    
+
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
 
