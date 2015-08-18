@@ -13,10 +13,11 @@ describe DishesController, :type => :controller do
 
   let(:klass){Dish}
   let(:dish){create(:dish)}
+  let(:project){nil}
 
   describe '#index' do
     before do
-      get :index, project_id: (project.id rescue nil)
+      get :index, project_id: project.try(:id)
     end
 
     it 'should assign @dishes' do
