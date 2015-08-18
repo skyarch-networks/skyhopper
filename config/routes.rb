@@ -25,9 +25,6 @@ SkyHopper::Application.routes.draw do
     collection do
       post 'schedule'
     end
-    member do
-      post 'restore'
-    end
   end
 
   resources :infrastructures do
