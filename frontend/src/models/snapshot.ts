@@ -15,7 +15,7 @@ class Snapshot extends ModelBase {
     );
   }
 
-  watch_snapshot_progress(dfd: JQueryDeferred<any>): any {
+  private watch_snapshot_progress(dfd: JQueryDeferred<any>): (d: any) => void {
     return (data: any) => {
       const ws = ws_connector('snapshot_status', data.snapshot_id);
       ws.onmessage = function (msg) {
