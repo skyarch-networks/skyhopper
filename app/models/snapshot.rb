@@ -12,9 +12,9 @@ class Snapshot < SimpleDelegator
         resp = ec2.create_snapshot(volume_id: volume_id)
         ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
       rescue Aws::EC2::Errors::IncorrectState => e
-        raise VolumeRetiredError if e.message =~ /retired/
+        raise VolumeRetiredError, e.message if e.message =~ /retired/
       rescue Aws::EC2::Errors::InvalidVolumeNotFound => e
-        raise VolumeNotFoundError
+        raise VolumeNotFoundError, e.message
       end
 
       new(infra, resp.snapshot_id)
