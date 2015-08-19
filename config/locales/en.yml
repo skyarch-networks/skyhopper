@@ -323,6 +323,7 @@ en:
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
       created:                 'This infrastructure has been registered with Zabbix Server.'
       updated:                 'Monitoring configuration updated.'
+      edit_templates:          'Zabbix templates updated!.'
       failure:                 'Failed to register with Zabbix Server.'
       not_selected:            'Monitoring options not selected yet.'
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'

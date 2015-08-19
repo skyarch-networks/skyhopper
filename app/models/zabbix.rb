@@ -55,21 +55,40 @@ class Zabbix
     )
   end
 
+  # Update the selected templates from host
+  # @param [String] physical_id
+  # @param [Array<String>] Objects containing new templates to be added
+  # @param [Array<String>] Objects containing templates to be removed
+  # @return [Array<Object>] Objects containing the IDS of the updated templates
+  def templates_update_host(physical_id, new_templates, clear_templates)
+    host_id = get_host_id(physical_id)
+    add_ids = @sky_zabbix.template.get(filter: {host: new_templates}).map{|x|x['templateid']}
+    clear_ids = @sky_zabbix.template.get(filter: {host: clear_templates}).map{|x|x['templateid']}
+    puts "add"
+    puts add_ids
+    puts "clear"
+    puts clear_ids
+
+    # @sky_zabbix.template.massremove(hosts: [{hostid: host_id}],templates: clear_ids.map{|x| {templateid: x}})
+    @sky_zabbix.template.massadd(hosts: [{hostid: host_id}],templates: add_ids.map{|x| {templateid: x}})
+
+  end
+
   # get available tempaltes from zabbix
   # @param  request the contents of the return templates from zabbix
   # @return [Array<String>]
   def available_templates
-    templates = @sky_zabbix.template.get(['name'])
-
+    templates = @sky_zabbix.template.get(output: ['name']).map{|x|x['name']}
     return templates
+
   end
 
-  #get the seleted/link templates of the seleted host
+  # get the seleted/link templates of the seleted host
+  # @param [String] physical_id request the contents of templates using physical_id
+  # @return [Array<String>] list of linked templates
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id)
-    puts selected_templates
-
+    selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id).map{|x|x['name']}
     return selected_templates
   end
 

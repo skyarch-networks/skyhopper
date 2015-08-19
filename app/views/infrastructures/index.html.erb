@@ -16,7 +16,7 @@
   <tbody>
     <% @infrastructures.each do |infra| %>
       <tr class="infrastructure-row">
-        <td><%= infra.stack_name %></td>
+        <td><%= infra.stack_name %> </td>
         <td><%= infra.region %></td>
         <td><%= infra.keypairname || t('infrastructures.msg.no_keypair') %></td>
         <td>

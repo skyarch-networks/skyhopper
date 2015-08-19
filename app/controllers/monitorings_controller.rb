@@ -40,11 +40,12 @@ class MonitoringsController < ApplicationController
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
+
     merged = []
     resources = @infra.resources.ec2
     linked = @zabbix.get_linked_templates(resources.last.physical_id)
     unlinked = @zabbix.available_templates
-    
+
     unlinked.each do |link|
       if linked.include?(link)
         merged.push({name: link, checked: true})
@@ -52,16 +53,33 @@ class MonitoringsController < ApplicationController
         merged.push({name: link, checked: false})
       end
     end
-    
+
     @templates = merged
 
     @resources = @infra.resources.ec2
 
   end
 
-  # GET /monitorings/:id/edit_templates
+  # POST /monitorings/:id/edit_templates
   def edit_templates
+    resources = @infra.resources.ec2
+    new_templates = params.require(:templates)
+    prev_templates = @zabbix.get_linked_templates(resources.last.physical_id)
+    clear_templates = []
 
+    # compare if the previous templates was removed and push to clear list
+    prev_templates.each do |prev|
+      if new_templates.include?(prev)
+        # new_templates.pop(prev)
+      else
+        clear_templates.push(prev)
+      end
+    end
+
+    @zabbix.templates_update_host(resources.last.physical_id, new_templates, clear_templates)
+
+    infra_logger_success("Templates Updated!")
+    render nothing: true and return
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph

@@ -299,6 +299,21 @@
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
+      edit_templates: function () {
+        if (!this.has_selected) {return;}
+
+        var self = this;
+        var templates = _(this.templates).filter(function (t){
+          return t.checked;
+        }).map(function(t){
+          return t.name
+        }).value();
+
+        this.monitoring.edit_templates(templates).done(function (){
+            alert_success(function (){
+            })(t('monitoring.msg.edit_templates'));
+          }).fail(alert_and_show_infra);
+      },
       show_url: function () {
         var self = this;
         self.loading_graph = true;
