@@ -15,6 +15,7 @@
 //= require models/monitoring
 //= require models/rds_instance
 //= require models/resource
+//= require models/snapshot
 
 
 (function () {
