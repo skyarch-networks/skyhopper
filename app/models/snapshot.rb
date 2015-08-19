@@ -21,11 +21,9 @@ class Snapshot < SimpleDelegator
     end
   end
 
-  # ==== Args
-  # [infra] {Infrastructure}
-  # [snapshot_id] {String}
-  # ==== return
-  # {Snapshot}
+  # @param [Infrastructure] infra
+  # @param [String] snapshot_id
+  # @return [Snapshot]
   def initialize(infra, snapshot_id)
     snapshot = Aws::EC2::Snapshot.new(snapshot_id, client: infra.ec2)
     __setobj__(snapshot)
