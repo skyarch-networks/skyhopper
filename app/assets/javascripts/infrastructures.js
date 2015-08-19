@@ -934,7 +934,7 @@
           snapshot.create(volume_id, self.physical_id).done(function (data) {
             if ($('#snapshots-modal.in').length && self.snapshots[data.snapshot_id] !== 'completed') {
               self.load_snapshots();
-            };
+            }
           }).fail(alert_danger());
 
           self.load_snapshots();
@@ -967,9 +967,9 @@
       },
       delete_selected_snapshots: function () {
         var self = this;
-        var snapshots    = _.select(this.snapshots, 'selected', true)
+        var snapshots    = _.select(this.snapshots, 'selected', true);
         var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
-        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ')
+        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
         bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
           var s = new Snapshot(current_infra.id);
 
@@ -999,7 +999,7 @@
         this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
       },
       sorting_by: function (key) {
-        return this.sort_key == key;
+        return this.sort_key === key;
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
