@@ -64,11 +64,6 @@ class Zabbix
     host_id = get_host_id(physical_id)
     add_ids = @sky_zabbix.template.get(filter: {host: new_templates}).map{|x|x['templateid']}
     clear_ids = @sky_zabbix.template.get(filter: {host: clear_templates}).map{|x|x['templateid']}
-    puts "add"
-    puts add_ids
-    puts "clear"
-    puts clear_ids
-
     # @sky_zabbix.template.massremove(hosts: [{hostid: host_id}],templates: clear_ids.map{|x| {templateid: x}})
     @sky_zabbix.template.massadd(hosts: [{hostid: host_id}],templates: add_ids.map{|x| {templateid: x}})
 
