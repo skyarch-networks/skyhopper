@@ -4,7 +4,7 @@
 class Snapshot extends ModelBase {
   constructor(private infra_id: string) {super(); }
 
-  static ajax = new AjaxSet.Resources('snapshots')
+  static ajax = new AjaxSet.Resources('snapshots');
 
   index(volume_id: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
@@ -24,7 +24,7 @@ class Snapshot extends ModelBase {
           ws.close();
         };
       };
-    }
+    };
   }
 
   create(volume_id: string, physical_id: string): JQueryPromise<any> {
