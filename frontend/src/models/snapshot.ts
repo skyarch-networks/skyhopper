@@ -4,7 +4,7 @@
 class Snapshot extends ModelBase {
   constructor(private infra_id: string) {super(); }
 
-  static ajax = new AjaxSet.Resources('snapshot')
+  static ajax = new AjaxSet.Resources('snapshots')
 
   index(volume_id: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
@@ -30,8 +30,11 @@ class Snapshot extends ModelBase {
   create(volume_id: string, physical_id: string): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    Snapshot.ajax.create({volume_id: volume_id, physical_id: physical_id})
-      .done((data: any) => {
+    Snapshot.ajax.create({
+      infra_id: this.infra_id,
+      volume_id: volume_id,
+      physical_id: physical_id
+    }).done((data: any) => {
         this.watch_snapshot_progress(dfd)(data);
       })
       .fail(this.rejectF(dfd));
