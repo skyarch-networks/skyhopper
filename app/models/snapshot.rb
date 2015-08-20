@@ -19,6 +19,20 @@ class Snapshot < SimpleDelegator
 
       new(infra, resp.snapshot_id)
     end
+
+    def describe(infra, volume_id)
+      ec2 = infra.ec2
+
+      parameters = { owner_ids: ['self'] }
+      parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id
+      resp = ec2.describe_snapshots(parameters)
+
+      snapshots = resp.snapshots.map { |snapshot|
+        tags_hash = snapshot.tags.map { |tag| [tag.key, tag.value] }.to_h
+        snapshot.tags = tags_hash
+        snapshot
+      }
+    end
   end
 
   # @param [Infrastructure] infra
