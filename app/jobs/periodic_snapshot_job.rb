@@ -18,7 +18,7 @@ class PeriodicSnapshotJob < ActiveJob::Base
       ).perform_later(volume_id, physical_id, infra, user_id)
     end
 
-    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
+    @ws = WSConnector.new('notifications', User.find(user_id).ws_key)
 
     begin
       snapshot = Snapshot.create(infra, volume_id, physical_id)
@@ -40,6 +40,6 @@ class PeriodicSnapshotJob < ActiveJob::Base
       infrastructure_id: infra_id, user_id: user_id, status: status,
       details: details
     )
-    ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
   end
 end
