@@ -75,6 +75,7 @@ class SnapshotsController < ApplicationController
 
   def notify_progress(snapshot)
     Thread.new do
+      ws = WSConnector.new('snapshot_status', snapshot.snapshot_id)
       sleep(2)
       begin
         until snapshot.latest_status == 'completed'
@@ -82,11 +83,11 @@ class SnapshotsController < ApplicationController
         end
       rescue => ex
         infra_logger_fail("Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
+        ws.push(ex.message)
         raise ex
       end
 
       infra_logger_success("Snapshot creation for #{snapshot.volume_id} has completed.\n Snapshot ID: #{snapshot.snapshot_id}")
-      ws = WSConnector.new('snapshot_status', snapshot.snapshot_id)
       ws.push('completed')
     end
   end

@@ -19,10 +19,16 @@ class Snapshot extends ModelBase {
     return (data: any) => {
       const ws = ws_connector('snapshot_status', data.snapshot_id);
       ws.onmessage = function (msg) {
-        if (msg.data === 'completed') {
-          dfd.resolve(data);
-          ws.close();
-        };
+        switch (msg.data) {
+          case "completed":
+            dfd.resolve(data);
+            ws.close();
+            break;
+          default:
+            dfd.reject(msg.data);
+            ws.close();
+            break;
+        }
       };
     };
   }
