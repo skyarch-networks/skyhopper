@@ -934,7 +934,7 @@
           snapshot.create(volume_id, self.physical_id).progress(function (data) {
             bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
           }).done(function (data) {
-            if ($('#snapshots-modal.in').length && self.snapshots[data.snapshot_id] !== 'completed') {
+            if ($('#snapshots-modal.in').length) {
               self.load_snapshots();
             }
           }).fail(alert_danger());
