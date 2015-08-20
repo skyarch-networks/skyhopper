@@ -302,8 +302,8 @@
       },
       update_templates: function () {
         if (!this.has_selected) {return;}
-        this.loading = true;
         var self = this;
+        self.loading = true;
         var templates = _(this.templates).filter(function (t){
           return t.checked;
         }).map(function(t){
@@ -311,9 +311,9 @@
         }).value();
 
         this.monitoring.update_templates(templates).done(function (){
+            self.loading = false;
             alert_success(function (){
             })(t('monitoring.msg.update_templates'));
-              this.loading = false;
           }).fail(alert_and_show_infra);
       },
       show_url: function () {
@@ -1328,6 +1328,13 @@
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
+        show_update_templates: function () {
+          if (this.no_stack) {return;}
+          var self = this;
+          self.show_tabpane('update-template');
+          self.loading = true;
+        },
+
 
         tabpane_active: function (id) { return this.tabpaneID === id; },
 

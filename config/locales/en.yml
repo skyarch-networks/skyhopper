@@ -305,6 +305,7 @@ en:
   monitoring:
     title:                'Monitoring'
     config:               'Monitoring Configuration'
+    template:             'Monitoring Template'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
