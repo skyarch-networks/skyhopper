@@ -39,9 +39,9 @@ class Monitoring extends ModelBase {
     );
   }
 
-  edit_templates(templates: any[] = []): JQueryPromise<any> {
+  update_templates(templates: any[] = []): JQueryPromise<any> {
      return this.WrapAndResolveReject(() =>
-      (<any>Monitoring.ajax).edit_templates({
+      (<any>Monitoring.ajax).update_templates({
         templates: templates,
         id: this.infra.id
       })
@@ -153,7 +153,7 @@ class Monitoring extends ModelBase {
 }
 
 Monitoring.ajax.add_member('create_host',  'POST');
-Monitoring.ajax.add_member('edit_templates',  'POST');
+Monitoring.ajax.add_member('update_templates',  'POST');
 Monitoring.ajax.add_member("show_cloudwatch_graph", "GET");
 Monitoring.ajax.add_member("show_problems", "GET");
 Monitoring.ajax.add_member("show_url_status", "GET");

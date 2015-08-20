@@ -273,6 +273,7 @@
       url_status: [],
       showing_url: false,
       loading_problems: true,
+      loading: false,
     };},
     methods: {
       show_problems: function () {
@@ -299,9 +300,9 @@
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
-      edit_templates: function () {
+      update_templates: function () {
         if (!this.has_selected) {return;}
-
+        this.loading = true;
         var self = this;
         var templates = _(this.templates).filter(function (t){
           return t.checked;
@@ -309,9 +310,10 @@
           return t.name
         }).value();
 
-        this.monitoring.edit_templates(templates).done(function (){
+        this.monitoring.update_templates(templates).done(function (){
             alert_success(function (){
-            })(t('monitoring.msg.edit_templates'));
+            })(t('monitoring.msg.update_templates'));
+              this.loading = false;
           }).fail(alert_and_show_infra);
       },
       show_url: function () {

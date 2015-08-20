@@ -128,9 +128,11 @@
     <h4 class="page-header"><%= t 'monitoring.linked_templates' %> <small>
 	<a href="#" data-toggle="modal" data-target="#edit-templates" class="btn-link"><span class="glyphicon glyphicon-edit"></span><%= t 'monitoring.btn.edit' %></a></small>
     </h4>
+
+    <div-loader v-if="loading"></div-loader>
     <ul v-repeat="l: templates">
       <li v-if="l.checked">{{l.name}}</li>
     </ul>
-    <%= render 'monitorings/modal_edit_templates' %>
+    <%= render 'monitorings/modal_update_templates' %>
   </div>
 </div>

@@ -77,7 +77,7 @@ SkyHopper::Application.routes.draw do
   resources :monitorings, only: [:create, :show, :edit, :update] do
     member do
       post 'create_host'
-      post 'edit_templates'
+      post 'update_templates'
       get 'show_cloudwatch_graph'
       get 'show_problems'
       get 'show_url_status'

@@ -8,7 +8,7 @@
 
 # record is a Infrastructure.
 class MonitoringPolicy < ApplicationPolicy
-  %i[edit? update? create_host? edit_templates?].each do |action|
+  %i[edit? update? create_host? update_templates?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end

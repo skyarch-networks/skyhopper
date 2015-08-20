@@ -324,7 +324,7 @@ ja:
       before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
       created:                 'インフラストラクチャを Zabbix Server に登録しました'
       updated:                 '監視設定が正常に更新されました'
-      edit_templates:          'Zabbix のテンプレートは正常に更新されました'
+      update_templates:          'Zabbix のテンプレートは正常に更新されました'
       failure:                 'Zabbix Server への登録に失敗しました'
       not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'

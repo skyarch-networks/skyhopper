@@ -60,23 +60,25 @@ class MonitoringsController < ApplicationController
 
   end
 
-  # POST /monitorings/:id/edit_templates
-  def edit_templates
+  # POST /monitorings/:id/update_templates
+  def update_templates
     resources = @infra.resources.ec2
     new_templates = params.require(:templates)
-    prev_templates = @zabbix.get_linked_templates(resources.last.physical_id)
-    clear_templates = []
+    resources.each do |resource|
+      prev_templates = @zabbix.get_linked_templates(resource.physical_id)
+      clear_templates = []
 
-    # compare if the previous templates was removed and push to clear list
-    prev_templates.each do |prev|
-      if new_templates.include?(prev)
-        # new_templates.pop(prev)
-      else
-        clear_templates.push(prev)
+      # compare if the previous templates was removed and push to clear list
+      prev_templates.each do |prev|
+        if new_templates.include?(prev)
+          # new_templates.pop(prev)
+        else
+          clear_templates.push(prev)
+        end
       end
-    end
 
-    @zabbix.templates_update_host(resources.last.physical_id, new_templates, clear_templates)
+      @zabbix.templates_update_host(resource.physical_id, new_templates, clear_templates)
+    end
 
     infra_logger_success("Templates Updated!")
     render nothing: true and return
