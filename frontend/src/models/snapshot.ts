@@ -63,4 +63,4 @@ class Snapshot extends ModelBase {
   }
 }
 
-Snapshot.ajax.add_member('schedule', 'POST');
+Snapshot.ajax.add_collection('schedule', 'POST');
