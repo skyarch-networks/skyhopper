@@ -415,7 +415,7 @@
   });
 
   Vue.component("update-template-tabpane",{
-    template: "#update-template-tabpane",
+    template: "#update-template-tabpane-template",
     data: function(){return{
       loading: false,
       templates: [],
@@ -433,12 +433,14 @@
 
         this.monitoring.update_templates(templates).done(function (){
             self.loading = false;
+            self.$parent.show_update_template();
             alert_success(function (){
             })(t('monitoring.msg.update_templates'));
           }).fail(alert_and_show_infra);
       },
     },
     computed:{
+        monitoring: function () { return new Monitoring(current_infra); },
         has_selected: function() {
           return _.some(this.templates, function(c){
             return c.checked;
