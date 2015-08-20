@@ -85,3 +85,8 @@ input[type="number"] {
     margin: auto;
     top:    30px;
 }
+
+.caret.caret-reversed {
+  border-top-width: 0;
+  border-bottom: 4px solid #000000;
+}
