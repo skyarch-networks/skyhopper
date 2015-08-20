@@ -1454,6 +1454,50 @@
   };
   var app;
 
+  var index = function(){
+    return new Vue({
+      el: '#demo',
+      data: {
+        searchQuery: '',
+        gridColumns: ['name', 'power', 'status'],
+        gridData: [
+          { name: 'Chuck Norris', power: Infinity, status: 'A'},
+          { name: 'Bruce Lee', power: 9000, status: 'B'},
+          { name: 'Jackie Chan', power: 7000, status: 'C' },
+          { name: 'Jet Li', power: 8000, status: 'D' }
+        ]
+      }
+    });
+  };
+
+  // register the grid component
+  Vue.component('demo-grid', {
+    template: '#grid-template',
+    replace: true,
+    props: ['data', 'columns', 'filter-key'],
+    data: function () {
+      return {
+        data: null,
+        columns: null,
+        sortKey: '',
+        filterKey: '',
+        reversed: {}
+      }
+    },
+    compiled: function () {
+      // initialize reverse state
+      var self = this
+      this.columns.forEach(function (key) {
+        self.reversed.$add(key, false)
+      })
+    },
+    methods: {
+      sortBy: function (key) {
+        this.sortKey = key
+        this.reversed[key] = !this.reversed[key]
+      }
+    }
+  })
 
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {
@@ -1469,6 +1513,15 @@
       }
     });
   };
+
+  var index = function(){
+    var l = new Loader();
+    if (app){
+      app.$destroy();
+    }
+    app = infraindex();
+    l.$destroy();
+  }
 
   var SHOW_INFRA_ID = '#infra-show';
 
@@ -1486,6 +1539,7 @@
       app.$mount(SHOW_INFRA_ID);
     });
   };
+
 
   var detach = function (infra_id) {
     bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -1569,7 +1623,9 @@
 // ================================================================
 // event bindings
 // ================================================================
-
+  $(document).ready(function(){
+    index();
+  });
 
   $(document).on('click', '.show-infra', function (e) {
     e.preventDefault();
