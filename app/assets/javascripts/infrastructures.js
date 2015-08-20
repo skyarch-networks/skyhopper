@@ -300,22 +300,6 @@
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
-      update_templates: function () {
-        if (!this.has_selected) {return;}
-        var self = this;
-        self.loading = true;
-        var templates = _(this.templates).filter(function (t){
-          return t.checked;
-        }).map(function(t){
-          return t.name
-        }).value();
-
-        this.monitoring.update_templates(templates).done(function (){
-            self.loading = false;
-            alert_success(function (){
-            })(t('monitoring.msg.update_templates'));
-          }).fail(alert_and_show_infra);
-      },
       show_url: function () {
         var self = this;
         self.loading_graph = true;
@@ -428,6 +412,47 @@
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+  });
+
+  Vue.component("update-template-tabpane",{
+    template: "#update-template-tabpane",
+    data: function(){return{
+      loading: false,
+      templates: [],
+    };},
+    methods:{
+      update_templates: function () {
+        if (!this.has_selected) {return;}
+        var self = this;
+        self.loading = true;
+        var templates = _(this.templates).filter(function (t){
+          return t.checked;
+        }).map(function(t){
+          return t.name
+        }).value();
+
+        this.monitoring.update_templates(templates).done(function (){
+            self.loading = false;
+            alert_success(function (){
+            })(t('monitoring.msg.update_templates'));
+          }).fail(alert_and_show_infra);
+      },
+    },
+    computed:{
+        has_selected: function() {
+          return _.some(this.templates, function(c){
+            return c.checked;
+          });
+        },
+      },
+      created: function () {
+        var self = this;
+        var monitoring = new Monitoring(current_infra);
+        monitoring.show().done(function (data) {
+          self.templates       = data.templates;
+          self.$parent.loading = false;
+        }).fail(alert_and_show_infra);
+      },
   });
 
   Vue.component("edit-monitoring-tabpane", {
@@ -1328,7 +1353,7 @@
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
-        show_update_templates: function () {
+        show_update_template: function () {
           if (this.no_stack) {return;}
           var self = this;
           self.show_tabpane('update-template');
