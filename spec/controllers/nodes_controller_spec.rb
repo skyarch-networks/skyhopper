@@ -18,7 +18,7 @@ describe NodesController, :type => :controller do
     let(:fqdn){'sky.example.com'}
     before do
       expect(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :fqdn_or_ip).and_return(fqdn)
+      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :fqdn).and_return(fqdn)
     end
 
     context 'when success' do

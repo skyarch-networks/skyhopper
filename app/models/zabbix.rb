@@ -212,11 +212,11 @@ class Zabbix
     @sky_zabbix.host.create(
       host: physical_id,
       interfaces: [{
-        type: 1,
-        main: 1,
-        ip: ec2.elastic_ip || ec2.public_ip_address,
-        dns: ec2.public_dns_name,
-        port: 10050,
+        type:  1,
+        main:  1,
+        ip:    ec2.ip_addr,
+        dns:   ec2.fqdn,
+        port:  10050,
         useip: 0
       }],
       groups: [

@@ -29,7 +29,7 @@ describe Node, :type => :model do
 
     before do
       allow(Open3).to receive(:popen3)
-      allow_any_instance_of(EC2Instance).to receive(:fqdn_or_ip).and_return("fqdn")
+      allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
     end
 
     let(:infra){build(:infrastructure)}
@@ -133,7 +133,7 @@ describe Node, :type => :model do
       EOS
       allow(status).to receive(:success?).and_return(true)
       allow(Open3).to receive(:capture3).and_return([out, 'err', status])
-      allow_any_instance_of(EC2Instance).to receive(:fqdn_or_ip).and_return("fqdn")
+      allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
     end
 
     it 'return hash' do

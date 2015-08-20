@@ -30,7 +30,7 @@ class NodesController < ApplicationController
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
-      fqdn        = @infra.instance(physical_id).fqdn_or_ip
+      fqdn        = @infra.instance(physical_id).fqdn
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 

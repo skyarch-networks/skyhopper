@@ -117,7 +117,7 @@ knife bootstrap #{fqdn} \
 
     raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
 
-    fqdn = infra.instance(@name).fqdn_or_ip
+    fqdn = infra.instance(@name).fqdn
 
     if selected_auto_generated
       local_path = scp_specs(ec2key.path_temp, fqdn)
@@ -261,7 +261,7 @@ knife bootstrap #{fqdn} \
   def exec_knife_ssh(command, infra)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
-    fqdn = infra.instance(@name).fqdn_or_ip
+    fqdn = infra.instance(@name).fqdn
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
