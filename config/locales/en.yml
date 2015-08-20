@@ -310,7 +310,7 @@ en:
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
     before_reg_title:     'Please select template before proceeding.'
-    linked_templates:	  'Linked Templates'
+    linked_templates:     'Linked Templates'
     btn:
       create: 'Register'
       add:    'Add'
