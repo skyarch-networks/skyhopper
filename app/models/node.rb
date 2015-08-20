@@ -10,7 +10,6 @@ class Node
   include ::Node::Attribute
 
   ChefDefaultUser = "ec2-user"
-  SSHConnectionAttribute = "public_dns" # to set ec2 (or others) public dns
   WaitSearchIndexInterval = 5
 
   class BootstrapError < ::StandardError; end
@@ -45,7 +44,6 @@ knife bootstrap #{fqdn} \
 --identity-file #{ec2key.path_temp} \
 --ssh-user #{user} \
 --node-name #{node_name} \
---json-attributes '{"#{SSHConnectionAttribute}":"#{fqdn}"}' \
 --sudo
     EOS
     if chef_client_version
