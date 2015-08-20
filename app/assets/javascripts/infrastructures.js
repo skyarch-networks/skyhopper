@@ -931,7 +931,9 @@
         bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
-          snapshot.create(volume_id, self.physical_id).done(function (data) {
+          snapshot.create(volume_id, self.physical_id).progress(function (data) {
+            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+          }).done(function (data) {
             if ($('#snapshots-modal.in').length && self.snapshots[data.snapshot_id] !== 'completed') {
               self.load_snapshots();
             }

@@ -35,9 +35,9 @@ class Snapshot extends ModelBase {
       volume_id: volume_id,
       physical_id: physical_id
     }).done((data: any) => {
-        this.watch_snapshot_progress(dfd)(data);
-      })
-      .fail(this.rejectF(dfd));
+      dfd.notify(data);
+      this.watch_snapshot_progress(dfd)(data);
+    }).fail(this.rejectF(dfd));
 
     return dfd.promise();
   }
