@@ -1454,7 +1454,7 @@
   };
   var app;
 
-  var index = function(){
+  var infraindex = function(){
     return new Vue({
       el: '#demo',
       data: {
@@ -1483,6 +1483,7 @@
         filterKey: '',
         reversed: {}
       }
+
     },
     compiled: function () {
       // initialize reverse state
@@ -1496,8 +1497,28 @@
         this.sortKey = key
         this.reversed[key] = !this.reversed[key]
       }
-    }
+    },
+    created:{
+      $.ajax({url: "/infrastructure.json", success: function(result){
+          console.log(result);
+      }});
+    }.
   })
+
+
+    Vue.filter('wrap', function(value){
+      if (value == 'stack'){
+        return "Stack Name";
+      }else if(value == 'regions'){
+        return "Regions";
+      }else if(value == 'key'){
+        return "KeyPair Name";
+      }else if(value == 'action'){
+        return "Action"
+      }else{
+        return value;
+      }
+    });
 
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {

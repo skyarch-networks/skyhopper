@@ -36,6 +36,7 @@ class InfrastructuresController < ApplicationController
 
 
   # GET /infrastructures
+  # GET /infrastructures.json
   def index
     project_id = params.require(:project_id)
     session[:project_id] = project_id
@@ -43,9 +44,12 @@ class InfrastructuresController < ApplicationController
 
     @selected_project = Project.find(project_id)
 
-    @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
-
+    @infrastructures = @selected_project.infrastructures
     @selected_client = @selected_project.client
+
+    respond_to do |format|
+      format.json
+      format.html {@infrastructures = @infrastructures.includes(:ec2_private_key).page(page).per(10)}
   end
 
   # GET /infrastructures/:id
