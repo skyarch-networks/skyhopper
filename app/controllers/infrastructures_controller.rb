@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -44,12 +45,13 @@ class InfrastructuresController < ApplicationController
 
     @selected_project = Project.find(project_id)
 
-    @infrastructures = @selected_project.infrastructures
+    @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
     @selected_client = @selected_project.client
-
+    puts @selected_client.inspect
     respond_to do |format|
       format.json
-      format.html {@infrastructures = @infrastructures.includes(:ec2_private_key).page(page).per(10)}
+      format.html
+    end
   end
 
   # GET /infrastructures/:id

@@ -5,6 +5,7 @@
   <%= link_to t('infrastructures.return_to_projects'), projects_path, {class: "btn btn-small btn-link"} unless current_user.master? %>
 </div>
 
+<div-loader v-if="loading"></div-loader>
 <!-- component template -->
 <script type="text/x-template" id="grid-template">
   <table class="table table-hover">
@@ -12,9 +13,9 @@
       <tr>
         <th v-repeat="key: columns"
           v-on="click:sortBy(key)"
-          v-class="active: sortKey == key">
+          v-class="active: sortKey === key">
           <text v-text="key | wrap"></text>
-          <span class="glyphicon"
+          <span v-if="key !== 'id'" class="glyphicon pull-right"
             v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'">
           </span>
         </th>
@@ -26,7 +27,7 @@
         | filterBy filterKey
         | orderBy sortKey reversed[sortKey]">
         <td v-repeat="key: columns">
-          <text v-text="entry[key] | listen"></text>
+          <text id="{{key}}" v-html="entry[key] | listen key "></text>
         </td>
       </tr>
     </tbody>
@@ -36,7 +37,7 @@
 <!-- demo root element -->
 <div id="demo">
   <form id="search">
-    Search <input name="query" v-model="searchQuery">
+    <input name="query" v-model="searchQuery" class="form-control" placeholder="Search .....">
   </form>
   <demo-grid
     data="{{gridData}}"
@@ -45,21 +46,10 @@
   </demo-grid>
 </div>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th><%= t 'infrastructures.stackname' %></th>
-      <th><%= t 'infrastructures.region' %></th>
-      <th><%= t 'infrastructures.keypair' %></th>
-      <th><%= t 'common.actions' %></th>
-    </tr>
-  </thead>
+<table class="table table-hover hidden">
   <tbody>
     <% @infrastructures.each do |infra| %>
       <tr class="infrastructure-row">
-        <td><%= infra.stack_name %> </td>
-        <td><%= infra.region %></td>
-        <td><%= infra.keypairname || t('infrastructures.msg.no_keypair') %></td>
         <td>
           <%= button_show_infra(infra) %>
 

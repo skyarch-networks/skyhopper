@@ -1459,13 +1459,8 @@
       el: '#demo',
       data: {
         searchQuery: '',
-        gridColumns: ['name', 'power', 'status'],
-        gridData: [
-          { name: 'Chuck Norris', power: Infinity, status: 'A'},
-          { name: 'Bruce Lee', power: 9000, status: 'B'},
-          { name: 'Jackie Chan', power: 7000, status: 'C' },
-          { name: 'Jet Li', power: 8000, status: 'D' }
-        ]
+        gridColumns: ['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
+        gridData: []
       }
     });
   };
@@ -1481,43 +1476,127 @@
         columns: null,
         sortKey: '',
         filterKey: '',
-        reversed: {}
+        reversed: {},
+        loading: false,
       }
 
     },
     compiled: function () {
       // initialize reverse state
-      var self = this
+        var self = this;
       this.columns.forEach(function (key) {
         self.reversed.$add(key, false)
       })
     },
     methods: {
       sortBy: function (key) {
-        this.sortKey = key
-        this.reversed[key] = !this.reversed[key]
+          if(key !== 'id')
+            this.sortKey = key
+            this.reversed[key] = !this.reversed[key]
       }
     },
-    created:{
-      $.ajax({url: "/infrastructure.json", success: function(result){
-          console.log(result);
-      }});
-    }.
-  })
+    created: function (){
+        var self = this;
+        self.loading = true;
+        var id =  parseURLParams();
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"
+                          ];
+       $.ajax({
+           url:'/infrastructures?&project_id='+id,
+           success: function (data) {
+             self.data = data.map(function (item) {
+                 var d = new Date(item.created_at);
+                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+                 return {stack_name: item.stack_name,
+                         region: item.region,
+                         keypairname: item.keypairname,
+                         created_at: date,
+
+                     //  ec2_private_key_id: item.ec2_private_key_id,
+                     //  project_id: item.project_id,
+                         status: item.status,
+                         id: item.id,
+                         };
+
+                 self.loading = false;
+               });
+
+             self.$emit('data-loaded')
+           }
+         });
+
+    },
+ });
+
+
+
+  function parseURLParams() {
+    var url =  window.location.href;
+    var queryStart = url.indexOf("?") + 1,
+      queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+      query = url.slice(queryStart, queryEnd - 1),
+      pairs = query.replace(/\+/g, " ").split("&"),
+      parms = {}, i, n, v, nv;
+
+    if (query === url || query === "") {
+      return;
+    }
+
+    for (i = 0; i < pairs.length; i++) {
+      nv = pairs[i].split("=");
+      n = decodeURIComponent(nv[0]);
+      v = decodeURIComponent(nv[1]);
+
+      if (!parms.hasOwnProperty(n)) {
+        parms[n] = [];
+      }
+
+      parms[n].push(nv.length === 2 ? v : null);
+    }
+    return parms['project_id'];
+  }
 
 
     Vue.filter('wrap', function(value){
-      if (value == 'stack'){
+      if (value == 'stack_name'){
         return "Stack Name";
-      }else if(value == 'regions'){
+      }else if(value == 'region'){
         return "Regions";
-      }else if(value == 'key'){
-        return "KeyPair Name";
-      }else if(value == 'action'){
+      }else if(value == 'created_at'){
+        return "Launch Time";
+      }else if(value == 'id'){
         return "Action"
+      }else if(value == 'status'){
+        return "Status"
       }else{
         return value;
       }
+    });
+    Vue.filter('listen', function(value, key){
+        if(key == 'id'){
+        var isEdit = $('#edit-'+value+'').attr('class');
+        var href = $('#edit-'+value+'').attr('href');
+        var isDelete = $('#delete-'+value+'').attr('class');
+        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>Show</a> " +
+          "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
+          "<a class='"+isEdit+"' href='"+href+"'>Edit</a> " +
+          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>Detach</a> "+
+          "<div class='btn-group'>"+
+              "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
+              "    Delete Stack&nbsp;<span class='caret'></span> " +
+              " </a> " +
+             "<ul class='dropdown-menu'>"+
+              "<li> " +
+               "<a class='delete-stack' infrastructure-id="+value+" href='#'>Execute</a> " +
+            "</li>"+
+            "</ul>"+
+           "</div>";
+
+          return ret;
+        }else{
+          return value;
+        }
     });
 
   var stack_in_progress = function (infra) {

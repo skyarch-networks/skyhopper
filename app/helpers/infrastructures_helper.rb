@@ -22,6 +22,7 @@ module InfrastructuresHelper
     return nil unless Pundit.policy(user, infra).edit?
 
     klass = 'btn btn-default btn-xs'
+    kid = 'edit-'+infra.id.to_s
     if infra.status.present?
       path = '#'
       klass << ' disabled'
@@ -33,6 +34,7 @@ module InfrastructuresHelper
       t('.edit', default: t("helpers.links.edit")),
       path,
       class: klass,
+      id: kid
     )
   end
 
@@ -42,29 +44,29 @@ module InfrastructuresHelper
     if deleting?(infra.status)
       return link_to t('helpers.links.detach'), "#", class: "btn btn-xs btn-warning disabled"
     end
-
     return link_to t('helpers.links.detach'), '#', {
       class: 'btn btn-xs btn-warning detach-infra',
-      :'infrastructure-id' => infra.id
+      :'infrastructure-id' => infra.id,
+
     }
   end
 
   def button_delete_stack(infra, user: current_user)
     return nil unless Pundit.policy(user, infra).delete_stack?
-
+    kid = "delete-"+infra.id.to_s
     btn_text = t('infrastructures.btn.delete_stack') + '&nbsp;' + content_tag(:span, '', class: 'caret')
 
     if deleting?(infra.status) || infra.status.blank?
-      return link_to btn_text.html_safe, "#", class: "btn btn-xs btn-danger disabled"
+      return link_to btn_text.html_safe, "#", class: "btn btn-xs btn-danger disabled", id: kid
     end
 
     button = link_to t('infrastructures.btn.delete_stack_confirm'), '#', {
       :class               => "delete-stack",
-      :"infrastructure-id" => infra.id
+      :"infrastructure-id" => infra.id,
     }
     ret = <<-EOF.html_safe
 <div class="btn-group">
-  <a class="btn btn-xs btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+  <a id="#{kid}" class="btn btn-xs btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
     #{btn_text}
   </a>
   <ul class="dropdown-menu">
