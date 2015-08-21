@@ -8,28 +8,57 @@
 <div-loader v-if="loading"></div-loader>
 <!-- component template -->
 <script type="text/x-template" id="grid-template">
-  <table class="table table-hover">
+<table>
+    <caption>
+        <span class="grid_data_length">
+            <span>{{filtered_data.length}}</span> record(s)
+        </span>
+        <span class="grid_data_search">
+            <label for="search">Search</label>
+            <input type="text" id="search" v-model="search_param">
+        </span>
+    </caption>
     <thead>
-    <tr>
-      <th v-repeat="key: columns"
-          v-on="click:sortBy(key)"
-          v-class="active: sortKey === key">
-            <text v-text="key | wrap"></text>
-            <span v-if="key !== 'id'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-      </th>
-    </tr>
+        <tr>
+          <th v-repeat="options.columns" v-on="click: sortBy(key)">{{* header}}</th>
+        </tr>
     </thead>
-    <tbody>
-    <tr class="infrastructure-row" v-repeat="
-              entry: data
-              | filterBy filterKey
-              | orderBy sortKey reversed[sortKey]">
-      <td v-repeat="key: columns">
-        <text id="{{key}}" v-html="entry[key] | listen key "></text>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      <tbody>
+          <tr v-repeat="paginated_data">
+              <td v-repeat="options.columns">{{* $parent[key]}}</td>
+          </tr>
+      </tbody>
+</table>
+  <span v-show="page_length > 1 && current_page_index > 1" class="page_index" v-on="click: current_page_index = 1">&lt;&lt;</span>
+    <template v-repeat="pages">
+        <span class="page_index" v-class="bold: current_page_index == $value" v-on="click: current_page_index = $value">{{ $value }}</span>
+    </template>
+  <span v-show="page_length > 1 && current_page_index < page_length" class="page_index" v-on="click: current_page_index = page_length">&gt;&gt;</span>
+
+
+
+  // <table class="table table-hover">
+  //   <thead>
+  //   <tr>
+  //     <th v-repeat="key: columns"
+  //         v-on="click:sortBy(key)"
+  //         v-class="active: sortKey === key">
+  //           <text v-text="key | wrap"></text>
+  //           <span v-if="key !== 'id'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+  //     </th>
+  //   </tr>
+  //   </thead>
+  //   <tbody>
+  //   <tr class="infrastructure-row" v-repeat="
+  //             entry: data
+  //             | filterBy filterKey
+  //             | orderBy sortKey reversed[sortKey]">
+  //     <td v-repeat="key: columns">
+  //       <text id="{{key}}" v-html="entry[key] | listen key "></text>
+  //     </td>
+  //   </tr>
+  //   </tbody>
+  // </table>
 </script>
 
 <!-- demo root element -->
@@ -37,10 +66,10 @@
   <form id="search">
     <input name="query" v-model="searchQuery" class="form-control" placeholder="Search .....">
   </form>
-  <demo-grid
-    data="{{gridData}}"
+  <demo-grid v-with="options: gridOptions">
+    <!-- data="{{gridData}}"
     columns="{{gridColumns}}"
-    filter-key="{{searchQuery}}">
+    filter-key="{{searchQuery}}"> -->
   </demo-grid>
 </div>
 

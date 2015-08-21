@@ -1459,72 +1459,158 @@
       el: '#demo',
       data: {
         searchQuery: '',
+        table_data
         gridColumns: ['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
-        gridData: []
+        gridOptions: {
+          table_data: loadInfraData(),
+          columns: [
+            {header: 'Stack Name', key: 'stack_name' },
+            {header: 'Region', key: 'region' },
+            {header: 'KeyPair Name', key: 'keypairname' },
+            {header: 'Launch Time', key: 'created_at' },
+            {header: 'Status', key: 'status' },
+            {header: 'Action', key: 'id' },
+          ],
+          pagination: 3
+        }
       }
     });
   };
 
+
+  var loadInfraData = function(){
+    var id =  parseURLParams();
+    var data = null;
+    var monthNames = ["January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"
+                      ];
+   $.ajax({
+       url:'/infrastructures?&project_id='+id,
+       success: function (data) {
+         data = data.map(function (item) {
+             var d = new Date(item.created_at);
+             var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+             return {stack_name: item.stack_name,
+                     region: item.region,
+                     keypairname: item.keypairname,
+                     created_at: date,
+                     status: item.status,
+                     id: item.id,
+                     };
+             self.loading = false;
+           });
+       }
+     });
+     return data;
+  }
   // register the grid component
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
     data: function () {
       return {
+        /*
         data: null,
         columns: null,
         sortKey: '',
         filterKey: '',
         reversed: {},
         loading: false,
-      }
-
+        */
+       ascending: {},
+       current_page_index: 1,
+       search_param: "",
+       filtered_data: [],
+       options: null
+     };
     },
+    computed: {
+      paginated_data: function() {
+        if(!!this.options && !!this.options.table_data)
+          var index = (this.current_page_index - 1) * this.options.pagination;
+          return this.filtered_data.slice(index, index + this.options.pagination);
+        else
+          return [];
+      },
+      page_length: function() {
+        if(!!this.options)
+          return Math.ceil(this.filtered_data.length / this.options.pagination);
+        else
+          return 1;
+      },
+      pages: function() {
+        var total = [],
+          i = this.current_page_index;
+
+          if(i === this.page_length) {
+            while (total.length <= 5 && i >= 1) {
+              total.push(i);
+              i--;
+            }
+          }else if ((i + 2) > this.page_length) {
+            while (total.length < 4 && i >= 1){
+              total.push(i);
+              i--;
+            }
+          }else if ((i + 2) <= this.page_length) {
+            while (total.length < 3 && i >= 1) {
+              total.push(i);
+              i--;
+            }
+          }
+          i = this.current_page_index + 1;
+          while (i <= this.page_length && total.length < 5) {
+              total.push(i);
+              i++;
+          }
+          return total.sort(function(a, b){
+            return a - b;
+          });
+        }
+      },
     compiled: function () {
       // initialize reverse state
-        var self = this;
+      var self = this;
       this.columns.forEach(function (key) {
         self.reversed.$add(key, false)
       })
     },
     methods: {
       sortBy: function (key) {
-          if(key !== 'id')
-            this.sortKey = key
-            this.reversed[key] = !this.reversed[key]
+          // if(key !== 'id')
+          //   this.sortKey = key
+          //   this.reversed[key] = !this.reversed[key]
+          var asc = this.ascending[key] = !this.ascending[key];
+          this.filtered_data.sort(function(a,b) {
+            var res = a[key] > b[key];
+            if (asc) res = !res;
+            return res ? 1 : -1;
+          })
       }
     },
     created: function (){
-        var self = this;
-        self.loading = true;
-        var id =  parseURLParams();
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"
-                          ];
-       $.ajax({
-           url:'/infrastructures?&project_id='+id,
-           success: function (data) {
-             self.data = data.map(function (item) {
-                 var d = new Date(item.created_at);
-                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
-                 return {stack_name: item.stack_name,
-                         region: item.region,
-                         keypairname: item.keypairname,
-                         created_at: date,
-                     //  ec2_private_key_id: item.ec2_private_key_id,
-                     //  project_id: item.project_id,
-                         status: item.status,
-                         id: item.id,
-                         };
-
-                 self.loading = false;
+        var populate_filtered_data = function()  {
+           if (!!this.options && !!this.options.table_data)  {
+             var data = this.options.table_data,
+                 self = this;
+             if (this.search_param !== "") {
+               data = _.filter(data, function(row) {
+                  for (var k in row) {
+                    if (row.hasOwnProperty(k))  {
+                      if (row[k].toString().toLowerCase().match(self.search_param.toLowerCase())) {
+                          return true;
+                      }
+                    }
+                  }
                });
-
-             self.$emit('data-loaded')
+             }
+             this.filtered_data = data;
+           } else {
+             this.filtered_data = [];
            }
-         });
-
+         };
+         this.$watch("search_param", populate_filtered_data);
+         this.$watch("options['table_data']", populate_filtered_data);
     },
  });
 
