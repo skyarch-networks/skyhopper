@@ -65,16 +65,16 @@ module InfrastructuresHelper
       :"infrastructure-id" => infra.id,
     }
     ret = <<-EOF.html_safe
-<div class="btn-group">
-  <a id="#{kid}" class="btn btn-xs btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
-    #{btn_text}
-  </a>
-  <ul class="dropdown-menu">
-    <li>
-      #{button}
-    </li>
-  </ul>
-</div>
+    <div class="btn-group">
+      <a id="#{kid}" class="btn btn-xs btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+        #{btn_text}
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          #{button}
+        </li>
+      </ul>
+    </div>
     EOF
     return ret
   end

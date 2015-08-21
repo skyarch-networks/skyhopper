@@ -1512,7 +1512,6 @@
                          region: item.region,
                          keypairname: item.keypairname,
                          created_at: date,
-
                      //  ec2_private_key_id: item.ec2_private_key_id,
                      //  project_id: item.project_id,
                          status: item.status,

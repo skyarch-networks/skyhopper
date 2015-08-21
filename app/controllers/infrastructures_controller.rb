@@ -47,7 +47,7 @@ class InfrastructuresController < ApplicationController
 
     @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
     @selected_client = @selected_project.client
-    puts @selected_client.inspect
+    
     respond_to do |format|
       format.json
       format.html
