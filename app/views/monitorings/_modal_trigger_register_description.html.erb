@@ -19,8 +19,8 @@
         </div>
 
 	<div class="modal-footer">
-          <button v-on="click: create()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
           <button type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.cancel' %></button>
+          <button v-on="click: create()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.done' %></button>
 	</div>
       </div>
     </div>

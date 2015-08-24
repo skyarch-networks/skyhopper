@@ -129,6 +129,8 @@ en:
     stackname:          'Stack Name'
     region:             'Region'
     keypair:            'KeyPair Name'
+    launchtime:         'Launch Time'
+    status:             'Status'
     sshkey:             'SSH Private Key'
     return_to_projects: 'Return to your projects'
     stack_info:         'Stack Information'
@@ -139,6 +141,7 @@ en:
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
+    search:             'Search by Keyword ...'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'

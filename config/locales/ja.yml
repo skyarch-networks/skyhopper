@@ -129,6 +129,8 @@ ja:
     stackname:          'スタック名'
     region:             'リージョン'
     keypair:            '鍵ペア名'
+    launchtime:         '発射時刻'
+    status:             '状態'
     sshkey:             'SSH鍵（鍵ペア）'
     return_to_projects: 'プロジェクト一覧に戻る'
     stack_info:         'スタックの詳細'
@@ -139,6 +141,7 @@ ja:
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
+    search:             'キーワードで検索...'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -312,6 +315,7 @@ ja:
     register_host:        'インフラストラクチャを Zabbix Server に登録'
     before_reg_title:     '先に進む前に、テンプレートを選択してください。'
     linked_templates:     '登録されたテンプレート'
+    template:             '監視テンプレート'
     btn:
       create: '登録'
       add:    '追加'

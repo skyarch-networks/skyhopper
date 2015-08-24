@@ -419,6 +419,7 @@
     data: function(){return{
       loading: false,
       templates: [],
+      before_register: false,
     };},
     methods:{
       update_templates: function () {
@@ -438,6 +439,23 @@
             })(t('monitoring.msg.update_templates'));
           }).fail(alert_and_show_infra);
       },
+      create: function () {
+        if(!this.has_selected) {return;}
+
+        var self = this;
+        self.creating = true;
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.name;
+        }).value();
+
+        this.monitoring.create_host(templates).done(function () {
+          alert_success(function () {
+            self.$parent.show_edit_monitoring();
+          })(t('monitoring.msg.created'));
+        }).fail(alert_and_show_infra);
+      },
     },
     computed:{
         monitoring: function () { return new Monitoring(current_infra); },
@@ -451,6 +469,7 @@
         var self = this;
         var monitoring = new Monitoring(current_infra);
         monitoring.show().done(function (data) {
+          self.before_register = data.before_register;
           self.templates       = data.templates;
           self.$parent.loading = false;
         }).fail(alert_and_show_infra);
@@ -1459,7 +1478,7 @@
       el: '#demo',
       data: {
         searchQuery: '',
-        gridColumns: ['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
+        gridColumns: [],//['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
         gridData: []
       }
     });
@@ -1494,43 +1513,55 @@
             this.sortKey = key
             this.reversed[key] = !this.reversed[key]
       }
+
     },
     created: function (){
         var self = this;
         self.loading = true;
-        var id =  parseURLParams();
+        var id =  parseURLParams('project_id');
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
+        if (id >3)
+          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          self.columns = ['stack_name','region', 'keypairname', 'id'];
+
        $.ajax({
            url:'/infrastructures?&project_id='+id,
            success: function (data) {
+             var nextColumns = [];
              self.data = data.map(function (item) {
                  var d = new Date(item.created_at);
                  var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
-                 return {stack_name: item.stack_name,
-                         region: item.region,
-                         keypairname: item.keypairname,
-                         created_at: date,
-                     //  ec2_private_key_id: item.ec2_private_key_id,
-                     //  project_id: item.project_id,
-                         status: item.status,
-                         id: item.id,
-                         };
-
+                 if(item.project_id > 3){
+                   return {stack_name: item.stack_name,
+                       region: item.region,
+                       keypairname: item.keypairname,
+                       created_at: date,
+                       //  ec2_private_key_id: item.ec2_private_key_id,
+                       status: item.status,
+                       id: item.id,
+                       };
+                 }else{
+                   return {stack_name: item.stack_name,
+                           region: item.region,
+                           keypairname: item.keypairname,
+                           //  ec2_private_key_id: item.ec2_private_key_id,
+                           id: item.id,
+                   };
+                 }
                  self.loading = false;
                });
-
+             console.log(self.columns);
              self.$emit('data-loaded')
-           }
+               }
          });
-
     },
  });
 
 
-
-  function parseURLParams() {
+  function parseURLParams(option) {
     var url =  window.location.href;
     var queryStart = url.indexOf("?") + 1,
       queryEnd   = url.indexOf("#") + 1 || url.length + 1,
@@ -1553,21 +1584,23 @@
 
       parms[n].push(nv.length === 2 ? v : null);
     }
-    return parms['project_id'];
+    return parms[option];
   }
 
 
     Vue.filter('wrap', function(value){
       if (value == 'stack_name'){
-        return "Stack Name";
+        return t('infrastructures.stackname');
       }else if(value == 'region'){
-        return "Regions";
+        return t('infrastructures.region');
       }else if(value == 'created_at'){
-        return "Launch Time";
+        return t('infrastructures.launchtime');
       }else if(value == 'id'){
-        return "Action"
+        return t('common.actions');
       }else if(value == 'status'){
-        return "Status"
+        return t('infrastructures.status');
+      }else if(value == 'keypairname'){
+        return t('infrastructures.keypair');
       }else{
         return value;
       }
@@ -1577,13 +1610,13 @@
         var isEdit = $('#edit-'+value+'').attr('class');
         var href = $('#edit-'+value+'').attr('href');
         var isDelete = $('#delete-'+value+'').attr('class');
-        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>Show</a> " +
+        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.show')+"</a> " +
           "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
-          "<a class='"+isEdit+"' href='"+href+"'>Edit</a> " +
-          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>Detach</a> "+
+          "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
+          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.detach')+"</a> "+
           "<div class='btn-group'>"+
               "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
-              "    Delete Stack&nbsp;<span class='caret'></span> " +
+              "    "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
               " </a> " +
              "<ul class='dropdown-menu'>"+
               "<li> " +
@@ -1594,7 +1627,10 @@
 
           return ret;
         }else{
-          return value;
+          if(value == "CREATE_COMPLETE")
+            return "<span class='label label-success'>"+value+"</span>";
+          else
+            return value;
         }
     });
 
@@ -1731,7 +1767,6 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-
     show_infra(infra_id);
   });
 
