@@ -1473,6 +1473,11 @@
   };
   var app;
 
+
+
+
+
+
   var infraindex = function(){
     return new Vue({
       el: '#demo',
@@ -1484,11 +1489,12 @@
     });
   };
 
+
+
   // register the grid component
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
     data: function () {
       return {
         data: null,
@@ -1497,9 +1503,8 @@
         filterKey: '',
         reversed: {},
         loading: false,
-      }
-
-    },
+          };
+      },
     compiled: function () {
       // initialize reverse state
         var self = this;
@@ -1553,12 +1558,12 @@
                  }
                  self.loading = false;
                });
-             console.log(self.columns);
              self.$emit('data-loaded')
                }
          });
     },
  });
+
 
 
   function parseURLParams(option) {
