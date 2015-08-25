@@ -22,13 +22,22 @@
       <tr class="infrastructure-row" v-repeat="
         entry: data
         | filterBy filterKey
-        | orderBy sortKey reversed[sortKey]">
+        | orderBy sortKey reversed[sortKey]
+        | paginate">
         <td v-repeat="key: columns">
           <text id="{{key}}" v-html="entry[key] | listen key "></text>
         </td>
       </tr>
     </tbody>
   </table>
+<nav v-if="data.length >= 10">
+  <ul class="pager">
+    <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+<label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
+    <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+</ul>
+
+          </nav>
 </script>
 
 <!-- demo root element -->

@@ -1539,6 +1539,8 @@
         filterKey: '',
         reversed: {},
         loading: true,
+        pages: 10,
+        pageNumber: 0,
           };
       },
     compiled: function () {
@@ -1553,14 +1555,37 @@
           if(key !== 'id')
             this.sortKey = key
             this.reversed[key] = !this.reversed[key]
-      }
-
+      },
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
+    },
+    filters:{
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+         return list.slice(index, index + this.pages);
+      },
+     roundup: function (val) { return (Math.ceil(val))},
     },
     created: function (){
         var il = new Loader();
         var self = this;
         self.loading = true;
         var id =  parseURLParams('project_id');
+        var page = parseURLParams('page');
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
@@ -1570,9 +1595,10 @@
           self.columns = ['stack_name','region', 'keypairname', 'id'];
 
        $.ajax({
-           url:'/infrastructures?&project_id='+id,
+           url:'/infrastructures?&page='+page+'&project_id='+id,
            success: function (data) {
              var nextColumns = [];
+             this.pages = data.length;
              self.data = data.map(function (item) {
                  var d = new Date(item.created_at);
                  var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
