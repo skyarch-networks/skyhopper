@@ -5,7 +5,7 @@
   <%= link_to t('infrastructures.return_to_projects'), projects_path, {class: "btn btn-small btn-link"} unless current_user.master? %>
 </div>
 
-<div-loader v-if="loading"></div-loader>
+
 <!-- component template -->
 <script type="text/x-template" id="grid-template">
   <table class="table table-hover">
@@ -32,10 +32,14 @@
 </script>
 
 <!-- demo root element -->
+<div-loader v-if="loading"></div-loader>
 <div id="demo">
-  <form id="search">
-    <input id="searchQ" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-  </form>
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form>
+  </div>
+  <hr>
   <demo-grid
     data="{{gridData}}"
     columns="{{gridColumns}}"

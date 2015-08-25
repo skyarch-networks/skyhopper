@@ -322,6 +322,10 @@ en:
       delete: 'Delete'
       done:   'Done'
       cancel: 'Cancel'
+      close:  'Close'
+      save:   'Save'
+      next:   'Next'
+      prev:   'Prevous'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
@@ -333,6 +337,8 @@ en:
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
       not_running:             'Zabbix Server is not running.'
       trigger_setting_warning: 'Threshold will be updated only the selected items.'
+      page:                    'Page'
+      of:                      'of'
       no_data: |
         Failed to fetch any data.
           1. Zabbix Agent may not have been installed into the server.

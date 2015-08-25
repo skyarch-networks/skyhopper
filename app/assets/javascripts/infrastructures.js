@@ -274,6 +274,8 @@
       showing_url: false,
       loading_problems: true,
       loading: false,
+      page: 0,
+      dispItemSize: 10,
     };},
     methods: {
       show_problems: function () {
@@ -385,6 +387,19 @@
           });
         }).fail(alert_and_show_infra);
       },
+      showPrev: function (){
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function (){
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function (){
+        this.$parent.show_update_template();
+      },
     },
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
@@ -394,6 +409,16 @@
         return _.some(this.templates, function(c){
           return c.checked;
         });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page == 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
       },
     },
     created: function () {
@@ -412,12 +437,17 @@
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val))},
+    },
   });
 
   Vue.component("update-template-tabpane",{
     template: "#update-template-tabpane-template",
     data: function(){return{
       loading: false,
+      page: 0,
+      dispItemSize: 10,
       templates: [],
       before_register: false,
     };},
@@ -456,15 +486,40 @@
           })(t('monitoring.msg.created'));
         }).fail(alert_and_show_infra);
       },
+
+      showPrev: function (){
+          if(this.isStartPage) return;
+          this.page--;
+          console.log(this.page);
+      },
+      showNext: function (){
+          if(this.isEndPage) return;
+          this.page++;
+          console.log(this.page);
+      },
+      close: function (){
+          this.$parent.show_update_template();
+      },
     },
     computed:{
         monitoring: function () { return new Monitoring(current_infra); },
+
         has_selected: function() {
           return _.some(this.templates, function(c){
             return c.checked;
           });
         },
-      },
+        dispItems: function(){
+          var startPage = this.page * this.dispItemSize;
+          return this.templates.slice(startPage, startPage + this.dispItemSize);
+        },
+        isStartPage: function(){
+          return (this.page == 0);
+        },
+        isEndPage: function(){
+          return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+        },
+    },
       created: function () {
         var self = this;
         var monitoring = new Monitoring(current_infra);
@@ -474,7 +529,11 @@
           self.$parent.loading = false;
         }).fail(alert_and_show_infra);
       },
+     filters: {
+        roundup: function (val) { return (Math.ceil(val))},
+     },
   });
+
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
@@ -1473,11 +1532,6 @@
   };
   var app;
 
-
-
-
-
-
   var infraindex = function(){
     return new Vue({
       el: '#demo',
@@ -1495,6 +1549,7 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
+    props: ['data', 'columns', 'filter-key'],
     data: function () {
       return {
         data: null,
@@ -1502,15 +1557,15 @@
         sortKey: '',
         filterKey: '',
         reversed: {},
-        loading: false,
+        loading: true,
           };
       },
     compiled: function () {
       // initialize reverse state
         var self = this;
-      this.columns.forEach(function (key) {
-        self.reversed.$add(key, false)
-      })
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false)
+         })
     },
     methods: {
       sortBy: function (key) {
@@ -1521,6 +1576,7 @@
 
     },
     created: function (){
+        var il = new Loader();
         var self = this;
         self.loading = true;
         var id =  parseURLParams('project_id');
@@ -1655,12 +1711,13 @@
   };
 
   var index = function(){
-    var l = new Loader();
+
     if (app){
       app.$destroy();
+    }else{
+      infraindex = infraindex();
     }
-    app = infraindex();
-    l.$destroy();
+
   }
 
   var SHOW_INFRA_ID = '#infra-show';
@@ -1766,6 +1823,7 @@
   $(document).ready(function(){
     index();
   });
+
 
   $(document).on('click', '.show-infra', function (e) {
     e.preventDefault();

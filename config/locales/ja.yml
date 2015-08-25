@@ -323,6 +323,10 @@ ja:
       delete: '削除'
       done:   '完了'
       cancel: 'キャンセル'
+      close:  'クローズ'
+      save:   'セーブ'
+      next:   '次'
+      prev:   '以前'
     msg:
       host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
       before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
@@ -334,6 +338,8 @@ ja:
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
+      page:                    'ページ'
+      of:                      'の'
       no_data: |
         データが取得出来ませんでした。
           1. Zabbix Agent がインストールされていない可能性があります。
