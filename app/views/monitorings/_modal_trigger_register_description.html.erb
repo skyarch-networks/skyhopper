@@ -25,10 +25,10 @@
           </nav>
         </div>
 
-	<div class="modal-footer">
-          <button v-on="click: close()" type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.close' %></button>
-          <button v-on="click: create()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.save' %></button>
-	</div>
+      <div class="modal-footer">
+        <button v-on="click: close()" type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.close' %></button>
+        <button v-on="click: create()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.save' %></button>
+    	</div>
       </div>
     </div>
   </div>

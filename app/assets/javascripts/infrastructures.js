@@ -398,7 +398,7 @@
         console.log(this.page);
       },
       close: function (){
-        this.$parent.show_update_template();
+        this.$parent.show_monitoring();
       },
     },
     computed: {
@@ -456,82 +456,63 @@
         if (!this.has_selected) {return;}
         var self = this;
         self.loading = true;
-        var templates = _(this.templates).filter(function (t){
+        var templates = _(this.templates).filter(function (t) {
           return t.checked;
-        }).map(function(t){
+        }).map(function(t)  {
           return t.name
         }).value();
 
-        this.monitoring.update_templates(templates).done(function (){
-            self.loading = false;
-            self.$parent.show_update_template();
-            alert_success(function (){
-            })(t('monitoring.msg.update_templates'));
-          }).fail(alert_and_show_infra);
-      },
-      create: function () {
-        if(!this.has_selected) {return;}
-
-        var self = this;
-        self.creating = true;
-        var templates = _(this.templates).filter(function (t) {
-          return t.checked;
-        }).map(function (t) {
-          return t.name;
-        }).value();
-
-        this.monitoring.create_host(templates).done(function () {
-          alert_success(function () {
-            self.$parent.show_edit_monitoring();
-          })(t('monitoring.msg.created'));
+        this.monitoring.update_templates(templates).done(function ()  {
+          self.loading = false;
+          self.$parent.show_update_template();
+          alert_success(function (){
+          })(t('monitoring.msg.update_templates'));
         }).fail(alert_and_show_infra);
       },
-
-      showPrev: function (){
-          if(this.isStartPage) return;
-          this.page--;
-          console.log(this.page);
+      showPrev: function () {
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
       },
-      showNext: function (){
-          if(this.isEndPage) return;
-          this.page++;
-          console.log(this.page);
+      showNext: function () {
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
       },
-      close: function (){
-          this.$parent.show_update_template();
+      close: function ()  {
+        this.$parent.show_update_template();
       },
     },
     computed:{
-        monitoring: function () { return new Monitoring(current_infra); },
-
-        has_selected: function() {
-          return _.some(this.templates, function(c){
-            return c.checked;
-          });
-        },
-        dispItems: function(){
-          var startPage = this.page * this.dispItemSize;
-          return this.templates.slice(startPage, startPage + this.dispItemSize);
-        },
-        isStartPage: function(){
-          return (this.page == 0);
-        },
-        isEndPage: function(){
-          return ((this.page + 1) * this.dispItemSize >= this.templates.length);
-        },
-    },
-      created: function () {
-        var self = this;
-        var monitoring = new Monitoring(current_infra);
-        monitoring.show().done(function (data) {
-          self.before_register = data.before_register;
-          self.templates       = data.templates;
-          self.$parent.loading = false;
-        }).fail(alert_and_show_infra);
+      monitoring: function () { return new Monitoring(current_infra); },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
       },
-     filters: {
-        roundup: function (val) { return (Math.ceil(val))},
-     },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page == 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
+    },
+    created: function () {
+      var self = this;
+      var monitoring = new Monitoring(current_infra);
+      monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.templates       = data.templates;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val))},
+    },
   });
 
 
