@@ -129,6 +129,8 @@ ja:
     stackname:          'スタック名'
     region:             'リージョン'
     keypair:            '鍵ペア名'
+    launchtime:         '発射時刻'
+    status:             '状態'
     sshkey:             'SSH鍵（鍵ペア）'
     return_to_projects: 'プロジェクト一覧に戻る'
     stack_info:         'スタックの詳細'
@@ -139,6 +141,7 @@ ja:
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
+    search:             'キーワードで検索...'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -311,6 +314,8 @@ ja:
     explanation_triggers: 'トリガーの説明'
     register_host:        'インフラストラクチャを Zabbix Server に登録'
     before_reg_title:     '先に進む前に、テンプレートを選択してください。'
+    linked_templates:     '登録されたテンプレート'
+    template:             '監視テンプレート'
     btn:
       create: '登録'
       add:    '追加'
@@ -318,16 +323,23 @@ ja:
       delete: '削除'
       done:   '完了'
       cancel: 'キャンセル'
+      close:  'クローズ'
+      save:   'セーブ'
+      next:   '次'
+      prev:   '以前'
     msg:
       host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
       before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
       created:                 'インフラストラクチャを Zabbix Server に登録しました'
       updated:                 '監視設定が正常に更新されました'
+      update_templates:          'Zabbix のテンプレートは正常に更新されました'
       failure:                 'Zabbix Server への登録に失敗しました'
       not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
+      page:                    'ページ'
+      of:                      'の'
       no_data: |
         データが取得出来ませんでした。
           1. Zabbix Agent がインストールされていない可能性があります。

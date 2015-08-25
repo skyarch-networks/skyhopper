@@ -273,6 +273,9 @@
       url_status: [],
       showing_url: false,
       loading_problems: true,
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
     };},
     methods: {
       show_problems: function () {
@@ -384,6 +387,19 @@
           });
         }).fail(alert_and_show_infra);
       },
+      showPrev: function (){
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function (){
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function (){
+        this.$parent.show_monitoring();
+      },
     },
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
@@ -393,6 +409,16 @@
         return _.some(this.templates, function(c){
           return c.checked;
         });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page == 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
       },
     },
     created: function () {
@@ -411,7 +437,84 @@
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val))},
+    },
   });
+
+  Vue.component("update-template-tabpane",{
+    template: "#update-template-tabpane-template",
+    data: function(){return{
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
+      templates: [],
+      before_register: false,
+    };},
+    methods:{
+      update_templates: function () {
+        if (!this.has_selected) {return;}
+        var self = this;
+        self.loading = true;
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function(t)  {
+          return t.name
+        }).value();
+
+        this.monitoring.update_templates(templates).done(function ()  {
+          self.loading = false;
+          self.$parent.show_update_template();
+          alert_success(function (){
+          })(t('monitoring.msg.update_templates'));
+        }).fail(alert_and_show_infra);
+      },
+      showPrev: function () {
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function () {
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function ()  {
+        this.$parent.show_update_template();
+      },
+    },
+    computed:{
+      monitoring: function () { return new Monitoring(current_infra); },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page == 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
+    },
+    created: function () {
+      var self = this;
+      var monitoring = new Monitoring(current_infra);
+      monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.templates       = data.templates;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val))},
+    },
+  });
+
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
@@ -1311,6 +1414,13 @@
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
+        show_update_template: function () {
+          if (this.no_stack) {return;}
+          var self = this;
+          self.show_tabpane('update-template');
+          self.loading = true;
+        },
+
 
         tabpane_active: function (id) { return this.tabpaneID === id; },
 
@@ -1403,6 +1513,168 @@
   };
   var app;
 
+  var infraindex = function(){
+    return new Vue({
+      el: '#demo',
+      data: {
+        searchQuery: '',
+        gridColumns: [],//['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
+        gridData: []
+      }
+    });
+  };
+
+
+
+  // register the grid component
+  Vue.component('demo-grid', {
+    template: '#grid-template',
+    replace: true,
+    props: ['data', 'columns', 'filter-key'],
+    data: function () {
+      return {
+        data: null,
+        columns: null,
+        sortKey: '',
+        filterKey: '',
+        reversed: {},
+        loading: true,
+          };
+      },
+    compiled: function () {
+      // initialize reverse state
+        var self = this;
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false)
+         })
+    },
+    methods: {
+      sortBy: function (key) {
+          if(key !== 'id')
+            this.sortKey = key
+            this.reversed[key] = !this.reversed[key]
+      }
+
+    },
+    created: function (){
+        var il = new Loader();
+        var self = this;
+        self.loading = true;
+        var id =  parseURLParams('project_id');
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"
+                          ];
+        if (id >3)
+          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          self.columns = ['stack_name','region', 'keypairname', 'id'];
+
+       $.ajax({
+           url:'/infrastructures?&project_id='+id,
+           success: function (data) {
+             var nextColumns = [];
+             self.data = data.map(function (item) {
+                 var d = new Date(item.created_at);
+                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+                 if(item.project_id > 3){
+                   return {stack_name: item.stack_name,
+                       region: item.region,
+                       keypairname: item.keypairname,
+                       created_at: date,
+                       //  ec2_private_key_id: item.ec2_private_key_id,
+                       status: item.status,
+                       id: item.id,
+                       };
+                 }else{
+                   return {stack_name: item.stack_name,
+                           region: item.region,
+                           keypairname: item.keypairname,
+                           //  ec2_private_key_id: item.ec2_private_key_id,
+                           id: item.id,
+                   };
+                 }
+                 self.loading = false;
+               });
+             self.$emit('data-loaded')
+               }
+         });
+    },
+ });
+
+
+
+  function parseURLParams(option) {
+    var url =  window.location.href;
+    var queryStart = url.indexOf("?") + 1,
+      queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+      query = url.slice(queryStart, queryEnd - 1),
+      pairs = query.replace(/\+/g, " ").split("&"),
+      parms = {}, i, n, v, nv;
+
+    if (query === url || query === "") {
+      return;
+    }
+
+    for (i = 0; i < pairs.length; i++) {
+      nv = pairs[i].split("=");
+      n = decodeURIComponent(nv[0]);
+      v = decodeURIComponent(nv[1]);
+
+      if (!parms.hasOwnProperty(n)) {
+        parms[n] = [];
+      }
+
+      parms[n].push(nv.length === 2 ? v : null);
+    }
+    return parms[option];
+  }
+
+
+    Vue.filter('wrap', function(value){
+      if (value == 'stack_name'){
+        return t('infrastructures.stackname');
+      }else if(value == 'region'){
+        return t('infrastructures.region');
+      }else if(value == 'created_at'){
+        return t('infrastructures.launchtime');
+      }else if(value == 'id'){
+        return t('common.actions');
+      }else if(value == 'status'){
+        return t('infrastructures.status');
+      }else if(value == 'keypairname'){
+        return t('infrastructures.keypair');
+      }else{
+        return value;
+      }
+    });
+    Vue.filter('listen', function(value, key){
+        if(key == 'id'){
+        var isEdit = $('#edit-'+value+'').attr('class');
+        var href = $('#edit-'+value+'').attr('href');
+        var isDelete = $('#delete-'+value+'').attr('class');
+        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.show')+"</a> " +
+          "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
+          "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
+          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.detach')+"</a> "+
+          "<div class='btn-group'>"+
+              "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
+              "    "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
+              " </a> " +
+             "<ul class='dropdown-menu'>"+
+              "<li> " +
+               "<a class='delete-stack' infrastructure-id="+value+" href='#'>Execute</a> " +
+            "</li>"+
+            "</ul>"+
+           "</div>";
+
+          return ret;
+        }else{
+          if(value == "CREATE_COMPLETE")
+            return "<span class='label label-success'>"+value+"</span>";
+          else
+            return value;
+        }
+    });
 
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {
@@ -1418,6 +1690,16 @@
       }
     });
   };
+
+  var index = function(){
+
+    if (app){
+      app.$destroy();
+    }else{
+      infraindex = infraindex();
+    }
+
+  }
 
   var SHOW_INFRA_ID = '#infra-show';
 
@@ -1435,6 +1717,7 @@
       app.$mount(SHOW_INFRA_ID);
     });
   };
+
 
   var detach = function (infra_id) {
     bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -1518,6 +1801,9 @@
 // ================================================================
 // event bindings
 // ================================================================
+  $(document).ready(function(){
+    index();
+  });
 
 
   $(document).on('click', '.show-infra', function (e) {
@@ -1525,7 +1811,6 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-
     show_infra(infra_id);
   });
 
