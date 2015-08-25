@@ -129,6 +129,8 @@ en:
     stackname:          'Stack Name'
     region:             'Region'
     keypair:            'KeyPair Name'
+    launchtime:         'Launch Time'
+    status:             'Status'
     sshkey:             'SSH Private Key'
     return_to_projects: 'Return to your projects'
     stack_info:         'Stack Information'
@@ -139,6 +141,7 @@ en:
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
+    search:             'Search by Keyword ...'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -305,11 +308,13 @@ en:
   monitoring:
     title:                'Monitoring'
     config:               'Monitoring Configuration'
+    template:             'Monitoring Template'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
     before_reg_title:     'Please select template before proceeding.'
+    linked_templates:     'Linked Templates'
     btn:
       create: 'Register'
       add:    'Add'
@@ -317,16 +322,23 @@ en:
       delete: 'Delete'
       done:   'Done'
       cancel: 'Cancel'
+      close:  'Close'
+      save:   'Save'
+      next:   'Next'
+      prev:   'Prevous'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
       created:                 'This infrastructure has been registered with Zabbix Server.'
       updated:                 'Monitoring configuration updated.'
+      update_templates:          'Zabbix templates updated!.'
       failure:                 'Failed to register with Zabbix Server.'
       not_selected:            'Monitoring options not selected yet.'
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
       not_running:             'Zabbix Server is not running.'
       trigger_setting_warning: 'Threshold will be updated only the selected items.'
+      page:                    'Page'
+      of:                      'of'
       no_data: |
         Failed to fetch any data.
           1. Zabbix Agent may not have been installed into the server.

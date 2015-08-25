@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -13,44 +14,6 @@ class Zabbix
   DefaultUsergroupName = "No access to the frontend"
   MasterUsergroupName = "master"
 
-  AvailableTemplates = ['Template App FTP Service',
-      'Template App HTTP Service',
-      'Template App HTTPS Service',
-      'Template App IMAP Service',
-      'Template App LDAP Service',
-      'Template App MySQL',
-      'Template App NNTP Service',
-      'Template App NTP Service',
-      'Template App POP Service',
-      'Template App SMTP Service',
-      'Template App SSH Service',
-      'Template App Telnet Service',
-      'Template App Zabbix Agent',
-      'Template App Zabbix Proxy',
-      'Template App Zabbix Server',
-      'Template ICMP Ping',
-      'Template IPMI Intel SR1530',
-      'Template IPMI Intel SR1630',
-      'Template JMX Generic',
-      'Template JMX Tomcat',
-      'Template OS AIX',
-      'Template OS FreeBSD',
-      'Template OS HP-UX',
-      'Template OS Linux',
-      'Template OS Mac OS X',
-      'Template OS OpenBSD',
-      'Template OS Solaris',
-      'Template OS Windows',
-      'Template SNMP Device',
-      'Template SNMP Disks',
-      'Template SNMP Generic',
-      'Template SNMP Interfaces',
-      'Template SNMP OS Linux',
-      'Template SNMP OS Windows',
-      'Template SNMP Processors',
-      'Template Virt VMware',
-      'Template Virt VMware Guest',
-      'Template Virt VMware Hypervisor',]
 
   # @param [String] username
   # @param [String] password
@@ -90,6 +53,38 @@ class Zabbix
       hosts: [{hostid: host_id}],
       templates: template_ids.map{|x| {templateid: x}}
     )
+  end
+
+  # Update the selected templates from host
+  # @param [String] physical_id
+  # @param [Array<String>] Objects containing new templates to be added
+  # @param [Array<String>] Objects containing templates to be removed
+  # @return [Array<Object>] Objects containing the IDS of the updated templates
+  def templates_update_host(physical_id, new_templates, clear_templates)
+    host_id = get_host_id(physical_id)
+    add_ids = @sky_zabbix.template.get(filter: {host: new_templates}).map{|x|x['templateid']}
+    clear_ids = @sky_zabbix.template.get(filter: {host: clear_templates}).map{|x|x['templateid']}
+    @sky_zabbix.template.massremove(hostids: [host_id], templateids: clear_ids)
+    @sky_zabbix.template.massadd(hosts: [{hostid: host_id}],templates: add_ids.map{|x| {templateid: x}})
+
+  end
+
+  # get available tempaltes from zabbix
+  # @param  request the contents of the return templates from zabbix
+  # @return [Array<String>]
+  def available_templates
+    templates = @sky_zabbix.template.get(output: ['name']).map{|x|x['name']}
+    return templates
+
+  end
+
+  # get the seleted/link templates of the seleted host
+  # @param [String] physical_id request the contents of templates using physical_id
+  # @return [Array<String>] list of linked templates
+  def get_linked_templates(physical_id)
+    host_id = get_host_id(physical_id)
+    selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id).map{|x|x['name']}
+    return selected_templates
   end
 
   # トリガーのオンオフを切り替える

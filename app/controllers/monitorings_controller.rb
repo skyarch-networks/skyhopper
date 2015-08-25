@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -33,14 +34,54 @@ class MonitoringsController < ApplicationController
       @before_register = true
 
       #get/load available zabbix templates set to static first.
-      @templates = Zabbix::AvailableTemplates.map{|t| {name: t, checked: false}}
+      @templates = @zabbix.available_templates.map{|t| {name: t, checked: false}}
       return
     end
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
+
+    merged = []
+    resources = @infra.resources.ec2
+    linked = @zabbix.get_linked_templates(resources.last.physical_id)
+    unlinked = @zabbix.available_templates
+
+    unlinked.each do |link|
+      if linked.include?(link)
+        merged.push({name: link, checked: true})
+      else
+        merged.push({name: link, checked: false})
+      end
+    end
+
+    @templates = merged
+
     @resources = @infra.resources.ec2
 
+  end
+
+  # POST /monitorings/:id/update_templates
+  def update_templates
+    resources = @infra.resources.ec2
+    new_templates = params.require(:templates)
+    resources.each do |resource|
+      prev_templates = @zabbix.get_linked_templates(resource.physical_id)
+      clear_templates = []
+
+      # compare if the previous templates was removed and push to clear list
+      prev_templates.each do |prev|
+        if new_templates.include?(prev)
+          # new_templates.pop(prev)
+        else
+          clear_templates.push(prev)
+        end
+      end
+
+      @zabbix.templates_update_host(resource.physical_id, new_templates, clear_templates)
+    end
+
+    infra_logger_success("Templates Updated!")
+    render nothing: true and return
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph

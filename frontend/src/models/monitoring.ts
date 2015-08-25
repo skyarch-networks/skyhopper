@@ -39,6 +39,16 @@ class Monitoring extends ModelBase {
     );
   }
 
+  update_templates(templates: any[] = []): JQueryPromise<any> {
+     return this.WrapAndResolveReject(() =>
+      (<any>Monitoring.ajax).update_templates({
+        templates: templates,
+        id: this.infra.id
+      })
+    );
+  }
+
+
   edit(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
@@ -143,6 +153,7 @@ class Monitoring extends ModelBase {
 }
 
 Monitoring.ajax.add_member('create_host',  'POST');
+Monitoring.ajax.add_member('update_templates',  'POST');
 Monitoring.ajax.add_member("show_cloudwatch_graph", "GET");
 Monitoring.ajax.add_member("show_problems", "GET");
 Monitoring.ajax.add_member("show_url_status", "GET");
