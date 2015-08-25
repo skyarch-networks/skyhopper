@@ -107,6 +107,13 @@
 
 
           "chef-server-ctl reconfigure\n",
+
+          "cd /opt/\n",
+          "git clone https://github.com/skyarch-networks/chefserver-internal-bootstrap-addon.git\n",
+          "cd chefserver-internal-bootstrap-addon\n",
+          "./install.sh\n",
+          "cd /tmp/\n",
+
           "chef-server-ctl start\n",
           "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
           "chef-server-ctl user-create ",
