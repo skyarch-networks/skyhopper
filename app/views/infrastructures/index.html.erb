@@ -32,7 +32,7 @@
 </script>
 
 <!-- demo root element -->
-<div-loader v-if="loading"></div-loader>
+
 <div id="demo">
   <div class="input-group">
     <form id="search">
@@ -46,7 +46,8 @@
     filter-key="{{searchQuery}}">
   </demo-grid>
 </div>
-
+<span id="loading"><div class="loader"></div> Loading ...</span>
+<hr>
 <table class="table table-hover hidden">
   <!-- <thead>
     <tr>
