@@ -1,5 +1,5 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../ast.ts" />
+/// <reference path="../../declares.d.ts" />
+/// <reference path="./ast.ts" />
 
 class VueMain extends Vue {
   private ast: ASTInterfaces.Describe[];
