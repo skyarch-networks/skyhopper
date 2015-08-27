@@ -167,6 +167,8 @@ ja:
       not_necessary:               '変更の必要はありません'
       check_intervals:             '15秒おきに自動的にステータスが更新されます...'
       generate_serverspec_confirm: 'このRDSへのアクセスを検証する Serverspec を生成します'
+      empty-list:                  'インフラストラクチャのリストは空です.'
+      loading-list:                'ロードインフラストラクチャ ...'
 
 
   nodes:
