@@ -12,6 +12,7 @@
   "dependencies": {
     "favico.js": "~0.3.7",
     "bootstrap": "~3.3.4",
+    "bootswatch-dist": "paper",
     "ajax_set.js": "https://github.com/pocke/ajax_set.js.git",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
     "noty": "~2.3.5",
