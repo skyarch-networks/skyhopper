@@ -18,7 +18,7 @@ RSpec.describe CloudWatch, :type => :model do
       .and_return(cw)
   end
 
-  let(:infra){create(:infrastructure)}
+  let(:infra){build(:infrastructure)}
   let(:cloud_watch){CloudWatch.new(infra)}
 
   describe '.new' do

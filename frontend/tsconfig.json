@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "declaration": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noLib": false,
+    "rootDir": "src/",
+    "outDir": "dest/"
+  },
+  "files": [
+    "src/helper.ts",
+    "src/server_status.ts",
+    "src/users_admin.ts",
+    "src/models/base.ts",
+    "src/models/cf_template.ts",
+    "src/models/dish.ts",
+    "src/models/ec2_instance.ts",
+    "src/models/infrastructure.ts",
+    "src/models/monitoring.ts",
+    "src/models/rds_instance.ts",
+    "src/models/resource.ts",
+    "src/models/s3_bucket.ts"
+  ]
+}

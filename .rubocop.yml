@@ -4,6 +4,9 @@ AllCops:
   RunRailsCops: true
   DisplayCopNames: true
 
+Style/BlockDelimiters:
+  Enabled: false
+
 Style/AccessModifierIndentation:
   Enabled: false
 

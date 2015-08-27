@@ -116,7 +116,7 @@ module DishesController::Validate
       infrastructure_id: infrastructure.id,
       name:              "t2.micro for Dish validate",
       detail:            "Dish: #{dish.name}",
-      value:             File.read(Rails.root.join('lib/cf_templates/dish_test.json')),
+      value:             ERB::Builder.new('dish_test').build,
       user_id:           current_user.id
     )
 
@@ -148,7 +148,7 @@ module DishesController::Validate
   #   - @physical_id
   def bootstrap_test_instance(infrastructure)
     @physical_id = @stack.instances.first.physical_resource_id
-    fqdn         = infrastructure.instance(@physical_id).dns_name
+    fqdn         = infrastructure.instance(@physical_id).public_dns_name
     retry_count  = 9     # 20 * 9 = 180 sec
     begin
       @node = Node.bootstrap(fqdn, @physical_id, infrastructure)

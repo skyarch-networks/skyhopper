@@ -39,7 +39,7 @@ class ServerStatusController < ApplicationController
       ws = WSConnector.new('server_status', @server.kind)    # ws://HOST/server_status/(chef|zabbix)
 
       before_status = ""
-      10.times do |i|
+      10.times do
         status = @server.latest_status
         ws.push(status)
         break if status == :running && before_status == :pending

@@ -6,18 +6,10 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'tempfile'
-require 'open3'
-require 'fileutils'
-require 'net/scp'
-require 'tmpdir'
-require 'rbconfig'
-
 class Node
   include ::Node::Attribute
 
   ChefDefaultUser = "ec2-user"
-  SSHConnectionAttribute = "public_dns" # to set ec2 (or others) public dns
   WaitSearchIndexInterval = 5
 
   class BootstrapError < ::StandardError; end
@@ -52,7 +44,6 @@ knife bootstrap #{fqdn} \
 --identity-file #{ec2key.path_temp} \
 --ssh-user #{user} \
 --node-name #{node_name} \
---json-attributes '{"#{SSHConnectionAttribute}":"#{fqdn}"}' \
 --sudo
     EOS
     if chef_client_version
@@ -66,9 +57,9 @@ knife bootstrap #{fqdn} \
     ec2key.close_temp
   end
 
-  def initialize(name, user: nil)
+  def initialize(name, user: ChefDefaultUser)
     @name = name
-    @user = user || ChefDefaultUser
+    @user = user
   end
   attr_reader :name
 
@@ -124,8 +115,10 @@ knife bootstrap #{fqdn} \
 
     raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
 
+    fqdn = infra.instance(@name).fqdn
+
     if selected_auto_generated
-      local_path = scp_specs(ec2key.path_temp)
+      local_path = scp_specs(ec2key.path_temp, fqdn)
     end
 
     run_spec_list_path = serverspec_ids.map do |spec|
@@ -223,17 +216,8 @@ knife bootstrap #{fqdn} \
     roles
   end
 
-  def fqdn
-    if details["normal"] && details["normal"][SSHConnectionAttribute]
-      return details["normal"][SSHConnectionAttribute]
-    elsif automatic = details["automatic"]
-      return automatic["fqdn"]
-    else
-      return nil
-    end
-  end
-
-  def scp_specs(sshkey_path)
+  # @param [String] fqdn
+  def scp_specs(sshkey_path, fqdn)
     d = details
     remote_path =
       begin
@@ -275,32 +259,22 @@ knife bootstrap #{fqdn} \
   def exec_knife_ssh(command, infra)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
+    fqdn = infra.instance(@name).fqdn
 
-    cmd = <<-EOS
-knife ssh \
-'name:#{@name}' \
-'#{command}' \
---identity-file #{ec2key.path_temp} \
---ssh-user #{@user} \
---attribute #{SSHConnectionAttribute}
-    EOS
+    cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
-    IO.popen(cmd) do |io|
-      while line = io.gets
-        line.gsub!(/\x1b[^m]*m/, '')    # remove ANSI escape
-        line.sub!(/^[^ ]+ /, '')       # remove hostname
+    Open3.popen3(cmd) do |stdin, stdout, stderr, w|
+      while line = stdout.gets
+        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!
 
         yield line
       end
-      io.close
 
-      status = $?.success?
-      raise CookError unless status
+      Rails.logger.warn(stderr.read)
+      raise CookError unless w.value.success?
     end
     return true
-
-
   ensure
     ec2key.close_temp
   end

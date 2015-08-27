@@ -5,7 +5,9 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  devise_for :users
+  devise_for :users, controllers: {
+    sessions: 'users/sessions',
+  }
 
   root to: 'root#root'
 
@@ -45,6 +47,7 @@ SkyHopper::Application.routes.draw do
       post 'apply_dish'
       put  'update_attributes'
       get  'edit_attributes'
+      post 'schedule_yum'
     end
   end
 
@@ -71,9 +74,10 @@ SkyHopper::Application.routes.draw do
 
   resources :infrastructure_logs, only: :index
 
-  resources :monitorings, only: [:show, :edit, :update] do
+  resources :monitorings, only: [:create, :show, :edit, :update] do
     member do
       post 'create_host'
+      post 'update_templates'
       get 'show_cloudwatch_graph'
       get 'show_problems'
       get 'show_url_status'

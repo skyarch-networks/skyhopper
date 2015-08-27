@@ -21,8 +21,8 @@
 
 
 //= require bootstrap_trigger
-//= require helper
 //= require share
+//= require helper
 //= require utils
 //= require server_status
 //= require notification_center

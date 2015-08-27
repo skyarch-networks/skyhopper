@@ -44,7 +44,7 @@ class ResourcesController < ApplicationController
     end
 
     # Infraが所属するRegionにphysical_idのインスタンスが存在しない場合
-    unless infra.ec2.instances[physical_id].exists?
+    unless infra.instance(physical_id).exists?
       # TODO: I18n
       render text: "Cannot find #{physical_id}", status: 400; return
     end
