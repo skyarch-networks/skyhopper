@@ -415,7 +415,7 @@
         return this.templates.slice(startPage, startPage + this.dispItemSize);
       },
       isStartPage: function(){
-        return (this.page == 0);
+        return (this.page === 0);
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -438,7 +438,7 @@
       }).fail(alert_and_show_infra);
     },
     filters: {
-      roundup: function (val) { return (Math.ceil(val))},
+      roundup: function (val) { return (Math.ceil(val));},
     },
   });
 
@@ -459,7 +459,7 @@
         var templates = _(this.templates).filter(function (t) {
           return t.checked;
         }).map(function(t)  {
-          return t.name
+          return t.name;
         }).value();
 
         this.monitoring.update_templates(templates).done(function ()  {
@@ -495,7 +495,7 @@
         return this.templates.slice(startPage, startPage + this.dispItemSize);
       },
       isStartPage: function(){
-        return (this.page == 0);
+        return (this.page === 0);
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -511,7 +511,7 @@
       }).fail(alert_and_show_infra);
     },
     filters: {
-      roundup: function (val) { return (Math.ceil(val))},
+      roundup: function (val) { return (Math.ceil(val));},
     },
   });
 
@@ -1545,14 +1545,14 @@
       // initialize reverse state
         var self = this;
         this.columns.forEach(function (key) {
-            self.reversed.$add(key, false)
-         })
+            self.reversed.$add(key, false);
+         });
     },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
-            this.sortKey = key
-            this.reversed[key] = !this.reversed[key]
+            this.sortKey = key;
+            this.reversed[key] = !this.reversed[key];
       }
 
     },
@@ -1701,7 +1701,7 @@
       infraindex = infraindex();
     }
 
-  }
+  };
 
   var SHOW_INFRA_ID = '#infra-show';
 
