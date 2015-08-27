@@ -1596,9 +1596,9 @@
                  self.loading = false;
                });
              self.$emit('data-loaded');
-             if(self.data.length > 0)
-             	$("#loading").hide();
-               }
+             $("#loading").hide();
+             if(self.data.length === 0){$('#infra-empty').show();}
+           }
          });
     },
  });
