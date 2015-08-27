@@ -1595,8 +1595,10 @@
                  }
                  self.loading = false;
                });
-             self.$emit('data-loaded')
-               }
+             self.$emit('data-loaded');
+             $("#loading").hide();
+             if(self.data.length === 0){$('#infra-empty').show();}
+           }
          });
     },
  });
