@@ -234,9 +234,10 @@ en:
     individual:        'Infrastructure Individual'
     select_serverspec: 'Select Serverspecs'
     btn:
-      add:    'Add Serverspec'
-      create: 'Create Serverspec'
-      run:    'Run Serverspecs'
+      add:       'Add Serverspec'
+      create:    'Create Serverspec'
+      run:       'Run Serverspecs'
+      generator: 'Generator'
     msg:
       created:   'Serverspec was successfully created.'
       updated:   'Serverspec was successfully updated.'

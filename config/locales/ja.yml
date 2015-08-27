@@ -235,9 +235,10 @@ ja:
     individual:        'インフラ固有の Serverspec'
     select_serverspec: '実行する Serverspec を選択'
     btn:
-      add:    'Serverspec の追加'
-      create: 'Serverspec の作成'
-      run:    'Serverspec の実行'
+      add:       'Serverspec の追加'
+      create:    'Serverspec の作成'
+      run:       'Serverspec の実行'
+      generator: 'ジェネレータ'
     msg:
       created:   'Serverspec が正常に追加されました'
       updated:   'Serverspec が正常に更新されました'
