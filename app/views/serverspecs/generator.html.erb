@@ -1,13 +1,11 @@
 <div class="container" id="main" v-cloak>
-  <h1 class="page-header">sss</h1>
+  <h2 class="page-header"><%=t('serverspecs.generator.title')%></h2>
 
   <div class="row">
     <div class="col-xs-6">
-      <h2 class="page-header">Menu</h2>
 
-
-      <h3>Describes</h3>
-      <button class="btn btn-success" v-on="click: addDescribe()">Add</button>
+      <h3><%=t('serverspecs.generator.resources')%></h3>
+      <button class="btn btn-success" v-on="click: addDescribe()"><%=t('serverspecs.generator.add_resource')%></button>
       <div class="panel panel-primary" v-repeat="desc: ast">
         <div class="panel-heading">
           <button class="btn btn-danger pull-right btn-xs" v-on="click: removeDescribe($index)"><span class="glyphicon glyphicon-remove"></span></button>
@@ -30,8 +28,8 @@
             </label>
           </div>
 
-          <button class="btn btn-success" v-on="click: addIt(desc)">Add It Block</button>
-          <button class="btn btn-success" v-on="click: addIts(desc)">Add Its Block</button>
+          <button class="btn btn-success" v-on="click: addIt(desc)"><%=t('serverspecs.generator.add_it')%></button>
+          <button class="btn btn-success" v-on="click: addIts(desc)"><%=t('serverspecs.generator.add_its')%></button>
 
           <div class="panel panel-info" v-repeat="it: desc.body">
             <div class="panel-heading">
@@ -70,7 +68,7 @@
 
 
     <div class="col-xs-6">
-      <h2 class="page-header">Generated Serverspec</h2>
+      <h2 class="page-header"><%=t('serverspecs.generator.generated')%></h2>
       <pre><code v-text="rubyCode"></code></pre>
       <a class="btn btn-primary" v-attr="href: downloadHref" download="serverspec.rb">Download</a>
     </div>

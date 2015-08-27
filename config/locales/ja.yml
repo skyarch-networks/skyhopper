@@ -250,6 +250,13 @@ ja:
       generated: 'Serverspec は正常に作成されました。'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
+    generator:
+      title:        'Serverspec ジェネレータ'
+      resources:    'リソース'
+      add_resource: 'リソースの追加'
+      add_it:       'It ブロックの追加'
+      add_its:      'Its ブロックの追加'
+      generated:    '生成された Serverspec'
 
 
   schedules:
