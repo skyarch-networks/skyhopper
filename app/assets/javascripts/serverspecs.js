@@ -5,6 +5,8 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+//= require serverspec-gen/ast
+//= require serverspec-gen/ui
 
 $(document).on("click", ".show-value", function(){
   var serverspec_id = $(this).closest("tr").attr("data-serverspec-id");
