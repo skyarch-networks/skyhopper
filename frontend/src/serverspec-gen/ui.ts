@@ -40,7 +40,7 @@ class VueMain extends Vue {
 
   addIt(desc: ASTInterfaces.Describe): void {
     desc.body.push({
-      type: 'it', // TODO: its
+      type: 'it',
       should: true,
       matcher: {name: 'be_', args: [], chains: []},
     });
