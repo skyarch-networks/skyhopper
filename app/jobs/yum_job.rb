@@ -9,7 +9,7 @@ class YumJob < ActiveJob::Base
     yum_screen_name << " check" unless exec
     yum_screen_name << " security" if security
     yum_screen_name << " update"
-    ws.push_as_json({message: "#{yum_screen_name} for #{physical_id} is started.", status: true, timestamp: Time.now.to_s})
+    ws.push_as_json({message: "#{yum_screen_name} for #{physical_id} is started.", status: true, timestamp: Time.zone.now.to_s})
 
     node = Node.new(physical_id)
 
@@ -33,7 +33,7 @@ class YumJob < ActiveJob::Base
         infrastructure_id: infra.id, user_id: user_id, status: false,
         details: "#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}"
       )
-      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
       ws_cook.push_as_json({v: false}) if cook
       r.status.yum.failed!
     else
@@ -41,7 +41,7 @@ class YumJob < ActiveJob::Base
         infrastructure_id: infra.id, user_id: user_id, status: true,
         details: "#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}"
       )
-      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
       ws_cook.push_as_json({v: true}) if cook
       r.status.yum.success!
     end

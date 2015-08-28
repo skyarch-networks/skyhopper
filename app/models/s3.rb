@@ -14,7 +14,7 @@ class S3 < SimpleDelegator
   def initialize(infra, bucket_name)
     access_key_id     = infra.access_key
     secret_access_key = infra.secret_access_key
-    @region            = infra.region
+    @region = infra.region
 
     @s3 = ::AWS::S3.new(
       access_key_id:     access_key_id,

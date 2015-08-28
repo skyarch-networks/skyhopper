@@ -22,7 +22,8 @@ module FormHelper
   end
 
   def parts_textarea(klass: nil, placeholder: nil, attributes: nil)
-    placeholder = if placeholder
+    placeholder =
+    if placeholder
       "placeholder=\"#{placeholder}\""
     else
       nil

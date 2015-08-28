@@ -63,11 +63,11 @@ class ChefServer::Deployment
       })
 
       __yield :init_ec2, &block
-      stack.wait_resource_status('EC2Instance',       'CREATE_COMPLETE')
+      stack.wait_resource_status('EC2Instance', 'CREATE_COMPLETE')
       __yield :download_chef, &block
       stack.wait_resource_status('wcDownloadChefPkg', 'CREATE_COMPLETE')
-      __yield :install_chef,  &block
-      stack.wait_resource_status('wcInstallChef',     'CREATE_COMPLETE')
+      __yield :install_chef, &block
+      stack.wait_resource_status('wcInstallChef', 'CREATE_COMPLETE')
       __yield :setting_chef, &block
       wait_creation(stack)
 

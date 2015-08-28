@@ -48,6 +48,6 @@ class AppSetting < ActiveRecord::Base
   # kind_of? で String のみを見ないと warning が出る(将来的にはエラー?) https://github.com/rails/rails/pull/18365
   # @return [Boolean]
   def dummy?
-    attributes.any?{|key, val| val.kind_of?(String) && val == DummyText}
+    attributes.any?{|_key, val| val.kind_of?(String) && val == DummyText}
   end
 end

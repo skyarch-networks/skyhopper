@@ -17,7 +17,7 @@ SkyHopper::Application.routes.draw do
 
   resources :key_pairs, only: [:index, :destroy], param: :name do
     collection do
-      get  'retrieve'
+      get 'retrieve'
     end
   end
 
@@ -38,7 +38,7 @@ SkyHopper::Application.routes.draw do
 
   resources :nodes, only: [:update, :show, :edit] do
     collection do
-      get  'recipes'
+      get 'recipes'
     end
     member do
       put  'cook'

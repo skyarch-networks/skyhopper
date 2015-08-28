@@ -61,7 +61,7 @@ class RDS < SimpleDelegator
     end
 
     begin
-      modify(db_instance_class: scale,  apply_immediately: true)
+      modify(db_instance_class: scale, apply_immediately: true)
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end

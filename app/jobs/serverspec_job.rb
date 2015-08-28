@@ -34,21 +34,21 @@ class ServerspecJob < ActiveJob::Base
         infrastructure_id: infra_id, user_id: user_id, status: false,
         details: "serverspec for #{physical_id} is failed. results: \n#{ex.message}"
       )
-      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
       raise ex
     end
 
     case resp[:status_text]
     when 'success'
-      log_msg    = "serverspec for #{physical_id} is successfully finished."
+      log_msg = "serverspec for #{physical_id} is successfully finished."
     when 'pending'
-      log_msg    = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{resp[:message]}"
+      log_msg = "serverspec for #{physical_id} is successfully finished. but have pending specs: \n#{resp[:message]}"
     when 'failed'
-      log_msg    = "serverspec for #{physical_id} is failed. failure specs: \n#{resp[:message]}"
+      log_msg = "serverspec for #{physical_id} is failed. failure specs: \n#{resp[:message]}"
     end
 
     log = InfrastructureLog.create(infrastructure_id: infra_id, user_id: user_id, details: log_msg, status: resp[:status])
-    ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+    ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
     Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids
     return resp
   end

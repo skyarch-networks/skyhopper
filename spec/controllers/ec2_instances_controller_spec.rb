@@ -22,7 +22,8 @@ describe Ec2InstancesController, :type => :controller do
     let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
 
-    let(:instance){double(:instance,
+    let(:instance){double
+    (:instance,
       stop:                nil,
       status:              :stopped,
       instance_type:       type,
@@ -155,7 +156,7 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
-      def authorize(*args)end # XXX: pundit hack
+      def authorize(*)end # XXX: pundit hack
       def test
         instance = double_instance()
         status   = params.require(:status)

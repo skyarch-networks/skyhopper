@@ -46,7 +46,7 @@ module Node::Attribute
   # 現在設定できる attributes を返す
   # @return [Hash{Symbol => Any}]
   def enabled_attributes
-    available_attributes.select do |name, a|
+    available_attributes.select do |_name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
     end
   end
@@ -167,12 +167,13 @@ module Node::Attribute
       keys = key.split('/') # ['zabbix', 'agent', 'servers']
 
       attr = Hash.new
-      keys.inject(attr) do |_attr, _key|
-        if _key != keys.last
-          next _attr[_key] = {}
+      keys.inject(attr) do |_attr, key|
+        if key != keys.last
+          next _attr[key] = {}
         end
 
-        _attr[_key] = if self.available_attributes[key.to_sym][:type] == Array
+        _attr[_key] =
+        if self.available_attributes[key.to_sym][:type] == Array
           [val]
         else
           val

@@ -157,15 +157,15 @@ class TemplateBuilder::Property
       return if @data_validator.nil?
 
       if data_type == String
-        if max = @data_validator[:max]
+        if max == @data_validator[:max]
           raise InvalidValue, "#{val} is too long. max: #{max}" if val.size > max
         end
 
-        if min = @data_validator[:min]
+        if min == @data_validator[:min]
           raise InvalidValue, "#{val} is too short. min: #{min}" if val.size < min
         end
 
-        if reg = @data_validator[:regexp]
+        if reg == @data_validator[:regexp]
           raise InvalidValue, "#{val} isn't #{reg}" unless val =~ reg
         end
       elsif data_type == Hash

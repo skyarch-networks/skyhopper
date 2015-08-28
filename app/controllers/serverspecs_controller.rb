@@ -101,7 +101,7 @@ class ServerspecsController < ApplicationController
     serverspec_ids = params.require(:serverspec_ids)
 
 
-    if selected_auto_generated = serverspec_ids.include?('-1')
+    if selected_auto_generated == serverspec_ids.include?('-1')
       serverspec_ids.delete('-1')
     end
 

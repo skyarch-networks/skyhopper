@@ -47,7 +47,7 @@ class Infrastructure < ActiveRecord::Base
     # @return [Infrastructure] Created infra.
     def create_for_test(project_id, dish_name = "")
       setting = AppSetting.get
-      stack_name = "validation-#{Digest::MD5.hexdigest(dish_name + DateTime.now.to_s)}"
+      stack_name = "validation-#{Digest::MD5.hexdigest(dish_name + DateTime.now.current.to_s)}"
 
       copied = setting.ec2_private_key.dup
       copied.save!
@@ -69,7 +69,8 @@ class Infrastructure < ActiveRecord::Base
     # @param [Hash{Symbol => String}] infra_params Same as Infrastructure#create
     # @return [Hash]
     def create_ec2_private_key(infra_params)
-      infra_params[:ec2_private_key_id] = if infra_params[:keypair_name].present? && infra_params[:keypair_value].present?
+      infra_params[:ec2_private_key_id] =
+      if infra_params[:keypair_name].present? && infra_params[:keypair_value].present?
         ec2key = Ec2PrivateKey.create!(
           name:  infra_params[:keypair_name],
           value: infra_params[:keypair_value]

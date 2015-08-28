@@ -66,7 +66,7 @@ class NodesController < ApplicationController
 
     chef_server = ServerState.new('chef')
 
-    if @chef_error = !chef_server.is_running?
+    if @chef_error == !chef_server.is_running?
       @chef_msg = t 'chef_servers.msg.not_running'
       return
     end
@@ -156,7 +156,7 @@ class NodesController < ApplicationController
     physical_id = params.require(:id)
     dish_id     = params.require(:dish_id)
 
-    dish           = Dish.find(dish_id)
+    dish = Dish.find(dish_id)
 
     runlist = dish.runlist
     if runlist.blank?
@@ -181,7 +181,7 @@ class NodesController < ApplicationController
   # [infra_id] 認証に必要
   def update_attributes
     physical_id = params.require(:id)
-    attr  = JSON.parse(params.require(:attributes))
+    attr = JSON.parse(params.require(:attributes))
 
     node = Node.new(physical_id)
 
