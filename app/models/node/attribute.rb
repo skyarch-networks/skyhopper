@@ -9,7 +9,6 @@
 module Node::Attribute
   Key = 'normal'
 
-
   # セットされている attribute を手に入れる。
   # @example
   #   node.get_attributes # => {:'yum_releasever/releasever' => 'latest', ...}
@@ -167,9 +166,9 @@ module Node::Attribute
       keys = key.split('/') # ['zabbix', 'agent', 'servers']
 
       attr = Hash.new
-      keys.inject(attr) do |_attr, key|
-        if key != keys.last
-          next _attr[key] = {}
+      keys.inject(attr) do |attr_, key_|
+        if key_ != keys.last
+          next attr_[key] = {}
         end
 
         _attr[_key] =

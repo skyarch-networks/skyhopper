@@ -22,13 +22,13 @@ describe Ec2InstancesController, :type => :controller do
     let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
 
-    let(:instance){double
-    (:instance,
+    let(:instance)
+    {double(:instance,
       stop:                nil,
       status:              :stopped,
       instance_type:       type,
       start:               nil,
-    )}
+            )}
     before do
       allow(Aws::EC2::Instance).to receive(:new).and_return(instance)
       allow(instance).to receive(:wait_until).and_return(nil)

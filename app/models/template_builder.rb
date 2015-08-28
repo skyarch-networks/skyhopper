@@ -78,13 +78,13 @@ class TemplateBuilder
     @resources << resource
   end
 
-  def add_param(params)
-    raise ArgumentError, "#{params} isn't parameter" unless params.kind_of? TemplateBuilder::Parameter
+  def add_param(param)
+    raise ArgumentError, "#{param} isn't parameter" unless param.kind_of? TemplateBuilder::Parameter
 
-    param_names = @parameters.map{|param| params.name}
-    raise ParameterAlreadyExist, "#{params.name} already exist" if param_names.include?(params.name)
+    param_names = @parameters.map{|param| param.name}
+    raise ParameterAlreadyExist, "#{param.name} already exist" if param_names.include?(param.name)
 
-    @parameters << params
+    @parameters << param
   end
 
   def add_output(output)
@@ -136,7 +136,7 @@ class TemplateBuilder
   end
 
   def to_json
-    build.to_json
+    delete.to_json
   end
 
   def to_pretty_json

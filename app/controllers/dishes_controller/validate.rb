@@ -4,23 +4,23 @@
 # This software is released under the MIT License.
 #
 # http://opensource.org/licenses/mit-license.php
-#
 
 module DishesController::Validate
+
   # POST /dishes/1/validate
   def validate
     id = params.require(:id)
     dish = Dish.find(id)
 
     # dishのテスト
-    Thread.new_with_db(dish) do |dish|
+    Thread.new_with_db(dish) do |dish_|
       begin
-        @ws = WSConnector.new('dish_validate', dish.id)
+        @ws = WSConnector.new('dish_validate', dish_.id)
 
-        validate_section(:creating, dish) do
+        validate_section(:creating, dish_) do
           prj             = Project.for_test
-          @infrastructure = Infrastructure.create_for_test(prj.id, dish.name)
-          create_test_stack(@infrastructure, dish)
+          @infrastructure = Infrastructure.create_for_test(prj.id, dish_.name)
+          create_test_stack(@infrastructure, dish_)
         end
 
 
@@ -147,7 +147,7 @@ module DishesController::Validate
   def bootstrap_test_instance(infrastructure)
     @physical_id = @stack.instances.first.physical_resource_id
     fqdn = infrastructure.instance(@physical_id).public_dns_name
-    retry_count = 9     # 20 * 9 = 180 sec
+    retry_count = 9 # 20 * 9 = 180 sec
     begin
       @node = Node.bootstrap(fqdn, @physical_id, infrastructure)
     rescue
