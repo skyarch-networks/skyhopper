@@ -30,7 +30,7 @@ describe ResourcesController do
     let(:req){post :create, infra_id: infra.id, physical_id: physical_id, screen_name: screen_name}
 
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[], :exists?).and_return(ec2_exists)
+      allow_any_instance_of(Infrastructure).to receive_message_chain(:instance, :exists?).and_return(ec2_exists)
     end
     before{req}
 

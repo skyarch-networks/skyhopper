@@ -43,3 +43,22 @@ vendor/bower_components
 /doc/javascripts/
 /doc/*.svg
 /.yardoc/
+/secrets/
+
+/frontend/dest/
+/frontend/node_modules/
+/frontend/typings/
+
+
+
+#emacs backup exclude during commit (clean files)
+*.rb~
+*.rb#
+*.html.erb#
+*.html.erb~
+*.js~
+*.js#
+*.ts~
+*.ts#
+*.css~
+*.css#

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -29,23 +30,28 @@ class InfrastructuresController < ApplicationController
   end
 
 
-  before_action :with_zabbix_or_render, only: [:destroy, :delete_stack]
+  before_action :with_zabbix, only: [:destroy, :delete_stack]
 
   @@regions = AWS::Regions
 
 
 
   # GET /infrastructures
+  # GET /infrastructures.json
   def index
     project_id = params.require(:project_id)
     session[:project_id] = project_id
-    page       = params[:page] || 1
+    page = params[:page] || 1
 
     @selected_project = Project.find(project_id)
 
     @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
-
     @selected_client = @selected_project.client
+
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /infrastructures/:id
@@ -62,13 +68,13 @@ class InfrastructuresController < ApplicationController
     unless stack.status[:available] # in many cases, it will be when stack does not exist.
       @infrastructure.status = ""
       @infrastructure.save!
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
 
       resp[:message] = stack.status[:message]
     end
 
     if stack.update_complete?
-      @infrastructure.resources.delete_all
+      @infrastructure.resources.destroy_all
     end
 
     @infrastructure.status = stack.status[:status]
@@ -83,7 +89,8 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
-    rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
+    rescue
+      Aws::CloudFormation::Errors::ValidationError # stack does not exist
     end
 
     render json: {
@@ -105,7 +112,7 @@ class InfrastructuresController < ApplicationController
   # スタック情報が取得できない場合のみ
   def edit
     if @infrastructure.status.present?
-      redirect_to ( infrastructures_path(project_id: @infrastructure.project_id) ),
+      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
         alert: I18n.t('infrastructures.msg.not_necessary')
     end
 
@@ -130,12 +137,16 @@ class InfrastructuresController < ApplicationController
   # PATCH/PUT /infrastructures/1
   # PATCH/PUT /infrastructures/1.json
   def update
-    if @infrastructure.update(infrastructure_params)
-      redirect_to infrastructures_path(project_id: @infrastructure.project_id),
-        notice: I18n.t('infrastructures.msg.updated')
-    else
-      render action: 'edit'
+    begin
+      @infrastructure.update!(infrastructure_params)
+    rescue => ex
+      @regions = @@regions
+      flash[:alert] = ex.message
+      render action: :edit, status: 400 and return
     end
+
+    redirect_to infrastructures_path(project_id: @infrastructure.project_id),
+      notice: I18n.t('infrastructures.msg.updated')
   end
 
   # DELETE /infrastructures/1
@@ -197,6 +208,7 @@ class InfrastructuresController < ApplicationController
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
+    @listeners     = elb.listeners
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}

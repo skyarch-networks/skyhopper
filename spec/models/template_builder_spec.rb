@@ -124,7 +124,7 @@ describe TemplateBuilder, :type => :model do
 
       context 'recieve invalid arg' do
         subject{builder.add_output(nil)}
-        it  do
+        it do
           expect{subject}.to raise_error ArgumentError
         end
       end
@@ -136,7 +136,7 @@ describe TemplateBuilder, :type => :model do
           builder.add_output(output)
         end
 
-        it  do
+        it do
           expect{subject}.to raise_error TemplateBuilder::OutputAlreadyExist
         end
       end

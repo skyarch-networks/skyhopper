@@ -11,8 +11,9 @@ module Node::Attribute
 
 
   # セットされている attribute を手に入れる。
-  # ==== Return
-  # Hash {:'yum_releasever/releasever' => 'latest', ...}
+  # @example
+  #   node.get_attributes # => {:'yum_releasever/releasever' => 'latest', ...}
+  # @return [Hash{Symbol => String}]
   def get_attributes
     keys = available_attributes.keys.map{|key| key.to_s.split('/')}
     result = {}
@@ -32,9 +33,9 @@ module Node::Attribute
     return result
   end
 
+
   # attributes をアップデートする。
-  # Args:
-  #   attrs: Hash
+  # @param [Hash] attrs
   def update_attributes(attrs)
     # TODO: 一度設定した attribute を多分消せない
     n = ChefAPI.find(:node, @name)
@@ -43,13 +44,24 @@ module Node::Attribute
   end
 
   # 現在設定できる attributes を返す
+  # @return [Hash{Symbol => Any}]
   def enabled_attributes
-    available_attributes.select do |name, a|
+    available_attributes.select do |_name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
     end
   end
 
+  # 必須の attribute がセットされているかどうかを返す。
+  # @return [Boolean]
+  def attribute_set?
+    a = get_attributes
+    return enabled_attributes.select{|_, v|v[:required]}.keys.none? do |key|
+      a[key].nil?
+    end
+  end
+
   # すべての設定可能な attributes を返す
+  # @return [Hash{Symbol => Any}]
   def available_attributes
     return {
       :'yum_releasever/releasever' => {
@@ -66,12 +78,16 @@ module Node::Attribute
       :'zabbix/agent/servers' => {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
-        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com'
+        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
+        default:     AppSetting.get.zabbix_fqdn,
+        required:    true,
       },
       :'zabbix/agent/servers_active' => {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
-        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com'
+        description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
+        default:     AppSetting.get.zabbix_fqdn,
+        required:    true,
       },
       :'zabbix/database/install_method' => {
         type: String,
@@ -126,21 +142,22 @@ module Node::Attribute
     }
   end
 
-  # ==== Args
-  # [slash] Hash
-  # {'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'}
-  # ==== Return
-  # Hash
-  # {
-  #   'yum_releasever' => {
-  #     'releasever' => '2014.09'
-  #   },
-  #   'zabbix' => {
-  #     'agent' => {
-  #       'servers' => ['example.com']
-  #     }
-  #   }
-  # }
+  # @example
+  #   node.attr_slash_to_hash({'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'})
+  #   # {
+  #   #   'yum_releasever' => {
+  #   #     'releasever' => '2014.09'
+  #   #   },
+  #   #   'zabbix' => {
+  #   #     'agent' => {
+  #   #       'servers' => ['example.com']
+  #   #     }
+  #   #   }
+  #   # }
+  # @param [Hash{String => String}] slash
+  #   key is a slash separated attribute name.
+  #   value is an attribute value.
+  # @return [Hash{String => Any}]
   def attr_slash_to_hash(slash)
     result = Hash.new
     slash.each do |key, val|
@@ -150,12 +167,13 @@ module Node::Attribute
       keys = key.split('/') # ['zabbix', 'agent', 'servers']
 
       attr = Hash.new
-      keys.inject(attr) do |_attr, _key|
-        if _key != keys.last
-          next _attr[_key] = {}
+      keys.inject(attr) do |_attr, key|
+        if key != keys.last
+          next _attr[key] = {}
         end
 
-        _attr[_key] = if self.available_attributes[key.to_sym][:type] == Array
+        _attr[_key] =
+        if self.available_attributes[key.to_sym][:type] == Array
           [val]
         else
           val

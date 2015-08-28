@@ -1,7 +1,6 @@
 language: ruby
 
 rvm:
-  - 2.1.6
   - 2.2.2
   - ruby-head
 
@@ -9,6 +8,9 @@ cache: bundler
 bundler_args: --jobs=4 --retry=3 --deployment
 sudo: false
 
+
+branches:
+  except: /^no-ci-.*$/
 
 before_script:
   - mkdir ~/.chef

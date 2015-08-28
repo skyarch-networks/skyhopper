@@ -1,0 +1,30 @@
+<h3 class="page-header"><%= t 'common.btn.login' %></h3>
+
+<% if User.count != 0 %>
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "form-horizontal", role: "form"}) do |f| %>
+    <input type="hidden" name="user[password]" value="<%= @password %>">
+
+    <div class="form-group">
+      <%= f.label :email, class: 'control-label col-sm-2' %>
+      <div class="col-sm-5">
+        <%= f.email_field :email,  {class: "form-control", required: true, readonly: true} %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :mfa_token, I18n.t("users.mfa_token") , class: 'control-label col-sm-2' %>
+      <div class="col-sm-5">
+        <input id="mfa_token" type="text" pattern="\d{6,6}" autofocus required name="user[mfa_token]" class="form-control">
+      </div>
+    </div>
+    <p class="help-block col-sm-offset-2"><%= t('users.msg.mfa_description') %></p>
+
+    <div class="form-actions-top">
+      <div class="col-sm-5">
+        <%= f.submit t('common.btn.login'), class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%= render "devise/shared/links" %>

@@ -1,8 +1,3 @@
-<%#
-Arguments:
-  infra_logs
-%>
-<script id="infra-logs-tabpane-template" type="text/template">
 <table class="table table-condensed" style="border-collapse:collapse;">
   <thead>
     <tr>
@@ -12,12 +7,12 @@ Arguments:
       <th>at</th>
     </tr>
   </thead>
-  <tbody v-repeat="log: infra_logs.logs" class="tbody-infra-log">
+  <tbody v-repeat="log: logs" class="tbody-infra-log">
     <tr>
       <td><span v-if="log.admin" class="label label-info">admin</span>&nbsp;{{log.email}}</td>
       <td><span v-class="status_class(log.status)" v-text="status_text(log.status)" class="label"></span></td>
       <td>{{log.title}}<a v-if="log.long" href="#" data-toggle="collapse" data-target="#logbody-{{log.id}}" class="accordion-toggle btn btn-xs btn-link popovermore">...see all </a></td>
-      <td v-text="log.created_at | toLocaleString"></td>
+      <td v-text="toLocaleString(log.created_at)"></td>
     </tr>
     <tr v-if="log.long">
       <td colspan="4" class="hidden-row">
@@ -29,5 +24,4 @@ Arguments:
   </tbody>
 </table>
 
-<vue-paginator v-with="infra_logs.page"></vue-paginator>
-</script>
+<vue-paginator page="{{page}}"></vue-paginator>

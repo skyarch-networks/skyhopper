@@ -78,13 +78,13 @@ class TemplateBuilder
     @resources << resource
   end
 
-  def add_param(param)
-    raise ArgumentError, "#{param} isn't parameter" unless param.kind_of? TemplateBuilder::Parameter
+  def add_param(params)
+    raise ArgumentError, "#{params} isn't parameter" unless params.kind_of? TemplateBuilder::Parameter
 
-    param_names = @parameters.map{|param| param.name}
-    raise ParameterAlreadyExist, "#{param.name} already exist" if param_names.include?(param.name)
+    param_names = @parameters.map{|param| params.name}
+    raise ParameterAlreadyExist, "#{params.name} already exist" if param_names.include?(params.name)
 
-    @parameters << param
+    @parameters << params
   end
 
   def add_output(output)
@@ -109,7 +109,7 @@ class TemplateBuilder
       result[:Mappings].merge!(RegionMapHVM: @@ami_mappings[:HVM])
     end
     if have_pv
-      result[:Mappings].merge!(RegionMapPV:  @@ami_mappings[:PV])
+      result[:Mappings].merge!(RegionMapPV: @@ami_mappings[:PV])
     end
 
     # set Description

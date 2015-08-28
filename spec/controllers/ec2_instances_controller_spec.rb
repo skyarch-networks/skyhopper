@@ -22,15 +22,16 @@ describe Ec2InstancesController, :type => :controller do
     let(:type){'t2.micro'}
     let(:req){post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type}
 
-    let(:instance){double(:instance,
+    let(:instance){double
+    (:instance,
       stop:                nil,
       status:              :stopped,
       instance_type:       type,
-      :'instance_type=' => nil,
       start:               nil,
     )}
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[]).and_return(instance)
+      allow(Aws::EC2::Instance).to receive(:new).and_return(instance)
+      allow(instance).to receive(:wait_until).and_return(nil)
     end
 
     before{req}
@@ -155,7 +156,7 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
-      def authorize(*args)end # XXX: pundit hack
+      def authorize(*)end # XXX: pundit hack
       def test
         instance = double_instance()
         status   = params.require(:status)

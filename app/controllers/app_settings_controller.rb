@@ -21,28 +21,20 @@ class AppSettingsController < ApplicationController
   # POST /app_settings/create
   def create
     settings = JSON.parse(params.require(:settings), symbolize_names: true)
+
     access_key        = settings.delete(:access_key)
     secret_access_key = settings.delete(:secret_access_key)
+    keypair_name      = settings.delete(:keypair_name)
+    keypair_value     = settings.delete(:keypair_value)
 
-    begin
-      ec2key = Ec2PrivateKey.create!(
-        name:  settings[:keypair_name],
-        value: settings[:keypair_value]
-      )
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
+    check_eip_limit!(settings[:aws_region], access_key, secret_access_key)
+
+    ec2key = Ec2PrivateKey.create!(
+      name:  keypair_name,
+      value: keypair_value,
+    )
 
     settings[:ec2_private_key_id] = ec2key.id
-    settings.delete(:keypair_name)
-    settings.delete(:keypair_value)
-
-    begin
-      AppSetting.validate(settings)
-    rescue AppSetting::ValidateError => ex
-      render text: ex.message, status: 500 and return
-    end
-
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
@@ -51,24 +43,19 @@ class AppSettingsController < ApplicationController
     AppSetting.clear_cache
 
 
-
-
     projects = Project.for_system
-    begin
-      projects.each do |project|
-        project.update!(access_key: access_key, secret_access_key: secret_access_key)
-      end
-    rescue => ex
-      render text: ex.message, status: 500 and return
+    projects.each do |project|
+      project.update!(access_key: access_key, secret_access_key: secret_access_key)
     end
 
     Thread.new_with_db do
       # おまじない
       ChefServer
       ChefServer::Deployment
+      CfTemplate
 
       set = AppSetting.get
-      stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.to_s)}"
+      stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.current.to_s)}"
 
       ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value)
     end
@@ -87,12 +74,8 @@ class AppSettingsController < ApplicationController
     user = params.require(:zabbix_user)
     pass = params.require(:zabbix_pass)
 
-    begin
-      app_setting.update!(zabbix_user: user, zabbix_pass: pass)
-      AppSetting.clear_cache
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
+    app_setting.update!(zabbix_user: user, zabbix_pass: pass)
+    AppSetting.clear_cache
 
     redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
   end
@@ -102,7 +85,7 @@ class AppSettingsController < ApplicationController
   def chef_create
     # とりあえず決め打ちでいい気がする
     # stack_name = params.require(:stack_name)
-    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.to_s)}"
+    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.current.to_s)}"
 
     set = AppSetting.first
     region        = set.aws_region
@@ -112,6 +95,7 @@ class AppSettingsController < ApplicationController
     # おまじない
     ChefServer
     ChefServer::Deployment
+    CfTemplate
 
     Thread.new_with_db do
       ws = WSConnector.new('chef_server_deployment', 'status')
@@ -146,5 +130,21 @@ class AppSettingsController < ApplicationController
     hash = ChefServer::Deployment::Progress[status].dup
     hash[:message] = msg || I18n.t("chef_servers.msg.#{status}")
     return JSON.generate(hash)
+  end
+
+  class EIPLimitError < StandardError; end
+
+  # @param [String] region
+  # @param [String] access_key_id
+  # @param [String] secret_access_key
+  # @raise [EIPLimitError] raise error when cann't allocate EIP.
+  def check_eip_limit!(region, access_key_id, secret_access_key)
+    e = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
+    a = e.describe_account_attributes
+    limit = a.account_attributes.find{|x| x.attribute_name == 'vpc-max-elastic-ips'}.attribute_values.first.attribute_value.to_i
+    n = e.describe_addresses.addresses.size
+    if limit - n < 2
+      raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
+    end
   end
 end

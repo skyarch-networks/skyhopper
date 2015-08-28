@@ -165,10 +165,10 @@ describe Infrastructure, :type => :model do
     subject{build(:infrastructure)}
 
 
-    it 'return AWS::EC2' do
+    it 'return Aws::EC2::Client' do
       result = double('result')
 
-      expect(::AWS::EC2).to receive(:new).with(
+      expect(::Aws::EC2::Client).to receive(:new).with(
         access_key_id: subject.access_key,
         secret_access_key: subject.secret_access_key,
         region: subject.region
@@ -201,13 +201,19 @@ describe Infrastructure, :type => :model do
   describe '#create_complete?' do
     subject{infra.create_complete?}
     context 'when create complete' do
-      let(:infra){create(:infrastructure, status: 'CREATE_COMPLETE')}
+      let(:infra){build(:infrastructure, status: 'CREATE_COMPLETE')}
       it{is_expected.to be true}
     end
 
     context 'when not create complete' do
-      let(:infra){create(:infrastructure, status: 'ROLLBACK_COMPLETE')}
+      let(:infra){build(:infrastructure, status: 'ROLLBACK_COMPLETE')}
       it{is_expected.to be false}
     end
+  end
+
+  describe '#client' do
+    let(:infra){create(:infrastructure)}
+    subject{infra.client}
+    it {is_expected.to eq infra.project.client}
   end
 end

@@ -37,16 +37,20 @@ describe Concerns::ErrorHandler do
   end
 
   describe '#rescue_exception' do
-    controller do
+    controller ApplicationController do
       include Concerns::ErrorHandler
       def index
-        rescue_exception(eval(params[:ex])) and return
+        rescue_exception(ex) and return
       end
     end
 
-    let(:ex){"StandardError.new('#{error_msg}')"}
+    let(:ex){StandardError.new(error_msg)}
     let(:error_msg){SecureRandom.hex(10)}
-    let(:req){get :index, ex: ex}
+    before do
+      allow_any_instance_of(ApplicationController).to receive(:ex).and_return(ex)
+      allow(ex).to receive(:backtrace).and_return(['foo'])
+    end
+    let(:req){get :index}
 
     context 'when ajax' do
       request_as_ajax

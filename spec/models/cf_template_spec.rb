@@ -33,7 +33,7 @@ describe CfTemplate, :type => :model do
     end
 
     it 'should return cf_templates for infra' do
-      expect(subject).to be_all{|t|t.infrastructure_id == infra.id}
+      is_expected.to be_all{|t|t.infrastructure_id == infra.id}
     end
   end
 
@@ -45,13 +45,13 @@ describe CfTemplate, :type => :model do
     end
 
     it 'should return global cf_templates' do
-      expect(subject).to be_all{|t|t.infrastructure_id.nil?}
+      is_expected.to be_all{|t|t.infrastructure_id.nil?}
     end
   end
 
   describe '#create_cfparams_set' do
-    let(:cft){create(:cf_template)}
-    let(:infra){create(:infrastructure)}
+    let(:cft){build(:cf_template)}
+    let(:infra){build(:infrastructure)}
     let(:subject){cft.create_cfparams_set(infra, params_inserted)}
 
     context 'when not received params_inserted' do
@@ -68,7 +68,15 @@ describe CfTemplate, :type => :model do
           v = JSON.parse(cft.value)
           v['Parameters'].delete('KeyName')
           cft.value = JSON.generate(v)
-          cft.save!
+        end
+        it {is_expected.to eq []}
+      end
+
+      context 'when not have Parameters field' do
+        before do
+          v = JSON.parse(cft.value)
+          v.delete('Parameters')
+          cft.value = JSON.generate(v)
         end
         it {is_expected.to eq []}
       end
@@ -91,7 +99,7 @@ describe CfTemplate, :type => :model do
     subject{cf_template.parsed_cfparams}
 
     context 'when assign @params_not_json' do
-      let(:cf_template){create(:cf_template)}
+      let(:cf_template){build(:cf_template)}
       let(:params_not_json){{foo: 'bar'}}
 
       before do
@@ -105,7 +113,7 @@ describe CfTemplate, :type => :model do
 
     context 'when not assign @params_not_json' do
       let(:params){JSON[{foo: 'hogehoge'}]}
-      let(:cf_template){create(:cf_template, params: params)}
+      let(:cf_template){build(:cf_template, params: params)}
 
       before do
         cf_template.instance_variable_set(:@params_not_json, nil)
@@ -119,7 +127,7 @@ describe CfTemplate, :type => :model do
 
   describe '#update_cfparams' do
     let(:params_not_json){{'foo' => 'hogefuga'}}
-    let(:cf_template){create(:cf_template)}
+    let(:cf_template){build(:cf_template)}
     subject{cf_template.update_cfparams}
 
     before do

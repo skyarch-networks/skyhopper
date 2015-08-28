@@ -10,7 +10,7 @@ require_relative '../spec_helper'
 
 describe Stack, :type => :model do
   let(:stack_name){'StackName'}
-  let(:infra){create(:infrastructure, stack_name: stack_name)}
+  let(:infra){build_stubbed(:infrastructure, stack_name: stack_name)}
   subject {Stack.new(infra)}
 
   it{expect(subject.inspect).to eq "#<Stack: #{stack_name}>"}
@@ -66,7 +66,7 @@ describe Stack, :type => :model do
 
     context "status is not in progress" do
       let(:status_list) do
-        ['CREATE_FAILED', 'CREATE_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_COMPLETE', 'DELETE_FAILED', 'DELETE_COMPLETE',  'UPDATE_COMPLETE',  'UPDATE_ROLLBACK_FAILED', 'UPDATE_ROLLBACK_COMPLETE']
+        ['CREATE_FAILED', 'CREATE_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_COMPLETE', 'DELETE_FAILED', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_FAILED', 'UPDATE_ROLLBACK_COMPLETE']
       end
 
       it "returns false" do
@@ -105,17 +105,17 @@ describe Stack, :type => :model do
       double(
         'rds',
         resource_type: 'AWS::RDS::DBInstance',
-        physical_resource_id:   'i-hogefuga',
+        physical_resource_id: 'i-hogefuga',
       ),
       double(
         'ec2',
         resource_type: 'AWS::EC2::Instance',
-        physical_resource_id:   'i-piyopoyo',
+        physical_resource_id: 'i-piyopoyo',
       )
     ]}
     before do
       allow(subject).to receive(:instances_for_resources).and_return(instances)
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:ec2, :instances, :[], :tags)
+      allow_any_instance_of(Infrastructure).to receive_message_chain(:instance, :tags_by_hash)
         .and_return({'Name' => 'SCREEN_NAME'})
     end
 

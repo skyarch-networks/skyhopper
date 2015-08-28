@@ -31,7 +31,7 @@ module ApplicationHelper
         text = content_tag(:div,
           content_tag(:button, raw("&times;"), :class => "close", "data-dismiss" => "alert") + msg,
           :class => "alert fade in alert-#{type} alert-dismissible #{options[:class]}"
-        )
+                          )
         flash_messages << text if msg
       end
     end
@@ -90,7 +90,7 @@ module ApplicationHelper
   end
 
   def uneditable_input(content)
-    return "<span class=\"input-large uneditable-input form-control\" disabled>#{content}</span>".html_safe
+    return "<span class=\"input-large uneditable-input form-control\" readonly>#{content}</span>".html_safe
   end
 
   def admin_label

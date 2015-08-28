@@ -48,8 +48,6 @@ RSpec.configure do |config|
   #     --seed 1234
   #config.order = "random"
 
-  config.include Capybara::DSL, :type => :feature
-
   config.include FactoryGirl::Syntax::Methods
   config.include Devise::TestHelpers, type: :controller
   config.include Devise::TestHelpers, type: :view
@@ -92,7 +90,7 @@ end
 
 AWS.stub!
 Aws.config[:stub_responses] = true
-ChefAPI.class_variable_set(:@@ridley, Ridley.new(server_url: 'https://dummy.dummy',  client_name: 'dummy',  client_key: <<EOS))
+ChefAPI.class_variable_set(:@@ridley, Ridley.new(server_url: 'https://dummy.dummy', client_name: 'dummy', client_key: <<EOS))
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA1Nn9urdkVWQB/mW5M/ttlLGEnhhKT666ZhIrZlPPycS7Bynq
 kyzb7tVVL9JGqO1fp4ylUGR6DPOhBRJkT5I9x1BrULdxLcLh0Of/SZQj8msGYZEM

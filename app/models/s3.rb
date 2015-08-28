@@ -10,11 +10,11 @@
 #      もしくは、キャッシュをしている変数をクリアする。
 #      @website
 #      @web_conf_opt
-class S3
+class S3 < SimpleDelegator
   def initialize(infra, bucket_name)
     access_key_id     = infra.access_key
     secret_access_key = infra.secret_access_key
-    @region            = infra.region
+    @region = infra.region
 
     @s3 = ::AWS::S3.new(
       access_key_id:     access_key_id,
@@ -22,18 +22,9 @@ class S3
     )
 
     @s3_bucket = @s3.buckets[bucket_name]
+    __setobj__(@s3_bucket)
   end
 
-  # ----------------------------------- method wrapper
-
-  %w[
-    name
-    url
-  ].each do |name|
-    define_method(name) do
-      @s3_bucket.__send__(name)
-    end
-  end
 
   # 毎回APIを叩かせないためキャッシュ
   # TODO: websiteかどうかが変更された場合の処理

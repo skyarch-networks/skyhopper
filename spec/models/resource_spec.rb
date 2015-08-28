@@ -13,15 +13,15 @@ RSpec.describe Resource, :type => :model do
     subject{resource.all_serverspecs}
 
     context 'when have dish' do
-      let(:dish){create(:dish, serverspecs: [create(:serverspec)])}
+      let(:dish){build_stubbed(:dish, serverspecs: [build_stubbed(:serverspec)])}
       # XXX: これとか FactoryGirl で定義したい
-      let(:resource){create(:resource, dish: dish, serverspecs: [create(:serverspec)])}
+      let(:resource){build_stubbed(:resource, dish: dish, serverspecs: [build_stubbed(:serverspec)])}
 
       it {is_expected.to match_array resource.serverspecs | resource.dish.serverspecs}
     end
 
     context 'when not have dish' do
-      let(:resource){create(:resource, serverspecs: [create(:serverspec)])}
+      let(:resource){build_stubbed(:resource, serverspecs: [build_stubbed(:serverspec)])}
       it {is_expected.to match_array resource.serverspecs}
     end
   end
@@ -30,14 +30,14 @@ RSpec.describe Resource, :type => :model do
     subject{resource.all_serverspec_ids}
 
     context 'when have dish' do
-      let(:dish){create(:dish, serverspecs: [create(:serverspec)])}
-      let(:resource){create(:resource, dish: dish, serverspecs: [create(:serverspec)])}
+      let(:dish){build_stubbed(:dish, serverspecs: [build_stubbed(:serverspec)])}
+      let(:resource){build_stubbed(:resource, dish: dish, serverspecs: [build_stubbed(:serverspec)])}
 
       it {is_expected.to match_array resource.serverspec_ids | resource.dish.serverspec_ids}
     end
 
     context 'when not have dish' do
-      let(:resource){create(:resource, serverspecs: [create(:serverspec)])}
+      let(:resource){build_stubbed(:resource, serverspecs: [build_stubbed(:serverspec)])}
 
       it {is_expected.to match_array resource.serverspec_ids}
     end

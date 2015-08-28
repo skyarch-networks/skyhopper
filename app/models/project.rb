@@ -20,25 +20,29 @@ class Project < ActiveRecord::Base
 
   before_destroy :detach_zabbix
 
+  extend Concerns::Cryptize
+  cryptize :access_key
+  cryptize :secret_access_key
+
   ForDishTestCodeName  = 'DishTest'.freeze
   ChefServerCodeName   = 'ChefServer'.freeze
   ZabbixServerCodeName = 'ZabbixServer'.freeze
 
 
   def self.for_test
-    find_by(code: ForDishTestCodeName)
+    return Client.for_system.projects.find_by(code: ForDishTestCodeName)
   end
 
   def self.for_chef_server
-    find_by(code: ChefServerCodeName)
+    return Client.for_system.projects.find_by(code: ChefServerCodeName)
   end
 
   def self.for_zabbix_server
-    find_by(code: ZabbixServerCodeName)
+    return Client.for_system.projects.find_by(code: ZabbixServerCodeName)
   end
 
   def self.for_system
-    where(code: [ForDishTestCodeName, ChefServerCodeName, ZabbixServerCodeName])
+    return Client.for_system.projects
   end
 
   def detach_zabbix

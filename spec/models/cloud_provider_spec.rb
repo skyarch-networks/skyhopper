@@ -35,6 +35,6 @@ RSpec.describe CloudProvider, :type => :model do
       after do
         create(:cloud_provider, name: "AWS")
       end
-   end
+    end
   end
 end

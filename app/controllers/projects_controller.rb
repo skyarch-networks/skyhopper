@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
     authorize(@project || Project.new(client_id: client_id))
   end
 
-  before_action :with_zabbix_or_back, only: [:destroy, :create, :new]
+  before_action :with_zabbix, only: [:destroy, :create, :new]
 
 
   # GET /projects

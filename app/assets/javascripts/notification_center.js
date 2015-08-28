@@ -38,16 +38,17 @@
   };
 
 
-  var ws_conn = ws_connector('notifications', session_id);
+  if (session_id) {
+    var ws_conn = ws_connector('notifications', session_id);
 
-  ws_conn.onmessage = function (msg) {
-    var data = JSON.parse(msg.data);
-    var status = data.status ? "success" : "danger";
-    var status_noty = data.status ? "success" : "error";
+    ws_conn.onmessage = function (msg) {
+      var data = JSON.parse(msg.data);
+      var status = data.status ? "success" : "danger";
+      var status_noty = data.status ? "success" : "error";
 
-    display_notification(data.message, status, data.timestamp, status_noty);
-  };
-
+      display_notification(data.message, status, data.timestamp, status_noty);
+    };
+  }
 
 
   var favicon_badge_count = 0;

@@ -6,8 +6,16 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class RDS
+class RDS < SimpleDelegator
   class ChangeScaleError < StandardError; end
+
+  Types = %w[
+    db.t1.micro
+    db.m3.medium db.m3.large db.m3.xlarge db.m3.2xlarge
+    db.m1.small db.m1.medium db.m1.large db.m1.xlarge
+    db.m2.xlarge db.m2.2xlarge db.m2.4.xlarge
+    db.cr1.8xl
+  ].recursive_freeze
 
   def initialize(infra, physical_id)
     access_key_id     = infra.access_key
@@ -21,30 +29,15 @@ class RDS
     )
 
     @db_instance = @rds.db_instances[physical_id]
+    __setobj__(@db_instance)
   end
 
   # ----------------------------------- method wrapper
-
-  %w[
-    endpoint_address
-    endpoint_port
-    db_instance_class
-    allocated_storage
-  ].each do |name|
-    define_method(name) do
-      @db_instance.__send__(name)
-    end
-  end
 
 
   def engine_type
     @db_instance.engine
   end
-
-  def is_multi_az?
-    @db_instance.multi_az?
-  end
-
 
   def engine
     "#{@db_instance.engine} (#{@db_instance.engine_version})"
@@ -68,18 +61,11 @@ class RDS
     end
 
     begin
-      modify(db_instance_class: scale,  apply_immediately: true)
+      modify(db_instance_class: scale, apply_immediately: true)
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end
 
     scale
-  end
-
-
-  private
-
-  def modify(opt)
-    @db_instance.modify(opt)
   end
 end
