@@ -103,7 +103,7 @@
         var index = this.pageNumber * this.pages;
         return list.slice(index, index + this.pages);
       },
-      roundup: function (val) { return (Math.ceil(val))},
+      roundup: function (val) { return (Math.ceil(val));},
     }
  });
 
