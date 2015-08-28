@@ -30,6 +30,11 @@
 // infrastructures
 // ================================================================
 
+//browserify functions for vue filters functionality
+  var wrap = require('./modules/wrap');
+  var listen = require('./modules/listen');
+  var parseURLParams = require('./modules/getURL');
+  var infraindex = require('./modules/loadindex');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -1513,16 +1518,7 @@
   };
   var app;
 
-  var infraindex = function(){
-    return new Vue({
-      el: '#demo',
-      data: {
-        searchQuery: '',
-        gridColumns: [],//['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
-        gridData: []
-      }
-    });
-  };
+
 
 
 
@@ -1539,6 +1535,10 @@
         filterKey: '',
         reversed: {},
         loading: true,
+        option: ['infrastructure'],
+        lang: null,
+        pages: 10,
+        pageNumber: 0,
           };
       },
     compiled: function () {
@@ -1553,14 +1553,31 @@
           if(key !== 'id')
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
-      }
-
+      },
+      parseURLParams: parseURLParams,
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
     },
     created: function (){
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  parseURLParams('project_id');
+        var id =  this.parseURLParams('project_id');
+        self.lang = this.parseURLParams('lang');
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
@@ -1572,6 +1589,7 @@
        $.ajax({
            url:'/infrastructures?&project_id='+id,
            success: function (data) {
+             this.pages = data.length;
              var nextColumns = [];
              self.data = data.map(function (item) {
                  var d = new Date(item.created_at);
@@ -1597,86 +1615,22 @@
                });
              self.$emit('data-loaded');
              $("#loading").hide();
-             if(self.data.length === 0){$('#infra-empty').show();}
+             var empty = t('infrastructures.msg.empty-list');
+             if(self.data.length === 0){ $('#empty').show().html(empty);}
            }
          });
     },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    }
  });
 
-
-
-  function parseURLParams(option) {
-    var url =  window.location.href;
-    var queryStart = url.indexOf("?") + 1,
-      queryEnd   = url.indexOf("#") + 1 || url.length + 1,
-      query = url.slice(queryStart, queryEnd - 1),
-      pairs = query.replace(/\+/g, " ").split("&"),
-      parms = {}, i, n, v, nv;
-
-    if (query === url || query === "") {
-      return;
-    }
-
-    for (i = 0; i < pairs.length; i++) {
-      nv = pairs[i].split("=");
-      n = decodeURIComponent(nv[0]);
-      v = decodeURIComponent(nv[1]);
-
-      if (!parms.hasOwnProperty(n)) {
-        parms[n] = [];
-      }
-
-      parms[n].push(nv.length === 2 ? v : null);
-    }
-    return parms[option];
-  }
-
-
-    Vue.filter('wrap', function(value){
-      if (value == 'stack_name'){
-        return t('infrastructures.stackname');
-      }else if(value == 'region'){
-        return t('infrastructures.region');
-      }else if(value == 'created_at'){
-        return t('infrastructures.launchtime');
-      }else if(value == 'id'){
-        return t('common.actions');
-      }else if(value == 'status'){
-        return t('infrastructures.status');
-      }else if(value == 'keypairname'){
-        return t('infrastructures.keypair');
-      }else{
-        return value;
-      }
-    });
-    Vue.filter('listen', function(value, key){
-        if(key == 'id'){
-        var isEdit = $('#edit-'+value+'').attr('class');
-        var href = $('#edit-'+value+'').attr('href');
-        var isDelete = $('#delete-'+value+'').attr('class');
-        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.show')+"</a> " +
-          "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
-          "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
-          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.detach')+"</a> "+
-          "<div class='btn-group'>"+
-              "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
-              "    "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
-              " </a> " +
-             "<ul class='dropdown-menu'>"+
-              "<li> " +
-               "<a class='delete-stack' infrastructure-id="+value+" href='#'>Execute</a> " +
-            "</li>"+
-            "</ul>"+
-           "</div>";
-
-          return ret;
-        }else{
-          if(value == "CREATE_COMPLETE")
-            return "<span class='label label-success'>"+value+"</span>";
-          else
-            return value;
-        }
-    });
 
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {

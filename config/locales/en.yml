@@ -121,6 +121,7 @@ en:
       updated:            'Project was successfully updated.'
       deleted:            'Project was successfully deleted.'
       cant_delete_system: 'Unable to delete project for this system.'
+      empty-list:         'Project list is empty'
 
 
   infrastructures:
@@ -167,7 +168,7 @@ en:
       not_necessary:               'It is not necessary to edit this infrastructure.'
       check_intervals:             'Automatic status update: every 15 seconds ...'
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
-      empty-list:                 'Infrastructure list is empty'
+      empty-list:                  'Infrastructure list is empty'
       loading-list:                'Loading Infrastructures ...'
 
 
