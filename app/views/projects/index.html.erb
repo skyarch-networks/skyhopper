@@ -4,22 +4,12 @@
   <%= breadcrumbs(@selected_client) if current_user.master? %>
 </div>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th><%= t 'projects.code' %></th>
-      <th><%= t 'projects.name' %></th>
-      <th><%= t 'projects.cloud_provider' %></th>
-      <th><%= t 'projects.access_key' %></th>
-      <th><%= t 'common.actions' %></th>
-    </tr>
-  </thead>
+<%= render 'vue/index' %>
+
+<table class="table table-hover hidden">
   <tbody>
     <% @projects.each do |project| %>
       <tr class="projects-row <%= 'info' if project.id == @selected_project_id %>">
-        <td><%= project.code %></td>
-        <td><%= project.name %></td>
-        <td><%= project.cloud_provider.name %></td>
         <td>*****<%= project.access_key[-3..-1] %></td>
         <td>
           <%= link_to t('projects.btn.show_infrastructures'),
@@ -54,9 +44,6 @@
   </tbody>
 </table>
 
-<div class="text-center">
-  <%= paginate(@projects) %>
-</div>
 
 
 <%= button_add_project(@selected_client) %>
