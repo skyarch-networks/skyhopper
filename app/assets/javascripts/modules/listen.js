@@ -43,6 +43,8 @@ function render_projects(value, key, lang){
     var del;
     if(isDelete){
      del = "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/projects/"+value+"?lang="+lang+"'>Delete</a>";
+    }else{
+     del = '';
     }
 
     var ret = "<a class='btn btn-xs btn-info ' href='/infrastructures?lang="+lang+"&amp;project_id="+value+"'' >"+t('projects.btn.show_infrastructures')+"</a> " +
