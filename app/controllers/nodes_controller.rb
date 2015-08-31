@@ -66,7 +66,7 @@ class NodesController < ApplicationController
 
     chef_server = ServerState.new('chef')
 
-    if @chef_error == !chef_server.is_running?
+    if @chef_error = !chef_server.is_running?
       @chef_msg = t 'chef_servers.msg.not_running'
       return
     end

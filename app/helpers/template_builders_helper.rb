@@ -180,17 +180,18 @@ module TemplateBuildersHelper
   def property_array(property)
     table_cols = []
 
-    hash_data_validator = if property.data_validator == String
-                            # StringのArray
-                            table_cols.push("values")
-                            nil
-                          else
-                            # HashのArray
-                            property.data_validator.data_validator.each do |key, _val|
-                              table_cols.push(key)
-                            end
-                            property.data_validator.data_validator
-                          end
+    hash_data_validator =
+    if property.data_validator == String
+      # StringのArray
+      table_cols.push("values")
+      nil
+    else
+      # HashのArray
+      property.data_validator.data_validator.each do |key, _val|
+        table_cols.push(key)
+      end
+      property.data_validator.data_validator
+    end
 
     form_parts = "<div>#{form_array_items(property, hash_data_validator: hash_data_validator)}</div>"
     form_parts << <<-EOF

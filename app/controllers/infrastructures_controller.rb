@@ -89,8 +89,8 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
-    rescue
-      Aws::CloudFormation::Errors::ValidationError # stack does not exist
+    #rubocop:disable Linth/HandleExceptions
+    rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
     end
 
     render json: {

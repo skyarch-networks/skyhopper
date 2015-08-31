@@ -136,7 +136,7 @@ class TemplateBuilder
   end
 
   def to_json
-    delete.to_json
+    build.to_json
   end
 
   def to_pretty_json

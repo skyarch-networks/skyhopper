@@ -5,7 +5,7 @@ require File.expand_path('../config/application', __FILE__)
 
 SkyHopper::Application.load_tasks
 
-task :register_users, ["users", "output"] => :environment do |_x, args|
+task :register_users, ["users", "output"] => :environment do |_, args|
   output = File.open(args.output, "w")
 
   client = Client.find_or_create_by(name: "Skyarch Networks Trial", code: "Skyarch Networks Trial")
