@@ -69,10 +69,6 @@ class ServerspecsController < ApplicationController
   def edit
   end
 
-  # GET /serverspecs/generator
-  def generator
-  end
-
   # DELETE /serverspecs/1
   def destroy
     infra_id = @serverspec.infrastructure_id
