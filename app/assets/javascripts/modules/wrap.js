@@ -1,5 +1,4 @@
 module.exports = function(value, option){
-  console.log(option[0]);
   if(option[0] ==='infrastructure') {
     return render_infrastructures(value);
   }else if(option[0] === 'project') {
@@ -70,3 +69,4 @@ function render_serverspecs(value){
     return value;
   }
 }
+
