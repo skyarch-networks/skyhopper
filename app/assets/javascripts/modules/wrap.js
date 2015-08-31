@@ -1,8 +1,13 @@
 module.exports = function(value, option){
-  if(option[0] ==='infrastructure'){
-        return render_infrastructures(value);
-  }else if(option[0] === 'project'){
-        return render_projects(value);
+  console.log(option[0]);
+  if(option[0] ==='infrastructure') {
+    return render_infrastructures(value);
+  }else if(option[0] === 'project') {
+    return render_projects(value);
+  }else if (option[0] === 'client') {
+    return render_clients(value);
+  }else if (option[0] === 'serverspec') {
+    return render_serverspecs(value);
   }else{
     return value;
   }
@@ -35,6 +40,30 @@ function render_projects(value){
     return t ('projects.cloud_provider');
   }else if (value === 'access_key') {
     return t ('projects.access_key');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_clients(value){
+  if (value === 'code'){
+    return t ('clients.code');
+  }else if (value === 'name') {
+    return t ('clients.name');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_serverspecs(value){
+  if (value === 'description'){
+    return t ('serverspecs.description');
+  }else if (value === 'name') {
+    return t ('serverspecs.name');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{
