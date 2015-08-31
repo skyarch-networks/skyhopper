@@ -8,6 +8,9 @@
     "jquery/jquery.d.ts": {
       "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
     },
+    "jqueryui/jqueryui.d.ts": {
+      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
+    },
     "lodash/lodash.d.ts": {
       "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
     },

@@ -81,6 +81,11 @@ module Modal {
 
     modal_base.appendTo('body').modal('show');
 
+    modal_base.children().draggable({
+      cursor: "move",
+      containment: ".modal-backdrop",
+    });
+
     return dfd;
   };
 
