@@ -3,6 +3,10 @@ module.exports = function (value, key, option, lang) {
     return render_infrastructures(value, key);
   }else if(option[0] === 'project'){
     return render_projects(value, key, lang);
+  }else if (option[0] === 'client') {
+    return render_clients(value, key, lang);
+  }else if (option[0] === 'serverspec') {
+    return render_serverspecs(value, key, lang);
   }else{
     return value;
   }
@@ -37,6 +41,25 @@ function render_infrastructures(value, key){
   }
 }
 
+function render_clients(value, key, lang){
+  if(key === 'id'){
+    var isEdit = $('#delete-'+value+'').attr('class');
+    var isDelete = $('#delete-'+value+'').attr('class');
+    var edit = '';
+    var del = '';
+    if(isEdit)
+      edit = " <a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a>";
+    if(isDelete)
+      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'>Delete</a>";
+
+
+    var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' >"+t('clients.btn.show_projects')+"</a> ";
+       return ret+edit+del;
+  }else{
+    return value;
+  }
+}
+
 function render_projects(value, key, lang){
   if(key === 'id'){
     var isDelete = $('#delete-'+value+'').attr('class');
@@ -61,6 +84,24 @@ function render_projects(value, key, lang){
       "</div>" +
       "<a class='btn btn-default btn-xs' href='/projects/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a> ";
        return ret+del;
+  }else{
+    return value;
+  }
+}
+
+function render_serverspecs(value, key, lang){
+  if(key === 'id'){
+    var isEdit = $('#edit-'+value+'').attr('class');
+    var isDelete = $('#delete-'+value+'').attr('class');
+    var edit = '';
+    var del = '';
+    if(isEdit)
+      edit = " <a class='btn btn-default btn-xs' href='/serverspecs/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a>";
+    if(isDelete)
+      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/serverspecs/"+value+"?lang="+lang+"'>Delete</a>";
+
+    var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
+    return ret+edit+del;
   }else{
     return value;
   }
