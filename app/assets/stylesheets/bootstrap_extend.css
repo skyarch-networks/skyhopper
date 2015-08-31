@@ -79,3 +79,14 @@ input[type="number"] {
   width: 800px;
   margin-left: -100px;
 }
+
+/* for draggable modal */
+.modal-dialog.ui-draggable {
+    margin: auto;
+    top:    30px;
+}
+
+.caret.caret-reversed {
+  border-top-width: 0;
+  border-bottom: 4px solid #000000;
+}

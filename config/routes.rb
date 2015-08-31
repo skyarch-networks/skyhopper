@@ -21,6 +21,12 @@ SkyHopper::Application.routes.draw do
     end
   end
 
+  resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
+    collection do
+      post 'schedule'
+    end
+  end
+
   resources :infrastructures do
     member do
       post 'change_rds_scale'
@@ -69,7 +75,6 @@ SkyHopper::Application.routes.draw do
       post 'run'
       put  'create_for_rds'
       post 'schedule'
-      get  'generator'
     end
   end
 

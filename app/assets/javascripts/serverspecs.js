@@ -7,6 +7,7 @@
 //
 //= require serverspec-gen/ast
 //= require serverspec-gen/ui
+
 //browserify functions for vue filters functionality
 var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
