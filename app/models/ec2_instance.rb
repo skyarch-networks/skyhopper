@@ -6,43 +6,19 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class EC2Instance
+class EC2Instance < SimpleDelegator
+  # instance_types を取得するAPIがなさそう?
+  Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
+
   class ChangeScaleError < StandardError; end
 
-  def initialize(arg, physical_id: nil)
-    raise ArgumentError unless physical_id
-
-    @physical_id = physical_id
-
-    case arg
-    when Infrastructure
-      @ec2 = arg.ec2
-    else
-      raise ArgumentError, "Invalid Argument: #{arg.inspect}"
-    end
-
-    @instance = @ec2.instances[physical_id]
-  end
   attr_reader :physical_id
 
-  %w[
-    instance_type
-    status
-    start
-    stop
-    reboot
-    tags
-    dns_name
-    public_ip_address
-    elastic_ip
-  ].each do |name|
-    define_method(name) do
-      @instance.__send__(name)
-    end
-  end
+  def initialize(infra, physical_id:)
+    @physical_id = physical_id
 
-  def instance_type=(type)
-    @instance.instance_type = type
+    @instance = Aws::EC2::Instance.new(physical_id, client: infra.ec2)
+    __setobj__(@instance)
   end
 
   # status が変化するのを待つ
@@ -69,19 +45,19 @@ class EC2Instance
     return type if instance_type == type
 
     stop
-    until status == :stopped
-      sleep 10
+    wait_until(delay: 10) do |instance|
+      instance.state.name == 'stopped'
     end
 
     begin
-      self.instance_type = type
-    rescue AWS::EC2::Errors::InvalidInstanceAttributeValue => ex
+      modify_attribute(attribute: 'instanceType', value: type)
+    rescue Aws::EC2::Errors::ClientInvalidParameterValue => ex
       start
       raise ChangeScaleError, ex.message
     end
 
-    until instance_type == type
-      sleep 3
+    wait_until(delay: 3) do |instance|
+      instance.instance_type == type
     end
     start
 
@@ -89,26 +65,39 @@ class EC2Instance
   end
 
   def summary
-    {
-      status: status,
+    reload
+    return {
+      status:        state.name,
       instance_type: instance_type,
-      public_dns: dns_name,
-      elastic_ip: elastic_ip,
-      public_ip: public_ip_address,
+      public_dns:    public_dns_name,
+      elastic_ip:    elastic_ip,
+      public_ip:     public_ip_address,
     }
   end
 
-  def is_status_running?
-    self.status === :running
+  # for compatibility
+  def status
+    reload
+    state.name.to_sym
   end
 
-  def is_status_in_progress?
-    case self.status
+  def elastic_ip
+    resp = client.describe_addresses(filters: [{name: 'instance-id', values: [instance_id]}])
+    resp.addresses.first.public_ip unless resp.addresses.empty?
+  end
 
-    when :pending, :stopping
-      return true
-    else
-      return false
-    end
+  def tags_by_hash
+    tags.map { |e| [e.key, e.value] }.to_h
+  end
+
+  def fqdn
+    return self.public_dns_name.presence ||
+           self.private_dns_name
+  end
+
+  def ip_addr
+    return self.elastic_ip.presence ||
+           self.public_ip_address.presence ||
+           self.private_ip_address
   end
 end

@@ -12,8 +12,7 @@ class UsersAdminController < ApplicationController
     authorize User.new
   end
 
-  before_action :with_zabbix_or_back, only: [:new, :create, :destroy]
-  before_action :with_zabbix_or_render, only: [:edit, :update, :sync_zabbix]
+  before_action :with_zabbix, only: [:new, :create, :destroy, :edit, :update, :sync_zabbix]
   before_action :set_zabbix, only: [:destroy]
 
   # user management
@@ -56,13 +55,7 @@ class UsersAdminController < ApplicationController
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
       s = AppSetting.get
       z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      user_id_z = z.create_user(@user.email, @user.encrypted_password)
-
-      if @user.master && @user.admin
-        z.update_user(user_id_z, type: Zabbix::UserTypeSuperAdmin)
-      elsif @user.master
-        z.update_user(user_id_z, usergroup_ids: [z.get_master_usergroup_id])
-      end
+      z.create_user(@user)
     rescue => ex
       @user.destroy
       e.(ex) and return
@@ -74,25 +67,32 @@ class UsersAdminController < ApplicationController
 
   # GET /users_admin/1/edit
   def edit
-    @user    = User.find( params.require(:id) )
-    @clients = Client.all
-    allowed_projects = @user.projects.includes(:client)
-    @allowed_projects_title = allowed_projects.map do |project|
+    user = User.find(params.require(:id))
+    @user = user.trim_password
+    @clients = Client.all.map{|c|{value: c.id, text: c.name}}
+    allowed_projects = user.projects.includes(:client)
+    @allowed_projects = allowed_projects.map do |project|
       client_name = project.client.name
-      {project_id: project.id, title: "#{client_name} / #{project.name}[#{project.code}]"}
+      {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
 
-    render partial: 'edit'
+    # 新しい MFA の鍵を生成する
+    @mfa_key = ROTP::Base32.random_base32
+    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{user.email}")
+    @mfa_qrcode = RQRCode::QRCode.new(uri).as_html # XXX: ここが遅い(開発環境で100msぐらいはかかる)
   end
 
   # PUT /users_admin/1
   def update
+    body = JSON.parse(params.require(:body), symbolize_names: true)
     user_id          = params.require(:id)
-    allowed_projects = params[:allowed_projects]
-    master           = params.require(:master) == 'true'
-    admin            = params.require(:admin)  == 'true'
-    password         = params[:password]
-    password_confirm = params[:password_confirmation]
+    allowed_projects = body[:allowed_projects]
+    master           = body[:master]
+    admin            = body[:admin]
+    mfa_secret_key   = body[:mfa_secret_key]
+    remove_mfa_key   = body[:remove_mfa_key]
+    password         = body[:password]
+    password_confirm = body[:password_confirmation]
 
     user = User.find(user_id)
     if master
@@ -105,34 +105,32 @@ class UsersAdminController < ApplicationController
     user.admin = admin
 
     if password && password_confirm
-      unless password == password_confirm
-        render text: 'Password confirmation does not match Password', status: 500 and return
-      end
-
       user.password = password
       user.password_confirmation = password_confirm
       set_password = true
     end
 
-    unless user.save
-      render text: user.errors.full_messages.join(' '), status: 500 and return
-    end
+
+    user.mfa_secret_key = mfa_secret_key if mfa_secret_key
+    user.mfa_secret_key = nil            if remove_mfa_key
+
+    user.save!
 
     s = AppSetting.get
     z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
     zabbix_user_id = z.get_user_id(user.email)
 
+    z.create_user(user) unless z.user_exists?(user.email)
+
     if set_password
       z.update_user(zabbix_user_id, password: user.encrypted_password)
     end
 
-    if user.master && user.admin
-      z.update_user(zabbix_user_id, usergroup_ids: [z.get_default_usergroup_id], type: Zabbix::UserTypeSuperAdmin)
-    elsif user.master
-      z.update_user(zabbix_user_id, usergroup_ids: [z.get_master_usergroup_id])
+    usergroup_ids = [z.get_group_id_by_user(user)]
+    if user.master
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
     else
       hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
-      usergroup_ids = [z.get_default_usergroup_id]
       if hostgroup_names.present?
         usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
       end
@@ -151,13 +149,7 @@ class UsersAdminController < ApplicationController
     users.each do |user|
       next if z.user_exists?(user.email)
 
-      # XXX: DRY. Same as create of this controller.
-      user_id_z = z.create_user(user.email, user.encrypted_password)
-      if user.master && user.admin
-        z.update_user(user_id_z, type: Zabbix::UserTypeSuperAdmin)
-      elsif user.master
-        z.update_user(user_id_z, usergroup_ids: [z.get_master_usergroup_id])
-      end
+      z.create_user(user)
     end
 
     render text: I18n.t('users.msg.synced'); return
@@ -189,7 +181,7 @@ class UsersAdminController < ApplicationController
   def set_zabbix
     begin
       @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError => ex
+    rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
       redirect_to users_admin_index_path
     end

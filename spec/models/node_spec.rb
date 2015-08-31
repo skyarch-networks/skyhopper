@@ -17,10 +17,10 @@ describe Node, :type => :model do
       expect(Open3).to receive(:capture3).and_return(['out','err', status])
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
-      expect(Node.bootstrap("hoge", "fuga", infra)).to be_truthy
+      expect(Node.bootstrap("hoge", "fuga", infra)).to be_a Node
     end
   end
 
@@ -28,10 +28,11 @@ describe Node, :type => :model do
     subject { Node.new("test") }
 
     before do
-      allow(IO).to receive(:popen)
+      allow(Open3).to receive(:popen3)
+      allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
     end
 
-    let(:infra){FactoryGirl.create(:infrastructure)}
+    let(:infra){build(:infrastructure)}
 
     it "returns true if status is success" do
       expect(subject.cook(infra)).to be_truthy
@@ -78,55 +79,6 @@ describe Node, :type => :model do
 
       it do
         expect{subject}.to raise_error RuntimeError
-      end
-    end
-  end
-
-  describe "#fqdn" do
-    context "only fqdn is configured" do
-      let (:details) do
-        {
-          "automatic" => {
-            "fqdn" => "example.com"
-          }
-        }
-      end
-
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_return(details)
-      end
-
-      subject do
-        Node.new("test")
-      end
-
-      it "acquires fqdn from details" do
-        expect(subject.__send__(:fqdn)).to eq('example.com')
-      end
-    end
-
-    context "both fqdn and public_dns is configured" do
-      let (:details) do
-        {
-          "automatic" => {
-            "fqdn" => "example.com"
-          },
-          "normal" => {
-            "public_dns" => "foo.example.com"
-          }
-        }
-      end
-
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_return(details)
-      end
-
-      subject do
-        Node.new("test")
-      end
-
-      it "returns public_dns" do
-        expect(subject.__send__(:fqdn)).to eq('foo.example.com')
       end
     end
   end
@@ -181,7 +133,7 @@ describe Node, :type => :model do
       EOS
       allow(status).to receive(:success?).and_return(true)
       allow(Open3).to receive(:capture3).and_return([out, 'err', status])
-      expect(subject).to receive(:fqdn).and_return('example.com')
+      allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
     end
 
     it 'return hash' do
@@ -197,12 +149,12 @@ describe Node, :type => :model do
 
     context 'when command fail' do
       before do
-        expect(Node).to receive(:exec_command).and_raise
+        expect(Node).to receive(:exec_command).and_raise StandardError
       end
 
       it 'should update status' do
         serverspecs = [serverspec.id]
-        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error
+        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
         expect(resource.status.serverspec.failed?).to be true
       end
     end

@@ -1,36 +1,61 @@
 <h3 class="page-header"><%= t('users.edit') %></h3>
 
-<%= hidden_field_tag "user-id", @user.id, id: "user-id" %>
-<div class="col-md-123 col-sm-12">
-  <div class="col-md-3 col-sm-3">
+<div class="col-md-12 col-sm-12">
+  <div class="col-md-2 col-sm-2">
     <h5 class="page-header"><%= t('users.role') %></h5>
     <div class="checkbox">
       <label>
-        <%= check_box_tag "user[master]", "master", @user.master %><%= master_label %>
+        <input type="checkbox" v-model="user.master"><%= master_label %>
       </label>
     </div>
     <div class="checkbox">
       <label>
-        <%= check_box_tag "user[admin]", "admin", @user.admin %><%= admin_label %>
+        <input type="checkbox" v-model="user.admin"><%= admin_label %>
       </label>
     </div>
   </div>
-  <div class="col-sm-9 col-md-9">
-    <h5 class="page-header">パスワードの変更</h5>
+
+  <div class="col-sm-6 col-md-6">
+    <h5 class="page-header"><%=t('users.change_password')%></h5>
     <form class="form-horizontal">
       <div class="form-group">
-        <label for="password" class="col-sm-3 control-label">Password</label>
+        <label for="password" class="col-sm-3 control-label"><%=t('users.password')%></label>
         <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" id="password" placeholder="Enter new password if you want to change" autocomplete="off">
+          <input type="password" class="form-control input-sm" placeholder="Enter new password if you want to change" autocomplete="off" v-model="user.password">
         </div>
       </div>
       <div class="form-group">
-        <label for="password_confirm" class="col-sm-3 control-label">Password Confirmation</label>
+        <label for="password_confirm" class="col-sm-3 control-label"><%=t('users.password_confirm')%></label>
         <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" id="password_confirmation" autocomplete="off">
+          <input type="password" class="form-control input-sm" v-model="user.password_confirmation" autocomplete="off">
         </div>
       </div>
     </form>
+  </div>
+
+  <div class="col-sm-4 col-md-4">
+    <h5 class="page-header"><%=t('users.mfa')%></h5>
+    <div v-if="user.mfa_use">
+      <p><%=t('users.msg.mfa_used')%></p>
+      <button class="btn btn-sm btn-default" v-on="click: update_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key"><%=t('users.change_mfa_secret')%></button>
+      <button class="btn btn-sm btn-danger"  v-on="click: remove_mfa()" v-attr="disabled: update_mfa_key || remove_mfa_key"><%=t('users.use_stop_mfa')%></button>
+    </div>
+
+    <div v-if="!user.mfa_use">
+      <button class="btn btn-sm btn-primary" v-on="click: update_mfa()"><%=t('users.use_start_mfa')%></button>
+    </div>
+
+    <div v-if="update_mfa_key">
+      <p><%=t('users.mfa_secret')%>: <code>{{mfa_key}}</code></p>
+      <div class="QRCode">
+        {{{mfa_qrcode}}}
+      </div>
+      <p><%=t('users.msg.mfa_start_description')%></p>
+    </div>
+
+    <div v-if="remove_mfa_key">
+      <div class="alert alert-danger" role="alert"><%=t('users.msg.use_stop_mfa')%></div>
+    </div>
   </div>
 </div>
 
@@ -38,18 +63,17 @@
 <div class="col-md-7 col-sm-7">
   <div class="col-md-5 col-sm-5 form-group">
     <h5 class="page-header"><%= t('clients.client') %></h5>
-    <select size="2" id="clients" class="form-control admin-selectbox-height">
-      <%= options_from_collection_for_select(@clients, :id, :name) %>
+    <select size="2" v-model="selected_client" number options="clients" class="form-control admin-selectbox-height" v-on="click: get_projects()">
     </select>
   </div>
   <div class="col-sm-7 col-md-7 form-group">
     <h5 class="page-header"><%= t('projects.project') %></h5>
-    <select multiple="multiple" id="projects" class="form-control admin-selectbox-height">
+    <select multiple="multiple" v-model="selected_projects" number options="projects" class="form-control admin-selectbox-height" v-on="dblclick: add()">
     </select>
   </div>
   <div class="col-sm-12 col-md-12">
     <div class="form-group">
-      <button class="btn btn-default pull-right" id="add-allowed-projects">
+      <button class="btn btn-default pull-right" v-on="click: add()">
         <span class="glyphicon glyphicon-plus"></span>
       </button>
     </div>
@@ -63,17 +87,14 @@
 
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <select id="allowed-projects" multiple="multiple" class="form-control admin-selectbox-height">
-          <% @allowed_projects_title.each do |project| %>
-            <option value="<%= project[:project_id] %>"><%= project[:title] %></option>
-          <% end %>
+        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_projects" number options="allowed_projects" v-on="dblclick: del()">
         </select>
       </div>
     </div>
 
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <button id="remove-allowed-projects" class="btn btn-default">
+        <button class="btn btn-default" v-on="click: del()">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
@@ -83,7 +104,7 @@
 
 <div class="col-md-12 col-sm-12">
   <div class="form-actions-top">
-    <button class="btn btn-primary btn-sm" id="apply-permission-edit">
+    <button class="btn btn-primary btn-sm" v-on="click: submit()">
       <%= t('common.btn.save_changes') %>
     </button>
   </div>

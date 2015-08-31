@@ -20,7 +20,7 @@ class ClientsController < ApplicationController
     authorize(@client || Client.new)
   end
 
-  before_action :with_zabbix_or_back, only: :destroy
+  before_action :with_zabbix, only: :destroy
 
 
 
@@ -28,7 +28,11 @@ class ClientsController < ApplicationController
   # GET /clients.json
   def index
     page = params[:page] || 1
-    @clients = Client.page(page).per(10)
+    @clients = Client.page(page)
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /clients/new

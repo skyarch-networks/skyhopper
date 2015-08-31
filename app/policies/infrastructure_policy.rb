@@ -14,7 +14,7 @@ class InfrastructurePolicy < ApplicationPolicy
     end
   end
 
-  %i[new? edit? create? update? destroy? delete_stack? change_rds_scale?].each do |action|
+  %i[edit? update? destroy? delete_stack? change_rds_scale?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end
@@ -22,7 +22,7 @@ class InfrastructurePolicy < ApplicationPolicy
 
   %i[new? create?].each do |action|
     define_method(action) do
-      user.admin? and user.allow?(record) and not record.project.client.is_for_system?
+      user.admin? and user.allow?(record) and not record.client.is_for_system?
     end
   end
 end

@@ -13,7 +13,7 @@
         <%= uneditable_input(@project.code) %>
         <%= f.hidden_field :code %>
       <% else %>
-        <%= f.text_field :code, class: 'form-control' %>
+        <%= f.text_field :code, class: 'form-control', required: true %>
       <% end %>
     </div>
   </div>
@@ -24,7 +24,7 @@
         <%= uneditable_input(@project.name) %>
         <%= f.hidden_field :name %>
       <% else %>
-        <%= f.text_field :name, class: 'form-control' %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
       <% end %>
     </div>
   </div>
@@ -37,13 +37,13 @@
   <div class="form-group">
     <%= f.label :access_key, t('projects.access_key'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <%= f.text_field :access_key, class: 'form-control' %>
+      <%= f.text_field :access_key, class: 'form-control', required: true, pattern: '[^\s]+' %>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :secret_access_key, t('projects.secret_access_key'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <%= f.text_field :secret_access_key, class: 'form-control form-control-masked' %>
+      <%= f.text_field :secret_access_key, class: 'form-control form-control-masked', required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 

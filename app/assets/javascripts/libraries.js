@@ -17,3 +17,4 @@
 //= require jquery.noty.packaged
 //= require vue
 //= require lodash
+//= require ZeroClipboard

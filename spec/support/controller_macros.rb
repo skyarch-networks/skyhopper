@@ -18,7 +18,7 @@ module ControllerMacros
   # zabbix server が走っている状態になる
   def run_zabbix_server
     before do
-      zabbix = double('server-state-zabbix-running', is_running?: true)
+      zabbix = double('server-state-zabbix-running', should_be_running!: true)
       allow(ServerState).to receive(:new).with('zabbix').and_return(zabbix)
     end
   end
@@ -32,13 +32,21 @@ module ControllerMacros
 
   def should_be_success
     it do
-      expect(response).to be_success
+      expect(response).to be_success,
+        -> () { "expected success, but response code is #{response.code}, response body is #{response.body.inspect}" }
     end
   end
 
   def should_be_failure
     it do
-      expect(response).not_to be_success
+      expect(response).not_to be_success,
+        -> () { "expected failure, but response code is #{response.code}, response body is #{response.body.inspect}" }
+    end
+  end
+
+  def should_be_json
+    it 'response body should be json' do
+      expect{JSON.parse(response.body)}.not_to raise_error
     end
   end
 end

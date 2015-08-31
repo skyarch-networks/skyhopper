@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -20,7 +21,7 @@ class MonitoringsController < ApplicationController
     authorize(@infra)
   end
 
-  before_action :with_zabbix_or_render, expect: [:show_cloudwatch_graph]
+  before_action :with_zabbix, expect: [:show_cloudwatch_graph]
   before_action :set_zabbix, except: [:show_cloudwatch_graph]
 
 
@@ -31,12 +32,56 @@ class MonitoringsController < ApplicationController
       # すべてのec2が登録されていなければ
       # Only show those hosts that are registered
       @before_register = true
+
+      #get/load available zabbix templates set to static first.
+      @templates = @zabbix.available_templates.map{|t| {name: t, checked: false}}
       return
     end
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
+
+    merged = []
+    resources = @infra.resources.ec2
+    linked = @zabbix.get_linked_templates(resources.last.physical_id)
+    unlinked = @zabbix.available_templates
+
+    unlinked.each do |link|
+      if linked.include?(link)
+        merged.push({name: link, checked: true})
+      else
+        merged.push({name: link, checked: false})
+      end
+    end
+
+    @templates = merged
+
     @resources = @infra.resources.ec2
+
+  end
+
+  # POST /monitorings/:id/update_templates
+  def update_templates
+    resources = @infra.resources.ec2
+    new_templates = params.require(:templates)
+    resources.each do |resource|
+      prev_templates = @zabbix.get_linked_templates(resource.physical_id)
+      clear_templates = []
+
+      # compare if the previous templates was removed and push to clear list
+      prev_templates.each do |prev|
+        if new_templates.include?(prev)
+          # new_templates.pop(prev)
+        else
+          clear_templates.push(prev)
+        end
+      end
+
+      @zabbix.templates_update_host(resource.physical_id, new_templates, clear_templates)
+    end
+
+    infra_logger_success("Templates Updated!")
+    render nothing: true and return
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -157,22 +202,25 @@ class MonitoringsController < ApplicationController
 
   # POST /monitorings/:id/create_host
   def create_host
+    templates = params.require(:templates)
     resources = @infra.resources.ec2
 
     z = @zabbix
 
     begin
+      reqs = []
       resources.each do |resource|
         z.create_host(@infra, resource.physical_id)
 
-        #TODO put these templates in array and update in once
-        z.templates_link_host(resource.physical_id, ['Template OS Linux', 'Template App HTTP Service', 'Template App SMTP Service'])
-        item_info_cpu = z.create_cpu_usage_item(resource.physical_id)
-        z.create_cpu_usage_trigger(item_info_cpu, resource.physical_id)
+        # TODO: Batch request
+        reqs.push z.templates_link_host(resource.physical_id, templates)
+        item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
         item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-        z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
+        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
+        reqs.push z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
       end
-      z.create_elb_host(@infra)
+      reqs.push z.create_elb_host(@infra)
+      z.batch(*reqs)
     rescue => ex
       @infra.detach_zabbix()
 
@@ -191,10 +239,6 @@ class MonitoringsController < ApplicationController
   end
 
   def set_zabbix
-    begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue Zabbix::ConnectError
-      #flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-    end
+    @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
   end
 end

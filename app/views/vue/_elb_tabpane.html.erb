@@ -1,29 +1,46 @@
-<script id="elb-tabpane-template" type="text/template">
 <h3 class="page-header">{{* physical_id}}</h3>
 
 <div class="col-sm-12">
   <h4 class="page-header">DNS name</h4>
   <a v-attr="href: 'http://' + dns_name" target="_blank">{{dns_name}}</a>
 
+  <h4 class="page-header"><%=t('ec2_instances.listeners')%></h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><%=t('ec2_instances.protocol')%></th> <th><%=t('ec2_instances.lb_port')%></th> <th><%=t('ec2_instances.instance_protocol')%></th> <th><%=t('ec2_instances.instance_port')%></th> <th><%=t('ec2_instances.expiration_date')%></th>
+      </tr>
+    </thead>
 
-  <h4 class="page-header">Instances</h4>
+    <tbody>
+      <tr v-repeat="listeners">
+        <td v-text="protocol"></td>
+        <td v-text="load_balancer_port"></td>
+        <td v-text="instance_protocol"></td>
+        <td v-text="instance_port"></td>
+        <td v-text="expiration_date(expiration)"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4 class="page-header"><%=t('ec2_instances.instances')%></h4>
   <div class="col-md-4 col-sm-6 col-xs-12" v-repeat="e: ec2_instances">
-    <div class="panel panel-{{state(e.state)}}">
+    <div class="panel" v-class="panel_class(e.state)">
       <div class="panel-heading">
           <a href="#" v-on="click: show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
       </div>
       <table class="table">
         <tbody>
           <tr>
-            <th>State</td>
-            <td><span class="label label-{{state(e.state)}}">{{* e.state}}</span></td>
+            <th><%=t('ec2_instances.state')%></td>
+            <td><span class="label" v-class="label_class(e.state)">{{* e.state}}</span></td>
           </tr>
           <tr>
-            <th>ReasonCode</td>
+            <th><%=t('ec2_instances.reason_code')%></td>
             <td>{{* e.reason_code}}</td>
           </tr>
           <tr>
-            <th>Description</td>
+            <th><%=t('ec2_instances.description')%></td>
             <td>{{* e.description}}</td>
           </tr>
         </tbody>
@@ -48,4 +65,3 @@
     </div>
   </div>
 </div>
-</script>

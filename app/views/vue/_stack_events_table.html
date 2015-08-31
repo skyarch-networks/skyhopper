@@ -1,24 +1,24 @@
-<script id="stack-events-table-template" type="text/template">
-<div v-if="events && events.length != 0">
-  <table class="table table-condensed">
-    <thead>
-      <tr>
-        <th>time</th>
-        <th>type</th>
-        <th>logical</th>
-        <th>status</th>
-        <th>reason</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-repeat="events" v-class="event_tr_class(status)">
-        <td v-text="time | toLocaleString"></td>
-        <td v-text="type"></td>
-        <td v-text="logical"></td>
-        <td v-text="status"></td>
-        <td v-text="reason"></td>
-      </tr>
-    </tbody>
-  </table>
+<div>
+  <div v-if="events && events.length != 0">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>time</th>
+          <th>type</th>
+          <th>logical</th>
+          <th>status</th>
+          <th>reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-repeat="events" v-class="event_tr_class(status)">
+          <td v-text="toLocaleString(time)"></td>
+          <td v-text="type"></td>
+          <td v-text="logical"></td>
+          <td v-text="status"></td>
+          <td v-text="reason"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-</script>

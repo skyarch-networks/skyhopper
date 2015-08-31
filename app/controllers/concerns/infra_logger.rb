@@ -78,6 +78,6 @@ module Concerns::InfraLogger
 
   def ws_send(details, status)
     ws = WSConnector.new('notifications', current_user.ws_key)
-    ws.push_as_json({message: details, status: status, timestamp: Time.now.to_s})
+    ws.push_as_json({message: details.truncate(100), status: status, timestamp: Time.now.to_s})
   end
 end

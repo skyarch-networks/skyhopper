@@ -14,7 +14,7 @@ Amazon Linux へのインストール方法しか記載していませんが、�
 
 ## ruby のインストール
 
-Ruby 2.1系以上の Ruby をインストール
+Ruby 2.2系以上の Ruby をインストール
 
 ```sh
 $ sudo yum remove ruby ruby20
@@ -33,6 +33,7 @@ $ sudo gem install bundler
 
 ```sh
 $ sudo yum install nodejs npm --enablerepo=epel
+$ sudo npm update -g npm
 $ node -v
 v0.10.33
 ```
@@ -147,6 +148,17 @@ $ bundle install --path vendor/bundle
 
 ```sh
 $ bower install
+```
+
+### TypeScript のコンパイル
+
+```sh
+$ sudo npm i -g gulp
+$ cd frontend/
+$ npm i
+$ gulp tsd
+$ gulp ts
+$ cd ..
 ```
 
 ### database.yml

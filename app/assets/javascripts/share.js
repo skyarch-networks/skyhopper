@@ -78,30 +78,35 @@ var cancel_default_event = function (event) {
 };
 
 var add_filename_label = function (filename, before) {
-  $(".private_key_filename").remove();
-  before.after($("<span>").addClass("label label-default private_key_filename").text(filename));
+  $(".filename_label").remove();
+  before.after($("<span>").addClass("label label-default filename_label").text(filename));
 };
 
-var ec2_private_key_drop = function (e) {
-  cancel_default_event(e);
-  var file = e.originalEvent.dataTransfer.files[0];
+// TODO: テキストファイル以外が投げられた場合は読み込まないようにしたい
+var file_drop_func = function (id) {
+  return function (e) {
+    cancel_default_event(e);
+    var file = e.originalEvent.dataTransfer.files[0];
 
-  var fileReader = new FileReader();
-  fileReader.onload = function (e) {
-    $("#keypair_value").val(e.target.result).trigger("change");
-    add_filename_label(file.name, $("#keypair_value"));
+    var fileReader = new FileReader();
+    fileReader.onload = function (e) {
+      $(id).val(e.target.result).trigger("change");
+      add_filename_label(file.name, $(id));
+    };
+    fileReader.readAsText(file);
   };
-  fileReader.readAsText(file);
 };
 
-$(document).ready(function() {
+$(document).ready(function () {
   // Drag'n'drop
-  $(document).on("drop", "#keypair_value", ec2_private_key_drop);
-  $(document).on("dragenter", "#keypair_value", cancel_default_event);
-  $(document).on("dragover", "#keypair_value", cancel_default_event);
+  // TODO: id ではなく class で指定するようにしたい
+  _.each(["#keypair_value", "#cf_template_value", "#add_modify_value"], function (id) {
+    $(document).on("drop", id, file_drop_func(id));
+    $(document).on("dragenter", id, cancel_default_event);
+    $(document).on("dragover", id, cancel_default_event);
+    $(id).change(function () { $(".filename_label").remove(); });
+  });
 });
-
-
 
 
 var masking_input_form = function (btn, target) {

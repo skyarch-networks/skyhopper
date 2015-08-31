@@ -70,6 +70,8 @@ describe InfrastructurePolicy do
 
   %i[new? create?].each do |action|
     permissions action do
+      let(:infra){create(:infrastructure)}
+
       context 'when allowed user' do
         before do
           admin.projects  = [infra.project]
@@ -93,7 +95,7 @@ describe InfrastructurePolicy do
 
       context 'when client is for system' do
         before do
-          allow(infra.project.client).to receive(:is_for_system?).and_return(true)
+          allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
         end
 
         it 'should deny' do
