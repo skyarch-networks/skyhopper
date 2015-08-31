@@ -8,6 +8,7 @@
 
 
 //= require jquery
+//= require jquery_ui
 //= require rails
 //= require ajax_set
 //= require i18n

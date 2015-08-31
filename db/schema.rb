@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150709072606) do
+ActiveRecord::Schema.define(version: 20150730060107) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 20150709072606) do
     t.datetime "updated_at",                              null: false
     t.string   "physical_id", limit: 255
     t.string   "type",        limit: 255,                 null: false
+    t.string   "volume_id",   limit: 255
   end
 
   create_table "serverspecs", force: :cascade do |t|

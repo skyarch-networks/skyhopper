@@ -273,6 +273,7 @@ ja:
     msg:
       serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
       yum_updated: 'Yum の定期実行スケジュールが更新されました'
+      snapshot_updated: '定期的なスナップショット作成のスケジュールが更新されました'
 
 
   cf_templates:
@@ -478,3 +479,17 @@ ja:
     msg:
       confirm:    'キーペア "%{name}" を削除しますか?'
       deleted:    'キーペア "%{name}" が正常に削除されました'
+
+  snapshots:
+    snapshot:          'スナップショット'
+    create_snapshot:   'スナップショットの作成'
+    delete_snapshot:   'スナップショットの削除'
+    schedule_snapshot: '作成スケジュールの変更'
+    list_of_snapshots: 'スナップショットの一覧'
+    btn:
+      create:          '作成'
+    msg:
+      no_snapshots:    'このボリュームのスナップショットはありません'
+      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot: '以下のスナップショットを削除しますか?'
+      creation_started: 'スナップショットの作成が開始されました'
