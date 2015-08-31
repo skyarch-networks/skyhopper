@@ -70,15 +70,11 @@
         self.loading = true;
         var id =  this.parseURLParams('client_id');
         self.lang = this.parseURLParams('lang');
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"
-                          ];
         self.columns = ['code','name', 'id'];
 
        $.ajax({
            url:'clients?lang='+self.lang,
            success: function (data) {
-             console.log(data);
              this.pages = data.length;
              self.data = data.map(function (item) {
                return {
