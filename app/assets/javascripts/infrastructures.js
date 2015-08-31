@@ -31,6 +31,11 @@
 // infrastructures
 // ================================================================
 
+//browserify functions for vue filters functionality
+  var wrap = require('./modules/wrap');
+  var listen = require('./modules/listen');
+  var parseURLParams = require('./modules/getURL');
+  var infraindex = require('./modules/loadindex');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -274,6 +279,9 @@
       url_status: [],
       showing_url: false,
       loading_problems: true,
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
     };},
     methods: {
       show_problems: function () {
@@ -385,6 +393,19 @@
           });
         }).fail(alert_and_show_infra);
       },
+      showPrev: function (){
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function (){
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function (){
+        this.$parent.show_monitoring();
+      },
     },
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
@@ -394,6 +415,16 @@
         return _.some(this.templates, function(c){
           return c.checked;
         });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
       },
     },
     created: function () {
@@ -412,7 +443,84 @@
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val));},
+    },
   });
+
+  Vue.component("update-template-tabpane",{
+    template: "#update-template-tabpane-template",
+    data: function(){return{
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
+      templates: [],
+      before_register: false,
+    };},
+    methods:{
+      update_templates: function () {
+        if (!this.has_selected) {return;}
+        var self = this;
+        self.loading = true;
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function(t)  {
+          return t.name;
+        }).value();
+
+        this.monitoring.update_templates(templates).done(function ()  {
+          self.loading = false;
+          self.$parent.show_update_template();
+          alert_success(function (){
+          })(t('monitoring.msg.update_templates'));
+        }).fail(alert_and_show_infra);
+      },
+      showPrev: function () {
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function () {
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function ()  {
+        this.$parent.show_update_template();
+      },
+    },
+    computed:{
+      monitoring: function () { return new Monitoring(current_infra); },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
+    },
+    created: function () {
+      var self = this;
+      var monitoring = new Monitoring(current_infra);
+      monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.templates       = data.templates;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val));},
+    },
+  });
+
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
@@ -1422,6 +1530,13 @@
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
+        show_update_template: function () {
+          if (this.no_stack) {return;}
+          var self = this;
+          self.show_tabpane('update-template');
+          self.loading = true;
+        },
+
 
         tabpane_active: function (id) { return this.tabpaneID === id; },
 
@@ -1515,6 +1630,119 @@
   var app;
 
 
+
+
+
+  // register the grid component
+  Vue.component('demo-grid', {
+    template: '#grid-template',
+    replace: true,
+    props: ['data', 'columns', 'filter-key'],
+    data: function () {
+      return {
+        data: null,
+        columns: null,
+        sortKey: '',
+        filterKey: '',
+        reversed: {},
+        loading: true,
+        option: ['infrastructure'],
+        lang: null,
+        pages: 10,
+        pageNumber: 0,
+          };
+      },
+    compiled: function () {
+      // initialize reverse state
+        var self = this;
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false);
+         });
+    },
+    methods: {
+      sortBy: function (key) {
+          if(key !== 'id')
+            this.sortKey = key;
+            this.reversed[key] = !this.reversed[key];
+      },
+      parseURLParams: parseURLParams,
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
+    },
+    created: function (){
+        var il = new Loader();
+        var self = this;
+        self.loading = true;
+        var id =  this.parseURLParams('project_id');
+        self.lang = this.parseURLParams('lang');
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"
+                          ];
+        if (id >3)
+          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          self.columns = ['stack_name','region', 'keypairname', 'id'];
+
+       $.ajax({
+           url:'/infrastructures?&project_id='+id,
+           success: function (data) {
+             this.pages = data.length;
+             var nextColumns = [];
+             self.data = data.map(function (item) {
+                 var d = new Date(item.created_at);
+                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+                 if(item.project_id > 3){
+                   return {stack_name: item.stack_name,
+                       region: item.region,
+                       keypairname: item.keypairname,
+                       created_at: date,
+                       //  ec2_private_key_id: item.ec2_private_key_id,
+                       status: item.status,
+                       id: item.id,
+                       };
+                 }else{
+                   return {stack_name: item.stack_name,
+                           region: item.region,
+                           keypairname: item.keypairname,
+                           //  ec2_private_key_id: item.ec2_private_key_id,
+                           id: item.id,
+                   };
+                 }
+                 self.loading = false;
+               });
+             self.$emit('data-loaded');
+             $("#loading").hide();
+             var empty = t('infrastructures.msg.empty-list');
+             if(self.data.length === 0){ $('#empty').show().html(empty);}
+           }
+         });
+    },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    }
+ });
+
+
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {
       if(infra.id !== current_infra.id){return;}
@@ -1528,6 +1756,16 @@
         show_infra(current_infra.id);
       }
     });
+  };
+
+  var index = function(){
+
+    if (app){
+      app.$destroy();
+    }else{
+      infraindex = infraindex();
+    }
+
   };
 
   var SHOW_INFRA_ID = '#infra-show';
@@ -1546,6 +1784,7 @@
       app.$mount(SHOW_INFRA_ID);
     });
   };
+
 
   var detach = function (infra_id) {
     bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -1633,6 +1872,9 @@
 // ================================================================
 // event bindings
 // ================================================================
+  $(document).ready(function(){
+    index();
+  });
 
 
   $(document).on('click', '.show-infra', function (e) {
@@ -1640,7 +1882,6 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-
     show_infra(infra_id);
   });
 

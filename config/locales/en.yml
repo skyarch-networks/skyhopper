@@ -71,10 +71,10 @@ en:
     msg:
       created:           'SkyHopper was successfully setup'
       show:              'Welcome to SkyHopper!'
-      log_directory:     'Logs could not be displayed in database will be stored in this directory'
+      log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
       aws_description:  |
         SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
-        The following settings of the AWS you entered are used only to construct the Chef Server and the Zabbix Server.
+        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
@@ -99,7 +99,7 @@ en:
       show_projects: 'Show'
       add:           'New Client'
     msg:
-      no_permission:      'Permission denied to utilise "Clients" feature'
+      no_permission:      'Permission denied to to utilize the "Clients" feature'
       created:            'Client was successfully created.'
       updated:            'Client was successfully updated.'
       deleted:            'Client was successfully deleted.'
@@ -121,6 +121,7 @@ en:
       updated:            'Project was successfully updated.'
       deleted:            'Project was successfully deleted.'
       cant_delete_system: 'Unable to delete project for this system.'
+      empty-list:         'Project list is empty'
 
 
   infrastructures:
@@ -129,6 +130,8 @@ en:
     stackname:          'Stack Name'
     region:             'Region'
     keypair:            'KeyPair Name'
+    launchtime:         'Launch Time'
+    status:             'Status'
     sshkey:             'SSH Private Key'
     return_to_projects: 'Return to your projects'
     stack_info:         'Stack Information'
@@ -139,6 +142,7 @@ en:
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
+    search:             'Search by Keyword ...'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -161,9 +165,11 @@ en:
       help_keypair:                'Please set up a KeyPair to utilise EC2::Instance.'
       no_keypair:                  'KeyPair has not been set'
       no_stack_info:               'Unable to get information for this stack for the following reasons.'
-      not_necessary:               'Unnecessary to edit this infrastructure.'
+      not_necessary:               'It is not necessary to edit this infrastructure.'
       check_intervals:             'Automatic status update: every 15 seconds ...'
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
+      empty-list:                  'Infrastructure list is empty'
+      loading-list:                'Loading Infrastructures ...'
 
 
   nodes:
@@ -193,7 +199,7 @@ en:
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
       cook_started:       'Cook was successfully started'
-      should_set_attr:    "Cook wasn't started. You should set attribute"
+      should_set_attr:    "Cook wasn't started. You should set the attribute(s)"
       attribute_updated:  'Attribute was successfully updated.'
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
@@ -214,7 +220,7 @@ en:
       updated:                'Dish was successfully updated.'
       created:                'Dish was successfully created.'
       deleted:                'Dish was successfully deleted.'
-      description:            'Dish is a preset of configuration for EC2 Instance.'
+      description:            'Dish is a preset to configure EC2 Instance.'
       no_serverspec_selected: 'No serverspecs selected.'
 
 
@@ -236,10 +242,10 @@ en:
       created:   'Serverspec was successfully created.'
       updated:   'Serverspec was successfully updated.'
       deleted:   'Serverspec was successfully deleted'
-      parseerr:  'Something wrong with Serverspec.'
+      parseerr:  'Something went wrong with Serverspec Operation.'
       success:   'Serverspec for %{physical_id} is successfully finished.'
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
-      failure:   'Serverspec for %{physical_id} is failed. failure specs: %{failure_specs}'
+      failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
       generated: 'Serverspec is successfully generated.'
       auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
@@ -265,9 +271,9 @@ en:
       friday:     'Friday'
       saturday:   'Saturday'
     msg:
-      serverspec_updated: 'Periodic run schedule of Serverspec has updated.'
-      yum_updated: 'Periodic run schedule of Yum has updated.'
-      snapshot_updated: 'Periodic run schedule for creating snapshot has updated.'
+      serverspec_updated: 'Periodic schedule for running Serverspec has updated.'
+      yum_updated: 'Periodic schedule for running of Yum has updated.'
+      snapshot_updated: 'Periodic schedule for creating snapshot has updated.'
 
 
   cf_templates:
@@ -306,11 +312,13 @@ en:
   monitoring:
     title:                'Monitoring'
     config:               'Monitoring Configuration'
+    template:             'Monitoring Template'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
     explanation_triggers: 'Triggers'
     register_host:        'Register infrastructure with Zabbix Server'
     before_reg_title:     'Please select template before proceeding.'
+    linked_templates:     'Linked Templates'
     btn:
       create: 'Register'
       add:    'Add'
@@ -318,20 +326,27 @@ en:
       delete: 'Delete'
       done:   'Done'
       cancel: 'Cancel'
+      close:  'Close'
+      save:   'Save'
+      next:   'Next'
+      prev:   'Prevous'
     msg:
       host_creating:           'Registering infrastructure...'
       before_create_host:      'This infrastructure has not been registered with Zabbix Server.'
       created:                 'This infrastructure has been registered with Zabbix Server.'
       updated:                 'Monitoring configuration updated.'
+      update_templates:          'Zabbix templates updated!.'
       failure:                 'Failed to register with Zabbix Server.'
       not_selected:            'Monitoring options not selected yet.'
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
       not_running:             'Zabbix Server is not running.'
-      trigger_setting_warning: 'Threshold will be updated only the selected items.'
+      trigger_setting_warning: 'Threshold will be updated only if you have selected items.'
+      page:                    'Page'
+      of:                      'of'
       no_data: |
         Failed to fetch any data.
           1. Zabbix Agent may not have been installed into the server.
-          2. Cannot fetch any data just after installing the Zabbix Agent. You should retry after a short intervals.
+          2. Cannot fetch any data when the Zabbix Agent is freshly installed. You should retry after a short intervals.
           3. Required package may not have been installed into the server. (Ex. MySQL Server, Client etc...)
     explanations:
       cpu:                      'Average of CPU usage last a minute'
@@ -368,7 +383,7 @@ en:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'
     msg:
-      role:                  'Master users can see all of infrastructures. Admin users can change assigned infrastructures.'
+      role:                  'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
       created:               'An account was successfully created.'
       updated:               'An account was successfully updated.'
       deleted:               'An account was successfully deleted.'
@@ -437,8 +452,8 @@ en:
       check_all_update:      'Check all updates'
       exec_all_update:       'Execute all update'
     confirm:
-      register:   'Do you want to register EC2 instance with ELB?'
-      deregister: 'Do you want to release registration of EC2 instance from ELB?'
+      register:   'Do you want to register this EC2 instance with ELB?'
+      deregister: 'Do you want to release the registration of EC2 instance from ELB?'
 
   ec2_private_keys:
     msg:

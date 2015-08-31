@@ -43,6 +43,8 @@ module ZabbixStub
       allow(_zabbix).to receive(:get_group_id_by_user).with(User).and_return('1')
       allow(_zabbix).to receive(:get_user_type_by_user).with(User).and_return('1')
       allow(_zabbix).to receive(:batch).with(any_args)
+      allow(_zabbix).to receive(:available_templates).with(no_args).and_return(['Template OS Linux', 'Template HTTP'])
+      allow(_zabbix).to receive(:get_linked_templates).with(String).and_return([])
     end
   end
 end
