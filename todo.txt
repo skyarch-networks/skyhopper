@@ -1,4 +1,0 @@
-##### Serverspec Model.
- Todo:
-   Create  ServerspecResults Model.
-   Save serverspec results.  
