@@ -1,6 +1,6 @@
 module.exports = function (value, key, option, lang) {
   if(option[0] === 'infrastructure'){
-    return render_infrastructures(value, key);
+    return render_infrastructures(value, key, lang);
   }else if(option[0] === 'project'){
     return render_projects(value, key, lang);
   }else if (option[0] === 'client') {
@@ -12,13 +12,13 @@ module.exports = function (value, key, option, lang) {
   }
 };
 
-function render_infrastructures(value, key){
+function render_infrastructures(value, key, lang){
   if(key === 'id'){
   var isEdit = $('#edit-'+value+'').attr('class');
   var href = $('#edit-'+value+'').attr('href');
   var isDelete = $('#delete-'+value+'').attr('class');
   var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.show')+"</a> " +
-    "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
+    "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang='"+lang+"'>Serverspecs</a> " +
     "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
     "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.detach')+"</a> "+
     "<div class='btn-group'>"+
