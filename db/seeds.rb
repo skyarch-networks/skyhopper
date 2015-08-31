@@ -74,7 +74,7 @@ template_paths.each do |path|
   b = ERB::Builder.new('presets/'+n)
 
   value = b.build
-  name = n.gsub('_', ' ')
+  name = n.tr('_', ' ')
   parsed = JSON.parse(value)
   detail = parsed['Description']
 

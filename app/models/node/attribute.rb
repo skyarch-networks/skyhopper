@@ -9,7 +9,6 @@
 module Node::Attribute
   Key = 'normal'
 
-
   # セットされている attribute を手に入れる。
   # @example
   #   node.get_attributes # => {:'yum_releasever/releasever' => 'latest', ...}
@@ -46,7 +45,7 @@ module Node::Attribute
   # 現在設定できる attributes を返す
   # @return [Hash{Symbol => Any}]
   def enabled_attributes
-    available_attributes.select do |name, a|
+    available_attributes.select do |_name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
     end
   end
@@ -167,12 +166,13 @@ module Node::Attribute
       keys = key.split('/') # ['zabbix', 'agent', 'servers']
 
       attr = Hash.new
-      keys.inject(attr) do |_attr, _key|
-        if _key != keys.last
-          next _attr[_key] = {}
+      keys.inject(attr) do |attr_, key_|
+        if key_ != keys.last
+          next attr_[key] = {}
         end
 
-        _attr[_key] = if self.available_attributes[key.to_sym][:type] == Array
+        _attr[_key] =
+        if self.available_attributes[key.to_sym][:type] == Array
           [val]
         else
           val

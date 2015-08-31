@@ -66,7 +66,7 @@ describe Stack, :type => :model do
 
     context "status is not in progress" do
       let(:status_list) do
-        ['CREATE_FAILED', 'CREATE_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_COMPLETE', 'DELETE_FAILED', 'DELETE_COMPLETE',  'UPDATE_COMPLETE',  'UPDATE_ROLLBACK_FAILED', 'UPDATE_ROLLBACK_COMPLETE']
+        ['CREATE_FAILED', 'CREATE_COMPLETE', 'ROLLBACK_FAILED', 'ROLLBACK_COMPLETE', 'DELETE_FAILED', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_FAILED', 'UPDATE_ROLLBACK_COMPLETE']
       end
 
       it "returns false" do
@@ -105,12 +105,12 @@ describe Stack, :type => :model do
       double(
         'rds',
         resource_type: 'AWS::RDS::DBInstance',
-        physical_resource_id:   'i-hogefuga',
+        physical_resource_id: 'i-hogefuga',
       ),
       double(
         'ec2',
         resource_type: 'AWS::EC2::Instance',
-        physical_resource_id:   'i-piyopoyo',
+        physical_resource_id: 'i-piyopoyo',
       )
     ]}
     before do

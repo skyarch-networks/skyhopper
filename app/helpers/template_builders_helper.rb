@@ -4,7 +4,6 @@
 # This software is released under the MIT License.
 #
 # http://opensource.org/licenses/mit-license.php
-#
 
 module TemplateBuildersHelper
 
@@ -26,7 +25,8 @@ module TemplateBuildersHelper
   #### Accordion
   def accordion_group(property, accordion_name: nil)
     return nil unless accordion_name
-    extra_klass = if property.required?
+    extra_klass =
+    if property.required?
       "panel-danger"
     else
       "panel-default"
@@ -100,7 +100,7 @@ module TemplateBuildersHelper
     end
 
     case
-    when property.data_type === :Boolean
+    when property.data_type == :Boolean
       return <<-EOS
       <div class="radio">
         <label class="radio"><input type="radio" name="#{property.name}" class="property-value" value="enable" #{common_attr}>#{t('template_builder.enable')}</label>
@@ -180,13 +180,14 @@ module TemplateBuildersHelper
   def property_array(property)
     table_cols = []
 
-    hash_data_validator = if property.data_validator == String
+    hash_data_validator =
+    if property.data_validator == String
       # StringのArray
       table_cols.push("values")
       nil
     else
       # HashのArray
-      property.data_validator.data_validator.each do |key, val|
+      property.data_validator.data_validator.each do |key, _val|
         table_cols.push(key)
       end
       property.data_validator.data_validator

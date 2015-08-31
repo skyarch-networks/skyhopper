@@ -125,7 +125,7 @@ knife bootstrap #{fqdn} \
       ::Serverspec.to_file(spec)
     end
 
-    ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+    ruby_cmd = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 
     cmd = []
     cmd << "SSHKeyPath=#{ec2key.path_temp}"
@@ -149,14 +149,15 @@ knife bootstrap #{fqdn} \
       e[:exception].delete(:backtrace) if e[:exception]
     end
     result[:status] = result[:summary][:failure_count] == 0
-    result[:status_text] = if result[:status]
+    result[:status_text] =
+    if result[:status]
       if result[:summary][:pending_count] == 0
         'success'
       else
         'pending'
       end
-    else
-      'failed'
+      else
+        'failed'
     end
 
     case result[:status_text]
@@ -263,9 +264,9 @@ knife bootstrap #{fqdn} \
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
-    Open3.popen3(cmd) do |stdin, stdout, stderr, w|
-      while line = stdout.gets
-        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
+      while line == stdout.gets
+        line.gsub!(/\x1b[^m]*m/, '') # remove ANSI escape
         line.chomp!
 
         yield line

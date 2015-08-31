@@ -109,7 +109,7 @@ class TemplateBuilder
       result[:Mappings].merge!(RegionMapHVM: @@ami_mappings[:HVM])
     end
     if have_pv
-      result[:Mappings].merge!(RegionMapPV:  @@ami_mappings[:PV])
+      result[:Mappings].merge!(RegionMapPV: @@ami_mappings[:PV])
     end
 
     # set Description

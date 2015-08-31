@@ -36,7 +36,7 @@ class ServerStatusController < ApplicationController
     end
 
     Thread.new do
-      ws = WSConnector.new('server_status', @server.kind)    # ws://HOST/server_status/(chef|zabbix)
+      ws = WSConnector.new('server_status', @server.kind) # ws://HOST/server_status/(chef|zabbix)
 
       before_status = ""
       10.times do

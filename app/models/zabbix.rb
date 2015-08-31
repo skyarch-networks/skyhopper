@@ -105,7 +105,7 @@ class Zabbix
       # データベースにはitemkeyとしてmysql.loginが保存されているので
       # 実際にitemkeyとして設定されている値をzabbixから取ってきて
       # replaceしています
-      if idx = item_keys.index('mysql.login')
+      if idx == item_keys.index('mysql.login')
         item_keys[idx] = get_item_info(r.physical_id, 'mysql.login', "search").first["key_"]
       end
 
@@ -172,7 +172,7 @@ class Zabbix
   # @param [String] hostname physical_id
   # @return [Array<Hash>]  item_key => trigger_expression
   def get_trigger_expressions_by_hostname(hostname)
-    data = @sky_zabbix.trigger.get(
+    datas = @sky_zabbix.trigger.get(
       output: [
         "triggeid",
         "expression"
@@ -188,7 +188,7 @@ class Zabbix
     # ビュー側でトリガーの現在値を取り出す為
     # infra.js edit monitoring component created 参照
     expression_hash = {}
-    data.each do |data|
+    datas.each do |data|
       data["expression"][/\{(i-[a-z0-9]+):/, 1] = "HOSTNAME"
       expression_hash[data["items"].first["key_"]] = data["expression"]
     end
@@ -412,7 +412,7 @@ class Zabbix
         0
       end
 
-    history_all =  @sky_zabbix.history.get(
+    history_all = @sky_zabbix.history.get(
       output: "extend",
       history: type,
       itemids: item_info.first["itemid"],
@@ -424,7 +424,7 @@ class Zabbix
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
-      time = Time.at(history["clock"].to_i)
+      time = Time.zone.at(history["clock"].to_i)
       chart_data.push([time.strftime("%H:%M"), history["value"].to_f])
     end
     return chart_data
@@ -456,7 +456,7 @@ class Zabbix
 
     # フォーマッティング
     problems.each do |p|
-      time = Time.at(p["lastchange"].to_i)
+      time = Time.zone.at(p["lastchange"].to_i)
       p["hosts"] = p["hosts"].first["hostid"]
       p["lastchange"] = time.strftime("%Y-%m-%d %H:%M:%S")
       hostname = get_host_name(p["hosts"])
@@ -509,7 +509,7 @@ class Zabbix
       end
 
       @sky_zabbix.httptest.build_create(
-        name:  scenario_name,
+        name: scenario_name,
         hostid: host_id,
         steps: s_array
       )

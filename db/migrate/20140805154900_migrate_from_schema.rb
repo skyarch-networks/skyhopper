@@ -34,7 +34,7 @@ class MigrateFromSchema < ActiveRecord::Migration
   create_table "infrastructure_logs", force: true do |t|
     t.integer  "infrastructure_id"
     t.boolean  "status"
-    t.text     "details",           limit: 16777215
+    t.text "details", limit: 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
@@ -123,7 +123,7 @@ class MigrateFromSchema < ActiveRecord::Migration
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"

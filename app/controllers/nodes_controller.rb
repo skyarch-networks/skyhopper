@@ -156,7 +156,7 @@ class NodesController < ApplicationController
     physical_id = params.require(:id)
     dish_id     = params.require(:dish_id)
 
-    dish           = Dish.find(dish_id)
+    dish = Dish.find(dish_id)
 
     runlist = dish.runlist
     if runlist.blank?
@@ -181,7 +181,7 @@ class NodesController < ApplicationController
   # [infra_id] 認証に必要
   def update_attributes
     physical_id = params.require(:id)
-    attr  = JSON.parse(params.require(:attributes))
+    attr = JSON.parse(params.require(:attributes))
 
     node = Node.new(physical_id)
 
@@ -308,14 +308,14 @@ class NodesController < ApplicationController
 
   # TODO: DRY
   def exec_yum_update(infra, physical_id, security=true, exec=false)
-    Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
+    Thread.new_with_db(infra, physical_id, current_user.id) do |infra_, physical_id, user_id|
       yum_screen_name = "yum "
       yum_screen_name << " check" unless exec
       yum_screen_name << " security" if security
       yum_screen_name << " update"
-      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
+      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra_.id, user_id: user_id)
 
-      r = infra.resource(physical_id)
+      r = infra_.resource(physical_id)
       r.status.yum.inprogress!
       r.status.serverspec.un_executed! if exec
 
@@ -326,18 +326,18 @@ class NodesController < ApplicationController
       log = []
 
       begin
-        node.yum_update(infra, security, exec) do |line|
+        node.yum_update(infra_, security, exec) do |line|
           ws.push_as_json({v: line})
           Rails.logger.debug "#{yum_screen_name} #{physical_id} > #{line}"
           log << line
         end
       rescue => ex
         Rails.logger.debug(ex)
-        infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra_.id, user_id: user_id)
         r.status.yum.failed!
         ws.push_as_json({v: false})
       else
-        infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra_.id, user_id: user_id)
         r.status.yum.success!
         ws.push_as_json({v: true})
       end

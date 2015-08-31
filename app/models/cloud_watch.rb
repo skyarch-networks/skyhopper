@@ -28,7 +28,7 @@ class CloudWatch
   # @return {Array<Array>} [[String, Float, Float, Float]] time, in avg, out avg, sum
   def get_networkinout(physical_id)
     get = -> (name) {
-      now = Time.now
+      now = Time.zone.now
       return @cloud_watch.get_metric_statistics(
         namespace:   'AWS/EC2',
         metric_name: name,

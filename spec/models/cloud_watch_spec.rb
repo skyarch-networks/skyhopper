@@ -28,9 +28,9 @@ RSpec.describe CloudWatch, :type => :model do
   end
 
   describe '#get_networkinout' do
-    let(:time1){Time.local(2014, 4, 9, 3, 8, 1)}
-    let(:time2){Time.local(2014, 4, 9, 3, 13, 1)}
-    let(:time3){Time.local(2014, 4, 9, 3, 18, 1)}
+    let(:time1){Time.zone.local(2014, 4, 9, 3, 8, 1)}
+    let(:time2){Time.zone.local(2014, 4, 9, 3, 13, 1)}
+    let(:time3){Time.zone.local(2014, 4, 9, 3, 18, 1)}
     let(:physical_id){'i-fugapiyo'}
 
     before do

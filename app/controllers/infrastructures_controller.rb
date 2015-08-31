@@ -41,13 +41,13 @@ class InfrastructuresController < ApplicationController
   def index
     project_id = params.require(:project_id)
     session[:project_id] = project_id
-    page       = params[:page] || 1
+    page = params[:page] || 1
 
     @selected_project = Project.find(project_id)
 
     @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
     @selected_client = @selected_project.client
-    
+
     respond_to do |format|
       format.json
       format.html
@@ -89,6 +89,7 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
+    #rubocop:disable Linth/HandleExceptions
     rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
     end
 

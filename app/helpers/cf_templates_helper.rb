@@ -13,7 +13,7 @@ module CfTemplatesHelper
     return link_to(
       t('.edit', default: t("helpers.links.edit").html_safe),
       edit_cf_template_path(cft),
-      class:  'btn btn-default btn-xs',
+      class: 'btn btn-default btn-xs',
     )
   end
 
