@@ -25,7 +25,7 @@ class ServerspecsController < ApplicationController
 
     @infrastructure_name = Infrastructure.find(@infrastructure_id).stack_name if @infrastructure_id
     @serverspecs = Serverspec.where(infrastructure_id: @infrastructure_id).page(page)
-    
+
     respond_to do |format|
       format.json
       format.html
@@ -104,6 +104,7 @@ class ServerspecsController < ApplicationController
     physical_id    = params.require(:physical_id)
     infra_id       = params.require(:infra_id)
     serverspec_ids = params.require(:serverspec_ids)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
 
     if selected_auto_generated = serverspec_ids.include?('-1')
@@ -125,11 +126,15 @@ class ServerspecsController < ApplicationController
     case resp[:status_text]
     when 'success'
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
+      ServerspecResult.generateResult(resource, serverspec_ids, 1, resp[:message])
     when 'pending'
+      ServerspecResult.generateResult(resource, serverspec_ids, 2, resp[:message])
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
     when 'failed'
+      ServerspecResult.generateResult(resource, serverspec_ids, 3, resp[:message])
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
+
 
     render text: render_msg, status: 200 and return
   end
