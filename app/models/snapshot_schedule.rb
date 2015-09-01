@@ -6,18 +6,16 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServerspecSchedule < Schedule
-  belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
-
+class SnapshotSchedule < Schedule
   before_update :delete_enqueued_jobs
   after_destroy :delete_enqueued_jobs
 
-  JOB_CLASS_NAME = PeriodicServerspecJob.to_s.freeze
+  JOB_CLASS_NAME = PeriodicSnapshotJob.to_s.freeze
 
   def delete_enqueued_jobs
     jobs = Sidekiq::ScheduledSet.new.select { |job|
       args = job.args[0]
-      args['job_class'] == JOB_CLASS_NAME && args['arguments'][0] == self.physical_id
+      args['job_class'] == JOB_CLASS_NAME && args['arguments'][0] == self.volume_id
     }
     jobs.each(&:delete)
   end

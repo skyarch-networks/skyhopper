@@ -9,14 +9,9 @@
   </h1>
 </div>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th><%= t('serverspecs.name') %></th>
-      <th><%= t('serverspecs.description') %></th>
-      <th><%= t('common.actions') %></th>
-    </tr>
-  </thead>
+<%= render 'vue/index' %>
+
+<table class="table table-hover hidden">
   <tbody>
     <% @serverspecs.each do |serverspec| %>
      <tr data-serverspec-id="<%= serverspec.id %>">
@@ -29,12 +24,14 @@
           <% if allow_change %>
             <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
               edit_serverspec_path(serverspec),
-              class: 'btn btn-xs btn-default' %>
+              class: 'btn btn-xs btn-default',
+              id: 'edit-'+serverspec.id.to_s %>
             <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
               serverspec_path(serverspec),
               method: :delete,
               data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-              class:  'btn btn-xs btn-danger' %>
+              class:  'btn btn-xs btn-danger',
+              id: 'delete-'+serverspec.id.to_s %>
           <% end %>
         </td>
       </tr>
@@ -42,16 +39,10 @@
   </tbody>
 </table>
 
-<div class="text-center">
-  <%= paginate(@serverspecs) %>
-</div>
 
 <% if allow_change %>
   <%= link_to t('.new', default: t('serverspecs.btn.add')),
     new_serverspec_path(infrastructure_id: @infrastructure_id),
-    class: 'btn btn-primary btn-small' %>
-  <%= link_to t('serverspecs.btn.generator'),
-    generator_serverspecs_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-primary btn-small' %>
 <% end %>
 

@@ -24,7 +24,12 @@ class ServerspecsController < ApplicationController
     page               = params[:page]
 
     @infrastructure_name = Infrastructure.find(@infrastructure_id).stack_name if @infrastructure_id
-    @serverspecs = Serverspec.where(infrastructure_id: @infrastructure_id).page(page).per(10)
+    @serverspecs = Serverspec.where(infrastructure_id: @infrastructure_id).page(page)
+    
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /serverspecs/new
@@ -67,10 +72,6 @@ class ServerspecsController < ApplicationController
 
   # GET /serverspecs/1/edit
   def edit
-  end
-
-  # GET /serverspecs/generator
-  def generator
   end
 
   # DELETE /serverspecs/1

@@ -235,10 +235,9 @@ ja:
     individual:        'インフラ固有の Serverspec'
     select_serverspec: '実行する Serverspec を選択'
     btn:
-      add:       'Serverspec の追加'
-      create:    'Serverspec の作成'
-      run:       'Serverspec の実行'
-      generator: 'ジェネレータ'
+      add:    'Serverspec の追加'
+      create: 'Serverspec の作成'
+      run:    'Serverspec の実行'
     msg:
       created:   'Serverspec が正常に追加されました'
       updated:   'Serverspec が正常に更新されました'
@@ -250,13 +249,6 @@ ja:
       generated: 'Serverspec は正常に作成されました。'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
-    generator:
-      title:        'Serverspec ジェネレータ'
-      resources:    'リソース'
-      add_resource: 'リソースの追加'
-      add_it:       'It ブロックの追加'
-      add_its:      'Its ブロックの追加'
-      generated:    '生成された Serverspec'
 
 
   schedules:
@@ -281,6 +273,7 @@ ja:
     msg:
       serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
       yum_updated: 'Yum の定期実行スケジュールが更新されました'
+      snapshot_updated: '定期的なスナップショット作成のスケジュールが更新されました'
 
 
   cf_templates:
@@ -486,3 +479,17 @@ ja:
     msg:
       confirm:    'キーペア "%{name}" を削除しますか?'
       deleted:    'キーペア "%{name}" が正常に削除されました'
+
+  snapshots:
+    snapshot:          'スナップショット'
+    create_snapshot:   'スナップショットの作成'
+    delete_snapshot:   'スナップショットの削除'
+    schedule_snapshot: '作成スケジュールの変更'
+    list_of_snapshots: 'スナップショットの一覧'
+    btn:
+      create:          '作成'
+    msg:
+      no_snapshots:    'このボリュームのスナップショットはありません'
+      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot: '以下のスナップショットを削除しますか?'
+      creation_started: 'スナップショットの作成が開始されました'
