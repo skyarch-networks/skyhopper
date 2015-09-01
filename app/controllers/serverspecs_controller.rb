@@ -126,12 +126,12 @@ class ServerspecsController < ApplicationController
     case resp[:status_text]
     when 'success'
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
-      ServerspecResult.generateResult(resource, serverspec_ids, 1, resp[:message])
+      ServerspecResult.generateResult(resource, serverspec_ids, 0, resp[:message])
     when 'pending'
-      ServerspecResult.generateResult(resource, serverspec_ids, 2, resp[:message])
+      ServerspecResult.generateResult(resource, serverspec_ids, 1, resp[:message])
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
     when 'failed'
-      ServerspecResult.generateResult(resource, serverspec_ids, 3, resp[:message])
+      ServerspecResult.generateResult(resource, serverspec_ids, 2, resp[:message])
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
