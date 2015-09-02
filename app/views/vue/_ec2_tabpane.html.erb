@@ -182,8 +182,16 @@
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" v-on="click: open_yum_schedule_modal()"><%=t('schedules.change_schedule')%></a></li>
         </ul>
       </div>
-      <button v-on="click: select_serverspec()" v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info"><%= t('serverspecs.serverspec') %></button>
-
+      <div class="dropup" style="display: inline-block">
+        <button v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+          <%= t('serverspecs.serverspec') %>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: select_serverspec()">Run <%= t('serverspecs.serverspec') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: serverspec_logs()">Serverspec Logs</a></li>
+        </ul>
+      </div>
       <div class="pull-right">
 
         <span v-if="dishes_empty">

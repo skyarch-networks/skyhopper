@@ -99,6 +99,7 @@
         <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
         <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
+        <serverspec-logs-tabpane v-if="tabpane_active('serverspec_logs')"       ></serverspec-logs-tabpane>
       </div>
     </div>
   </div>
@@ -123,3 +124,4 @@
 <script id="edit-runlist-tabpane-template"    type="text/template"> <%= render 'vue/edit_runlist_tabpane' %> </script>
 <script id="edit-attr-tabpane-template"       type="text/template"> <%= render 'vue/edit_attr_tabpane' %> </script>
 <script id="serverspec-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_tabpane' %> </script>
+<script id="serverspec-logs-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_logs_tabpane' %> </script>
