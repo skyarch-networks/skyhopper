@@ -41,6 +41,7 @@ en:
       lang:            'Language'
       previous:        'Previous'
       next:            'Next'
+      delete:          'Delete'
     msg:
       loading:       ' Loading...'
       empty:         '%{name} is empty'
