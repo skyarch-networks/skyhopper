@@ -1357,16 +1357,16 @@
     },
   });
 
-  Vue.component('serverspec-logs-tabpane', {
-    template: '#serverspec-logs-tabpane-template',
-    data: function () {return {
-        loading: false,
-        data: null,
-    };},
-    created: function ()  {
-      this.$parent.loading = false;
-    },
-  });
+  // Vue.component('serverspec-logs-tabpane', {
+  //   template: '#serverspec-logs-tabpane-template',
+  //   data: function () {return {
+  //       loading: false,
+  //       data: null,
+  //   };},
+  //   created: function ()  {
+  //     this.$parent.loading = false;
+  //   },
+  // });
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
