@@ -89,7 +89,7 @@
                };
              });
              self.$emit('data-loaded');
-             var empty = t('projects.msg.empty-list');
+             var empty = t('dishes.msg.empty-list');
              if(self.data.length === 0){ $('#empty').show().html(empty);}
            }
          });

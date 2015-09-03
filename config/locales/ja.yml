@@ -222,6 +222,7 @@ ja:
       deleted:                'ディッシュが正常に削除されました'
       description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
       no_serverspec_selected: 'Serverspec が選択されていません'
+      empty-list:	      'ディッシュのリストが空です'
 
 
   serverspecs:
