@@ -121,7 +121,7 @@ en:
       updated:            'Project was successfully updated.'
       deleted:            'Project was successfully deleted.'
       cant_delete_system: 'Unable to delete project for this system.'
-      empty-list:         'Project list is empty'
+      empty-list:         'No Project found.'
 
 
   infrastructures:
@@ -168,7 +168,7 @@ en:
       not_necessary:               'It is not necessary to edit this infrastructure.'
       check_intervals:             'Automatic status update: every 15 seconds ...'
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
-      empty-list:                  'Infrastructure list is empty'
+      empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
 
 
@@ -222,6 +222,7 @@ en:
       deleted:                'Dish was successfully deleted.'
       description:            'Dish is a preset to configure EC2 Instance.'
       no_serverspec_selected: 'No serverspecs selected.'
+      empty-list:             'No dishes found.'
 
 
   serverspecs:

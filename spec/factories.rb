@@ -6,7 +6,15 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-FactoryGirl.define do
+FactoryGirl.define do  factory :serverspec_result_detail do
+    serverspec_id 1
+serverspec_result_id 1
+  end
+  factory :serverspec_result do
+    resource_id 1
+status 1
+  end
+
   sequence(:id) {|n| n }
 
   sequence(:code) {|n| "a10#{n}a1a1" }
