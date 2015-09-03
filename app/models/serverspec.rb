@@ -15,7 +15,7 @@ class Serverspec < ActiveRecord::Base
   has_many :dishes, through: :dish_serverspecs
   has_many :resource_serverspecs
   has_many :resources, through: :resource_serverspecs
-  has_many :serverspec_result_details
+  has_many :serverspec_results, through: :serverspec_result_details
 
   validates :value, ruby: true
 
