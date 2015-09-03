@@ -106,7 +106,6 @@ class ServerspecsController < ApplicationController
     serverspec_ids = params.require(:serverspec_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-
     if selected_auto_generated = serverspec_ids.include?('-1')
       serverspec_ids.delete('-1')
     end
@@ -125,17 +124,22 @@ class ServerspecsController < ApplicationController
 
     case resp[:status_text]
     when 'success'
+      status = 0
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
-      ServerspecResult.generateResult(resource, serverspec_ids, 0, resp[:message])
     when 'pending'
-      ServerspecResult.generateResult(resource, serverspec_ids, 1, resp[:message])
+      status = 1
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
     when 'failed'
-      ServerspecResult.generateResult(resource, serverspec_ids, 2, resp[:message])
+      status = 2
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
-
+      ServerspecResult.create(
+        resource_id: resource.id,
+        status: status,
+        message: resp[:message],
+        serverspec_ids: serverspec_ids
+      )
     render text: render_msg, status: 200 and return
   end
 

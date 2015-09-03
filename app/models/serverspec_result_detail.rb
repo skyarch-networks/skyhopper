@@ -1,4 +1,4 @@
 class ServerspecResultDetail < ActiveRecord::Base
   belongs_to :serverspec
-  belongs_to :serverspec_result
+  belongs_to :serverspec_results
 end
