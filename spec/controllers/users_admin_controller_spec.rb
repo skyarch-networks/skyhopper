@@ -28,7 +28,8 @@ describe UsersAdminController, :type => :controller do
     should_be_success
 
     it 'should assign @users' do
-      expect(assigns[:users]).to eq klass.all.page(1).per(10)
+      get :index, format: 'json'
+      expect(assigns[:users]).to eq klass.all.page(1)
     end
   end
 
