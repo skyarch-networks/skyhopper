@@ -5,7 +5,6 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-//
 (function () {
   'use_strict';
 
@@ -72,22 +71,29 @@
         self.loading = true;
         var id =  this.parseURLParams('client_id');
         self.lang = this.parseURLParams('lang');
-        self.columns = ['code','name', 'id'];
+        self.columns = ['role', 'tooltop', 'email', 'last_sign_in_at', 'id'];
 
         $.ajax({
             url:'users_admin?lang='+self.lang,
             success: function (data) {
-              console.log(data);
               this.pages = data.length;
               self.data = data.map(function (item) {
+                item.master = (item.master ?   'yes' : 'no');
+                item.admin = (item.admin ?   'yes' : 'no');
+                item.last_sign_in_at = (item.last_sign_in_at ? item.last_sign_in_at : 'Not yet logged in');
+                var grav_url = Gravtastic(user.email);
+                console.log(grav_url);
+
                 return {
-                  code: item.code,
-                  name: item.name,
+                  role: item.master,
+                  tooltop: item.admin,
+                  email: item.email,
+                  last_sign_in_at: item.last_sign_in_at,
                   id: item.id,
                 };
               });
               self.$emit('data-loaded');
-              var empty = t('projects.msg.empty-list');
+              var empty = '';
               if(self.data.length === 0){ $('#empty').show().html(empty);}
             }
           });

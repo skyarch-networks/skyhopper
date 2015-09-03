@@ -29,9 +29,6 @@ gem 'jbuilder'
 # Modularize javascript code in application
 gem 'browserify-rails'
 
-# Use Gravatar on Javascript
-gem 'gravtastic'
-
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false

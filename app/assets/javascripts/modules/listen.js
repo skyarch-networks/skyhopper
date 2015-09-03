@@ -12,7 +12,7 @@ module.exports = function (value, key, option, lang) {
   }else if (option[0] === 'cf_template') {
     return render_cf_templates(value, key, lang);
   }else{
-    return '';
+    return value;
   }
 };
 
