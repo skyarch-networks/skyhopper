@@ -79,7 +79,6 @@
            url:'dishes?lang='+self.lang,
            success: function (data) {
              this.pages = data.length;
-             console.log(data);
              self.data = data.map(function (item) {
                return {
                  name: item.name,
