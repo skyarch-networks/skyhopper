@@ -7,6 +7,8 @@ module.exports = function(value, option){
     return render_clients(value);
   }else if (option[0] === 'serverspec') {
     return render_serverspecs(value);
+  }else if (option[0] === 'dish') {
+    return render_dish(value);
   }else{
     return value;
   }
@@ -70,3 +72,16 @@ function render_serverspecs(value){
   }
 }
 
+function render_dish(value){
+  if (value === 'name'){
+    return t ('dishes.name');
+  }else if (value === 'detail') {
+    return t ('dishes.detail');
+  }else if (value === 'status') {
+    return t ('dishes.validation_status');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}

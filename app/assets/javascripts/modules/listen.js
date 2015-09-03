@@ -7,6 +7,8 @@ module.exports = function (value, key, option, lang) {
     return render_clients(value, key, lang);
   }else if (option[0] === 'serverspec') {
     return render_serverspecs(value, key, lang);
+  }else if (option[0] === 'dish') {
+    return render_dish(value, key, lang);
   }else{
     return value;
   }
@@ -102,6 +104,34 @@ function render_serverspecs(value, key, lang){
 
     var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
     return ret+edit+del;
+  }else{
+    return value;
+  }
+}
+
+function render_dish(value, key, lang){
+  if(key === 'id'){
+    var isDelete = $('#delete-'+value+'').attr('class');
+    var del = '';
+    if(isDelete)
+      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/dishes/"+value+"?lang="+lang+"'>"+t("helpers.links.destroy")+"</a>";
+
+    var ret = "<a class='btn btn-xs btn-info show-dish' data-dish-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
+    return ret+del;
+  }else if (key === 'status') {
+    var label = null;
+    if(value === 'SUCCESS'){
+      label = 'label-success';
+    }else if (value === 'FAILURE') {
+      label = 'label-danger';
+    }else if (value === 'CREATING' || value === 'BOOTSTRAPPING' || value === 'APPLYING' || value === 'SERVERSPEC') {
+      label = 'label-info';
+    }else {
+      label = 'label-warning';
+      value = 'NOT YET';
+    }
+
+    return "<span class='label "+label+"'>"+value+"</span>";
   }else{
     return value;
   }
