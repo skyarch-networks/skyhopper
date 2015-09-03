@@ -11,6 +11,8 @@ module.exports = function (value, key, option, lang) {
     return render_dish(value, key, lang);
   }else if (option[0] === 'cf_template') {
     return render_cf_templates(value, key, lang);
+  }else if (option[0] === 'user_admin') {
+    return render_user_admin(value, key, lang);
   }else{
     return value;
   }
@@ -152,6 +154,31 @@ function render_dish(value, key, lang){
     }
 
     return "<span class='label "+label+"'>"+value+"</span>";
+  }else{
+    return value;
+  }
+}
+
+function render_user_admin(value, key, lang){
+  if(key === 'id'){
+    var isEdit = $('#edit-'+value+'').attr('class');
+    var isDelete = $('#delete-'+value+'').attr('class');
+    var edit = '';
+    var del = '';
+    if(isEdit)
+      edit = " <a class='btn btn-default btn-xs edit-user'user-id="+value+" href='#'>"+t("helpers.links.edit")+"</a>";
+    if(isDelete)
+      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/users_admin/"+value+"?lang="+lang+"'>Delete</a>";
+    return edit+del;
+  }else if (key === 'email') {
+    var image = "<img class='img-rounded gravatar-icon' src='http://www.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
+    var email = value[1];
+    return image+" "+email;
+  }else if (key === 'role') {
+    var admin = (value[0] ? "<span class='label label-info'>admin</span>" : "");
+    var master = (value[1] ? "<span class='label label-warning'>master</span>" : "");
+
+    return master+"  "+admin;
   }else{
     return value;
   }

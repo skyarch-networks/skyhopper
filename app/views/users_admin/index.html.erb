@@ -3,43 +3,26 @@
 </div>
 
 <%= render 'vue/index' %>
-<table class="table">
-  <thead>
-    <tr>
-      <th colspan="2">
-        <%= t('users.role') %>
-        <a href="#" data-content="<%= t('users.msg.role')%>" data-placement="right" data-toggle="popover" data-original-title="<%= t('users.role') %>" class="pull-right popover-help"><span class="glyphicon glyphicon-question-sign"></span></a>
-      </th>
-      <th><%= t('users.email') %></th>
-      <th><%= t('users.last_signed_in_at') %></th>
-      <th><%= t('common.actions') %></th>
-    </tr>
-  </thead>
-  <tbody>
+<table class="table hidden">
+    <tbody>
     <% @users.each do |user| %>
       <tr class="user-row">
-        <td style="width: 50px"><%= master_label if user.master? %></td>
-        <td style="width: 50px"><%= admin_label if user.admin? %></td>
-        <td><%= gravatar(user.email) %>&nbsp;<%= user.email %>&nbsp;<%= label_its_you(user) %></td>
-        <td><%= user.last_sign_in_at %></td>
-        <td>
+          <td>
           <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
             "#",
-            class: 'btn btn-xs btn-default edit-user', :"user-id" => user.id %>
+            class: 'btn btn-xs btn-default edit-user', :"user-id" => user.id,
+            id: 'edit-'+user.id.to_s %>
           <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
             users_admin_path(user),
             method: :delete,
             data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-            class:  'btn btn-xs btn-danger' %>
+            class:  'btn btn-xs btn-danger',
+            id: 'delete-'+user.id.to_s %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<div class="text-center">
-  <%= paginate(@users) %>
-</div>
 
 <%= link_to new_users_admin_path, class: "btn btn-primary btn-sm", remote: true do %>
   <span class="glyphicon glyphicon-plus-sign"></span> <%= t('users.btn.add') %>

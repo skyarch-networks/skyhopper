@@ -13,7 +13,7 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var adminIndex = require('./modules/loadindex');
-  var http = require('http');
+  var md5 = require('./modules/md5');
 
   var app;
 
@@ -43,9 +43,12 @@
     },
     methods: {
       sortBy: function (key) {
-          if(key !== 'id')
+          if(key !== 'id' && key !== 'role')
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
+      },
+      pop: function(){
+         $('#role').popover();
       },
       parseURLParams: parseURLParams,
       showPrev: function(){
@@ -71,33 +74,27 @@
         self.loading = true;
         var id =  this.parseURLParams('client_id');
         self.lang = this.parseURLParams('lang');
-        self.columns = ['role', 'tooltop', 'email', 'last_sign_in_at', 'id'];
-
+        self.columns = ['role', 'email', 'last_sign_in_at', 'id'];
         $.ajax({
             url:'users_admin?lang='+self.lang,
             success: function (data) {
               this.pages = data.length;
               self.data = data.map(function (item) {
-                item.master = (item.master ?   'yes' : 'no');
-                item.admin = (item.admin ?   'yes' : 'no');
-                item.last_sign_in_at = (item.last_sign_in_at ? item.last_sign_in_at : 'Not yet logged in');
-                var grav_url = Gravtastic(user.email);
-                console.log(grav_url);
-
                 return {
-                  role: item.master,
-                  tooltop: item.admin,
-                  email: item.email,
+                  role: [item.master, item.admin],
+                  email: [md5(item.email.toLowerCase()), item.email],
                   last_sign_in_at: item.last_sign_in_at,
                   id: item.id,
                 };
               });
               self.$emit('data-loaded');
+              console.log(self.data);
               var empty = '';
               if(self.data.length === 0){ $('#empty').show().html(empty);}
             }
           });
           $("#loading").hide();
+          this.pop();
     },
     filters:{
       wrap: wrap,
