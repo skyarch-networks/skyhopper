@@ -12,6 +12,7 @@ class Resource < ActiveRecord::Base
   has_many :resource_serverspecs
   has_many :serverspecs, through: :resource_serverspecs
   has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
+  has_many :serverspec_results
 
   has_one :serverspec_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
