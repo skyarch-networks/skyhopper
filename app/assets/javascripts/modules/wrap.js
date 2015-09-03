@@ -9,6 +9,8 @@ module.exports = function(value, option){
     return render_serverspecs(value);
   }else if (option[0] === 'dish') {
     return render_dish(value);
+  }else if (option[0] === 'cf_template') {
+    return render_cf_templates(value);
   }else{
     return value;
   }
@@ -79,6 +81,18 @@ function render_dish(value){
     return t ('dishes.detail');
   }else if (value === 'status') {
     return t ('dishes.validation_status');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_cf_templates(value){
+  if (value === 'subject'){
+    return t ('cf_templates.subject');
+  }else if (value === 'details') {
+    return t ('cf_templates.details');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{

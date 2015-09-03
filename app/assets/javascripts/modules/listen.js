@@ -9,8 +9,10 @@ module.exports = function (value, key, option, lang) {
     return render_serverspecs(value, key, lang);
   }else if (option[0] === 'dish') {
     return render_dish(value, key, lang);
+  }else if (option[0] === 'cf_template') {
+    return render_cf_templates(value, key, lang);
   }else{
-    return value;
+    return '';
   }
 };
 
@@ -103,6 +105,24 @@ function render_serverspecs(value, key, lang){
       del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/serverspecs/"+value+"?lang="+lang+"'>Delete</a>";
 
     var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
+    return ret+edit+del;
+  }else{
+    return value;
+  }
+}
+
+function render_cf_templates(value, key, lang){
+  if(key === 'id'){
+    var isEdit = $('#edit-'+value+'').attr('class');
+    var isDelete = $('#delete-'+value+'').attr('class');
+    var edit = '';
+    var del = '';
+    if(isEdit)
+      edit = " <a class='btn btn-default btn-xs' href='/cf_templates/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a>";
+    if(isDelete)
+      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/cf_templates/"+value+"?lang="+lang+"'>Delete</a>";
+
+    var ret = "<a class='btn btn-xs btn-info show-template' data-managejson-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
     return ret+edit+del;
   }else{
     return value;
