@@ -80,10 +80,11 @@
             success: function (data) {
               this.pages = data.length;
               self.data = data.map(function (item) {
+                var last_log = (item.last_sign_in_at ? new Date(item.last_sign_in_at) : '');
                 return {
                   role: [item.master, item.admin],
                   email: [md5(item.email.toLowerCase()), item.email],
-                  last_sign_in_at: item.last_sign_in_at,
+                  last_sign_in_at: last_log.toLocaleString(),
                   id: item.id,
                 };
               });
