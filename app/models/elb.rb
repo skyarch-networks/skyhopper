@@ -34,9 +34,12 @@ class ELB
   def listeners
     return details.listener_descriptions.map(&:listener).map(&:to_hash).map do |l|
       crt_id = l[:ssl_certificate_id]
-      if crt_id
-        l.delete(:ssl_certificate_id)
+      if crt_id == "Invalid-Certificate"
+        l[:expiration] = ""
+      elsif crt_id
         l[:expiration] = ssl_expiration(crt_id)
+      else
+        l[:ssl_certificate_id] = ""
       end
       l
     end
@@ -64,7 +67,80 @@ class ELB
       instances:[{instance_id: physical_id}],
     )
   end
-
+  
+  # create ELB listener
+  # protocol is HTTP or TCP or HTTPS or SSL.
+  def create_listener(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)
+    @elb.create_load_balancer_listeners(
+      load_balancer_name: @name,
+      listeners: [{
+        protocol: protocol,
+        load_balancer_port: load_balancer_port,
+        instance_protocol: instance_protocol,
+        instance_port: instance_port,
+        ssl_certificate_id: ssl_certificate_id,
+      }],
+    )
+  end
+  
+  # Delete ELB listener
+  def delete_listener(load_balancer_port)
+    @elb.delete_load_balancer_listeners(
+      load_balancer_name: @name,
+      load_balancer_ports: [ load_balancer_port ],
+    )
+  end
+  
+  # Upload server certificate
+  def upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
+    iam = Aws::IAM::Client.new(@aws_params)
+    if (certificate_chain.nil?) || (certificate_chain.empty?) then
+      iam.upload_server_certificate(
+        server_certificate_name: server_certificate_name,
+        certificate_body: certificate_body,
+        private_key: private_key,
+      )
+    else
+      iam.upload_server_certificate(
+        server_certificate_name: server_certificate_name,
+        certificate_body: certificate_body,
+        private_key: private_key,
+        certificate_chain: certificate_chain,
+      )
+    end
+  end
+  
+  # Delete server certificate
+  def delete_server_certificate(server_certificate_name)
+    iam = Aws::IAM::Client.new(@aws_params)
+    iam.delete_server_certificate({
+      server_certificate_name: server_certificate_name,
+    })
+  end
+  
+  # Get list of server certificate
+  def list_server_certificates()
+    iam = Aws::IAM::Client.new(@aws_params)
+    return iam.list_server_certificates({})
+  end
+  
+  # Describe ELB
+  def describe()
+    return @elb.describe_load_balancers({
+      load_balancer_names: [@name],
+    }).load_balancer_descriptions[0]
+  end
+  
+  # Describe ELB listener
+  def describe_listener(load_balancer_port)
+    describe().listener_descriptions.each do |listener|
+      if listener[0].load_balancer_port == load_balancer_port then
+        return listener[0]
+      end
+    end
+    return nil
+  end
+  
 
   private
 

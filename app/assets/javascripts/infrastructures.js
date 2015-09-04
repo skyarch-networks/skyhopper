@@ -600,6 +600,9 @@
       dns_name: "",
       listeners: [],
       selected_ec2: null,
+      server_certificates: [],
+      server_certificate_name_items: [],
+      loading: false,
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -633,10 +636,112 @@
         if (s === 'InService') { return 'success'; }
         else                   { return 'danger'; }
       },
+      ssl_certificate_id_to_name: function (ssl_certificate_id) {
+        if (!ssl_certificate_id) {
+        	return "";
+        } else if (ssl_certificate_id === "Invalid-Certificate"){
+        	return "Invalid-Certificate";
+        }
+        return ssl_certificate_id.replace(/arn:aws:iam::[0-9]+:server-certificate\//, "");
+      },
       expiration_date: function (date_str) {
         if (!date_str) { return ""; }
 
         return toLocaleString(date_str);
+      },
+      set_create_listener_modal_default_value: function (){
+      	var self = this;
+      	self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').val("").val();
+      },
+      set_edit_listener_modal_default_value: function (protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id){
+      	var self = this;
+      	self.old_load_balancer_port = load_balancer_port;
+      	self.protocol = $('#edit-listener-modal #edit_listener_protocol').val(protocol).val();
+      	self.load_balancer_port = $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).val();
+      	self.instance_protocol = $('#edit-listener-modal #edit_listener_instance_protocol').val(instance_protocol).val();
+      	self.instance_port = $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).val();
+      	if (ssl_certificate_id === "Invalid-Certificate"){
+      		self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val("").val();
+      	} else {
+      		self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val(ssl_certificate_id).val();
+      	}
+      },
+      create_listener: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.create_listener(self.physical_id, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+          .done(function (msg) {
+          	alert_success(reload)(msg);
+          	$('#create-listener-modal').modal('hide');
+          })
+          .fail(function (msg) {
+          	alert_danger(reload)(msg);
+          	$('#create-listener-modal').modal('hide');
+          });
+      },
+      edit_listener: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.delete_and_create_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+          .done(function (msg) {
+          	alert_success(reload)(msg);
+          	$('#edit-listener-modal').modal('hide');
+          })
+          .fail(function (msg) {
+          	alert_danger(reload)(msg);
+          	$('#edit-listener-modal').modal('hide');
+          });
+      },
+      delete_listener: function(load_balancer_port){
+        var self = this;
+        self.load_balancer_port = load_balancer_port;
+        bootstrap_confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, "");
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.delete_listener(self.physical_id, self.load_balancer_port)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      upload_server_certificate: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.upload_server_certificate(self.physical_id, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
+          .done(function (msg) {
+          	alert_success(reload)(msg);
+ 	      	$('#upload-server-certificate-modal').modal('hide');
+          })
+          .fail(function (msg) {
+          	alert_danger(reload)(msg);
+          	$('#upload-server-certificate-modal').modal('hide');
+          });
+      },
+      delete_server_certificate: function(server_certificate_name){
+        var self = this;
+        self.server_certificate_name = server_certificate_name;
+        bootstrap_confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, "");
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.delete_server_certificate(self.physical_id, self.server_certificate_name)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
       },
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
@@ -649,6 +754,8 @@
         self.unregistereds = data.unregistereds;
         self.dns_name = data.dns_name;
         self.listeners = data.listeners;
+        self.server_certificates = data.server_certificates;
+        self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;
         console.log(self);

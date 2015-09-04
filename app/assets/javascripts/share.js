@@ -196,3 +196,18 @@ $(document).ready(function () {
     toggle_input();
   });
 });
+
+// allow textfile drop
+$(document).on("dragover", ".allow_textfile_drop", function(){
+  event.preventDefault();
+});
+$(document).on("drop", ".allow_textfile_drop", function(){
+  self = this;
+  event.preventDefault();
+  var file = event.dataTransfer.files[0];
+  var fileReader = new FileReader();
+  fileReader.onloadend = function(){
+    $(self).val(fileReader.result).trigger("input");
+  };
+  fileReader.readAsText(file);
+});
