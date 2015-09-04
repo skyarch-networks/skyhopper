@@ -962,6 +962,10 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
+      serverspec_logs: function() {
+        this.$parent.tabpaneID = 'serverspec_logs';
+        this._loading();
+      },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
 
@@ -1352,6 +1356,17 @@
       }).fail(alert_danger(self.show_ec2));
     },
   });
+
+  // Vue.component('serverspec-logs-tabpane', {
+  //   template: '#serverspec-logs-tabpane-template',
+  //   data: function () {return {
+  //       loading: false,
+  //       data: null,
+  //   };},
+  //   created: function ()  {
+  //     this.$parent.loading = false;
+  //   },
+  // });
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
