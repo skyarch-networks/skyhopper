@@ -5,9 +5,9 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+//= require user_index
 
 /// <reference path="../declares.d.ts" />
-//=require user_index
 
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
