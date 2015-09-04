@@ -103,10 +103,17 @@ class ServerspecsController < ApplicationController
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    @serverspec_results = ServerspecResult.where(:resource_id, resource.id)
-    @serverspec_results_details = ServerspecResultDetail.where(:serverspec_result_id, @serverspec_results.id)
-    @serverspecs =
-    @physical_id = resource.physical_id
+    sql = "select serverspecs.name ,
+          resources.physical_id,
+          serverspec_results.message,
+          serverspec_results.status,
+          serverspec_results.created_at
+          from serverspec_results
+          INNER JOIN resources ON resources.id = serverspec_results.resource_id
+          INNER JOIN serverspec_result_details ON serverspec_result_details.serverspec_result_id = serverspec_results.id
+          INNER JOIN serverspecs on serverspec_result_details.serverspec_id = serverspecs.id where resource_id = "+resource.id.to_s+";"
+
+    @serverspec_results = ActiveRecord::Base.connection.execute(sql)
 
     respond_to do |format|
       format.json

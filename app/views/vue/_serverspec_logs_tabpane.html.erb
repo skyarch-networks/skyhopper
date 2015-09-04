@@ -3,12 +3,19 @@
   <table class="table">
     <thead>
       <tr>
+        <th>Serverspec</th>
         <th>Resource</th>
+        <th>Message</th>
+        <th>Status</th>
+        <th>Rundate</th>
       </tr>
     </thead>
     <tbody>
       <tr v-repeat="d: data">
-        <td>{{d.physical_id}}</td>
+        <td v-repeat="d" track-by="$index">
+          <code v-if="$index === 2">{{$value}}</code>
+          <text v-if="$index !== 2">{{$value}}</text>
+        </td>
       </tr>
   </tbody>
   </table>

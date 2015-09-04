@@ -1378,9 +1378,11 @@
       self = this;
       var self = this;
       self.loading = false;
+      var fields = ['Serverspec', 'Resource', 'Message', 'Status', 'Created at'];
       self.ec2.logs_serverspec().done(function (data) {
-        console.log(data['serverspec_logs']);
-        self.data = data;
+
+          self.data = data.serverspec_results;
+        console.log(self.data);
           self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
     },
