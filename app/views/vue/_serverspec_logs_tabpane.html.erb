@@ -4,33 +4,11 @@
     <thead>
       <tr>
         <th>Resource</th>
-        <th>Serverspec</th>
-        <th>Status</th>
-        <th>Details</th>
-        <th>Scheduled</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-      </tr>
-      <tr>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-      </tr>
-      <tr>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
-        <td>Test</td>
+      <tr v-repeat="d: data">
+        <td>{{d.physical_id}}</td>
       </tr>
   </tbody>
   </table>

@@ -5,34 +5,25 @@
 <table class="table">
   <thead>
     <tr>
-      <th colspan="2">
-        <%= t('users.role') %>
-        <a href="#" data-content="<%= t('users.msg.role')%>" data-placement="right" data-toggle="popover" data-original-title="<%= t('users.role') %>" class="pull-right popover-help"><span class="glyphicon glyphicon-question-sign"></span></a>
-      </th>
-      <th><%= t('users.email') %></th>
-      <th><%= t('users.last_signed_in_at') %></th>
-      <th><%= t('common.actions') %></th>
+      <th>resouce.physical_id</th>
+      <th>severspec_result.status</th>
+      <th>severspec_result.mesage</th>
+      <th>severspec_result.create_at</th>
     </tr>
   </thead>
   <tbody>
-    <% @users.each do |user| %>
-      <tr class="user-row">
-        <td style="width: 50px"><%= master_label if user.master? %></td>
-        <td style="width: 50px"><%= admin_label if user.admin? %></td>
-        <td><%= gravatar(user.email) %>&nbsp;<%= user.email %>&nbsp;<%= label_its_you(user) %></td>
-        <td><%= user.last_sign_in_at %></td>
-        <td>
-          <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
-            "#",
-            class: 'btn btn-xs btn-default edit-user', :"user-id" => user.id %>
-          <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
-            users_admin_path(user),
-            method: :delete,
-            data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-            class:  'btn btn-xs btn-danger' %>
-        </td>
-      </tr>
-    <% end %>
+        <% Resource.where("id = 3").each do |r|%>
+
+              <% r.serverspec_results.all.each do |sr| %>
+                <tr>
+                  <td><%= r.physical_id %></td>
+                  <td><%= sr.status %></td>
+                  <td><%= sr.message %></td>
+                  <td><%= sr.created_at %></td>
+
+                </tr>
+              <% end %>
+        <% end %>
   </tbody>
 </table>
 
@@ -45,7 +36,3 @@
 
 <div class="page-header"></div>
 <div id="user-edit" style="padding-bottom: 70px;"></div>
-
-<script id="user-edit-template" type="text/template">
-<%= render 'edit' %>
-</script>

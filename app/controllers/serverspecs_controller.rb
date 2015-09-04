@@ -98,6 +98,22 @@ class ServerspecsController < ApplicationController
     @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
   end
 
+  # GET /serverspecs/logs
+  def logs
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+    @serverspec_results = ServerspecResult.where(:resource_id, resource.id)
+    @serverspec_results_details = ServerspecResultDetail.where(:serverspec_result_id, @serverspec_results.id)
+    @serverspecs =
+    @physical_id = resource.physical_id
+
+    respond_to do |format|
+      format.json
+    end
+  end
+
+
   # TODO: refactor
   # POST /serverspecs/run
   def run
@@ -138,6 +154,7 @@ class ServerspecsController < ApplicationController
       )
     render text: render_msg, status: 200 and return
   end
+
 
   # Generate serverspec to connect to RDS instance
   # PUT /serverspecs/create_for_rds

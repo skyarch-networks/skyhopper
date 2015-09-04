@@ -36,6 +36,7 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
+  var http = require('http');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -1363,8 +1364,25 @@
         loading: false,
         data: null,
     };},
+    methods:{
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
+    },
+    computed: {
+      physical_id: function () { return this.$parent.tabpaneGroupID; },
+      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      all_spec:    function () { return this.globals.concat(this.individuals); }
+    },
     created: function ()  {
-      this.$parent.loading = false;
+      self = this;
+      var self = this;
+      self.loading = false;
+      self.ec2.logs_serverspec().done(function (data) {
+        console.log(data['serverspec_logs']);
+        self.data = data;
+          self.$parent.loading = false;
+      }).fail(alert_danger(self.show_ec2));
     },
   });
 
