@@ -13,7 +13,7 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var adminIndex = require('./modules/loadindex');
-  var md5 = require('./modules/md5');
+  var md5 = require('md5');
 
   var app;
 
