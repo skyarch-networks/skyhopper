@@ -13,6 +13,8 @@ module.exports = function (value, key, option, lang) {
     return render_cf_templates(value, key, lang);
   }else if (option[0] === 'user_admin') {
     return render_user_admin(value, key, lang);
+  }else if (option[0] === 'serverspec_logs') {
+    return render_serverspecs_logs(value, key);
   }else{
     return value;
   }
@@ -179,6 +181,38 @@ function render_user_admin(value, key, lang){
     var master = (value[1] ? "<span class='label label-warning'>master</span>" : "");
 
     return master+"  "+admin;
+  }else{
+    return value;
+  }
+}
+
+function render_serverspecs_logs(value, key){
+  if(key === 'status'){
+    var ret;
+    switch (value) {
+      case 'success':
+        ret = "<span class='label label-success'>"+value+"</span>";
+        break;
+      case 'failed':
+        ret = "<span class='label label-danger'>"+value+"</span>";
+        break;
+      case 'pending':
+        ret = "<span class='label label-info'>"+value+"</span>";
+        break;
+    }
+    return ret;
+  }else if (key === 'message') {
+      var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle btn btn-xs btn-link popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
+
+      var body = "<div class='col-sm-12'>" +
+        "<td class='hidden-row'>" +
+        "  <div class='accordion-body collapse' id='logbody-"+value[0]+"'>" +
+        "    <pre style='margin: 5px'>"+value[2]+"</pre>" +
+        "  </div>" +
+        "</td>" +
+      "</div>";
+
+    return head+body;
   }else{
     return value;
   }

@@ -13,6 +13,8 @@ module.exports = function(value, option){
     return render_cf_templates(value);
   }else if (option[0] === 'user_admin') {
     return render_user_admin(value);
+  }else if (option[0] === 'serverspec_logs') {
+    return render_serverspecs_logs(value);
   }else{
     return value;
   }
@@ -111,6 +113,22 @@ function render_user_admin(value){
     return t('users.last_signed_in_at');
   }else if (value === 'id') {
     return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_serverspecs_logs(value){
+  if (value === 'serverspec'){
+    return t('serverspecs.serverspecs');
+  }else if (value === 'resource') {
+    return t('serverspecs.generator.resources');
+  }else if (value === 'message') {
+    return t('cf_templates.details');
+  }else if (value === 'status') {
+    return t ('infrastructures.status');
+  }else if (value === 'created_at') {
+    return t ('serverspecs.created_at');
   }else{
     return value;
   }

@@ -236,6 +236,8 @@ ja:
     global:            'インフラ共通の Serverspec'
     individual:        'インフラ固有の Serverspec'
     select_serverspec: '実行する Serverspec を選択'
+    operation_logs:    '操作ログ'
+    created_at:        'at'
     btn:
       add:    'Serverspec の追加'
       create: 'Serverspec の作成'
@@ -251,7 +253,8 @@ ja:
       generated: 'Serverspec は正常に作成されました。'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
-
+    generator:
+      resources:    'リソース'
 
   schedules:
     schedule:         'スケジュール'

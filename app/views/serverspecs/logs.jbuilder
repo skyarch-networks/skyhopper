@@ -1,5 +1,4 @@
-# json.array!(@serverspec_logs) do |log|
-#   json.extract! log, :physical_id
-#   json.url log_url(log, format: :json)
-# end
-json.serverspec_results @serverspec_results
+json.array!(@serverspec_results) do |log|
+  json.extract! log, :id, :result_id, :physical_id, :message, :status, :created_at, :name
+end
+#json.serverspec_results @serverspec_results

@@ -236,6 +236,8 @@ en:
     global:            'Global'
     individual:        'Infrastructure Individual'
     select_serverspec: 'Select Serverspecs'
+    created_at:	       'at'
+    operation_logs:    'Operation Logs'
     btn:
       add:    'Add Serverspec'
       create: 'Create Serverspec'

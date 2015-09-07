@@ -1,22 +1,37 @@
-<h3 class="page-header">Serverspec <small>Operation Logs</small></h3>
+<h3 class="page-header"><%= t 'serverspecs.serverspecs' %> <small><%= t 'serverspecs.operation_logs' %></small></h3>
 <div class="col-sm-12">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Serverspec</th>
-        <th>Resource</th>
-        <th>Message</th>
-        <th>Status</th>
-        <th>Rundate</th>
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form><hr>
+  </div>
+  <table class="table table-hover">
+    <tr>
+      <th v-repeat="key: columns"
+        v-class="active: sortKey === key">
+        <text v-html="key | wrap option"></text>
+          <span v-on="click:sortBy(key)" v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+
+      </th>
       </tr>
     </thead>
-    <tbody>
-      <tr v-repeat="d: data">
-        <td v-repeat="d" track-by="$index">
-          <code v-if="$index === 2">{{$value}}</code>
-          <text v-if="$index !== 2">{{$value}}</text>
+    <tbody class="tbody-infra-log">
+      <tr v-repeat="
+        entry: data
+        | filterBy filterKey
+        | orderBy sortKey reversed[sortKey]
+        | paginate">
+        <td v-repeat="key: columns">
+          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
         </td>
       </tr>
-  </tbody>
+    </tbody>
   </table>
+  <nav v-if="data.length >= 10">
+    <ul class="pager">
+      <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+        <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
+      <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+    </ul>
+  </nav>
 </div>

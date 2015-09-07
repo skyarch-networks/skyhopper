@@ -103,17 +103,11 @@ class ServerspecsController < ApplicationController
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    sql = "select serverspecs.name ,
-          resources.physical_id,
-          serverspec_results.message,
-          serverspec_results.status,
-          serverspec_results.created_at
-          from serverspec_results
-          INNER JOIN resources ON resources.id = serverspec_results.resource_id
-          INNER JOIN serverspec_result_details ON serverspec_result_details.serverspec_result_id = serverspec_results.id
-          INNER JOIN serverspecs on serverspec_result_details.serverspec_id = serverspecs.id where resource_id = "+resource.id.to_s+";"
 
-    @serverspec_results = ActiveRecord::Base.connection.execute(sql)
+    @serverspec_results = ServerspecResult.joins(:serverspec_result_details, :serverspecs, :resource).where(resource_id: resource.id)
+    .group('serverspec_result_details.id')
+    .order('serverspec_results.id DESC')
+    .select("serverspec_results.*, serverspecs.name, resources.physical_id, serverspec_result_details.id as 'result_id'")
 
     respond_to do |format|
       format.json
@@ -146,19 +140,16 @@ class ServerspecsController < ApplicationController
 
     case resp[:status_text]
     when 'success'
+      ServerspecResult.create(resource_id: resource.id, status: resp[:status_text],message: resp[:message], serverspec_ids: serverspec_ids)
       render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
     when 'pending'
+      ServerspecResult.create(resource_id: resource.id, status: resp[:status_text],message: resp[:message], serverspec_ids: serverspec_ids)
       render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:message])
     when 'failed'
+      ServerspecResult.create(resource_id: resource.id, status: resp[:status_text],message: resp[:message], serverspec_ids: serverspec_ids)
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
-      ServerspecResult.create(
-        resource_id: resource.id,
-        status: resp[:status_text],
-        message: resp[:message],
-        serverspec_ids: serverspec_ids
-      )
     render text: render_msg, status: 200 and return
   end
 
