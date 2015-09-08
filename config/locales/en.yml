@@ -388,6 +388,7 @@ en:
     use_start_mfa:     'Use start MFA'
     use_stop_mfa:      'Use stop MFA'
     mfa_secret:        'Secret key of MFA'
+    search:            'Search by email'
     create_new_user:   'Create New User'
     btn:
       add: 'Add User'
