@@ -127,3 +127,15 @@ input[type="number"] {
   text-shadow: 0 1px 1px rgb(140, 225, 237);
   -webkit-font-smoothing: antialiased;
 }
+
+th {
+  background: rgb(252, 255, 255);
+}
+
+th:nth-child(odd){
+  background: rgb(252, 255, 255);
+}
+/*  Define the background color for all the EVEN table columns  */
+th:nth-child(even){
+  background: rgba(98, 105, 106, 0.13);
+}
