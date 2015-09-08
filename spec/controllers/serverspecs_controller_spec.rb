@@ -259,6 +259,21 @@ describe ServerspecsController, :type => :controller do
     end
   end
 
+  describe '#logs' do
+    let(:infra){create(:infrastructure)}
+    let(:specs){create_list(:serverspec, 3, infrastructure: infra)}
+    let(:physical_id){SecureRandom.base64(10)}
+    let(:dish){create(:dish, serverspecs: [create(:serverspec)])}
+    let(:resource){create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra, serverspecs: [create(:serverspec)])}
+
+    should_be_success
+    
+    it 'should assign @serverspec_results' do
+      get :index, format: 'json'
+      expect(assigns[:serverspec_results]).to eq klass.all
+    end
+  end
+
   describe '#run' do
     let(:infra){create(:infrastructure)}
     let(:physical_id){SecureRandom.base64(10)}
