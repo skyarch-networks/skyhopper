@@ -266,6 +266,7 @@ describe ServerspecsController, :type => :controller do
 
     before do
       resource # exec create resource
+      create(:serverspec_result, serverspecs: specs, resource: resource)
       get :results, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
     end
 
