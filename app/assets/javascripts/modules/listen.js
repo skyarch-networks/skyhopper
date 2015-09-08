@@ -49,7 +49,7 @@ function render_infrastructures(value, key, lang){
     }else if (value === 'CREATE_IN_PROGRESS') {
       return "<span class='text text-info'>"+value+"</span>";
     }else{
-      return 'NO STACK INFO';
+      return value;
     }
   }else{
     return value;
