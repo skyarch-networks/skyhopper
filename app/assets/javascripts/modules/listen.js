@@ -43,7 +43,7 @@ function render_infrastructures(value, key, lang){
     return ret;
   }else{
     if(value == "CREATE_COMPLETE")
-      return "<span class='label label-success'>"+value+"</span>";
+      return "<span class='text text-success'>"+value+"</span>";
     else
       return value;
   }
