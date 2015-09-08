@@ -34,6 +34,11 @@ http://www.skyarch.net/blog/?p=2709
 [doc/installation/zabbix_server.md](doc/installation/zabbix_server.md)
 
 
+### アップデート手順
+
+最新のリリースページを参考にしてください。
+
+https://github.com/skyarch-networks/skyhopper/releases/latest
 
 ## 既知の問題
 

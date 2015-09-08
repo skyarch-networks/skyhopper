@@ -5,8 +5,6 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-//= require serverspec-gen/ast
-//= require serverspec-gen/ui
 
 //browserify functions for vue filters functionality
 var wrap = require('./modules/wrap');
