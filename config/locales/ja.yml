@@ -381,7 +381,8 @@ ja:
     use_start_mfa:     'MFA の使用を開始する'
     use_stop_mfa:      'MFA の使用を停止する'
     mfa_secret:        'MFA の秘密鍵'
-    search:	       'メールで検索'
+    search:            'メールで検索'
+    create_new_user:   '新規ユーザーの作成'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'

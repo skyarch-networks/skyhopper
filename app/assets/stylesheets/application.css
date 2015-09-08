@@ -9,8 +9,8 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require_tree .
  *= require bootstrap.min
+ *= require_tree .
  *= require animate.min
  */
 
@@ -256,12 +256,6 @@ h6.page-header {
 100% {
     opacity: 1;
   }
-}
-
-.border-blink {
-  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
-  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
-  animation: border_blink 0.7s ease-in-out infinite alternate;
 }
 
 @-webkit-keyframes border_blink {

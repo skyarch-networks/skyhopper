@@ -15,6 +15,7 @@ en:
       detach: "Detach"
       close: "Close"
       change: "Change"
+      create: "Create"
     titles:
       edit: "Edit"
       save: "Save"
