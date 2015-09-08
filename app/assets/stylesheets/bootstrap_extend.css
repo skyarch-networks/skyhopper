@@ -113,3 +113,10 @@ h6, .h6 {
 .btn {
   text-transform: none;
 }
+
+.border-blink {
+  border-style: solid;
+  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
+  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
+  animation: border_blink 0.7s ease-in-out infinite alternate;
+}

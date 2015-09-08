@@ -258,12 +258,6 @@ h6.page-header {
   }
 }
 
-.border-blink {
-  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
-  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
-  animation: border_blink 0.7s ease-in-out infinite alternate;
-}
-
 @-webkit-keyframes border_blink {
   0% {
     border: 2px solid #5bc0de;
