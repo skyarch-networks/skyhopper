@@ -275,7 +275,7 @@ class EC2Instance extends ModelBase {
       (<any>EC2Instance.ajax_ec2).deregister_from_elb(_.merge(this.params, {elb_name: elb_name}))
     );
   }
-  
+
   create_listener(
     elb_name: string,
     protocol: string,
@@ -295,13 +295,15 @@ class EC2Instance extends ModelBase {
       }))
     );
   }
-  
+
   delete_listener(elb_name: string, load_balancer_port: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_elb).delete_listener(_.merge(this.params, {elb_name: elb_name, elb_listener_load_balancer_port: load_balancer_port}))
+      (<any>EC2Instance.ajax_elb).delete_listener(
+        _.merge(this.params, {elb_name: elb_name, elb_listener_load_balancer_port: load_balancer_port})
+      )
     );
   }
-  
+
   delete_and_create_listener(
     elb_name: string,
     protocol: string,
@@ -323,13 +325,13 @@ class EC2Instance extends ModelBase {
       }))
     );
   }
-  
+
   upload_server_certificate(
     elb_name: string,
     server_certificate_name: string,
     certificate_body: string,
     private_key: string,
-    certificate_chain: string,
+    certificate_chain: string
   ): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>EC2Instance.ajax_elb).upload_server_certificate(_.merge(this.params, {
@@ -341,10 +343,12 @@ class EC2Instance extends ModelBase {
       }))
     );
   }
-  
+
   delete_server_certificate(elb_name: string, server_certificate_name: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_elb).delete_server_certificate(_.merge(this.params, {elb_name: elb_name, ss_server_certificate_name: server_certificate_name}))
+      (<any>EC2Instance.ajax_elb).delete_server_certificate(
+        _.merge(this.params, {elb_name: elb_name, ss_server_certificate_name: server_certificate_name})
+      )
     );
   }
 }
