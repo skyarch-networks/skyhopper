@@ -273,7 +273,7 @@ describe ServerspecsController, :type => :controller do
     should_be_success
 
     it 'should assign @serverspec_results' do
-      expect(assigns[:serverspec_results]).to eq ServerspecResult.all
+      expect(assigns[:serverspec_results]).to eq resource.serverspec_results
     end
   end
 

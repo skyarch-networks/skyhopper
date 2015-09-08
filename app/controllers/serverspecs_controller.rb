@@ -104,10 +104,7 @@ class ServerspecsController < ApplicationController
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @serverspec_results = ServerspecResult.joins(:serverspec_result_details, :serverspecs, :resource).where(resource_id: resource.id)
-    .group('serverspec_result_details.id')
-    .order('serverspec_results.id DESC')
-    .select("serverspec_results.*, serverspecs.name, resources.physical_id, serverspec_result_details.id as 'result_id'")
+    @serverspec_results = resource.serverspec_results
 
     respond_to do |format|
       format.json
