@@ -130,7 +130,7 @@ en:
     stackname:          'Stack Name'
     region:             'Region'
     keypair:            'KeyPair Name'
-    launchtime:         'Launch Time'
+    creation_time:      'Creation Time'
     status:             'Status'
     sshkey:             'SSH Private Key'
     return_to_projects: 'Return to your projects'
