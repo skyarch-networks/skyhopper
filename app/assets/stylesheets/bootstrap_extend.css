@@ -109,3 +109,7 @@ h5, .h5 {
 h6, .h6 {
   font-size: 12px;
 }
+
+.btn {
+  text-transform: none;
+}
