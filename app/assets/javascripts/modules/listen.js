@@ -41,11 +41,18 @@ function render_infrastructures(value, key, lang){
      "</div>";
 
     return ret;
-  }else{
-    if(value == "CREATE_COMPLETE")
+  }else if (key === 'status') {
+    if(value == "CREATE_COMPLETE"){
       return "<span class='text text-success'>"+value+"</span>";
-    else
-      return value;
+    }else if (value === 'DELETE_IN_PROGRESS') {
+      return "<span class='text text-danger'>"+value+"</span>";
+    }else if (value === 'CREATE_IN_PROGRESS') {
+      return "<span class='text text-info'>"+value+"</span>";
+    }else{
+      return 'NO STACK INFO';
+    }
+  }else{
+    return value;
   }
 }
 
