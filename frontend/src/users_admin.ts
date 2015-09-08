@@ -15,7 +15,7 @@ namespace UsersAdmin {
 
   function highlight_user_row(selected_user: JQuery): void {
     selected_user.removeClass("info");
-    var tr = selected_user.closest('tr');
+    const tr = selected_user.closest('tr');
     $('tr.info').removeClass('info');
     tr.addClass('info');
   }
