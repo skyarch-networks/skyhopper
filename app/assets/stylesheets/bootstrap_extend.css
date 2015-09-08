@@ -128,15 +128,15 @@ input[type="number"] {
   -webkit-font-smoothing: antialiased;
 }
 
-th {
+.ssp th {
   background: rgb(252, 255, 255);
 }
 
-th:nth-child(odd){
+.ssp th:nth-child(odd){
   background: rgb(252, 255, 255);
 }
 /*  Define the background color for all the EVEN table columns  */
-th:nth-child(even){
+.ssp th:nth-child(even){
   background: rgba(98, 105, 106, 0.13);
 
 h1, .h1 {
