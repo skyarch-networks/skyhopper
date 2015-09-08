@@ -28,7 +28,7 @@ describe ServerspecsController, :type => :controller do
       expect(assigns[:serverspecs]).to be_all{|serverspec|serverspec.kind_of?(Serverspec)}
     end
 
-    context 'when accessed index without infrastracture id' do
+    context 'when accessed index without infrastructure id' do
       let(:infrastructure){double("dummy", id: nil)}
 
       it 'should render index' do
@@ -40,8 +40,8 @@ describe ServerspecsController, :type => :controller do
       end
     end
 
-    context 'when accessed index with infrastracture id' do
-      it 'infrawtructure name should not be nil' do
+    context 'when accessed index with infrastructure id' do
+      it 'infrastructure name should not be nil' do
         expect(assigns[:infrastructure_name]).to eq infrastructure.stack_name
       end
 
@@ -260,17 +260,19 @@ describe ServerspecsController, :type => :controller do
   end
 
   describe '#logs' do
-    let(:infra){create(:infrastructure)}
-    let(:specs){create_list(:serverspec, 3, infrastructure: infra)}
+    let(:specs){create_list(:serverspec, 3, infrastructure: infrastructure)}
     let(:physical_id){SecureRandom.base64(10)}
-    let(:dish){create(:dish, serverspecs: [create(:serverspec)])}
-    let(:resource){create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra, serverspecs: [create(:serverspec)])}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infrastructure, serverspecs: specs)}
+
+    before do
+      resource # exec create resource
+      get :logs, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
+    end
 
     should_be_success
-    
+
     it 'should assign @serverspec_results' do
-      get :index, format: 'json'
-      expect(assigns[:serverspec_results]).to eq klass.all
+      expect(assigns[:serverspec_results]).to eq ServerspecResult.all
     end
   end
 
