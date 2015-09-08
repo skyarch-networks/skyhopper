@@ -138,4 +138,32 @@ th:nth-child(odd){
 /*  Define the background color for all the EVEN table columns  */
 th:nth-child(even){
   background: rgba(98, 105, 106, 0.13);
+
+h1, .h1 {
+  font-size: 36px;
 }
+h2, .h2 {
+  font-size: 30px;
+}
+h3, .h3 {
+  font-size: 24px;
+}
+h4, .h4 {
+  font-size: 18px;
+}
+h5, .h5 {
+  font-size: 14px;
+}
+h6, .h6 {
+  font-size: 12px;
+}
+
+.btn {
+  text-transform: none;
+}
+
+.border-blink {
+  border-style: solid;
+  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
+  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
+  animation: border_blink 0.7s ease-in-out infinite alternate;
