@@ -42,7 +42,7 @@ describe ServerspecPolicy do
     end
   end
 
-  %i[new? update? create? edit? destroy? select? logs? run? create_for_rds? schedule?].each do |action|
+  %i[new? update? create? edit? destroy? select? run? create_for_rds? schedule?].each do |action|
     permissions action do
       context 'serverspec has infra' do
         it 'should grant allowed user' do
