@@ -1422,7 +1422,10 @@
             return {
               serverspec: item.serverspecs,
               resource: item.resource.physical_id,
-              message: [item.serverspec_result_details.serverspec_result_id, item.resource.physical_id, item.message],
+              message: [item.id,
+                        item.resource.physical_id,
+                        item.message,
+                        item.serverspec_result_details],
               status: item.status,
               created_at: last_log.toLocaleString()
             };

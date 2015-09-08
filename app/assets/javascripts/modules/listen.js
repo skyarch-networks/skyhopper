@@ -210,9 +210,18 @@ function render_serverspecs_results(value, key){
     return ret;
   }else if (key === 'serverspec') {
     if(value.length > 0){
-      return value.name;
+      var values = [];
+      $.each(value, function(index, value){
+        values.push(" "+value.name);
+      });
+      return values;
+    }else {
+      return 'auto generated';
     }
   }else if (key === 'message') {
+    if(value[3].length <= 0){
+      return "<span class='text text-success'> serverspec for "+value[1]+" is successfully finished. </span>";
+    }else{
       var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle btn btn-xs btn-link popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
 
       var body = "<div class='col-sm-12'>" +
@@ -222,8 +231,8 @@ function render_serverspecs_results(value, key){
         "  </div>" +
         "</td>" +
       "</div>";
-
-    return head+body;
+      return head+body;
+    }
   }else{
     return value;
   }

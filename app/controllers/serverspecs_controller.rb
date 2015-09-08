@@ -104,10 +104,11 @@ class ServerspecsController < ApplicationController
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @serverspec_results = resource.serverspec_results.includes(:serverspec_result_details, :serverspecs, :resource)
+    @serverspec_results = resource.serverspec_results
 
     respond_to do |format|
-      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message], include: [:serverspec_result_details, {serverspecs: {only:[:name]}}, {resource: {only: [:physical_id]}} ]) }
+      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message],
+        include: [{serverspec_result_details: {only: [:id]}},{serverspecs: {only:[:name]}}, {resource: {only: [:physical_id]}} ]) }
     end
   end
 
