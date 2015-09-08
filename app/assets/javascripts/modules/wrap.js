@@ -26,7 +26,7 @@ function render_infrastructures(value){
   }else if(value === 'region'){
     return t('infrastructures.region');
   }else if(value === 'created_at'){
-    return t('infrastructures.launchtime');
+    return t('infrastructures.creation_time');
   }else if(value === 'id'){
     return t('common.actions');
   }else if(value === 'status'){

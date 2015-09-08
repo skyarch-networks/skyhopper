@@ -130,7 +130,7 @@ ja:
     stackname:          'スタック名'
     region:             'リージョン'
     keypair:            '鍵ペア名'
-    launchtime:         '発射時刻'
+    creation_time:      '作成時刻'
     status:             '状態'
     sshkey:             'SSH鍵（鍵ペア）'
     return_to_projects: 'プロジェクト一覧に戻る'
