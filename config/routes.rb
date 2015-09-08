@@ -21,6 +21,12 @@ SkyHopper::Application.routes.draw do
     end
   end
 
+  resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
+    collection do
+      post 'schedule'
+    end
+  end
+
   resources :infrastructures do
     member do
       post 'change_rds_scale'
@@ -84,9 +90,10 @@ SkyHopper::Application.routes.draw do
 
   resources :infrastructure_logs, only: :index
 
-  resources :monitorings, only: [:show, :edit, :update] do
+  resources :monitorings, only: [:create, :show, :edit, :update] do
     member do
       post 'create_host'
+      post 'update_templates'
       get 'show_cloudwatch_graph'
       get 'show_problems'
       get 'show_url_status'

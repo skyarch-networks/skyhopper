@@ -15,6 +15,7 @@
 //= require models/monitoring
 //= require models/rds_instance
 //= require models/resource
+//= require models/snapshot
 
 
 (function () {
@@ -30,6 +31,11 @@
 // infrastructures
 // ================================================================
 
+//browserify functions for vue filters functionality
+  var wrap = require('./modules/wrap');
+  var listen = require('./modules/listen');
+  var parseURLParams = require('./modules/getURL');
+  var infraindex = require('./modules/loadindex');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -267,11 +273,15 @@
       commons: [],
       uncommons: [],
       resources: [],
+      templates: [],
       error_message: null,
       loading_graph: false,
       url_status: [],
       showing_url: false,
       loading_problems: true,
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
     };},
     methods: {
       show_problems: function () {
@@ -282,9 +292,17 @@
         });
       },
       create: function () {
+        if(!this.has_selected) {return;}
+
         var self = this;
         self.creating = true;
-        this.monitoring.create_host().done(function () {
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.name;
+        }).value();
+
+        this.monitoring.create_host(templates).done(function () {
           alert_success(function () {
             self.$parent.show_edit_monitoring();
           })(t('monitoring.msg.created'));
@@ -375,11 +393,39 @@
           });
         }).fail(alert_and_show_infra);
       },
+      showPrev: function (){
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function (){
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function (){
+        this.$parent.show_monitoring();
+      },
     },
     computed: {
       monitoring: function ()    { return new Monitoring(current_infra); },
       no_problem: function ()    { return _.isEmpty(this.problems); },
-      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; }
+      before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
     },
     created: function () {
       var self = this;
@@ -389,13 +435,92 @@
         self.commons         = data.monitor_selected_common;
         self.uncommons       = data.monitor_selected_uncommon;
         self.resources       = data.resources;
+        self.templates       = data.templates;
+
         if (!this.before_register) {
           self.show_problems();
         }
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val));},
+    },
   });
+
+  Vue.component("update-template-tabpane",{
+    template: "#update-template-tabpane-template",
+    data: function(){return{
+      loading: false,
+      page: 0,
+      dispItemSize: 10,
+      templates: [],
+      before_register: false,
+    };},
+    methods:{
+      update_templates: function () {
+        if (!this.has_selected) {return;}
+        var self = this;
+        self.loading = true;
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function(t)  {
+          return t.name;
+        }).value();
+
+        this.monitoring.update_templates(templates).done(function ()  {
+          self.loading = false;
+          self.$parent.show_update_template();
+          alert_success(function (){
+          })(t('monitoring.msg.update_templates'));
+        }).fail(alert_and_show_infra);
+      },
+      showPrev: function () {
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function () {
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
+      close: function ()  {
+        this.$parent.show_update_template();
+      },
+    },
+    computed:{
+      monitoring: function () { return new Monitoring(current_infra); },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
+    },
+    created: function () {
+      var self = this;
+      var monitoring = new Monitoring(current_infra);
+      monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.templates       = data.templates;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val));},
+    },
+  });
+
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
@@ -792,17 +917,19 @@
     data: function () {return {
       loading:             false,
       loading_s:           false,
+      loading_snapshots:   false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
       selected_dish:       null,
       ec2:                 {},
+      volume_selected:     '',
+      snapshots:           {},
+      sort_key:            '',
+      sort_asc:            false,
+      schedule_type:       '',
+      schedule:            {},
 
-      // TODO: 階層を分けたい
-      enabled: false,
-      frequency: null,
-      day_of_week: null,
-      time: null,
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -942,6 +1069,10 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
+      serverspec_logs: function() {
+        this.$parent.tabpaneID = 'serverspec_logs';
+        this._loading();
+      },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
 
@@ -976,10 +1107,20 @@
         });
       },
       change_schedule: function () {
+        switch (this.schedule_type) {
+        case 'yum':
+          this.change_yum_schedule();
+          break;
+        case 'snapshot':
+          this.change_snapshot_schedule();
+          break;
+        }
+      },
+      change_yum_schedule: function () {
         var self = this;
         self.loading_s = true;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        ec2.schedule_yum(self.ec2.yum_schedule).done(function (msg) {
+        ec2.schedule_yum(self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
           alert_success()(msg);
@@ -988,6 +1129,100 @@
           alert_danger()(msg);
         });
       },
+      change_snapshot_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        var s = new Snapshot(current_infra.id);
+        s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      },
+      is_root_device: function (device_name) {
+        return this.ec2.root_device_name === device_name;
+      },
+      create_snapshot: function (volume_id) {
+        var self = this;
+        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
+          var snapshot = new Snapshot(current_infra.id);
+
+          snapshot.create(volume_id, self.physical_id).progress(function (data) {
+            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+          }).done(function (data) {
+            if ($('#snapshots-modal.in').length) {
+              self.load_snapshots();
+            }
+          }).fail(alert_danger());
+
+          self.load_snapshots();
+        });
+      },
+      open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
+      open_yum_schedule_modal: function () {
+        this.schedule_type = "yum";
+        this.schedule = this.ec2.yum_schedule;
+        this.open_schedule_modal();
+      },
+      open_snapshot_schedule_modal: function (volume_id) {
+        this.schedule_type = "snapshot";
+        this.schedule = this.ec2.snapshot_schedules[volume_id];
+        this.open_schedule_modal();
+      },
+      load_snapshots: function () {
+        var self = this;
+        var snapshot = new Snapshot(current_infra.id);
+        this.loading_snapshots = true;
+        snapshot.index(this.volume_selected).done(function (data) {
+          self.snapshots = _.map(data.snapshots, function (s) {
+            s.selected = false;
+            return s;
+          });
+          self.sort_key = '';
+          self.sort_by('start_time');
+          self.loading_snapshots = false;
+        }).fail(alert_danger());
+      },
+      delete_selected_snapshots: function () {
+        var self = this;
+        var snapshots    = _.select(this.snapshots, 'selected', true);
+        var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
+        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
+        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+          var s = new Snapshot(current_infra.id);
+
+          _.each(snapshots, function (snapshot) {
+            s.destroy(snapshot.snapshot_id).done(function (msg) {
+              self.snapshots.$remove(snapshot);
+            });
+          });
+        });
+      },
+      snapshot_status: function (snapshot) {
+        if (snapshot.state === 'pending') {
+          return snapshot.state + '(' + snapshot.progress + ')';
+        }
+        return snapshot.state;
+      },
+      select_snapshot: function (snapshot) {
+        snapshot.selected = !snapshot.selected;
+      },
+      sort_by: function (key) {
+        if (this.sort_key === key) {
+          this.sort_asc = !this.sort_asc;
+        } else {
+          this.sort_asc = false;
+          this.sort_key = key;
+        }
+        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
+      },
+      sorting_by: function (key) {
+        return this.sort_key === key;
+      },
+      toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
@@ -1019,20 +1254,21 @@
         return {text: dish.name, value: dish.id};
       }));},
 
-      next_run:    function () { return (new Date().getHours() + parseInt(this.ec2.yum_schedule.time, 10)) % 24; },
-      all_filled:  function () {
-        if (!this.ec2.yum_schedule.enabled) return true;
-        switch (this.ec2.yum_schedule.frequency) {
+      next_run:    function () { return (new Date().getHours() + parseInt(this.schedule.time, 10)) % 24; },
+      filled_all:  function () {
+        if (!this.schedule.enabled) return true;
+        switch (this.schedule.frequency) {
           case 'weekly':
-            return this.ec2.yum_schedule.day_of_week && this.ec2.yum_schedule.time;
+            return this.schedule.day_of_week && this.schedule.time;
           case 'daily':
-            return this.ec2.yum_schedule.time;
+            return this.schedule.time;
           case 'intervals':
-            return parseInt(this.ec2.yum_schedule.time, 10);
+            return parseInt(this.schedule.time, 10);
           default:
             return false;
         }
       },
+      selected_any: function () { return _.any(this.snapshots, 'selected', true); },
     },
     ready: function () {
       var self = this;
@@ -1041,13 +1277,6 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
-
-        if (data.yum_schedule) {
-          self.enabled     = data.yum_schedule.enabled;
-          self.frequency   = data.yum_schedule.frequency;
-          self.day_of_week = data.yum_schedule.day_of_week;
-          self.time        = data.yum_schedule.time;
-        }
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
@@ -1085,6 +1314,16 @@
           target.text(hint_text);
           setTimeout(function () { target.text(orig_text); }, 1000);
         });
+      });
+
+      $('#snapshots-modal').on('show.bs.modal', function (e) {
+        $(e.target).children().attr('style', null);
+        self.load_snapshots();
+      });
+      $("#snapshots-modal >").draggable({
+        cursor: "move",
+        containment: ".modal-backdrop",
+        handle: ".modal-header"
       });
     },
     filters: {
@@ -1224,6 +1463,17 @@
       }).fail(alert_danger(self.show_ec2));
     },
   });
+
+  // Vue.component('serverspec-logs-tabpane', {
+  //   template: '#serverspec-logs-tabpane-template',
+  //   data: function () {return {
+  //       loading: false,
+  //       data: null,
+  //   };},
+  //   created: function ()  {
+  //     this.$parent.loading = false;
+  //   },
+  // });
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
@@ -1402,6 +1652,13 @@
           self.show_tabpane('edit-monitoring');
           self.loading = true;
         },
+        show_update_template: function () {
+          if (this.no_stack) {return;}
+          var self = this;
+          self.show_tabpane('update-template');
+          self.loading = true;
+        },
+
 
         tabpane_active: function (id) { return this.tabpaneID === id; },
 
@@ -1495,6 +1752,119 @@
   var app;
 
 
+
+
+
+  // register the grid component
+  Vue.component('demo-grid', {
+    template: '#grid-template',
+    replace: true,
+    props: ['data', 'columns', 'filter-key'],
+    data: function () {
+      return {
+        data: null,
+        columns: null,
+        sortKey: '',
+        filterKey: '',
+        reversed: {},
+        loading: true,
+        option: ['infrastructure'],
+        lang: null,
+        pages: 10,
+        pageNumber: 0,
+          };
+      },
+    compiled: function () {
+      // initialize reverse state
+        var self = this;
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false);
+         });
+    },
+    methods: {
+      sortBy: function (key) {
+          if(key !== 'id')
+            this.sortKey = key;
+            this.reversed[key] = !this.reversed[key];
+      },
+      parseURLParams: parseURLParams,
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
+    },
+    created: function (){
+        var il = new Loader();
+        var self = this;
+        self.loading = true;
+        var id =  this.parseURLParams('project_id');
+        self.lang = this.parseURLParams('lang');
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"
+                          ];
+        if (id >3)
+          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          self.columns = ['stack_name','region', 'keypairname', 'id'];
+
+       $.ajax({
+           url:'/infrastructures?&project_id='+id,
+           success: function (data) {
+             this.pages = data.length;
+             var nextColumns = [];
+             self.data = data.map(function (item) {
+                 var d = new Date(item.created_at);
+                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+                 if(item.project_id > 3){
+                   return {stack_name: item.stack_name,
+                       region: item.region,
+                       keypairname: item.keypairname,
+                       created_at: date,
+                       //  ec2_private_key_id: item.ec2_private_key_id,
+                       status: item.status,
+                       id: item.id,
+                       };
+                 }else{
+                   return {stack_name: item.stack_name,
+                           region: item.region,
+                           keypairname: item.keypairname,
+                           //  ec2_private_key_id: item.ec2_private_key_id,
+                           id: item.id,
+                   };
+                 }
+                 self.loading = false;
+               });
+             self.$emit('data-loaded');
+             $("#loading").hide();
+             var empty = t('infrastructures.msg.empty-list');
+             if(self.data.length === 0){ $('#empty').show().html(empty);}
+           }
+         });
+    },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    }
+ });
+
+
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {
       if(infra.id !== current_infra.id){return;}
@@ -1508,6 +1878,16 @@
         show_infra(current_infra.id);
       }
     });
+  };
+
+  var index = function(){
+
+    if (app){
+      app.$destroy();
+    }else{
+      infraindex = infraindex();
+    }
+
   };
 
   var SHOW_INFRA_ID = '#infra-show';
@@ -1526,6 +1906,7 @@
       app.$mount(SHOW_INFRA_ID);
     });
   };
+
 
   var detach = function (infra_id) {
     bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -1603,12 +1984,19 @@
     });
   };
 
-
+  Vue.transition('fade', {
+    leave: function (el, done) {
+      $(el).fadeOut('normal');
+    }
+  });
 
 
 // ================================================================
 // event bindings
 // ================================================================
+  $(document).ready(function(){
+    index();
+  });
 
 
   $(document).on('click', '.show-infra', function (e) {
@@ -1616,7 +2004,6 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-
     show_infra(infra_id);
   });
 

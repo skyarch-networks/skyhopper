@@ -26,7 +26,12 @@ class DishesController < ApplicationController
     page        = params[:page] || 1
 
     @project_name = Project.find(@project_id).name if @project_id
-    @dishes = Dish.where(project_id: @project_id).page(page).per(10)
+    @dishes = Dish.where(project_id: @project_id).page(page)
+
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /dishes/1

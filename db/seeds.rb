@@ -68,27 +68,16 @@ Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerC
 
 
 # ----------------------- Global CF template
-path = Rails.root.join('lib/cf_templates/modules/ami_mappings_2014_09.json')
-skyhopper_modules = {}
-skyhopper_modules[:ami_mappings_2014_09]   = File.read(path)
-skyhopper_modules[:ec2_instance_types_hvm] = AWS::InstanceTypes[:current].to_json
-
-require 'erb'
-require 'json'
-template_paths = Dir.glob(Rails.root.join('lib/cf_templates/preset_patterns/*')).sort
+template_paths = Dir.glob(Rails.root.join('lib/erb-builder/templates/presets/*')).sort
 template_paths.each do |path|
-  value = File::read(path)
-  name  = File::basename(path, '.json.erb').gsub('_', ' ')
+  n = File.basename(path, '.json.erb')
+  b = ERB::Builder.new('presets/'+n)
 
-  erb_value = ERB.new(value).result(binding)
-
-  parsed_value = JSON::parse(erb_value)
-  detail = parsed_value['Description']
-
-  pretty_json = JSON.pretty_generate(parsed_value)
-
+  value = b.build
+  name = n.gsub('_', ' ')
+  parsed = JSON.parse(value)
+  detail = parsed['Description']
 
   CfTemplate.delete_all(name: name)
-
-  CfTemplate.create(name: name, detail: detail, value: pretty_json)
+  CfTemplate.create(name: name, detail: detail, value: value)
 end

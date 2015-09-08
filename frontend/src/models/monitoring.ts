@@ -1,3 +1,11 @@
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 /// <reference path="../../declares.d.ts" />
 /// <reference path="./infrastructure.ts" />
 /// <reference path="./base.ts" />
@@ -30,11 +38,24 @@ class Monitoring extends ModelBase {
     return 'trigger';
   }
 
-  create_host(): JQueryPromise<any> {
+  create_host(templates: any[] = []): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>Monitoring.ajax).create_host({id: this.infra.id})
+      (<any>Monitoring.ajax).create_host({
+        templates: templates,
+        id: this.infra.id
+      })
     );
   }
+
+  update_templates(templates: any[] = []): JQueryPromise<any> {
+     return this.WrapAndResolveReject(() =>
+      (<any>Monitoring.ajax).update_templates({
+        templates: templates,
+        id: this.infra.id
+      })
+    );
+  }
+
 
   edit(): JQueryPromise<any> {
     const dfd = $.Deferred();
@@ -62,7 +83,7 @@ class Monitoring extends ModelBase {
         data.web_scenarios = [];
       }
       dfd.resolve(data);
-    }).fail(this.rejectF);
+    }).fail(dfd.reject);
 
     return dfd.promise();
   }
@@ -140,6 +161,7 @@ class Monitoring extends ModelBase {
 }
 
 Monitoring.ajax.add_member('create_host',  'POST');
+Monitoring.ajax.add_member('update_templates',  'POST');
 Monitoring.ajax.add_member("show_cloudwatch_graph", "GET");
 Monitoring.ajax.add_member("show_problems", "GET");
 Monitoring.ajax.add_member("show_url_status", "GET");

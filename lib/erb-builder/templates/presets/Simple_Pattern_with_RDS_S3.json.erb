@@ -1,0 +1,178 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Simple Pattern (EC2x1, RDSx1, S3x1)",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "String"
+        },
+        "S3BucketBucketName": {
+            "Description": "The name of S3Bucket",
+            "Type": "String",
+            "Default": "backup"
+        },
+        "S3BucketAccessControl": {
+            "Description": "grants predefined permissions to the bucket.",
+            "Type": "String",
+            "Default": "Private",
+            "AllowedValues": [
+                "Private",
+                "PublicRead",
+                "PublicReadWrite",
+                "AuthenticatedRead",
+                "LogDeliveryWrite",
+                "BucketOwnerRead",
+                "BucketOwnerFullControl"
+            ]
+        },
+        "EC2InstanceType": {
+            "Description": "EC2 Instance Type",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        },
+        "RDSInstanceDBName": {
+            "Default": "MyDatabase",
+            "Description": "database name",
+            "Type": "String",
+            "MinLength": "1",
+            "MaxLength": "64",
+            "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+            "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+        },
+        "RDSInstanceMasterUsername": {
+            "Default": "root",
+            "NoEcho": "true",
+            "Description": "Username for database access",
+            "Type": "String",
+            "MinLength": "1",
+            "MaxLength": "16",
+            "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+            "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+        },
+        "RDSInstancePassword": {
+            "Default": "skyroot123",
+            "NoEcho": "true",
+            "Description": "Password for database access",
+            "Type": "String",
+            "MinLength": "8",
+            "MaxLength": "41",
+            "AllowedPattern": "[a-zA-Z0-9]*",
+            "ConstraintDescription": "must contain only alphanumeric characters."
+        },
+        "RDSInstanceAllocatedStorage": {
+            "Default": "5",
+            "Description": "The size of the database (Gb)",
+            "Type": "Number",
+            "MinValue": "5",
+            "MaxValue": "1024",
+            "ConstraintDescription": "must be between 5 and 1024Gb."
+        },
+        "RDSInstanceInstanceClass": {
+            "Default": "db.t1.micro",
+            "Description": "The database instance type",
+            "Type": "String",
+            "AllowedValues": [
+                "db.t1.micro",
+                "db.m1.small",
+                "db.m1.medium",
+                "db.m1.large",
+                "db.m1.xlarge",
+                "db.m2.xlarge",
+                "db.m2.2xlarge",
+                "db.m2.4xlarge",
+                "db.cr1.8xlarge"
+            ],
+            "ConstraintDescription": "must select a valid database instance type."
+        },
+        "RDSInstanceMultiAZ": {
+            "Default": "false",
+            "Description": "is Enable MultiAZ",
+            "Type": "String",
+            "AllowedValues": [ "true", "false" ]
+        },
+        "RDSInstanceEngine": {
+            "Default": "MySQL",
+            "Description": "Database engine type",
+            "Type": "String",
+            "AllowedValues": [ "MySQL", "postgres" ]
+        },
+        "BlockDeviceVolumeSize": {
+            "Description": "Root volume size",
+            "Type": "String",
+            "Default": "8"
+        },
+        "BlockDeviceVolumeType": {
+            "Description": "Root volume type. gp2 for General Purpose (SSD) volumes, standard for Magnetic volumes.",
+            "Type": "String",
+            "Default": "standard",
+            "AllowedValues": [
+                "gp2",
+                "standard"
+            ]
+        }
+    },
+    "Mappings": {
+        "RegionMap": <%= fragment(:ami_mappings) %>
+    },
+    "Resources": {
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "AccessControl": { "Ref": "S3BucketAccessControl" },
+                "BucketName":    { "Ref": "S3BucketBucketName" }
+            }
+        },
+        "EC2Instance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "InstanceType": { "Ref": "EC2InstanceType" },
+                "KeyName": { "Ref": "KeyName" },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        { "Ref": "AWS::Region" },
+                        "AMI"
+                    ]
+                },
+                "AvailabilityZone": {
+                    "Fn::Select" : [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ]
+                },
+                "Tags": [
+                    {
+                        "Key":   "Name",
+                        "Value": "EC2 Instance"
+                    }
+                ],
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "VolumeSize": { "Ref": "BlockDeviceVolumeSize"},
+                            "VolumeType": { "Ref": "BlockDeviceVolumeType"}
+                        }
+                    }
+                ]
+            }
+        },
+        "EC2EIP": {
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "InstanceId": { "Ref": "EC2Instance" }
+            }
+        },
+        "RDSInstance": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "Engine":               { "Ref": "RDSInstanceEngine" },
+                "DBName":               { "Ref": "RDSInstanceDBName" },
+                "MultiAZ":              { "Ref": "RDSInstanceMultiAZ" },
+                "MasterUsername":       { "Ref": "RDSInstanceMasterUsername" },
+                "MasterUserPassword":   { "Ref": "RDSInstancePassword" },
+                "DBInstanceClass":      { "Ref": "RDSInstanceInstanceClass" },
+                "AllocatedStorage":     { "Ref": "RDSInstanceAllocatedStorage" }
+            }
+        }
+    }
+}

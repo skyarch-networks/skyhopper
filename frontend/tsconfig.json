@@ -20,6 +20,7 @@
     "src/models/monitoring.ts",
     "src/models/rds_instance.ts",
     "src/models/resource.ts",
-    "src/models/s3_bucket.ts"
+    "src/models/s3_bucket.ts",
+    "src/models/snapshot.ts"
   ]
 }

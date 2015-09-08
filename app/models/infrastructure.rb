@@ -177,4 +177,11 @@ class Infrastructure < ActiveRecord::Base
   def resource(physical_id)
     resources.find_by(physical_id: physical_id)
   end
+
+  # @return [Client]
+  def client
+    c = Client.arel_table
+    p = Project.arel_table
+    return Client.where(c[:id].eq(p.project(p[:client_id]).where(p[:id].eq(project_id)))).first
+  end
 end

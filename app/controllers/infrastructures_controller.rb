@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -36,6 +37,7 @@ class InfrastructuresController < ApplicationController
 
 
   # GET /infrastructures
+  # GET /infrastructures.json
   def index
     project_id = params.require(:project_id)
     session[:project_id] = project_id
@@ -44,8 +46,12 @@ class InfrastructuresController < ApplicationController
     @selected_project = Project.find(project_id)
 
     @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
-
     @selected_client = @selected_project.client
+    
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /infrastructures/:id

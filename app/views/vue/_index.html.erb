@@ -1,0 +1,58 @@
+<!-- component template -->
+<script type="text/x-template" id="grid-template">
+  <table class="table table-hover">
+    <tr>
+      <th v-repeat="key: columns"
+        v-class="active: sortKey === key">
+        <text v-html="key | wrap option"></text>
+          <span v-on="click:sortBy(key)" v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+          <i v-if="key === 'role'"><a href="#" id="role" v-on="click:pop()"
+            data-content="<%= t('users.msg.role')%>"
+            data-placement="right"
+            rel="popover"
+            data-original-title="<%= t('users.role') %>"
+            class="pull-right popover-help">
+            <span class="glyphicon glyphicon-question-sign"></span></a>
+          </i>
+      </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-class="infrastructure-row: option === 'infrastructure'" v-repeat="
+        entry: data
+        | filterBy filterKey
+        | orderBy sortKey reversed[sortKey]
+        | paginate">
+        <td v-repeat="key: columns">
+          <text id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <nav v-if="data.length >= 10">
+    <ul class="pager">
+      <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+        <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
+      <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+    </ul>
+  </nav>
+</script>
+
+<!-- demo root element -->
+
+<div id="indexElement">
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form><hr>
+  </div>
+  <demo-grid
+    data="{{gridData}}"
+    columns="{{gridColumns}}"
+    filter-key="{{searchQuery}}">
+  </demo-grid>
+</div>
+
+<div id="empty" style="display: none;"></div>
+<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<hr>

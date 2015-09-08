@@ -1,3 +1,11 @@
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 /// <reference path="../declares.d.ts" />
 const loadGif = $('<div class="loader"></div>');
 
@@ -80,6 +88,11 @@ module Modal {
     });
 
     modal_base.appendTo('body').modal('show');
+
+    modal_base.children().draggable({
+      cursor: "move",
+      containment: ".modal-backdrop",
+    });
 
     return dfd;
   };

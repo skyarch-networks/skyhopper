@@ -18,7 +18,7 @@ describe NodesController, :type => :controller do
     let(:fqdn){'sky.example.com'}
     before do
       expect(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :public_dns_name).and_return(fqdn)
+      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :fqdn).and_return(fqdn)
     end
 
     context 'when success' do
@@ -46,7 +46,10 @@ describe NodesController, :type => :controller do
     # mocks
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
-    let(:instance_summary){{status: instance_status}}
+    let(:instance_summary){{
+      status: instance_status,
+      block_devices: [],
+    }}
     let(:cook_status){resource.status.cook}
     let(:serverspec_status){resource.status.serverspec}
     let(:yum_status){resource.status.yum}

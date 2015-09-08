@@ -1,0 +1,184 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Chef Server for SkyHopper",
+
+  "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type" : "String"
+    },
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t2.small",
+      "AllowedValues": <%= fragment(:ec2_instance_types_hvm) %>,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    },
+    "InstanceName": {
+      "Description" : "Name of EC2 Instance",
+      "Type" : "String",
+      "Default": "Chef Server for SkyHopper"
+    },
+
+    "ChefPackageURL": { "Type" : "String", "Default": "https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.8-1.el6.x86_64.rpm" },
+    "ChefUser":       { "Type" : "String", "Default": "skyhopper" },
+    "ChefFullName":   { "Type" : "String", "Default": "anakin skyhopper" },
+    "ChefEmail":      { "Type" : "String", "Default": "skyhopper@example.com" },
+    "ChefPassword":   { "Type" : "String", "Default": "ilikerandompasswords" },
+    "ChefOrg":        { "Type" : "String", "Default": "skyarch" },
+    "ChefFullOrg":    { "Type" : "String", "Default": "Skyarch Networks Inc." },
+
+    "UserPemID":         { "Type": "String" },
+    "OrgPemID":          { "Type": "String" },
+    "TrustedCertsPemID": { "Type": "String" }
+  },
+
+  "Mappings": {
+    "RegionMap": <%= fragment(:ami_mappings) %>
+  },
+
+  "Resources" : {
+    "SecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH/HTTP/HTTPS",
+        "SecurityGroupIngress" : [{
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : { "Ref" : "SSHLocation" }
+        }, {
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        }, {
+          "IpProtocol" : "tcp",
+          "FromPort" : "443",
+          "ToPort" : "443",
+          "CidrIp" : "0.0.0.0/0"
+        }]
+      }
+    },
+    "EC2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "KeyName" : { "Ref" : "KeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "Tags" : [
+          {"Key" : "Name", "Value" : { "Ref": "InstanceName"}}
+        ],
+        "SecurityGroupIds" : [
+          { "Ref" : "SecurityGroup" }
+        ],
+        "UserData": {"Fn::Base64": {"Fn::Join": ["", [
+          "#! /bin/bash -v\n",
+
+          "# Wait EIP assign\n",
+          "sleep 60\n",
+
+          "PublicDnsName=\"$(curl http://169.254.169.254/latest/meta-data/public-hostname)\"\n",
+
+          "# For RabbitMQ. If HOME isn't set, RabbitMQ says 'erlexec: HOME must be set'\n",
+          "export HOME=/root/\n",
+
+          "echo '*** Fix Hostname ***'\n",
+          "hostname ${PublicDnsName}", "\n",
+          "sed -i -E \"s/^HOSTNAME=.+$/HOSTNAME=${PublicDnsName}/g\" /etc/sysconfig/network\n",
+          "service network restart\n",
+
+          "echo '*** Install Chef ***'\n",
+          "cd /tmp/\n",
+
+
+          "/opt/aws/bin/cfn-signal '", {"Ref": "wchDownloadChefPkg"}, "'\n",
+          "rpm -Uvh ", {"Ref": "ChefPackageURL"}, "\n",
+
+
+          "chef-server-ctl reconfigure\n",
+          "chef-server-ctl start\n",
+          "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
+          "chef-server-ctl user-create ",
+              {"Ref": "ChefUser"},     " ",
+              {"Ref": "ChefFullName"}, " ",
+              {"Ref": "ChefEmail"},    " ",
+              {"Ref": "ChefPassword"}, " ",
+              "--filename ", {"Ref": "ChefUser"}, ".pem\n",
+          "chef-server-ctl org-create ",
+              {"Ref": "ChefOrg"},     " ",
+              {"Ref": "ChefFullOrg"}, " ",
+              "--association_user ", {"Ref": "ChefUser"}, " ",
+              "--filename ",         {"Ref": "ChefOrg"},  ".pem\n",
+
+          "echo '*** Output files ***'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "UserPemID"},                     " ",
+              "--data \"$(cat ", {"Ref": "ChefUser"}, ".pem)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "OrgPemID"},                     " ",
+              "--data \"$(cat ", {"Ref": "ChefOrg"}, ".pem)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n",
+          "/opt/aws/bin/cfn-signal ",
+              "--id ", {"Ref": "TrustedCertsPemID"}, " ",
+              "--data \"$(cat /var/opt/opscode/nginx/ca/${PublicDnsName}.crt)\"", " ",
+              "'", {"Ref": "wchPemFiles"}, "'\n"
+        ]]}}
+      }
+    },
+    "EIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "InstanceId" : { "Ref" : "EC2Instance" }
+      }
+    },
+
+    "wchPemFiles": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcPemFiles": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchPemFiles"},
+        "Count":   "3",
+        "Timeout": "900"
+      }
+    },
+
+    "wchDownloadChefPkg": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcDownloadChefPkg": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchDownloadChefPkg"},
+        "Timeout": "900"
+      }
+    },
+
+    "wchInstallChef": { "Type": "AWS::CloudFormation::WaitConditionHandle" },
+    "wcInstallChef": {
+      "Type": "AWS::CloudFormation::WaitCondition",
+      "DependsOn": "EC2Instance",
+      "Properties": {
+        "Handle":  {"Ref": "wchInstallChef"},
+        "Timeout": "900"
+      }
+    }
+  },
+
+  "Outputs": {
+    "PemFiles": {
+      "Value": {"Fn::GetAtt": ["wcPemFiles", "Data"]}
+    }
+  }
+}

@@ -30,7 +30,7 @@ class NodesController < ApplicationController
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
-      fqdn        = @infra.instance(physical_id).public_dns_name || @infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
+      fqdn        = @infra.instance(physical_id).fqdn
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 
@@ -58,6 +58,12 @@ class NodesController < ApplicationController
 
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
+
+    @snapshot_schedules = {}
+    @instance_summary[:block_devices].each do |block_device|
+      volume_id = block_device.ebs.volume_id
+      @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
+    end
 
     case @instance_summary[:status]
     when :terminated, :stopped
@@ -96,7 +102,7 @@ class NodesController < ApplicationController
 
     @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
-    @yum_schedule = YumSchedule.find_or_create_by(physical_id: physical_id)
+    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
 
     @attribute_set = n.attribute_set?
   end

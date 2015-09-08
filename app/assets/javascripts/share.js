@@ -94,6 +94,10 @@ var file_drop_func = function (id) {
       add_filename_label(file.name, $(id));
     };
     fileReader.readAsText(file);
+
+    if (id === "#keypair_value") {
+      $("#keypair_name").val(file.name.replace(/\.\w+$/, ''));
+    }
   };
 };
 

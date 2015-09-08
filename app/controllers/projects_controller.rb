@@ -45,10 +45,9 @@ class ProjectsController < ApplicationController
     else
       @projects = current_user.projects
     end
-
     respond_to do |format|
       format.json
-      format.html { @projects = @projects.includes(:cloud_provider).page(page).per(10) }
+      format.html 
     end
   end
 
