@@ -259,14 +259,14 @@ describe ServerspecsController, :type => :controller do
     end
   end
 
-  describe '#logs' do
+  describe '#results' do
     let(:specs){create_list(:serverspec, 3, infrastructure: infrastructure)}
     let(:physical_id){SecureRandom.base64(10)}
     let(:resource){create(:resource, physical_id: physical_id, infrastructure: infrastructure, serverspecs: specs)}
 
     before do
       resource # exec create resource
-      get :logs, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
+      get :results, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
     end
 
     should_be_success

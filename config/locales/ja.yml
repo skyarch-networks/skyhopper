@@ -238,6 +238,8 @@ ja:
     select_serverspec: '実行する Serverspec を選択'
     operation_logs:    '操作ログ'
     created_at:        'at'
+    run:	       'Run Serverspecs'
+    results:	       'Serverspecs 結果'
     btn:
       add:    'Serverspec の追加'
       create: 'Serverspec の作成'
@@ -251,6 +253,7 @@ ja:
       pending:   '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
       generated: 'Serverspec は正常に作成されました。'
+      empty-results: '結果が見つかりませんでした。'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
     generator:

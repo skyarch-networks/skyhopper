@@ -1,3 +1,4 @@
+<span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
 <h3 class="page-header"><%= t 'serverspecs.serverspecs' %> <small><%= t 'serverspecs.operation_logs' %></small></h3>
 <div class="col-sm-12">
   <div class="input-group">
@@ -25,6 +26,7 @@
           <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
         </td>
       </tr>
+      <td id="empty_results" style="display: none;"></td>
     </tbody>
   </table>
   <nav v-if="data.length >= 10">

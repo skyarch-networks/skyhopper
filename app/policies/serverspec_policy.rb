@@ -17,7 +17,7 @@ class ServerspecPolicy < ApplicationPolicy
     end
   end
 
-  %i[new? update? create? edit? destroy? select? logs? run? create_for_rds? schedule?].each do |action|
+  %i[new? update? create? edit? destroy? select? results? run? create_for_rds? schedule?].each do |action|
     define_method(action) do
       if record.infrastructure
         user.allow?(record.infrastructure) && user.admin?

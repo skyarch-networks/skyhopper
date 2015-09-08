@@ -13,8 +13,8 @@ module.exports = function(value, option){
     return render_cf_templates(value);
   }else if (option[0] === 'user_admin') {
     return render_user_admin(value);
-  }else if (option[0] === 'serverspec_logs') {
-    return render_serverspecs_logs(value);
+  }else if (option[0] === 'serverspec_results') {
+    return render_serverspecs_results(value);
   }else{
     return value;
   }
@@ -118,7 +118,7 @@ function render_user_admin(value){
   }
 }
 
-function render_serverspecs_logs(value){
+function render_serverspecs_results(value){
   if (value === 'serverspec'){
     return t('serverspecs.serverspecs');
   }else if (value === 'resource') {

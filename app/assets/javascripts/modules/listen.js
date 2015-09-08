@@ -13,8 +13,8 @@ module.exports = function (value, key, option, lang) {
     return render_cf_templates(value, key, lang);
   }else if (option[0] === 'user_admin') {
     return render_user_admin(value, key, lang);
-  }else if (option[0] === 'serverspec_logs') {
-    return render_serverspecs_logs(value, key);
+  }else if (option[0] === 'serverspec_results') {
+    return render_serverspecs_results(value, key);
   }else{
     return value;
   }
@@ -193,7 +193,7 @@ function render_user_admin(value, key, lang){
   }
 }
 
-function render_serverspecs_logs(value, key){
+function render_serverspecs_results(value, key){
   if(key === 'status'){
     var ret;
     switch (value) {

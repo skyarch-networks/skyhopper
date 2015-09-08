@@ -963,8 +963,8 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
-      serverspec_logs: function() {
-        this.$parent.tabpaneID = 'serverspec_logs';
+      serverspec_results: function() {
+        this.$parent.tabpaneID = 'serverspec_results';
         this._loading();
       },
 
@@ -1358,15 +1358,15 @@
     },
   });
 
-  Vue.component('serverspec-logs-tabpane', {
-    template: '#serverspec-logs-tabpane-template',
+  Vue.component('serverspec-results-tabpane', {
+    template: '#serverspec-results-tabpane-template',
     data: function () {return {
         data: null,
         columns: null,
         sortKey: '',
         filterKey: '',
         reversed: {},
-        option: ['serverspec_logs'],
+        option: ['serverspec_results'],
         lang: null,
         pages: 10,
         pageNumber: 0,
@@ -1412,11 +1412,10 @@
     created: function ()  {
       self = this;
       var self = this;
-      self.loading = false;
       self.columns = ['serverspec', 'resource', 'message', 'status', 'created_at'];
       var temp_id = null;
       var serverspecs = [];
-      self.ec2.logs_serverspec().done(function (data) {
+      self.ec2.results_serverspec().done(function (data) {
         self.data = data.map(function (item) {
           var last_log = (item.created_at ? new Date(item.created_at) : '');
             return {
@@ -1427,8 +1426,10 @@
               created_at: last_log.toLocaleString()
             };
         });
-        console.log(self.data);
         self.$parent.loading = false;
+        $("#loading_results").hide();
+        var empty = t('serverspecs.msg.empty-results');
+        if(self.data.length === 0){ $('#empty_results').show().html(empty);}
       }).fail(alert_danger(self.show_ec2));
     },
     filters:{

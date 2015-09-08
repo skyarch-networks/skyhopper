@@ -177,10 +177,10 @@ class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  logs_serverspec(): JQueryPromise<any> {
+  results_serverspec(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    (<any>EC2Instance.ajax_serverspec).logs({
+    (<any>EC2Instance.ajax_serverspec).results({
       physical_id: this.physical_id,
       infra_id:    this.infra.id,
     }).done((data: any) => {
@@ -308,6 +308,6 @@ EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
 
 EC2Instance.ajax_serverspec.add_collection('select', 'GET');
-EC2Instance.ajax_serverspec.add_collection('logs', 'GET');
+EC2Instance.ajax_serverspec.add_collection('results', 'GET');
 EC2Instance.ajax_serverspec.add_collection("run", "POST");
 EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');

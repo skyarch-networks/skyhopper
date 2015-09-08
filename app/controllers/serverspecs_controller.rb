@@ -98,8 +98,8 @@ class ServerspecsController < ApplicationController
     @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
   end
 
-  # GET /serverspecs/logs
-  def logs
+  # GET /serverspecs/results
+  def results
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
