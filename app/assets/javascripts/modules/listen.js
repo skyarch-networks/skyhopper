@@ -208,6 +208,10 @@ function render_serverspecs_results(value, key){
         break;
     }
     return ret;
+  }else if (key === 'serverspec') {
+    if(value.length > 0){
+      return value.name;
+    }
   }else if (key === 'message') {
       var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle btn btn-xs btn-link popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
 

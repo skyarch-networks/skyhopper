@@ -1416,12 +1416,13 @@
       var temp_id = null;
       var serverspecs = [];
       self.ec2.results_serverspec().done(function (data) {
+        console.log(data);
         self.data = data.map(function (item) {
           var last_log = (item.created_at ? new Date(item.created_at) : '');
             return {
-              serverspec: item.name,
-              resource: item.physical_id,
-              message: [item.result_id, item.physical_id, item.message],
+              serverspec: item.serverspecs,
+              resource: item.resource.physical_id,
+              message: [item.serverspec_result_details.serverspec_result_id, item.resource.physical_id, item.message],
               status: item.status,
               created_at: last_log.toLocaleString()
             };
