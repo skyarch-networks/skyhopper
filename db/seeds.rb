@@ -55,49 +55,29 @@ end
 EOS
 
 
-# ---------------------- AppSetting
-unless AppSetting.get
-  AppSetting.create(
-    aws_region: DummyText,
-    log_directory: DummyText,
-  )
-end
 
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system
 if client_skyhopper.blank?
   client_skyhopper = Client.create(name: Client::ForSystemCodeName, code: Client::ForSystemCodeName)
 end
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ForDishTestCodeName, code: Project::ForDishTestCodeName, access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ChefServerCodeName,  code: Project::ChefServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
-Project.find_or_create_by(client_id: client_skyhopper.id, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider_id: CloudProvider.aws.id)
+aws = CloudProvider.aws
+Project.find_or_create_by(client: client_skyhopper, name: Project::ForDishTestCodeName,   code: Project::ForDishTestCodeName,   access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ChefServerCodeName,    code: Project::ChefServerCodeName,    access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
 
 
 # ----------------------- Global CF template
-skyhopper_module_paths = Dir.glob(Rails.root.join('lib/cf_templates/modules/*')).sort
-skyhopper_modules = {}
-skyhopper_module_paths.each do |path|
-  value = File::read(path)
-  name  = File::basename(path, '.*')
-  skyhopper_modules[name.to_sym] = value
-end
-
-require 'erb'
-require 'json'
-template_paths = Dir.glob(Rails.root.join('lib/cf_templates/preset_patterns/*')).sort
+template_paths = Dir.glob(Rails.root.join('lib/erb-builder/templates/presets/*')).sort
 template_paths.each do |path|
-  value = File::read(path)
-  name  = File::basename(path, '.json.erb').gsub('_', ' ')
+  n = File.basename(path, '.json.erb')
+  b = ERB::Builder.new('presets/'+n)
 
-  erb_value = ERB.new(value).result(binding)
-
-  parsed_value = JSON::parse(erb_value)
-  detail = parsed_value['Description']
-
-  pretty_json = JSON.pretty_generate(parsed_value)
-
+  value = b.build
+  name = n.gsub('_', ' ')
+  parsed = JSON.parse(value)
+  detail = parsed['Description']
 
   CfTemplate.delete_all(name: name)
-
-  CfTemplate.create(name: name, detail: detail, value: pretty_json)
+  CfTemplate.create(name: name, detail: detail, value: value)
 end

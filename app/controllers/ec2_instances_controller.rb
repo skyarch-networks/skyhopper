@@ -56,11 +56,11 @@ class Ec2InstancesController < ApplicationController
 
     instance = Infrastructure.find(infra_id).instance(physical_id)
     instance.start
-    infra_logger_success("#{physical_id} turned on the power.")
+    infra_logger_success("#{physical_id} is turned on the power.")
 
     notify_ec2_status(instance, :running)
 
-    render nothing: true
+    render text: I18n.t('ec2_instances.msg.start_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/stop
@@ -70,11 +70,11 @@ class Ec2InstancesController < ApplicationController
 
     instance = Infrastructure.find(infra_id).instance(physical_id)
     instance.stop
-    infra_logger_success("#{physical_id} turned off the power.")
+    infra_logger_success("#{physical_id} is turned off the power.")
 
     notify_ec2_status(instance, :stopped)
 
-    render nothing: true
+    render text: I18n.t('ec2_instances.msg.stop_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/reboot

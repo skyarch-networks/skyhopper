@@ -4,19 +4,12 @@
   <%= breadcrumbs %>
 </div>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th><%= t 'clients.code' %></th>
-      <th><%= t 'clients.name' %></th>
-      <th><%= t 'common.actions' %></th>
-    </tr>
-  </thead>
+<%= render 'vue/index' %>
+
+<table class="table table-hover hidden">
   <tbody>
     <% @clients.each do |client| %>
       <tr>
-        <td><%= client.code %></td>
-        <td><%= client.name %></td>
         <td>
           <%= link_to t('clients.btn.show_projects'),
             projects_path(client_id: client.id),
@@ -31,11 +24,6 @@
     <% end %>
   </tbody>
 </table>
-
-<div class="text-center">
-  <%= paginate(@clients) %>
-</div>
-
 
 <%= link_to(
   t('clients.btn.add'),

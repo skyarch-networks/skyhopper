@@ -80,6 +80,7 @@ ja:
       aws_region:        'SkyHopper のシステムが使用する AWS のリージョン'
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
+      eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -120,7 +121,7 @@ ja:
       updated:            '案件が正常に更新されました'
       deleted:            '案件が正常に削除されました'
       cant_delete_system: 'システム用のプロジェクトは削除できません'
-
+      empty-list:	  'プロジェクトは空です。'
 
   infrastructures:
     infrastructure:     'インフラストラクチャ'
@@ -128,6 +129,8 @@ ja:
     stackname:          'スタック名'
     region:             'リージョン'
     keypair:            '鍵ペア名'
+    creation_time:      '作成時刻'
+    status:             '状態'
     sshkey:             'SSH鍵（鍵ペア）'
     return_to_projects: 'プロジェクト一覧に戻る'
     stack_info:         'スタックの詳細'
@@ -138,6 +141,7 @@ ja:
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
+    search:             'キーワードで検索...'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -163,6 +167,8 @@ ja:
       not_necessary:               '変更の必要はありません'
       check_intervals:             '15秒おきに自動的にステータスが更新されます...'
       generate_serverspec_confirm: 'このRDSへのアクセスを検証する Serverspec を生成します'
+      empty-list:                  'インフラストラクチャのリストは空です.'
+      loading-list:                'インフラストラクチャのロード中です...'
 
 
   nodes:
@@ -192,11 +198,13 @@ ja:
       runlist_updated:    'Runlist は正常に更新されました'
       runlist_applying:   'Runlist を適用中です...'
       cook_started:       'Cook が正常に開始されました'
+      should_set_attr:    "Cook は開始できませんでした。インスタンスの設定を行ってください"
       attribute_updated:  'Attribute が正常に更新されました'
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
       runlist_empty:      'Runlist は空です'
+      dish_applied:       'Dish が適用されました'
 
 
   dishes:
@@ -214,6 +222,7 @@ ja:
       deleted:                'ディッシュが正常に削除されました'
       description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
       no_serverspec_selected: 'Serverspec が選択されていません'
+      empty-list:	      'ディッシュのリストが空です'
 
 
   serverspecs:
@@ -243,12 +252,17 @@ ja:
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
 
 
-  serverspec_schedules:
+  schedules:
+    schedule:         'スケジュール'
     change_schedule:  'スケジュールの変更'
     run_periodically: '定期的に実行'
+    o_clock:          '時'
+    hours:            '時間毎'
+    next_run:         '次は {{next_run}} 時に実行されます'
     frequency:
       weekly:     '毎週'
       daily:      '毎日'
+      intervals:  '任意の間隔'
     day_of_week:
       sunday:     '日曜'
       monday:     '月曜'
@@ -257,9 +271,10 @@ ja:
       thursday:   '木曜'
       friday:     '金曜'
       saturday:   '土曜'
-    o_clock:      '時'
     msg:
-      updated:    'Serverspec の定期実行スケジュールが更新されました'
+      serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
+      yum_updated: 'Yum の定期実行スケジュールが更新されました'
+      snapshot_updated: '定期的なスナップショット作成のスケジュールが更新されました'
 
 
   cf_templates:
@@ -302,21 +317,33 @@ ja:
     trigger:              '閾値の設定'
     explanation_triggers: 'トリガーの説明'
     register_host:        'インフラストラクチャを Zabbix Server に登録'
+    before_reg_title:     '先に進む前に、テンプレートを選択してください。'
+    linked_templates:     '登録されたテンプレート'
+    template:             '監視テンプレート'
     btn:
       create: '登録'
       add:    '追加'
       edit:   '編集'
       delete: '削除'
+      done:   '完了'
+      cancel: 'キャンセル'
+      close:  'クローズ'
+      save:   'セーブ'
+      next:   '次'
+      prev:   '以前'
     msg:
       host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
       before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
       created:                 'インフラストラクチャを Zabbix Server に登録しました'
       updated:                 '監視設定が正常に更新されました'
+      update_templates:          'Zabbix のテンプレートは正常に更新されました'
       failure:                 'Zabbix Server への登録に失敗しました'
       not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
+      page:                    'ページ'
+      of:                      'の'
       no_data: |
         データが取得出来ませんでした。
           1. Zabbix Agent がインストールされていない可能性があります。
@@ -339,29 +366,44 @@ ja:
     user:              'ユーザー'
     role:              '権限'
     email:             'メールアドレス'
+    password:          'パスワード'
+    password_confirm:  'パスワード(確認)'
     last_signed_in_at: '最終ログイン日時'
     you:               'このアカウント'
     edit:              '権限の編集'
     allowed_projects:  '管理する案件'
     unregistered:      '未登録'
+    mfa_token:         'MFA トークン'
+    mfa:               '多要素認証(MFA)'
+    change_password:   'パスワードの変更'
+    change_mfa_secret: 'MFA の秘密鍵を変更する'
+    use_start_mfa:     'MFA の使用を開始する'
+    use_stop_mfa:      'MFA の使用を停止する'
+    mfa_secret:        'MFA の秘密鍵'
+    create_new_user:   '新規ユーザーの作成'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'
     msg:
-      role:                'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
-      created:             'ユーザーアカウントが正常に追加されました'
-      updated:             'ユーザーアカウントが正常に更新されました'
-      deleted:             'ユーザーアカウントが正常に削除されました'
-      synced:              '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
-      only_master:         'ユーザー管理は master ユーザーのみが行うことができます'
-      confirm_sync_zabbix: 'Zabbix Server とユーザーを同期しますか?'
+      role:                  'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
+      created:               'ユーザーアカウントが正常に追加されました'
+      updated:               'ユーザーアカウントが正常に更新されました'
+      deleted:               'ユーザーアカウントが正常に削除されました'
+      synced:                '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
+      only_master:           'ユーザー管理は master ユーザーのみが行うことができます'
+      confirm_sync_zabbix:   'Zabbix Server とユーザーを同期しますか?'
+      mfa_description:       'このユーザーは MFA によって保護されています。ワンタイムパスワードを入力してください。'
+      mfa_failure:           'ワンタイムパスワードが違います。'
+      mfa_used:              'MFA は既に使用されています。'
+      mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
+      use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
 
 
   chef_servers:
     msg:
       creating_infra: 'Chef Server 用のインフラを作成しています...'
-      creating_stack: 'Chef Server 用のスタックを作成しています...'
       init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
+      download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
       complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
@@ -386,16 +428,31 @@ ja:
       not_running:    'Zabbix Server が起動していません'
 
   ec2_instances:
-    description:     '詳細'
-    settings:        '設定'
-    change_status:   'EC2 インスタンスのステータスを変更する'
-    changing_status: 'EC2 インスタンスのステータスを変更しています...'
+    description:       '詳細'
+    settings:          '設定'
+    change_status:     'EC2 インスタンスのステータスを変更する'
+    changing_status:   'EC2 インスタンスのステータスを変更しています...'
+    listeners:          'リスナー'
+    protocol:          'プロトコル'
+    lb_port:           'ロードバランサ側ポート'
+    instance_protocol: 'インスタンス側プロトコル'
+    instance_port:     'インスタンス側ポート'
+    expiration_date:   'SSL証明書の有効期限'
+    instances:         'インスタンス'
+    state:             '状態'
+    reason_code:       '原因コード'
     msg:
-      registered_to_elb:    'ELB に EC2 インスタンスを登録しました'
+      start_ec2:             'EC2 インスタンスの起動が開始されました'
+      stop_ec2:              'EC2 インスタンスの停止が開始されました'
+      registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
     btn:
-      register:   'インスタンスを登録'
-      deregister: 'インスタンスの登録を解除'
+      register:       'インスタンスを登録'
+      deregister:     'インスタンスの登録を解除'
+      check_security_update: 'セキュリティアップデートを確認する'
+      exec_security_update:  'セキュリティアップデートを実行する'
+      check_all_update:      '全てのアップデートを確認する'
+      exec_all_update:       '全てのアップデートを実行する'
     confirm:
       register:   'EC2 インスタンスを ELB に登録しますか?'
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
@@ -424,3 +481,17 @@ ja:
     msg:
       confirm:    'キーペア "%{name}" を削除しますか?'
       deleted:    'キーペア "%{name}" が正常に削除されました'
+
+  snapshots:
+    snapshot:          'スナップショット'
+    create_snapshot:   'スナップショットの作成'
+    delete_snapshot:   'スナップショットの削除'
+    schedule_snapshot: '作成スケジュールの変更'
+    list_of_snapshots: 'スナップショットの一覧'
+    btn:
+      create:          '作成'
+    msg:
+      no_snapshots:    'このボリュームのスナップショットはありません'
+      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot: '以下のスナップショットを削除しますか?'
+      creation_started: 'スナップショットの作成が開始されました'

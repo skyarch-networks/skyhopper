@@ -9,19 +9,28 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require_tree .
  *= require bootstrap.min
+ *= require_tree .
  *= require animate.min
  */
-
-
- /* Bootstrap overrides */
 
 @font-face {
   font-family: 'glyphicon localized';
 
   src: url('/assets/glyphicons-halflings-regular.eot');
   src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+input:invalid,
+textarea:invalid {
+  border-color: #a94442;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+  border-color: #843534;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 6px #ce8483;
 }
 
 .glyphicon {
@@ -34,11 +43,13 @@
 }
 
 /* NC-380: Fix broken apply-dish button. */
+
 .pull-right > .input-group > .input-group-btn {
   width: auto !important;
 }
 
 /* define migrated panel-disabled */
+
 .panel-default .panel-heading .panel-title a.property-heading {
   color: #b7b7b7;
 }
@@ -59,7 +70,10 @@ html {
   overflow-y: scroll;
 }
 
-input, button, select, textarea {
+input,
+button,
+select,
+textarea {
   font-family: "Noto Sans Japanese", "NotoSans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 
@@ -76,9 +90,8 @@ img.gravatar-icon {
 }
 
 .nav-header {
-  margin-top: -15px
+  margin-top: -15px;
 }
-
 
 .form-actions {
   background-color: white;
@@ -87,6 +100,7 @@ img.gravatar-icon {
   margin-top: 20px;
   padding: 19px 20px 20px;
 }
+
 .form-actions-top {
   background-color: white;
   border-top: 1px solid #e5e5e5;
@@ -94,6 +108,7 @@ img.gravatar-icon {
   margin-top: 20px;
   padding: 19px 20px 20px;
 }
+
 .bg-white {
   background-color: white !important;
 }
@@ -102,17 +117,16 @@ h4.page-header {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
 h5.page-header {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
 h6.page-header {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
-
-
 
 .hidden-row {
   padding: 0 !important;
@@ -121,6 +135,7 @@ h6.page-header {
 
 
 /* loading circle icon */
+
 .loader {
   display: inline-block;
   width: 15px;
@@ -129,10 +144,8 @@ h6.page-header {
   border: 3px solid #fff;
   border-right-color: transparent;
   border-color: #17cddd transparent #17cddd #17cddd;
-
   animation: spin 1s linear infinite;
   -moz-animation: spin 1s lenear infinite;
-
   -webkit-animation-name: spin;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
@@ -144,11 +157,13 @@ h6.page-header {
     transform: rotate(0deg);
     opacity: 0.2;
   }
-  50% {
+
+50% {
     transform: rotate(180deg);
     opacity: 1.0;
   }
-  100% {
+
+100% {
     transform: rotate(360deg);
     opacity: 0.2;
   }
@@ -159,11 +174,13 @@ h6.page-header {
     transform: rotate(0deg);
     opacity: 0.2;
   }
-  50% {
+
+50% {
     transform: rotate(180deg);
     opacity: 1.0;
   }
-  100% {
+
+100% {
     transform: rotate(360deg);
     opacity: 0.2;
   }
@@ -174,11 +191,13 @@ h6.page-header {
     -webkit-transform: rotate(0deg);
     opacity: 0.2;
   }
-  50% {
+
+50% {
     -webkit-transform: rotate(180deg);
     opacity: 1.0;
   }
-  100% {
+
+100% {
     -webkit-transform: rotate(360deg);
     opacity: 0.2;
   }
@@ -186,6 +205,7 @@ h6.page-header {
 
 
 /* selectbox heights */
+
 .admin-selectbox-height {
   height: 350px !important;
 }
@@ -193,74 +213,107 @@ h6.page-header {
 .roles-selectbox-height {
   height: 180px !important;
 }
+
 .recipes-selectbox-height {
   height: 285px !important;
 }
+
 .runlist-selectbox-height {
   height: 600px !important;
 }
 
-
 .blinking {
-  -webkit-animation:blink 0.7s ease-in-out infinite alternate;
-  -moz-animation:blink 0.7s ease-in-out infinite alternate;
-  animation:blink 0.7s ease-in-out infinite alternate;
+  -webkit-animation: blink 0.7s ease-in-out infinite alternate;
+  -moz-animation: blink 0.7s ease-in-out infinite alternate;
+  animation: blink 0.7s ease-in-out infinite alternate;
 }
+
 @-webkit-keyframes blink {
   0% {
     opacity: 0;
   }
-  100% {
+
+100% {
     opacity: 1;
   }
 }
+
 @-moz-keyframes blink {
   0% {
     opacity: 0;
   }
-  100% {
+
+100% {
     opacity: 1;
   }
 }
+
 @keyframes blink {
   0% {
     opacity: 0;
   }
-  100% {
+
+100% {
     opacity: 1;
   }
 }
 
-
-
-.border-blink {
-  -webkit-animation:border_blink 0.7s ease-in-out infinite alternate;
-  -moz-animation:border_blink 0.7s ease-in-out infinite alternate;
-  animation:border_blink 0.7s ease-in-out infinite alternate;
-}
 @-webkit-keyframes border_blink {
   0% {
-    border: solid 2px #5bc0de;
+    border: 2px solid #5bc0de;
   }
-  100% {
-    border: solid 2px #fff;
-  }
-}
-@-moz-keyframes border_blink {
-  0% {
-    border: solid 2px #5bc0de;
-  }
-  100% {
-    border: solid 2px #fff;
-  }
-}
-@keyframes border_blink {
-  0% {
-    border: solid 2px #5bc0de;
-  }
-  100% {
-    border: solid 2px #fff;
+
+100% {
+    border: 2px solid #fff;
   }
 }
 
-[v-cloak] {display: none;}
+@-moz-keyframes border_blink {
+  0% {
+    border: 2px solid #5bc0de;
+  }
+
+100% {
+    border: 2px solid #fff;
+  }
+}
+
+@keyframes border_blink {
+  0% {
+    border: 2px solid #5bc0de;
+  }
+
+100% {
+    border: 2px solid #fff;
+  }
+}
+
+[v-cloak] {
+  display: none;
+}
+
+
+/*for QR code*/
+
+.QRCode table {
+  border-width: 0;
+  border-style: none;
+  border-color: #0000ff;
+  border-collapse: collapse;
+}
+
+.QRCode td {
+  border-left: solid 3px #000;
+  padding: 0;
+  margin: 0;
+  width: 0px;
+  height: 3px;
+}
+
+.QRCode td.black {
+  border-color: #000;
+}
+
+.QRCode td.white {
+  border-color: #fff;
+}

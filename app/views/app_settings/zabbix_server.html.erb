@@ -4,14 +4,14 @@
   <div class="form-group">
     <label for="zabbix_user", class="control-label col-sm-2">Username</label>
     <div class="col-sm-5">
-      <input type="text" id="zabbix_user" name="zabbix_user" class="form-control" value="<%= @app_setting.zabbix_user %>">
+      <input type="text" id="zabbix_user" name="zabbix_user" class="form-control" value="<%= @app_setting.zabbix_user %>" pattern="[^\s]+" required>
     </div>
   </div>
 
   <div class="form-group">
     <label for="zabbix_pass", class="control-label col-sm-2">Password</label>
     <div class="col-sm-5">
-      <input type="password" id="zabbix_pass" name="zabbix_pass" class="form-control" value="<%= @app_setting.zabbix_pass %>">
+      <input type="password" id="zabbix_pass" name="zabbix_pass" class="form-control" value="<%= @app_setting.zabbix_pass %>" pattern="[^\s]+" required>
     </div>
   </div>
 

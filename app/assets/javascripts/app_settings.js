@@ -27,10 +27,7 @@
       data: {
         settings: JSON.stringify(settings)
       },
-
-    }).fail(function (data) {
-      bootstrap_alert(t('app_settings.title.setup'), data.responseText, 'danger');
-    });
+    }).fail(modal_for_ajax_std_error());
   };
 
   var chef_create = function () {
@@ -44,9 +41,7 @@
       },
       dataType: "json",
 
-    }).fail(function (data) {
-      bootstrap_alert(t('app_settings.title.setup'), data.responseText, 'danger');
-    });
+    }).fail(modal_for_ajax_std_error());
   };
 
 

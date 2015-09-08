@@ -9,17 +9,6 @@
 (function () {
   'use strict';
 
-  var Loader = Vue.extend({
-    template: '<span><div class="loader"></div>{{text | format}}</span>',
-    created: function () {
-      this.$set('text', t('common.msg.loading'));
-    },
-    filters: {
-      format: function (str) {
-        return ' ' + str;
-      }
-    }
-  });
   Vue.component('div-loader', Loader);
 
   var kpvm = new Vue({

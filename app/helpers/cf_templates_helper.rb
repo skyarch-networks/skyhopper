@@ -14,6 +14,7 @@ module CfTemplatesHelper
       t('.edit', default: t("helpers.links.edit").html_safe),
       edit_cf_template_path(cft),
       class:  'btn btn-default btn-xs',
+      id: 'edit-'+cft.id.to_s
     )
   end
 
@@ -26,6 +27,7 @@ module CfTemplatesHelper
       method: :delete,
       data:   { confirm: t('.confirm', default: t("helpers.links.confirm")) },
       class:  'btn btn-xs btn-danger',
+      id: 'delete-'+cft.id.to_s
     )
   end
 

@@ -8,6 +8,7 @@
 
 
 //= require jquery
+//= require jquery_ui
 //= require rails
 //= require ajax_set
 //= require i18n
@@ -17,3 +18,4 @@
 //= require jquery.noty.packaged
 //= require vue
 //= require lodash
+//= require ZeroClipboard

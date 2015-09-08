@@ -8,8 +8,6 @@
 
 class ServerspecJob < ActiveJob::Base
   queue_as :default
-  include Sidekiq::Worker
-  sidekiq_options retry: false
 
   # Serverspec を実行し、結果をインフラログに書き出す。
   # また、Resource の Serverspec IDs を更新する。

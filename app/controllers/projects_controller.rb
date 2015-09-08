@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
     authorize(@project || Project.new(client_id: client_id))
   end
 
-  before_action :with_zabbix_or_back, only: [:destroy, :create, :new]
+  before_action :with_zabbix, only: [:destroy, :create, :new]
 
 
   # GET /projects
@@ -45,10 +45,9 @@ class ProjectsController < ApplicationController
     else
       @projects = current_user.projects
     end
-
     respond_to do |format|
       format.json
-      format.html { @projects = @projects.includes(:cloud_provider).page(page).per(10) }
+      format.html 
     end
   end
 

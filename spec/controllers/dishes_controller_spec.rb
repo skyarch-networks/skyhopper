@@ -13,14 +13,15 @@ describe DishesController, :type => :controller do
 
   let(:klass){Dish}
   let(:dish){create(:dish)}
+  let(:project){nil}
 
   describe '#index' do
     before do
-      get :index, project_id: (project.id rescue nil)
+      get :index, project_id: project.try(:id)
     end
 
     it 'should assign @dishes' do
-      dishes = Dish.where(project_id: nil).page(1).per(10)
+      dishes = Dish.where(project_id: nil).page(1)
       expect(assigns[:dishes]).to eq dishes
     end
 
@@ -145,8 +146,9 @@ describe DishesController, :type => :controller do
   end
 
   describe '#new' do
+    let(:project){nil}
     before do
-      get :new, project_id: (project.id rescue nil)
+      get :new, project_id: project.try(:id)
     end
 
     context 'when have project' do

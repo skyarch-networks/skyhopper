@@ -4,19 +4,12 @@
   <h1><%= t('cf_templates.cf_template') %></h1>
 </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th><%= t('cf_templates.subject') %></th>
-      <th><%= t('cf_templates.details') %></th>
-      <th><%= t('common.actions') %></th>
-    </tr>
-  </thead>
+<%= render 'vue/index' %>
+
+<table class="table hidden">
   <tbody>
     <% @global_jsons.each do |json| %>
-      <tr data-managejson-id="<%= json.id %>">
-        <td><%= json.name %></td>
-        <td><%= json.detail %></td>
+      <tr>
         <td>
           <%= link_to t('helpers.links.show'), '#', class: 'btn btn-xs btn-info show-template' %>
           <%= button_edit_cft(json) %>
@@ -26,11 +19,6 @@
     <% end %>
   </tbody>
 </table>
-
-<div class="text-center">
-  <%= paginate(@global_jsons) %>
-</div>
-
 
 <%= button_add_cft %>
 <%= button_template_builder %>

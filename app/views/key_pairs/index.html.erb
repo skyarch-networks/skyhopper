@@ -2,7 +2,7 @@
   <h2>
     <%= t 'key_pairs.key_pairs' %>
     <small>
-      <%= ('for '+ link_to(@project.name, projects_path(client_id: @project.client_id, project_id: @project_id))).html_safe if @project_id %>
+      <%= ('for '+ link_to(@project.name, projects_path(client_id: @project.client_id, project_id: @project_id))).html_safe if @project %>
     </small>
   </h2>
 </div>
@@ -14,7 +14,7 @@
         <label><%= t('key_pairs.region') %></label>
         <button class="btn btn-default btn-sm" style="float: right" v-attr="disabled: loading" v-on="click: reload"><span class="glyphicon glyphicon-refresh"></span></button>
       </div>
-      <div class="panel panel-primary">
+      <div class="panel panel-primary" v-if="regions">
         <div class="list-group">
           <a href="#" v-on="click: switch_region(region.name)" v-repeat="region: regions" v-class="active: region.selected, disabled: has_no_key_pairs(region.name)" class="list-group-item">
             {{region.name}}

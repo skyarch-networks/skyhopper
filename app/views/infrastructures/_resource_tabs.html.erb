@@ -7,7 +7,7 @@
     <small>{{screen_name(ec2)}}</small>
     <small v-if="tabpane_active(ec2.physical_id)"><%= glyphicon 'refresh' %></small>
     <!-- workaround http://stackoverflow.com/questions/18730116/twitter-bootstrap-3-0-how-do-i-badge-badge-important-now -->
-    <bootstrap-tooltip v-if="!ec2.serverspec_status" v-with="title: '<%= t('infrastructures.serverspec_failed') %>'" class="badge progress-bar-danger">!</bootstrap-tooltip>
+    <bootstrap-tooltip v-if="!ec2.serverspec_status" title="<%= t('infrastructures.serverspec_failed') %>" class="badge progress-bar-danger">!</bootstrap-tooltip>
   </a>
 </li>
 

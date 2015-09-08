@@ -28,7 +28,7 @@ class CfTemplatesController < ApplicationController
     @global_jsons = CfTemplate.global
 
     respond_to do |format|
-      format.json
+      format.json { @global_jsons = @global_jsons }
       format.html { @global_jsons = @global_jsons.page(page).per(10) }
     end
   end
@@ -93,7 +93,7 @@ class CfTemplatesController < ApplicationController
     end
 
     # create EC2 instance ?
-    if @tpl["Parameters"].include?("KeyName")
+    if @tpl["Parameters"].try(:include?, "KeyName")
       unless infra.ec2_private_key_id
         render text: I18n.t('cf_templates.msg.keypair_missing'), status: 400 and return
       end

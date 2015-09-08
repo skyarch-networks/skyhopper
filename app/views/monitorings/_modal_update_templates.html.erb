@@ -1,0 +1,35 @@
+<!-- modal for trigger setting -->
+<div id="edit-templates" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"><%= t 'monitoring.before_reg_title' %></h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="col-md-12 col-sm-12">
+          <form>
+            <div class="checkbox" v-repeat="t: dispItems">
+              <label class="checkbox">
+                <input type="checkbox" v-attr="checked: t.checked" v-model="t.checked" id="inputEmail3">{{t.name}}
+              </label>
+            </div>
+          </form>
+          <nav>
+            <ul class="pager">
+              <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+              <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+            </ul>
+            <lable><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="templates.length / 10 | roundup"></span>
+          </nav>
+        </div>
+
+	<div class="modal-footer">
+    <button v-on="click: close()" type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.close' %></button>
+    <button v-on="click: update_templates()" type="button" v-attr="disabled: !has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.save' %></button>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,6 +10,10 @@ class InfrastructureLog < ActiveRecord::Base
   belongs_to :infrastructure
   belongs_to :user
 
+  scope :security_update, -> (physical_id) {
+    where(InfrastructureLog.arel_table[:details].matches("yum%security%#{physical_id}%finished%"))
+  }
+
   class << self
     def for_infra(infra_id)
       where(infra_id).includes(:user).order("created_at DESC")
@@ -49,6 +53,21 @@ class InfrastructureLog < ActiveRecord::Base
           end
         end
       })
+    end
+
+    # @param [Integer] infra_id
+    # @param [String] physical_id
+    # @return [Integer|nil]
+    def number_of_security_updates(infra_id, physical_id)
+      log = where(infrastructure_id: infra_id).security_update(physical_id).last
+      return unless log
+
+      if /Complete!\Z/ =~ log.details
+        0
+      else
+        num = log.details[/(\d+|No) package\(?s\)? needed for security/, 1]
+        (num == 'No') ? 0 : num.to_i
+      end
     end
   end
 end

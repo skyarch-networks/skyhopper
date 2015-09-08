@@ -7,6 +7,8 @@
 #
 
 class ServerState
+  class NotRunning < StandardError; end
+
   def initialize(kind)
     case kind
     when 'chef'
@@ -19,7 +21,7 @@ class ServerState
 
     resources = infra.resources_or_create
     physical_id = resources.first.physical_id
-    @server = infra.ec2.instances[physical_id]
+    @server = infra.instance(physical_id)
     @kind = kind
   end
 
@@ -49,5 +51,13 @@ class ServerState
 
   def is_in_progress?
     status.to_s == "pending" || status.to_s == "stopping"
+  end
+
+  # @param [String] msg is an Error message.
+  # @raise [NotRunning]
+  def should_be_running!(msg)
+    unless self.is_running?
+      raise NotRunning, msg
+    end
   end
 end

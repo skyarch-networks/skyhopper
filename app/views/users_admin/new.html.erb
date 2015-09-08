@@ -1,26 +1,26 @@
 <div class="page-header">
-  <h1>Create New Account</h1>
+  <h1><%= t('users.create_new_user') %></h1>
 </div>
 <%= form_for @user, url: {action: 'create'}, html: {class: "form-horizontal", role: "form"} do |f| %>
 
   <div class="form-group">
-    <%= f.label :email, class: 'col-sm-2 control-label' %>
+    <%= f.label t('users.email'), class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.email_field :email, autofocus: true, class: "form-control" %>
+      <%= f.email_field :email, autofocus: true, class: "form-control", required: true %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :password, class: 'col-sm-2 control-label' %>
+    <%= f.label t('users.password'), class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.password_field :password, class: "form-control" %>
+      <%= f.password_field :password, class: "form-control", required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :password_confirmation, class: 'col-sm-2 control-label' %>
+    <%= f.label t('users.password_confirm'), class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.password_field :password_confirmation, class: "form-control" %>
+      <%= f.password_field :password_confirmation, class: "form-control", required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 
@@ -34,7 +34,7 @@
   </div>
 
   <div class="form-actions-top">
-    <%= f.submit "Create New User", class: "btn btn-primary create" %>
+    <%= f.submit t('helpers.links.create'), class: "btn btn-primary create" %>
     <%= link_to t('.cancel', default: t("helpers.links.cancel")),
       users_admin_index_path,
       class: 'btn btn-default' %>

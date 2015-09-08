@@ -30,7 +30,7 @@ class NodesController < ApplicationController
   def run_bootstrap
     Thread.new_with_db do
       physical_id = params.require(:id)
-      fqdn        = @infra.instance(physical_id).dns_name || @infra.instance(physical_id).elastic_ip.to_s #=> ec2-54-250-207-102.ap-northeast-1.compute.amazonaws.com
+      fqdn        = @infra.instance(physical_id).fqdn
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 
@@ -59,6 +59,12 @@ class NodesController < ApplicationController
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
 
+    @snapshot_schedules = {}
+    @instance_summary[:block_devices].each do |block_device|
+      volume_id = block_device.ebs.volume_id
+      @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
+    end
+
     case @instance_summary[:status]
     when :terminated, :stopped
       return
@@ -71,10 +77,11 @@ class NodesController < ApplicationController
       return
     end
 
+    resource = @infra.resource(physical_id)
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
-      @selected_dish = @infra.resource(physical_id).dish
+      @selected_dish = resource.dish
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true
@@ -86,12 +93,18 @@ class NodesController < ApplicationController
     end
 
     @info = {}
-    status = Resource.find_by(physical_id: physical_id).status
-    @info[:cook_status]       = status.cook.value.camelize
-    @info[:serverspec_status] = status.serverspec.value.camelize
-    @info[:update_status]     = status.yum.value.camelize
+    status = resource.status
+    @info[:cook_status]       = status.cook
+    @info[:serverspec_status] = status.serverspec
+    @info[:update_status]     = status.yum
 
     @dishes = Dish.valid_dishes(@infra.project_id)
+
+    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
+
+    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
+
+    @attribute_set = n.attribute_set?
   end
 
   # GET /nodes/i-0b8e7f12/edit
@@ -130,6 +143,13 @@ class NodesController < ApplicationController
   def cook
     physical_id = params.require(:id)
 
+    node = Node.new(physical_id)
+
+    unless node.attribute_set?
+      render text: I18n.t('nodes.msg.should_set_attr'), status: 400
+      return
+    end
+
     Thread.new_with_db do
       cook_node(@infra, physical_id)
     end
@@ -155,12 +175,7 @@ class NodesController < ApplicationController
       render text: ret[:message], status: 500 and return
     end
 
-    Thread.new_with_db do
-      cook_node(@infra, physical_id)
-      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
-    end
-
-    render text: I18n.t('nodes.msg.cook_started')
+    render text: I18n.t('nodes.msg.dish_applied')
   end
 
 
@@ -186,6 +201,23 @@ class NodesController < ApplicationController
 
     Resource.find_by(physical_id: physical_id).status.cook.un_executed!
     render text: I18n.t('nodes.msg.attribute_updated') and return
+  end
+
+  # POST /nodes/i-hogehoge/schedule_yum
+  def schedule_yum
+    physical_id = params.require(:physical_id)
+    schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
+
+    ys = YumSchedule.find_by(physical_id: physical_id)
+    ys.update_attributes!(schedule)
+
+    if ys.enabled?
+      PeriodicYumJob.set(
+        wait_until: ys.next_run
+      ).perform_later(physical_id, @infra, current_user.id)
+    end
+
+    render text: I18n.t('schedules.msg.yum_updated'), status: 200 and return
   end
 
   # ==== Route
@@ -274,6 +306,10 @@ class NodesController < ApplicationController
     r.status.cook.success!
     infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
+
+    if r.dish_id # if resource has dish
+      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
+    end
   end
 
   # TODO: DRY
@@ -287,7 +323,7 @@ class NodesController < ApplicationController
 
       r = infra.resource(physical_id)
       r.status.yum.inprogress!
-      r.status.serverspec.un_executed!
+      r.status.serverspec.un_executed! if exec
 
       node = Node.new(physical_id)
 

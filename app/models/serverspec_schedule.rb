@@ -6,28 +6,19 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'sidekiq/api'
-
-class ServerspecSchedule < ActiveRecord::Base
+class ServerspecSchedule < Schedule
   belongs_to :resource, foreign_key: 'physical_id', primary_key: 'physical_id'
 
-  enum frequency:   %i[daily weekly]
-  enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
+  before_update :delete_enqueued_jobs
+  after_destroy :delete_enqueued_jobs
 
-  after_destroy do
-    jobs = Sidekiq::ScheduledSet.new.select { |job| job.args[0]['arguments'][0] == self.physical_id }
+  JOB_CLASS_NAME = PeriodicServerspecJob.to_s.freeze
+
+  def delete_enqueued_jobs
+    jobs = Sidekiq::ScheduledSet.new.select { |job|
+      args = job.args[0]
+      args['job_class'] == JOB_CLASS_NAME && args['arguments'][0] == self.physical_id
+    }
     jobs.each(&:delete)
-  end
-
-  def next_run
-    case self.frequency
-    when 'weekly'
-      tmp = Time.current.beginning_of_week(:sunday) + self[:day_of_week].days + self.time.hours
-      tmp = tmp + 1.week if tmp.past?
-    when 'daily'
-      tmp = Time.current.beginning_of_day + self.time.hours
-      tmp = tmp.tomorrow if tmp.past?
-    end
-    tmp
   end
 end
