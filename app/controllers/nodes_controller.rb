@@ -142,7 +142,7 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12/cook
   def cook
     physical_id = params.require(:id)
-    whyrun      = params.require(:whyrun) === 'true'
+    whyrun      = params.require(:whyrun) == 'true'
 
     node = Node.new(physical_id)
 
