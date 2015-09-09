@@ -16,7 +16,6 @@ class VueMain extends Vue {
       methods: {
         addDescribe:    this.addDescribe,
         removeDescribe: this.removeDescribe,
-        removeIt:       this.removeIt,
       },
       computed: {
         rubyCode:     this._rubyCode,
@@ -36,9 +35,6 @@ class VueMain extends Vue {
   }
 
 
-  removeIt(desc: ASTInterfaces.Describe, idx: number): void {
-    (<any>desc.body).$remove(idx);
-  }
 
 
 
@@ -87,6 +83,11 @@ const ResourcePanel = Vue.extend({
         should: true,
         matcher: {name: 'be_', args: [], chains: []},
       });
+    },
+
+    removeIt: function(idx: number) {
+      console.log(idx);
+      this.desc.body.$remove(idx);
     },
   },
   ready: function() {
