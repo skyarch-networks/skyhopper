@@ -448,6 +448,9 @@ Style/WordArray:
 Lint/StringConversionInInterpolation:
   Enabled: false
 
+Lint/AssignmentInCondition:
+  Enabled: false
+
 Metrics/AbcSize:
   Enabled: false
 
