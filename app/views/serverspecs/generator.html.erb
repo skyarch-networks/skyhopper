@@ -16,8 +16,11 @@
     <div class="col-xs-6">
       <h2 class="page-header"><%=t('serverspecs.generator.generated')%></h2>
       <pre><code v-text="rubyCode"></code></pre>
-      <a class="btn btn-primary" v-attr="href: downloadHref" download="serverspec.rb">Download</a>
     </div>
+  </div>
+
+  <div class="row">
+    <a class="btn btn-primary" v-attr="href: downloadHref" download="serverspec.rb">Download</a>
   </div>
 </div>
 

@@ -1,16 +1,16 @@
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./ast.ts" />
 
-import ResourcePanel from './resource-panel';
-import ItPanel       from './it-panel';
-
+import ResourcePanel     from './resource-panel';
+import ItPanel           from './it-panel';
+import * as ASTInterface from './ast-interface';
+import * as AST          from './ast';
 
 class VueMain extends Vue {
-  private ast: ASTInterfaces.Describe[];
+  private ast: ASTInterface.Describe[];
   private rubyCode:     string;
   private downloadHref: string;
 
-  constructor(ast: ASTInterfaces.Describe[]) {
+  constructor(ast: ASTInterface.Describe[]) {
     this.ast = ast;
     super({
       el: '#main',
@@ -25,6 +25,7 @@ class VueMain extends Vue {
         rubyCode:     this._rubyCode,
         downloadHref: this._downloadHref,
       },
+      ready: () => { console.log(this); }
     });
   }
 
@@ -50,8 +51,9 @@ class VueMain extends Vue {
     return `data:application/octet-stream,${encodeURIComponent(this.rubyCode)}`;
   }
 }
-const app = new VueMain([]);
 
-
-Vue.component("resource-panel", ResourcePanel);
-Vue.component("it-panel", ItPanel);
+if (document.querySelector('#main')) {
+  Vue.component("resource-panel", ResourcePanel);
+  Vue.component("it-panel", ItPanel);
+  const __ = new VueMain([]);
+}

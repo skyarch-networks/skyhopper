@@ -12,7 +12,6 @@ var listen = require('./modules/listen');
 var parseURLParams = require('./modules/getURL');
 var serverspecIndex = require('./modules/loadindex');
 
-require('serverspec-gen/ast');
 require('serverspec-gen/ui');
 
 var app;
