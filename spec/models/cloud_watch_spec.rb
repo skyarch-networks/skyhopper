@@ -55,9 +55,9 @@ RSpec.describe CloudWatch, :type => :model do
     it 'should be formated' do
       res = cloud_watch.get_networkinout(physical_id)
       # Check time
-      expect(res[0][0]).to eq time3.strftime('%H:%M')
-      expect(res[1][0]).to eq time2.strftime('%H:%M')
-      expect(res[2][0]).to eq time1.strftime('%H:%M')
+      expect(res[0][0]).to eq time3.localtime.strftime('%H:%M')
+      expect(res[1][0]).to eq time2.localtime.strftime('%H:%M')
+      expect(res[2][0]).to eq time1.localtime.strftime('%H:%M')
 
       # Check in + out = sum
       res.each do |data|
