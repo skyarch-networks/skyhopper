@@ -1,5 +1,4 @@
- json.array!(@serverspecs) do |serverspec|
-   json.extract! serverspec, :id, :description, :name
-   json.url serverspec_url(serverspec, format: :json)
- end
-# json.projects @projects
+json.array!(@serverspecs) do |serverspec|
+  json.extract! serverspec, :id, :description, :name
+  json.url serverspec_url(serverspec, format: :json)
+end
