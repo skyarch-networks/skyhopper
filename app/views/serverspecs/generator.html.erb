@@ -19,8 +19,10 @@
     </div>
   </div>
 
-  <div class="row">
-    <a class="btn btn-primary" v-attr="href: downloadHref" download="serverspec.rb">Download</a>
+  <div class="row form-actions-top">
+    <button class="btn btn-primary">Create</button>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+      serverspecs_path, class: 'btn-default btn' %>
   </div>
 </div>
 

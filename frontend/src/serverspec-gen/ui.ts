@@ -8,7 +8,6 @@ import * as AST          from './ast';
 class VueMain extends Vue {
   private ast: ASTInterface.Describe[];
   private rubyCode:     string;
-  private downloadHref: string;
 
   constructor(ast: ASTInterface.Describe[]) {
     this.ast = ast;
@@ -23,7 +22,6 @@ class VueMain extends Vue {
       },
       computed: {
         rubyCode:     this._rubyCode,
-        downloadHref: this._downloadHref,
       },
       ready: () => { console.log(this); }
     });
@@ -44,11 +42,9 @@ class VueMain extends Vue {
 
   _rubyCode(): string {
     const ast = new AST.Top(this.ast);
-    return ast.to_ruby();
-  }
+    return `require 'serverspec_helper'
 
-  _downloadHref(): string {
-    return `data:application/octet-stream,${encodeURIComponent(this.rubyCode)}`;
+${ast.to_ruby()}`;
   }
 }
 
