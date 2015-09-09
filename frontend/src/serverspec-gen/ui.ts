@@ -16,8 +16,6 @@ class VueMain extends Vue {
       methods: {
         addDescribe:    this.addDescribe,
         removeDescribe: this.removeDescribe,
-        addIt:          this.addIt,
-        addIts:         this.addIts,
         removeIt:       this.removeIt,
       },
       computed: {
@@ -38,23 +36,6 @@ class VueMain extends Vue {
   }
 
 
-  addIt(desc: ASTInterfaces.Describe): void {
-    desc.body.push({
-      type: 'it',
-      should: true,
-      matcher: {name: 'be_', args: [], chains: []},
-    });
-  }
-
-  addIts(desc: ASTInterfaces.Describe): void {
-    desc.body.push({
-      type: 'its',
-      name: "",
-      should: true,
-      matcher: {name: 'be_', args: [], chains: []},
-    });
-  }
-
   removeIt(desc: ASTInterfaces.Describe, idx: number): void {
     (<any>desc.body).$remove(idx);
   }
@@ -73,8 +54,11 @@ class VueMain extends Vue {
   }
 }
 
+
+// TODO: Split files
+
 const ResourcePanel = Vue.extend({
-  template: '#resource-template',
+  template: '#resource-panel-template',
   el: () => { return document.createElement('div'); },
   props: {
     desc: {
@@ -87,11 +71,52 @@ const ResourcePanel = Vue.extend({
       required: true,
     },
   },
+  methods: {
+    addIt: function () {
+      this.desc.body.push({
+        type: 'it',
+        should: true,
+        matcher: {name: 'be_', args: [], chains: []},
+      });
+    },
+
+    addIts: function () {
+      this.desc.body.push({
+        type: 'its',
+        name: "",
+        should: true,
+        matcher: {name: 'be_', args: [], chains: []},
+      });
+    },
+  },
   ready: function() {
     console.log(this);
   }
 });
 
 Vue.component("resource-panel", ResourcePanel);
+
+
+
+const ItPanel = Vue.extend({
+  template: '#it-panel-template',
+  el: () => {return document.createElement('div'); },
+  props: {
+    it: {
+      type: Object,
+      twoWay: true,
+      required: true,
+    },
+    idx: {
+      type: Number,
+      required: true,
+    }
+  },
+  ready: function() {
+    console.log(this);
+  },
+});
+
+Vue.component("it-panel", ItPanel);
 
 const app = new VueMain([]);
