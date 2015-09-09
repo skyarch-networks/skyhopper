@@ -157,3 +157,14 @@ h6, .h6 {
   -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
   animation: border_blink 0.7s ease-in-out infinite alternate;
 }
+
+input:invalid,
+textarea:invalid {
+  box-shadow: 0 -2px 0 #e51c23 inset !important;
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+  box-shadow: 0 -2px 0 #e51c23 inset !important;
+}
+
