@@ -73,20 +73,25 @@ class VueMain extends Vue {
   }
 }
 
-const app = new VueMain([{
-  // This is an example.
-  resourceType: 'lxc',
-  name: 'ct01',
-  body: [
-    {
-      type: 'it',
-      should: true,
-      matcher: {name: 'exist', args: [], chains: []},
+const ResourcePanel = Vue.extend({
+  template: '#resource-template',
+  el: () => { return document.createElement('div'); },
+  props: {
+    desc: {
+      type: Object,
+      twoWay: true,
+      required: true,
     },
-    {
-      type: 'it',
-      should: true,
-      matcher: {name: 'be_running', args: [], chains: []},
-    }
-  ],
-}]);
+    idx: {
+      type: Number,
+      required: true,
+    },
+  },
+  ready: function() {
+    console.log(this);
+  }
+});
+
+Vue.component("resource-panel", ResourcePanel);
+
+const app = new VueMain([]);
