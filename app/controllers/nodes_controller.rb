@@ -142,6 +142,7 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12/cook
   def cook
     physical_id = params.require(:id)
+    whyrun      = params.require(:whyrun) === 'true'
 
     node = Node.new(physical_id)
 
@@ -151,7 +152,7 @@ class NodesController < ApplicationController
     end
 
     Thread.new_with_db do
-      cook_node(@infra, physical_id)
+      cook_node(@infra, physical_id, whyrun)
     end
 
     render text: I18n.t('nodes.msg.runlist_applying'), status: 202
@@ -276,7 +277,7 @@ class NodesController < ApplicationController
 
 
   # TODO: refactor
-  def cook_node(infrastructure, physical_id)
+  def cook_node(infrastructure, physical_id, whyrun)
     user_id = current_user.id
     infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
@@ -290,7 +291,7 @@ class NodesController < ApplicationController
     ws = WSConnector.new('cooks', physical_id)
 
     begin
-      node.cook(infrastructure) do |line|
+      node.cook(infrastructure, whyrun) do |line|
         ws.push_as_json({v: line})
         Rails.logger.debug "cooking #{physical_id} > #{line}"
         log << line
