@@ -100,7 +100,7 @@ module TemplateBuildersHelper
     end
 
     case
-    when property.data_type === :Boolean
+    when property.data_type == :Boolean
       return <<-EOS
       <div class="radio">
         <label class="radio"><input type="radio" name="#{property.name}" class="property-value" value="enable" #{common_attr}>#{t('template_builder.enable')}</label>
@@ -186,7 +186,7 @@ module TemplateBuildersHelper
       nil
     else
       # HashのArray
-      property.data_validator.data_validator.each do |key, val|
+      property.data_validator.data_validator.each do |key|
         table_cols.push(key)
       end
       property.data_validator.data_validator

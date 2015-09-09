@@ -85,6 +85,9 @@ Style/ClassVars:
 Style/ColonMethodCall:
   Enabled: false
 
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
 Style/CommentAnnotation:
   Enabled: false
 
@@ -149,6 +152,9 @@ Style/EndOfLine:
   Enabled: false
 
 Style/EvenOdd:
+  Enabled: false
+
+Style/ExtraSpacing:
   Enabled: false
 
 Style/FileName:
