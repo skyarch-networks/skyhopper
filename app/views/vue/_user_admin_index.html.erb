@@ -42,9 +42,9 @@
 
 <div id="indexElement">
   <div class="input-group">
-    <form id="search">
-      <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'users.search' %>">
-    </form><hr>
+      <input v-on="keyup:prevent | key 'enter'" type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'users.search' %>">
+      </input>
+      <hr>
   </div>
   <demo-grid
     data="{{gridData}}"
