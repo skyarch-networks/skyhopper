@@ -91,7 +91,7 @@ module DishesController::Validate
 
   private
 
-  def validate_section(status, dish, &block)
+  def validate_section(status, dish, &_block)
     Rails.logger.debug("start #{status} dish test instance")
     update_validate_status(dish, status)
 

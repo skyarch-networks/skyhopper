@@ -263,7 +263,7 @@ knife bootstrap #{fqdn} \
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
-    Open3.popen3(cmd) do |stdin, stdout, stderr, w|
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!

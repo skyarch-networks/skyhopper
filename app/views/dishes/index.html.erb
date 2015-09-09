@@ -10,23 +10,14 @@
   <div class="muted"><%= t('dishes.msg.description') %></div>
 </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th><%= t('dishes.name') %></th>
-      <th><%= t('dishes.detail') %></th>
-      <th><%= t('dishes.validation_status') %></th>
-      <th><%= t('common.actions') %></th>
-    </tr>
-  </thead>
+<%= render 'vue/index'%>
+
+<table class="table hidden">
   <tbody>
     <% @dishes.each do |dish| %>
       <% next unless allow_change or dish.status == Dish::STATUS[:success] %>
 
       <tr data-dish-id="<%= dish.id %>">
-        <td><%= dish.name %></td>
-        <td><%= dish.detail %></td>
-        <td><%= label_dish_status(dish) %></td>
         <td>
           <%= link_to t('helpers.links.show'), '#', class: 'btn btn-xs btn-info show-dish' %>
           <% if allow_change %>
@@ -34,18 +25,14 @@
               dish_path(dish),
               method: :delete,
               data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-              class:  'btn btn-xs btn-danger' %>
+              class:  'btn btn-xs btn-danger',
+              id: 'delete-'+dish.id.to_s %>
           <% end %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-
-<div class="text-center">
-  <%= paginate(@dishes) %>
-</div>
 
 
 <% if allow_change %>

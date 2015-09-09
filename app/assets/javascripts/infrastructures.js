@@ -15,6 +15,7 @@
 //= require models/monitoring
 //= require models/rds_instance
 //= require models/resource
+//= require models/snapshot
 
 
 (function () {
@@ -809,17 +810,19 @@
     data: function () {return {
       loading:             false,
       loading_s:           false,
+      loading_snapshots:   false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
       selected_dish:       null,
       ec2:                 {},
+      volume_selected:     '',
+      snapshots:           {},
+      sort_key:            '',
+      sort_asc:            false,
+      schedule_type:       '',
+      schedule:            {},
 
-      // TODO: 階層を分けたい
-      enabled: false,
-      frequency: null,
-      day_of_week: null,
-      time: null,
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -959,6 +962,10 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
+      serverspec_logs: function() {
+        this.$parent.tabpaneID = 'serverspec_logs';
+        this._loading();
+      },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
 
@@ -993,10 +1000,20 @@
         });
       },
       change_schedule: function () {
+        switch (this.schedule_type) {
+        case 'yum':
+          this.change_yum_schedule();
+          break;
+        case 'snapshot':
+          this.change_snapshot_schedule();
+          break;
+        }
+      },
+      change_yum_schedule: function () {
         var self = this;
         self.loading_s = true;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        ec2.schedule_yum(self.ec2.yum_schedule).done(function (msg) {
+        ec2.schedule_yum(self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
           alert_success()(msg);
@@ -1005,6 +1022,100 @@
           alert_danger()(msg);
         });
       },
+      change_snapshot_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        var s = new Snapshot(current_infra.id);
+        s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      },
+      is_root_device: function (device_name) {
+        return this.ec2.root_device_name === device_name;
+      },
+      create_snapshot: function (volume_id) {
+        var self = this;
+        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
+          var snapshot = new Snapshot(current_infra.id);
+
+          snapshot.create(volume_id, self.physical_id).progress(function (data) {
+            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+          }).done(function (data) {
+            if ($('#snapshots-modal.in').length) {
+              self.load_snapshots();
+            }
+          }).fail(alert_danger());
+
+          self.load_snapshots();
+        });
+      },
+      open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
+      open_yum_schedule_modal: function () {
+        this.schedule_type = "yum";
+        this.schedule = this.ec2.yum_schedule;
+        this.open_schedule_modal();
+      },
+      open_snapshot_schedule_modal: function (volume_id) {
+        this.schedule_type = "snapshot";
+        this.schedule = this.ec2.snapshot_schedules[volume_id];
+        this.open_schedule_modal();
+      },
+      load_snapshots: function () {
+        var self = this;
+        var snapshot = new Snapshot(current_infra.id);
+        this.loading_snapshots = true;
+        snapshot.index(this.volume_selected).done(function (data) {
+          self.snapshots = _.map(data.snapshots, function (s) {
+            s.selected = false;
+            return s;
+          });
+          self.sort_key = '';
+          self.sort_by('start_time');
+          self.loading_snapshots = false;
+        }).fail(alert_danger());
+      },
+      delete_selected_snapshots: function () {
+        var self = this;
+        var snapshots    = _.select(this.snapshots, 'selected', true);
+        var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
+        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
+        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+          var s = new Snapshot(current_infra.id);
+
+          _.each(snapshots, function (snapshot) {
+            s.destroy(snapshot.snapshot_id).done(function (msg) {
+              self.snapshots.$remove(snapshot);
+            });
+          });
+        });
+      },
+      snapshot_status: function (snapshot) {
+        if (snapshot.state === 'pending') {
+          return snapshot.state + '(' + snapshot.progress + ')';
+        }
+        return snapshot.state;
+      },
+      select_snapshot: function (snapshot) {
+        snapshot.selected = !snapshot.selected;
+      },
+      sort_by: function (key) {
+        if (this.sort_key === key) {
+          this.sort_asc = !this.sort_asc;
+        } else {
+          this.sort_asc = false;
+          this.sort_key = key;
+        }
+        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
+      },
+      sorting_by: function (key) {
+        return this.sort_key === key;
+      },
+      toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
@@ -1036,20 +1147,21 @@
         return {text: dish.name, value: dish.id};
       }));},
 
-      next_run:    function () { return (new Date().getHours() + parseInt(this.ec2.yum_schedule.time, 10)) % 24; },
-      all_filled:  function () {
-        if (!this.ec2.yum_schedule.enabled) return true;
-        switch (this.ec2.yum_schedule.frequency) {
+      next_run:    function () { return (new Date().getHours() + parseInt(this.schedule.time, 10)) % 24; },
+      filled_all:  function () {
+        if (!this.schedule.enabled) return true;
+        switch (this.schedule.frequency) {
           case 'weekly':
-            return this.ec2.yum_schedule.day_of_week && this.ec2.yum_schedule.time;
+            return this.schedule.day_of_week && this.schedule.time;
           case 'daily':
-            return this.ec2.yum_schedule.time;
+            return this.schedule.time;
           case 'intervals':
-            return parseInt(this.ec2.yum_schedule.time, 10);
+            return parseInt(this.schedule.time, 10);
           default:
             return false;
         }
       },
+      selected_any: function () { return _.any(this.snapshots, 'selected', true); },
     },
     ready: function () {
       var self = this;
@@ -1058,13 +1170,6 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
-
-        if (data.yum_schedule) {
-          self.enabled     = data.yum_schedule.enabled;
-          self.frequency   = data.yum_schedule.frequency;
-          self.day_of_week = data.yum_schedule.day_of_week;
-          self.time        = data.yum_schedule.time;
-        }
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
@@ -1102,6 +1207,16 @@
           target.text(hint_text);
           setTimeout(function () { target.text(orig_text); }, 1000);
         });
+      });
+
+      $('#snapshots-modal').on('show.bs.modal', function (e) {
+        $(e.target).children().attr('style', null);
+        self.load_snapshots();
+      });
+      $("#snapshots-modal >").draggable({
+        cursor: "move",
+        containment: ".modal-backdrop",
+        handle: ".modal-header"
       });
     },
     filters: {
@@ -1241,6 +1356,17 @@
       }).fail(alert_danger(self.show_ec2));
     },
   });
+
+  // Vue.component('serverspec-logs-tabpane', {
+  //   template: '#serverspec-logs-tabpane-template',
+  //   data: function () {return {
+  //       loading: false,
+  //       data: null,
+  //   };},
+  //   created: function ()  {
+  //     this.$parent.loading = false;
+  //   },
+  // });
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
@@ -1751,7 +1877,11 @@
     });
   };
 
-
+  Vue.transition('fade', {
+    leave: function (el, done) {
+      $(el).fadeOut('normal');
+    }
+  });
 
 
 // ================================================================

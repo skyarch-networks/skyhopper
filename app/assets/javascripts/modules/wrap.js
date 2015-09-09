@@ -1,8 +1,18 @@
 module.exports = function(value, option){
-  if(option[0] ==='infrastructure'){
-        return render_infrastructures(value);
-  }else if(option[0] === 'project'){
-        return render_projects(value);
+  if(option[0] ==='infrastructure') {
+    return render_infrastructures(value);
+  }else if(option[0] === 'project') {
+    return render_projects(value);
+  }else if (option[0] === 'client') {
+    return render_clients(value);
+  }else if (option[0] === 'serverspec') {
+    return render_serverspecs(value);
+  }else if (option[0] === 'dish') {
+    return render_dish(value);
+  }else if (option[0] === 'cf_template') {
+    return render_cf_templates(value);
+  }else if (option[0] === 'user_admin') {
+    return render_user_admin(value);
   }else{
     return value;
   }
@@ -14,7 +24,7 @@ function render_infrastructures(value){
   }else if(value === 'region'){
     return t('infrastructures.region');
   }else if(value === 'created_at'){
-    return t('infrastructures.launchtime');
+    return t('infrastructures.creation_time');
   }else if(value === 'id'){
     return t('common.actions');
   }else if(value === 'status'){
@@ -35,6 +45,70 @@ function render_projects(value){
     return t ('projects.cloud_provider');
   }else if (value === 'access_key') {
     return t ('projects.access_key');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_clients(value){
+  if (value === 'code'){
+    return t ('clients.code');
+  }else if (value === 'name') {
+    return t ('clients.name');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_serverspecs(value){
+  if (value === 'description'){
+    return t ('serverspecs.description');
+  }else if (value === 'name') {
+    return t ('serverspecs.name');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_dish(value){
+  if (value === 'name'){
+    return t ('dishes.name');
+  }else if (value === 'detail') {
+    return t ('dishes.detail');
+  }else if (value === 'status') {
+    return t ('dishes.validation_status');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_cf_templates(value){
+  if (value === 'subject'){
+    return t ('cf_templates.subject');
+  }else if (value === 'details') {
+    return t ('cf_templates.details');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_user_admin(value){
+  if (value === 'role'){
+    return t('users.role');
+  }else if (value === 'email') {
+    return t('users.email');
+  }else if (value === 'last_sign_in_at') {
+    return t('users.last_signed_in_at');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{

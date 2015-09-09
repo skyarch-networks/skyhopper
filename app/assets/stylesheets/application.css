@@ -9,8 +9,8 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require_tree .
  *= require bootstrap.min
+ *= require_tree .
  *= require animate.min
  */
 
@@ -19,18 +19,6 @@
 
   src: url('/assets/glyphicons-halflings-regular.eot');
   src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
-}
-
-input:invalid,
-textarea:invalid {
-  border-color: #a94442;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-}
-
-input:focus:invalid,
-textarea:focus:invalid {
-  border-color: #843534;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 6px #ce8483;
 }
 
 .glyphicon {
@@ -256,12 +244,6 @@ h6.page-header {
 100% {
     opacity: 1;
   }
-}
-
-.border-blink {
-  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
-  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
-  animation: border_blink 0.7s ease-in-out infinite alternate;
 }
 
 @-webkit-keyframes border_blink {

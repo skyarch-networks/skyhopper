@@ -46,7 +46,10 @@ describe NodesController, :type => :controller do
     # mocks
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
-    let(:instance_summary){{status: instance_status}}
+    let(:instance_summary){{
+      status: instance_status,
+      block_devices: [],
+    }}
     let(:cook_status){resource.status.cook}
     let(:serverspec_status){resource.status.serverspec}
     let(:yum_status){resource.status.yum}
