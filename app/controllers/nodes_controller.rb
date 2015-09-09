@@ -279,7 +279,8 @@ class NodesController < ApplicationController
   # TODO: refactor
   def cook_node(infrastructure, physical_id, whyrun)
     user_id = current_user.id
-    infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+    mode_string = '(why-run mode)' if whyrun
+    infra_logger_success("Cook#{mode_string} for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
     r = infrastructure.resource(physical_id)
     r.status.cook.inprogress!
@@ -293,19 +294,19 @@ class NodesController < ApplicationController
     begin
       node.cook(infrastructure, whyrun) do |line|
         ws.push_as_json({v: line})
-        Rails.logger.debug "cooking #{physical_id} > #{line}"
+        Rails.logger.debug "cooking#{mode_string} #{physical_id} > #{line}"
         log << line
       end
     rescue => ex
       Rails.logger.debug(ex)
       r.status.cook.failed!
-      infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      infra_logger_fail("Cook#{mode_string} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
       ws.push_as_json({v: false})
       return
     end
 
     r.status.cook.success!
-    infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+    infra_logger_success("Cook#{mode_string} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
 
     if r.dish_id # if resource has dish
