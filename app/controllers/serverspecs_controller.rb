@@ -107,7 +107,7 @@ class ServerspecsController < ApplicationController
     @serverspec_results = resource.serverspec_results
 
     respond_to do |format|
-      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message],
+      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at],
         include: [{serverspec_result_details: {only: [:id]}},{serverspecs: {only:[:name]}}, {resource: {only: [:physical_id]}} ]) }
     end
   end
