@@ -7,9 +7,10 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./base.ts" />
 
-class Dish  extends ModelBase {
+import ModelBase from './base';
+
+export default class Dish extends ModelBase {
   constructor(public id: string) {super(); }
 
   static ajax = new AjaxSet.Resources('dishes');

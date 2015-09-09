@@ -6,17 +6,6 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require models/base
-//= require models/cf_template
-//= require models/infrastructure
-//= require models/s3_bucket
-//= require models/dish
-//= require models/ec2_instance
-//= require models/monitoring
-//= require models/rds_instance
-//= require models/resource
-//= require models/snapshot
-
 
 (function () {
   'use strict';
@@ -36,6 +25,16 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
+
+  var CFTemplate     = require('models/cf_template').default;
+  var Infrastructure = require('models/infrastructure').default;
+  var S3Bucket       = require('models/s3_bucket').default;
+  var Dish           = require('models/dish').default;
+  var EC2Instance    = require('models/ec2_instance').default;
+  var Monitoring     = require('models/monitoring').default;
+  var RDSInstance    = require('models/rds_instance').default;
+  var Resource       = require('models/resource').default;
+  var Snapshot       = require('models/snapshot').default;
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
