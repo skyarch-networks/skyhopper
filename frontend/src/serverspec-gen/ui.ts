@@ -20,7 +20,7 @@ class VueMain extends Vue {
       methods: {
         addDescribe:    this.addDescribe,
         removeDescribe: this.removeDescribe,
-        create:         this.create,
+        save:         this.save,
       },
       computed: {
         rubyCode:     this._rubyCode,
@@ -39,7 +39,7 @@ class VueMain extends Vue {
     (<any>this.ast).$remove(idx);
   }
 
-  create(): void {
+  save(): void {
     bootstrap_prompt("Serverspec Generator", "filename").done((fname) => {
       const s = new Serverspec();
       s.create(fname, this.rubyCode).done(function (data) {
