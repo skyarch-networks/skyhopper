@@ -50,12 +50,14 @@ class AppSettingsController < ApplicationController
 
     Thread.new_with_db do
       # おまじない
+      # rubocop:disable Lint/Void
       ChefServer
       ChefServer::Deployment
       CfTemplate
+      # rubocop:enable Lint/Void
 
       set = AppSetting.get
-      stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.to_s)}"
+      stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.current.to_s)}"
 
       ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value)
     end
@@ -85,7 +87,7 @@ class AppSettingsController < ApplicationController
   def chef_create
     # とりあえず決め打ちでいい気がする
     # stack_name = params.require(:stack_name)
-    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.to_s)}"
+    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.current.to_s)}"
 
     set = AppSetting.first
     region        = set.aws_region
@@ -93,9 +95,11 @@ class AppSettingsController < ApplicationController
     keypair_value = set.ec2_private_key.value
 
     # おまじない
+    # rubocop:disable Lint/Void
     ChefServer
     ChefServer::Deployment
     CfTemplate
+    # rubocop:enable Lint/Void
 
     Thread.new_with_db do
       ws = WSConnector.new('chef_server_deployment', 'status')

@@ -47,7 +47,7 @@ class Infrastructure < ActiveRecord::Base
     # @return [Infrastructure] Created infra.
     def create_for_test(project_id, dish_name = "")
       setting = AppSetting.get
-      stack_name = "validation-#{Digest::MD5.hexdigest(dish_name + DateTime.now.to_s)}"
+      stack_name = "validation-#{Digest::MD5.hexdigest(dish_name + DateTime.now.current.to_s)}"
 
       copied = setting.ec2_private_key.dup
       copied.save!
