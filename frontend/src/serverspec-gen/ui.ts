@@ -2,6 +2,7 @@
 
 import ResourcePanel     from './resource-panel';
 import ItPanel           from './it-panel';
+import Serverspec        from '../models/serverspec';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
@@ -19,6 +20,7 @@ class VueMain extends Vue {
       methods: {
         addDescribe:    this.addDescribe,
         removeDescribe: this.removeDescribe,
+        create:         this.create,
       },
       computed: {
         rubyCode:     this._rubyCode,
@@ -35,6 +37,17 @@ class VueMain extends Vue {
 
   removeDescribe(idx: number): void {
     (<any>this.ast).$remove(idx);
+  }
+
+  create(): void {
+    bootstrap_prompt("Serverspec Generator", "filename").done((fname) => {
+      const s = new Serverspec();
+      s.create(fname, this.rubyCode).done(function (data) {
+        console.log(data);
+      }).fail(function (data) {
+        console.log(data);
+      });
+    });
   }
 
 
