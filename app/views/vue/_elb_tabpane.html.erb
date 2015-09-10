@@ -13,7 +13,6 @@
         <th><%=t('ec2_instances.instance_protocol')%></th>
         <th><%=t('ec2_instances.instance_port')%></th>
         <th><%=t('ec2_instances.certificate_name')%></th>
-        <th><%=t('ec2_instances.expiration_date')%></th>
         <th><%=t('ec2_instances.btn.edit_to_elb_listener')%></th>
       </tr>
     </thead>
@@ -25,17 +24,16 @@
         <td v-text="instance_protocol"></td>
         <td v-text="instance_port"></td>
         <td v-text="ssl_certificate_id_to_name(ssl_certificate_id)"></td>
-        <td v-text="expiration_date(expiration)"></td>
         <td>
           <button v-on="click: set_edit_listener_modal_default_value(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)" class="btn btn-xs btn-default" data-toggle="modal" role="button" href="#edit-listener-modal">Edit</button>
-          <button v-on="click: delete_listener(load_balancer_port)" class="btn btn-xs btn-default" data-toggle="modal" role="button">Delete</button>
+          <button v-on="click: delete_listener(load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
   <button v-on="click: set_create_listener_modal_default_value()" class="btn btn-default" data-toggle="modal" role="button" href="#create-listener-modal"><%=t('ec2_instances.btn.create_to_elb_listener')%></button>
 
-　　<h4 class="page-header"><%=t('ec2_instances.certificate')%></h4>
+  <h4 class="page-header"><%=t('ec2_instances.certificate')%></h4>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -48,7 +46,7 @@
         <td v-text="name"></td>
         <td v-text="expiration_date(expiration)"></td>
         <td>
-          <button v-on="click: delete_server_certificate(name)" class="btn btn-xs btn-default" data-toggle="modal" role="button">Delete</button>
+          <button v-on="click: delete_server_certificate(name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button">Delete</button>
         </td>
       </tr>
     </tbody>
@@ -121,7 +119,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.lb_port') %></label>
-        <input v-model="load_balancer_port" class="form-control" />
+        <input type="number" min="0" max="65535" v-model="load_balancer_port" class="form-control" />
       </div>
       
       <div class="modal-body">
@@ -136,7 +134,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.instance_port') %></label>
-        <input v-model="instance_port" class="form-control" />
+        <input type="number" min="0" max="65535" v-model="instance_port" class="form-control" />
       </div>
       
       <div class="modal-body">
@@ -178,7 +176,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.lb_port') %></label>
-        <input v-model="load_balancer_port" id="edit_listener_load_balancer_port" class="form-control" />
+        <input type="number" min="0" max="65535" v-model="load_balancer_port" id="edit_listener_load_balancer_port" class="form-control" />
       </div>
       
       <div class="modal-body">
@@ -193,7 +191,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.instance_port') %></label>
-        <input v-model="instance_port" id="edit_listener_instance_port" class="form-control" />
+        <input type="number" min="0" max="65535" v-model="instance_port" id="edit_listener_instance_port" class="form-control" />
       </div>
       
       <div class="modal-body">

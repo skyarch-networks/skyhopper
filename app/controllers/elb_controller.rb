@@ -14,7 +14,6 @@ class ElbController < ApplicationController
 
   # POST /elb/create_listener
   def create_listener
-    #id = params.require(:id)
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     protocol            = params.require(:elb_listener_protocol)
@@ -33,7 +32,6 @@ class ElbController < ApplicationController
   
   # POST /elb/delete_listener
   def delete_listener
-    #id = params.require(:id)
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     load_balancer_port  = params.require(:elb_listener_load_balancer_port)
@@ -48,7 +46,6 @@ class ElbController < ApplicationController
   
   # POST /elb/delete_and_create_listener
   def delete_and_create_listener
-    #id = params.require(:id)
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     protocol            = params.require(:elb_listener_protocol)
@@ -88,7 +85,6 @@ class ElbController < ApplicationController
   
   # POST /elb/upload_server_certificate
   def upload_server_certificate
-    #id = params.require(:id)
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     server_certificate_name  = params.require(:ss_server_certificate_name)
@@ -106,7 +102,6 @@ class ElbController < ApplicationController
   
   # POST /elb/delete_server_certificate
   def delete_server_certificate
-    #id = params.require(:id)
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     server_certificate_name  = params.require(:ss_server_certificate_name)

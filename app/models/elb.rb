@@ -33,12 +33,7 @@ class ELB
   # @return [Array<Hash{Symbol => String}>]
   def listeners
     return details.listener_descriptions.map(&:listener).map(&:to_hash).map do |l|
-      crt_id = l[:ssl_certificate_id]
-      if crt_id == "Invalid-Certificate"
-        l[:expiration] = ""
-      elsif crt_id
-        l[:expiration] = ssl_expiration(crt_id)
-      else
+      if !l[:ssl_certificate_id]
         l[:ssl_certificate_id] = ""
       end
       l
@@ -94,7 +89,7 @@ class ELB
   # Upload server certificate
   def upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
     iam = Aws::IAM::Client.new(@aws_params)
-    if (certificate_chain.nil?) || (certificate_chain.empty?) then
+    if certificate_chain.blank?
       iam.upload_server_certificate(
         server_certificate_name: server_certificate_name,
         certificate_body: certificate_body,
@@ -153,12 +148,4 @@ class ELB
     )
   end
 
-  # @param [String] crt_id example: arn:aws:iam::000000000000:server-certificate/certName
-  # @return [Time] expiration date.
-  def ssl_expiration(crt_id)
-    id_body = crt_id[/\/(.+)$/, 1]
-    iam = Aws::IAM::Client.new(@aws_params)
-    res = iam.get_server_certificate(server_certificate_name: id_body)
-    return res.server_certificate.server_certificate_metadata.expiration
-  end
 end
