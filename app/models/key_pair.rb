@@ -40,5 +40,29 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
 
       key_pairs.sort_by(&:region)
     end
+
+    def find(project_id, key_name, key_fingerprint, region)
+      key_pairs = []
+      fingerprints = []
+      project = Project.find(project_id)
+
+
+      ec2 = Aws::EC2::Client.new(
+        access_key_id:     project.access_key,
+        secret_access_key: project.secret_access_key,
+        region:            region
+      )
+
+     keypairs_resp = ec2.describe_key_pairs.key_pairs
+
+     keypairs_resp.each do |key_pair|
+       if key_pair.key_name == key_name
+         key_pairs.push(key_pair.key_fingerprint)
+       end
+     end
+
+    return key_pairs.include?(key_fingerprint)
+
+    end
   end
 end
