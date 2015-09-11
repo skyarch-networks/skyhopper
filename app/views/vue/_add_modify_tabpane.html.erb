@@ -11,10 +11,11 @@
     </div>
 
     <div class="form-group">
-      <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
-      <textarea v-model="result.value" id="add_modify_value" class="form-control" cols="20" rows="15" required></textarea>
+        <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
+        <!-- <textarea autofocus v-on="click: " name="description" id="add_modify_value" v-model="result.value"  class="form-control" cols="20" rows="15" required></textarea> -->
     </div>
     <div class="alert alert-danger" v-show="jsonParseErr">{{jsonParseErr}}</div>
+    <div id="description" style="position: absolute; width: 100%; left: 0px; height: 429px; font-size: 12px;"></div>
   </fieldset>
 </div>
 

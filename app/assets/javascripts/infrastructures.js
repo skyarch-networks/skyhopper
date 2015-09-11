@@ -16,8 +16,6 @@
 //= require models/rds_instance
 //= require models/resource
 //= require models/snapshot
-
-
 (function () {
   'use strict';
 
@@ -123,19 +121,37 @@
         self.result.name   = cft.name;
         self.result.detail = cft.detail;
         self.result.value  = cft.value;
+        this.editor(cft.value);
+
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
         app.show_tabpane('insert-cf-params');
         app.loading = true;
       },
+      editor: function (){
+        var self = this;
+        // var textarea = $('textarea[name="description"]').hide();
+        var editor = ace.edit("description");
+        editor.setTheme("ace/theme/github");
+        editor.getSession().setMode("ace/mode/javascript");
+        if (self.result.value) {
+          editor.getSession().setValue(self.result.value);
+        }else {
+          editor.getSession().setValue();
+        }
+        editor.getSession().on('change', function(){
+          self.result.value = editor.getSession().getValue();
+        });
+      }
     },
     computed: {
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
     created: function () {
       console.log(this);
-    }
+      setTimeout(this.editor, 1000);
+    },
   });
 
   Vue.component("insert-cf-params", {

@@ -26,3 +26,5 @@
 //= require utils
 //= require server_status
 //= require notification_center
+//= require ace-rails-ap
+//= require ace/mode-javascript
