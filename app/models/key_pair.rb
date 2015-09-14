@@ -63,7 +63,7 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
        #Imported keypair
        pem = OpenSSL::PKey::RSA.new(params[:keypair_value])
        pub = pem.public_key
-       fingerprint_import = OpenSSL::Digest::MD5.new(pub.to_der).to_s  # => "c481261b1bafd395bd76ff4773433bcf"
+       fingerprint_import = OpenSSL::Digest::MD5.new(pub.to_der).to_s.scan(/../).join(':')  # => "c481261b1bafd395bd76ff4773433bcf"
 
        #Keypair from AWS console
        data = IO.popen("openssl pkcs8 -nocrypt -topk8 -outform DER", 'r+'){|io| io.print(params[:keypair_value]); io.close_write; io.read}
