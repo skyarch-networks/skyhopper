@@ -258,21 +258,8 @@ class InfrastructuresController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def infrastructure_params(no_keypair: nil)
-    require 'open3'
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
-
-    file = File.new( "tmp/keypairs/#{p[:keypair_name]}.pem", "w" )
-    file.puts p[:keypair_value]
-    file.close
-
-    location = p[:keypair_name].to_s+'.pem'
-    output = `ec2fp tmp/keypairs/#{location}`
-    cmd =  "#{output}"
-
-    File.delete("tmp/keypairs/#{p[:keypair_name]}.pem")
-    fingerprint = cmd.delete!("\n")
-
-    keypair_info = KeyPair.find(p[:project_id], p[:keypair_name], fingerprint, p[:region])
+    keypair_info = KeyPair.find(p)
     if !keypair_info
       raise I18n.t('infrastructures.msg.invalid_keypair')
     end
