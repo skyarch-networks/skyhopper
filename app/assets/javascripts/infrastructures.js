@@ -111,10 +111,7 @@
       },
     },
     data: function(){
-      return{
-        selected_cft_id: null,
-        loading: false
-      };},
+      return{selected_cft_id: null,};},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
@@ -125,7 +122,7 @@
         self.result.name   = cft.name;
         self.result.detail = cft.detail;
         self.result.value  = cft.value;
-        this.editor(cft.value);
+        this.editor();
 
       },
       submit: function () {
@@ -148,16 +145,14 @@
         editor.getSession().on('change', function(){
           self.result.value = editor.getSession().getValue();
         });
-        self.loading = false;
       }
     },
     computed: {
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
-    created: function () {
+    ready: function () {
       console.log(this);
-      this.loading = true;
-      setTimeout(this.editor, 1000);
+      this.editor();
     },
   });
 
