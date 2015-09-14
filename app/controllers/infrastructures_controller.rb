@@ -262,7 +262,7 @@ class InfrastructuresController < ApplicationController
   def infrastructure_params(no_keypair: nil)
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
 
-        if no_keypair
+    if no_keypair
       p.delete(:keypair_name)
       p.delete(:keypair_value)
     end
