@@ -20,6 +20,8 @@ class InfrastructuresController < ApplicationController
 
   before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
+  before_action :keypair_validation, only: [:create]
+
   before_action do
     infra = @infrastructure || (
       project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
@@ -259,17 +261,21 @@ class InfrastructuresController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def infrastructure_params(no_keypair: nil)
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
-    keypair_info = KeyPair.find(p)
-    if !keypair_info
-      raise I18n.t('infrastructures.msg.invalid_keypair')
-    end
 
-
-    if no_keypair
+        if no_keypair
       p.delete(:keypair_name)
       p.delete(:keypair_value)
     end
     return p
+  end
+
+  # raise error if uploaded keypair does not exist
+  def keypair_validation(no_keypair: nil)
+    p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
+
+    if !KeyPair.same_exists(p)
+      raise I18n.t('infrastructures.msg.invalid_keypair')
+    end
   end
 
   # redirect to projects#index if specified project does not exist
