@@ -110,7 +110,11 @@
         required: true,
       },
     },
-    data: function(){return{selected_cft_id: null};},
+    data: function(){
+      return{
+        selected_cft_id: null,
+        loading: false
+      };},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
@@ -134,7 +138,7 @@
         // var textarea = $('textarea[name="description"]').hide();
         var editor = ace.edit("description");
         editor.setTheme("ace/theme/github");
-        editor.getSession().setMode("ace/mode/javascript");
+        editor.getSession().setMode("ace/mode/json");
         if (self.result.value) {
           editor.getSession().setValue(self.result.value);
         }else {
@@ -143,6 +147,7 @@
         editor.getSession().on('change', function(){
           self.result.value = editor.getSession().getValue();
         });
+        self.loading = false;
       }
     },
     computed: {
@@ -150,6 +155,7 @@
     },
     created: function () {
       console.log(this);
+      this.loading = true;
       setTimeout(this.editor, 1000);
     },
   });
