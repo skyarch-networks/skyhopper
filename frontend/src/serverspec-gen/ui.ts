@@ -43,10 +43,8 @@ class VueMain extends Vue {
     bootstrap_prompt("Serverspec Generator", "filename").done((fname) => {
       const s = new Serverspec();
       s.create(fname, this.rubyCode).done(function (data) {
-        console.log(data);
-      }).fail(function (data) {
-        console.log(data);
-      });
+        bootstrap_alert(t('serverspecs.serverspec'), data);
+      }).fail(modal_for_ajax_std_error());
     });
   }
 

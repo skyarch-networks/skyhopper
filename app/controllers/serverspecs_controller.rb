@@ -61,12 +61,19 @@ class ServerspecsController < ApplicationController
 
     infra_id = @serverspec.infrastructure_id
 
-    if @serverspec.save
+    begin
+      @serverspec.save!
+    rescue => ex
+      raise ex if ajax?
+      flash.now[:alert] = @serverspec.errors[:value] if @serverspec.errors[:value]
+      render action: 'new', infrastructure_id: infra_id; return
+    end
+
+    if ajax?
+      render text: I18n.t('serverspecs.msg.created') and return
+    else
       redirect_to serverspecs_path(infrastructure_id: infra_id),
         notice: I18n.t('serverspecs.msg.created')
-    else
-      flash.now[:alert] = @serverspec.errors[:value] if @serverspec.errors[:value]
-      render action: 'new', infrastructure_id: infra_id
     end
   end
 
