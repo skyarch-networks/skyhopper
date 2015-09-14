@@ -139,6 +139,7 @@
         var editor = ace.edit("description");
         editor.setTheme("ace/theme/github");
         editor.getSession().setMode("ace/mode/json");
+        editor.getSession().setUseWrapMode(true);
         if (self.result.value) {
           editor.getSession().setValue(self.result.value);
         }else {
