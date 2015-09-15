@@ -516,6 +516,17 @@ describe InfrastructuresController, :type => :controller do
     end
   end
 
+  describe '#keypair_validation' do
+    controller InfrastructuresController do
+      before_action :keypair_validation
+      def foo
+        render text: 'success!!!'
+      end
+      def authorize(*)end #XXX: pundit hack
+      def allowed_infrastructure(_);end #skip
+    end
+  end
+
   describe '#infrastructure_exist' do
     controller InfrastructuresController do
       before_action :infrastructure_exist

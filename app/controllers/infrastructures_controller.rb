@@ -270,7 +270,7 @@ class InfrastructuresController < ApplicationController
   end
 
   # raise error if uploaded keypair does not exist
-  def keypair_validation(no_keypair: nil)
+  def keypair_validation
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
 
     if !KeyPair.same_exists(p)
