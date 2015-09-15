@@ -122,7 +122,6 @@
         self.result.name   = cft.name;
         self.result.detail = cft.detail;
         self.result.value  = cft.value;
-        this.editor();
 
       },
       submit: function () {
@@ -130,30 +129,35 @@
         app.show_tabpane('insert-cf-params');
         app.loading = true;
       },
-      editor: function (){
-        var self = this;
-        // var textarea = $('textarea[name="description"]').hide();
-        var editor = ace.edit("description");
-        editor.setTheme("ace/theme/github");
-        editor.getSession().setMode("ace/mode/json");
-        editor.getSession().setUseWrapMode(true);
-        if (self.result.value) {
-          editor.getSession().setValue(self.result.value);
-        }else {
-          editor.getSession().setValue();
-        }
-        editor.getSession().on('change', function(){
-          self.result.value = editor.getSession().getValue();
-        });
-      }
     },
     computed: {
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
-    ready: function () {
-      console.log(this);
-      this.editor();
-    },
+
+  });
+
+
+  Vue.directive("ace", {
+      twoWay: true,
+      bind: function () {
+          console.log(this.el);
+          this.editor = ace.edit(this.el);
+          this.editor.setTheme("ace/theme/github");
+          this.editor.getSession().setMode("ace/mode/json");
+          this.editor.getSession().setUseWrapMode(true);
+          this.silent = false;
+          this.handler = function () {
+              if (!this.silent) {
+                  this.set(this.editor.getSession().getValue(), true);
+              }
+          }.bind(this);
+          this.editor.on("change", this.handler);
+      },
+      update: function (value, oldValue) {
+          this.silent = true;
+          this.editor.getSession().setValue(value);
+          this.silent = false;
+      }
   });
 
   Vue.component("insert-cf-params", {
