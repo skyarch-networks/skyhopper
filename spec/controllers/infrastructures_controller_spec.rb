@@ -517,7 +517,7 @@ describe InfrastructuresController, :type => :controller do
   end
 
   describe '#keypair_validation' do
-    let(:req){infrastructure: infra}
+    let(:req){build_stubbed(:infrastructure)}
 
     controller InfrastructuresController do
       before_action :keypair_validation
