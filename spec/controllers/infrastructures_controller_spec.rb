@@ -200,6 +200,9 @@ describe InfrastructuresController, :type => :controller do
     let(:infra_key_name){ec2_key.name}
     let(:infra_key_value){ec2_key.value}
     let(:create_request){post :create, infrastructure: infra_hash}
+    before do
+      allow(KeyPair).to receive(:same_exists?).and_return(true)
+    end
 
     context 'when create succees' do
       it 'should increase the total count of database by one' do
@@ -514,19 +517,6 @@ describe InfrastructuresController, :type => :controller do
       before{project.delete; req}
       it {is_expected.to redirect_to projects_path}
     end
-  end
-
-  describe '#keypair_validation' do
-    let(:req){build_stubbed(:infrastructure)}
-
-    controller InfrastructuresController do
-      before_action :keypair_validation
-      before do
-        expect(KeyPair).to receive(:same_exists).and_return(true)
-        should_be_success
-      end
-    end
-
   end
 
   describe '#infrastructure_exist' do

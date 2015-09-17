@@ -41,7 +41,7 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
       key_pairs.sort_by(&:region)
     end
 
-    def same_exists(params)
+    def same_exists?(params)
       key_pairs = []
       fingerprints = []
       project = Project.find(params[:project_id])

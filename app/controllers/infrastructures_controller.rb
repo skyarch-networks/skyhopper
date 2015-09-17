@@ -273,7 +273,7 @@ class InfrastructuresController < ApplicationController
   def keypair_validation
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
 
-    if !KeyPair.same_exists(p)
+    if !KeyPair.same_exists?(p)
       raise I18n.t('infrastructures.msg.invalid_keypair')
     end
   end
