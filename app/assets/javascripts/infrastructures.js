@@ -1371,13 +1371,6 @@
         pageNumber: 0,
       };
     },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods:{
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -1408,6 +1401,15 @@
           return ((this.pageNumber + 1) * this.pages >= this.data.length);
       },
     },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    },
     created: function ()  {
       self = this;
       var self = this;
@@ -1435,14 +1437,12 @@
         if(self.data.length === 0){ $('#empty_results').show().html(empty);}
       }).fail(alert_danger(self.show_ec2));
     },
-    filters:{
-      wrap: wrap,
-      listen: listen,
-      paginate: function(list) {
-        var index = this.pageNumber * this.pages;
-        return list.slice(index, index + this.pages);
-      },
-      roundup: function (val) { return (Math.ceil(val));},
+    compiled: function () {
+      // initialize reverse state
+        var self = this;
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false);
+         });
     }
   });
 
