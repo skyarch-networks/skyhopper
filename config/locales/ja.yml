@@ -170,7 +170,7 @@ ja:
       generate_serverspec_confirm: 'このRDSへのアクセスを検証する Serverspec を生成します'
       empty-list:                  'インフラストラクチャのリストは空です.'
       loading-list:                'インフラストラクチャのロード中です...'
-      invalid_keypair:		   '無効なキーのペア！鍵ペアファイルを確認してください。'
+      invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   nodes:
     bootstrap:   'Bootstrap'
