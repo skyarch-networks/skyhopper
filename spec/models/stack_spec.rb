@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Stack, :type => :model do
+describe Stack, type: :model do
   let(:stack_name){'StackName'}
   let(:infra){build_stubbed(:infrastructure, stack_name: stack_name)}
   subject {Stack.new(infra)}

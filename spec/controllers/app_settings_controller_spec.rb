@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe AppSettingsController, :type => :controller do
+describe AppSettingsController, type: :controller do
   login_user
 
   before do

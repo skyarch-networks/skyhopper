@@ -9,7 +9,7 @@
 require_relative '../../spec_helper'
 
 FactoryGirl.create(:app_setting)
-describe ChefServer::Deployment, :type => :model do
+describe ChefServer::Deployment, type: :model do
   let(:klass){ChefServer::Deployment}
 
   describe '.create' do

@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe RootController, :type => :controller do
+describe RootController, type: :controller do
   let(:klass){RootController}
   let(:request){get :root}
 

@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe InfrastructuresController, :type => :controller do
+describe InfrastructuresController, type: :controller do
   login_user
 
   let(:infra){create(:infrastructure)}

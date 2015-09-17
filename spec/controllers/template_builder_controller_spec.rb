@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe TemplateBuilderController, :type => :controller do
+describe TemplateBuilderController, type: :controller do
   login_user
 
   let(:klass){TemplateBuilder}

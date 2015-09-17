@@ -8,6 +8,6 @@
 
 require_relative '../spec_helper'
 
-describe S3, :type => :model do
+describe S3, type: :model do
 
 end

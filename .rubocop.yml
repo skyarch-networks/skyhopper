@@ -176,7 +176,12 @@ Style/GuardClause:
   Enabled: false
 
 Style/HashSyntax:
-  Enabled: false
+  Enabled: true
+  SupportedStyles:
+    - ruby19
+    - ruby19_no_mixed_keys
+    - hash_rockets
+  UseHashRocketsWithSymbolValues: false
 
 Style/IfUnlessModifier:
   Enabled: false

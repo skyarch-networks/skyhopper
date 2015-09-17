@@ -9,8 +9,8 @@
 module InfrastructuresHelper
   def button_show_infra(infra)
     return link_to t("helpers.links.show"), "#", {
-      :class               => "btn btn-xs btn-info show-infra",
-      :"infrastructure-id" => infra.id
+      class: "btn btn-xs btn-info show-infra",
+      "infrastructure-id": infra.id
     }
   end
 
@@ -45,9 +45,8 @@ module InfrastructuresHelper
       return link_to t('helpers.links.detach'), "#", class: "btn btn-xs btn-warning disabled"
     end
     return link_to t('helpers.links.detach'), '#', {
-      class: 'btn btn-xs btn-warning detach-infra',
-      :'infrastructure-id' => infra.id,
-
+      class:               'btn btn-xs btn-warning detach-infra',
+      'infrastructure-id': infra.id,
     }
   end
 
@@ -61,8 +60,8 @@ module InfrastructuresHelper
     end
 
     button = link_to t('infrastructures.btn.delete_stack_confirm'), '#', {
-      :class               => "delete-stack",
-      :"infrastructure-id" => infra.id,
+      class:               "delete-stack",
+      "infrastructure-id": infra.id,
     }
     ret = <<-EOF.html_safe
     <div class="btn-group">

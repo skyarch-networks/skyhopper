@@ -10,7 +10,7 @@ require_relative '../spec_helper'
 
 class StubRes < TemplateBuilder::Resource; end
 
-describe TemplateBuilder, :type => :model do
+describe TemplateBuilder, type: :model do
   describe 'class variables' do
     describe '@@base_template' do
       it 'should be Hash' do
@@ -80,7 +80,7 @@ describe TemplateBuilder, :type => :model do
 
     describe '#add_param' do
       context 'method success' do
-        let(:param){double(:'kind_of?' => true, name: 'foo')}
+        let(:param){double('kind_of?': true, name: 'foo')}
         subject{builder.instance_variable_get(:@parameters)}
 
         it do
@@ -98,7 +98,7 @@ describe TemplateBuilder, :type => :model do
       end
 
       context 'parameter already exist' do
-        let(:param){double(:'kind_of?' => true, name: 'bar')}
+        let(:param){double('kind_of?': true, name: 'bar')}
         subject{builder.add_param(param)}
         before do
           builder.add_param(param)
@@ -112,7 +112,7 @@ describe TemplateBuilder, :type => :model do
 
     describe '#add_output' do
       context 'method success' do
-        let(:output){double(:'kind_of?' => true, name: 'foo')}
+        let(:output){double('kind_of?': true, name: 'foo')}
         subject{builder.instance_variable_get(:@outputs)}
 
         it do
@@ -130,7 +130,7 @@ describe TemplateBuilder, :type => :model do
       end
 
       context 'output already exist' do
-        let(:output){double(:'kind_of?' => true, name: 'bar')}
+        let(:output){double('kind_of?': true, name: 'bar')}
         subject{builder.add_output(output)}
         before do
           builder.add_output(output)

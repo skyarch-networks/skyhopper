@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Infrastructure, :type => :model do
+describe Infrastructure, type: :model do
   let(:klass){Infrastructure}
   let(:ec2key){build(:ec2_private_key)}
 
