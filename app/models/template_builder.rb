@@ -81,7 +81,7 @@ class TemplateBuilder
   def add_param(param)
     raise ArgumentError, "#{param} isn't parameter" unless param.kind_of? TemplateBuilder::Parameter
 
-    param_names = @parameters.map{|param| param.name}
+    param_names = @parameters.map{|p| p.name}
     raise ParameterAlreadyExist, "#{param.name} already exist" if param_names.include?(param.name)
 
     @parameters << param
@@ -135,9 +135,11 @@ class TemplateBuilder
     return result
   end
 
+  # rubocop:disable Rails/Delegate
   def to_json
     build.to_json
   end
+  # rubocop:enable Rails/Delegate
 
   def to_pretty_json
     JSON::pretty_generate(build)

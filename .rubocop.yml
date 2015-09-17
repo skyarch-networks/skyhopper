@@ -52,9 +52,6 @@ Style/BlockComments:
 Style/BlockEndNewline:
   Enabled: false
 
-Style/Blocks:
-  Enabled: false
-
 Style/BracesAroundHashParameters:
   Enabled: false
 
@@ -424,9 +421,6 @@ Style/UnneededCapitalW:
 Style/UnneededPercentQ:
   Enabled: false
 
-Style/UnneededPercentX:
-  Enabled: false
-
 Style/VariableInterpolation:
   Enabled: false
 
@@ -443,6 +437,9 @@ Style/WhileUntilModifier:
   Enabled: false
 
 Style/WordArray:
+  Enabled: false
+
+Lint/EndAlignment:
   Enabled: false
 
 Lint/StringConversionInInterpolation:
@@ -467,6 +464,9 @@ Metrics/LineLength:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ParameterLists:

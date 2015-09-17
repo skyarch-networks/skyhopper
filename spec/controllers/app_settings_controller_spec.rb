@@ -130,7 +130,7 @@ describe AppSettingsController, :type => :controller do
       def test
         check_eip_limit!('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
         render text: 'success'
-      rescue ::AppSettingsController::EIPLimitError => ex
+      rescue ::AppSettingsController::EIPLimitError
         render text: 'failure', status: 400
       end
     end

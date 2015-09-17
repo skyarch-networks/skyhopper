@@ -10,12 +10,11 @@ module DishesController::Validate
   # POST /dishes/1/validate
   def validate
     id = params.require(:id)
-    dish  = Dish.find(id)
-
-
 
     # dishのテスト
-    Thread.new_with_db(dish) do |dish|
+    Thread.new_with_db do
+      dish  = Dish.find(id)
+
       begin
         @ws = WSConnector.new('dish_validate', dish.id)
 
@@ -125,7 +124,9 @@ module DishesController::Validate
 
     begin
       @stack.apply_template(cf_template.value, parameters)
+      # rubocop:disable Lint/HandleExceptions
     rescue
+      # rubocop:enable Lint/HandleExceptions
       # Stack Create failed
       #render text: ex.message, status: 500
     else
@@ -152,7 +153,7 @@ module DishesController::Validate
     retry_count  = 9     # 20 * 9 = 180 sec
     begin
       @node = Node.bootstrap(fqdn, @physical_id, infrastructure)
-    rescue => ex
+    rescue
       retry_count -= 1
       if retry_count < 0
         raise 'Bootstrap Timeout'

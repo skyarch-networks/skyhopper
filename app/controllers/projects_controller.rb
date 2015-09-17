@@ -34,7 +34,6 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     @selected_project_id = params[:project_id].to_i
-    page = params[:page] || 1
 
     if current_user.master?
       client_id = params.require(:client_id)
@@ -47,7 +46,7 @@ class ProjectsController < ApplicationController
     end
     respond_to do |format|
       format.json
-      format.html 
+      format.html
     end
   end
 

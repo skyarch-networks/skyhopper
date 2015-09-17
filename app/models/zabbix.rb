@@ -172,7 +172,7 @@ class Zabbix
   # @param [String] hostname physical_id
   # @return [Array<Hash>]  item_key => trigger_expression
   def get_trigger_expressions_by_hostname(hostname)
-    data = @sky_zabbix.trigger.get(
+    datas = @sky_zabbix.trigger.get(
       output: [
         "triggeid",
         "expression"
@@ -188,7 +188,7 @@ class Zabbix
     # ビュー側でトリガーの現在値を取り出す為
     # infra.js edit monitoring component created 参照
     expression_hash = {}
-    data.each do |data|
+    datas.each do |data|
       data["expression"][/\{(i-[a-z0-9]+):/, 1] = "HOSTNAME"
       expression_hash[data["items"].first["key_"]] = data["expression"]
     end
