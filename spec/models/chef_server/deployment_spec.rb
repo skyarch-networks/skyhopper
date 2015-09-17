@@ -54,7 +54,7 @@ describe ChefServer::Deployment, type: :model do
         stack_name,
         region,
         keypair_name,
-        keypair_value
+        keypair_value,
       )
     end
   end

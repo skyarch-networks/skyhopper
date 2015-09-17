@@ -10,7 +10,7 @@ module InfrastructuresHelper
   def button_show_infra(infra)
     return link_to t("helpers.links.show"), "#", {
       class: "btn btn-xs btn-info show-infra",
-      "infrastructure-id": infra.id
+      "infrastructure-id": infra.id,
     }
   end
 
@@ -34,7 +34,7 @@ module InfrastructuresHelper
       t('.edit', default: t("helpers.links.edit")),
       path,
       class: klass,
-      id: kid
+      id: kid,
     )
   end
 

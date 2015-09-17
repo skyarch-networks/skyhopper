@@ -25,7 +25,7 @@ class RDS < SimpleDelegator
     @rds = ::AWS::RDS.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region
+      region:            region,
     )
 
     @db_instance = @rds.db_instances[physical_id]

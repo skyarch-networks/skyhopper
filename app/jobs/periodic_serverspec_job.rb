@@ -13,7 +13,7 @@ class PeriodicServerspecJob < ActiveJob::Base
     schedule = ServerspecSchedule.find_by(physical_id: physical_id)
 
     PeriodicServerspecJob.set(
-      wait_until: schedule.next_run
+      wait_until: schedule.next_run,
     ).perform_later(physical_id, infra_id, user_id)
 
     status = schedule.resource.infrastructure.instance(physical_id).status

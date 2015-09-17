@@ -23,7 +23,7 @@ class Infrastructure < ActiveRecord::Base
 
   # 将来的にproject_id もuniqueに含める?
   validates :stack_name, uniqueness: {
-    scope: [:region]
+    scope: [:region],
   }
   validates :stack_name, format: {with: /\A[a-zA-Z][a-zA-Z0-9-]*$\z/}, length: {maximum: 128}
 
@@ -56,7 +56,7 @@ class Infrastructure < ActiveRecord::Base
         project_id:         project_id,
         stack_name:         stack_name,
         region:             setting.aws_region,
-        ec2_private_key_id: copied.id
+        ec2_private_key_id: copied.id,
       )
       infrastructure.save!
 
@@ -73,7 +73,7 @@ class Infrastructure < ActiveRecord::Base
         if infra_params[:keypair_name].present? && infra_params[:keypair_value].present?
           ec2key = Ec2PrivateKey.create!(
             name:  infra_params[:keypair_name],
-            value: infra_params[:keypair_value]
+            value: infra_params[:keypair_value],
           )
           ec2key.id
         else
@@ -154,7 +154,7 @@ class Infrastructure < ActiveRecord::Base
     ::Aws::EC2::Client.new(
       access_key_id:     self.access_key,
       secret_access_key: self.secret_access_key,
-      region:            self.region
+      region:            self.region,
     )
   end
 

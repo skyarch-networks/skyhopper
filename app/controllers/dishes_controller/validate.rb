@@ -116,7 +116,7 @@ module DishesController::Validate
       name:              "t2.micro for Dish validate",
       detail:            "Dish: #{dish.name}",
       value:             ERB::Builder.new('dish_test').build,
-      user_id:           current_user.id
+      user_id:           current_user.id,
     )
 
     @stack = Stack.new(infrastructure)

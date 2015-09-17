@@ -436,7 +436,7 @@ describe InfrastructuresController, type: :controller do
         :change_rds_scale,
         physical_id:   'hogehoge',
         id:            infra.id,
-        instance_type: type
+        instance_type: type,
       )
     }
 

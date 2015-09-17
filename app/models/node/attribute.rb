@@ -73,7 +73,7 @@ module Node::Attribute
       'gateone/url': {
         type:        String,
         recipes:     ['role[hyclops]'],
-        description: 'Zabbix Server IP. ex) https://54.172.247.142'
+        description: 'Zabbix Server IP. ex) https://54.172.247.142',
       },
       'zabbix/agent/servers': {
         type:        Array,
@@ -127,17 +127,17 @@ module Node::Attribute
       'zabbix/agent/monitoring_rds': {
         type: :Boolean,
         recipes: ['recipe[zabbix::agent_monitoring_mysql]'],
-        description: 'If this flag true, Zabbix agent monitors RDS.'
+        description: 'If this flag true, Zabbix agent monitors RDS.',
       },
       'zabbix/agent/mysql_username': {
         type: String,
         recipes: ['recipe[zabbix::agent_monitoring_mysql]'],
-        description: 'MySQL username to be monitored by Zabbix Agent'
+        description: 'MySQL username to be monitored by Zabbix Agent',
       },
       'mysql/server_root_password': {
         type: String,
         recipes: ['recipe[mysql::client]', 'recipe[mysql::server]'],
-        description: 'MySQL password'
+        description: 'MySQL password',
       },
     }
   end

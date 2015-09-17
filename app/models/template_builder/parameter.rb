@@ -28,7 +28,7 @@ class TemplateBuilder::Parameter
     param = {
       @name => {
         Type: @type,
-      }
+      },
     }
 
     case @type

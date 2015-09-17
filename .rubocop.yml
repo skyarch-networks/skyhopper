@@ -410,7 +410,8 @@ Style/TrailingBlankLines:
   Enabled: false
 
 Style/TrailingComma:
-  Enabled: false
+  Enabled: true
+  EnforcedStyleForMultiline: comma
 
 Style/TrailingWhitespace:
   Enabled: false

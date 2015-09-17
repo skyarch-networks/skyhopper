@@ -111,7 +111,7 @@ describe Stack, type: :model do
         'ec2',
         resource_type: 'AWS::EC2::Instance',
         physical_resource_id:   'i-piyopoyo',
-      )
+      ),
     ]}
     before do
       allow(subject).to receive(:instances_for_resources).and_return(instances)

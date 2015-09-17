@@ -33,7 +33,7 @@ describe AppSettingsController, type: :controller do
   describe '#create' do
     let(:settings){{
       aws_region: 'ap-northeast-1',
-      log_directory: '/foo'
+      log_directory: '/foo',
     }}
     let(:ec2key){create(:ec2_private_key)}
     let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}

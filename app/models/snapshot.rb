@@ -64,8 +64,8 @@ class Snapshot < SimpleDelegator
       snapshot_ids: [snapshot_id],
       filters: [
         { name: 'volume-id', values: [volume_id] },
-        { name: 'snapshot-id', values: [snapshot_id]}
-      ]
+        { name: 'snapshot-id', values: [snapshot_id]},
+      ],
     )
 
     resp.snapshots.first.state

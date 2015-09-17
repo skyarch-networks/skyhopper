@@ -141,9 +141,9 @@ describe CfTemplatesController, type: :controller do
         name: 'foo',
         details: 'hogehoge',
         value: value,
-        params: nil
+        params: nil,
       },
-      infrastructure_id: infra.id
+      infrastructure_id: infra.id,
     }}
     let(:value){JSON[{Parameters: {}}]}
     let(:req){post :insert_cf_params, http_params}
