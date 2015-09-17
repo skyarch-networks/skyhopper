@@ -8,7 +8,6 @@
 #
 
 FactoryGirl.define do
-
   factory :serverspec_result do
     resource
     status :success
