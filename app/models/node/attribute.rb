@@ -46,7 +46,7 @@ module Node::Attribute
   # 現在設定できる attributes を返す
   # @return [Hash{Symbol => Any}]
   def enabled_attributes
-    available_attributes.select do |name, a|
+    available_attributes.select do |_name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
     end
   end

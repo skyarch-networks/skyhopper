@@ -29,7 +29,7 @@ class CfTemplatesController < ApplicationController
 
     respond_to do |format|
       format.json { @global_jsons = @global_jsons }
-      format.html { @global_jsons = @global_jsons.page(page).per(10) }
+      format.html { @global_jsons = @global_jsons.page(page)}
     end
   end
 
