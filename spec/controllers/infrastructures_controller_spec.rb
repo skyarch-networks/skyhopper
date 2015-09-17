@@ -200,6 +200,9 @@ describe InfrastructuresController, :type => :controller do
     let(:infra_key_name){ec2_key.name}
     let(:infra_key_value){ec2_key.value}
     let(:create_request){post :create, infrastructure: infra_hash}
+    before do
+      allow(KeyPair).to receive(:same_exists?).and_return(true)
+    end
 
     context 'when create succees' do
       it 'should increase the total count of database by one' do
