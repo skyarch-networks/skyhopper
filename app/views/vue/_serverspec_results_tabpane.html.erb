@@ -1,32 +1,32 @@
-<!-- component template -->
-<script type="text/x-template" id="grid-template">
+<span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<h3 class="page-header"><%= t 'serverspecs.serverspecs' %> <small><%= t 'serverspecs.operation_logs' %></small></h3>
+<div class="col-sm-12">
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form><hr>
+  </div>
   <table class="table table-hover ssp">
     <tr>
       <th v-repeat="key: columns"
         v-class="active: sortKey === key">
         <text v-html="key | wrap option"></text>
           <span v-on="click:sortBy(key)" v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          <i v-if="key === 'role'"><a href="#" id="role" v-on="click:pop()"
-            data-content="<%= t('users.msg.role')%>"
-            data-placement="right"
-            rel="popover"
-            data-original-title="<%= t('users.role') %>"
-            class="pull-right popover-help">
-            <span class="glyphicon glyphicon-question-sign"></span></a>
-          </i>
+
       </th>
       </tr>
     </thead>
-    <tbody>
-      <tr v-class="infrastructure-row: option === 'infrastructure'" v-repeat="
+    <tbody class="tbody-infra-log">
+      <tr v-repeat="
         entry: data
-        | filterBy filterKey in 'email[1]'
+        | filterBy filterKey
         | orderBy sortKey reversed[sortKey]
         | paginate">
         <td v-repeat="key: columns">
-          <text id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
         </td>
       </tr>
+      <td id="empty_results" style="display: none;"></td>
     </tbody>
   </table>
   <nav v-if="data.length >= 10">
@@ -36,22 +36,10 @@
       <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
     </ul>
   </nav>
-</script>
-
-<!-- demo root element -->
-
-<div id="indexElement">
-  <div class="input-group">
-    <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'users.search' %>">
-    <hr>
-  </div>
-  <demo-grid
-    data="{{gridData}}"
-    columns="{{gridColumns}}"
-    filter-key="{{searchQuery}}">
-  </demo-grid>
 </div>
 
-<div id="empty" style="display: none;"></div>
-<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
-<hr>
+<div class="col-md-12 col-sm-12">
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-arrow-left"></span> <%= t 'helpers.links.back' %></button>
+  </div>
+</div>
