@@ -37,3 +37,9 @@
     </ul>
   </nav>
 </div>
+
+<div class="col-md-12 col-sm-12">
+  <div v-if="!loading" class="form-actions-top">
+    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-arrow-left"></span> <%= t 'helpers.links.back' %></button>
+  </div>
+</div>
