@@ -236,10 +236,10 @@ en:
     global:            'Global'
     individual:        'Infrastructure Individual'
     select_serverspec: 'Select Serverspecs'
-    created_at:	       'at'
+    created_at:        'at'
     operation_logs:    'Operation Logs'
-    run:	       'Run Serverspecs'
-    results:	       'Serverspec Results'
+    run:               'Run Serverspecs'
+    results:           'Serverspec Results'
     btn:
       add:    'Add Serverspec'
       create: 'Create Serverspec'
