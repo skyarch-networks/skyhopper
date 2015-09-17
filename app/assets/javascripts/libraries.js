@@ -19,3 +19,6 @@
 //= require vue
 //= require lodash
 //= require ZeroClipboard
+//= require microplugin
+//= require sifter
+//= require selectize

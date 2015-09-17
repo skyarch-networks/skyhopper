@@ -17,7 +17,6 @@
 //= require models/resource
 //= require models/snapshot
 
-
 (function () {
   'use strict';
 
@@ -36,7 +35,6 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
-
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {
@@ -1889,6 +1887,10 @@
 // ================================================================
   $(document).ready(function(){
     index();
+    $('#infrastructure_region').selectize({
+      create: false,
+      sortField: 'text'
+    });
   });
 
 
