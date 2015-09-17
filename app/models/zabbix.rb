@@ -424,7 +424,7 @@ class Zabbix
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
-      time = Time.at(history["clock"].to_i)
+      time = Time.zone.at(history["clock"].to_i)
       chart_data.push([time.strftime("%H:%M"), history["value"].to_f])
     end
     return chart_data
@@ -456,7 +456,7 @@ class Zabbix
 
     # フォーマッティング
     problems.each do |p|
-      time = Time.at(p["lastchange"].to_i)
+      time = Time.zone.at(p["lastchange"].to_i)
       p["hosts"] = p["hosts"].first["hostid"]
       p["lastchange"] = time.strftime("%Y-%m-%d %H:%M:%S")
       hostname = get_host_name(p["hosts"])

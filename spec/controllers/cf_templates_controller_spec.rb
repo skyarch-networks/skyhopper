@@ -29,7 +29,7 @@ describe CfTemplatesController, :type => :controller do
     end
 
     context 'format html' do
-      let(:global_jsons){ klass.global.page(1).per(10) }
+      let(:global_jsons){ klass.global.page(1) }
 
       it 'should assign @global_jsons' do
         get :index, format: 'html'

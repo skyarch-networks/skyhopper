@@ -20,7 +20,7 @@
     <tbody>
       <tr v-class="infrastructure-row: option === 'infrastructure'" v-repeat="
         entry: data
-        | filterBy filterKey
+        | filterBy filterKey in 'email[1]'
         | orderBy sortKey reversed[sortKey]
         | paginate">
         <td v-repeat="key: columns">
@@ -42,8 +42,8 @@
 
 <div id="indexElement">
   <div class="input-group">
-      <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-      <hr>
+    <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'users.search' %>">
+    <hr>
   </div>
   <demo-grid
     data="{{gridData}}"

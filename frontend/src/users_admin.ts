@@ -5,6 +5,7 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+//= require user_index
 
 /// <reference path="../declares.d.ts" />
 
@@ -13,8 +14,10 @@ namespace UsersAdmin {
   ajax.add_collection('sync_zabbix', 'PUT');
 
   function highlight_user_row(selected_user: JQuery): void {
-    $(".user-row").removeClass("info");
-    selected_user.addClass("info");
+    selected_user.removeClass("info");
+    const tr = selected_user.closest('tr');
+    $('tr.info').removeClass('info');
+    tr.addClass('info');
   }
 
   function sync_zabbix(btn: JQuery): void {
@@ -202,7 +205,7 @@ namespace UsersAdmin {
 
   $(document).on('click', '.edit-user', function (e) {
     e.preventDefault();
-    highlight_user_row($(this).parent().parent());
+    highlight_user_row($(this));
     const user_id = $(this).attr('user-id');
     show_edit(parseInt(user_id));
   });

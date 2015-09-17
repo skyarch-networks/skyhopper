@@ -11,6 +11,8 @@ module.exports = function(value, option){
     return render_dish(value);
   }else if (option[0] === 'cf_template') {
     return render_cf_templates(value);
+  }else if (option[0] === 'user_admin') {
+    return render_user_admin(value);
   }else{
     return value;
   }
@@ -93,6 +95,20 @@ function render_cf_templates(value){
     return t ('cf_templates.subject');
   }else if (value === 'details') {
     return t ('cf_templates.details');
+  }else if (value === 'id') {
+    return t ('common.actions');
+  }else{
+    return value;
+  }
+}
+
+function render_user_admin(value){
+  if (value === 'role'){
+    return t('users.role');
+  }else if (value === 'email') {
+    return t('users.email');
+  }else if (value === 'last_sign_in_at') {
+    return t('users.last_signed_in_at');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{

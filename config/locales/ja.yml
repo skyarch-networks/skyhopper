@@ -41,6 +41,7 @@ ja:
       lang:            '言語'
       previous:        '前へ'
       next:            '次へ'
+      delete:	       '削除します'
     msg:
       loading:       ' 読み込み中...'
       empty:         '%{name}がありません'
@@ -380,6 +381,7 @@ ja:
     use_start_mfa:     'MFA の使用を開始する'
     use_stop_mfa:      'MFA の使用を停止する'
     mfa_secret:        'MFA の秘密鍵'
+    search:            'メールアドレスで検索'
     create_new_user:   '新規ユーザーの作成'
     btn:
       add: '新規ユーザー'
