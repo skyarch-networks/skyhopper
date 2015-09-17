@@ -1417,7 +1417,7 @@
       var temp_id = null;
       var serverspecs = [];
       self.ec2.results_serverspec().done(function (data) {
-        console.log(data);
+          console.log(data);
         self.data = data.map(function (item) {
           var last_log = (item.created_at ? new Date(item.created_at) : '');
             return {
@@ -1443,7 +1443,7 @@
         this.columns.forEach(function (key) {
             self.reversed.$add(key, false);
          });
-    }
+    },
   });
 
   Vue.component('serverspec-tabpane', {

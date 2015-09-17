@@ -204,7 +204,7 @@ function render_serverspecs_results(value, key){
         ret = "<span class='label label-danger'>"+value+"</span>";
         break;
       case 'pending':
-        ret = "<span class='label label-info'>"+value+"</span>";
+        ret = "<span class='label label-warning'>"+value+"</span>";
         break;
     }
     return ret;
@@ -223,14 +223,17 @@ function render_serverspecs_results(value, key){
       return "<span class='text text-success'> serverspec for "+value[1]+" is successfully finished. </span>";
     }else{
       var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle btn btn-xs btn-link popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
+      var body = '';
+      if(value[2]){
+          body = "<div class='col-sm-12'>" +
+          "<td class='hidden-row'>" +
+          "  <div class='accordion-body collapse' id='logbody-"+value[0]+"'>" +
+          "    <pre style='margin: 5px'>"+value[2]+"</pre>" +
+          "  </div>" +
+          "</td>" +
+        "</div>";
+      }
 
-      var body = "<div class='col-sm-12'>" +
-        "<td class='hidden-row'>" +
-        "  <div class='accordion-body collapse' id='logbody-"+value[0]+"'>" +
-        "    <pre style='margin: 5px'>"+value[2]+"</pre>" +
-        "  </div>" +
-        "</td>" +
-      "</div>";
       return head+body;
     }
   }else{

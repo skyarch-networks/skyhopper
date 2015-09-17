@@ -104,7 +104,7 @@ class ServerspecsController < ApplicationController
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @serverspec_results = resource.serverspec_results
+    @serverspec_results = resource.serverspec_results.order("created_at desc")
 
     respond_to do |format|
       format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at],
