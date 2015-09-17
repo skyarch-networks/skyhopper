@@ -172,11 +172,12 @@ module Node::Attribute
           next attr_[key_] = {}
         end
 
-        attr_[key_] = if self.available_attributes[key.to_sym][:type] == Array
-          [val]
-        else
-          val
-        end
+        attr_[key_] =
+          if self.available_attributes[key.to_sym][:type] == Array
+            [val]
+          else
+            val
+          end
       end
 
       result.deep_merge!(attr)

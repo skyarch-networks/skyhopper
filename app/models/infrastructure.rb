@@ -69,15 +69,16 @@ class Infrastructure < ActiveRecord::Base
     # @param [Hash{Symbol => String}] infra_params Same as Infrastructure#create
     # @return [Hash]
     def create_ec2_private_key(infra_params)
-      infra_params[:ec2_private_key_id] = if infra_params[:keypair_name].present? && infra_params[:keypair_value].present?
-        ec2key = Ec2PrivateKey.create!(
-          name:  infra_params[:keypair_name],
-          value: infra_params[:keypair_value]
-        )
-        ec2key.id
-      else
-        nil
-      end
+      infra_params[:ec2_private_key_id] =
+        if infra_params[:keypair_name].present? && infra_params[:keypair_value].present?
+          ec2key = Ec2PrivateKey.create!(
+            name:  infra_params[:keypair_name],
+            value: infra_params[:keypair_value]
+          )
+          ec2key.id
+        else
+          nil
+        end
       infra_params.delete(:keypair_name)
       infra_params.delete(:keypair_value)
 

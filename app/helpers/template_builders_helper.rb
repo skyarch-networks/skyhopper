@@ -26,11 +26,12 @@ module TemplateBuildersHelper
   #### Accordion
   def accordion_group(property, accordion_name: nil)
     return nil unless accordion_name
-    extra_klass = if property.required?
-      "panel-danger"
-    else
-      "panel-default"
-    end
+    extra_klass =
+      if property.required?
+        "panel-danger"
+      else
+        "panel-default"
+      end
 
     return <<-EOS
     <div class="panel #{extra_klass}">
@@ -180,17 +181,18 @@ module TemplateBuildersHelper
   def property_array(property)
     table_cols = []
 
-    hash_data_validator = if property.data_validator == String
-      # StringのArray
-      table_cols.push("values")
-      nil
-    else
-      # HashのArray
-      property.data_validator.data_validator.each do |key|
-        table_cols.push(key)
+    hash_data_validator =
+      if property.data_validator == String
+        # StringのArray
+        table_cols.push("values")
+        nil
+      else
+        # HashのArray
+        property.data_validator.data_validator.each do |key|
+          table_cols.push(key)
+        end
+        property.data_validator.data_validator
       end
-      property.data_validator.data_validator
-    end
 
     form_parts = "<div>#{form_array_items(property, hash_data_validator: hash_data_validator)}</div>"
     form_parts << <<-EOF

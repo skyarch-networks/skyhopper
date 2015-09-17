@@ -166,9 +166,9 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#edit' do
-      before do
-        get :edit, id: infra.id
-      end
+    before do
+      get :edit, id: infra.id
+    end
 
     context 'when cant edit' do
       it 'assigns @infrastructure' do
