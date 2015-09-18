@@ -399,7 +399,7 @@ class Zabbix
   #Item_keyはItemの情報を得る為に使われる
   #返される値はGoogle Chart用のフォーマットに変更された
   #アイテムのヒストリー情報
-  def get_history(physical_id, item_key)
+  def get_history(physical_id, item_key, date_range)
     item_info = get_item_info(physical_id, item_key, "filter")
 
     # データによってオブジェクトのタイプが違う
@@ -412,20 +412,31 @@ class Zabbix
         0
       end
 
+    max =
+      case date_range
+      when nil
+        30
+      else
+
+      end
+
     history_all =  @sky_zabbix.history.get(
       output: "extend",
       history: type,
       itemids: item_info.first["itemid"],
       sortfield: 'clock',
-      sortorder: 'DESC',
-      limit: 30
+      sortorder: 'ASC',
+      time_from: '1441085400',
+      time_till: '1442554200',
+      limit: max
     )
 
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
       time = Time.zone.at(history["clock"].to_i)
-      chart_data.push([time.strftime("%H:%M"), history["value"].to_f])
+      puts time
+      chart_data.push([time, history["value"].to_f])
     end
     return chart_data
   end

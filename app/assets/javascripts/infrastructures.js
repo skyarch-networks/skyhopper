@@ -322,13 +322,23 @@
       },
       drawChart: function (data, physical_id, title_name, columns) {
         var resizable_data = new google.visualization.DataTable();
-
-        resizable_data.addColumn('string', 'clock');
-        _.forEach(columns, function (col) {
-          resizable_data.addColumn('number', col);
-        });
-        resizable_data.addRows(data);
-
+        if (columns.length === 1) {
+          resizable_data.addColumn('datetime', 'DateTime');
+          _.forEach(columns, function (col) {
+            resizable_data.addColumn('number', col);
+          });
+          var zabbix_data = data.map(function (obj, i){
+            var format_date = new Date(obj[0]);
+            return [format_date,obj[1]];
+          });
+          resizable_data.addRows(zabbix_data);
+        }else {
+          resizable_data.addColumn('string', 'clock');
+          _.forEach(columns, function (col) {
+            resizable_data.addColumn('number', col);
+          });
+          resizable_data.addRows(data);
+        }
         var resizable_options = {
           title: physical_id + " " + title_name,
           titleTextStyle: {
@@ -352,6 +362,13 @@
               min: 0
             },
           },
+          legend: {
+      			position:'none'
+      		},
+      		explorer: {
+            axis: 'horizontal'
+            // axis: 'vertical'
+      		}
         };
         if (columns.length === 1) {
           resizable_options.legend = {position: 'none'};
