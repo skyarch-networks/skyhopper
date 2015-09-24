@@ -201,7 +201,7 @@ describe InfrastructuresController, type: :controller do
     let(:infra_key_value){ec2_key.value}
     let(:create_request){post :create, infrastructure: infra_hash}
     before do
-      allow(KeyPair).to receive(:same_exists?).and_return(true)
+      allow(KeyPair).to receive(:validate!)
     end
 
     context 'when create succees' do
