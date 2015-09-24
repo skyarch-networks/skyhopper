@@ -64,5 +64,10 @@ class Serverspec < ActiveRecord::Base
         description:       description,
       )
     end
+
+    # @return [Array<Symbol>]
+    def resource_types
+
+    end
   end
 end
