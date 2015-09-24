@@ -305,7 +305,11 @@ class NodesController < ApplicationController
       return
     end
 
-    r.status.cook.success!
+    if whyrun
+      r.status.cook.un_executed!
+    else
+      r.status.cook.success!
+    end
     infra_logger_success("Cook#{mode_string} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
 
