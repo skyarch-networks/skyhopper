@@ -37,6 +37,8 @@ end
 # Use unicorn as the app server
 gem 'unicorn-rails'
 
+gem 'ace-rails-ap'
+
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'

@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe CfTemplatesController, :type => :controller do
+describe CfTemplatesController, type: :controller do
   login_user
   let(:klass){CfTemplate}
   let(:infra){ create(:infrastructure) }
@@ -29,7 +29,7 @@ describe CfTemplatesController, :type => :controller do
     end
 
     context 'format html' do
-      let(:global_jsons){ klass.global.page(1).per(10) }
+      let(:global_jsons){ klass.global.page(1) }
 
       it 'should assign @global_jsons' do
         get :index, format: 'html'
@@ -141,9 +141,9 @@ describe CfTemplatesController, :type => :controller do
         name: 'foo',
         details: 'hogehoge',
         value: value,
-        params: nil
+        params: nil,
       },
-      infrastructure_id: infra.id
+      infrastructure_id: infra.id,
     }}
     let(:value){JSON[{Parameters: {}}]}
     let(:req){post :insert_cf_params, http_params}

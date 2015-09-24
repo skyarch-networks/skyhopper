@@ -60,7 +60,7 @@ class SnapshotsController < ApplicationController
 
     if ss.enabled?
       PeriodicSnapshotJob.set(
-        wait_until: ss.next_run
+        wait_until: ss.next_run,
       ).perform_later(volume_id, physical_id, @infra, current_user.id)
     end
 

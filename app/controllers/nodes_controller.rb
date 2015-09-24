@@ -214,7 +214,7 @@ class NodesController < ApplicationController
 
     if ys.enabled?
       PeriodicYumJob.set(
-        wait_until: ys.next_run
+        wait_until: ys.next_run,
       ).perform_later(physical_id, @infra, current_user.id)
     end
 

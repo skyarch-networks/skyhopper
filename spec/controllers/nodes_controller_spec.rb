@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe NodesController, :type => :controller do
+describe NodesController, type: :controller do
   login_user
   let(:infra){create(:infrastructure)}
   let(:physical_id){attributes_for(:resource)[:physical_id]}
@@ -270,7 +270,7 @@ describe NodesController, :type => :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param
+          dish_id: dish.id.to_param,
         ).and_return({status: false, message: msg})
         req
       end
@@ -288,7 +288,7 @@ describe NodesController, :type => :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param
+          dish_id: dish.id.to_param,
         ).and_return({status: true})
         req
       end

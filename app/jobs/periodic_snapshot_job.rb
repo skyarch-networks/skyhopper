@@ -14,7 +14,7 @@ class PeriodicSnapshotJob < ActiveJob::Base
 
     if schedule.enabled
       PeriodicSnapshotJob.set(
-        wait_until: schedule.next_run
+        wait_until: schedule.next_run,
       ).perform_later(volume_id, physical_id, infra, user_id)
     end
 
@@ -40,6 +40,6 @@ class PeriodicSnapshotJob < ActiveJob::Base
       infrastructure_id: infra_id, user_id: user_id, status: status,
       details: details
     )
-    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.now.to_s})
+    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
   end
 end

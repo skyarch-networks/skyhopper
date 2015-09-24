@@ -197,8 +197,8 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: select_serverspec()">Run <%= t('serverspecs.serverspec') %></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: serverspec_logs()">Serverspec Logs</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: select_serverspec()"><%= t('serverspecs.run') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: serverspec_results()"><%= t('serverspecs.results') %></a></li>
         </ul>
       </div>
       <div class="pull-right">

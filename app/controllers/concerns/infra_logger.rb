@@ -15,7 +15,7 @@ module Concerns::InfraLogger
     InfrastructureLog.success(
       infrastructure_id: infrastructure_id,
       details:           details,
-      user_id:           user_id
+      user_id:           user_id,
     )
   end
 
@@ -25,7 +25,7 @@ module Concerns::InfraLogger
     InfrastructureLog.fail(
       infrastructure_id: infrastructure_id,
       details:           details,
-      user_id:           user_id
+      user_id:           user_id,
     )
   end
 
@@ -65,19 +65,17 @@ module Concerns::InfraLogger
 
     serverspec_names << 'auto_generated' if selected_auto_generated
 
-    serverspec_names.concat(
-      selected_serverspecs.map do |spec|
-        screen_name = spec.name
-        screen_name << " (#{spec.description})" if spec.description.present?
-        screen_name
-      end
-    )
+    serverspec_names.concat(selected_serverspecs.map{|spec|
+      screen_name = spec.name
+      screen_name << " (#{spec.description})" if spec.description.present?
+      screen_name
+    })
 
     infra_logger_success("serverspec for #{physical_id} is started. serverspecs: \n#{serverspec_names.join(",\n")}")
   end
 
   def ws_send(details, status)
     ws = WSConnector.new('notifications', current_user.ws_key)
-    ws.push_as_json({message: details.truncate(100), status: status, timestamp: Time.now.to_s})
+    ws.push_as_json({message: details.truncate(100), status: status, timestamp: Time.zone.now.to_s})
   end
 end

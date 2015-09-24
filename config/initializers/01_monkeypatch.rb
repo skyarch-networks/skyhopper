@@ -1,14 +1,14 @@
 class Hash
   def symbolize_keys_recursive
     result = self.symbolize_keys
-    result.each_pair do |key, val|
+    result.each_pair do |_, val|
       val.symbolize_keys! if val.is_a?(Hash)
     end
   end
 
   def recursive_freeze
     freeze
-    self.each do |key, val|
+    self.each do |_, val|
       if defined? val.recursive_freeze
         val.recursive_freeze
       else
