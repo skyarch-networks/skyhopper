@@ -35,6 +35,10 @@
   var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
 
+  //browserify modules for Vue directives
+  Vue.use(require('./modules/datepicker'), parseURLParams('lang'));
+  Vue.use(require('./modules/ace'));
+
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {
@@ -134,30 +138,6 @@
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
 
-  });
-
-
-  Vue.directive("ace", {
-      twoWay: true,
-      bind: function () {
-          console.log(this.el);
-          this.editor = ace.edit(this.el);
-          this.editor.setTheme("ace/theme/github");
-          this.editor.getSession().setMode("ace/mode/json");
-          this.editor.getSession().setUseWrapMode(true);
-          this.silent = false;
-          this.handler = function () {
-              if (!this.silent) {
-                  this.set(this.editor.getSession().getValue(), true);
-              }
-          }.bind(this);
-          this.editor.on("change", this.handler);
-      },
-      update: function (value, oldValue) {
-          this.silent = true;
-          this.editor.getSession().setValue(value);
-          this.silent = false;
-      }
   });
 
   Vue.component("insert-cf-params", {
@@ -285,34 +265,7 @@
     },
   });
 
-  Vue.directive('datepicker', {
-    twoWay: true,
-    bind: function () {
-      var vm = this.vm;
-      var key = this.expression;
-      var loc = parseURLParams('lang');
-      var dp = $(this.el).datetimepicker({
-        locale: loc,
-        sideBySide: true,
-      });
 
-      dp.on("dp.change", function (e) {
-
-         vm.$set(key, moment(e.date._d).unix());
-         var current = new Date();
-         dp.data("DateTimePicker").maxDate(current);
-      });
-      // dp.change(date) {
-      //   vm.$set(key, date);
-      // }
-    },
-    update: function (val) {
-      $(this.el).datetimepicker('setDate', val);
-      var vm = this.vm;
-      var key = this.expression;
-      vm.$set(key, val);
-    }
-  });
 
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
