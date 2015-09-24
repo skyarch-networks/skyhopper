@@ -145,10 +145,11 @@ class ServerspecsController < ApplicationController
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
-    ServerspecResult.create(resource_id: resource.id,
-      status: resp[:status_text],
-      message: resp[:message],
-      serverspec_ids: serverspec_ids
+    ServerspecResult.create(
+      resource_id:    resource.id,
+      status:         resp[:status_text],
+      message:        resp[:message],
+      serverspec_ids: serverspec_ids,
     )
     render text: render_msg, status: 200 and return
   end
@@ -183,7 +184,7 @@ class ServerspecsController < ApplicationController
 
     if ss.enabled?
       PeriodicServerspecJob.set(
-        wait_until: ss.next_run
+        wait_until: ss.next_run,
       ).perform_later(physical_id, infra_id, current_user.id)
     end
 

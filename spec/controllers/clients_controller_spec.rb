@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe ClientsController, :type => :controller do
+describe ClientsController, type: :controller do
   login_user
   let(:client_codename) { attributes_for(:client, code: 'hoge', name: 'fuga') }
 

@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Node, :type => :model do
+describe Node, type: :model do
 
   describe ".bootstrap" do
     before do

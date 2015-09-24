@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe ServerspecsController, :type => :controller do
+describe ServerspecsController, type: :controller do
   login_user
   let(:infrastructure){create(:infrastructure)}
   let(:svrsp_name){'name'}
@@ -304,7 +304,7 @@ describe ServerspecsController, :type => :controller do
       it 'should call run_serverspec with auto generated flag true' do
         expect(ServerspecJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true,
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true
         )
         req
       end
@@ -314,7 +314,7 @@ describe ServerspecsController, :type => :controller do
       it 'should call run_serverspec with auto generated flag false' do
         expect(ServerspecJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false,
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false
         )
         req
       end

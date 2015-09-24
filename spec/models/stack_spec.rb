@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Stack, :type => :model do
+describe Stack, type: :model do
   let(:stack_name){'StackName'}
   let(:infra){build_stubbed(:infrastructure, stack_name: stack_name)}
   subject {Stack.new(infra)}
@@ -111,7 +111,7 @@ describe Stack, :type => :model do
         'ec2',
         resource_type: 'AWS::EC2::Instance',
         physical_resource_id:   'i-piyopoyo',
-      )
+      ),
     ]}
     before do
       allow(subject).to receive(:instances_for_resources).and_return(instances)
