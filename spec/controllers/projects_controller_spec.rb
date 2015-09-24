@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe ProjectsController, :type => :controller do
+describe ProjectsController, type: :controller do
   login_user
 
   let(:client){create(:client)}

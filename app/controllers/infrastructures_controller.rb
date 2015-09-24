@@ -91,12 +91,14 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
+      # rubocop:disable Lint/HandleExceptions
     rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
+      # rubocop:enable Lint/HandleExceptions
     end
 
     render json: {
       stack_status: stack.status_and_type,
-      stack_events: events
+      stack_events: events,
     } and return
   end
 
@@ -104,7 +106,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id
+      project_id: project_id,
     )
     @regions = @@regions
   end

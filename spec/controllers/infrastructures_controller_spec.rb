@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe InfrastructuresController, :type => :controller do
+describe InfrastructuresController, type: :controller do
   login_user
 
   let(:infra){create(:infrastructure)}
@@ -166,9 +166,9 @@ describe InfrastructuresController, :type => :controller do
   end
 
   describe '#edit' do
-      before do
-        get :edit, id: infra.id
-      end
+    before do
+      get :edit, id: infra.id
+    end
 
     context 'when cant edit' do
       it 'assigns @infrastructure' do
@@ -439,7 +439,7 @@ describe InfrastructuresController, :type => :controller do
         :change_rds_scale,
         physical_id:   'hogehoge',
         id:            infra.id,
-        instance_type: type
+        instance_type: type,
       )
     }
 
