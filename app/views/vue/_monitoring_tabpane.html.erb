@@ -52,11 +52,39 @@
         </div>
       </div>
 
+      <div v-if="show_range">
+          <div class='col-md-3'>
+              <div class="form-group">
+                  <div class='input-group date' id='datetimepicker6'>
+                      <span class="input-group-addon">
+                          <span>From: </span>
+                      </span>
+                      <input v-datepicker="dt" type='text' class="form-control" placeholder="Start"/>
+                  </div>
+              </div>
+          </div>
+          <div class='col-md-4'>
+              <div class="form-group">
+                  <div class='input-group date' id='datetimepicker7'>
+                      <span class="input-group-addon">
+                          <span>To: </span>
+                      </span>
+                      <input v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                      <span class="input-group-addon">
+                          <button v-on="click: showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
+                      </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+
       <div class="col-md-10 col-sm-9">
         <div-loader v-if="loading_graph"></div-loader>
         <div v-if="!loading_graph">
+
           <%# Graph %>
           <pre class="alert alert-warning h5" v-if="error_message">{{error_message}}</pre>
+
           <div id="graph" v-if="!showing_url" style="height: 300px">
           </div>
           <%# URL %>
@@ -123,5 +151,3 @@
       </table>
     </div>
   </div>
-
-

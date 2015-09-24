@@ -412,30 +412,34 @@ class Zabbix
         0
       end
 
-    max =
-      case date_range
+    case date_range
       when nil
-        30
+        history_all =  @sky_zabbix.history.get(
+          output: "extend",
+          history: type,
+          itemids: item_info.first["itemid"],
+          sortfield: 'clock',
+          sortorder: 'ASC',
+          limit: 30,
+        )
       else
+        history_all =  @sky_zabbix.history.get(
+          output: "extend",
+          history: type,
+          itemids: item_info.first["itemid"],
+          sortfield: 'clock',
+          sortorder: 'ASC',
+          time_from: date_range[0],
+          time_till: date_range[1],
+        )
+    end
 
-      end
 
-    history_all =  @sky_zabbix.history.get(
-      output: "extend",
-      history: type,
-      itemids: item_info.first["itemid"],
-      sortfield: 'clock',
-      sortorder: 'ASC',
-      time_from: '1441085400',
-      time_till: '1442554200',
-      limit: max
-    )
 
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
       time = Time.zone.at(history["clock"].to_i)
-      puts time
       chart_data.push([time, history["value"].to_f])
     end
     return chart_data

@@ -263,6 +263,35 @@
     },
   });
 
+  Vue.directive('datepicker', {
+    twoWay: true,
+    bind: function () {
+      var vm = this.vm;
+      var key = this.expression;
+      var loc = parseURLParams('lang');
+      var dp = $(this.el).datetimepicker({
+        locale: loc,
+        sideBySide: true,
+      });
+
+      dp.on("dp.change", function (e) {
+
+         vm.$set(key, moment(e.date._d).unix());
+         var current = new Date();
+         dp.data("DateTimePicker").maxDate(current);
+      });
+      // dp.change(date) {
+      //   vm.$set(key, date);
+      // }
+    },
+    update: function (val) {
+      $(this.el).datetimepicker('setDate', val);
+      var vm = this.vm;
+      var key = this.expression;
+      vm.$set(key, val);
+    }
+  });
+
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
     template: "#monitoring-tabpane-template",
@@ -282,6 +311,11 @@
       loading: false,
       page: 0,
       dispItemSize: 10,
+      show_range: false,
+      dt: null,
+      dt2: null,
+      physical_id: null,
+      item_id: null,
     };},
     methods: {
       show_problems: function () {
@@ -318,6 +352,23 @@
           self.error_message = null;
           self.loading_graph = false;
           self.showing_url = true;
+        }).fail(alert_and_show_infra);
+      },
+      showDate: function ()  {
+        var self = this;
+        self.loading_graph = true;
+        var dates = [];
+        dates.push(this.dt, this.dt2);
+        this.monitoring.show_zabbix_graph(self.physical_id, self.item_key, dates).done(function (data) {
+          self.loading_graph = false;
+          Vue.nextTick(function () {
+            if (data.length === 0) {
+              self.error_message = t('monitoring.msg.no_data');
+            } else {
+              self.error_message = null;
+              self.drawChart(data, self.physical_id, self.item_key, ['value']);
+            }
+          });
         }).fail(alert_and_show_infra);
       },
       drawChart: function (data, physical_id, title_name, columns) {
@@ -386,8 +437,11 @@
         var self = this;
         self.showing_url = false;
         self.loading_graph = true;
+        self.physical_id = physical_id;
+        self.item_key = item_key;
         this.monitoring.show_zabbix_graph(physical_id, item_key).done(function (data) {
           self.loading_graph = false;
+          self.show_range = true;
           Vue.nextTick(function () {
             if (data.length === 0) {
               self.error_message = t('monitoring.msg.no_data');
@@ -401,6 +455,7 @@
       show_cloudwatch_graph: function (physical_id) {
         var self = this;
         self.showing_url = false;
+        self.show_range = false;
         self.loading_graph = true;
         this.monitoring.show_cloudwatch_graph(physical_id).done(function (data) {
           self.error_message = null;
@@ -1984,7 +2039,6 @@
   $(document).ready(function(){
     index();
   });
-
 
   $(document).on('click', '.show-infra', function (e) {
     e.preventDefault();

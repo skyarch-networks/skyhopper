@@ -19,3 +19,5 @@
 //= require vue
 //= require lodash
 //= require ZeroClipboard
+//= require moment-with-locales.min
+//= require bootstrap-datetimepicker
