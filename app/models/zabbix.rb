@@ -14,6 +14,7 @@ class Zabbix
   DefaultUsergroupName = "No access to the frontend"
   MasterUsergroupName = "master"
 
+  class ZabbixError < ::StandardError; end
 
   # @param [String] username
   # @param [String] password
@@ -412,19 +413,16 @@ class Zabbix
         0
       end
 
-      case item_info
-      when []
-        raise item_key.to_s + I18n.t('monitoring.msg.not_set')
-      else
-        history_all =  @sky_zabbix.history.get(
-          output: "extend",
-          history: type,
-          itemids: item_info.first["itemid"],
-          sortfield: 'clock',
-          sortorder: 'DESC',
-          limit: 30,
-        )
-      end
+      raise ZabbixError , item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
+
+      history_all =  @sky_zabbix.history.get(
+        output: "extend",
+        history: type,
+        itemids: item_info.first["itemid"],
+        sortfield: 'clock',
+        sortorder: 'DESC',
+        limit: 30,
+      )
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
