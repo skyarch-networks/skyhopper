@@ -112,13 +112,7 @@ class MonitoringsController < ApplicationController
       item_key = item_infos.first["key_"]
     end
 
-
-    begin
-      history_all = z.get_history(physical_id, item_key)
-    rescue SyntaxError, NameError
-        raise item_key.to_s + I18n.t('monitoring.msg.not_set')
-    end
-
+    history_all = z.get_history(physical_id, item_key)
 
     render json: history_all
   end
