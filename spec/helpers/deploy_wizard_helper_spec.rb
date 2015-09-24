@@ -8,5 +8,5 @@
 
 require 'spec_helper'
 
-RSpec.describe DeployWizardHelper, :type => :helper do
+RSpec.describe DeployWizardHelper, type: :helper do
 end

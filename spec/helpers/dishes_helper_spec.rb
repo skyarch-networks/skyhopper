@@ -8,5 +8,5 @@
 
 require 'spec_helper'
 
-describe DishesHelper, :type => :helper do
+describe DishesHelper, type: :helper do
 end

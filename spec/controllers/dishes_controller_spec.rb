@@ -8,7 +8,7 @@
 
 require 'spec_helper'
 
-describe DishesController, :type => :controller do
+describe DishesController, type: :controller do
   login_user
 
   let(:klass){Dish}

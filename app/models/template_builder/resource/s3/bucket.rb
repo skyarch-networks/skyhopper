@@ -9,7 +9,7 @@
 class TemplateBuilder::Resource::S3::Bucket < TemplateBuilder::Resource
   @@properties = [
     TemplateBuilder::Property.new(:AccessControl, String, select: true){access_controls},
-    TemplateBuilder::Property.new(:BucketName, String)
+    TemplateBuilder::Property.new(:BucketName, String),
   ].freeze
 
   class << self

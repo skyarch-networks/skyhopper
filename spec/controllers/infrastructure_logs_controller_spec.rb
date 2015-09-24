@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe InfrastructureLogsController, :type => :controller do
+describe InfrastructureLogsController, type: :controller do
   login_user
 
   describe '#index' do

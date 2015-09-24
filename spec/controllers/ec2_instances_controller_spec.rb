@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Ec2InstancesController, :type => :controller do
+describe Ec2InstancesController, type: :controller do
   login_user
 
   let(:physical_id){'i-fugahoge'}

@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
       code: email,
       access_key: DummyText,
       secret_access_key: DummyText,
-      cloud_provider: CloudProvider.aws
+      cloud_provider: CloudProvider.aws,
     )
     if prj.save
       UserProject.create(user_id: self.id, project_id: prj.id)

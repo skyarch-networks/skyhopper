@@ -8,7 +8,7 @@
 
 require_relative '../../spec_helper'
 
-describe TemplateBuilder::Output, :type => :model do
+describe TemplateBuilder::Output, type: :model do
   let(:klass){TemplateBuilder::Output}
 
   describe '#initialize' do

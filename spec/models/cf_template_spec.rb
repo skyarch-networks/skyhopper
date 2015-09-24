@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe CfTemplate, :type => :model do
+describe CfTemplate, type: :model do
   let(:klass){CfTemplate}
 
   describe 'with validation' do

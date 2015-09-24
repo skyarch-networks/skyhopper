@@ -8,7 +8,7 @@
 
 require_relative '../../spec_helper'
 
-describe TemplateBuilder::Parameter, :type => :model do
+describe TemplateBuilder::Parameter, type: :model do
   let(:string_prop){double(:string_prop, can_parameterize?: true, data_type: String)}
   let(:array_prop) {double(:array_prop,  can_parameterize?: true, data_type: Array)}
   let(:cannt_parameterize_prop){double(:cannt_parameterize_prop, can_parameterize?: false)}

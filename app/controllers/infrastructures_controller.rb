@@ -91,12 +91,14 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
+      # rubocop:disable Lint/HandleExceptions
     rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
+      # rubocop:enable Lint/HandleExceptions
     end
 
     render json: {
       stack_status: stack.status_and_type,
-      stack_events: events
+      stack_events: events,
     } and return
   end
 
@@ -104,7 +106,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id
+      project_id: project_id,
     )
     @regions = @@regions
   end
@@ -271,11 +273,9 @@ class InfrastructuresController < ApplicationController
 
   # raise error if uploaded keypair does not exist
   def keypair_validation
-    p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
+    p = infrastructure_params
 
-    if !KeyPair.same_exists?(p)
-      raise I18n.t('infrastructures.msg.invalid_keypair')
-    end
+    KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
   # redirect to projects#index if specified project does not exist

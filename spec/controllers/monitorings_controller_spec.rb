@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe MonitoringsController, :type => :controller do
+RSpec.describe MonitoringsController, type: :controller do
   login_user
   stubize_zabbix
   run_zabbix_server

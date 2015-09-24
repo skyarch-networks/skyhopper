@@ -22,12 +22,14 @@ module FormHelper
   end
 
   def parts_textarea(klass: nil, placeholder: nil, attributes: nil)
-    placeholder = if placeholder
-      "placeholder=\"#{placeholder}\""
-    else
-      nil
-    end
-    <<-EOS.html_safe
+    placeholder =
+      if placeholder
+        "placeholder=\"#{placeholder}\""
+      else
+        nil
+      end
+
+    return <<-EOS.html_safe
 <textarea class="form-control #{klass}" #{attributes} #{placeholder}><textarea>
     EOS
   end
