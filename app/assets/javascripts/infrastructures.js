@@ -1884,6 +1884,7 @@
           self.columns = ['stack_name','region', 'keypairname', 'id'];
 
        $.ajax({
+           cache: false,
            url:'/infrastructures?&project_id='+id,
            success: function (data) {
              this.pages = data.length;
