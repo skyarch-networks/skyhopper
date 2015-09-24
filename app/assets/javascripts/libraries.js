@@ -19,6 +19,9 @@
 //= require vue
 //= require lodash
 //= require ZeroClipboard
+//= require microplugin
+//= require sifter
+//= require selectize
 //= require ace-rails-ap
 //= require ace/mode-javascript
 //= require ace/mode-json
