@@ -116,9 +116,7 @@ class MonitoringsController < ApplicationController
     begin
       history_all = z.get_history(physical_id, item_key)
       rescue SyntaxError, NameError => boom
-        raise item_key.to_s+ ": was not selected in zabbix Templates. Please select template in the templates tab."
-      rescue StandardError => bang
-        puts "Error running script: " + bang.to_s
+        raise item_key.to_s + I18n.t('monitoring.msg.not_set')
     end
 
 
