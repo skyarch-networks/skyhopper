@@ -22,6 +22,10 @@
     "jquery-ui": "~1.11.4",
     "vue": "~0.12.9",
     "lodash": "~3.9.3",
-    "zeroclipboard": "~2.2.0"
+    "zeroclipboard": "~2.2.0",
+    "selectize": "~0.12.1",
+    "microplugin": "~0.0.3",
+    "sifter": "~0.4.3",
+    "selectize-bootswatch": "5e9042f617"
   }
 }

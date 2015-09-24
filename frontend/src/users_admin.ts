@@ -122,7 +122,7 @@ namespace UsersAdmin {
       $.ajax({
         url: '/projects.json',
         data: {client_id: this.selected_client},
-        datatype: 'json'
+        dataType: 'json',
       }).done((projects: ProjectResp[]) => {
         this.projects = _.map(projects, (project) => {
           const client_name = _.find(this.clients, c => c.value === this.selected_client).text;
