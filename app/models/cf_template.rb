@@ -31,10 +31,10 @@ class CfTemplate < ActiveRecord::Base
   def create_cfparams_set(infrastructure, params_inserted = nil)
     parameters = []
     if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
-      parameters.push({
+      parameters.push(
         parameter_key:   "KeyName",
-        parameter_value: infrastructure.keypairname
-      })
+        parameter_value: infrastructure.keypairname,
+      )
     end
 
     if params_inserted

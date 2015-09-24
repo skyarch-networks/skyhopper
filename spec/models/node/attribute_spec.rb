@@ -49,10 +49,10 @@ describe Node::Attribute do
         },
         'zabbix' => {
           'agent' => {
-            'servers' => ['example.com']
-          }
-        }
-      })
+            'servers' => ['example.com'],
+          },
+        },
+      },)
     end
   end
 end

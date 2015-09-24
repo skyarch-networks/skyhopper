@@ -171,6 +171,7 @@ en:
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
+      invalid_keypair:		   'Invalid key pair! Please check the keypair file.'
 
 
   nodes:

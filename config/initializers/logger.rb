@@ -9,7 +9,7 @@ class CoolLogFormater
     'ERROR' => :red,
     'WARN'  => :yellow,
     'INFO'  => :green,
-    'DEBUG' => :blue
+    'DEBUG' => :blue,
   }
 
   @@highline = HighLine.new

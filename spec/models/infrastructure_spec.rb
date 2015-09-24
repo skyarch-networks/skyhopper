@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Infrastructure, :type => :model do
+describe Infrastructure, type: :model do
   let(:klass){Infrastructure}
   let(:ec2key){build(:ec2_private_key)}
 
@@ -171,7 +171,7 @@ describe Infrastructure, :type => :model do
       expect(::Aws::EC2::Client).to receive(:new).with(
         access_key_id: subject.access_key,
         secret_access_key: subject.secret_access_key,
-        region: subject.region
+        region: subject.region,
       ).and_return(result)
 
       expect(subject.ec2).to eq result
