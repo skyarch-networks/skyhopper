@@ -23,9 +23,9 @@
     "vue": "~0.12.9",
     "lodash": "~3.9.3",
     "zeroclipboard": "~2.2.0",
-    "selectize": "",
-    "microplugin": "",
-    "sifter": "",
-    "selectize-bootswatch": ""
+    "selectize": "~0.12.1",
+    "microplugin": "~0.0.3",
+    "sifter": "~0.4.3",
+    "selectize-bootswatch": "5e9042f617"
   }
 }
