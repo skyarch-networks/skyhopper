@@ -72,6 +72,7 @@ Vue.component('demo-grid', {
       self.columns = ['name','description', 'id'];
 
      $.ajax({
+         cache: false,
          url:'serverspecs?lang='+self.lang,
          success: function (data) {
            this.pages = data.length;

@@ -111,7 +111,8 @@
         required: true,
       },
     },
-    data: function(){return{selected_cft_id: null};},
+    data: function(){
+      return{selected_cft_id: null,};},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
@@ -122,6 +123,7 @@
         self.result.name   = cft.name;
         self.result.detail = cft.detail;
         self.result.value  = cft.value;
+
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
@@ -132,9 +134,31 @@
     computed: {
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
-    created: function () {
-      console.log(this);
-    }
+
+  });
+
+
+  Vue.directive("ace", {
+      twoWay: true,
+      bind: function () {
+          console.log(this.el);
+          this.editor = ace.edit(this.el);
+          this.editor.setTheme("ace/theme/github");
+          this.editor.getSession().setMode("ace/mode/json");
+          this.editor.getSession().setUseWrapMode(true);
+          this.silent = false;
+          this.handler = function () {
+              if (!this.silent) {
+                  this.set(this.editor.getSession().getValue(), true);
+              }
+          }.bind(this);
+          this.editor.on("change", this.handler);
+      },
+      update: function (value, oldValue) {
+          this.silent = true;
+          this.editor.getSession().setValue(value);
+          this.silent = false;
+      }
   });
 
   Vue.component("insert-cf-params", {
@@ -1789,6 +1813,7 @@
           self.columns = ['stack_name','region', 'keypairname', 'id'];
 
        $.ajax({
+           cache: false,
            url:'/infrastructures?&project_id='+id,
            success: function (data) {
              this.pages = data.length;

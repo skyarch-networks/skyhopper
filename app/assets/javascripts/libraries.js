@@ -19,3 +19,6 @@
 //= require vue
 //= require lodash
 //= require ZeroClipboard
+//= require ace-rails-ap
+//= require ace/mode-javascript
+//= require ace/mode-json
