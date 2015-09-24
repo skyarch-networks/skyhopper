@@ -67,7 +67,17 @@ class Serverspec < ActiveRecord::Base
 
     # @return [Array<Symbol>]
     def resource_types
+      ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+      opts = %w[-rjson -rserverspec -e]
+      code = <<-EOS
+        t = Serverspec::Type.constants
+        t.delete(:Base)
+        print JSON.generate(t)
+      EOS
 
+      return IO.popen([ruby_cmd, *opts, code]) do |io|
+        JSON.parse(io.read)
+      end
     end
   end
 end
