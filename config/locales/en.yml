@@ -171,6 +171,7 @@ en:
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
+      invalid_keypair:		   'Invalid key pair! Please check the keypair file.'
 
 
   nodes:
@@ -236,6 +237,10 @@ en:
     global:            'Global'
     individual:        'Infrastructure Individual'
     select_serverspec: 'Select Serverspecs'
+    created_at:        'at'
+    operation_logs:    'Operation Logs'
+    run:               'Run Serverspecs'
+    results:           'Serverspec Results'
     btn:
       add:       'Add Serverspec'
       create:    'Create Serverspec'
@@ -250,6 +255,7 @@ en:
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
       failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
       generated: 'Serverspec is successfully generated.'
+      empty-results: 'No results found.'
       auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
     generator:

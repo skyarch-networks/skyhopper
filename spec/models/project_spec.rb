@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Project, :type => :model do
+describe Project, type: :model do
   describe 'with validation' do
     describe 'column code' do
       let(:prj){build(:project)}

@@ -13,7 +13,7 @@ module MonitoringsHelper
     {name: "URL",             example: "http://www.zabbix.com", sym: :url},
     {name: "Required String", example: "welcome",               sym: :required_string},
     {name: "Status Code",     example: "200, 201, 202",         sym: :status_code},
-    {name: "Timeout",         example: "15, 60 (sec)",          sym: :timeout}
+    {name: "Timeout",         example: "15, 60 (sec)",          sym: :timeout},
   ]
 
   def url_settings

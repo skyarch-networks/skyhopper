@@ -109,6 +109,21 @@ class ServerspecsController < ApplicationController
     @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
   end
 
+  # GET /serverspecs/results
+  def results
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:infra_id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+
+    @serverspec_results = resource.serverspec_results.order("created_at desc")
+
+    respond_to do |format|
+      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at],
+        include: [{serverspec_result_details: {only: [:id]}},{serverspecs: {only:[:name]}}, {resource: {only: [:physical_id]}} ]) }
+    end
+  end
+
+
   # TODO: refactor
   # POST /serverspecs/run
   def run
@@ -141,14 +156,15 @@ class ServerspecsController < ApplicationController
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:message])
     end
 
-      ServerspecResult.create(
-        resource_id: resource.id,
-        status: resp[:status_text],
-        message: resp[:message],
-        serverspec_ids: serverspec_ids
-      )
+    ServerspecResult.create(
+      resource_id:    resource.id,
+      status:         resp[:status_text],
+      message:        resp[:message],
+      serverspec_ids: serverspec_ids,
+    )
     render text: render_msg, status: 200 and return
   end
+
 
   # Generate serverspec to connect to RDS instance
   # PUT /serverspecs/create_for_rds
@@ -179,7 +195,7 @@ class ServerspecsController < ApplicationController
 
     if ss.enabled?
       PeriodicServerspecJob.set(
-        wait_until: ss.next_run
+        wait_until: ss.next_run,
       ).perform_later(physical_id, infra_id, current_user.id)
     end
 

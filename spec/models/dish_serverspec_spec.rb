@@ -8,5 +8,5 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe DishServerspec, :type => :model do
+RSpec.describe DishServerspec, type: :model do
 end
