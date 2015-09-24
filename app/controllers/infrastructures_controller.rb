@@ -273,11 +273,9 @@ class InfrastructuresController < ApplicationController
 
   # raise error if uploaded keypair does not exist
   def keypair_validation
-    p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
+    p = infrastructure_params
 
-    if !KeyPair.same_exists?(p)
-      raise I18n.t('infrastructures.msg.invalid_keypair')
-    end
+    KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
   # redirect to projects#index if specified project does not exist
