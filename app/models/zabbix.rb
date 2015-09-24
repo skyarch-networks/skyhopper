@@ -402,8 +402,6 @@ class Zabbix
   def get_history(physical_id, item_key)
     item_info = get_item_info(physical_id, item_key, "filter")
 
-    puts "=====info====="
-    puts item_info.inspect
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
     type =
