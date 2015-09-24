@@ -1990,6 +1990,10 @@
 // ================================================================
   $(document).ready(function(){
     index();
+    $('#infrastructure_region').selectize({
+      create: false,
+      sortField: 'text'
+    });
   });
 
 
