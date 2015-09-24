@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe User, :type => :model do
+describe User, type: :model do
   let(:klass){User}
   let(:user){build_stubbed(:user, master: false)}
 

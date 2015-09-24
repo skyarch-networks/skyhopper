@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe CloudWatch, :type => :model do
+RSpec.describe CloudWatch, type: :model do
   let(:cw_client){double('CloudWatch Client')}
   before do
     cw = double('cw', client: cw_client)

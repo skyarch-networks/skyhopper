@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 # TODO: refactor
-describe Serverspec, :type => :model do
+describe Serverspec, type: :model do
   let(:klass){Serverspec}
 
   describe 'with validation' do

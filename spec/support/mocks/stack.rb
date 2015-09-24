@@ -42,7 +42,7 @@ module StackStub
           type:    "AWS::CloudFormation::Stack",
           logical: "stack",
           status:  "CREAT_COMPLETE",
-          reason:  nil
+          reason:  nil,
         }])
       end
     end

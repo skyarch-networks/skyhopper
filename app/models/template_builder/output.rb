@@ -26,8 +26,8 @@ class TemplateBuilder::Output
     return {
       @name => {
         Description: @description,
-        Value:       @value
-      }
+        Value:       @value,
+      },
     }
   end
 end

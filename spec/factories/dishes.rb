@@ -9,7 +9,7 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :dish, :class => 'Dish' do
+  factory :dish, class: 'Dish' do
     name "MyString"
     runlist 'foo,bar,hoge,fuga'
     project

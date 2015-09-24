@@ -76,6 +76,7 @@
         self.lang = this.parseURLParams('lang');
         self.columns = ['role', 'email', 'last_sign_in_at', 'id'];
         $.ajax({
+            cache: false,
             url:'users_admin?lang='+self.lang,
             success: function (data) {
               this.pages = data.length;

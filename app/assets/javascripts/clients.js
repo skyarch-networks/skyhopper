@@ -73,6 +73,7 @@
         self.columns = ['code','name', 'id'];
 
        $.ajax({
+           cache: false,
            url:'clients?lang='+self.lang,
            success: function (data) {
              this.pages = data.length;

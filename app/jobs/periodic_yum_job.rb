@@ -13,7 +13,7 @@ class PeriodicYumJob < ActiveJob::Base
     schedule = YumSchedule.find_by(physical_id: physical_id)
 
     PeriodicYumJob.set(
-      wait_until: schedule.next_run
+      wait_until: schedule.next_run,
     ).perform_later(physical_id, infra, user_id)
 
     status = schedule.resource.infrastructure.instance(physical_id).status

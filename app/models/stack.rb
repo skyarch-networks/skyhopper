@@ -20,7 +20,7 @@ class Stack
     @cloud_formation = Aws::CloudFormation::Resource.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region
+      region:            region,
     )
     @stack = @cloud_formation.stack(@name)
 
@@ -174,7 +174,7 @@ class Stack
         type:    event.resource_type,
         logical: event.logical_resource_id,
         status:  event.resource_status,
-        reason:  event.resource_status_reason
+        reason:  event.resource_status_reason,
       }
     end
   end
@@ -203,7 +203,7 @@ class Stack
         physical_id: aws_resource.physical_resource_id,
         type_name: aws_resource.resource_type,
         infrastructure_id: @infra.id,
-        screen_name: screen_name
+        screen_name: screen_name,
       )
     end
   end
