@@ -33,9 +33,10 @@ describe Node, :type => :model do
     end
 
     let(:infra){build(:infrastructure)}
+    let(:whyrun){false}
 
     it "returns true if status is success" do
-      expect(subject.cook(infra)).to be_truthy
+      expect(subject.cook(infra, whyrun)).to be_truthy
     end
   end
 
