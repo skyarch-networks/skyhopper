@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Client, :type => :model do
+describe Client, type: :model do
   let(:klass){Client}
 
   describe 'Client::ForSystemCodeName ' do

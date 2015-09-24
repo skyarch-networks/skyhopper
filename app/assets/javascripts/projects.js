@@ -76,6 +76,7 @@
         self.columns = ['code','name', 'cloud_provider', 'access_key', 'id'];
 
        $.ajax({
+           cache: false,
            url:'projects?client_id='+id+'&lang='+self.lang,
            success: function (data) {
              this.pages = data.length;

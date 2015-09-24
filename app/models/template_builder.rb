@@ -19,12 +19,12 @@ class TemplateBuilder
     Parameters: {
       KeyName: {
         Description: 'Name of an existing EC2 KeyPair to enable SSH access to the instance',
-        Type: 'String'
-      }
+        Type: 'String',
+      },
     },
     Mappings: {},
     Resources: {},
-    Outputs: {}
+    Outputs: {},
   }.recursive_freeze
 
   @@ami_mappings = {
@@ -36,7 +36,7 @@ class TemplateBuilder
       "sa-east-1"      => { "AMI" => "ami-8737829a" },
       "ap-southeast-1" => { "AMI" => "ami-ac5c7afe" },
       "ap-southeast-2" => { "AMI" => "ami-63f79559" },
-      "ap-northeast-1" => { "AMI" => "ami-4985b048" }
+      "ap-northeast-1" => { "AMI" => "ami-4985b048" },
     },
     PV: { # 古くて動かないかも
       "us-east-1"      => { "AMI" => "ami-35792c5c" },
@@ -46,8 +46,8 @@ class TemplateBuilder
       "sa-east-1"      => { "AMI" => "ami-9f6ec982" },
       "ap-southeast-1" => { "AMI" => "ami-14f2b946" },
       "ap-southeast-2" => { "AMI" => "ami-a148d59b" },
-      "ap-northeast-1" => { "AMI" => "ami-3561fe34" }
-    }
+      "ap-northeast-1" => { "AMI" => "ami-3561fe34" },
+    },
   }
 
   class << self
@@ -81,7 +81,7 @@ class TemplateBuilder
   def add_param(param)
     raise ArgumentError, "#{param} isn't parameter" unless param.kind_of? TemplateBuilder::Parameter
 
-    param_names = @parameters.map{|param| param.name}
+    param_names = @parameters.map{|p| p.name}
     raise ParameterAlreadyExist, "#{param.name} already exist" if param_names.include?(param.name)
 
     @parameters << param
@@ -135,9 +135,11 @@ class TemplateBuilder
     return result
   end
 
+  # rubocop:disable Rails/Delegate
   def to_json
     build.to_json
   end
+  # rubocop:enable Rails/Delegate
 
   def to_pretty_json
     JSON::pretty_generate(build)

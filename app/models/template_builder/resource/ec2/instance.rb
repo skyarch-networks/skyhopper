@@ -33,9 +33,9 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
     TemplateBuilder::Property.new(:Tags, Array, data_validator:
       TemplateBuilder::Property.new(:EC2_Tag, Hash, data_validator: {
         Key:   TemplateBuilder::Property.new(:Key,   String, required: true),
-        Value: TemplateBuilder::Property.new(:Value, String, required: true)
+        Value: TemplateBuilder::Property.new(:Value, String, required: true),
       })
-    )
+    ),
   ].freeze
 
   # @name => @@resource_base
@@ -69,8 +69,8 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
     result = super
     result[@name][:Properties].merge!(
       ImageId: {
-        'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"]
-      }
+        'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
+      },
     )
 
     return result

@@ -26,11 +26,12 @@ module TemplateBuildersHelper
   #### Accordion
   def accordion_group(property, accordion_name: nil)
     return nil unless accordion_name
-    extra_klass = if property.required?
-      "panel-danger"
-    else
-      "panel-default"
-    end
+    extra_klass =
+      if property.required?
+        "panel-danger"
+      else
+        "panel-default"
+      end
 
     return <<-EOS
     <div class="panel #{extra_klass}">
@@ -95,7 +96,7 @@ module TemplateBuildersHelper
         options:         options_for_select(property.get_options),
         selected_option: t('common.please_select'),
         klass:           "col-md-3 col-sm-3 property-value",
-        attributes:      common_attr
+        attributes:      common_attr,
       )
     end
 
@@ -118,7 +119,7 @@ module TemplateBuildersHelper
       return parts_input(
         klass:       "form-control input-sm property-value",
         attributes:  common_attr,
-        placeholder: validate_rule(property.data_validator)
+        placeholder: validate_rule(property.data_validator),
       )
     end
   end
@@ -163,14 +164,14 @@ module TemplateBuildersHelper
         form_parts << "<div class=\"form-group\"><label>#{key}</label>"
         form_parts << parts_input(
           attributes: "#{common_attr} hash-key=\"#{val.name}\"",
-          klass: "input-sm"
+          klass: "input-sm",
         )
         form_parts << "</div>"
       end
     else
       form_parts << "<div class=\"form-group\">" + parts_input(
         attributes: common_attr,
-        klass: "input-sm"
+        klass: "input-sm",
       ) + "</div>"
     end
     return form_parts
@@ -180,17 +181,18 @@ module TemplateBuildersHelper
   def property_array(property)
     table_cols = []
 
-    hash_data_validator = if property.data_validator == String
-      # StringのArray
-      table_cols.push("values")
-      nil
-    else
-      # HashのArray
-      property.data_validator.data_validator.each do |key|
-        table_cols.push(key)
+    hash_data_validator =
+      if property.data_validator == String
+        # StringのArray
+        table_cols.push("values")
+        nil
+      else
+        # HashのArray
+        property.data_validator.data_validator.each do |key|
+          table_cols.push(key)
+        end
+        property.data_validator.data_validator
       end
-      property.data_validator.data_validator
-    end
 
     form_parts = "<div>#{form_array_items(property, hash_data_validator: hash_data_validator)}</div>"
     form_parts << <<-EOF
@@ -202,7 +204,7 @@ module TemplateBuildersHelper
     hidden = parts_input(
       type:       "hidden",
       klass:      "property-value",
-      attributes: "property-type=\"#{property.name}\" data-type=\"array\""
+      attributes: "property-type=\"#{property.name}\" data-type=\"array\"",
     )
     return <<-EOS
     #{hidden}

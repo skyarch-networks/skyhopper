@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe Resource, :type => :model do
+RSpec.describe Resource, type: :model do
   describe '#all_serverspecs' do
     subject{resource.all_serverspecs}
 

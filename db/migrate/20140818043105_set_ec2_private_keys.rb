@@ -7,7 +7,7 @@ class SetEc2PrivateKeys < ActiveRecord::Migration
     infras.each do |infra|
       p = Ec2PrivateKey.new(
         name:  infra[:keypairname],
-        value: File.read( File.join(key_dir, infra.id.to_s) )
+        value: File.read( File.join(key_dir, infra.id.to_s) ),
       )
       p.save!
       infra.ec2_private_key_id = p.id
@@ -18,7 +18,7 @@ class SetEc2PrivateKeys < ActiveRecord::Migration
     app_settings.each do |app_setting|
       p = Ec2PrivateKey.new(
         name:  File.basename(app_setting.aws_keypair, '.*'),
-        value: File.read(app_setting.aws_keypair)
+        value: File.read(app_setting.aws_keypair),
       )
       p.save!
       app_setting.ec2_private_key_id = p.id

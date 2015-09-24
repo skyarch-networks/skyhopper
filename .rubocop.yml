@@ -52,9 +52,6 @@ Style/BlockComments:
 Style/BlockEndNewline:
   Enabled: false
 
-Style/Blocks:
-  Enabled: false
-
 Style/BracesAroundHashParameters:
   Enabled: false
 
@@ -179,7 +176,12 @@ Style/GuardClause:
   Enabled: false
 
 Style/HashSyntax:
-  Enabled: false
+  Enabled: true
+  SupportedStyles:
+    - ruby19
+    - ruby19_no_mixed_keys
+    - hash_rockets
+  UseHashRocketsWithSymbolValues: false
 
 Style/IfUnlessModifier:
   Enabled: false
@@ -191,7 +193,8 @@ Style/IndentationConsistency:
   Enabled: false
 
 Style/IndentationWidth:
-  Enabled: false
+  Enabled: true
+  Width: 2
 
 Style/IndentArray:
   Enabled: false
@@ -407,7 +410,8 @@ Style/TrailingBlankLines:
   Enabled: false
 
 Style/TrailingComma:
-  Enabled: false
+  Enabled: true
+  EnforcedStyleForMultiline: comma
 
 Style/TrailingWhitespace:
   Enabled: false
@@ -422,9 +426,6 @@ Style/UnneededCapitalW:
   Enabled: false
 
 Style/UnneededPercentQ:
-  Enabled: false
-
-Style/UnneededPercentX:
   Enabled: false
 
 Style/VariableInterpolation:
@@ -443,6 +444,9 @@ Style/WhileUntilModifier:
   Enabled: false
 
 Style/WordArray:
+  Enabled: false
+
+Lint/EndAlignment:
   Enabled: false
 
 Lint/StringConversionInInterpolation:
@@ -467,6 +471,9 @@ Metrics/LineLength:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ParameterLists:
