@@ -105,6 +105,22 @@
 
   $(document).ready(function(){
     cf_templatesIndex();
+
+    if ($('#description').length > 0) {
+      var editor = ace.edit("description");
+      var textarea = $('#cf_template_value');
+      editor.getSession().setValue(textarea.val());
+      editor.getSession().on('change', function(){
+        textarea.val(editor.getSession().getValue());
+      });
+      editor.setOptions({
+        maxLines: 30,
+        minLines: 15,
+      });
+      editor.setTheme("ace/theme/github");
+      editor.getSession().setMode("ace/mode/json");
+      $("#ace-loading").hide();
+    }
   });
 
   $(document).on("click", ".show-template", function () {
