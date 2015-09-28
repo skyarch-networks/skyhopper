@@ -6,7 +6,6 @@
     "noEmitOnError": true,
     "removeComments": true,
     "noLib": false,
-    "rootDir": "src/",
     "outDir": "dest/",
     "module": "commonjs"
   },
@@ -14,11 +13,6 @@
     "src/helper.ts",
     "src/server_status.ts",
     "src/users_admin.ts",
-    "src/serverspec-gen/ast-interface.ts",
-    "src/serverspec-gen/ast.ts",
-    "src/serverspec-gen/it-panel.ts",
-    "src/serverspec-gen/resource-panel.ts",
-    "src/serverspec-gen/ui.ts",
     "src/models/base.ts",
     "src/models/cf_template.ts",
     "src/models/dish.ts",
@@ -29,6 +23,12 @@
     "src/models/resource.ts",
     "src/models/s3_bucket.ts",
     "src/models/serverspec.ts",
-    "src/models/snapshot.ts"
+    "src/models/snapshot.ts",
+    "src/serverspec-gen/ast-interface.ts",
+    "src/serverspec-gen/ast.ts",
+    "src/serverspec-gen/it-panel.ts",
+    "src/serverspec-gen/resource-panel.ts",
+    "src/serverspec-gen/ui.ts",
+    "test/ast_test.ts"
   ]
 }

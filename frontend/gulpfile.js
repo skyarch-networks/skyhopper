@@ -21,16 +21,16 @@ gulp.task('ts', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch('./src/**/*.ts', ['ts', 'tslint']);
+  gulp.watch('./+(src|test)/**/*.ts', ['ts', 'tslint']);
 });
 
 gulp.task('tsconfig', function () {
-  gulp.src(['src/**/*.ts'])
+  gulp.src(['src/**/*.ts', 'test/**/*.ts'])
     .pipe(tsconfig({newline_eof: true}));
 });
 
 gulp.task('tslint', function () {
-  gulp.src(['src/**/*.ts'])
+  gulp.src(['src/**/*.ts', 'test/**/*.ts'])
     .pipe(tslint())
     .pipe(tslint.report('verbose', {emitError: false}));
 });
