@@ -8,7 +8,7 @@
 
     <div class="form-group">
       <label>
-        ResourceType
+        <%= t('serverspecs.generator.resource_type') %>
         <select v-model="desc.resourceType">
           <% resource_types.each do |type| %>
             <option><%= type %></option>
@@ -20,7 +20,7 @@
 
     <div class="form-group">
       <label>
-        Name
+        <%= t('serverspecs.generator.name') %>
         <input type="text" class="form-control" required v-model="desc.name">
       </label>
     </div>

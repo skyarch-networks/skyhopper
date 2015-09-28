@@ -259,12 +259,14 @@ en:
       auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
     generator:
-      title:        'Serverspec Generator'
-      resources:    'Resources'
-      add_resource: 'Add Resource'
-      add_it:       'Add It Block'
-      add_its:      'Add Its Block'
-      generated:    'Generated Serverspec'
+      title:         'Serverspec Generator'
+      name:          'name'
+      resources:     'Resources'
+      resource_type: 'Resource Type'
+      add_resource:  'Add Resource'
+      add_it:        'Add It Block'
+      add_its:       'Add Its Block'
+      generated:     'Generated Serverspec'
 
 
   schedules:
