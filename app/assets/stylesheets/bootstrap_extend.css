@@ -96,16 +96,12 @@ input[type="number"] {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 
 .label-info {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 
 .tr-info {
@@ -117,8 +113,6 @@ input[type="number"] {
 .info {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 .table>thead>tr>td.info,
 .table>tbody>tr>td.info,
@@ -140,8 +134,6 @@ input[type="number"] {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 
 .btn:focus, .btn:active:focus, .btn.active:focus {
@@ -154,7 +146,7 @@ input[type="number"] {
 }
 
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info {
-    background: #33a6cc;
+    background: #0e8db8;
 }
 
 .btn-info:active, .btn-info.active {
