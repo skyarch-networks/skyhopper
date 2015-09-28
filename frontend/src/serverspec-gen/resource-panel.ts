@@ -33,8 +33,12 @@ export default Vue.extend({
     },
 
     removeIt: function(idx: number) {
-      console.log(idx);
       this.desc.body.$remove(idx);
+    },
+
+    accordionToggle: function () {
+      const el = (<HTMLElement>this.$el).querySelector('.collapse');
+      $(el).collapse('toggle');
     },
   },
   ready: function() {

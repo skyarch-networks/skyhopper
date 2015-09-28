@@ -14,6 +14,15 @@ export default Vue.extend({
       required: true,
     }
   },
+  methods: {
+
+    // XXX: DRY (resource-panel.ts)
+    accordionToggle: function () {
+      const el = (<HTMLElement>this.$el).querySelector('.collapse');
+      $(el).collapse('toggle');
+    },
+
+  },
   ready: function() {
     console.log(this);
   },
