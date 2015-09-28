@@ -1,7 +1,7 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../../typings/tsd.d.ts" />
 
 import * as mocha from 'mocha';
-import * as AST from '../src/serverspec-gen/ast';
+import * as AST from '../../src/serverspec-gen/ast';
 
 describe('AST', () => {
   describe('Describe', () => {

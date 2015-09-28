@@ -29,6 +29,6 @@
     "src/serverspec-gen/it-panel.ts",
     "src/serverspec-gen/resource-panel.ts",
     "src/serverspec-gen/ui.ts",
-    "test/ast_test.ts"
+    "test/serverspec-gen/ast_test.ts"
   ]
 }
