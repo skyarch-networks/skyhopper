@@ -14,6 +14,7 @@ class Zabbix
   DefaultUsergroupName = "No access to the frontend"
   MasterUsergroupName = "master"
 
+  class ZabbixError < ::StandardError; end
 
   # @param [String] username
   # @param [String] password
@@ -400,8 +401,8 @@ class Zabbix
   #返される値はGoogle Chart用のフォーマットに変更された
   #アイテムのヒストリー情報
   def get_history(physical_id, item_key, date_range)
-    item_info = get_item_info(physical_id, item_key, "filter")
-
+    item_info = get_item_info(physical_id, item_key, "filter"
+    raise ZabbixError , item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
     type =

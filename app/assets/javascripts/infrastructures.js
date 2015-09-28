@@ -2014,6 +2014,10 @@
 // ================================================================
   $(document).ready(function(){
     index();
+    $('#infrastructure_region').selectize({
+      create: false,
+      sortField: 'text'
+    });
   });
 
   $(document).on('click', '.show-infra', function (e) {

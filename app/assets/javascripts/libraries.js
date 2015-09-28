@@ -21,6 +21,9 @@
 //= require ZeroClipboard
 //= require moment-with-locales.min
 //= require bootstrap-datetimepicker
+//= require microplugin
+//= require sifter
+//= require selectize
 //= require ace-rails-ap
 //= require ace/mode-javascript
 //= require ace/mode-json

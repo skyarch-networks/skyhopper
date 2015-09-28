@@ -24,5 +24,9 @@
     "lodash": "~3.9.3",
     "zeroclipboard": "~2.2.0",
     "eonasdan-bootstrap-datetimepicker": "~4.17.37"
+    "selectize": "~0.12.1",
+    "microplugin": "~0.0.3",
+    "sifter": "~0.4.3",
+    "selectize-bootswatch": "5e9042f617"
   }
 }
