@@ -402,7 +402,7 @@ class Zabbix
   #アイテムのヒストリー情報
   def get_history(physical_id, item_key, date_range)
     item_info = get_item_info(physical_id, item_key, "filter"
-
+    raise ZabbixError , item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
     type =
@@ -412,8 +412,6 @@ class Zabbix
       else
         0
       end
-
-    raise ZabbixError , item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
 
     case date_range
       when nil
