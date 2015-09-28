@@ -18,7 +18,7 @@ class S3 < SimpleDelegator
 
     @s3 = ::AWS::S3.new(
       access_key_id:     access_key_id,
-      secret_access_key: secret_access_key
+      secret_access_key: secret_access_key,
     )
 
     @s3_bucket = @s3.buckets[bucket_name]

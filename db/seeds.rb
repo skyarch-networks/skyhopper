@@ -23,7 +23,7 @@ MasterMonitoring.delete_all
   {id: 6,  name: 'SMTP',         item: 'net.tcp.service[smtp]',        trigger_expression: '{HOSTNAME:net.tcp.service[smtp].max(#3)}=',        is_common: false},
   {id: 7,  name: 'URL',          item: nil,                            trigger_expression: nil,                                                is_common: true},
   {id: 8,  name: 'MySQL',        item: 'mysql.login',                  trigger_expression: nil,                                                is_common: false},
-  {id: 9,  name: 'PostgreSQL',   item: 'postgresql.login',             trigger_expression: nil,                                                is_common: false}
+  {id: 9,  name: 'PostgreSQL',   item: 'postgresql.login',             trigger_expression: nil,                                                is_common: false},
 ].each do |x|
   MasterMonitoring.create!(x)
 end
@@ -74,7 +74,7 @@ template_paths.each do |path|
   b = ERB::Builder.new('presets/'+n)
 
   value = b.build
-  name = n.gsub('_', ' ')
+  name = n.tr('_', ' ')
   parsed = JSON.parse(value)
   detail = parsed['Description']
 

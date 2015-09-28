@@ -28,7 +28,7 @@ class TemplateBuilder::Parameter
     param = {
       @name => {
         Type: @type,
-      }
+      },
     }
 
     case @type
@@ -63,7 +63,7 @@ class TemplateBuilder::Parameter
     end
   end
 
-  def build_for_array(param)
+  def build_for_array(_param)
 
   end
 end

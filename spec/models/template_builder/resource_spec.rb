@@ -11,7 +11,7 @@ require_relative '../../spec_helper'
 class TemplateBuilder::Resource::TestResource < TemplateBuilder::Resource
 end
 
-describe TemplateBuilder::Resource, :type => :model do
+describe TemplateBuilder::Resource, type: :model do
   let(:klass){TemplateBuilder::Resource::TestResource}
   let(:klass_name){'TestResource'}
   let(:required_prop    ){double(:required_prop, required?: true,  name: :required_prop,     validate: true)}

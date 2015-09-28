@@ -149,15 +149,16 @@ knife bootstrap #{fqdn} \
       e[:exception].delete(:backtrace) if e[:exception]
     end
     result[:status] = result[:summary][:failure_count] == 0
-    result[:status_text] = if result[:status]
-      if result[:summary][:pending_count] == 0
-        'success'
+    result[:status_text] =
+      if result[:status]
+        if result[:summary][:pending_count] == 0
+          'success'
+        else
+          'pending'
+        end
       else
-        'pending'
+        'failed'
       end
-    else
-      'failed'
-    end
 
     case result[:status_text]
     when 'pending'

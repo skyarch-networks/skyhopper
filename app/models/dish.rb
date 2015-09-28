@@ -20,7 +20,7 @@ class Dish < ActiveRecord::Base
     creating: 'CREATING',
     bootstrapping: 'BOOTSTRAPPING',
     applying: 'APPLYING',
-    serverspec: 'SERVERSPEC'
+    serverspec: 'SERVERSPEC',
   }.recursive_freeze
 
   def update_status(symbol_status)

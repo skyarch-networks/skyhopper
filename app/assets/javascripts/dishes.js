@@ -76,6 +76,7 @@
         self.columns = ['name','detail', 'status', 'id'];
 
        $.ajax({
+           cache: false,
            url:'dishes?lang='+self.lang,
            success: function (data) {
              this.pages = data.length;

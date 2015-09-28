@@ -12,6 +12,7 @@
  *= require bootstrap.min
  *= require_tree .
  *= require animate.min
+ *= require selectize.paper
  */
 
 @font-face {

@@ -14,7 +14,7 @@ class PeriodicSnapshotJob < ActiveJob::Base
 
     if schedule.enabled
       PeriodicSnapshotJob.set(
-        wait_until: schedule.next_run
+        wait_until: schedule.next_run,
       ).perform_later(volume_id, physical_id, infra, user_id)
     end
 

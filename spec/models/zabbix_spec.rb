@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Zabbix, :type => :model do
+describe Zabbix, type: :model do
   describe '.new' do
     let(:set){AppSetting.get}
     let(:zabbix){double('method result')}

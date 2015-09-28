@@ -41,7 +41,7 @@ class UsersAdminController < ApplicationController
       password:              params[:user][:password],
       password_confirmation: params[:user][:password_confirmation],
       admin:                 params[:user][:admin],
-      master:                params[:user][:master]
+      master:                params[:user][:master],
     )
 
     e = -> (ex) {
