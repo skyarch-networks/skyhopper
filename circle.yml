@@ -8,8 +8,8 @@ dependencies:
     - frontend/typings
     - vendor/bower_components
   override:
-    - "true"
+    - echo Skip bundle install
 
 database:
   override:
-    - "true"
+    - "echo Skip rake db:hogehoge"
