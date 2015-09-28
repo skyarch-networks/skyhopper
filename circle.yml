@@ -1,8 +1,6 @@
 machine:
   node:
     version: 4.1.0
-  ruby:
-    version: 2.2.3
 
 dependencies:
   cache_directories:
