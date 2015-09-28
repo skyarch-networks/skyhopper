@@ -9,3 +9,7 @@ dependencies:
     - vendor/bower_components
   override:
     - "true"
+
+database:
+  override:
+    - "true"
