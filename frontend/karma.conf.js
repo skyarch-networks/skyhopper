@@ -24,6 +24,7 @@ module.exports = function(config) {
       "../vendor/assets/javascripts/bootstrap.js",
       "../vendor/assets/javascripts/ajax_set.js",
       "../vendor/assets/javascripts/vue.js",
+      "../vendor/assets/javascripts/lodash.js",
       "dest/**/*.js",
     ],
 
