@@ -8,6 +8,7 @@
     "node": ">= 0.10"
   },
   "devDependencies": {
+    "bower": "^1.5.3",
     "browserify": "~> 10.2.4",
     "browserify-incremental": "^3.0.1",
     "gulp": "^3.9.0",
