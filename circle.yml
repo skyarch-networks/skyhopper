@@ -8,4 +8,4 @@ dependencies:
     - frontend/typings
     - vendor/bower_components
   override:
-    - true
+    - "true"
