@@ -9,7 +9,12 @@
     <div class="form-group">
       <label>
         ResourceType
-        <input type="text" class="form-control" required v-model="desc.resourceType">
+        <select v-model="desc.resourceType">
+          <% resource_types.each do |type| %>
+            <option><%= type %></option>
+          <% end %>
+        </select>
+        <%# <input type="text" class="form-control" required> %>
       </label>
     </div>
 

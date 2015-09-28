@@ -65,7 +65,8 @@ class Serverspec < ActiveRecord::Base
       )
     end
 
-    # @return [Array<Symbol>]
+    # XXX: too slow, because `require serverspec` is slow...
+    # @return [Array<String>]
     def resource_types
       ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
       opts = %w[-rjson -rserverspec -e]

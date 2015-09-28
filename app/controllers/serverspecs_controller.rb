@@ -83,6 +83,7 @@ class ServerspecsController < ApplicationController
 
   # GET /serverspecs/generator
   def generator
+    @resource_types = Serverspec.resource_types.map(&:underscore)
   end
 
   # DELETE /serverspecs/1

@@ -26,5 +26,5 @@
   </div>
 </div>
 
-<script id="resource-panel-template" type="text/template"> <%= render 'gen_resource' %> </script>
+<script id="resource-panel-template" type="text/template"> <%= render partial: 'gen_resource', locals: {resource_types: @resource_types} %> </script>
 <script id="it-panel-template"       type="text/template"> <%= render 'gen_it' %> </script>
