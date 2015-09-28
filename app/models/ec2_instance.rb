@@ -74,6 +74,7 @@ class EC2Instance < SimpleDelegator
       public_ip:     public_ip_address,
       block_devices: block_device_mappings,
       root_device_name: root_device_name,
+      platform: platform,
     }
   end
 

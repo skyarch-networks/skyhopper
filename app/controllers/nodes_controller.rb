@@ -58,6 +58,7 @@ class NodesController < ApplicationController
 
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
+    @platform = @instance_summary[:platform]
 
     @snapshot_schedules = {}
     @instance_summary[:block_devices].each do |block_device|

@@ -39,13 +39,19 @@ class Node
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: node_name)
 
+    puts fqdn.to_s+"====="+ec2key.path_temp.to_s+"===="+user.to_s+"====="+node_name.to_s
+
+#     cmd = <<-EOS
+# knife bootstrap windows winrm #{fqdn} \
+# --identity-file #{ec2key.path_temp} \
+# --ssh-user #{user} \
+# --node-name #{node_name} \
+# --sudo
+#     EOS
+
     cmd = <<-EOS
-knife bootstrap #{fqdn} \
---identity-file #{ec2key.path_temp} \
---ssh-user #{user} \
---node-name #{node_name} \
---sudo
-    EOS
+chef gem install knife-windows
+  EOS
     if chef_client_version
       cmd.chomp!
       cmd.concat(" --bootstrap-version #{chef_client_version}")
