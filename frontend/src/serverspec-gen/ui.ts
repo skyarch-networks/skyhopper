@@ -32,7 +32,7 @@ class VueMain extends Vue {
 
   // methods
   addDescribe(): void {
-    this.ast.push({resourceType: "a", name: "a", body: []});
+    this.ast.push({resourceType: "command", name: "NAME", body: []});
   }
 
   removeDescribe(idx: number): void {
