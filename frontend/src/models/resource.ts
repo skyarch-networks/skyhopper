@@ -11,7 +11,7 @@
 import ModelBase      from './base';
 import Infrastructure from './infrastructure';
 
-export default class Resource extends ModelBase{
+export default class Resource extends ModelBase {
   constructor(private infra: Infrastructure) {super(); }
 
   static ajax = new AjaxSet.Resources('resources');
