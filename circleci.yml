@@ -1,12 +1,13 @@
 machine:
   node:
     version: 4.1.0
-    ruby:
-      version: 2.2.3
+  ruby:
+    version: 2.2.3
 
 dependencies:
   cache_directories:
-    - frontend/node_modules/
-    - frontend/typings/
-    - vendor/bower_components/
-    - vendor/bundle/
+    - frontend/node_modules
+    - frontend/typings
+    - vendor/bower_components
+  override:
+    - true
