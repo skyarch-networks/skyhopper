@@ -183,7 +183,7 @@ ja:
     latest_cook_status:       'Cook'
     latest_update_status:     'yum'
     latest_serverspec_status: 'Serverspec'
-    cook_in_why_run_mode:     'Cook を why-run モードで実行'
+    cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Runlist の編集'
       apply_dish:                 'ディッシュの適用'

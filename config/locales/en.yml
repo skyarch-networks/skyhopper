@@ -185,7 +185,7 @@ en:
     latest_cook_status:       'Latest Cook Status'
     latest_update_status:     'Latest yum command Status'
     latest_serverspec_status: 'Latest Serverspec Status'
-    cook_in_why_run_mode:     'Cook in why-run mode'
+    cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Edit Runlist'
       apply_dish:                 'Apply Dish'
