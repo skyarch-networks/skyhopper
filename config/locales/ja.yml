@@ -497,8 +497,6 @@ ja:
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'
     list_of_snapshots: 'スナップショットの一覧'
-    btn:
-      create:          '作成'
     msg:
       no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'

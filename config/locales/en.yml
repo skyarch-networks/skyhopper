@@ -504,8 +504,6 @@ en:
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'
     list_of_snapshots: 'List of Snapshots'
-    btn:
-      create:          'Create'
     msg:
       no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
