@@ -162,11 +162,11 @@
   <%# Buttons %>
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">
-      <div class="btn-group dropup">
-        <button v-on="click: cook({whyrun: false})" v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
+      <div v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" class="btn-group dropup">
+        <button v-on="click: cook({whyrun: false})" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook'%>
         </button>
-        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
