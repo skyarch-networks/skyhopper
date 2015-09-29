@@ -94,6 +94,7 @@ class EC2Instance < SimpleDelegator
 
   def fqdn
     return self.public_dns_name.presence ||
+           self.elastic_ip.presence ||
            self.private_dns_name
   end
 
