@@ -843,6 +843,8 @@
       sort_asc:            false,
       schedule_type:       '',
       schedule:            {},
+      loading_volumes:     false,
+      attachable_volumes:  [],
 
     };},
     template: '#ec2-tabpane-template',
@@ -1135,6 +1137,15 @@
       },
       sorting_by: function (key) {
         return this.sort_key === key;
+      },
+      load_volumes: function () {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        this.loading_volumes = true;
+        ec2.attachable_volumes(this.ec2.availability_zone).done(function (data) {
+          self.attachable_volumes = data.attachable_volumes;
+          self.loading_volumes = false;
+        });
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}

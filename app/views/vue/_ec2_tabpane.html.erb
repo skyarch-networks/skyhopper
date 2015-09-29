@@ -65,6 +65,18 @@
                 </ul>
               </bootstrap-tooltip>
             </span>
+            <bootstrap-tooltip title="Attach" class="dropdown">
+              <a v-on="click: load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
+              <ul id="attachVolume" class="dropdown-menu">
+                <li><a href="#">Create Volume</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Attachable Volumes</li>
+                <li v-if="loading_volumes"><div-loader></div-loader></li>
+                <li v-repeat="volume: attachable_volumes" v-show="!loading_volumes">
+                  <a href="#">{{volume.volume_id}}</a>
+                </li>
+              </ul>
+            </bootstrap-tooltip>
           </td>
         </tr>
         <tr>

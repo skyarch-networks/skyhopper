@@ -137,6 +137,19 @@ class Ec2InstancesController < ApplicationController
   end
 
 
+  def attachable_volumes
+    infra_id          = params.require(:infra_id)
+    availability_zone = params.require(:availability_zone)
+
+    ec2 = Infrastructure.find(infra_id).ec2
+    volumes = ec2.describe_volumes(filters: [{
+      name: "availability-zone",
+      values: [availability_zone]
+    }]).volumes.select { |volume| volume.state == 'available' }
+
+    render json: {attachable_volumes: volumes}
+  end
+
   private
 
   def notify_ec2_status(instance, status)
