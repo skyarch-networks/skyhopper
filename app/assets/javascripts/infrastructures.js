@@ -808,14 +808,14 @@
           	$('#create-listener-modal').modal('hide');
           });
       },
-      edit_listener: function(){
+      update_listener: function(){
         var self = this;
         self.loading = true;
         var ec2 = new EC2Instance(current_infra, "");
         var reload = function () {
           self.$parent.show_elb(self.physical_id);
         };
-        ec2.delete_and_create_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+        ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
           .done(function (msg) {
           	alert_success(reload)(msg);
           	$('#edit-listener-modal').modal('hide');

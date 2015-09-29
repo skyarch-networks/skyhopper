@@ -73,7 +73,7 @@ SkyHopper::Application.routes.draw do
     collection do
       post 'create_listener'
       post 'delete_listener'
-      post 'delete_and_create_listener'
+      post 'update_listener'
       post 'upload_server_certificate'
       post 'delete_server_certificate'
     end

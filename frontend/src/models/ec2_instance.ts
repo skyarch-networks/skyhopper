@@ -304,7 +304,7 @@ class EC2Instance extends ModelBase {
     );
   }
 
-  delete_and_create_listener(
+  update_listener(
     elb_name: string,
     protocol: string,
     old_load_balancer_port: string,
@@ -314,7 +314,7 @@ class EC2Instance extends ModelBase {
     ssl_certificate_id: string
   ): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_elb).delete_and_create_listener(_.merge(this.params, {
+      (<any>EC2Instance.ajax_elb).update_listener(_.merge(this.params, {
         elb_name: elb_name,
         elb_listener_protocol: protocol,
         elb_listener_old_load_balancer_port: old_load_balancer_port,
@@ -377,6 +377,6 @@ EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');
 
 EC2Instance.ajax_elb.add_collection('create_listener', 'POST');
 EC2Instance.ajax_elb.add_collection('delete_listener', 'POST');
-EC2Instance.ajax_elb.add_collection('delete_and_create_listener', 'POST');
+EC2Instance.ajax_elb.add_collection('update_listener', 'POST');
 EC2Instance.ajax_elb.add_collection('upload_server_certificate', 'POST');
 EC2Instance.ajax_elb.add_collection('delete_server_certificate', 'POST');

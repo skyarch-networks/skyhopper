@@ -42,6 +42,7 @@ en:
       previous:        'Previous'
       next:            'Next'
       delete:          'Delete'
+      update:          'Update'
     msg:
       loading:       ' Loading...'
       empty:         '%{name} is empty'

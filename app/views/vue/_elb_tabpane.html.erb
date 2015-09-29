@@ -25,8 +25,8 @@
         <td v-text="instance_port"></td>
         <td v-text="ssl_certificate_id_to_name(ssl_certificate_id)"></td>
         <td>
-          <button v-on="click: set_edit_listener_modal_default_value(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)" class="btn btn-xs btn-default" data-toggle="modal" role="button" href="#edit-listener-modal">Edit</button>
-          <button v-on="click: delete_listener(load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button">Delete</button>
+          <button v-on="click: set_edit_listener_modal_default_value(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)" class="btn btn-xs btn-default" data-toggle="modal" role="button" href="#edit-listener-modal"><%=t('helpers.links.edit')%></button>
+          <button v-on="click: delete_listener(load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
         </td>
       </tr>
     </tbody>
@@ -46,7 +46,7 @@
         <td v-text="name"></td>
         <td v-text="expiration_date(expiration)"></td>
         <td>
-          <button v-on="click: delete_server_certificate(name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button">Delete</button>
+          <button v-on="click: delete_server_certificate(name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
         </td>
       </tr>
     </tbody>
@@ -146,7 +146,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: create_listener()" class="btn btn-warning"><%= t('helpers.links.new') %></button>
+          <button v-on="click: create_listener()" class="btn btn-primary"><%= t('helpers.links.new') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
       </div>
@@ -203,7 +203,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: edit_listener()" class="btn btn-warning"><%= t('helpers.links.edit') %></button>
+          <button v-on="click: update_listener()" class="btn btn-primary"><%= t('common.btn.update') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
       </div>
@@ -244,7 +244,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: upload_server_certificate()" class="btn btn-warning"><%= t('helpers.links.new') %></button>
+          <button v-on="click: upload_server_certificate()" class="btn btn-primary"><%= t('helpers.links.new') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
       </div>

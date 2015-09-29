@@ -44,8 +44,8 @@ class ElbController < ApplicationController
     render text: I18n.t('ec2_instances.msg.deleted_listener_to_elb')
   end
   
-  # POST /elb/delete_and_create_listener
-  def delete_and_create_listener
+  # POST /elb/update_listener
+  def update_listener
     elb_name    = params.require(:elb_name)
     infra_id    = params.require(:infra_id)
     protocol            = params.require(:elb_listener_protocol)
