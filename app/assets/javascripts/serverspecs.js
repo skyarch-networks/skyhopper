@@ -13,7 +13,6 @@ var parseURLParams = require('./modules/getURL');
 var serverspecIndex = require('./modules/loadindex');
 
 Vue.use(require('./modules/ace'), true, 'ruby');
-Vue.use(require('./modules/selectize'));
 
 
 require('serverspec-gen/ui');
