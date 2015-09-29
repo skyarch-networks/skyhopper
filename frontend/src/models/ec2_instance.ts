@@ -86,7 +86,7 @@ class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  cook(params: any) {
+  cook(params: {whyrun: boolean}) {
     return this._cook('cook', _.merge(this.params, params));
   }
 
