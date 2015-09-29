@@ -1,6 +1,7 @@
 <div class="panel panel-primary">
   <div class="panel-heading">
     <button class="btn btn-danger pull-right btn-xs" v-on="click: $parent.removeDescribe(idx)"><span class="glyphicon glyphicon-remove"></span></button>
+    <text class="pull-right">&nbsp&nbsp</text>
     <button class="btn btn-default pull-right btn-xs" v-on="click: accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
     <h3 class="panel-title">{{desc.resourceType + "(" + desc.name + ")"}}</h3>
   </div>
@@ -15,7 +16,7 @@
             <option><%= type %></option>
           <% end %>
         </select>
-        <a href="http://serverspec.org/resource_types.html#{{desc.resourceType}}">Ref</a>
+        <a href="http://serverspec.org/resource_types.html#{{desc.resourceType}}" target="_blank">Ref</a>
       </label>
     </div>
 

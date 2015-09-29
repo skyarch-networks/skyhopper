@@ -104,6 +104,8 @@ Vue.component('demo-grid', {
 
 $(document).ready(function(){
   serverspecIndex();
+
+  ace.edit('rCode');
 });
 
 $(document).on("click", ".show-value", function(){
