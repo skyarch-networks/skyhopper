@@ -7,9 +7,10 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./base.ts" />
 
-class Infrastructure extends ModelBase {
+import ModelBase from './base';
+
+export default class Infrastructure extends ModelBase {
   constructor(public id: string) {super(); }
 
   static ajax_infra    = new AjaxSet.Resources('infrastructures');

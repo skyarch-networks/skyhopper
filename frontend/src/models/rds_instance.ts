@@ -7,10 +7,11 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./base.ts" />
-/// <reference path="./infrastructure.ts" />
 
-class RDSInstance extends ModelBase {
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
+
+export default class RDSInstance extends ModelBase {
   private params: {physical_id: string, id: string};
 
   constructor(private infra: Infrastructure, private physical_id: string) {

@@ -1,0 +1,15 @@
+machine:
+  node:
+    version: 4.1.0
+
+dependencies:
+  cache_directories:
+    - frontend/node_modules
+    - frontend/typings
+    - vendor/bower_components
+  override:
+    - echo Skip bundle install
+
+database:
+  override:
+    - "echo Skip rake db:hogehoge"
