@@ -8,7 +8,7 @@
 
 /// <reference path="../../declares.d.ts" />
 
-class ModelBase {
+export default class ModelBase {
   protected WrapAndResolveReject(
     fn: (_dfd: JQueryDeferred<any>) => JQueryPromise<any>
   ): JQueryPromise<any> {

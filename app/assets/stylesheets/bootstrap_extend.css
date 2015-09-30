@@ -136,6 +136,11 @@ input[type="number"] {
   color: rgb(255, 255, 255) !important;
 }
 
+.panel-info>.panel-heading {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+  color: rgb(255, 255, 255) !important;
+}
 .btn:focus, .btn:active:focus, .btn.active:focus {
     outline: 0 none;
 }

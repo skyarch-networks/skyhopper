@@ -225,7 +225,7 @@ GEM
     mixlib-shellout (2.1.0)
     multi_json (1.11.2)
     multipart-post (2.0.0)
-    mysql2 (0.4.1)
+    mysql2 (0.3.20)
     named_let (0.2.0)
       rspec-core
     nenv (0.2.0)
@@ -503,7 +503,7 @@ DEPENDENCIES
   kaminari
   less-rails
   libv8
-  mysql2
+  mysql2 (~> 0.3.20)
   named_let
   net-scp
   net-ssh
