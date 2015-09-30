@@ -1,6 +1,14 @@
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 /// <reference path="../../declares.d.ts" />
 
-class ModelBase {
+export default class ModelBase {
   protected WrapAndResolveReject(
     fn: (_dfd: JQueryDeferred<any>) => JQueryPromise<any>
   ): JQueryPromise<any> {

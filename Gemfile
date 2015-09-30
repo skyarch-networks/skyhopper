@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '~> 4'
 
 # Use mysql as the database for Active Record
-gem 'mysql2'
+gem 'mysql2', '~> 0.3.20'
 gem 'activerecord-import'
 
 # Use SCSS for stylesheets
@@ -26,6 +26,9 @@ gem 'libv8'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder'
 
+# Modularize javascript code in application
+gem 'browserify-rails'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
@@ -33,6 +36,8 @@ end
 
 # Use unicorn as the app server
 gem 'unicorn-rails'
+
+gem 'ace-rails-ap'
 
 
 gem 'aws-sdk-v1'

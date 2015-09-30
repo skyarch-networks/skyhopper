@@ -38,11 +38,11 @@ module StackStub
         allow(_stack).to receive(:events).and_raise(cf_validate_error)
       else
         allow_any_instance_of(Stack).to receive(:events).and_return([{
-          time:    Time.now,
+          time:    Time.zone.now,
           type:    "AWS::CloudFormation::Stack",
           logical: "stack",
           status:  "CREAT_COMPLETE",
-          reason:  nil
+          reason:  nil,
         }])
       end
     end

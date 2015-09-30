@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe ProjectsController, :type => :controller do
+describe ProjectsController, type: :controller do
   login_user
 
   let(:client){create(:client)}
@@ -194,7 +194,7 @@ describe ProjectsController, :type => :controller do
   describe '#client_exist' do
     controller ProjectsController do
       before_action :client_exist
-      def authorize(*args)end #XXX: pundit hack
+      def authorize(*)end #XXX: pundit hack
       def test
         render text: 'success!!!'
       end
@@ -225,7 +225,7 @@ describe ProjectsController, :type => :controller do
   describe '#project_exist' do
     controller ProjectsController do
       before_action :project_exist
-      def authorize(*args)end #XXX: pundit hack
+      def authorize(*)end #XXX: pundit hack
       def test
         render text: 'success!!!'
       end

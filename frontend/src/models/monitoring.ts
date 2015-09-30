@@ -1,6 +1,15 @@
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./infrastructure.ts" />
-/// <reference path="./base.ts" />
+
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
 
 type MasterMonitoring = {
   id: number,
@@ -12,7 +21,7 @@ type MasterMonitoring = {
   checked: boolean,
 };
 
-class Monitoring extends ModelBase {
+export default class Monitoring extends ModelBase {
   constructor(private infra: Infrastructure) { super(); }
 
   static ajax = new AjaxSet.Resources('monitorings');

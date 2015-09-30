@@ -79,3 +79,134 @@ input[type="number"] {
   width: 800px;
   margin-left: -100px;
 }
+
+/* for draggable modal */
+.modal-dialog.ui-draggable {
+    margin: auto;
+    top:    30px;
+}
+
+.caret.caret-reversed {
+  border-top-width: 0;
+  border-bottom: 4px solid #000000;
+}
+
+/* For button enhancement */
+.btn-info {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+  color: rgb(255, 255, 255) !important;
+}
+
+.label-info {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+  color: rgb(255, 255, 255) !important;
+}
+
+.tr-info {
+  background-color: hsl(189, 77%, 52%) !important;
+}
+
+
+
+.info {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+}
+.table>thead>tr>td.info,
+.table>tbody>tr>td.info,
+.table>tfoot>tr>td.info,
+.table>thead>tr>th.info,
+.table>tbody>tr>th.info,
+.table>tfoot>tr>th.info,
+.table>thead>tr.info>td,
+.table>tbody>tr.info>td,
+.table>tfoot>tr.info>td,
+.table>thead>tr.info>th,
+.table>tbody>tr.info>th,
+.table>tfoot>tr.info>th
+.table>tfoot>tr.info>th {
+    background: #a4d6e7 !important;
+}
+
+.alert-info {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+  color: rgb(255, 255, 255) !important;
+}
+
+.panel-info>.panel-heading {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+  color: rgb(255, 255, 255) !important;
+}
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+
+.btn-info {
+    background: #0099cc;
+    color: #ffffff;
+}
+
+.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info {
+    background: #0e8db8;
+}
+
+.btn-info:active, .btn-info.active {
+    background: #007299;
+    box-shadow: none;
+}
+
+.ssp th {
+  background: rgb(252, 255, 255);
+}
+
+.ssp th:nth-child(odd){
+  background: rgb(252, 255, 255);
+}
+/*  Define the background color for all the EVEN table columns  */
+.ssp th:nth-child(even){
+  background: rgba(98, 105, 106, 0.13);
+}
+
+h1, .h1 {
+  font-size: 36px;
+}
+h2, .h2 {
+  font-size: 30px;
+}
+h3, .h3 {
+  font-size: 24px;
+}
+h4, .h4 {
+  font-size: 18px;
+}
+h5, .h5 {
+  font-size: 14px;
+}
+h6, .h6 {
+  font-size: 12px;
+}
+
+.btn {
+  text-transform: none;
+}
+
+.border-blink {
+  border-style: solid;
+  -webkit-animation: border_blink 0.7s ease-in-out infinite alternate;
+  -moz-animation: border_blink 0.7s ease-in-out infinite alternate;
+  animation: border_blink 0.7s ease-in-out infinite alternate;
+}
+
+input:invalid,
+textarea:invalid {
+  box-shadow: 0 -2px 0 #e51c23 inset !important;
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+  box-shadow: 0 -2px 0 #e51c23 inset !important;
+}

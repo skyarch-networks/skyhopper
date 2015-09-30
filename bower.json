@@ -12,14 +12,20 @@
   "dependencies": {
     "favico.js": "~0.3.7",
     "bootstrap": "~3.3.4",
+    "bootswatch-dist": "paper",
     "ajax_set.js": "https://github.com/pocke/ajax_set.js.git",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
     "noty": "~2.3.5",
     "animate.css": "~3.3.0",
     "jquery": "~2.1.4",
     "jquery-ujs": "~1.0.3",
+    "jquery-ui": "~1.11.4",
     "vue": "~0.12.9",
     "lodash": "~3.9.3",
-    "zeroclipboard": "~2.2.0"
+    "zeroclipboard": "~2.2.0",
+    "selectize": "~0.12.1",
+    "microplugin": "~0.0.3",
+    "sifter": "~0.4.3",
+    "selectize-bootswatch": "5e9042f617"
   }
 }

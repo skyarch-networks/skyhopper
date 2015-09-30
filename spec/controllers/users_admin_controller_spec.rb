@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 
-describe UsersAdminController, :type => :controller do
+describe UsersAdminController, type: :controller do
   login_user
   stubize_zabbix
   run_zabbix_server
@@ -28,7 +28,8 @@ describe UsersAdminController, :type => :controller do
     should_be_success
 
     it 'should assign @users' do
-      expect(assigns[:users]).to eq klass.all.page(1).per(10)
+      get :index, format: 'json'
+      expect(assigns[:users]).to eq klass.all.page(1)
     end
   end
 

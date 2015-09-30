@@ -17,7 +17,7 @@ class CloudWatch
     @cloud_watch = AWS::CloudWatch.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region
+      region:            region,
     ).client
   end
 
@@ -28,7 +28,7 @@ class CloudWatch
   # @return {Array<Array>} [[String, Float, Float, Float]] time, in avg, out avg, sum
   def get_networkinout(physical_id)
     get = -> (name) {
-      now = Time.now
+      now = Time.zone.now
       return @cloud_watch.get_metric_statistics(
         namespace:   'AWS/EC2',
         metric_name: name,

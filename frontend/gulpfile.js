@@ -3,6 +3,7 @@ var ts       = require('gulp-typescript');
 var tsd      = require('gulp-tsd');
 var tsconfig = require('gulp-tsconfig-files');
 var tslint   = require('gulp-tslint');
+var KarmaSrv = require('karma').Server;
 
 gulp.task('tsd', function (callback) {
   tsd({
@@ -21,18 +22,25 @@ gulp.task('ts', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch('./src/**/*.ts', ['ts', 'tslint']);
+  gulp.watch('./+(src|test)/**/*.ts', ['ts', 'tslint', 'test']);
 });
 
 gulp.task('tsconfig', function () {
-  gulp.src(['src/**/*.ts'])
+  gulp.src(['src/**/*.ts', 'test/**/*.ts'])
     .pipe(tsconfig({newline_eof: true}));
 });
 
 gulp.task('tslint', function () {
-  gulp.src(['src/**/*.ts'])
+  gulp.src(['src/**/*.ts', 'test/**/*.ts'])
     .pipe(tslint())
     .pipe(tslint.report('verbose', {emitError: false}));
 });
 
-gulp.task('default', ['ts', 'tslint', 'watch']);
+gulp.task('test', function (done) {
+  new KarmaSrv({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true,
+  }, done).start();
+});
+
+gulp.task('default', ['ts', 'tslint', 'test', 'watch']);

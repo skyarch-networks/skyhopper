@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe NodesController, :type => :controller do
+describe NodesController, type: :controller do
   login_user
   let(:infra){create(:infrastructure)}
   let(:physical_id){attributes_for(:resource)[:physical_id]}
@@ -46,7 +46,10 @@ describe NodesController, :type => :controller do
     # mocks
     let(:instance){double('instance')}
     let(:instance_status){:running} # 各コンテキストで場合によって上書き
-    let(:instance_summary){{status: instance_status}}
+    let(:instance_summary){{
+      status: instance_status,
+      block_devices: [],
+    }}
     let(:cook_status){resource.status.cook}
     let(:serverspec_status){resource.status.serverspec}
     let(:yum_status){resource.status.yum}
@@ -151,11 +154,12 @@ describe NodesController, :type => :controller do
   end
 
   describe "#POST cook" do
-    let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
+    let(:whyrun){false}
+    let(:cook_request){post :cook, id: physical_id, infra_id: infra.id, whyrun: whyrun}
 
     before do
       allow(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id, whyrun)
       allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
       cook_request
     end
@@ -266,7 +270,7 @@ describe NodesController, :type => :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param
+          dish_id: dish.id.to_param,
         ).and_return({status: false, message: msg})
         req
       end
@@ -284,7 +288,7 @@ describe NodesController, :type => :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param
+          dish_id: dish.id.to_param,
         ).and_return({status: true})
         req
       end
@@ -433,7 +437,7 @@ describe NodesController, :type => :controller do
         physical_id = params.require(:id)
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
-        cook_node(infra, physical_id)
+        cook_node(infra, physical_id, false)
         render nothing: true
       end
     end

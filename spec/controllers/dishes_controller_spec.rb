@@ -8,7 +8,7 @@
 
 require 'spec_helper'
 
-describe DishesController, :type => :controller do
+describe DishesController, type: :controller do
   login_user
 
   let(:klass){Dish}
@@ -21,7 +21,7 @@ describe DishesController, :type => :controller do
     end
 
     it 'should assign @dishes' do
-      dishes = Dish.where(project_id: nil).page(1).per(10)
+      dishes = Dish.where(project_id: nil).page(1)
       expect(assigns[:dishes]).to eq dishes
     end
 

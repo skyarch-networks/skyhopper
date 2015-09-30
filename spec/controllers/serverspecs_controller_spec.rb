@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe ServerspecsController, :type => :controller do
+describe ServerspecsController, type: :controller do
   login_user
   let(:infrastructure){create(:infrastructure)}
   let(:svrsp_name){'name'}
@@ -28,7 +28,7 @@ describe ServerspecsController, :type => :controller do
       expect(assigns[:serverspecs]).to be_all{|serverspec|serverspec.kind_of?(Serverspec)}
     end
 
-    context 'when accessed index without infrastracture id' do
+    context 'when accessed index without infrastructure id' do
       let(:infrastructure){double("dummy", id: nil)}
 
       it 'should render index' do
@@ -40,8 +40,8 @@ describe ServerspecsController, :type => :controller do
       end
     end
 
-    context 'when accessed index with infrastracture id' do
-      it 'infrawtructure name should not be nil' do
+    context 'when accessed index with infrastructure id' do
+      it 'infrastructure name should not be nil' do
         expect(assigns[:infrastructure_name]).to eq infrastructure.stack_name
       end
 
@@ -132,7 +132,7 @@ describe ServerspecsController, :type => :controller do
 
     context 'when invalid params' do
       before do
-        allow_any_instance_of(Serverspec).to receive(:save).and_return(false)
+        allow_any_instance_of(Serverspec).to receive(:save!).and_raise
         create_request
       end
 
@@ -259,6 +259,24 @@ describe ServerspecsController, :type => :controller do
     end
   end
 
+  describe '#results' do
+    let(:specs){create_list(:serverspec, 3, infrastructure: infrastructure)}
+    let(:physical_id){SecureRandom.base64(10)}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infrastructure, serverspecs: specs)}
+
+    before do
+      resource # exec create resource
+      create(:serverspec_result, serverspecs: specs, resource: resource)
+      get :results, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
+    end
+
+    should_be_success
+
+    it 'should assign @serverspec_results' do
+      expect(assigns[:serverspec_results]).to eq resource.serverspec_results
+    end
+  end
+
   describe '#run' do
     let(:infra){create(:infrastructure)}
     let(:physical_id){SecureRandom.base64(10)}
@@ -286,7 +304,7 @@ describe ServerspecsController, :type => :controller do
       it 'should call run_serverspec with auto generated flag true' do
         expect(ServerspecJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true,
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: true
         )
         req
       end
@@ -296,7 +314,7 @@ describe ServerspecsController, :type => :controller do
       it 'should call run_serverspec with auto generated flag false' do
         expect(ServerspecJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false,
+          serverspec_ids: serverspecs.map{|x|x.id.to_s}, auto_generated: false
         )
         req
       end

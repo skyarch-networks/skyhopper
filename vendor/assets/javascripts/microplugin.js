@@ -1,0 +1,1 @@
+../../bower_components/microplugin/src/microplugin.js

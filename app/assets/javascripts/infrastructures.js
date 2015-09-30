@@ -6,16 +6,6 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require models/base
-//= require models/cf_template
-//= require models/infrastructure
-//= require models/s3_bucket
-//= require models/dish
-//= require models/ec2_instance
-//= require models/monitoring
-//= require models/rds_instance
-//= require models/resource
-
 
 (function () {
   'use strict';
@@ -30,6 +20,23 @@
 // infrastructures
 // ================================================================
 
+//browserify functions for vue filters functionality
+  var wrap = require('./modules/wrap');
+  var listen = require('./modules/listen');
+  var parseURLParams = require('./modules/getURL');
+  var infraindex = require('./modules/loadindex');
+
+  var CFTemplate     = require('models/cf_template').default;
+  var Infrastructure = require('models/infrastructure').default;
+  var S3Bucket       = require('models/s3_bucket').default;
+  var Dish           = require('models/dish').default;
+  var EC2Instance    = require('models/ec2_instance').default;
+  var Monitoring     = require('models/monitoring').default;
+  var RDSInstance    = require('models/rds_instance').default;
+  var Resource       = require('models/resource').default;
+  var Snapshot       = require('models/snapshot').default;
+
+  Vue.use(require('./modules/ace'), false, 'json');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -106,7 +113,8 @@
         required: true,
       },
     },
-    data: function(){return{selected_cft_id: null};},
+    data: function(){
+      return{selected_cft_id: null,};},
     template: '#add-modify-tabpane-template',
     methods: {
       select_cft: function () {
@@ -117,6 +125,7 @@
         self.result.name   = cft.name;
         self.result.detail = cft.detail;
         self.result.value  = cft.value;
+
       },
       submit: function () {
         if (this.jsonParseErr) {return;}
@@ -127,10 +136,9 @@
     computed: {
       jsonParseErr: function () { return jsonParseErr(this.result.value); },
     },
-    created: function () {
-      console.log(this);
-    }
+
   });
+
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',
@@ -415,7 +423,7 @@
         return this.templates.slice(startPage, startPage + this.dispItemSize);
       },
       isStartPage: function(){
-        return (this.page == 0);
+        return (this.page === 0);
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -438,7 +446,7 @@
       }).fail(alert_and_show_infra);
     },
     filters: {
-      roundup: function (val) { return (Math.ceil(val))},
+      roundup: function (val) { return (Math.ceil(val));},
     },
   });
 
@@ -459,7 +467,7 @@
         var templates = _(this.templates).filter(function (t) {
           return t.checked;
         }).map(function(t)  {
-          return t.name
+          return t.name;
         }).value();
 
         this.monitoring.update_templates(templates).done(function ()  {
@@ -495,7 +503,7 @@
         return this.templates.slice(startPage, startPage + this.dispItemSize);
       },
       isStartPage: function(){
-        return (this.page == 0);
+        return (this.page === 0);
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -511,7 +519,7 @@
       }).fail(alert_and_show_infra);
     },
     filters: {
-      roundup: function (val) { return (Math.ceil(val))},
+      roundup: function (val) { return (Math.ceil(val));},
     },
   });
 
@@ -804,17 +812,19 @@
     data: function () {return {
       loading:             false,
       loading_s:           false,
+      loading_snapshots:   false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
       selected_dish:       null,
       ec2:                 {},
+      volume_selected:     '',
+      snapshots:           {},
+      sort_key:            '',
+      sort_asc:            false,
+      schedule_type:       '',
+      schedule:            {},
 
-      // TODO: 階層を分けたい
-      enabled: false,
-      frequency: null,
-      day_of_week: null,
-      time: null,
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -916,7 +926,7 @@
           .done(alert_success(this._show_ec2))
           .fail(alert_danger(this._show_ec2));
       },
-      cook:       function () { this._cook('cook'); },
+      cook:       function (params) { this._cook('cook', params); },
 
       yum_update: function (security, exec) {
         var self = this;
@@ -954,6 +964,10 @@
         this.$parent.tabpaneID = 'serverspec';
         this._loading();
       },
+      serverspec_results: function() {
+        this.$parent.tabpaneID = 'serverspec_results';
+        this._loading();
+      },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
 
@@ -988,10 +1002,20 @@
         });
       },
       change_schedule: function () {
+        switch (this.schedule_type) {
+        case 'yum':
+          this.change_yum_schedule();
+          break;
+        case 'snapshot':
+          this.change_snapshot_schedule();
+          break;
+        }
+      },
+      change_yum_schedule: function () {
         var self = this;
         self.loading_s = true;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        ec2.schedule_yum(self.ec2.yum_schedule).done(function (msg) {
+        ec2.schedule_yum(self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
           alert_success()(msg);
@@ -1000,6 +1024,100 @@
           alert_danger()(msg);
         });
       },
+      change_snapshot_schedule: function () {
+        var self = this;
+        self.loading_s = true;
+        var s = new Snapshot(current_infra.id);
+        s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
+          self.loading_s = false;
+          $('#change-schedule-modal').modal('hide');
+          alert_success()(msg);
+        }).fail(function (msg) {
+          self.loading_s = false;
+          alert_danger()(msg);
+        });
+      },
+      is_root_device: function (device_name) {
+        return this.ec2.root_device_name === device_name;
+      },
+      create_snapshot: function (volume_id) {
+        var self = this;
+        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
+          var snapshot = new Snapshot(current_infra.id);
+
+          snapshot.create(volume_id, self.physical_id).progress(function (data) {
+            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+          }).done(function (data) {
+            if ($('#snapshots-modal.in').length) {
+              self.load_snapshots();
+            }
+          }).fail(alert_danger());
+
+          self.load_snapshots();
+        });
+      },
+      open_schedule_modal: function () { $('#change-schedule-modal').modal('show'); },
+      open_yum_schedule_modal: function () {
+        this.schedule_type = "yum";
+        this.schedule = this.ec2.yum_schedule;
+        this.open_schedule_modal();
+      },
+      open_snapshot_schedule_modal: function (volume_id) {
+        this.schedule_type = "snapshot";
+        this.schedule = this.ec2.snapshot_schedules[volume_id];
+        this.open_schedule_modal();
+      },
+      load_snapshots: function () {
+        var self = this;
+        var snapshot = new Snapshot(current_infra.id);
+        this.loading_snapshots = true;
+        snapshot.index(this.volume_selected).done(function (data) {
+          self.snapshots = _.map(data.snapshots, function (s) {
+            s.selected = false;
+            return s;
+          });
+          self.sort_key = '';
+          self.sort_by('start_time');
+          self.loading_snapshots = false;
+        }).fail(alert_danger());
+      },
+      delete_selected_snapshots: function () {
+        var self = this;
+        var snapshots    = _.select(this.snapshots, 'selected', true);
+        var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
+        var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
+        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+          var s = new Snapshot(current_infra.id);
+
+          _.each(snapshots, function (snapshot) {
+            s.destroy(snapshot.snapshot_id).done(function (msg) {
+              self.snapshots.$remove(snapshot);
+            });
+          });
+        });
+      },
+      snapshot_status: function (snapshot) {
+        if (snapshot.state === 'pending') {
+          return snapshot.state + '(' + snapshot.progress + ')';
+        }
+        return snapshot.state;
+      },
+      select_snapshot: function (snapshot) {
+        snapshot.selected = !snapshot.selected;
+      },
+      sort_by: function (key) {
+        if (this.sort_key === key) {
+          this.sort_asc = !this.sort_asc;
+        } else {
+          this.sort_asc = false;
+          this.sort_key = key;
+        }
+        this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
+      },
+      sorting_by: function (key) {
+        return this.sort_key === key;
+      },
+      toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
     computed: {
@@ -1031,20 +1149,21 @@
         return {text: dish.name, value: dish.id};
       }));},
 
-      next_run:    function () { return (new Date().getHours() + parseInt(this.ec2.yum_schedule.time, 10)) % 24; },
-      all_filled:  function () {
-        if (!this.ec2.yum_schedule.enabled) return true;
-        switch (this.ec2.yum_schedule.frequency) {
+      next_run:    function () { return (new Date().getHours() + parseInt(this.schedule.time, 10)) % 24; },
+      filled_all:  function () {
+        if (!this.schedule.enabled) return true;
+        switch (this.schedule.frequency) {
           case 'weekly':
-            return this.ec2.yum_schedule.day_of_week && this.ec2.yum_schedule.time;
+            return this.schedule.day_of_week && this.schedule.time;
           case 'daily':
-            return this.ec2.yum_schedule.time;
+            return this.schedule.time;
           case 'intervals':
-            return parseInt(this.ec2.yum_schedule.time, 10);
+            return parseInt(this.schedule.time, 10);
           default:
             return false;
         }
       },
+      selected_any: function () { return _.any(this.snapshots, 'selected', true); },
     },
     ready: function () {
       var self = this;
@@ -1053,13 +1172,6 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
-
-        if (data.yum_schedule) {
-          self.enabled     = data.yum_schedule.enabled;
-          self.frequency   = data.yum_schedule.frequency;
-          self.day_of_week = data.yum_schedule.day_of_week;
-          self.time        = data.yum_schedule.time;
-        }
 
         var dish_id = '0';
         if (self.ec2.selected_dish) {
@@ -1097,6 +1209,16 @@
           target.text(hint_text);
           setTimeout(function () { target.text(orig_text); }, 1000);
         });
+      });
+
+      $('#snapshots-modal').on('show.bs.modal', function (e) {
+        $(e.target).children().attr('style', null);
+        self.load_snapshots();
+      });
+      $("#snapshots-modal >").draggable({
+        cursor: "move",
+        containment: ".modal-backdrop",
+        handle: ".modal-header"
       });
     },
     filters: {
@@ -1234,6 +1356,94 @@
         self.attributes = data;
         self.$parent.loading = false;
       }).fail(alert_danger(self.show_ec2));
+    },
+  });
+
+  Vue.component('serverspec-results-tabpane', {
+    template: '#serverspec-results-tabpane-template',
+    data: function () {return {
+        data: null,
+        columns: null,
+        sortKey: '',
+        filterKey: '',
+        reversed: {},
+        option: ['serverspec_results'],
+        lang: null,
+        pages: 10,
+        pageNumber: 0,
+      };
+    },
+    methods:{
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
+      sortBy: function (key) {
+          if(key !== 'id')
+            this.sortKey = key;
+            this.reversed[key] = !this.reversed[key];
+      },
+      parseURLParams: parseURLParams,
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      physical_id: function () { return this.$parent.tabpaneGroupID; },
+      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      all_spec:    function () { return this.globals.concat(this.individuals); },
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
+    },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    },
+    created: function ()  {
+      self = this;
+      var self = this;
+      self.columns = ['serverspec', 'resource', 'message', 'status', 'created_at'];
+      var temp_id = null;
+      var serverspecs = [];
+      self.ec2.results_serverspec().done(function (data) {
+        self.data = data.map(function (item) {
+          var last_log = (item.created_at ? new Date(item.created_at) : '');
+            return {
+              serverspec: item.serverspecs,
+              resource: item.resource.physical_id,
+              message: [item.id,
+                        item.resource.physical_id,
+                        item.message,
+                        item.serverspec_result_details],
+              status: item.status,
+              created_at: last_log.toLocaleString()
+            };
+        });
+        self.$parent.loading = false;
+        $("#loading_results").hide();
+        var empty = t('serverspecs.msg.empty-results');
+        if(self.data.length === 0){ $('#empty_results').show().html(empty);}
+      }).fail(alert_danger(self.show_ec2));
+    },
+    compiled: function () {
+      // initialize reverse state
+        var self = this;
+        this.columns.forEach(function (key) {
+            self.reversed.$add(key, false);
+         });
     },
   });
 
@@ -1513,16 +1723,7 @@
   };
   var app;
 
-  var infraindex = function(){
-    return new Vue({
-      el: '#demo',
-      data: {
-        searchQuery: '',
-        gridColumns: [],//['stack_name', 'region', 'keypairname', 'created_at', 'status', 'id'],
-        gridData: []
-      }
-    });
-  };
+
 
 
 
@@ -1539,28 +1740,49 @@
         filterKey: '',
         reversed: {},
         loading: true,
+        option: ['infrastructure'],
+        lang: null,
+        pages: 10,
+        pageNumber: 0,
           };
       },
     compiled: function () {
       // initialize reverse state
         var self = this;
         this.columns.forEach(function (key) {
-            self.reversed.$add(key, false)
-         })
+            self.reversed.$add(key, false);
+         });
     },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
-            this.sortKey = key
-            this.reversed[key] = !this.reversed[key]
-      }
-
+            this.sortKey = key;
+            this.reversed[key] = !this.reversed[key];
+      },
+      parseURLParams: parseURLParams,
+      showPrev: function(){
+          if(this.pageNumber === 0) return;
+          this.pageNumber--;
+      },
+      showNext: function(){
+          if(this.isEndPage) return;
+          this.pageNumber++;
+      },
+    },
+    computed: {
+      isStartPage: function(){
+          return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      },
     },
     created: function (){
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  parseURLParams('project_id');
+        var id =  this.parseURLParams('project_id');
+        self.lang = this.parseURLParams('lang');
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
@@ -1570,8 +1792,10 @@
           self.columns = ['stack_name','region', 'keypairname', 'id'];
 
        $.ajax({
+           cache: false,
            url:'/infrastructures?&project_id='+id,
            success: function (data) {
+             this.pages = data.length;
              var nextColumns = [];
              self.data = data.map(function (item) {
                  var d = new Date(item.created_at);
@@ -1595,86 +1819,24 @@
                  }
                  self.loading = false;
                });
-             self.$emit('data-loaded')
-               }
+             self.$emit('data-loaded');
+             $("#loading").hide();
+             var empty = t('infrastructures.msg.empty-list');
+             if(self.data.length === 0){ $('#empty').show().html(empty);}
+           }
          });
     },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    }
  });
 
-
-
-  function parseURLParams(option) {
-    var url =  window.location.href;
-    var queryStart = url.indexOf("?") + 1,
-      queryEnd   = url.indexOf("#") + 1 || url.length + 1,
-      query = url.slice(queryStart, queryEnd - 1),
-      pairs = query.replace(/\+/g, " ").split("&"),
-      parms = {}, i, n, v, nv;
-
-    if (query === url || query === "") {
-      return;
-    }
-
-    for (i = 0; i < pairs.length; i++) {
-      nv = pairs[i].split("=");
-      n = decodeURIComponent(nv[0]);
-      v = decodeURIComponent(nv[1]);
-
-      if (!parms.hasOwnProperty(n)) {
-        parms[n] = [];
-      }
-
-      parms[n].push(nv.length === 2 ? v : null);
-    }
-    return parms[option];
-  }
-
-
-    Vue.filter('wrap', function(value){
-      if (value == 'stack_name'){
-        return t('infrastructures.stackname');
-      }else if(value == 'region'){
-        return t('infrastructures.region');
-      }else if(value == 'created_at'){
-        return t('infrastructures.launchtime');
-      }else if(value == 'id'){
-        return t('common.actions');
-      }else if(value == 'status'){
-        return t('infrastructures.status');
-      }else if(value == 'keypairname'){
-        return t('infrastructures.keypair');
-      }else{
-        return value;
-      }
-    });
-    Vue.filter('listen', function(value, key){
-        if(key == 'id'){
-        var isEdit = $('#edit-'+value+'').attr('class');
-        var href = $('#edit-'+value+'').attr('href');
-        var isDelete = $('#delete-'+value+'').attr('class');
-        var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.show')+"</a> " +
-          "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang=en'>Serverspecs</a> " +
-          "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
-          "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'>"+t('helpers.links.detach')+"</a> "+
-          "<div class='btn-group'>"+
-              "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
-              "    "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
-              " </a> " +
-             "<ul class='dropdown-menu'>"+
-              "<li> " +
-               "<a class='delete-stack' infrastructure-id="+value+" href='#'>Execute</a> " +
-            "</li>"+
-            "</ul>"+
-           "</div>";
-
-          return ret;
-        }else{
-          if(value == "CREATE_COMPLETE")
-            return "<span class='label label-success'>"+value+"</span>";
-          else
-            return value;
-        }
-    });
 
   var stack_in_progress = function (infra) {
     infra.stack_events().done(function (res) {
@@ -1699,7 +1861,7 @@
       infraindex = infraindex();
     }
 
-  }
+  };
 
   var SHOW_INFRA_ID = '#infra-show';
 
@@ -1795,7 +1957,11 @@
     });
   };
 
-
+  Vue.transition('fade', {
+    leave: function (el, done) {
+      $(el).fadeOut('normal');
+    }
+  });
 
 
 // ================================================================
@@ -1803,6 +1969,10 @@
 // ================================================================
   $(document).ready(function(){
     index();
+    $('#infrastructure_region').selectize({
+      create: false,
+      sortField: 'text'
+    });
   });
 
 

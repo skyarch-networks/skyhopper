@@ -2,7 +2,7 @@
   <h2>
     <%= t 'key_pairs.key_pairs' %>
     <small>
-      <%= ('for '+ link_to(@project.name, projects_path(client_id: @project.client_id, project_id: @project_id))).html_safe if @project_id %>
+      <%= ('for '+ link_to(@project.name, projects_path(client_id: @project.client_id, project_id: @project_id))).html_safe if @project %>
     </small>
   </h2>
 </div>

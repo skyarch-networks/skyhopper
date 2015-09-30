@@ -41,6 +41,7 @@ ja:
       lang:            '言語'
       previous:        '前へ'
       next:            '次へ'
+      delete:          '削除します'
     msg:
       loading:       ' 読み込み中...'
       empty:         '%{name}がありません'
@@ -121,7 +122,7 @@ ja:
       updated:            '案件が正常に更新されました'
       deleted:            '案件が正常に削除されました'
       cant_delete_system: 'システム用のプロジェクトは削除できません'
-
+      empty-list:         'プロジェクトは空です。'
 
   infrastructures:
     infrastructure:     'インフラストラクチャ'
@@ -129,7 +130,7 @@ ja:
     stackname:          'スタック名'
     region:             'リージョン'
     keypair:            '鍵ペア名'
-    launchtime:         '発射時刻'
+    creation_time:      '作成時刻'
     status:             '状態'
     sshkey:             'SSH鍵（鍵ペア）'
     return_to_projects: 'プロジェクト一覧に戻る'
@@ -167,7 +168,9 @@ ja:
       not_necessary:               '変更の必要はありません'
       check_intervals:             '15秒おきに自動的にステータスが更新されます...'
       generate_serverspec_confirm: 'このRDSへのアクセスを検証する Serverspec を生成します'
-
+      empty-list:                  'インフラストラクチャのリストは空です.'
+      loading-list:                'インフラストラクチャのロード中です...'
+      invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   nodes:
     bootstrap:   'Bootstrap'
@@ -180,6 +183,7 @@ ja:
     latest_cook_status:       'Cook'
     latest_update_status:     'yum'
     latest_serverspec_status: 'Serverspec'
+    cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Runlist の編集'
       apply_dish:                 'ディッシュの適用'
@@ -220,6 +224,7 @@ ja:
       deleted:                'ディッシュが正常に削除されました'
       description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
       no_serverspec_selected: 'Serverspec が選択されていません'
+      empty-list:             'ディッシュのリストが空です'
 
 
   serverspecs:
@@ -232,10 +237,15 @@ ja:
     global:            'インフラ共通の Serverspec'
     individual:        'インフラ固有の Serverspec'
     select_serverspec: '実行する Serverspec を選択'
+    operation_logs:    '操作ログ'
+    created_at:        'at'
+    run:               'Serverspec の実行'
+    results:           'Serverspec の結果'
     btn:
-      add:    'Serverspec の追加'
-      create: 'Serverspec の作成'
-      run:    'Serverspec の実行'
+      add:       'Serverspec の追加'
+      create:    'Serverspec の作成'
+      run:       'Serverspec の実行'
+      generator: 'ジェネレータ'
     msg:
       created:   'Serverspec が正常に追加されました'
       updated:   'Serverspec が正常に更新されました'
@@ -245,8 +255,18 @@ ja:
       pending:   '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
       generated: 'Serverspec は正常に作成されました。'
+      empty-results: '結果が見つかりませんでした。'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
+    generator:
+      title:         'Serverspec ジェネレータ'
+      name:          '名前'
+      resources:     'リソース'
+      resource_type: 'リソースタイプ'
+      add_resource:  'リソースの追加'
+      add_it:        'It ブロックの追加'
+      add_its:       'Its ブロックの追加'
+      generated:     '生成された Serverspec'
 
 
   schedules:
@@ -271,6 +291,7 @@ ja:
     msg:
       serverspec_updated: 'Serverspec の定期実行スケジュールが更新されました'
       yum_updated: 'Yum の定期実行スケジュールが更新されました'
+      snapshot_updated: '定期的なスナップショット作成のスケジュールが更新されました'
 
 
   cf_templates:
@@ -338,6 +359,7 @@ ja:
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
+      not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視テンプレート]タブでテンプレートを選択してください。'
       page:                    'ページ'
       of:                      'の'
       no_data: |
@@ -376,6 +398,8 @@ ja:
     use_start_mfa:     'MFA の使用を開始する'
     use_stop_mfa:      'MFA の使用を停止する'
     mfa_secret:        'MFA の秘密鍵'
+    search:            'メールアドレスで検索'
+    create_new_user:   '新規ユーザーの作成'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'
@@ -476,3 +500,17 @@ ja:
     msg:
       confirm:    'キーペア "%{name}" を削除しますか?'
       deleted:    'キーペア "%{name}" が正常に削除されました'
+
+  snapshots:
+    snapshot:          'スナップショット'
+    create_snapshot:   'スナップショットの作成'
+    delete_snapshot:   'スナップショットの削除'
+    schedule_snapshot: '作成スケジュールの変更'
+    list_of_snapshots: 'スナップショットの一覧'
+    btn:
+      create:          '作成'
+    msg:
+      no_snapshots:    'このボリュームのスナップショットはありません'
+      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot: '以下のスナップショットを削除しますか?'
+      creation_started: 'スナップショットの作成が開始されました'

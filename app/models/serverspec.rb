@@ -15,6 +15,7 @@ class Serverspec < ActiveRecord::Base
   has_many :dishes, through: :dish_serverspecs
   has_many :resource_serverspecs
   has_many :resources, through: :resource_serverspecs
+  has_many :serverspec_results, through: :serverspec_result_details
 
   validates :value, ruby: true
 
@@ -60,8 +61,24 @@ class Serverspec < ActiveRecord::Base
         infrastructure_id: infra_id,
         name:              "RDS connection to #{host[/^([^\.]+)\./, 1]}",
         value:             spec_value,
-        description:       description
+        description:       description,
       )
+    end
+
+    # XXX: too slow, because `require serverspec` is slow...
+    # @return [Array<String>]
+    def resource_types
+      ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+      opts = %w[-rjson -rserverspec -e]
+      code = <<-EOS
+        t = Serverspec::Type.constants
+        t.delete(:Base)
+        print JSON.generate(t)
+      EOS
+
+      return IO.popen([ruby_cmd, *opts, code]) do |io|
+        JSON.parse(io.read)
+      end
     end
   end
 end

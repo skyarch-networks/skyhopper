@@ -1,7 +1,16 @@
-/// <reference path="../../declares.d.ts" />
-/// <reference path="./base.ts" />
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
 
-class Infrastructure extends ModelBase {
+/// <reference path="../../declares.d.ts" />
+
+import ModelBase from './base';
+
+export default class Infrastructure extends ModelBase {
   constructor(public id: string) {super(); }
 
   static ajax_infra    = new AjaxSet.Resources('infrastructures');

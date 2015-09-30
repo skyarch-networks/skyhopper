@@ -20,6 +20,8 @@ class InfrastructuresController < ApplicationController
 
   before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
+  before_action :keypair_validation, only: [:create]
+
   before_action do
     infra = @infrastructure || (
       project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
@@ -45,9 +47,9 @@ class InfrastructuresController < ApplicationController
 
     @selected_project = Project.find(project_id)
 
-    @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page).per(10)
+    @infrastructures = @selected_project.infrastructures.includes(:ec2_private_key).page(page)
     @selected_client = @selected_project.client
-    
+
     respond_to do |format|
       format.json
       format.html
@@ -89,12 +91,14 @@ class InfrastructuresController < ApplicationController
     events = nil
     begin
       events = stack.events
+      # rubocop:disable Lint/HandleExceptions
     rescue Aws::CloudFormation::Errors::ValidationError # stack does not exist
+      # rubocop:enable Lint/HandleExceptions
     end
 
     render json: {
       stack_status: stack.status_and_type,
-      stack_events: events
+      stack_events: events,
     } and return
   end
 
@@ -102,7 +106,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id
+      project_id: project_id,
     )
     @regions = @@regions
   end
@@ -259,11 +263,19 @@ class InfrastructuresController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def infrastructure_params(no_keypair: nil)
     p = params.require(:infrastructure).permit(:project_id, :stack_name, :keypair_name, :keypair_value, :region)
+
     if no_keypair
       p.delete(:keypair_name)
       p.delete(:keypair_value)
     end
     return p
+  end
+
+  # raise error if uploaded keypair does not exist
+  def keypair_validation
+    p = infrastructure_params
+
+    KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
   # redirect to projects#index if specified project does not exist

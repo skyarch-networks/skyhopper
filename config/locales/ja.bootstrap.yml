@@ -15,6 +15,7 @@ ja:
       detach: "管理から外す"
       close: "閉じる"
       change: "変更"
+      create: "作成"
     titles:
       edit: "編集"
       save: "保存"

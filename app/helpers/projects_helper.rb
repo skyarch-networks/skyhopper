@@ -9,12 +9,13 @@
 module ProjectsHelper
   def button_delete_project(project)
     return nil unless Pundit.policy(current_user, project).destroy?
-
+    kid = 'delete-'+project.id.to_s
     link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
       project_path(project),
       method: :delete,
       data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-      class:  'btn btn-xs btn-danger'
+      class:  'btn btn-xs btn-danger',
+      id: kid
   end
 
   def button_add_project(client)

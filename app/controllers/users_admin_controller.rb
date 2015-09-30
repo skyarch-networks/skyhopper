@@ -20,7 +20,11 @@ class UsersAdminController < ApplicationController
   def index
     page = params[:page] || 1
 
-    @users = User.all.page(page).per(10)
+    @users = User.all.page(page)
+    respond_to do |format|
+      format.json {@users}
+      format.html
+    end
   end
 
   # register new user only by master
@@ -37,7 +41,7 @@ class UsersAdminController < ApplicationController
       password:              params[:user][:password],
       password_confirmation: params[:user][:password_confirmation],
       admin:                 params[:user][:admin],
-      master:                params[:user][:master]
+      master:                params[:user][:master],
     )
 
     e = -> (ex) {

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
 #
@@ -7,6 +8,12 @@
 #
 
 FactoryGirl.define do
+  factory :serverspec_result do
+    resource
+    status :success
+    message 'serverspec success'
+  end
+
   sequence(:id) {|n| n }
 
   sequence(:code) {|n| "a10#{n}a1a1" }

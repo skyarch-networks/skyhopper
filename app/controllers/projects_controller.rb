@@ -34,7 +34,6 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     @selected_project_id = params[:project_id].to_i
-    page = params[:page] || 1
 
     if current_user.master?
       client_id = params.require(:client_id)
@@ -45,10 +44,9 @@ class ProjectsController < ApplicationController
     else
       @projects = current_user.projects
     end
-
     respond_to do |format|
       format.json
-      format.html { @projects = @projects.includes(:cloud_provider).page(page).per(10) }
+      format.html
     end
   end
 

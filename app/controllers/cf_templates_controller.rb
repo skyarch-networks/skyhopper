@@ -28,8 +28,8 @@ class CfTemplatesController < ApplicationController
     @global_jsons = CfTemplate.global
 
     respond_to do |format|
-      format.json
-      format.html { @global_jsons = @global_jsons.page(page).per(10) }
+      format.json { @global_jsons = @global_jsons }
+      format.html { @global_jsons = @global_jsons.page(page)}
     end
   end
 

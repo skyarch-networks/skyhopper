@@ -1,3 +1,12 @@
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+//= require user_index
+
 /// <reference path="../declares.d.ts" />
 
 namespace UsersAdmin {
@@ -5,8 +14,10 @@ namespace UsersAdmin {
   ajax.add_collection('sync_zabbix', 'PUT');
 
   function highlight_user_row(selected_user: JQuery): void {
-    $(".user-row").removeClass("info");
-    selected_user.addClass("info");
+    selected_user.removeClass("info");
+    const tr = selected_user.closest('tr');
+    $('tr.info').removeClass('info');
+    tr.addClass('info');
   }
 
   function sync_zabbix(btn: JQuery): void {
@@ -111,7 +122,7 @@ namespace UsersAdmin {
       $.ajax({
         url: '/projects.json',
         data: {client_id: this.selected_client},
-        datatype: 'json'
+        dataType: 'json',
       }).done((projects: ProjectResp[]) => {
         this.projects = _.map(projects, (project) => {
           const client_name = _.find(this.clients, c => c.value === this.selected_client).text;
@@ -194,7 +205,7 @@ namespace UsersAdmin {
 
   $(document).on('click', '.edit-user', function (e) {
     e.preventDefault();
-    highlight_user_row($(this).parent().parent());
+    highlight_user_row($(this));
     const user_id = $(this).attr('user-id');
     show_edit(parseInt(user_id));
   });

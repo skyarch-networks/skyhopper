@@ -59,6 +59,12 @@ class NodesController < ApplicationController
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
 
+    @snapshot_schedules = {}
+    @instance_summary[:block_devices].each do |block_device|
+      volume_id = block_device.ebs.volume_id
+      @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
+    end
+
     case @instance_summary[:status]
     when :terminated, :stopped
       return
@@ -96,7 +102,7 @@ class NodesController < ApplicationController
 
     @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
-    @yum_schedule = YumSchedule.find_or_create_by(physical_id: physical_id)
+    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
 
     @attribute_set = n.attribute_set?
   end
@@ -136,6 +142,7 @@ class NodesController < ApplicationController
   # PUT /nodes/i-0b8e7f12/cook
   def cook
     physical_id = params.require(:id)
+    whyrun      = params.require(:whyrun) == 'true'
 
     node = Node.new(physical_id)
 
@@ -145,7 +152,7 @@ class NodesController < ApplicationController
     end
 
     Thread.new_with_db do
-      cook_node(@infra, physical_id)
+      cook_node(@infra, physical_id, whyrun)
     end
 
     render text: I18n.t('nodes.msg.runlist_applying'), status: 202
@@ -207,7 +214,7 @@ class NodesController < ApplicationController
 
     if ys.enabled?
       PeriodicYumJob.set(
-        wait_until: ys.next_run
+        wait_until: ys.next_run,
       ).perform_later(physical_id, @infra, current_user.id)
     end
 
@@ -270,9 +277,10 @@ class NodesController < ApplicationController
 
 
   # TODO: refactor
-  def cook_node(infrastructure, physical_id)
+  def cook_node(infrastructure, physical_id, whyrun)
     user_id = current_user.id
-    infra_logger_success("Cook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+    mode_string = '(why-run mode)' if whyrun
+    infra_logger_success("Cook#{mode_string} for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
 
     r = infrastructure.resource(physical_id)
     r.status.cook.inprogress!
@@ -284,21 +292,25 @@ class NodesController < ApplicationController
     ws = WSConnector.new('cooks', physical_id)
 
     begin
-      node.cook(infrastructure) do |line|
+      node.cook(infrastructure, whyrun) do |line|
         ws.push_as_json({v: line})
-        Rails.logger.debug "cooking #{physical_id} > #{line}"
+        Rails.logger.debug "cooking#{mode_string} #{physical_id} > #{line}"
         log << line
       end
     rescue => ex
       Rails.logger.debug(ex)
       r.status.cook.failed!
-      infra_logger_fail("Cook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      infra_logger_fail("Cook#{mode_string} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
       ws.push_as_json({v: false})
       return
     end
 
-    r.status.cook.success!
-    infra_logger_success("Cook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+    if whyrun
+      r.status.cook.un_executed!
+    else
+      r.status.cook.success!
+    end
+    infra_logger_success("Cook#{mode_string} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
 
     if r.dish_id # if resource has dish

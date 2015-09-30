@@ -1,8 +1,17 @@
-/// <reference path="../../declares.d.ts" />
-/// <reference path="./infrastructure.ts" />
-/// <reference path="./base.ts" />
+//
+// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
 
-class EC2Instance extends ModelBase {
+/// <reference path="../../declares.d.ts" />
+
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
+
+export default class EC2Instance extends ModelBase {
   private params: {id: string; infra_id: string};
   constructor(private infra: Infrastructure, private physical_id: string) {
     super();
@@ -78,8 +87,8 @@ class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  cook() {
-    return this._cook('cook', this.params);
+  cook(params: {whyrun: boolean}) {
+    return this._cook('cook', _.merge(this.params, params));
   }
 
   yum_update(security: boolean, exec: boolean): JQueryPromise<any> {
@@ -163,6 +172,19 @@ class EC2Instance extends ModelBase {
       _.forEach(data.individuals, (s: any) => {
         s.checked = false;
       });
+      dfd.resolve(data);
+    }).fail(this.rejectF(dfd));
+
+    return dfd.promise();
+  }
+
+  results_serverspec(): JQueryPromise<any> {
+    const dfd = $.Deferred();
+
+    (<any>EC2Instance.ajax_serverspec).results({
+      physical_id: this.physical_id,
+      infra_id:    this.infra.id,
+    }).done((data: any) => {
       dfd.resolve(data);
     }).fail(this.rejectF(dfd));
 
@@ -287,5 +309,6 @@ EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
 
 EC2Instance.ajax_serverspec.add_collection('select', 'GET');
+EC2Instance.ajax_serverspec.add_collection('results', 'GET');
 EC2Instance.ajax_serverspec.add_collection("run", "POST");
 EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');

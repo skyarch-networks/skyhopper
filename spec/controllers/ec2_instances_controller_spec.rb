@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Ec2InstancesController, :type => :controller do
+describe Ec2InstancesController, type: :controller do
   login_user
 
   let(:physical_id){'i-fugahoge'}
@@ -155,7 +155,7 @@ describe Ec2InstancesController, :type => :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
-      def authorize(*args)end # XXX: pundit hack
+      def authorize(*)end # XXX: pundit hack
       def test
         instance = double_instance()
         status   = params.require(:status)

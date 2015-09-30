@@ -40,7 +40,7 @@ class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
     TemplateBuilder::Property.new(:AllocatedStorage, String, required: true, data_validator: {regexp: /^[0-9]+$/}),
     TemplateBuilder::Property.new(:DBInstanceIdentifier, String),
     TemplateBuilder::Property.new(:AllowMajorVersionUpgrade, :Boolean),
-    TemplateBuilder::Property.new(:AutoMinorVersionUpgrade, :Boolean)
+    TemplateBuilder::Property.new(:AutoMinorVersionUpgrade, :Boolean),
   ].freeze
 
 

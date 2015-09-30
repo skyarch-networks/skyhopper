@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   include Concerns::ControllerUtil
   include Pundit
 
-  def default_url_options(option={})
+  def default_url_options(_option={})
     {lang: I18n.locale}
   end
 

@@ -8,6 +8,7 @@
 
 
 //= require jquery
+//= require jquery_ui
 //= require rails
 //= require ajax_set
 //= require i18n
@@ -18,3 +19,9 @@
 //= require vue
 //= require lodash
 //= require ZeroClipboard
+//= require microplugin
+//= require sifter
+//= require selectize
+//= require ace-rails-ap
+//= require ace/mode-javascript
+//= require ace/mode-json

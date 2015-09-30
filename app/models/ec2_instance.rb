@@ -72,6 +72,8 @@ class EC2Instance < SimpleDelegator
       public_dns:    public_dns_name,
       elastic_ip:    elastic_ip,
       public_ip:     public_ip_address,
+      block_devices: block_device_mappings,
+      root_device_name: root_device_name,
     }
   end
 
@@ -92,6 +94,7 @@ class EC2Instance < SimpleDelegator
 
   def fqdn
     return self.public_dns_name.presence ||
+           self.elastic_ip.presence ||
            self.private_dns_name
   end
 

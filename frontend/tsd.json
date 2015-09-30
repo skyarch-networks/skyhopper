@@ -6,16 +6,31 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "jquery/jquery.d.ts": {
-      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
+      "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
+    },
+    "jqueryui/jqueryui.d.ts": {
+      "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
     },
     "lodash/lodash.d.ts": {
-      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
+      "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
     },
     "vue/vue.d.ts": {
-      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
+      "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
     },
     "bootstrap/bootstrap.d.ts": {
-      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
+      "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
+    },
+    "mocha/mocha.d.ts": {
+      "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
+    },
+    "empower/empower.d.ts": {
+      "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
+    },
+    "power-assert-formatter/power-assert-formatter.d.ts": {
+      "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
+    },
+    "power-assert/power-assert.d.ts": {
+      "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
     }
   }
 }

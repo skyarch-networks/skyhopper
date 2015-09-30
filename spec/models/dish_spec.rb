@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe Dish, :type => :model do
+describe Dish, type: :model do
   let(:klass){Dish}
   describe 'Dish::STATUS' do
     subject{klass::STATUS}
