@@ -87,8 +87,8 @@ export default class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  cook() {
-    return this._cook('cook', this.params);
+  cook(params: {whyrun: boolean}) {
+    return this._cook('cook', _.merge(this.params, params));
   }
 
   yum_update(security: boolean, exec: boolean): JQueryPromise<any> {

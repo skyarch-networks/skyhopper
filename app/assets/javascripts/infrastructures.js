@@ -926,7 +926,7 @@
           .done(alert_success(this._show_ec2))
           .fail(alert_danger(this._show_ec2));
       },
-      cook:       function () { this._cook('cook'); },
+      cook:       function (params) { this._cook('cook', params); },
 
       yum_update: function (security, exec) {
         var self = this;
