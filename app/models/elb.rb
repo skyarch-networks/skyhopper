@@ -21,6 +21,7 @@ class ELB
     }
 
     @elb = ::Aws::ElasticLoadBalancing::Client.new(@aws_params)
+    @iam = Aws::IAM::Client.new(@aws_params)
   end
 
   # return instance description.
@@ -97,15 +98,14 @@ class ELB
   # @param [String] private_key Private key.
   # @param [String] certificate_chain Certificate chain.
   def upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
-    iam = Aws::IAM::Client.new(@aws_params)
     if certificate_chain.blank?
-      iam.upload_server_certificate(
+      @iam.upload_server_certificate(
         server_certificate_name: server_certificate_name,
         certificate_body: certificate_body,
         private_key: private_key,
       )
     else
-      iam.upload_server_certificate(
+      @iam.upload_server_certificate(
         server_certificate_name: server_certificate_name,
         certificate_body: certificate_body,
         private_key: private_key,
@@ -117,22 +117,20 @@ class ELB
   # Delete server certificate
   # @param [String] server_certificate_name Certificate name".
   def delete_server_certificate(server_certificate_name)
-    iam = Aws::IAM::Client.new(@aws_params)
-    iam.delete_server_certificate({
+    @iam.delete_server_certificate({
       server_certificate_name: server_certificate_name,
     })
   end
   
   # Get list of server certificate
   # @return [Struct]
-  def list_server_certificates()
-    iam = Aws::IAM::Client.new(@aws_params)
-    return iam.list_server_certificates({})
+  def list_server_certificates
+    return @iam.list_server_certificates({})
   end
   
   # Describe ELB
   # @return [Struct]
-  def describe()
+  def describe
     return @elb.describe_load_balancers({
       load_balancer_names: [@name],
     }).load_balancer_descriptions[0]
@@ -142,7 +140,7 @@ class ELB
   # @param [Integer] load_balancer_port
   # @return [Struct]
   def describe_listener(load_balancer_port)
-    describe().listener_descriptions.each do |listener|
+    describe.listener_descriptions.each do |listener|
       if listener[0].load_balancer_port == load_balancer_port then
         return listener[0]
       end
