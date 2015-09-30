@@ -132,7 +132,7 @@ describe ServerspecsController, type: :controller do
 
     context 'when invalid params' do
       before do
-        allow_any_instance_of(Serverspec).to receive(:save).and_return(false)
+        allow_any_instance_of(Serverspec).to receive(:save!).and_raise
         create_request
       end
 

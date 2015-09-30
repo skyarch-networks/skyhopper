@@ -242,9 +242,10 @@ ja:
     run:               'Serverspec の実行'
     results:           'Serverspec の結果'
     btn:
-      add:    'Serverspec の追加'
-      create: 'Serverspec の作成'
-      run:    'Serverspec の実行'
+      add:       'Serverspec の追加'
+      create:    'Serverspec の作成'
+      run:       'Serverspec の実行'
+      generator: 'ジェネレータ'
     msg:
       created:   'Serverspec が正常に追加されました'
       updated:   'Serverspec が正常に更新されました'
@@ -258,7 +259,15 @@ ja:
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
     generator:
-      resources:    'リソース'
+      title:         'Serverspec ジェネレータ'
+      name:          '名前'
+      resources:     'リソース'
+      resource_type: 'リソースタイプ'
+      add_resource:  'リソースの追加'
+      add_it:        'It ブロックの追加'
+      add_its:       'Its ブロックの追加'
+      generated:     '生成された Serverspec'
+
 
   schedules:
     schedule:         'スケジュール'
