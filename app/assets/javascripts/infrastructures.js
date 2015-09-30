@@ -6,16 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//= require models/base
-//= require models/cf_template
-//= require models/infrastructure
-//= require models/s3_bucket
-//= require models/dish
-//= require models/ec2_instance
-//= require models/monitoring
-//= require models/rds_instance
-//= require models/resource
-//= require models/snapshot
+
 (function () {
   'use strict';
 
@@ -34,6 +25,19 @@
   var listen = require('./modules/listen');
   var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
+
+  var CFTemplate     = require('models/cf_template').default;
+  var Infrastructure = require('models/infrastructure').default;
+  var S3Bucket       = require('models/s3_bucket').default;
+  var Dish           = require('models/dish').default;
+  var EC2Instance    = require('models/ec2_instance').default;
+  var Monitoring     = require('models/monitoring').default;
+  var RDSInstance    = require('models/rds_instance').default;
+  var Resource       = require('models/resource').default;
+  var Snapshot       = require('models/snapshot').default;
+
+  Vue.use(require('./modules/ace'), false, 'json');
+
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {
@@ -135,29 +139,6 @@
 
   });
 
-
-  Vue.directive("ace", {
-      twoWay: true,
-      bind: function () {
-          console.log(this.el);
-          this.editor = ace.edit(this.el);
-          this.editor.setTheme("ace/theme/github");
-          this.editor.getSession().setMode("ace/mode/json");
-          this.editor.getSession().setUseWrapMode(true);
-          this.silent = false;
-          this.handler = function () {
-              if (!this.silent) {
-                  this.set(this.editor.getSession().getValue(), true);
-              }
-          }.bind(this);
-          this.editor.on("change", this.handler);
-      },
-      update: function (value, oldValue) {
-          this.silent = true;
-          this.editor.getSession().setValue(value);
-          this.silent = false;
-      }
-  });
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',
@@ -945,7 +926,7 @@
           .done(alert_success(this._show_ec2))
           .fail(alert_danger(this._show_ec2));
       },
-      cook:       function () { this._cook('cook'); },
+      cook:       function (params) { this._cook('cook', params); },
 
       yum_update: function (security, exec) {
         var self = this;

@@ -7,10 +7,11 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./infrastructure.ts" />
-/// <reference path="./base.ts" />
 
-class EC2Instance extends ModelBase {
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
+
+export default class EC2Instance extends ModelBase {
   private params: {id: string; infra_id: string};
   constructor(private infra: Infrastructure, private physical_id: string) {
     super();
@@ -86,8 +87,8 @@ class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  cook() {
-    return this._cook('cook', this.params);
+  cook(params: {whyrun: boolean}) {
+    return this._cook('cook', _.merge(this.params, params));
   }
 
   yum_update(security: boolean, exec: boolean): JQueryPromise<any> {

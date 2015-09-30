@@ -66,4 +66,12 @@ describe Serverspec, type: :model do
       expect(klass.create_rds(rds, user, pass, infrastructure_id)).to be_kind_of klass
     end
   end
+
+  describe '.resource_types' do
+    subject{Serverspec.resource_types}
+
+    it {is_expected.to be_a Array}
+    it {is_expected.to be_all{|t|t.is_a? String}}
+    it {is_expected.to be_include 'Selinux'}
+  end
 end

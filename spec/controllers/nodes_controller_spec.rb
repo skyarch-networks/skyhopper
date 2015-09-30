@@ -154,11 +154,12 @@ describe NodesController, type: :controller do
   end
 
   describe "#POST cook" do
-    let(:cook_request){post :cook, id: physical_id, infra_id: infra.id}
+    let(:whyrun){false}
+    let(:cook_request){post :cook, id: physical_id, infra_id: infra.id, whyrun: whyrun}
 
     before do
       allow(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id)
+      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id, whyrun)
       allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
       cook_request
     end
@@ -436,7 +437,7 @@ describe NodesController, type: :controller do
         physical_id = params.require(:id)
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
-        cook_node(infra, physical_id)
+        cook_node(infra, physical_id, false)
         render nothing: true
       end
     end

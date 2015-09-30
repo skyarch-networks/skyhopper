@@ -82,8 +82,10 @@ knife bootstrap #{fqdn} \
   # node.cook do |line|
   #   # line is chef-clinet log
   # end
-  def cook(infra, &block)
-    exec_knife_ssh('sudo chef-client', infra, &block)
+  def cook(infra, whyrun, &block)
+    cmd = 'sudo chef-client'
+    cmd << ' -W' if whyrun
+    exec_knife_ssh(cmd, infra, &block)
   end
 
   def wait_search_index
