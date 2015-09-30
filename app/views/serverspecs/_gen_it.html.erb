@@ -1,6 +1,7 @@
 <div class="panel panel-info">
   <div class="panel-heading">
     <button class="btn btn-danger pull-right btn-xs" v-on="click: $parent.removeIt(idx)"><span class="glyphicon glyphicon-remove"></span></button>
+    <text class="pull-right">&nbsp&nbsp</text>
     <button class="btn btn-default pull-right btn-xs" v-on="click: accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
     <h3 v-if="it.type === 'it'"  class="panel-title">{{it.matcher.name}}</h3>
     <h3 v-if="it.type === 'its'" class="panel-title">{{it.name}} {{it.matcher.name}}</h3>

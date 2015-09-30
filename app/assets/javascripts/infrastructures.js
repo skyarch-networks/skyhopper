@@ -36,6 +36,8 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
 
+  Vue.use(require('./modules/ace'), false, 'json');
+
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {
@@ -137,29 +139,6 @@
 
   });
 
-
-  Vue.directive("ace", {
-      twoWay: true,
-      bind: function () {
-          console.log(this.el);
-          this.editor = ace.edit(this.el);
-          this.editor.setTheme("ace/theme/github");
-          this.editor.getSession().setMode("ace/mode/json");
-          this.editor.getSession().setUseWrapMode(true);
-          this.silent = false;
-          this.handler = function () {
-              if (!this.silent) {
-                  this.set(this.editor.getSession().getValue(), true);
-              }
-          }.bind(this);
-          this.editor.on("change", this.handler);
-      },
-      update: function (value, oldValue) {
-          this.silent = true;
-          this.editor.getSession().setValue(value);
-          this.silent = false;
-      }
-  });
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',

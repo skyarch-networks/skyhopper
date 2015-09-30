@@ -12,6 +12,9 @@ var listen = require('./modules/listen');
 var parseURLParams = require('./modules/getURL');
 var serverspecIndex = require('./modules/loadindex');
 
+Vue.use(require('./modules/ace'), true, 'ruby');
+
+
 require('serverspec-gen/ui');
 
 var app;
