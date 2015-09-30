@@ -456,7 +456,7 @@ en:
     instances:         'Instances'
     state:             'State'
     reason_code:       'Reason Code'
-    none:              'none'
+    none:              'None'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
