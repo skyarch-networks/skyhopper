@@ -64,7 +64,11 @@ class ELB
   end
   
   # create ELB listener
-  # protocol is HTTP or TCP or HTTPS or SSL.
+  # @param [String] protocol Loadbalancer protocol".
+  # @param [String] load_balancer_port Loadbalancer port.
+  # @param [String] instance_protocol Instance protocol.
+  # @param [String] instance_port Instance port.
+  # @param [String] ssl_certificate_id Certificate id.
   def create_listener(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)
     @elb.create_load_balancer_listeners(
       load_balancer_name: @name,
@@ -79,6 +83,7 @@ class ELB
   end
   
   # Delete ELB listener
+  # @param [String] load_balancer_port Loadbalancer port.
   def delete_listener(load_balancer_port)
     @elb.delete_load_balancer_listeners(
       load_balancer_name: @name,
@@ -87,6 +92,10 @@ class ELB
   end
   
   # Upload server certificate
+  # @param [String] server_certificate_name Certificate name".
+  # @param [String] certificate_body Public certificate.
+  # @param [String] private_key Private key.
+  # @param [String] certificate_chain Certificate chain.
   def upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
     iam = Aws::IAM::Client.new(@aws_params)
     if certificate_chain.blank?
@@ -106,6 +115,7 @@ class ELB
   end
   
   # Delete server certificate
+  # @param [String] server_certificate_name Certificate name".
   def delete_server_certificate(server_certificate_name)
     iam = Aws::IAM::Client.new(@aws_params)
     iam.delete_server_certificate({
@@ -114,12 +124,14 @@ class ELB
   end
   
   # Get list of server certificate
+  # @return [Struct]
   def list_server_certificates()
     iam = Aws::IAM::Client.new(@aws_params)
     return iam.list_server_certificates({})
   end
   
   # Describe ELB
+  # @return [Struct]
   def describe()
     return @elb.describe_load_balancers({
       load_balancer_names: [@name],
@@ -127,6 +139,8 @@ class ELB
   end
   
   # Describe ELB listener
+  # @param [Integer] load_balancer_port
+  # @return [Struct]
   def describe_listener(load_balancer_port)
     describe().listener_descriptions.each do |listener|
       if listener[0].load_balancer_port == load_balancer_port then
