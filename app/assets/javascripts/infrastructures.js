@@ -37,8 +37,8 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
 
-  Vue.use(require('./modules/ace'), false, 'json');
   Vue.use(require('./modules/datepicker'), parseURLParams('lang'));
+  Vue.use(require('./modules/ace'), false, 'json', '30');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
