@@ -763,9 +763,9 @@
       },
       ssl_certificate_id_to_name: function (ssl_certificate_id) {
         if (!ssl_certificate_id) {
-        	return "";
+          return "";
         } else if (ssl_certificate_id === "Invalid-Certificate"){
-        	return "Invalid-Certificate";
+          return "Invalid-Certificate";
         }
         return ssl_certificate_id.replace(/arn:aws:iam::[0-9]+:server-certificate\//, "");
       },
@@ -775,21 +775,40 @@
         return toLocaleString(date_str);
       },
       set_create_listener_modal_default_value: function (){
-      	var self = this;
-      	self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').val("").val();
+        var self = this;
+        self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').val("").val();
       },
       set_edit_listener_modal_default_value: function (protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id){
-      	var self = this;
-      	self.old_load_balancer_port = load_balancer_port;
-      	self.protocol = $('#edit-listener-modal #edit_listener_protocol').val(protocol).val();
-      	self.load_balancer_port = $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).val();
-      	self.instance_protocol = $('#edit-listener-modal #edit_listener_instance_protocol').val(instance_protocol).val();
-      	self.instance_port = $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).val();
-      	if (ssl_certificate_id === "Invalid-Certificate"){
-      		self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val("").val();
-      	} else {
-      		self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val(ssl_certificate_id).val();
-      	}
+        var self = this;
+        self.old_load_balancer_port = load_balancer_port;
+        self.protocol = $('#edit-listener-modal #edit_listener_protocol').val(protocol).val();
+        self.load_balancer_port = $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).val();
+        self.instance_protocol = $('#edit-listener-modal #edit_listener_instance_protocol').val(instance_protocol).val();
+        self.instance_port = $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).val();
+        if (ssl_certificate_id === "Invalid-Certificate"){
+          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val("").val();
+        } else {
+          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val(ssl_certificate_id).val();
+        }
+        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
+          $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", true);
+        }
+      },
+      change_create_listener_protocol: function(){
+        var self = this;
+        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
+          self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').prop("disabled", true).val("").val();
+        } else {
+          $('#create-listener-modal #create_listener_ssl_certificate_id').prop("disabled", false);
+        }
+      },
+      change_edit_listener_protocol: function(){
+        var self = this;
+        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
+          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", true).val("").val();
+        } else {
+          $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", false);
+        }
       },
       create_listener: function(){
         var self = this;
@@ -800,12 +819,12 @@
         };
         ec2.create_listener(self.physical_id, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
           .done(function (msg) {
-          	alert_success(reload)(msg);
-          	$('#create-listener-modal').modal('hide');
+            alert_success(reload)(msg);
+            $('#create-listener-modal').modal('hide');
           })
           .fail(function (msg) {
-          	alert_danger(reload)(msg);
-          	$('#create-listener-modal').modal('hide');
+            alert_danger(reload)(msg);
+            $('#create-listener-modal').modal('hide');
           });
       },
       update_listener: function(){
@@ -817,12 +836,12 @@
         };
         ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
           .done(function (msg) {
-          	alert_success(reload)(msg);
-          	$('#edit-listener-modal').modal('hide');
+            alert_success(reload)(msg);
+            $('#edit-listener-modal').modal('hide');
           })
           .fail(function (msg) {
-          	alert_danger(reload)(msg);
-          	$('#edit-listener-modal').modal('hide');
+            alert_danger(reload)(msg);
+            $('#edit-listener-modal').modal('hide');
           });
       },
       delete_listener: function(load_balancer_port){
@@ -847,12 +866,12 @@
         };
         ec2.upload_server_certificate(self.physical_id, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
           .done(function (msg) {
-          	alert_success(reload)(msg);
- 	      	$('#upload-server-certificate-modal').modal('hide');
+            alert_success(reload)(msg);
+            $('#upload-server-certificate-modal').modal('hide');
           })
           .fail(function (msg) {
-          	alert_danger(reload)(msg);
-          	$('#upload-server-certificate-modal').modal('hide');
+            alert_danger(reload)(msg);
+            $('#upload-server-certificate-modal').modal('hide');
           });
       },
       delete_server_certificate: function(server_certificate_name){

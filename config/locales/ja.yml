@@ -449,6 +449,7 @@ ja:
     instances:         'インスタンス'
     state:             '状態'
     reason_code:       '原因コード'
+    none:              'なし'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
