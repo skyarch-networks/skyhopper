@@ -76,6 +76,7 @@ SkyHopper::Application.routes.draw do
       post 'run'
       put  'create_for_rds'
       post 'schedule'
+      get  'generator'
     end
   end
 

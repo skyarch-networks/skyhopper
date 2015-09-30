@@ -6,8 +6,8 @@
     "noEmitOnError": true,
     "removeComments": true,
     "noLib": false,
-    "rootDir": "src/",
-    "outDir": "dest/"
+    "outDir": "dest/",
+    "module": "commonjs"
   },
   "files": [
     "src/helper.ts",
@@ -22,6 +22,13 @@
     "src/models/rds_instance.ts",
     "src/models/resource.ts",
     "src/models/s3_bucket.ts",
-    "src/models/snapshot.ts"
+    "src/models/serverspec.ts",
+    "src/models/snapshot.ts",
+    "src/serverspec-gen/ast-interface.ts",
+    "src/serverspec-gen/ast.ts",
+    "src/serverspec-gen/it-panel.ts",
+    "src/serverspec-gen/resource-panel.ts",
+    "src/serverspec-gen/ui.ts",
+    "test/serverspec-gen/ast_test.ts"
   ]
 }
