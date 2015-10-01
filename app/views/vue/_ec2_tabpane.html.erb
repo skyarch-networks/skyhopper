@@ -174,9 +174,18 @@
   <%# Buttons %>
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">
-      <button v-on="click: cook()" v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
-        <%= t 'nodes.cook'%>
-      </button>
+      <div v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" class="btn-group dropup">
+        <button v-on="click: cook({whyrun: true})" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
+          <%= t 'nodes.cook_in_why_run_mode'%>
+        </button>
+        <button type="button" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a v-on="click: cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
+        </ul>
+      </div>
       <button v-on="click: edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
       <button v-on="click: edit_attr()" class="btn btn-sm btn-default" v-class="border-blink: !ec2.attribute_set"><%= t 'nodes.btn.instance_settings' %></button>
       <div class="dropup" style="display: inline-block">

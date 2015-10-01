@@ -7,9 +7,10 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./base.ts" />
 
-class Snapshot extends ModelBase {
+import ModelBase from './base';
+
+export default class Snapshot extends ModelBase {
   constructor(private infra_id: string) {super(); }
 
   static ajax = new AjaxSet.Resources('snapshots');
