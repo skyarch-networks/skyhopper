@@ -55,7 +55,7 @@
       <div v-if="show_range">
           <div class='col-md-3'>
               <div class="form-group">
-                  <div class='input-group date' id='datetimepicker6'>
+                  <div class='input-group date'>
                       <span class="input-group-addon">
                           <span>From: </span>
                       </span>
@@ -65,13 +65,13 @@
           </div>
           <div class='col-md-4'>
               <div class="form-group">
-                  <div class='input-group date' id='datetimepicker7'>
+                  <div class='input-group date'>
                       <span class="input-group-addon">
                           <span>To: </span>
                       </span>
-                      <input v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                      <input v-attr="disabled: isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
                       <span class="input-group-addon">
-                          <button v-on="click: showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
+                          <button v-attr="disabled: isShow" v-on="click: showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
                       </span>
                   </div>
               </div>

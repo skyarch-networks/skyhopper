@@ -23,8 +23,8 @@
 //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
+  var queryString = require('query-string').parse(location.search);
 
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
@@ -37,7 +37,7 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
 
-  Vue.use(require('./modules/datepicker'), parseURLParams('lang'));
+  Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
@@ -334,19 +334,20 @@
       showDate: function ()  {
         var self = this;
         self.loading_graph = true;
-        var dates = [];
-        dates.push(this.dt, this.dt2);
-        this.monitoring.show_zabbix_graph(self.physical_id, self.item_key, dates).done(function (data) {
-          self.loading_graph = false;
-          Vue.nextTick(function () {
-            if (data.length === 0) {
-              self.error_message = t('monitoring.msg.no_data');
-            } else {
-              self.error_message = null;
-              self.drawChart(data, self.physical_id, self.item_key, ['value']);
-            }
-          });
-        }).fail(alert_and_show_infra);
+        if(this.dt && this.dt2){
+          var dates = [this.dt, this.dt2];
+          this.monitoring.show_zabbix_graph(self.physical_id, self.item_key, dates).done(function (data) {
+            self.loading_graph = false;
+            Vue.nextTick(function () {
+              if (data.length === 0) {
+                self.error_message = t('monitoring.msg.no_data');
+              } else {
+                self.error_message = null;
+                self.drawChart(data, self.physical_id, self.item_key, ['value']);
+              }
+            });
+          }).fail(alert_and_show_infra);
+        }
       },
       drawChart: function (data, physical_id, title_name, columns) {
         var resizable_data = new google.visualization.DataTable();
@@ -359,12 +360,14 @@
             var format_date = new Date(obj[0]);
             return [format_date,obj[1]];
           });
+          console.log(zabbix_data);
           resizable_data.addRows(zabbix_data);
         }else {
           resizable_data.addColumn('string', 'clock');
           _.forEach(columns, function (col) {
             resizable_data.addColumn('number', col);
           });
+          console.log(data);
           resizable_data.addRows(data);
         }
         var resizable_options = {
@@ -390,9 +393,6 @@
               min: 0
             },
           },
-          legend: {
-      			position:'none'
-      		},
       		explorer: {
             axis: 'horizontal'
             // axis: 'vertical'
@@ -445,12 +445,10 @@
       showPrev: function (){
         if(this.isStartPage) return;
         this.page--;
-        console.log(this.page);
       },
       showNext: function (){
         if(this.isEndPage) return;
         this.page++;
-        console.log(this.page);
       },
       close: function (){
         this.$parent.show_monitoring();
@@ -471,6 +469,12 @@
       },
       isStartPage: function(){
         return (this.page === 0);
+      },
+      isTo: function(){
+        return (!this.dt && this.dt !== '');
+      },
+      isShow: function(){
+        return (!this.dt2 && this.dt2 !== '');
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -1429,7 +1433,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -1788,7 +1791,7 @@
         reversed: {},
         loading: true,
         option: ['infrastructure'],
-        lang: null,
+        lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
@@ -1806,7 +1809,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -1828,8 +1830,7 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  this.parseURLParams('project_id');
-        self.lang = this.parseURLParams('lang');
+        var id =  queryString.project_id;
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];

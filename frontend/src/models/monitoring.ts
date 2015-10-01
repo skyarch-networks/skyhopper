@@ -141,7 +141,7 @@ export default class Monitoring extends ModelBase {
   }
 
 
-  show_zabbix_graph(physical_id: string, item_key: any, date_range: any): JQueryPromise<any> {
+  show_zabbix_graph(physical_id: string, item_key: string, date_range?: Array<number>): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).show_zabbix_graph({
         id:          this.infra.id,

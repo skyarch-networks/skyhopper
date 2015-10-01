@@ -442,7 +442,7 @@ class Zabbix
       time = Time.zone.at(history["clock"].to_i)
       chart_data.push([time, history["value"].to_f])
     end
-    return chart_data
+    return chart_data.reverse
   end
 
   # 最近の障害を取ってきている
