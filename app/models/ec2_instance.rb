@@ -104,4 +104,19 @@ class EC2Instance < SimpleDelegator
            self.public_ip_address.presence ||
            self.private_ip_address
   end
+
+  def attachable_volumes(availability_zone)
+    client.describe_volumes(
+      filters: [{
+        name: "availability-zone",
+        values: [availability_zone]
+      }])
+      .volumes
+      .select { |volume| volume.state == 'available' }
+      .map { |volume|
+        tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
+        volume.tags = tags_hash
+        volume
+      }
+  end
 end

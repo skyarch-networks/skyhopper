@@ -138,14 +138,12 @@ class Ec2InstancesController < ApplicationController
 
 
   def attachable_volumes
+    physical_id       = params.require(:id)
     infra_id          = params.require(:infra_id)
     availability_zone = params.require(:availability_zone)
 
-    ec2 = Infrastructure.find(infra_id).ec2
-    volumes = ec2.describe_volumes(filters: [{
-      name: "availability-zone",
-      values: [availability_zone]
-    }]).volumes.select { |volume| volume.state == 'available' }
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    volumes = instance.attachable_volumes(availability_zone)
 
     render json: {attachable_volumes: volumes}
   end
