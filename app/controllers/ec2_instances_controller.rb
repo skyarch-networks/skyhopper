@@ -148,6 +148,18 @@ class Ec2InstancesController < ApplicationController
     render json: {attachable_volumes: volumes}
   end
 
+  def attach_volume
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+    volume_id   = params.require(:volume_id)
+    device_name = params.require(:device_name)
+
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    instance.attach_volume(volume_id, device_name)
+
+    render nothing: true
+  end
+
   private
 
   def notify_ec2_status(instance, status)

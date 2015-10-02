@@ -119,4 +119,13 @@ class EC2Instance < SimpleDelegator
         volume
       }
   end
+
+  def attach_volume(volume_id, device_name)
+    client.attach_volume({
+      volume_id: volume_id,
+      instance_id: @physical_id,
+      device: device_name
+    })
+
+  end
 end
