@@ -782,9 +782,9 @@
         var self = this;
         self.old_load_balancer_port = load_balancer_port;
         self.protocol = $('#edit-listener-modal #edit_listener_protocol').val(protocol).val();
-        self.load_balancer_port = $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).val();
+        $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).change();
         self.instance_protocol = $('#edit-listener-modal #edit_listener_instance_protocol').val(instance_protocol).val();
-        self.instance_port = $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).val();
+        $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).change();
         if (ssl_certificate_id === "Invalid-Certificate"){
           self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val("").val();
         } else {

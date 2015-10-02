@@ -467,7 +467,7 @@ en:
       uploaded_certificate: 'Uploaded the certificate.'
       deleted_certificate: 'Deleted the certificate.'
       private_key_droppable: 'Please either insert a private key or drag-and-drop the file of private key.'
-      public_key_certificate_droppable: 'Please either insert a public　key　certificate or drag-and-drop the file of public　key　certificate.'
+      public_key_certificate_droppable: 'Please either insert a public key certificate or drag-and-drop the file of public key certificate.'
       certificate_chain_droppable: '(Option) Please either insert a certificate chain or drag-and-drop the file of certificate chain.'
     btn:
       register:   'Register to ELB'
