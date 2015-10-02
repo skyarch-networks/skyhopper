@@ -1128,6 +1128,15 @@
           self.loading_volumes = false;
         });
       },
+      attach_volume: function (volume_id) {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        bootstrap_prompt('Attach Volume', 'Device name').done(function (device_name) {
+          // unimpl
+        })
+        $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
+
+      },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
@@ -1175,6 +1184,32 @@
         }
       },
       selected_any: function () { return _.any(this.snapshots, 'selected', true); },
+      suggest_device_name: function () {
+        // TODO: iikanji ni sitai
+        var suggested_device_letter = 'f'; // same as aws default
+        var device_letter_codes = _(this.ec2.block_devices).chain()
+          .pluck('device_name')
+          .filter(function (name) {
+            if (/sd([a-z])$/.test(name)) {
+              var letter = name.slice(-1);
+              if ('a' <= letter && letter <= 'z') {
+                return letter.charCodeAt(0);
+              } else {
+                retrun false;
+              }
+            } else {
+              return false;
+            }
+          })
+          .sort()
+          .value();
+        if (device_letter_codes.indexOf(102) !== -1) { // 'f'.charCodeAt() === 102
+          // unimpl
+          suggested_device_letter = '?';
+        }
+
+        return '/dev/sd' + suggested_device_letter;
+      }
     },
     ready: function () {
       var self = this;
