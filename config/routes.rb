@@ -67,6 +67,7 @@ SkyHopper::Application.routes.draw do
       post 'register_to_elb'
       post 'deregister_from_elb'
       get  'attachable_volumes'
+      post 'attach_volume'
     end
   end
 

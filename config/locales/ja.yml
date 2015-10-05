@@ -465,6 +465,7 @@ ja:
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
       registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
+      volume_attached:       '%{instance_id} に %{volume_id} をアタッチしました。 デバイス名は %{device} です。'
     btn:
       register:       'インスタンスを登録'
       deregister:     'インスタンスの登録を解除'

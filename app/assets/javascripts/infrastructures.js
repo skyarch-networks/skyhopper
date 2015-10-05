@@ -1132,8 +1132,10 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         bootstrap_prompt('Attach Volume', 'Device name').done(function (device_name) {
-          // unimpl
-        })
+          ec2.attach_volume(volume_id, device_name).done(function (msg) {
+            bootstrap_alert('Attached', msg).done(self._show_ec2)
+          });
+        });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
 
       },

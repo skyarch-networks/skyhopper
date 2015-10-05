@@ -155,9 +155,9 @@ class Ec2InstancesController < ApplicationController
     device_name = params.require(:device_name)
 
     instance = Infrastructure.find(infra_id).instance(physical_id)
-    instance.attach_volume(volume_id, device_name)
+    resp = instance.attach_volume(volume_id, device_name)
 
-    render nothing: true
+    render text: I18n.t('ec2_instances.msg.volume_attached', resp.to_h)
   end
 
   private
