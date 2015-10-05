@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe AppSetting, :type => :model do
+describe AppSetting, type: :model do
   let(:klass){AppSetting}
 
   describe 'with validation' do

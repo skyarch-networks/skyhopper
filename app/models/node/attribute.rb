@@ -46,7 +46,7 @@ module Node::Attribute
   # 現在設定できる attributes を返す
   # @return [Hash{Symbol => Any}]
   def enabled_attributes
-    available_attributes.select do |name, a|
+    available_attributes.select do |_name, a|
       have_recipes?(a[:recipes]) or have_roles?(a[:recipes])
     end
   end
@@ -64,80 +64,80 @@ module Node::Attribute
   # @return [Hash{Symbol => Any}]
   def available_attributes
     return {
-      :'yum_releasever/releasever' => {
+      'yum_releasever/releasever': {
         type:        String,
         recipes:     ['recipe[yum_releasever]', 'recipe[yum_releasever::default]'],
         description: 'Yum release version. ex) latest, 2014.09, ...',
         # allowed_values: ['latest', '2014.09', '2014.03', '2013.09'],
       },
-      :'gateone/url' => {
+      'gateone/url': {
         type:        String,
         recipes:     ['role[hyclops]'],
-        description: 'Zabbix Server IP. ex) https://54.172.247.142'
+        description: 'Zabbix Server IP. ex) https://54.172.247.142',
       },
-      :'zabbix/agent/servers' => {
+      'zabbix/agent/servers': {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
         description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
         default:     AppSetting.get.zabbix_fqdn,
         required:    true,
       },
-      :'zabbix/agent/servers_active' => {
+      'zabbix/agent/servers_active': {
         type:        Array,
         recipes:     ['role[zabbix_agent]'],
         description: 'Zabbix FQDN ex)   ec2-54-165-199-182.compute-1.amazonaws.com',
         default:     AppSetting.get.zabbix_fqdn,
         required:    true,
       },
-      :'zabbix/database/install_method' => {
+      'zabbix/database/install_method': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'mysql or rds_mysql',
       },
-      :'zabbix/database/rds_master_username' => {
+      'zabbix/database/rds_master_username': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'RDSInstanceMasterUsername',
       },
-      :'zabbix/database/rds_master_password' => {
+      'zabbix/database/rds_master_password': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'RDSInstancePassword',
       },
-      :'zabbix/database/dbhost' => {
+      'zabbix/database/dbhost': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'RDS FQDN',
       },
-      :'zabbix/database/dbport' => {
+      'zabbix/database/dbport': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'Default is 3306',
       },
-      :'zabbix/database/dbuser' => {
+      'zabbix/database/dbuser': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'RDSInstanceMasterUsername',
       },
-      :'zabbix/database/dbpassword' => {
+      'zabbix/database/dbpassword': {
         type: String,
         recipes: ['role[zabbix_server]'],
         description: 'RDSInstancePassword',
       },
-      :'zabbix/agent/monitoring_rds' => {
+      'zabbix/agent/monitoring_rds': {
         type: :Boolean,
         recipes: ['recipe[zabbix::agent_monitoring_mysql]'],
-        description: 'If this flag true, Zabbix agent monitors RDS.'
+        description: 'If this flag true, Zabbix agent monitors RDS.',
       },
-      :'zabbix/agent/mysql_username' => {
+      'zabbix/agent/mysql_username': {
         type: String,
         recipes: ['recipe[zabbix::agent_monitoring_mysql]'],
-        description: 'MySQL username to be monitored by Zabbix Agent'
+        description: 'MySQL username to be monitored by Zabbix Agent',
       },
-      :'mysql/server_root_password' => {
+      'mysql/server_root_password': {
         type: String,
         recipes: ['recipe[mysql::client]', 'recipe[mysql::server]'],
-        description: 'MySQL password'
+        description: 'MySQL password',
       },
     }
   end
@@ -167,16 +167,17 @@ module Node::Attribute
       keys = key.split('/') # ['zabbix', 'agent', 'servers']
 
       attr = Hash.new
-      keys.inject(attr) do |_attr, _key|
-        if _key != keys.last
-          next _attr[_key] = {}
+      keys.inject(attr) do |attr_, key_|
+        if key_ != keys.last
+          next attr_[key_] = {}
         end
 
-        _attr[_key] = if self.available_attributes[key.to_sym][:type] == Array
-          [val]
-        else
-          val
-        end
+        attr_[key_] =
+          if self.available_attributes[key.to_sym][:type] == Array
+            [val]
+          else
+            val
+          end
       end
 
       result.deep_merge!(attr)

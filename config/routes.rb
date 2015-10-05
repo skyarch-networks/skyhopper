@@ -82,6 +82,7 @@ SkyHopper::Application.routes.draw do
   resources :serverspecs do
     collection do
       get  'select'
+      get  'results'
       post 'run'
       put  'create_for_rds'
       post 'schedule'

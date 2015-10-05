@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 
-describe UsersAdminController, :type => :controller do
+describe UsersAdminController, type: :controller do
   login_user
   stubize_zabbix
   run_zabbix_server

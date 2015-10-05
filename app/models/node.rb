@@ -149,15 +149,16 @@ knife bootstrap #{fqdn} \
       e[:exception].delete(:backtrace) if e[:exception]
     end
     result[:status] = result[:summary][:failure_count] == 0
-    result[:status_text] = if result[:status]
-      if result[:summary][:pending_count] == 0
-        'success'
+    result[:status_text] =
+      if result[:status]
+        if result[:summary][:pending_count] == 0
+          'success'
+        else
+          'pending'
+        end
       else
-        'pending'
+        'failed'
       end
-    else
-      'failed'
-    end
 
     case result[:status_text]
     when 'pending'
@@ -263,7 +264,7 @@ knife bootstrap #{fqdn} \
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
-    Open3.popen3(cmd) do |stdin, stdout, stderr, w|
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!

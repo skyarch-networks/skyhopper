@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe CloudProvider, :type => :model do
+RSpec.describe CloudProvider, type: :model do
 
   describe "aws" do
     context "when exists" do
@@ -35,6 +35,6 @@ RSpec.describe CloudProvider, :type => :model do
       after do
         create(:cloud_provider, name: "AWS")
       end
-   end
+    end
   end
 end

@@ -27,7 +27,7 @@ class InfrastructureLog < ActiveRecord::Base
             status:            name == :success,
             details:           details,
             infrastructure_id: infrastructure_id,
-            user_id:           user_id
+            user_id:           user_id,
           )
         rescue ::ActiveRecord::StatementInvalid => ex
           if ex.message.include?("Data too long")
@@ -38,7 +38,7 @@ class InfrastructureLog < ActiveRecord::Base
               status:            name == :success,
               details:           sliced,
               infrastructure_id: infrastructure_id,
-              user_id:           user_id
+              user_id:           user_id,
             )
             log.save!
 

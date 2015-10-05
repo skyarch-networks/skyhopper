@@ -8,7 +8,7 @@
 
 require_relative '../../spec_helper'
 
-describe TemplateBuilder::Property, :type => :model do
+describe TemplateBuilder::Property, type: :model do
   let(:klass){TemplateBuilder::Property}
   describe '@@data_types' do
     subject{klass.class_variable_get(:@@data_types)}

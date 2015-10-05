@@ -73,6 +73,7 @@
         self.columns = ['subject','details', 'id'];
 
        $.ajax({
+           cache: false,
            url:'cf_templates?lang='+self.lang,
            success: function (data) {
              this.pages = data.length;

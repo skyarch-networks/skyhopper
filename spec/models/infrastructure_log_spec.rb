@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe InfrastructureLog, :type => :model do
+describe InfrastructureLog, type: :model do
   let(:klass){InfrastructureLog}
   let(:infra){build_stubbed(:infrastructure)}
   let(:user){build_stubbed(:user)}

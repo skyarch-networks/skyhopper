@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe CloudWatch, :type => :model do
+RSpec.describe CloudWatch, type: :model do
   let(:cw_client){double('CloudWatch Client')}
   before do
     cw = double('cw', client: cw_client)
@@ -28,9 +28,9 @@ RSpec.describe CloudWatch, :type => :model do
   end
 
   describe '#get_networkinout' do
-    let(:time1){Time.local(2014, 4, 9, 3, 8, 1)}
-    let(:time2){Time.local(2014, 4, 9, 3, 13, 1)}
-    let(:time3){Time.local(2014, 4, 9, 3, 18, 1)}
+    let(:time1){Time.zone.local(2014, 4, 9, 3, 8, 1)}
+    let(:time2){Time.zone.local(2014, 4, 9, 3, 13, 1)}
+    let(:time3){Time.zone.local(2014, 4, 9, 3, 18, 1)}
     let(:physical_id){'i-fugapiyo'}
 
     before do
@@ -55,9 +55,9 @@ RSpec.describe CloudWatch, :type => :model do
     it 'should be formated' do
       res = cloud_watch.get_networkinout(physical_id)
       # Check time
-      expect(res[0][0]).to eq time3.strftime('%H:%M')
-      expect(res[1][0]).to eq time2.strftime('%H:%M')
-      expect(res[2][0]).to eq time1.strftime('%H:%M')
+      expect(res[0][0]).to eq time3.localtime.strftime('%H:%M')
+      expect(res[1][0]).to eq time2.localtime.strftime('%H:%M')
+      expect(res[2][0]).to eq time1.localtime.strftime('%H:%M')
 
       # Check in + out = sum
       res.each do |data|

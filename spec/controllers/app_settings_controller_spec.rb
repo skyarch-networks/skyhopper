@@ -8,7 +8,7 @@
 
 require_relative '../spec_helper'
 
-describe AppSettingsController, :type => :controller do
+describe AppSettingsController, type: :controller do
   login_user
 
   before do
@@ -33,7 +33,7 @@ describe AppSettingsController, :type => :controller do
   describe '#create' do
     let(:settings){{
       aws_region: 'ap-northeast-1',
-      log_directory: '/foo'
+      log_directory: '/foo',
     }}
     let(:ec2key){create(:ec2_private_key)}
     let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
@@ -126,11 +126,11 @@ describe AppSettingsController, :type => :controller do
 
   describe '#check_eip_limit!' do
     controller AppSettingsController do
-      def authorize(*args)end #XXX: pundit hack
+      def authorize(*)end #XXX: pundit hack
       def test
         check_eip_limit!('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
         render text: 'success'
-      rescue ::AppSettingsController::EIPLimitError => ex
+      rescue ::AppSettingsController::EIPLimitError
         render text: 'failure', status: 400
       end
     end

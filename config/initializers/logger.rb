@@ -9,12 +9,12 @@ class CoolLogFormater
     'ERROR' => :red,
     'WARN'  => :yellow,
     'INFO'  => :green,
-    'DEBUG' => :blue
+    'DEBUG' => :blue,
   }
 
   @@highline = HighLine.new
 
-  def call(severity, timestamp, progname, msg)
+  def call(severity, timestamp, _progname, msg)
     message = if msg.is_a?(String) then
                 return '' if msg.empty?
                 msg

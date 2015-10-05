@@ -8,6 +8,6 @@
 
 require_relative '../spec_helper'
 
-describe UserProject, :type => :model do
+describe UserProject, type: :model do
   let(:klass){UserProject}
 end
