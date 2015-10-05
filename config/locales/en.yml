@@ -515,3 +515,15 @@ en:
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
       delete_snapshot: 'Are you sure you want to delete following snapshots?'
       creation_started: 'Snapshot creation has started.'
+
+  datepicker:
+    today: 'Go to Today'
+    selectTime: 'Select Time'
+    selectMonth: 'Select Month'
+    togglePeriod: 'Toggle Period'
+    incrementMinute: 'Increment Minute'
+    decrementMinute: 'Decrement Minute'
+    pickMinute: 'Pick Minute'
+    incrementHour: 'Increment Hour'
+    decrementHour: 'Decrement Hour'
+    pickHour: 'Pick Hour'

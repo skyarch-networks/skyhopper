@@ -514,3 +514,15 @@ ja:
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
       delete_snapshot: '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'
+
+  datepicker:
+    today: '今日'
+    selectTime: '時刻を選択'
+    selectMonth: '月を選択'
+    togglePeriod: '午前/午後を切り替え'
+    incrementMinute: '1分後'
+    decrementMinute: '1分前'
+    pickMinute: '分を選択してください'
+    incrementHour: '1時間後'
+    decrementHour: '1時間前'
+    pickHour: '時間を選択してください'

@@ -1,4 +1,4 @@
-exports.install = function(Vue, options, mode){
+exports.install = function(Vue, options, mode, lines){
   Vue.directive("ace", {
       twoWay: true,
       bind: function () {
@@ -7,8 +7,10 @@ exports.install = function(Vue, options, mode){
           this.editor.getSession().setMode("ace/mode/"+mode);
           this.editor.getSession().setUseWrapMode(true);
           this.editor.$blockScrolling = Infinity;
+          if(!lines)
+            lines = Infinity;
           this.editor.setOptions({
-            maxLines: Infinity,
+            maxLines: lines,
             minLines: 15,
           });
           if (options){
