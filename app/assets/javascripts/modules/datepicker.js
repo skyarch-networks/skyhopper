@@ -25,17 +25,25 @@ exports.install = function(Vue, lang){
       });
       dp.on("dp.change", function (e) {
          vm.$set(key, moment(e.date._d).unix());
-         var current = new Date();
-         dp.data("DateTimePicker").maxDate(current);
+
+        var current = new Date();
+
+        dp.data("DateTimePicker").maxDate(current);
+
+        if(e.target.placeholder === "Start")
+          console.log(e.date._d);
+          $("input[type='hidden']").val(e.date._d);
       });
 
       dp.on("dp.show", function (e) {
-        var start;
         if(e.target.placeholder === "End"){
-          var min = new Date($("input[placeholder='Start']").val());
+          var start = $("input[type='hidden']").val();
+          var min = new Date(start);
           dp.data("DateTimePicker").minDate(min);
+          console.log(dp);
         }
       });
+
 
     },
     update: function (val) {
