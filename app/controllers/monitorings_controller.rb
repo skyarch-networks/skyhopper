@@ -99,6 +99,7 @@ class MonitoringsController < ApplicationController
   def show_zabbix_graph
     physical_id = params.require(:physical_id)
     item_key    = params.require(:item_key)
+    date_range  = params[:date_range]
 
     # TODO: I18n
     unless @infra.resources.pluck(:physical_id).include?(physical_id)
@@ -112,7 +113,7 @@ class MonitoringsController < ApplicationController
       item_key = item_infos.first["key_"]
     end
 
-    history_all = z.get_history(physical_id, item_key)
+    history_all = z.get_history(physical_id, item_key, date_range)
 
     render json: history_all
   end
