@@ -39,7 +39,9 @@ class Node
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: node_name)
 
-    install_sh_url = File.join(ChefAPI.server_url, '/bootstrap/install.sh')
+    uri = URI.parse(ChefAPI.server_url)
+    uri.path = '/bootstrap/install.sh'
+    install_sh_url = uri.to_s
 
     cmd = <<-EOS
 knife bootstrap #{fqdn} \
@@ -47,7 +49,8 @@ knife bootstrap #{fqdn} \
 --ssh-user #{user} \
 --node-name #{node_name} \
 --sudo \
---bootstrap-url #{install_sh_url}
+--bootstrap-url #{install_sh_url} \
+--bootstrap-wget-options '--no-check-certificate'
     EOS
     if chef_client_version
       cmd.chomp!
