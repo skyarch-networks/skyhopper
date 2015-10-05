@@ -95,37 +95,68 @@ input[type="number"] {
 .btn-info {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
-  border-color: #1798c4 #1798c4 hsl(195, 79%, 38%);
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 
 .label-info {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
-  border-color: #1798c4 #1798c4 hsl(195, 79%, 38%);
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
+}
+
+.tr-info {
+  background-color: hsl(189, 77%, 52%) !important;
+}
+
+
+
+.info {
+  background-color: hsl(189, 77%, 52%) !important;
+  background-repeat: repeat-x;
+}
+.table>thead>tr>td.info,
+.table>tbody>tr>td.info,
+.table>tfoot>tr>td.info,
+.table>thead>tr>th.info,
+.table>tbody>tr>th.info,
+.table>tfoot>tr>th.info,
+.table>thead>tr.info>td,
+.table>tbody>tr.info>td,
+.table>tfoot>tr.info>td,
+.table>thead>tr.info>th,
+.table>tbody>tr.info>th,
+.table>tfoot>tr.info>th
+.table>tfoot>tr.info>th {
+    background: #a4d6e7 !important;
 }
 
 .alert-info {
   background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
-  border-color: #1798c4 #1798c4 hsl(195, 79%, 38%);
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
 }
 
-.btn-info:hover {
-  background-color: hsl(195, 79%, 43%) !important;
+.panel-info>.panel-heading {
+  background-color: hsl(189, 77%, 52%) !important;
   background-repeat: repeat-x;
-  border-color: #1798c4 #1798c4 hsl(195, 79%, 38%);
   color: rgb(255, 255, 255) !important;
-  text-shadow: 0 1px 1px rgb(140, 225, 237);
-  -webkit-font-smoothing: antialiased;
+}
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+
+.btn-info {
+    background: #0099cc;
+    color: #ffffff;
+}
+
+.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info {
+    background: #0e8db8;
+}
+
+.btn-info:active, .btn-info.active {
+    background: #007299;
+    box-shadow: none;
 }
 
 .ssp th {
