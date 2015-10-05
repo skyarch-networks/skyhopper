@@ -351,6 +351,7 @@
       },
       drawChart: function (data, physical_id, title_name, columns) {
         var resizable_data = new google.visualization.DataTable();
+        var direction;
         if (columns.length === 1) {
           resizable_data.addColumn('datetime', 'DateTime');
           _.forEach(columns, function (col) {
@@ -360,15 +361,16 @@
             var format_date = new Date(obj[0]);
             return [format_date,obj[1]];
           });
-          console.log(zabbix_data);
           resizable_data.addRows(zabbix_data);
+          resizable_data.sort([{column: 0, asc: true}]);
+          direction = 1;
         }else {
           resizable_data.addColumn('string', 'clock');
           _.forEach(columns, function (col) {
             resizable_data.addColumn('number', col);
           });
-          console.log(data);
           resizable_data.addRows(data);
+          direction = -1;
         }
         var resizable_options = {
           title: physical_id + " " + title_name,
@@ -383,7 +385,7 @@
           fontSize: 11,
             // setting labels 45 degrees
           hAxis: {
-            direction: -1,
+            direction: direction,
             slantedText: true,
             slantedTextAngle: 45
           },
