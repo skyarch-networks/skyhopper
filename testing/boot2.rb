@@ -2,35 +2,32 @@
 
 require 'socket'
 
+require 'winrm'
+
 # AWS API Credentials
-# AWS_ACCESS_KEY_ID     = "AKIAIYPOCQWUGWEUGGDQ"
-# AWS_SECRET_ACCESS_KEY = "WjRz3LbJaBq+i0Nn1vcQpRax9PRnZYWGlX9rpgD/"
-#
-# # Node details
-NODE_NAME         = "webserver-01.example.com"
-CHEF_ENVIRONMENT  = "production"
-# INSTANCE_SIZE     = "t2.small"
-# EBS_ROOT_VOL_SIZE = 30   # in GB
-# REGION            = "ap-northeast-1"
-# AVAILABILITY_ZONE = "ap-northeast-1c"
-# AMI_NAME          = "ami-4623a846"
-# SECURITY_GROUP    = "default"
-RUN_LIST          = "role[base],role[iis]"
+AWS_ACCESS_KEY_ID     = "AKIAIYPOCQWUGWEUGGDQ"
+AWS_SECRET_ACCESS_KEY = "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"
+
+# Node details
+NODE_NAME         = "windows-node3"
+INSTANCE_SIZE     = "t2.small"
+REGION            = "ap-northeast-1"
+AVAILABILITY_ZONE = "ap-northeast-1c"
+AMI_NAME          = "ami-4623a846"
+SECURITY_GROUP    = "default"
 USER_DATA_FILE    = "/tmp/userdata.txt"
-# USERNAME          = "Administrator"
-PASSWORD          = "1234"
-#
+USERNAME          = "Administrator"
+PASSWORD          = "pass1234"
+
 # Write user data file that sets up WinRM and sets the Administrator password.
 File.open(USER_DATA_FILE, "w") do |f|
   f.write <<EOT
 <script>
-winrm quickconfig -q & winrm set winrm/config @{MaxTimeoutms="1800000"}
-& winrm set winrm/config/service @{AllowUnencrypted="true"}
-& winrm set winrm/config/service/auth @{Basic="true"}
-& netsh advfirewall firewall add rule name="WinRM 5985"
-protocol=TCP dir=in localport=5985 action=allow
-& netsh advfirewall firewall add rule name="WinRM 5986"
-protocol=TCP dir=in localport=5986 action=allow
+winrm quickconfig -q & winrm set winrm/config @{MaxTimeoutms="1800000"} &
+winrm set winrm/config/service @{AllowUnencrypted="true"} &
+winrm set winrm/config/service/auth @{Basic="true"} &
+netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow &
+netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
 </script>
 <powershell>
 $admin = [adsi]("WinNT://./administrator, user")
@@ -45,13 +42,11 @@ provision_cmd = [
   "--aws-access-key-id #{AWS_ACCESS_KEY_ID}",
   "--aws-secret-access-key #{AWS_SECRET_ACCESS_KEY}",
   "--tags 'Name=#{NODE_NAME}'",
-  "--environment '#{CHEF_ENVIRONMENT}'",
   "--flavor #{INSTANCE_SIZE}",
-  "--ebs-size #{EBS_ROOT_VOL_SIZE}",
   "--region #{REGION}",
   "--availability-zone #{AVAILABILITY_ZONE}",
   "--image #{AMI_NAME}",
-  "--groups '#{SECURITY_GROUP}'",
+  "--security-group-ids '#{SECURITY_GROUP}'",
   "--user-data #{USER_DATA_FILE}",
   "--ssh-key 'joeper'",
   "--verbose"
@@ -78,43 +73,49 @@ IO.popen(provision_cmd) do |pipe|
     # done
   end
 end
-if ip_addr.nil?
-  puts "ERROR: Unable to get new instance's IP address"
-  exit -1
-end
+
 
 # Now the new instance is provisioned, but we have no idea when it will
 # be ready to go. The first thing we'll do is wait until the WinRM port
 # responds to connections.
-puts ip_addr
 puts "Waiting for WinRM..."
 start_time = Time.now
+count =0;
+
+
 begin
-  s = TCPSocket.new ip_addr, 5985
-rescue Errno::ETIMEDOUT => e
+  sleep 30
+  endpoint = "http://#{ip_addr}:5985/wsman"
+  winrm =WinRM::WinRMWebService.new(endpoint, :plaintext, :user =>"#{USERNAME}" , :pass => "#{PASSWORD}", :disable_sspi => true,:basic_auth_only => true)
+  winrm.cmd('ipconfig /all') do |stdout, stderr|
+    STDOUT.print stdout
+    STDERR.print stderr
+  end
+rescue Exception=> e
   puts "Still waiting..."+e.to_s
-  retry
+  if count <50 then
+    count =count+1
+    retry
+  end
 end
-s.close
-#
-# # You'd think we'd be good to go now...but NOPE! There is still more Windows
-# # bootstrap crap going on, and we have no idea what we need to wait on. So,
-# # in a last-ditch effort to make this all work, we've seen that 120 seconds
-# # ought to be enough...
-# wait_time = 120
-# while wait_time > 0
-#   puts "Better wait #{wait_time} more seconds..."
-#   sleep 1
-#   wait_time -= 1
-# end
-# puts "Finally ready to try bootstrapping instance..."
+
+# You'd think we'd be good to go now...but NOPE! There is still more Windows
+# bootstrap crap going on, and we have no idea what we need to wait on. So,
+# in a last-ditch effort to make this all work, we've seen that 120 seconds
+# ought to be enough...
+wait_time = 120
+while wait_time > 0
+  puts "Better wait #{wait_time} more seconds..."
+  sleep 1
+  wait_time -= 1
+end
+puts "Finally ready to try bootstrapping instance..."
 
 # Define the command to bootstrap the already-provisioned instance with Chef
 bootstrap_cmd = [
   "knife bootstrap windows winrm #{ip_addr}",
-  "-x Administrator",
-  "-P '8aUNWBR@GLE'",
-  "--environment #{CHEF_ENVIRONMENT}",
+  "-x #{USERNAME}",
+  "-P '#{PASSWORD}'",
   "--node-name #{NODE_NAME}",
   "--verbose"
 ].join(' ')

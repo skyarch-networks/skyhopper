@@ -36,7 +36,7 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
 
-  Vue.use(require('./modules/ace'), false, 'json', '30');
+  Vue.use(require('./modules/ace'), false, 'json', '20');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
