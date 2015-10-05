@@ -1195,7 +1195,7 @@
               if ('a' <= letter && letter <= 'z') {
                 return letter.charCodeAt(0);
               } else {
-                retrun false;
+                return false;
               }
             } else {
               return false;
