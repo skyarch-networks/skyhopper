@@ -11,9 +11,9 @@
   //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var parseURLParams = require('./modules/getURL');
   var adminIndex = require('./modules/loadindex');
   var md5 = require('md5');
+  var queryString = require('query-string').parse(location.search);
 
   var app;
 
@@ -29,7 +29,7 @@
         filterKey: '',
         reversed: {},
         option: ['user_admin'],
-        lang: null,
+        lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
@@ -50,7 +50,6 @@
       pop: function(){
          $('#role').popover();
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -72,8 +71,6 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  this.parseURLParams('client_id');
-        self.lang = this.parseURLParams('lang');
         self.columns = ['role', 'email', 'last_sign_in_at', 'id'];
         $.ajax({
             cache: false,
@@ -90,7 +87,6 @@
                 };
               });
               self.$emit('data-loaded');
-              console.log(self.data);
               var empty = '';
               if(self.data.length === 0){ $('#empty').show().html(empty);}
             }
