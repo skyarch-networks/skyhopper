@@ -31,7 +31,6 @@ exports.install = function(Vue, lang){
         dp.data("DateTimePicker").maxDate(current);
 
         if(e.target.placeholder === "Start")
-          console.log(e.date._d);
           $("input[type='hidden']").val(e.date._d);
       });
 
@@ -40,7 +39,6 @@ exports.install = function(Vue, lang){
           var start = $("input[type='hidden']").val();
           var min = new Date(start);
           dp.data("DateTimePicker").minDate(min);
-          console.log(dp);
         }
       });
 
