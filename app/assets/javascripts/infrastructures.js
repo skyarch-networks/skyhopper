@@ -1186,10 +1186,10 @@
       selected_any: function () { return _.any(this.snapshots, 'selected', true); },
       suggest_device_name: function () {
         // TODO: iikanji ni sitai
-        var suggested_device_letter = 'f'; // same as aws default
+        var suggested_device_letter_code = 102; // same as aws default 'f'
         var device_letter_codes = _(this.ec2.block_devices).chain()
           .pluck('device_name')
-          .filter(function (name) {
+          .map(function (name) {
             if (/sd([a-z])$/.test(name)) {
               var letter = name.slice(-1);
               if ('a' <= letter && letter <= 'z') {
@@ -1201,14 +1201,19 @@
               return false;
             }
           })
+          .filter()
           .sort()
           .value();
-        if (device_letter_codes.indexOf(102) !== -1) { // 'f'.charCodeAt() === 102
-          // unimpl
-          suggested_device_letter = '?';
+
+        while (device_letter_codes.indexOf(suggested_device_letter_code) !== -1) {
+          if (suggested_device_letter_code === 122) { // 'z'
+            suggested_device_letter_code = 63;        // '?'
+            break;
+          }
+          suggested_device_letter_code++;
         }
 
-        return '/dev/sd' + suggested_device_letter;
+        return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
       }
     },
     ready: function () {
