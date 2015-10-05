@@ -307,3 +307,13 @@ h6.page-header {
 .QRCode td.white {
   border-color: #fff;
 }
+
+/* panel header link-text */
+.panel.panel-primary .panel-heading a,
+.panel.panel-success .panel-heading a,
+.panel.panel-info .panel-heading a,
+.panel.panel-warning .panel-heading a,
+.panel.panel-danger .panel-heading a
+{
+  color: white;
+}

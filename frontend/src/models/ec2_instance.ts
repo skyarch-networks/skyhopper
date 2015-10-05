@@ -21,6 +21,7 @@ export default class EC2Instance extends ModelBase {
   static ajax_node       = new AjaxSet.Resources('nodes');
   static ajax_ec2        = new AjaxSet.Resources('ec2_instances');
   static ajax_serverspec = new AjaxSet.Resources('serverspecs');
+  static ajax_elb        = new AjaxSet.Resources('elb');
 
 
   show(): JQueryPromise<any> {
@@ -288,6 +289,82 @@ export default class EC2Instance extends ModelBase {
       (<any>EC2Instance.ajax_ec2).deregister_from_elb(_.merge(this.params, {elb_name: elb_name}))
     );
   }
+
+  create_listener(
+    elb_name: string,
+    protocol: string,
+    load_balancer_port: string,
+    instance_protocol: string,
+    instance_port: string,
+    ssl_certificate_id: string
+  ): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_elb).create_listener(_.merge(this.params, {
+        elb_name: elb_name,
+        elb_listener_protocol: protocol,
+        elb_listener_load_balancer_port: load_balancer_port,
+        elb_listener_instance_protocol: instance_protocol,
+        elb_listener_instance_port: instance_port,
+        elb_listener_ssl_certificate_id: ssl_certificate_id
+      }))
+    );
+  }
+
+  delete_listener(elb_name: string, load_balancer_port: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_elb).delete_listener(
+        _.merge(this.params, {elb_name: elb_name, elb_listener_load_balancer_port: load_balancer_port})
+      )
+    );
+  }
+
+  update_listener(
+    elb_name: string,
+    protocol: string,
+    old_load_balancer_port: string,
+    load_balancer_port: string,
+    instance_protocol: string,
+    instance_port: string,
+    ssl_certificate_id: string
+  ): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_elb).update_listener(_.merge(this.params, {
+        elb_name: elb_name,
+        elb_listener_protocol: protocol,
+        elb_listener_old_load_balancer_port: old_load_balancer_port,
+        elb_listener_load_balancer_port: load_balancer_port,
+        elb_listener_instance_protocol: instance_protocol,
+        elb_listener_instance_port: instance_port,
+        elb_listener_ssl_certificate_id: ssl_certificate_id
+      }))
+    );
+  }
+
+  upload_server_certificate(
+    elb_name: string,
+    server_certificate_name: string,
+    certificate_body: string,
+    private_key: string,
+    certificate_chain: string
+  ): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_elb).upload_server_certificate(_.merge(this.params, {
+        elb_name: elb_name,
+        ss_server_certificate_name: server_certificate_name,
+        ss_certificate_body: certificate_body,
+        ss_private_key: private_key,
+        ss_certificate_chain: certificate_chain,
+      }))
+    );
+  }
+
+  delete_server_certificate(elb_name: string, server_certificate_name: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_elb).delete_server_certificate(
+        _.merge(this.params, {elb_name: elb_name, ss_server_certificate_name: server_certificate_name})
+      )
+    );
+  }
 }
 
 
@@ -312,3 +389,9 @@ EC2Instance.ajax_serverspec.add_collection('select', 'GET');
 EC2Instance.ajax_serverspec.add_collection('results', 'GET');
 EC2Instance.ajax_serverspec.add_collection("run", "POST");
 EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');
+
+EC2Instance.ajax_elb.add_collection('create_listener', 'POST');
+EC2Instance.ajax_elb.add_collection('delete_listener', 'POST');
+EC2Instance.ajax_elb.add_collection('update_listener', 'POST');
+EC2Instance.ajax_elb.add_collection('upload_server_certificate', 'POST');
+EC2Instance.ajax_elb.add_collection('delete_server_certificate', 'POST');
