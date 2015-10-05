@@ -460,6 +460,11 @@ ja:
     instances:         'インスタンス'
     state:             '状態'
     reason_code:       '原因コード'
+    attach:            'アタッチ'
+    attachable_volumes: 'アタッチ可能なボリューム'
+    device_name:       'デバイス名'
+    set_device_name:   'デバイス名の設定'
+    no_volumes:        'ボリュームはありません'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'

@@ -461,11 +461,17 @@ en:
     instances:         'Instances'
     state:             'State'
     reason_code:       'Reason Code'
+    attach:            'Attach'
+    attachable_volumes: 'Attachable Volumes'
+    device_name:       'Device Name'
+    set_device_name:   'Set Device Name'
+    no_volumes:        'No Volumes'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
       registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
+      volume_attached:       '%{volume_id} has attached to %{instance_id}. Device name is %{device}'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
