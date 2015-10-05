@@ -7,9 +7,18 @@ dependencies:
     - frontend/node_modules
     - frontend/typings
     - vendor/bower_components
+  pre:
+    - "cd frontend && npm i && cd .."
+    - "bower install"
+    - "cd frontend && node_modules/.bin/gulp tsd && node_modules/.bin/gulp ts && cd .."
   override:
     - echo Skip bundle install
 
 database:
   override:
     - "echo Skip rake db:hogehoge"
+
+
+test:
+  override:
+    - "cd frontend && npm test"
