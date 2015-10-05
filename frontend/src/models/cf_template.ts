@@ -7,9 +7,11 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="infrastructure.ts" />
 
-class CFTemplate extends ModelBase {
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
+
+export default class CFTemplate extends ModelBase {
   constructor(private infra: Infrastructure) {super(); }
 
   static ajax = new AjaxSet.Resources('cf_templates');

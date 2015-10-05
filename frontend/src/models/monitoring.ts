@@ -7,8 +7,9 @@
 //
 
 /// <reference path="../../declares.d.ts" />
-/// <reference path="./infrastructure.ts" />
-/// <reference path="./base.ts" />
+
+import ModelBase      from './base';
+import Infrastructure from './infrastructure';
 
 type MasterMonitoring = {
   id: number,
@@ -20,7 +21,7 @@ type MasterMonitoring = {
   checked: boolean,
 };
 
-class Monitoring extends ModelBase {
+export default class Monitoring extends ModelBase {
   constructor(private infra: Infrastructure) { super(); }
 
   static ajax = new AjaxSet.Resources('monitorings');
@@ -140,12 +141,13 @@ class Monitoring extends ModelBase {
   }
 
 
-  show_zabbix_graph(physical_id: string, item_key: any): JQueryPromise<any> {
+  show_zabbix_graph(physical_id: string, item_key: string, date_range?: Array<number>): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).show_zabbix_graph({
         id:          this.infra.id,
         physical_id: physical_id,
         item_key:    item_key,
+        date_range:  date_range,
       })
     );
   }

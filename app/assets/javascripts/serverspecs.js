@@ -11,6 +11,12 @@ var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
 var parseURLParams = require('./modules/getURL');
 var serverspecIndex = require('./modules/loadindex');
+var queryString = require('query-string').parse(location.search);
+
+Vue.use(require('./modules/ace'), true, 'ruby');
+
+
+require('serverspec-gen/ui');
 
 var app;
 
@@ -26,7 +32,7 @@ Vue.component('demo-grid', {
       filterKey: '',
       reversed: {},
       option: ['serverspec'],
-      lang: null,
+      lang: queryString.lang,
       pages: 10,
       pageNumber: 0,
         };
@@ -44,7 +50,6 @@ Vue.component('demo-grid', {
           this.sortKey = key;
           this.reversed[key] = !this.reversed[key];
     },
-    parseURLParams: parseURLParams,
     showPrev: function(){
         if(this.pageNumber === 0) return;
         this.pageNumber--;
@@ -66,7 +71,6 @@ Vue.component('demo-grid', {
       var il = new Loader();
       var self = this;
       self.loading = true;
-      self.lang = this.parseURLParams('lang');
       self.columns = ['name','description', 'id'];
 
      $.ajax({

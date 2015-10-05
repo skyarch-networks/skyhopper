@@ -14,8 +14,8 @@
   //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var parseURLParams = require('./modules/getURL');
   var dishesIndex = require('./modules/loadindex');
+  var queryString = require('query-string').parse(location.search);
 
   var app;
 
@@ -31,7 +31,7 @@
         filterKey: '',
         reversed: {},
         option: ['dish'],
-        lang: null,
+        lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
@@ -49,7 +49,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -71,8 +70,7 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  this.parseURLParams('client_id');
-        self.lang = this.parseURLParams('lang');
+        var id =  queryString.client_id;
         self.columns = ['name','detail', 'status', 'id'];
 
        $.ajax({
