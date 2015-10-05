@@ -2,6 +2,7 @@ exports.install = function(Vue, lang){
 
   Vue.directive('datepicker', {
     twoWay: true,
+
     bind: function () {
       var vm = this.vm;
       var key = this.expression;
@@ -22,11 +23,18 @@ exports.install = function(Vue, lang){
           pickHour: t('datepicker.pickHour'),
         },
       });
-
       dp.on("dp.change", function (e) {
          vm.$set(key, moment(e.date._d).unix());
          var current = new Date();
          dp.data("DateTimePicker").maxDate(current);
+      });
+
+      dp.on("dp.show", function (e) {
+        var start;
+        if(e.target.placeholder === "End"){
+          var min = new Date($("input[placeholder='Start']").val());
+          dp.data("DateTimePicker").minDate(min);
+        }
       });
 
     },
