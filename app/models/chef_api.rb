@@ -74,4 +74,11 @@ module ChefAPI
   def search_node(name)
     @@ridley.search(:node, "name:#{name}")
   end
+
+  # @return [String] URL of Chef Server
+  def server_url
+    path = File.expand_path("~/.chef/knife.rb")
+    conf = Ridley::Chef::Config.new(path).to_hash
+    return conf[:chef_server_url]
+  end
 end
