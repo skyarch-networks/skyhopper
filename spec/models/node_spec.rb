@@ -15,7 +15,6 @@ describe Node, type: :model do
       status = double()
       expect(status).to receive(:success?).and_return(true)
       expect(Open3).to receive(:capture3).and_return(['out','err', status])
-      expect(ChefAPI).to receive(:server_url).and_return('http://example.com/hoge/fuga')
     end
 
     let(:infra){build(:infrastructure)}
