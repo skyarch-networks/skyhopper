@@ -1272,6 +1272,8 @@
         containment: ".modal-backdrop",
         handle: ".modal-header"
       });
+
+      $('#attachButton').on('show.bs.dropdown', self.load_volumes);
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
