@@ -471,7 +471,6 @@ en:
     attachable_volumes: 'Attachable Volumes'
     device_name:       'Device Name'
     set_device_name:   'Set Device Name'
-    no_volumes:        'No Volumes'
     none:              'None'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
