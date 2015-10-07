@@ -157,7 +157,7 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     resp = instance.attach_volume(volume_id, device_name)
 
-    render text: I18n.t('ec2_instances.msg.volume_attached', resp.to_h)
+    render json: resp
   end
 
   private
