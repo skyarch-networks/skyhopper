@@ -74,7 +74,7 @@ class EC2Instance < SimpleDelegator
       public_ip:     public_ip_address,
       block_devices: block_device_mappings,
       root_device_name: root_device_name,
-      availability_zone: placement.availability_zone
+      availability_zone: placement.availability_zone,
     }
   end
 
@@ -109,7 +109,7 @@ class EC2Instance < SimpleDelegator
     client.describe_volumes(
       filters: [{
         name: "availability-zone",
-        values: [availability_zone]
+        values: [availability_zone],
       }])
       .volumes
       .select { |volume| volume.state == 'available' }
@@ -124,7 +124,7 @@ class EC2Instance < SimpleDelegator
     client.attach_volume({
       volume_id: volume_id,
       instance_id: @physical_id,
-      device: device_name
+      device: device_name,
     })
 
   end

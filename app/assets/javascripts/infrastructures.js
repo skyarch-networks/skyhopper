@@ -1312,7 +1312,7 @@
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
           ec2.attach_volume(volume_id, device_name).done(function (data) {
-            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2)
+            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
           });
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
