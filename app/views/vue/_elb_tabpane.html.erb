@@ -8,7 +8,12 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th><%=t('ec2_instances.protocol')%></th> <th><%=t('ec2_instances.lb_port')%></th> <th><%=t('ec2_instances.instance_protocol')%></th> <th><%=t('ec2_instances.instance_port')%></th> <th><%=t('ec2_instances.expiration_date')%></th>
+        <th><%=t('ec2_instances.protocol')%></th>
+        <th><%=t('ec2_instances.lb_port')%></th>
+        <th><%=t('ec2_instances.instance_protocol')%></th>
+        <th><%=t('ec2_instances.instance_port')%></th>
+        <th><%=t('ec2_instances.certificate_name')%></th>
+        <th><%=t('ec2_instances.btn.edit_to_elb_listener')%></th>
       </tr>
     </thead>
 
@@ -18,10 +23,36 @@
         <td v-text="load_balancer_port"></td>
         <td v-text="instance_protocol"></td>
         <td v-text="instance_port"></td>
-        <td v-text="expiration_date(expiration)"></td>
+        <td v-text="ssl_certificate_id_to_name(ssl_certificate_id)"></td>
+        <td>
+          <button v-on="click: set_edit_listener_modal_default_value(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)" class="btn btn-xs btn-default" data-toggle="modal" role="button" href="#edit-listener-modal"><%=t('helpers.links.edit')%></button>
+          <button v-on="click: delete_listener(load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
+        </td>
       </tr>
     </tbody>
   </table>
+  <button v-on="click: set_create_listener_modal_default_value()" class="btn btn-default" data-toggle="modal" role="button" href="#create-listener-modal"><%=t('ec2_instances.btn.create_to_elb_listener')%></button>
+
+  <h4 class="page-header"><%=t('ec2_instances.certificate')%></h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><%=t('ec2_instances.certificate_name')%></th> <th><%=t('ec2_instances.expiration_date')%></th> <th><%=t('ec2_instances.btn.edit_certificate')%></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr v-repeat="server_certificates">
+        <td v-text="name"></td>
+        <td v-text="expiration_date(expiration)"></td>
+        <td>
+          <button v-on="click: delete_server_certificate(name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-default" data-toggle="modal" role="button" href="#upload-server-certificate-modal"><%=t('ec2_instances.btn.upload_certificate')%></button>
+
 
   <h4 class="page-header"><%=t('ec2_instances.instances')%></h4>
   <div class="col-md-4 col-sm-6 col-xs-12" v-repeat="e: ec2_instances">
@@ -61,6 +92,163 @@
         <button class="btn btn-primary btn-sm" v-on="click: register()" v-attr="disabled: !selected_ec2">
           <%= I18n.t('ec2_instances.btn.register') %>
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# modal for create listener %>
+<div id="create-listener-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t('ec2_instances.btn.create_to_elb_listener') %></h4>
+      </div>
+
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.protocol') %></label>
+        <select v-model="protocol" v-on="change: change_create_listener_protocol()" class="form-control">
+          <option value="HTTP">HTTP</option>
+          <option value="HTTPS">HTTPS(Secure HTTP)</option>
+          <option value="TCP">TCP</option>
+          <option value="SSL">SSL(Secure TCP)</option>
+        </select>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.lb_port') %></label>
+        <input type="number" min="0" max="65535" v-model="load_balancer_port" class="form-control" />
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.instance_protocol') %></label>
+        <select v-model="instance_protocol" class="form-control">
+          <option value="HTTP">HTTP</option>
+          <option value="HTTPS">HTTPS(Secure HTTP)</option>
+          <option value="TCP">TCP</option>
+          <option value="SSL">SSL(Secure TCP)</option>
+        </select>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.instance_port') %></label>
+        <input type="number" min="0" max="65535" v-model="instance_port" class="form-control" />
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.certificate_name') %></label>
+        <select v-model="ssl_certificate_id" id="create_listener_ssl_certificate_id" class="form-control" options="server_certificate_name_items">
+          <option value=""><%= t('ec2_instances.none') %></option>
+        </select>
+      </div>
+      
+      <div class="modal-footer">
+        <div v-if="!loading">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button v-on="click: create_listener()" class="btn btn-primary"><%= t('helpers.links.new') %></button>
+        </div>
+        <div-loader v-if="loading"></div-loader>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# modal for edit listener %>
+<div id="edit-listener-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t('ec2_instances.btn.edit_to_elb_listener') %></h4>
+      </div>
+
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.protocol') %></label>
+        <select v-model="protocol" v-on="change: change_edit_listener_protocol()" id="edit_listener_protocol" class="form-control">
+          <option value="HTTP">HTTP</option>
+          <option value="HTTPS">HTTPS(Secure HTTP)</option>
+          <option value="TCP">TCP</option>
+          <option value="SSL">SSL(Secure TCP)</option>
+        </select>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.lb_port') %></label>
+        <input type="number" min="0" max="65535" v-model="load_balancer_port" id="edit_listener_load_balancer_port" class="form-control" />
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.instance_protocol') %></label>
+        <select v-model="instance_protocol" id="edit_listener_instance_protocol" class="form-control">
+          <option value="HTTP">HTTP</option>
+          <option value="HTTPS">HTTPS(Secure HTTP)</option>
+          <option value="TCP">TCP</option>
+          <option value="SSL">SSL(Secure TCP)</option>
+        </select>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.instance_port') %></label>
+        <input type="number" min="0" max="65535" v-model="instance_port" id="edit_listener_instance_port" class="form-control" />
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.certificate_name') %></label>
+        <select v-model="ssl_certificate_id" id="edit_listener_ssl_certificate_id" class="form-control" options="server_certificate_name_items">
+          <option value=""><%= t('ec2_instances.none') %></option>
+        </select>
+      </div>
+      
+      <div class="modal-footer">
+        <div v-if="!loading">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button v-on="click: update_listener()" class="btn btn-primary"><%= t('common.btn.update') %></button>
+        </div>
+        <div-loader v-if="loading"></div-loader>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# modal for upload server certificate %>
+<div id="upload-server-certificate-modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t('ec2_instances.btn.upload_certificate') %></h4>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.certificate_name') %></label>
+        <input v-model="server_certificate_name" class="form-control" />
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.private_key') %></label>
+        <textarea v-model="private_key" class="form-control allow_textfile_drop" placeholder="<%= t('ec2_instances.msg.private_key_droppable') %>"></textarea>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.public_key_certificate') %></label>
+        <textarea v-model="certificate_body" class="form-control allow_textfile_drop" placeholder="<%= t('ec2_instances.msg.public_key_certificate_droppable') %>"></textarea>
+      </div>
+      
+      <div class="modal-body">
+        <label class="control-label"><%= t('ec2_instances.certificate_chain') %></label>
+        <textarea v-model="certificate_chain" class="form-control allow_textfile_drop" placeholder="<%= t('ec2_instances.msg.certificate_chain_droppable') %>"></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <div v-if="!loading">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button v-on="click: upload_server_certificate()" class="btn btn-primary"><%= t('helpers.links.new') %></button>
+        </div>
+        <div-loader v-if="loading"></div-loader>
       </div>
     </div>
   </div>

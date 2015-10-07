@@ -215,6 +215,22 @@ class InfrastructuresController < ApplicationController
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
+    
+    list_server_certificates = elb.list_server_certificates
+    
+    @server_certificate_name_items = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
+      {
+        text: crt['server_certificate_name'],
+        value: crt['arn'],
+      }
+    end
+    
+    @server_certificates = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
+      {
+        name: crt['server_certificate_name'],
+        expiration: crt['expiration'],
+      }
+    end
   end
 
   # POST /infrastructures/change_rds_scale

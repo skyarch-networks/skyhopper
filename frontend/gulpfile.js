@@ -22,7 +22,7 @@ gulp.task('ts', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch('./+(src|test)/**/*.ts', ['ts', 'tslint', 'test']);
+  gulp.watch('./+(src|test)/**/*.ts', ['ts', 'tslint']);
 });
 
 gulp.task('tsconfig', function () {
@@ -36,11 +36,4 @@ gulp.task('tslint', function () {
     .pipe(tslint.report('verbose', {emitError: false}));
 });
 
-gulp.task('test', function (done) {
-  new KarmaSrv({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true,
-  }, done).start();
-});
-
-gulp.task('default', ['ts', 'tslint', 'test', 'watch']);
+gulp.task('default', ['ts', 'tslint', 'watch']);

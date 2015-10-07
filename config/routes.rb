@@ -70,6 +70,16 @@ SkyHopper::Application.routes.draw do
       post 'attach_volume'
     end
   end
+  
+  resources :elb, only: [] do
+    collection do
+      post 'create_listener'
+      post 'delete_listener'
+      post 'update_listener'
+      post 'upload_server_certificate'
+      post 'delete_server_certificate'
+    end
+  end
 
   resources :serverspecs do
     collection do
