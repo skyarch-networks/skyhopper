@@ -115,7 +115,7 @@
           "./install.sh\n",
           "cd /tmp/\n",
 
-          "chef-server-ctl start\n",
+          "chef-server-ctl restart\n",
           "/opt/aws/bin/cfn-signal '", {"Ref": "wchInstallChef"}, "'\n",
           "chef-server-ctl user-create ",
               {"Ref": "ChefUser"},     " ",
