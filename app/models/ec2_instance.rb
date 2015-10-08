@@ -126,6 +126,5 @@ class EC2Instance < SimpleDelegator
       instance_id: @physical_id,
       device: device_name,
     })
-
   end
 end
