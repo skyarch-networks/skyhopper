@@ -66,7 +66,7 @@
               </bootstrap-tooltip>
             </span>
             <bootstrap-tooltip title="<%= t 'ec2_instances.attach' %>" class="dropdown" id="attachButton">
-              <a class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
+              <a v-on="click: load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
               <ul id="attachVolume" class="dropdown-menu">
 <!--                 <li><a href="#">Create Volume</a></li>
                 <li role="separator" class="divider"></li> -->

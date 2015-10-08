@@ -1299,6 +1299,7 @@
         return this.sort_key === key;
       },
       load_volumes: function () {
+        if ($("#attachButton.dropdown.open").length) {return;};
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         this.loading_volumes = true;
@@ -1451,8 +1452,6 @@
         containment: ".modal-backdrop",
         handle: ".modal-header"
       });
-
-      $('#attachButton').on('show.bs.dropdown', self.load_volumes);
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
