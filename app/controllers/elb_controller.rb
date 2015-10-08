@@ -21,7 +21,7 @@ class ElbController < ApplicationController
     instance_protocol   = params.require(:elb_listener_instance_protocol)
     instance_port       = params.require(:elb_listener_instance_port)
     ssl_certificate_id  = params[:elb_listener_ssl_certificate_id]
-    
+
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
 
@@ -29,7 +29,7 @@ class ElbController < ApplicationController
 
     render text: I18n.t('ec2_instances.msg.created_listener_to_elb')
   end
-  
+
   # POST /elb/delete_listener
   def delete_listener
     elb_name    = params.require(:elb_name)
@@ -38,12 +38,12 @@ class ElbController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
-    
+
     elb.delete_listener(load_balancer_port)
 
     render text: I18n.t('ec2_instances.msg.deleted_listener_to_elb')
   end
-  
+
   # POST /elb/update_listener
   def update_listener
     elb_name    = params.require(:elb_name)
@@ -57,7 +57,7 @@ class ElbController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
-    
+
     begin
       old_listener = elb.describe_listener(old_load_balancer_port.to_i)
       elb.delete_listener(old_load_balancer_port)
@@ -70,19 +70,18 @@ class ElbController < ApplicationController
           old_listener['load_balancer_port'],
           old_listener['instance_protocol'],
           old_listener['instance_port'],
-          old_listener['ssl_certificate_id']
+          old_listener['ssl_certificate_id'],
         )
-      rescue => rollback_error
+      rescue
         raise 'Failed to rollback. Data might have been lost.'
       end
       # Rollback end
       raise error
-      return
     end
-    
+
     render text: I18n.t('ec2_instances.msg.deleted_listener_to_elb') + "<br />" + I18n.t('ec2_instances.msg.created_listener_to_elb')
   end
-  
+
   # POST /elb/upload_server_certificate
   def upload_server_certificate
     elb_name    = params.require(:elb_name)
@@ -91,15 +90,15 @@ class ElbController < ApplicationController
     certificate_body  = params.require(:ss_certificate_body)
     private_key  = params.require(:ss_private_key)
     certificate_chain  = params[:ss_certificate_chain]
-    
+
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
-    
+
     elb.upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
-    
+
     render text: I18n.t('ec2_instances.msg.uploaded_certificate')
   end
-  
+
   # POST /elb/delete_server_certificate
   def delete_server_certificate
     elb_name    = params.require(:elb_name)
@@ -108,7 +107,7 @@ class ElbController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
-    
+
     elb.delete_server_certificate(server_certificate_name)
 
     render text: I18n.t('ec2_instances.msg.deleted_certificate')
