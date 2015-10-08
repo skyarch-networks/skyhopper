@@ -9,7 +9,6 @@
 //browserify functions for vue filters functionality
 var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
-var parseURLParams = require('./modules/getURL');
 var serverspecIndex = require('./modules/loadindex');
 var queryString = require('query-string').parse(location.search);
 
