@@ -63,7 +63,7 @@ class ELB
       instances:[{instance_id: physical_id}],
     )
   end
-  
+
   # create ELB listener
   # @param [String] protocol Loadbalancer protocol".
   # @param [String] load_balancer_port Loadbalancer port.
@@ -82,7 +82,7 @@ class ELB
       }],
     )
   end
-  
+
   # Delete ELB listener
   # @param [String] load_balancer_port Loadbalancer port.
   def delete_listener(load_balancer_port)
@@ -91,7 +91,7 @@ class ELB
       load_balancer_ports: [ load_balancer_port ],
     )
   end
-  
+
   # Upload server certificate
   # @param [String] server_certificate_name Certificate name".
   # @param [String] certificate_body Public certificate.
@@ -113,29 +113,29 @@ class ELB
       )
     end
   end
-  
+
   # Delete server certificate
   # @param [String] server_certificate_name Certificate name".
   def delete_server_certificate(server_certificate_name)
-    @iam.delete_server_certificate({
+    @iam.delete_server_certificate(
       server_certificate_name: server_certificate_name,
-    })
+    )
   end
-  
+
   # Get list of server certificate
   # @return [Struct]
   def list_server_certificates
     return @iam.list_server_certificates({})
   end
-  
+
   # Describe ELB
   # @return [Struct]
   def describe
-    return @elb.describe_load_balancers({
+    return @elb.describe_load_balancers(
       load_balancer_names: [@name],
-    }).load_balancer_descriptions[0]
+    ).load_balancer_descriptions[0]
   end
-  
+
   # Describe ELB listener
   # @param [Integer] load_balancer_port
   # @return [Struct]
@@ -147,7 +147,7 @@ class ELB
     end
     return nil
   end
-  
+
 
   private
 
