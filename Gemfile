@@ -59,8 +59,10 @@ group :development, :test do
   gem "better_errors"
   gem 'binding_of_caller'
   gem 'bullet'
+  gem 'pry'
   gem "pry-rails"
   gem "pry-doc"
+  gem 'pry-remote'
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
