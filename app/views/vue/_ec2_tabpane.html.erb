@@ -99,12 +99,18 @@
     </div>
   </div>
 
+
   <div class="form-actions-top col-xs-12">
-    <button v-if="!loading" v-on="click: bootstrap()" class="btn btn-primary">
-      <%= t 'nodes.btn.bootstrap_with_chef_server' %>
+
+    <button v-attr="disabled: !running" v-if="!loading" v-on="click: bootstrap()" class="btn btn-primary">
+      <bootstrap-tooltip v-if="!running" title="<%= t('nodes.msg.stopped') %>">
+        <%= t 'nodes.btn.bootstrap_with_chef_server' %>
+      </bootstrap-tooltip>
+      <span v-if="running"> <%= t 'nodes.btn.bootstrap_with_chef_server' %></span>
     </button>
     <div-loader v-if="loading"></div-loader>
   </div>
+
 </div>
 
 <%# show-node-infomation %>

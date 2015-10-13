@@ -23,9 +23,10 @@
 //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var parseURLParams = require('./modules/getURL');
   var infraindex = require('./modules/loadindex');
+  var queryString = require('query-string').parse(location.search);
 
+  //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
   var S3Bucket       = require('models/s3_bucket').default;
@@ -36,6 +37,7 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
 
+  Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
@@ -265,6 +267,8 @@
     },
   });
 
+
+
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
     template: "#monitoring-tabpane-template",
@@ -284,6 +288,11 @@
       loading: false,
       page: 0,
       dispItemSize: 10,
+      show_range: false,
+      dt: null,
+      dt2: null,
+      physical_id: null,
+      item_id: null,
     };},
     methods: {
       show_problems: function () {
@@ -322,15 +331,47 @@
           self.showing_url = true;
         }).fail(alert_and_show_infra);
       },
+      showDate: function ()  {
+        var self = this;
+        self.loading_graph = true;
+        if(this.dt && this.dt2){
+          var dates = [this.dt, this.dt2];
+          this.monitoring.show_zabbix_graph(self.physical_id, self.item_key, dates).done(function (data) {
+            self.loading_graph = false;
+            Vue.nextTick(function () {
+              if (data.length === 0) {
+                self.error_message = t('monitoring.msg.no_data');
+              } else {
+                self.error_message = null;
+                self.drawChart(data, self.physical_id, self.item_key, ['value']);
+              }
+            });
+          }).fail(alert_and_show_infra);
+        }
+      },
       drawChart: function (data, physical_id, title_name, columns) {
         var resizable_data = new google.visualization.DataTable();
-
-        resizable_data.addColumn('string', 'clock');
-        _.forEach(columns, function (col) {
-          resizable_data.addColumn('number', col);
-        });
-        resizable_data.addRows(data);
-
+        var direction;
+        if (columns.length === 1) {
+          resizable_data.addColumn('datetime', 'DateTime');
+          _.forEach(columns, function (col) {
+            resizable_data.addColumn('number', col);
+          });
+          var zabbix_data = data.map(function (obj, i){
+            var format_date = new Date(obj[0]);
+            return [format_date,obj[1]];
+          });
+          resizable_data.addRows(zabbix_data);
+          resizable_data.sort([{column: 0, asc: true}]);
+          direction = 1;
+        }else {
+          resizable_data.addColumn('string', 'clock');
+          _.forEach(columns, function (col) {
+            resizable_data.addColumn('number', col);
+          });
+          resizable_data.addRows(data);
+          direction = -1;
+        }
         var resizable_options = {
           title: physical_id + " " + title_name,
           titleTextStyle: {
@@ -344,7 +385,7 @@
           fontSize: 11,
             // setting labels 45 degrees
           hAxis: {
-            direction: -1,
+            direction: direction,
             slantedText: true,
             slantedTextAngle: 45
           },
@@ -354,6 +395,10 @@
               min: 0
             },
           },
+      		explorer: {
+            axis: 'horizontal'
+            // axis: 'vertical'
+      		}
         };
         if (columns.length === 1) {
           resizable_options.legend = {position: 'none'};
@@ -371,8 +416,11 @@
         var self = this;
         self.showing_url = false;
         self.loading_graph = true;
+        self.physical_id = physical_id;
+        self.item_key = item_key;
         this.monitoring.show_zabbix_graph(physical_id, item_key).done(function (data) {
           self.loading_graph = false;
+          self.show_range = true;
           Vue.nextTick(function () {
             if (data.length === 0) {
               self.error_message = t('monitoring.msg.no_data');
@@ -386,6 +434,7 @@
       show_cloudwatch_graph: function (physical_id) {
         var self = this;
         self.showing_url = false;
+        self.show_range = false;
         self.loading_graph = true;
         this.monitoring.show_cloudwatch_graph(physical_id).done(function (data) {
           self.error_message = null;
@@ -398,12 +447,10 @@
       showPrev: function (){
         if(this.isStartPage) return;
         this.page--;
-        console.log(this.page);
       },
       showNext: function (){
         if(this.isEndPage) return;
         this.page++;
-        console.log(this.page);
       },
       close: function (){
         this.$parent.show_monitoring();
@@ -424,6 +471,12 @@
       },
       isStartPage: function(){
         return (this.page === 0);
+      },
+      isTo: function(){
+        return (!this.dt && this.dt !== '');
+      },
+      isShow: function(){
+        return (!this.dt2 && this.dt2 !== '');
       },
       isEndPage: function(){
         return ((this.page + 1) * this.dispItemSize >= this.templates.length);
@@ -727,6 +780,14 @@
       dns_name: "",
       listeners: [],
       selected_ec2: null,
+      server_certificates: [],
+      server_certificate_name_items: [],
+      loading: false,
+      protocol: '',
+      load_balancer_port: '',
+      instance_protocol: '',
+      instance_port: '',
+      ssl_certificate_id: '',
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -760,10 +821,122 @@
         if (s === 'InService') { return 'success'; }
         else                   { return 'danger'; }
       },
+      ssl_certificate_id_to_name: function (ssl_certificate_id) {
+        if (!ssl_certificate_id) {
+          return "";
+        } else if (ssl_certificate_id === "Invalid-Certificate"){
+          return "Invalid-Certificate";
+        }
+        return ssl_certificate_id.replace(/arn:aws:iam::[0-9]+:server-certificate\//, "");
+      },
       expiration_date: function (date_str) {
         if (!date_str) { return ""; }
 
         return toLocaleString(date_str);
+      },
+      set_create_listener_modal_default_value: function (){
+        var self = this;
+        self.protocol = "";
+        self.load_balancer_port = "";
+        self.instance_protocol = "";
+        self.instance_port = "";
+        self.ssl_certificate_id = "";
+      },
+      set_edit_listener_modal_default_value: function (protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id){
+        var self = this;
+        self.old_load_balancer_port = load_balancer_port;
+        self.protocol = protocol;
+        self.load_balancer_port = load_balancer_port;
+        self.instance_protocol = instance_protocol;
+        self.instance_port = instance_port;
+        if (ssl_certificate_id === "Invalid-Certificate"){
+          self.ssl_certificate_id = "";
+        } else {
+          self.ssl_certificate_id = ssl_certificate_id;
+        }
+      },
+      change_listener_protocol: function(){
+        var self = this;
+        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
+          self.ssl_certificate_id = "";
+        } 
+      },
+      create_listener: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.create_listener(self.physical_id, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+          .done(function (msg) {
+            alert_success(reload)(msg);
+            $('#create-listener-modal').modal('hide');
+          })
+          .fail(function (msg) {
+            alert_danger(reload)(msg);
+            $('#create-listener-modal').modal('hide');
+          });
+      },
+      update_listener: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+          .done(function (msg) {
+            alert_success(reload)(msg);
+            $('#edit-listener-modal').modal('hide');
+          })
+          .fail(function (msg) {
+            alert_danger(reload)(msg);
+            $('#edit-listener-modal').modal('hide');
+          });
+      },
+      delete_listener: function(load_balancer_port){
+        var self = this;
+        self.load_balancer_port = load_balancer_port;
+        bootstrap_confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, "");
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.delete_listener(self.physical_id, self.load_balancer_port)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
+      },
+      upload_server_certificate: function(){
+        var self = this;
+        self.loading = true;
+        var ec2 = new EC2Instance(current_infra, "");
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+        ec2.upload_server_certificate(self.physical_id, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
+          .done(function (msg) {
+            alert_success(reload)(msg);
+            $('#upload-server-certificate-modal').modal('hide');
+          })
+          .fail(function (msg) {
+            alert_danger(reload)(msg);
+            $('#upload-server-certificate-modal').modal('hide');
+          });
+      },
+      delete_server_certificate: function(server_certificate_name){
+        var self = this;
+        self.server_certificate_name = server_certificate_name;
+        bootstrap_confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
+          var ec2 = new EC2Instance(current_infra, "");
+          var reload = function () {
+            self.$parent.show_elb(self.physical_id);
+          };
+          ec2.delete_server_certificate(self.physical_id, self.server_certificate_name)
+            .done(alert_success(reload))
+            .fail(alert_danger(reload));
+        });
       },
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
@@ -776,6 +949,8 @@
         self.unregistereds = data.unregistereds;
         self.dns_name = data.dns_name;
         self.listeners = data.listeners;
+        self.server_certificates = data.server_certificates;
+        self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;
         console.log(self);
@@ -1382,7 +1557,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -1686,7 +1860,6 @@
               v.serverspec_status = true;
             });
             self.current_infra.resources = resources;
-
             // show first tab
             var instance = _(resources).values().flatten().first();
             var physical_id = instance.physical_id;
@@ -1741,7 +1914,7 @@
         reversed: {},
         loading: true,
         option: ['infrastructure'],
-        lang: null,
+        lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
@@ -1759,7 +1932,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -1781,8 +1953,7 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  this.parseURLParams('project_id');
-        self.lang = this.parseURLParams('lang');
+        var id =  queryString.project_id;
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
@@ -1974,7 +2145,6 @@
       sortField: 'text'
     });
   });
-
 
   $(document).on('click', '.show-infra', function (e) {
     e.preventDefault();

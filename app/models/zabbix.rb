@@ -400,8 +400,9 @@ class Zabbix
   #Item_keyはItemの情報を得る為に使われる
   #返される値はGoogle Chart用のフォーマットに変更された
   #アイテムのヒストリー情報
-  def get_history(physical_id, item_key)
+  def get_history(physical_id, item_key, date_range)
     item_info = get_item_info(physical_id, item_key, "filter")
+    raise ZabbixError, item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
 
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
@@ -413,23 +414,35 @@ class Zabbix
         0
       end
 
-    raise ZabbixError , item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
+    case date_range
+      when nil
+        history_all =  @sky_zabbix.history.get(
+          output: "extend",
+          history: type,
+          itemids: item_info.first["itemid"],
+          sortfield: 'clock',
+          sortorder: 'ASC',
+          limit: 30,
+        )
+      else
+        history_all =  @sky_zabbix.history.get(
+          output: "extend",
+          history: type,
+          itemids: item_info.first["itemid"],
+          sortfield: 'clock',
+          sortorder: 'ASC',
+          time_from: date_range[0],
+          time_till: date_range[1],
+        )
+    end
 
-    history_all =  @sky_zabbix.history.get(
-      output: "extend",
-      history: type,
-      itemids: item_info.first["itemid"],
-      sortfield: 'clock',
-      sortorder: 'DESC',
-      limit: 30,
-    )
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
       time = Time.zone.at(history["clock"].to_i)
-      chart_data.push([time.strftime("%H:%M"), history["value"].to_f])
+      chart_data.push([time, history["value"].to_f])
     end
-    return chart_data
+    return chart_data.reverse
   end
 
   # 最近の障害を取ってきている

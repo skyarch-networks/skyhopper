@@ -11,7 +11,7 @@
   //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var parseURLParams = require('./modules/getURL');
+  var queryString = require('query-string').parse(location.search);
   var cf_templatesIndex = require('./modules/loadindex');
 
   var app;
@@ -28,7 +28,7 @@
         filterKey: '',
         reversed: {},
         option: ['cf_template'],
-        lang: null,
+        lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
@@ -46,7 +46,6 @@
             this.sortKey = key;
             this.reversed[key] = !this.reversed[key];
       },
-      parseURLParams: parseURLParams,
       showPrev: function(){
           if(this.pageNumber === 0) return;
           this.pageNumber--;
@@ -68,8 +67,7 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  this.parseURLParams('client_id');
-        self.lang = this.parseURLParams('lang');
+        var id =  queryString.client_id;
         self.columns = ['subject','details', 'id'];
 
        $.ajax({
@@ -105,6 +103,22 @@
 
   $(document).ready(function(){
     cf_templatesIndex();
+
+    if ($('#description').length > 0) {
+      var editor = ace.edit("description");
+      var textarea = $('#cf_template_value');
+      editor.getSession().setValue(textarea.val());
+      editor.getSession().on('change', function(){
+        textarea.val(editor.getSession().getValue());
+      });
+      editor.setOptions({
+        maxLines: 30,
+        minLines: 15,
+      });
+      editor.setTheme("ace/theme/github");
+      editor.getSession().setMode("ace/mode/json");
+      $("#ace-loading").hide();
+    }
   });
 
   $(document).on("click", ".show-template", function () {
