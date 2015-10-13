@@ -7,7 +7,7 @@ AWS_ACCESS_KEY_ID     = "AKIAIYPOCQWUGWEUGGDQ"
 AWS_SECRET_ACCESS_KEY = "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"
 #
 # # Node details
-NODE_NAME         = "windows-connect4"
+NODE_NAME         = "windows-connect6"
 CHEF_ENVIRONMENT  = "production"
 INSTANCE_SIZE     = "t2.small"
 EBS_ROOT_VOL_SIZE = 30   # in GB
@@ -24,11 +24,7 @@ PASSWORD          = "password1234"
 File.open(USER_DATA_FILE, "w") do |f|
   f.write <<EOT
 <script>
-winrm quickconfig -q & winrm set winrm/config @{MaxTimeoutms="1800000"} &
-winrm set winrm/config/service @{AllowUnencrypted="true"} &
-winrm set winrm/config/service/auth @{Basic="true"} &
-netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow &
-netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
+winrm quickconfig -q & winrm set winrm/config @{MaxTimeoutms="1800000"} & winrm set winrm/config/service @{AllowUnencrypted="true"} & winrm set winrm/config/service/auth @{Basic="true"} & netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow & netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
 </script>
 <powershell>
 $admin = [adsi]("WinNT://./administrator, user")
@@ -39,7 +35,7 @@ end
 
 # Define the command to provision the instance
 provision_cmd = [
-  "knife ec2 server create",
+  "bundle exec knife ec2 server create",
   "--aws-access-key-id #{AWS_ACCESS_KEY_ID}",
   "--aws-secret-access-key #{AWS_SECRET_ACCESS_KEY}",
   "--tags 'Name=#{NODE_NAME}'",
@@ -51,7 +47,7 @@ provision_cmd = [
   "--image #{AMI_NAME}",
   "--groups '#{SECURITY_GROUP}'",
   "--user-data #{USER_DATA_FILE}",
-  "--ssh-key 'joeper'",
+  "--ssh-key 'smartkey'",
   "--verbose"
 ].join(" ")
 
@@ -99,17 +95,17 @@ s.close
 # # bootstrap crap going on, and we have no idea what we need to wait on. So,
 # # in a last-ditch effort to make this all work, we've seen that 120 seconds
 # # ought to be enough...
-wait_time = 120
-while wait_time > 0
-  puts "Better wait #{wait_time} more seconds..."
-  sleep 1
-  wait_time -= 1
-end
+# wait_time = 120
+# while wait_time > 0
+#   puts "Better wait #{wait_time} more seconds..."
+#   sleep 1
+#   wait_time -= 1
+# end
 puts "Finally ready to try bootstrapping instance..."
 #
 # Define the command to bootstrap the already-provisioned instance with Chef
 bootstrap_cmd = [
-  "knife bootstrap windows winrm #{ip_addr}",
+  "bundle exec knife bootstrap windows winrm #{ip_addr}",
   "-x Administrator",
   "-P '#{PASSWORD}'",
   "--node-name #{NODE_NAME}"

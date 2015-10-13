@@ -15,21 +15,21 @@ SECURITY_GROUP    = "default"
 RUN_LIST          = "role[base],role[iis]"
 USER_DATA_FILE    = "/tmp/userdata.txt"
 USERNAME          = "Administrator"
-PASSWORD          = "password1234"
+PASSWORD          = "W6ccxK@5jye"
 
-ip_addr = '54.92.63.122'
+ip_addr = '52.69.142.168'
 
 
 puts ip_addr
-# puts "Waiting for WinRM..."
-# start_time = Time.now
-# begin
-#   s = TCPSocket.new ip_addr, 5985
-# rescue Errno::ETIMEDOUT => e
-#   puts "Still waiting..."+e.to_s
-#   retry
-# end
-# s.close
+puts "Waiting for WinRM..."
+start_time = Time.now
+begin
+  s = TCPSocket.new ip_addr, 5985
+rescue Errno::ETIMEDOUT => e
+  puts "Still waiting..."+e.to_s
+  retry
+end
+s.close
 
 # # You'd think we'd be good to go now...but NOPE! There is still more Windows
 # # bootstrap crap going on, and we have no idea what we need to wait on. So,

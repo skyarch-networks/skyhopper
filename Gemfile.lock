@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    CFPropertyList (2.3.2)
     ace-rails-ap (4.0.0)
     actionmailer (4.2.4)
       actionpack (= 4.2.4)
@@ -149,7 +150,14 @@ GEM
     docile (1.1.5)
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
+    em-winrm (0.7.0)
+      eventmachine (~> 1.0.0)
+      mixlib-log (>= 1.3.0)
+      uuidtools (~> 2.1.1)
+      winrm (~> 1.3.0)
     erubis (2.7.0)
+    eventmachine (1.0.8)
+    excon (0.45.4)
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -161,11 +169,104 @@ GEM
     ffi (1.9.10)
     ffi-yajl (2.2.2)
       libyajl2 (~> 1.2)
+    fission (0.5.0)
+      CFPropertyList (~> 2.2)
+    fog (1.29.0)
+      fog-atmos
+      fog-aws (~> 0.0)
+      fog-brightbox (~> 0.4)
+      fog-core (~> 1.27, >= 1.27.4)
+      fog-ecloud
+      fog-json
+      fog-local
+      fog-powerdns (>= 0.1.1)
+      fog-profitbricks
+      fog-radosgw (>= 0.0.2)
+      fog-riakcs
+      fog-sakuracloud (>= 0.0.4)
+      fog-serverlove
+      fog-softlayer
+      fog-storm_on_demand
+      fog-terremark
+      fog-vmfusion
+      fog-voxel
+      fog-xml (~> 0.1.1)
+      ipaddress (~> 0.5)
+      nokogiri (~> 1.5, >= 1.5.11)
+    fog-atmos (0.1.0)
+      fog-core
+      fog-xml
+    fog-aws (0.7.6)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+      ipaddress (~> 0.8)
+    fog-brightbox (0.9.0)
+      fog-core (~> 1.22)
+      fog-json
+      inflecto (~> 0.0.2)
+    fog-core (1.32.1)
+      builder
+      excon (~> 0.45)
+      formatador (~> 0.2)
+      mime-types
+      net-scp (~> 1.1)
+      net-ssh (>= 2.1.3)
+    fog-ecloud (0.3.0)
+      fog-core
+      fog-xml
+    fog-json (1.0.2)
+      fog-core (~> 1.0)
+      multi_json (~> 1.10)
+    fog-local (0.2.1)
+      fog-core (~> 1.27)
+    fog-powerdns (0.1.1)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+    fog-profitbricks (0.0.5)
+      fog-core
+      fog-xml
+      nokogiri
+    fog-radosgw (0.0.4)
+      fog-core (>= 1.21.0)
+      fog-json
+      fog-xml (>= 0.0.1)
+    fog-riakcs (0.1.0)
+      fog-core
+      fog-json
+      fog-xml
+    fog-sakuracloud (1.3.3)
+      fog-core
+      fog-json
+    fog-serverlove (0.1.2)
+      fog-core
+      fog-json
+    fog-softlayer (0.4.7)
+      fog-core
+      fog-json
+    fog-storm_on_demand (0.1.1)
+      fog-core
+      fog-json
+    fog-terremark (0.1.0)
+      fog-core
+      fog-xml
+    fog-vmfusion (0.1.0)
+      fission
+      fog-core
+    fog-voxel (0.1.0)
+      fog-core
+      fog-xml
+    fog-xml (0.1.2)
+      fog-core
+      nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
     git-version-bump (0.15.1)
     github-markup (1.4.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    gssapi (1.2.0)
+      ffi (>= 1.0.1)
     guard (2.13.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, <= 4.0)
@@ -180,15 +281,19 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    gyoku (1.3.1)
+      builder (>= 2.1.2)
     hashie (2.1.2)
     highline (1.7.7)
     hiredis (0.6.0)
     hitimes (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    httpclient (2.6.0.1)
     i18n (0.7.0)
     i18n-js (2.1.2)
       i18n
+    inflecto (0.0.2)
     ipaddress (0.8.0)
     jbuilder (2.3.1)
       activesupport (>= 3.0.0, < 5)
@@ -199,6 +304,12 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.10.0)
+    knife-ec2 (0.11.0)
+      fog (~> 1.29.0)
+      knife-windows (>= 0.8.2)
+    knife-windows (0.8.6)
+      em-winrm (~> 0.7)
+      winrm-s (~> 0.3.1)
     less (2.6.0)
       commonjs (~> 0.2.7)
     less-rails (2.7.0)
@@ -211,6 +322,10 @@ GEM
     listen (3.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    little-plugger (1.1.4)
+    logging (1.8.2)
+      little-plugger (>= 1.1.3)
+      multi_json (>= 1.8.4)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
@@ -246,6 +361,7 @@ GEM
     nio4r (1.1.1)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
+    nori (2.6.0)
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -403,6 +519,7 @@ GEM
       ruby-progressbar (~> 1.4)
     ruby-prof (0.15.8)
     ruby-progressbar (1.7.5)
+    rubyntlm (0.4.0)
     sass (3.4.18)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
@@ -483,6 +600,17 @@ GEM
       hashie (>= 2.0.2, < 3.0.0)
     warden (1.2.3)
       rack (>= 1.0)
+    winrm (1.3.4)
+      builder (>= 2.1.2)
+      gssapi (~> 1.2)
+      gyoku (~> 1.0)
+      httpclient (~> 2.2, >= 2.2.0.2)
+      logging (~> 1.6, >= 1.6.1)
+      nori (~> 2.0)
+      rubyntlm (~> 0.4.0)
+      uuidtools (~> 2.1.2)
+    winrm-s (0.3.1)
+      winrm (~> 1.3.0)
     wmi-lite (1.0.0)
     yard (0.8.7.6)
 
@@ -515,6 +643,8 @@ DEPENDENCIES
   i18n-js
   jbuilder
   kaminari
+  knife-ec2
+  knife-windows (~> 0.8.6)
   less-rails
   libv8
   mysql2 (~> 0.3.20)
