@@ -208,6 +208,7 @@ ja:
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
       runlist_empty:      'Runlist は空です'
       dish_applied:       'Dish が適用されました'
+      stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
 
 
   dishes:

@@ -783,6 +783,11 @@
       server_certificates: [],
       server_certificate_name_items: [],
       loading: false,
+      protocol: '',
+      load_balancer_port: '',
+      instance_protocol: '',
+      instance_port: '',
+      ssl_certificate_id: '',
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -831,39 +836,30 @@
       },
       set_create_listener_modal_default_value: function (){
         var self = this;
-        self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').val("").val();
+        self.protocol = "";
+        self.load_balancer_port = "";
+        self.instance_protocol = "";
+        self.instance_port = "";
+        self.ssl_certificate_id = "";
       },
       set_edit_listener_modal_default_value: function (protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id){
         var self = this;
         self.old_load_balancer_port = load_balancer_port;
-        self.protocol = $('#edit-listener-modal #edit_listener_protocol').val(protocol).val();
-        $('#edit-listener-modal #edit_listener_load_balancer_port').val(load_balancer_port).change();
-        self.instance_protocol = $('#edit-listener-modal #edit_listener_instance_protocol').val(instance_protocol).val();
-        $('#edit-listener-modal #edit_listener_instance_port').val(instance_port).change();
+        self.protocol = protocol;
+        self.load_balancer_port = load_balancer_port;
+        self.instance_protocol = instance_protocol;
+        self.instance_port = instance_port;
         if (ssl_certificate_id === "Invalid-Certificate"){
-          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val("").val();
+          self.ssl_certificate_id = "";
         } else {
-          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').val(ssl_certificate_id).val();
-        }
-        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
-          $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", true);
+          self.ssl_certificate_id = ssl_certificate_id;
         }
       },
-      change_create_listener_protocol: function(){
+      change_listener_protocol: function(){
         var self = this;
         if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
-          self.ssl_certificate_id = $('#create-listener-modal #create_listener_ssl_certificate_id').prop("disabled", true).val("").val();
-        } else {
-          $('#create-listener-modal #create_listener_ssl_certificate_id').prop("disabled", false);
-        }
-      },
-      change_edit_listener_protocol: function(){
-        var self = this;
-        if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
-          self.ssl_certificate_id = $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", true).val("").val();
-        } else {
-          $('#edit-listener-modal #edit_listener_ssl_certificate_id').prop("disabled", false);
-        }
+          self.ssl_certificate_id = "";
+        } 
       },
       create_listener: function(){
         var self = this;
@@ -1864,7 +1860,6 @@
               v.serverspec_status = true;
             });
             self.current_infra.resources = resources;
-
             // show first tab
             var instance = _(resources).values().flatten().first();
             var physical_id = instance.physical_id;
