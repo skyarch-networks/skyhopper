@@ -109,7 +109,7 @@
 
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.protocol') %></label>
-        <select v-model="protocol" v-on="change: change_create_listener_protocol()" class="form-control">
+        <select v-model="protocol" v-on="change: change_listener_protocol()" class="form-control">
           <option value="HTTP">HTTP</option>
           <option value="HTTPS">HTTPS(Secure HTTP)</option>
           <option value="TCP">TCP</option>
@@ -139,7 +139,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.certificate_name') %></label>
-        <select v-model="ssl_certificate_id" id="create_listener_ssl_certificate_id" class="form-control" options="server_certificate_name_items">
+        <select v-model="ssl_certificate_id" v-attr="disabled: protocol!=='HTTPS'&&protocol!=='SSL'" class="form-control" options="server_certificate_name_items">
           <option value=""><%= t('ec2_instances.none') %></option>
         </select>
       </div>
@@ -167,7 +167,7 @@
 
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.protocol') %></label>
-        <select v-model="protocol" v-on="change: change_edit_listener_protocol()" id="edit_listener_protocol" class="form-control">
+        <select v-model="protocol" v-on="change: change_listener_protocol()" id="edit_listener_protocol" class="form-control">
           <option value="HTTP">HTTP</option>
           <option value="HTTPS">HTTPS(Secure HTTP)</option>
           <option value="TCP">TCP</option>
@@ -197,7 +197,7 @@
       
       <div class="modal-body">
         <label class="control-label"><%= t('ec2_instances.certificate_name') %></label>
-        <select v-model="ssl_certificate_id" id="edit_listener_ssl_certificate_id" class="form-control" options="server_certificate_name_items">
+        <select v-model="ssl_certificate_id" v-attr="disabled: protocol!=='HTTPS'&&protocol!=='SSL'" id="edit_listener_ssl_certificate_id" class="form-control" options="server_certificate_name_items">
           <option value=""><%= t('ec2_instances.none') %></option>
         </select>
       </div>
