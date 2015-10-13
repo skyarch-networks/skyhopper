@@ -1860,7 +1860,6 @@
               v.serverspec_status = true;
             });
             self.current_infra.resources = resources;
-
             // show first tab
             var instance = _(resources).values().flatten().first();
             var physical_id = instance.physical_id;
