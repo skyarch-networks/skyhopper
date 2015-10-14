@@ -27,7 +27,6 @@
   var infraindex = require('./modules/loadindex');
   var newVM = require('./modules/newVM');
   var queryString = require('query-string').parse(location.search);
-
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
@@ -41,6 +40,9 @@
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
+
+
+
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -1711,14 +1713,29 @@
     data: function () { return{
 
     };},
-    methods: {
-
-    },
-    computed: {
-
-    },
-    created: function () {
+    ready: function () {
       var self = this;
+      console.log(self);
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        defaultView: 'agendaWeek',
+        editable: true,
+        dayClick: function(date, allDay, jsEvent, view) {
+
+        },
+        eventClick: function(calEvent, jsEvent, view) {
+        },
+        eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
+                             revertFunc, jsEvent, ui, view ) {
+        },
+        eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
+        }
+      });
+
       self.$parent.loading = false;
     }
   });

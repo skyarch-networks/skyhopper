@@ -181,8 +181,6 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, current_
             self.update_serverspec_status(v.physical_id);
           });
         });
-        if(current_tab === 'show_sched')
-          self.show_operation_sched_template(stack);
       }
       else if (stack.status.type === 'IN_PROGRESS') {
         stack_in_progress(current_infra);
