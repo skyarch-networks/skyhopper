@@ -25,7 +25,22 @@ function render_infrastructures(value, key, lang){
   var isEdit = $('#edit-'+value+'').attr('class');
   var href = $('#edit-'+value+'').attr('href');
   var isDelete = $('#delete-'+value+'').attr('class');
-  var ret = "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'><span class='glyphicon glyphicon-info-sign'></span> "+t('helpers.links.show')+"</a> " +
+  var ret =  "<div class='btn-group'>"+
+          "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value+" href='#'><span class='glyphicon glyphicon-info-sign'>" +
+            "</span> "+t('helpers.links.show')+
+          "</a> " +
+          "<button type='button' class='btn btn-xs btn-info dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"+
+            "<span class='caret'></span>"+
+            "<span class='sr-only'>Toggle Dropdown</span>"+
+          "</button>"+
+          "<ul class='dropdown-menu'>"+
+          "<li> " +
+            "<a class='operation-sched' infrastructure-id="+value+" href='#'>" +
+              "<span class='glyphicon glyphicon-calendar'></span> Operation Schedule"+
+            "</a> " +
+          "</li>"+
+          "</ul>"+
+    "</div>"+
     "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value+"&amp;lang='"+lang+"'>Serverspecs</a> " +
     "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
     "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> "+
