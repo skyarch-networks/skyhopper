@@ -1710,12 +1710,24 @@
 
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
-    data: function () { return{
+    props: {
+      instances: {
+        type: Object,
+        required: true,
+      },
+    },
+    data: function () {return {
+      loading:             false,
+      loading_s:           false,
+      inprogress:          false, // for cook
+      schedule_type:       '',
+      schedule:            {},
 
     };},
     ready: function () {
+
       var self = this;
-      console.log(self);
+      var currentDate = new Date();
       $('#calendar').fullCalendar({
         header: {
           left: 'prev,next today',
@@ -1724,6 +1736,12 @@
         },
         defaultView: 'agendaWeek',
         editable: true,
+        events: [{
+          title:"My repeating event",
+          start: '10:00', // a start time (10am in this example)
+          end: '14:00', // an end time (6pm in this example)
+          dow: [ 1, 4, 6 ] // Repeat monday and thursday
+        }],
         dayClick: function(date, allDay, jsEvent, view) {
 
         },

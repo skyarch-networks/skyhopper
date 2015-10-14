@@ -1,6 +1,31 @@
 <h3>Operation Scheduler </h3>
 <hr>
 
+<table class="table">
+  <thead>
+    <tr>
+      <th>PHYSICAL_ID</th>
+      <th>Name</th>
+      <th>Operation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-repeat="ec2: instances.ec2_instances">
+      <td>{{ec2.physical_id}}</td>
+      <td>{{ec2.screen_name}}</td>
+      <td><button class="btn btn-xs btn-success" data-toggle="modal" data-target="#manage_schedule">Manage Schedule</button></td>
+    </tr>
+    <tr v-repeat="rds: instances.rds">
+      <td>{{rds.physical_id}}</td>
+      <td>{{rds.screen_name}}</td>
+      <td><button class="btn btn-xs btn-success">Manage Schedule</button></td>
+    </tr>
+  <!--TODO: other instances-->
+  </tbody>
+</table>
+
+<%= render 'monitorings/modal_manage_schedule' %>
+
 <div class="container">
   <div id="calendar"></div>
 </div>

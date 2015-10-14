@@ -1,0 +1,38 @@
+<div class="modal fade" id="manage_schedule" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Manage Schedule for: test</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Start</th>
+              <th>End</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"> Monday</td>
+              <td><input type="text"> </td>
+            </tr>
+              <td><input type="checkbox"> Tuesday</td>
+              <td><input type="checkbox"> Wednesday</td>
+              <td><input type="checkbox"> Thursday</td>
+              <td><input type="checkbox"> Friday</td>
+              <td><input type="checkbox"> Saturday</td>
+              <td><input type="checkbox"> Sunday</td>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" v-on="click: add_step()" v-attr="disabled: add_step_err()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

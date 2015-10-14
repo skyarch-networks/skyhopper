@@ -100,7 +100,7 @@
         <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
         <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"       ></serverspec-results-tabpane>
-        <operation-sched-tabpane v-if="tabpane_active('operation-sched')"  ></operation-sched-tabpane>
+        <operation-sched-tabpane v-if="tabpane_active('operation-sched')"   instances="{{* instances}}"></operation-sched-tabpane>
     </div>
   </div>
 </div>
