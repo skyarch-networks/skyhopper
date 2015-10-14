@@ -1,4 +1,4 @@
-module.exports = function (stack, Resource, EC2Instance, current_infra) {
+module.exports = function (stack, Resource, EC2Instance, current_infra, current_tab) {
   return new Vue({
     template: '#infra-show-template',
     data: {
@@ -98,6 +98,12 @@ module.exports = function (stack, Resource, EC2Instance, current_infra) {
         self.show_tabpane('update-template');
         self.loading = true;
       },
+      show_operation_sched: function (stack) {
+        if (this.no_stack) {return;}
+        var self = this;
+        self.show_tabpane('operation-sched');
+        self.loading = true;
+      },
 
 
       tabpane_active: function (id) { return this.tabpaneID === id; },
@@ -148,6 +154,8 @@ module.exports = function (stack, Resource, EC2Instance, current_infra) {
       var self = this;
       console.log(self);
       if (stack.status.type === 'OK') {
+
+
         var res = new Resource(current_infra);
         res.index().done(function (resources) {
           _.forEach(resources.ec2_instances, function (v) {
@@ -157,7 +165,9 @@ module.exports = function (stack, Resource, EC2Instance, current_infra) {
           // show first tab
           var instance = _(resources).values().flatten().first();
           var physical_id = instance.physical_id;
-          if (instance.type_name === "AWS::EC2::Instance") {
+          if(current_tab === 'show_sched'){
+            self.show_operation_sched(stack);
+          } else if (instance.type_name === "AWS::EC2::Instance") {
             self.show_ec2(physical_id);
           } else if (instance.type_name === "AWS::RDS::DBInstance"){
             self.show_rds(physical_id);
@@ -171,6 +181,8 @@ module.exports = function (stack, Resource, EC2Instance, current_infra) {
             self.update_serverspec_status(v.physical_id);
           });
         });
+        if(current_tab === 'show_sched')
+          self.show_operation_sched_template(stack);
       }
       else if (stack.status.type === 'IN_PROGRESS') {
         stack_in_progress(current_infra);

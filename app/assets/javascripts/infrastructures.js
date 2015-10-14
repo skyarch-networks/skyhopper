@@ -13,6 +13,7 @@
   google.load('visualization',   '1.0',   {'packages':['corechart']});
 
   var current_infra = null;
+  var app;
 
   ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
 
@@ -1705,7 +1706,22 @@
     }
   });
 
-  var app;
+  Vue.component('operation-sched-tabpane',  {
+    template: '#operation-sched-tabpane-template',
+    data: function () { return{
+
+    };},
+    methods: {
+
+    },
+    computed: {
+
+    },
+    created: function () {
+      var self = this;
+      self.$parent.loading = false;
+    }
+  });
 
   // register the grid component
   Vue.component('demo-grid', {
@@ -1867,7 +1883,7 @@
       app.$destroy();
     }
     current_infra.show().done(function (stack) {
-      app = newVM(stack, Resource, EC2Instance, current_infra);
+      app = newVM(stack, Resource, EC2Instance, current_infra, 'show_sched');
       l.$destroy();
       app.$mount(SHOW_INFRA_ID);
     });
