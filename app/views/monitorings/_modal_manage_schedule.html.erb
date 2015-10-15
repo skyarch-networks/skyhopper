@@ -3,31 +3,64 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Manage Schedule for: test</h4>
+        <h3 class="modal-title">Manage Schedule for: test</h3>
       </div>
       <div class="modal-body">
-        <table class="table table-condensed">
-          <thead>
-            <tr>
-              <th>Day</th>
-              <th>Start</th>
-              <th>End</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="checkbox"> Monday</td>
-              <td><input type="text"> </td>
-            </tr>
-              <td><input type="checkbox"> Tuesday</td>
-              <td><input type="checkbox"> Wednesday</td>
-              <td><input type="checkbox"> Thursday</td>
-              <td><input type="checkbox"> Friday</td>
-              <td><input type="checkbox"> Saturday</td>
-              <td><input type="checkbox"> Sunday</td>
-
-          </tbody>
-        </table>
+        <div class="col-md-12">
+          <h4>Duration</h4>
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-md-6">
+                Start Date: <input type="text" v-datepicker="dt" placeholder="Start date" class="form-control" id="op-sched">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                End Date: <input type="text" v-datepicker="dt2" placeholder="End date" class="form-control" id="op-sched">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <hr>
+          <h4> Recurring </h4>
+          <div class="form-group">
+            <label class="col-lg-2 control-label">Every:</label>
+            <div class="col-lg-10">
+              <div class="radio">
+                <label>
+                  <input type="radio" value="1" name="repeat-freq" align="bottom" checked="true">
+                  Everyday (Monday - Sunday)
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="7" name="repeat-freq" align="bottom">
+                  Weekdays (Monday - Friday)
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" value="7" name="repeat-freq" align="bottom">
+                  Specific dates (other)
+                </label>
+              </div>
+            </div>
+          </div>
+          <div id="weekdays">
+            <p>
+              <label for="add-start-time">Start Time: </label>
+              <input v-timepicker="start" placeholder="Start" type="text" name="start-time" id="start-time" class="form-control"/>
+            </p>
+            <p>
+              <label for="add-end-time">End Time: </label>
+              <input v-timepicker="end" placeholder="End" type="text" name="end-time" id="end-time" class="form-control"/>
+            </p>
+          </div>
+          <div id="specific">
+            <!-- TODO:-->
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

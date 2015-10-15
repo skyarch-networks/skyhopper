@@ -39,6 +39,7 @@
   var Snapshot       = require('models/snapshot').default;
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
+  Vue.use(require('./modules/timepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
 
 
@@ -1718,11 +1719,9 @@
     },
     data: function () {return {
       loading:             false,
-      loading_s:           false,
-      inprogress:          false, // for cook
-      schedule_type:       '',
-      schedule:            {},
-
+      //days: {"Sunday" : true, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+      start: null,
+      end: null,
     };},
     ready: function () {
 
@@ -1742,6 +1741,7 @@
           end: '14:00', // an end time (6pm in this example)
           dow: [ 1, 4, 6 ] // Repeat monday and thursday
         }],
+        allDayDefault: false,
         dayClick: function(date, allDay, jsEvent, view) {
 
         },

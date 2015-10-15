@@ -1,13 +1,14 @@
 exports.install = function(Vue, lang){
 
-  Vue.directive('datepicker', {
+  Vue.directive('timepicker', {
     twoWay: true,
 
     bind: function () {
       var vm = this.vm;
       var key = this.expression;
       var dp = $(this.el).datetimepicker({
-        format: 'YYYY/MM/D h:mm a',
+        //format: 'YYYY/MM/D h:mm a',
+        format: 'hh:mm a',
         showTodayButton: true,
         locale: lang,
         tooltips: {
@@ -24,22 +25,11 @@ exports.install = function(Vue, lang){
         },
       });
       dp.on("dp.change", function (e) {
-         vm.$set(key, moment(e.date._d).unix());
+        vm.$set(key, moment(e.date._d).unix());
 
         var current = new Date();
-        if(e.target.id !== "op-sched")
-          dp.data("DateTimePicker").maxDate(current);
-
         if(e.target.placeholder === "Start")
           $("input[type='hidden']").val(e.date._d);
-      });
-
-      dp.on("dp.show", function (e) {
-        if(e.target.placeholder === "End"){
-          var start = $("input[type='hidden']").val();
-          var min = new Date(start);
-          dp.data("DateTimePicker").minDate(min);
-        }
       });
 
 
