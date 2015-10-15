@@ -1723,6 +1723,15 @@
       start: null,
       end: null,
     };},
+    methods: {
+      pop: function(e){
+        if(e === 'duration'){
+          $("#duration").popover('toggle');
+        }else if(e === 'recurring'){
+          $("#recurring").popover('toggle');
+        }
+      }
+    },
     ready: function () {
 
       var self = this;
