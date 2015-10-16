@@ -1721,15 +1721,17 @@
     },
     data: function () {return {
       loading:             false,
-      dates: [{day: "Monday", checked: false},
-             {day: "Tuesday", checked: false},
-             {day: "Wednesday", checked: false},
-             {day: "Thursday", checked: false},
-             {day: "Friday", checked: false},
-             {day: "Saturday", checked: false},
-             {day: "Sunday", checked: false},],
+      dates: [{day: "Monday",   checked: false, value : 1},
+              {day: "Tuesday",  checked: false, value : 2},
+              {day: "Wednesday",checked: false, value : 3},
+              {day: "Thursday", checked: false, value : 4},
+              {day: "Friday",   checked: false, value : 5},
+              {day: "Saturday", checked: false, value : 6},
+              {day: "Sunday",   checked: false, value : 0}],
       default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D h:mm a'),
       default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D h:mm a'),
+      time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('h:mm a'),
+      time_end: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(19).minute(0).format('h:mm a'),
       sel_instance: {
         start_date: null,
         end_date: null,
@@ -1753,11 +1755,17 @@
       },
       save_sched: function () {
         var self = this;
+        if(self.sel_instance.repeat_freq === "4")
+          self.sel_instance.dates = self.dates;
         console.log(self.sel_instance);
       },
     },
     computed: {
-
+      has_selected: function() {
+        return _.some(this.dates, function(c){
+          return c.checked;
+        });
+      },
     },
     ready: function () {
 

@@ -33,8 +33,6 @@ exports.install = function(Vue, lang){
         }else{
           vm.$set(key, moment(e.date._d).format('YYYY/MM/D h:mm a'));
         }
-
-
         if(e.target.placeholder === "Start")
           $("input[type='hidden']").val(e.date._d);
       });
