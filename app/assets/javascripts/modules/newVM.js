@@ -98,10 +98,9 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, current_
         self.show_tabpane('update-template');
         self.loading = true;
       },
-      show_operation_sched: function (instance) {
+      show_operation_sched: function () {
         if (this.no_stack) {return;}
         var self = this;
-        this.instances = instance;
         self.show_tabpane('operation-sched');
         self.loading = true;
       },
@@ -167,7 +166,7 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, current_
           var instance = _(resources).values().flatten().first();
           var physical_id = instance.physical_id;
           if(current_tab === 'show_sched'){
-            self.show_operation_sched(resources);
+            self.show_operation_sched();
           } else if (instance.type_name === "AWS::EC2::Instance") {
             self.show_ec2(physical_id);
           } else if (instance.type_name === "AWS::RDS::DBInstance"){

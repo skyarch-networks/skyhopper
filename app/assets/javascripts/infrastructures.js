@@ -1713,14 +1713,9 @@
 
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
-    props: {
-      instances: {
-        type: Object,
-        required: true,
-      },
-    },
     data: function () {return {
       loading:             false,
+      instances: null,
       dates: [{day: "Monday",   checked: false, value : 1},
               {day: "Tuesday",  checked: false, value : 2},
               {day: "Wednesday",checked: false, value : 3},
@@ -1773,6 +1768,16 @@
     ready: function () {
 
       var self = this;
+      var res = new Resource(current_infra);
+      //TODO: get all assigned dates and print to calendar. :D
+      res.index().done(function (resources) {
+        _.forEach(resources.ec2_instances, function (v) {
+          v.serverspec_status = true;
+        });
+        self.instances = resources;
+      });
+
+
       var currentDate = new Date();
       $('#calendar').fullCalendar({
         header: {
