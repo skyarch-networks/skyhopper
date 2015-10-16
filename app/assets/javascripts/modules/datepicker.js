@@ -24,11 +24,16 @@ exports.install = function(Vue, lang){
         },
       });
       dp.on("dp.change", function (e) {
-         vm.$set(key, moment(e.date._d).unix());
+
 
         var current = new Date();
-        if(e.target.id !== "op-sched")
+        if(e.target.id !== "op-sched"){
           dp.data("DateTimePicker").maxDate(current);
+          vm.$set(key, moment(e.date._d).unix());
+        }else{
+          vm.$set(key, moment(e.date._d).format('YYYY/MM/D h:mm a'));
+        }
+
 
         if(e.target.placeholder === "Start")
           $("input[type='hidden']").val(e.date._d);

@@ -13,7 +13,7 @@
     <tr v-repeat="ec2: instances.ec2_instances">
       <td>{{ec2.physical_id}}</td>
       <td>{{ec2.screen_name}}</td>
-      <td><button class="btn btn-xs btn-success" data-toggle="modal" data-target="#manage_schedule">Manage Schedule</button></td>
+      <td><button class="btn btn-xs btn-success"  v-on="click: manage_sched(ec2)" data-toggle="modal" data-target="#manage_schedule">Manage Schedule</button></td>
     </tr>
     <tr v-repeat="rds: instances.rds">
       <td>{{rds.physical_id}}</td>
@@ -24,7 +24,7 @@
   </tbody>
 </table>
 
-<%= render 'monitorings/modal_manage_schedule' %>
+<%= render 'infrastructures/modal/modal_manage_schedule' %>
 
 <div class="container">
   <div id="calendar"></div>

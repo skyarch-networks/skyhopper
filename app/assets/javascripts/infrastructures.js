@@ -573,8 +573,10 @@
       monitoring.show().done(function (data) {
         self.before_register = data.before_register;
         self.templates       = data.templates;
+        console.log(data.templates);
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
+
     },
     filters: {
       roundup: function (val) { return (Math.ceil(val));},
@@ -1719,9 +1721,21 @@
     },
     data: function () {return {
       loading:             false,
-      //days: {"Sunday" : true, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
-      start: null,
-      end: null,
+      dates: [{day: "Monday", checked: false},
+             {day: "Tuesday", checked: false},
+             {day: "Wednesday", checked: false},
+             {day: "Thursday", checked: false},
+             {day: "Friday", checked: false},
+             {day: "Saturday", checked: false},
+             {day: "Sunday", checked: false},],
+      default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D h:mm a'),
+      default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D h:mm a'),
+      sel_instance: {
+        start_date: null,
+        end_date: null,
+        start_time: null,
+        end_time: null,
+      },
     };},
     methods: {
       pop: function(e){
@@ -1730,7 +1744,20 @@
         }else if(e === 'recurring'){
           $("#recurring").popover('toggle');
         }
-      }
+      },
+      manage_sched: function (ec2) {
+        var self = this;
+        self.sel_instance = ec2;
+        var start = new Date();
+
+      },
+      save_sched: function () {
+        var self = this;
+        console.log(self.sel_instance);
+      },
+    },
+    computed: {
+
     },
     ready: function () {
 
