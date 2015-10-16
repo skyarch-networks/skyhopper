@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150901074256) do
+ActiveRecord::Schema.define(version: 20151016062523) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -116,6 +116,14 @@ ActiveRecord::Schema.define(version: 20150901074256) do
     t.integer "master_monitoring_id", limit: 4
   end
 
+  create_table "operation_durations", force: :cascade do |t|
+    t.integer  "resource_id", limit: 4
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string   "code",              limit: 255
     t.datetime "created_at"
@@ -128,6 +136,16 @@ ActiveRecord::Schema.define(version: 20150901074256) do
   end
 
   add_index "projects", ["client_id"], name: "projects_client_id_fk", using: :btree
+
+  create_table "recurring_dates", force: :cascade do |t|
+    t.string   "operation_duration_id", limit: 255
+    t.integer  "repeats",               limit: 4
+    t.time     "start_time"
+    t.time     "end_time"
+    t.string   "dates",                 limit: 255
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
 
   create_table "resource_serverspecs", force: :cascade do |t|
     t.integer  "resource_id",   limit: 4, null: false

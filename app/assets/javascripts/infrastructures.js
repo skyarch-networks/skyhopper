@@ -1757,7 +1757,7 @@
         var self = this;
         if(self.sel_instance.repeat_freq === "4")
           self.sel_instance.dates = self.dates;
-        console.log(self.sel_instance);
+        
       },
     },
     computed: {
