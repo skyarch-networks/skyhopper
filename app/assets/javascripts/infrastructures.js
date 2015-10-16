@@ -1753,10 +1753,15 @@
       },
       save_sched: function () {
         var self = this;
-        if(self.sel_instance.repeat_freq === "4")
+        if (self.sel_instance.repeat_freq === "4")
           self.sel_instance.dates = self.dates;
-        current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance);
-      },
+        current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
+          self.loading = false;
+          self.$parent.show_operation_sched();
+          alert_success(function () {
+          })(t('resources.msg.created'));
+        }).fail(alert_and_show_infra);
+      }
     },
     computed: {
       has_selected: function() {
