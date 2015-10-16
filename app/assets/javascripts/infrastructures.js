@@ -1750,14 +1750,12 @@
       manage_sched: function (ec2) {
         var self = this;
         self.sel_instance = ec2;
-        var start = new Date();
-
       },
       save_sched: function () {
         var self = this;
         if(self.sel_instance.repeat_freq === "4")
           self.sel_instance.dates = self.dates;
-        
+        current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance);
       },
     },
     computed: {

@@ -215,16 +215,16 @@ class InfrastructuresController < ApplicationController
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
-    
+
     list_server_certificates = elb.list_server_certificates
-    
+
     @server_certificate_name_items = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
       {
         text: crt['server_certificate_name'],
         value: crt['arn'],
       }
     end
-    
+
     @server_certificates = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
       {
         name: crt['server_certificate_name'],
@@ -266,6 +266,56 @@ class InfrastructuresController < ApplicationController
     @s3 = S3.new(infrastructure, @bucket_name)
 
     render partial: 'show_s3'
+  end
+
+  # POST /infrastructures/save_schedule
+  # @param [Integer] infra_id
+  # @param [String] physical_id
+  # @param [Object] selected_instance
+  def save_schedule
+    physical_id = params.require(:physical_id)
+    selected_instance =  params.require(:selected_instance)
+    ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
+
+    puts ops_exists.inspect
+    if ops_exists
+      ops_exists.start_date = selected_instance[:start_date]
+      ops_exists.end_date =  selected_instance[:end_date]
+      ops_exists.save
+
+      recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
+      recur_exits.repeats = selected_instance[:repeat_freq]
+      recur_exits.start_time = selected_instance[:start_time]
+      recur_exits.end_time = selected_instance[:end_time]
+      if selected_instance[:repeat_freq] == '4'
+        recur_exits.dates = selected_instance[:dates]
+      else
+        recur_exits.dates = {}
+      end
+      recur_exits.save
+    else
+      begin
+        ops = OperationDuration.create!(
+          resource_id:  selected_instance[:id],
+          start_date:   selected_instance[:start_date],
+          end_date:     selected_instance[:end_date]
+        )
+
+        recur = ops.recurring_dates.create(
+          operation_duration_id: ops.id,
+          repeats: selected_instance[:repeat_freq],
+          start_time: selected_instance[:start_time],
+          end_time: selected_instance[:end_time],
+        )
+        recur.dates = selected_instance[:dates]
+        recur.save
+      rescue => ex
+        render text: ex.message, status: 500 and return
+      end
+    end
+
+
+    render text: I18n.t('resources.msg.created') status: 200 and return
   end
 
 

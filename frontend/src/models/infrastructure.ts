@@ -61,8 +61,18 @@ export default class Infrastructure extends ModelBase {
       })
     );
   }
+
+  save_schedule(physical_id: string, sel_instance: any[] = []): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+        (<any>Infrastructure.ajax_infra).save_schedule({
+          physical_id: physical_id,
+          selected_instance: sel_instance,
+        })
+    );
+  }
 }
 
 Infrastructure.ajax_infra.add_member('delete_stack', 'POST');
+Infrastructure.ajax_infra.add_member('save_schedule', 'POST');
 Infrastructure.ajax_infra.add_member('stack_events', 'GET');
 Infrastructure.ajax_infra.add_member('show_elb', 'GET');
