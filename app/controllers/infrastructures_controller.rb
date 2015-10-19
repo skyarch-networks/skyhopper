@@ -296,7 +296,6 @@ class InfrastructuresController < ApplicationController
     selected_instance =  params.require(:selected_instance)
     ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
 
-    puts ops_exists.inspect
     if ops_exists
       ops_exists.start_date = selected_instance[:start_date]
       ops_exists.end_date =  selected_instance[:end_date]
@@ -306,11 +305,7 @@ class InfrastructuresController < ApplicationController
       recur_exits.repeats = selected_instance[:repeat_freq]
       recur_exits.start_time = selected_instance[:start_time].to_time
       recur_exits.end_time = selected_instance[:end_time].to_time
-      if selected_instance[:repeat_freq] == '4'
-        recur_exits.dates = selected_instance[:dates]
-      else
-        recur_exits.dates = {}
-      end
+      recur_exits.dates = selected_instance[:dates]
       recur_exits.save
     else
       begin
