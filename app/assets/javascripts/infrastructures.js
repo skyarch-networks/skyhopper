@@ -1735,7 +1735,7 @@
         end_date: null,
         start_time: null,
         end_time: null,
-        repeat_freq: null,
+        repeat_freq: '1',
       },
       sources: [],
     };},
@@ -1750,6 +1750,20 @@
       manage_sched: function (ec2) {
         var self = this;
         self.sel_instance = ec2;
+        current_infra.get_schedule(ec2.physical_id).done(function  (data){
+          self.sel_instance.physical_id = ec2.physical_id;
+          console.log(data);
+          _.forEach(data, function(item){
+            console.log('item', item);
+            self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
+            self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
+            self.sel_instance.start_time = moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
+            self.sel_instance.end_time = moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
+            self.sel_instance.repeat_freq = item.recurring_dates[0].repeats;
+            self.sel_instance.dates = item.recurring_dates[0].dates;
+
+          });
+        });
       },
       save_sched: function () {
         var self = this;
@@ -1827,7 +1841,7 @@
       },
       save_sched_err: function () {
         var self = this.sel_instance;
-        return !!(self.start_date && self.end_date && self.start_time && self.end_time && self.repeat_freq);
+        return (self.start_date && self.end_date && self.start_time && self.end_time && self.repeat_freq);
       },
     },
     created: function(){
@@ -1873,32 +1887,32 @@
     },
     ready: function () {
       var self = this;
-      self.sources.forEach(function (key) {
-        console.log(key);
-        //$('#calendar').fullCalendar( 'addEventSource', source );
-      });
-
-      $('#calendar').fullCalendar({
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'month,agendaWeek,agendaDay'
-        },
-        defaultView: 'agendaWeek',
-        editable: true,
-        allDayDefault: false,
-        events: [],
-        dayClick: function(date, allDay, jsEvent, view) {
-
-        },
-        eventClick: function(calEvent, jsEvent, view) {
-        },
-        eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
-                             revertFunc, jsEvent, ui, view ) {
-        },
-        eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
-        }
-      });
+      //self.sources.forEach(function (key) {
+      //  console.log(key);
+      //  //$('#calendar').fullCalendar( 'addEventSource', source );
+      //});
+      //
+      //$('#calendar').fullCalendar({
+      //  header: {
+      //    left: 'prev,next today',
+      //    center: 'title',
+      //    right: 'month,agendaWeek,agendaDay'
+      //  },
+      //  defaultView: 'agendaWeek',
+      //  editable: true,
+      //  allDayDefault: false,
+      //  events: [{self.sources}],
+      //  dayClick: function(date, allDay, jsEvent, view) {
+      //
+      //  },
+      //  eventClick: function(calEvent, jsEvent, view) {
+      //  },
+      //  eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
+      //                       revertFunc, jsEvent, ui, view ) {
+      //  },
+      //  eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
+      //  }
+      //});
 
       self.$parent.loading = false;
     }
