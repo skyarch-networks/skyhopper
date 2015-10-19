@@ -34,6 +34,7 @@ SkyHopper::Application.routes.draw do
       get  'show_elb'
       get  'show_s3'
       get  'stack_events'
+      get  'get_schedule'
       post 'delete_stack'
       post 'save_schedule'
     end

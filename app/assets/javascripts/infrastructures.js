@@ -1714,7 +1714,7 @@
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
     data: function () {return {
-      loading:             false,
+      event_loading:   false,
       instances: null,
       dates: [{day: "Monday",   checked: false, value : 1},
               {day: "Tuesday",  checked: false, value : 2},
@@ -1733,6 +1733,7 @@
         start_time: null,
         end_time: null,
       },
+      sources: [],
     };},
     methods: {
       pop: function(e){
@@ -1748,6 +1749,7 @@
       },
       save_sched: function () {
         var self = this;
+        self.$parent.loading = true;
         if (self.sel_instance.repeat_freq === "4")
           self.sel_instance.dates = self.dates;
         current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
@@ -1756,7 +1758,62 @@
           alert_success(function () {
           })(t('resources.msg.created'));
         }).fail(alert_and_show_infra);
-      }
+      },
+      get_sched: function (ec2){
+        var self = this;
+        self.$parent.show_operation_sched();
+        current_infra.get_schedule(ec2.physical_id).done(function  (data){
+          console.log(data);
+          var events = [];
+          events = data.map(function (item) {
+            var dow = [];
+            if(item.recurring_dates[0].repeats === 4){
+              _.forEach(item.recurring_dates[0].dates, function(date){
+                if(date.checked === "true")
+                  dow.push(parseInt(date.value));
+              });
+            }else if(item.recurring_dates[0].repeats === 1){
+              dow = [1,2,3,4,5,6,0];
+            }else if(item.recurring_dates[0].repeats === 2){
+              dow = [1,2,3,4,5];
+            }else{
+              dow = [0,6];
+            }
+            return {
+              title: item.resource.physical_id,
+              start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              dow: dow,
+              ranges: [{
+                start: item.start_date,
+                end: item.end_date,
+              }]
+            };
+          });
+
+          $('#calendar').fullCalendar({
+            header: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'month,agendaWeek,agendaDay'
+            },
+            defaultView: 'agendaWeek',
+            editable: true,
+            events: events,
+            allDayDefault: false,
+            dayClick: function(date, allDay, jsEvent, view) {
+
+            },
+            eventClick: function(calEvent, jsEvent, view) {
+            },
+            eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
+                                 revertFunc, jsEvent, ui, view ) {
+            },
+            eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
+            }
+          });
+        });
+      },
     },
     computed: {
       has_selected: function() {
@@ -1765,20 +1822,54 @@
         });
       },
     },
-    ready: function () {
-
+    created: function(){
       var self = this;
       var res = new Resource(current_infra);
+      var events = [];
       //TODO: get all assigned dates and print to calendar. :D
       res.index().done(function (resources) {
         _.forEach(resources.ec2_instances, function (v) {
-          v.serverspec_status = true;
+          current_infra.get_schedule(v.physical_id).done(function  (data){
+            var events = data.map(function (item) {
+              var dow = [];
+              if(item.recurring_dates[0].repeats === 4){
+                _.forEach(item.recurring_dates[0].dates, function(date){
+                  if(date.checked === "true")
+                    dow.push(parseInt(date.value));
+                });
+              }else if(item.recurring_dates[0].repeats === 1){
+                dow = [1,2,3,4,5,6,0];
+              }else if(item.recurring_dates[0].repeats === 2){
+                dow = [1,2,3,4,5];
+              }else{
+                dow = [0,6];
+              }
+              return {
+                title: item.resource.physical_id,
+                start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                dow: dow,
+                ranges: [{
+                  start: item.start_date,
+                  end: item.end_date,
+                }]
+              };
+            });
+            self.sources.push(events);
+          });
+
         });
         self.instances = resources;
+
+      });
+    },
+    ready: function () {
+      var self = this;
+      self.sources.forEach(function (key) {
+        console.log(key);
+        //$('#calendar').fullCalendar( 'addEventSource', source );
       });
 
-
-      var currentDate = new Date();
       $('#calendar').fullCalendar({
         header: {
           left: 'prev,next today',
@@ -1787,13 +1878,8 @@
         },
         defaultView: 'agendaWeek',
         editable: true,
-        events: [{
-          title:"My repeating event",
-          start: '10:00', // a start time (10am in this example)
-          end: '14:00', // an end time (6pm in this example)
-          dow: [ 1, 4, 6 ] // Repeat monday and thursday
-        }],
         allDayDefault: false,
+        events: [],
         dayClick: function(date, allDay, jsEvent, view) {
 
         },

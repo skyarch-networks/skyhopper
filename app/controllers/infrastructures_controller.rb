@@ -268,6 +268,25 @@ class InfrastructuresController < ApplicationController
     render partial: 'show_s3'
   end
 
+
+  # GET /infreastructures/get_schedule
+  # @param [Integer] infra_id
+  # @param [String]  physical_id
+  def get_schedule
+    infra_id = params.require(:infra_id)
+    physical_id = params.require(:physical_id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+
+    @operation_schedule = resource.operation_durations.order("created_at desc")
+
+    respond_to do |format|
+      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
+        include: [{recurring_dates: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
+                  {resource: {only: [:physical_id]}} ])
+      }
+    end
+  end
+
   # POST /infrastructures/save_schedule
   # @param [Integer] infra_id
   # @param [String] physical_id
@@ -285,8 +304,8 @@ class InfrastructuresController < ApplicationController
 
       recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
       recur_exits.repeats = selected_instance[:repeat_freq]
-      recur_exits.start_time = selected_instance[:start_time]
-      recur_exits.end_time = selected_instance[:end_time]
+      recur_exits.start_time = selected_instance[:start_time].to_time
+      recur_exits.end_time = selected_instance[:end_time].to_time
       if selected_instance[:repeat_freq] == '4'
         recur_exits.dates = selected_instance[:dates]
       else
