@@ -1713,7 +1713,6 @@
   });
 
 
-  Vue.config.debug = true;
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
     data: function () {return {
@@ -1735,7 +1734,6 @@
         end_date: null,
         start_time: null,
         end_time: null,
-        repeat_freq: '1',
       },
       sources: [],
     };},
@@ -1752,14 +1750,13 @@
         self.sel_instance = ec2;
         current_infra.get_schedule(ec2.physical_id).done(function  (data){
           self.sel_instance.physical_id = ec2.physical_id;
-          console.log(data);
           _.forEach(data, function(item){
             console.log('item', item);
             self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.start_time = moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
             self.sel_instance.end_time = moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
-            self.sel_instance.repeat_freq = item.recurring_dates[0].repeats;
+            self.sel_instance.repeat_freq = item.recurring_dates[0].repeats.toString();
             self.sel_instance.dates = item.recurring_dates[0].dates;
 
           });
@@ -1816,19 +1813,8 @@
               right: 'month,agendaWeek,agendaDay'
             },
             defaultView: 'agendaWeek',
-            editable: true,
             events: events,
             allDayDefault: false,
-            dayClick: function(date, allDay, jsEvent, view) {
-
-            },
-            eventClick: function(calEvent, jsEvent, view) {
-            },
-            eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
-                                 revertFunc, jsEvent, ui, view ) {
-            },
-            eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
-            }
           });
         });
       },
