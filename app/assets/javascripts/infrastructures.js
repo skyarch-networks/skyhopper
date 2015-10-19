@@ -41,6 +41,7 @@
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
+  Vue.use(require('vue-validator'));
 
 
 
@@ -1711,6 +1712,8 @@
     }
   });
 
+
+  Vue.config.debug = true;
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
     data: function () {return {
@@ -1732,6 +1735,7 @@
         end_date: null,
         start_time: null,
         end_time: null,
+        repeat_freq: null,
       },
       sources: [],
     };},
@@ -1820,6 +1824,10 @@
         return _.some(this.dates, function(c){
           return c.checked;
         });
+      },
+      save_sched_err: function () {
+        var self = this.sel_instance;
+        return !!(self.start_date && self.end_date && self.start_time && self.end_time && self.repeat_freq);
       },
     },
     created: function(){
