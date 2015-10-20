@@ -41,7 +41,6 @@
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '30');
-  Vue.use(require('vue-validator'));
 
 
 
@@ -1729,15 +1728,48 @@
       default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D h:mm a'),
       time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('h:mm a'),
       time_end: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(19).minute(0).format('h:mm a'),
+      modes: [{desc: 'Everyday', value: 1},
+        {desc: 'Weekdays (Monday - Friday)', value: 2},
+        {desc: 'Weekends (Saturday & Sunday)', value: 3},
+        {desc: 'Specific dates (other)', value: 4},],
       sel_instance: {
         start_date: null,
         end_date: null,
         start_time: null,
         end_time: null,
+        repeat_freq: null,
       },
       sources: [],
+      is_specific: null,
     };},
     methods: {
+      repeat_selector: function() {
+        if(parseInt(this.sel_instance.repeat_freq) === 1){
+          $("#days-selector input").attr('disabled', true);
+          $("#days-selector").show();
+          _.forEach(this.dates, function(item){
+            item.checked = true;
+          });
+        }else if(parseInt(this.sel_instance.repeat_freq) === 2){
+          $("#days-selector input").attr('disabled', true).show();
+          $("#days-selector").show();
+          _.forEach(this.dates, function(item){
+            item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0)
+          });
+        }else if(parseInt(this.sel_instance.repeat_freq) === 3){
+          $("#days-selector input").attr('disabled', true).show();
+          $("#days-selector").show();
+          _.forEach(this.dates, function(item){
+            item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0)
+          });
+        }else{
+          _.forEach(this.dates, function(item){
+            item.checked = false;
+            $("#days-selector input").attr('disabled', false).show();
+            $("#days-selector").show();
+          })
+        }
+      },
       pop: function(e){
         if(e === 'duration'){
           $("#duration").popover('toggle');
@@ -1745,28 +1777,23 @@
           $("#recurring").popover('toggle');
         }
       },
-      manage_sched: function (ec2) {
+      manage_sched: function (instance) {
         var self = this;
-        self.sel_instance = ec2;
-        current_infra.get_schedule(ec2.physical_id).done(function  (data){
-          self.sel_instance.physical_id = ec2.physical_id;
+        self.sel_instance = instance;
+        current_infra.get_schedule(instance.physical_id).done(function  (data){
+          self.sel_instance.physical_id = instance.physical_id;
           _.forEach(data, function(item){
-            console.log('item', item);
             self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.start_time = moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
             self.sel_instance.end_time = moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
-            self.sel_instance.repeat_freq = item.recurring_dates[0].repeats.toString();
-            self.sel_instance.dates = item.recurring_dates[0].dates;
-
           });
         });
       },
       save_sched: function () {
         var self = this;
         self.$parent.loading = true;
-        if (self.sel_instance.repeat_freq === "4")
-          self.sel_instance.dates = self.dates;
+        self.sel_instance.dates = self.dates;
         current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
           self.loading = false;
           self.$parent.show_operation_sched();
@@ -1778,7 +1805,6 @@
         var self = this;
         self.$parent.show_operation_sched();
         current_infra.get_schedule(ec2.physical_id).done(function  (data){
-          console.log(data);
           var events = [];
           events = data.map(function (item) {
             var dow = [];
@@ -1824,6 +1850,9 @@
         return _.some(this.dates, function(c){
           return c.checked;
         });
+      },
+      is_specific: function(){
+        return (parseInt(this.sel_instance.repeat_freq) === 4);
       },
       save_sched_err: function () {
         var self = this.sel_instance;
@@ -1873,33 +1902,6 @@
     },
     ready: function () {
       var self = this;
-      //self.sources.forEach(function (key) {
-      //  console.log(key);
-      //  //$('#calendar').fullCalendar( 'addEventSource', source );
-      //});
-      //
-      //$('#calendar').fullCalendar({
-      //  header: {
-      //    left: 'prev,next today',
-      //    center: 'title',
-      //    right: 'month,agendaWeek,agendaDay'
-      //  },
-      //  defaultView: 'agendaWeek',
-      //  editable: true,
-      //  allDayDefault: false,
-      //  events: [{self.sources}],
-      //  dayClick: function(date, allDay, jsEvent, view) {
-      //
-      //  },
-      //  eventClick: function(calEvent, jsEvent, view) {
-      //  },
-      //  eventDrop: function( calEvent, dayDelta, minuteDelta, allDay,
-      //                       revertFunc, jsEvent, ui, view ) {
-      //  },
-      //  eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc) {
-      //  }
-      //});
-
       self.$parent.loading = false;
     }
   });
