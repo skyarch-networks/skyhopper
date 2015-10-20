@@ -1,10 +1,10 @@
-<h3>Operation Scheduler </h3>
+<h3><%= I18n.t('operation_scheduler.title')%> </h3>
 <hr>
 
 <table class="table">
   <thead>
     <tr>
-      <th>PHYSICAL_ID</th>
+      <th>PHYSICAL ID</th>
       <th>Name</th>
       <th>Operation</th>
     </tr>
@@ -14,8 +14,9 @@
       <td>{{ec2.physical_id}}</td>
       <td>{{ec2.screen_name}}</td>
       <td>
-        <button class="btn btn-xs btn-primary"  v-on="click: get_sched(ec2)"><%= glyphicon 'calendar' %> View Schedule</button>
-        <button class="btn btn-xs btn-success"  v-on="click: manage_sched(ec2)" data-toggle="modal" data-target="#manage_schedule"><%= glyphicon 'edit' %> Manage Schedule</button>
+        <button class="btn btn-xs btn-primary"  v-on="click: get_sched(ec2)"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
+        <button class="btn btn-xs btn-success"  v-on="click: manage_sched(ec2)" data-toggle="modal" data-target="#manage_schedule">
+          <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched')%></button>
       </td>
     </tr>
   <!--TODO: other instances-->

@@ -36,7 +36,7 @@ function render_infrastructures(value, key, lang){
           "<ul class='dropdown-menu'>"+
           "<li> " +
             "<a class='operation-sched' infrastructure-id="+value+" href='#'>" +
-              "<span class='glyphicon glyphicon-calendar'></span> Operation Schedule"+
+              "<span class='glyphicon glyphicon-calendar'></span> "+t('infrastructures.btn.operation_schedule')+
             "</a> " +
           "</li>"+
           "</ul>"+

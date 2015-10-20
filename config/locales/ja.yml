@@ -147,6 +147,7 @@ ja:
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
+      operation_schedule:   '運転スケジュール'
       add:                  '新規インフラ'
       change_scale:         'スケールの変更'
       generate_serverspec:  'Serverspec の生成'
@@ -172,6 +173,36 @@ ja:
       empty-list:                  'インフラストラクチャのリストは空です.'
       loading-list:                'インフラストラクチャのロード中です...'
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
+
+  operation_scheduler:
+    title: '操作スケジューラ'
+    modal_title: 'スケジュールを管理します'
+    recurring: '繰り返し発生します'
+    duration: 'デュレーション'
+    every: 'すべて：'
+    start_date: '開始日：'
+    end_date: '終了日：'
+    start_time: '始まる時間：'
+    end_time: '終了時間：'
+    btn:
+      view_sched: '表示スケジュール'
+      manage_sched: 'スケジュールを管理します'
+      cancel: 'キャンセル'
+      save: 'セーブ'
+    desc:
+      everyday: '毎日'
+      weekdays: '平日 (月曜日 - 金曜日)'
+      weekends: '週末 (土曜日 & 日曜日)'
+      specific_dates: '特定の日付 (その他)'
+    dates:
+      monday: '月曜日'
+      tuesday: '火曜日'
+      wednesday: '水曜日'
+      thursday: '木曜日'
+      friday: '金曜日'
+      saturday: '土曜日'
+      sunday: '日曜日'
+
 
   nodes:
     bootstrap:   'Bootstrap'
