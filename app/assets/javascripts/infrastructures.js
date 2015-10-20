@@ -1754,20 +1754,20 @@
           $("#days-selector input").attr('disabled', true).show();
           $("#days-selector").show();
           _.forEach(this.dates, function(item){
-            item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0)
+            item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
         }else if(parseInt(this.sel_instance.repeat_freq) === 3){
           $("#days-selector input").attr('disabled', true).show();
           $("#days-selector").show();
           _.forEach(this.dates, function(item){
-            item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0)
+            item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
         }else{
           _.forEach(this.dates, function(item){
             item.checked = false;
             $("#days-selector input").attr('disabled', false).show();
             $("#days-selector").show();
-          })
+          });
         }
       },
       pop: function(e){
