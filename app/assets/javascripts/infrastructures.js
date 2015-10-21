@@ -40,7 +40,7 @@
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
-  Vue.use(require('./modules/ace'), false, 'json', '30');
+  Vue.use(require('./modules/ace'), false, 'json', '25');
 
 
 
@@ -2118,7 +2118,15 @@
       app.$destroy();
     }
     current_infra.show().done(function (stack) {
-      app = newVM(stack, Resource, EC2Instance, current_infra);
+      app = newVM(stack,
+        Resource,
+        EC2Instance,
+        current_infra,
+        CFTemplate,
+        alert_danger,
+        stack_in_progress,
+        ''
+      );
       l.$destroy();
       app.$mount(SHOW_INFRA_ID);
     });
@@ -2133,7 +2141,16 @@
       app.$destroy();
     }
     current_infra.show().done(function (stack) {
-      app = newVM(stack, Resource, EC2Instance, current_infra, 'show_sched');
+      app = newVM(
+        stack,
+        Resource,
+        EC2Instance,
+        current_infra,
+        CFTemplate,
+        alert_danger,
+        stack_in_progress,
+        'show_sched'
+      );
       l.$destroy();
       app.$mount(SHOW_INFRA_ID);
     });

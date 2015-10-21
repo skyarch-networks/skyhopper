@@ -1,4 +1,4 @@
-module.exports = function (stack, Resource, EC2Instance, current_infra, current_tab) {
+module.exports = function (stack, Resource, EC2Instance, current_infra, CFTemplate, alert_danger, stack_in_progress, current_tab) {
   return new Vue({
     template: '#infra-show-template',
     data: {
