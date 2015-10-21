@@ -1923,7 +1923,7 @@
       },
       save_sched_err: function () {
         var self = this.sel_instance;
-        return (self.start_date && self.end_date && self.start_time && self.end_time && self.repeat_freq);
+        return (self.start_date && self.end_date && self.repeat_freq);
       },
     },
     created: function(){
