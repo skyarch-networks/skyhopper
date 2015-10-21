@@ -65,6 +65,8 @@ module Concerns::ErrorHandler
   def rescue_exception(ex)
     Rails.logger.error(ex.inspect + " from " + ex.backtrace.first)
     Rails.logger.debug(ex.backtrace.join("\n"))
+    raise ex if ex.is_a? Sprockets::FileNotFound # prevent redirect loop
+
     if ajax?
       render json: {error: ex.format_error}, status: ex.status_code and return
     else
