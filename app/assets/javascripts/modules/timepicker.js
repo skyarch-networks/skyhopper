@@ -26,7 +26,6 @@ exports.install = function(Vue, lang){
           vm.$set(key, moment(e.date._d).format('h:mm a'));
       });
 
-
     },
     update: function (val) {
       $(this.el).datetimepicker('setDate', val);
