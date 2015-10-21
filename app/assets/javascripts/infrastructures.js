@@ -1745,27 +1745,24 @@
     methods: {
       repeat_selector: function() {
         if(parseInt(this.sel_instance.repeat_freq) === 1){
-          $("#days-selector input").attr('disabled', true);
-          $("#days-selector").show();
+          $("#days-selector").hide();
           _.forEach(this.dates, function(item){
             item.checked = true;
           });
         }else if(parseInt(this.sel_instance.repeat_freq) === 2){
-          $("#days-selector input").attr('disabled', true).show();
-          $("#days-selector").show();
+          $("#days-selector").hide();
           _.forEach(this.dates, function(item){
             item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
         }else if(parseInt(this.sel_instance.repeat_freq) === 3){
-          $("#days-selector input").attr('disabled', true).show();
-          $("#days-selector").show();
+          $("#days-selector").hide();
           _.forEach(this.dates, function(item){
             item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
         }else{
           _.forEach(this.dates, function(item){
             item.checked = false;
-            $("#days-selector input").attr('disabled', false).show();
+            $("#days-selector input").attr('disabled', false);
             $("#days-selector").show();
           });
         }
@@ -1824,7 +1821,7 @@
               title: item.resource.physical_id,
               start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
               end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-              dow: dow
+              dow: dow,
             };
           });
           $('#calendar').fullCalendar({
@@ -1858,8 +1855,6 @@
                 $(".fc-next-button").prop('disabled', false);
               }
             }
-
-
           });
         });
       },

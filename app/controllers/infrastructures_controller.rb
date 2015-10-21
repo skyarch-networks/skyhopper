@@ -297,29 +297,29 @@ class InfrastructuresController < ApplicationController
     ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
 
     if ops_exists
-      ops_exists.start_date = selected_instance[:start_date]
-      ops_exists.end_date =  selected_instance[:end_date]
+      ops_exists.start_date = selected_instance[:start_date].to_datetime
+      ops_exists.end_date =  selected_instance[:end_date].to_datetime
       ops_exists.save
 
       recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
       recur_exits.repeats = selected_instance[:repeat_freq]
-      recur_exits.start_time = selected_instance[:start_time].to_time
-      recur_exits.end_time = selected_instance[:end_time].to_time
+      recur_exits.start_time = selected_instance[:start_date].to_time
+      recur_exits.end_time = selected_instance[:end_date].to_time
       recur_exits.dates = selected_instance[:dates]
       recur_exits.save
     else
       begin
         ops = OperationDuration.create!(
           resource_id:  selected_instance[:id],
-          start_date:   selected_instance[:start_date],
-          end_date:     selected_instance[:end_date]
+          start_date:   selected_instance[:start_date].to_datetime,
+          end_date:     selected_instance[:end_date].to_datetime
         )
 
         recur = ops.recurring_dates.create(
           operation_duration_id: ops.id,
           repeats: selected_instance[:repeat_freq],
-          start_time: selected_instance[:start_time],
-          end_time: selected_instance[:end_time],
+          start_time: selected_instance[:start_date].to_time,
+          end_time: selected_instance[:end_date].to_time,
         )
         recur.dates = selected_instance[:dates]
         recur.save

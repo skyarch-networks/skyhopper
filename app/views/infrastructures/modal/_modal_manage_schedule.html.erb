@@ -18,14 +18,14 @@
           <div class="col-lg-12">
             <div class="row">
               <div class="col-md-6">
-                <%= I18n.t('operation_scheduler.start_date')%> <input type="text" v-datepicker="sel_instance.start_date" v-model="sel_instance.start_date" class="form-control" id="op-sched-start">
+                <%= I18n.t('operation_scheduler.start_date')%> & <%= I18n.t('operation_scheduler.start_time')%><input type="text" v-datepicker="sel_instance.start_date" v-model="sel_instance.start_date" class="form-control" id="op-sched-start">
                 <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.start_date = default_start">Default</button>
                 <span class="help-block">{{default_start}}</span>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6">
-                <%= I18n.t('operation_scheduler.end_date')%> <input type="text" v-datepicker="sel_instance.end_date" v-model="sel_instance.end_date" class="form-control" id="op-sched-end">
+                <%= I18n.t('operation_scheduler.end_date')%> & <%= I18n.t('operation_scheduler.end_time')%><input type="text" v-datepicker="sel_instance.end_date" v-model="sel_instance.end_date" class="form-control" id="op-sched-end">
                 <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.end_date = default_end">Default (+1 year)</button>
                 <span class="help-block">{{default_end}}</span>
               </div>
@@ -59,20 +59,6 @@
             <div id="days-selector" class="col-sm-6" style="display: none">
               <div class="checkbox" v-repeat="d: dates">
                 <label><input v-attr="checked: d.checked" v-model="d.checked" type="checkbox"> {{d.day}}</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-6">
-                  <%= I18n.t('operation_scheduler.start_time')%> <input v-timepicker="sel_instance.start_time" v-model="sel_instance.start_time" type="text" name="start-time" id="start-time" class="form-control"/>
-                  <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.start_time = time_start">Default</button>
-                  <span class="help-block">{{time_start}}</span>
-                </div>
-                <div class="col-md-6">
-                  <%= I18n.t('operation_scheduler.end_time')%>: <input v-timepicker="sel_instance.end_time"  v-model="sel_instance.end_time" type="text" name="end-time" id="end-time" class="form-control"/>
-                  <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.end_time = time_end">Default</button>
-                  <span class="help-block">{{time_end}}</span>
-                </div>
               </div>
             </div>
           </div>
