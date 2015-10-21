@@ -5,6 +5,7 @@ json.public_dns    @instance_summary[:public_dns]
 json.elastic_ip    @instance_summary[:elastic_ip].to_s
 json.block_devices @instance_summary[:block_devices].to_a
 json.root_device_name @instance_summary[:root_device_name]
+json.availability_zone @instance_summary[:availability_zone]
 
 json.chef_error @chef_error
 json.chef_msg   @chef_msg

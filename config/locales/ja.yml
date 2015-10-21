@@ -498,12 +498,17 @@ ja:
     instances:         'インスタンス'
     state:             '状態'
     reason_code:       '原因コード'
+    attach:            'アタッチ'
+    attachable_volumes: 'アタッチ可能なボリューム'
+    device_name:       'デバイス名'
+    set_device_name:   'デバイス名の設定'
     none:              'なし'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
       registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
+      volume_attached:       '%{instance_id} に %{volume_id} をアタッチしました。 デバイス名は %{device} です。'
       created_listener_to_elb: 'ELB に リスナーを作成しました。'
       deleted_listener_to_elb: 'ELB からリスナーを削除しました。'
       uploaded_certificate: '証明書をアップロードしました。'
@@ -561,8 +566,6 @@ ja:
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'
     list_of_snapshots: 'スナップショットの一覧'
-    btn:
-      create:          '作成'
     msg:
       no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'

@@ -1006,6 +1006,8 @@
       sort_asc:            false,
       schedule_type:       '',
       schedule:            {},
+      loading_volumes:     false,
+      attachable_volumes:  [],
 
     };},
     template: '#ec2-tabpane-template',
@@ -1299,6 +1301,26 @@
       sorting_by: function (key) {
         return this.sort_key === key;
       },
+      load_volumes: function () {
+        if ($("#attachButton.dropdown.open").length) {return;}
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        this.loading_volumes = true;
+        ec2.attachable_volumes(this.ec2.availability_zone).done(function (data) {
+          self.attachable_volumes = data.attachable_volumes;
+          self.loading_volumes = false;
+        });
+      },
+      attach_volume: function (volume_id) {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
+          ec2.attach_volume(volume_id, device_name).done(function (data) {
+            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
+          });
+        });
+        $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
+      },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
@@ -1346,6 +1368,37 @@
         }
       },
       selected_any: function () { return _.any(this.snapshots, 'selected', true); },
+      suggest_device_name: function () {
+        // TODO: iikanji ni sitai
+        var suggested_device_letter_code = 102; // same as aws default 'f'
+        var device_letter_codes = _(this.ec2.block_devices).chain()
+          .pluck('device_name')
+          .map(function (name) {
+            if (/sd([a-z])$/.test(name)) {
+              var letter = name.slice(-1);
+              if ('a' <= letter && letter <= 'z') {
+                return letter.charCodeAt(0);
+              } else {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          })
+          .filter()
+          .sort()
+          .value();
+
+        while (device_letter_codes.indexOf(suggested_device_letter_code) !== -1) {
+          if (suggested_device_letter_code === 122) { // 'z'
+            suggested_device_letter_code = 63;        // '?'
+            break;
+          }
+          suggested_device_letter_code++;
+        }
+
+        return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
+      }
     },
     ready: function () {
       var self = this;
