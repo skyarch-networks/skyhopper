@@ -281,7 +281,7 @@ class InfrastructuresController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
-        include: [{recurring_dates: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
+        include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
                   {resource: {only: [:physical_id]}} ])
       }
     end
@@ -303,7 +303,7 @@ class InfrastructuresController < ApplicationController
       ops_exists.save
 
       recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
-      recur_exits.repeats = selected_instance[:repeat_freq]
+      recur_exits.repeats = selected_instance[:repeat_freq].to_i
       recur_exits.start_time = start_time
       recur_exits.end_time = end_time
       recur_exits.dates = selected_instance[:dates]
@@ -318,7 +318,7 @@ class InfrastructuresController < ApplicationController
 
         recur = ops.recurring_dates.create(
           operation_duration_id: ops.id,
-          repeats: selected_instance[:repeat_freq],
+          repeats: selected_instance[:repeat_freq].to_i,
           start_time: start_time,
           end_time: end_time,
         )

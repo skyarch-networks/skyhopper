@@ -1835,8 +1835,8 @@
           _.forEach(data, function(item){
             self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
-            self.sel_instance.start_time = moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
-            self.sel_instance.end_time = moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
+            self.sel_instance.start_time = moment(item.recurring_date[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
+            self.sel_instance.end_time = moment(item.recurring_date[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
           });
         });
       },
@@ -1855,25 +1855,26 @@
         var self = this;
         self.$parent.show_operation_sched();
         current_infra.get_schedule(ec2.physical_id).done(function  (data){
+          console.log(data);
           var events = [];
           events = data.map(function (item) {
             var dow = [];
-            if(item.recurring_dates[0].repeats === 4){
-              _.forEach(item.recurring_dates[0].dates, function(date){
+            if(item.recurring_date.repeats === "other"){
+              _.forEach(item.recurring_date.dates, function(date){
                 if(date.checked === "true")
                   dow.push(parseInt(date.value));
               });
-            }else if(item.recurring_dates[0].repeats === 1){
+            }else if(item.recurring_date.repeats === "everyday"){
               dow = [1,2,3,4,5,6,0];
-            }else if(item.recurring_dates[0].repeats === 2){
+            }else if(item.recurring_date.repeats === "weekdays"){
               dow = [1,2,3,4,5];
             }else{
               dow = [0,6];
             }
             return {
               title: item.resource.physical_id,
-              start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-              end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
               dow: dow,
             };
           });
@@ -1936,22 +1937,22 @@
           current_infra.get_schedule(v.physical_id).done(function  (data){
             var events = data.map(function (item) {
               var dow = [];
-              if(item.recurring_dates[0].repeats === 4){
-                _.forEach(item.recurring_dates[0].dates, function(date){
+              if(item.recurring_date.repeats === "other"){
+                _.forEach(item.recurring_date.dates, function(date){
                   if(date.checked === "true")
                     dow.push(parseInt(date.value));
                 });
-              }else if(item.recurring_dates[0].repeats === 1){
+              }else if(item.recurring_date.repeats === "everyday"){
                 dow = [1,2,3,4,5,6,0];
-              }else if(item.recurring_dates[0].repeats === 2){
+              }else if(item.recurring_date.repeats === "weekdays"){
                 dow = [1,2,3,4,5];
               }else{
                 dow = [0,6];
               }
               return {
                 title: item.resource.physical_id,
-                start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-                end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
                 dow: dow,
                 ranges: [{
                   start: item.start_date,

@@ -1,4 +1,4 @@
 class OperationDuration < ActiveRecord::Base
   belongs_to :resource
-  has_many :recurring_dates
+  has_one :recurring_date
 end
