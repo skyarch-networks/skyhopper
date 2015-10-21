@@ -210,6 +210,7 @@ en:
       attr_not_exists:    'Available attributes does not exists'
       runlist_empty:      'Runlist is empty'
       dish_applied:       'Dish was applied.'
+      stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
 
   dishes:
     dishes:            'Dishes'
