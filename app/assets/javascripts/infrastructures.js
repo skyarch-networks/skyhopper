@@ -1824,24 +1824,42 @@
               title: item.resource.physical_id,
               start: moment(item.recurring_dates[0].start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
               end: moment(item.recurring_dates[0].end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-              dow: dow,
-              ranges: [{
-                start: item.start_date,
-                end: item.end_date,
-              }]
+              dow: dow
             };
           });
-
           $('#calendar').fullCalendar({
             header: {
               left: 'prev,next today',
               center: 'title',
-              right: 'month,agendaWeek,agendaDay'
+              right: 'month,agendaWeek,agendaDay,agendaFourDay'
             },
             defaultView: 'agendaWeek',
             events: events,
             allDayDefault: false,
             lang: queryString.lang,
+            viewRender: function(currentView){
+              var minDate = moment(data[0].start_date).utcOffset ("Asia/Tokyo"),
+                maxDate = moment(data[0].end_date).utcOffset ("Asia/Tokyo");
+
+              if (minDate >= currentView.start && minDate <= currentView.end) {
+                $(".fc-prev-button").prop('disabled', true);
+                $(".fc-prev-button").addClass('fc-state-disabled');
+              }
+              else {
+                $(".fc-prev-button").removeClass('fc-state-disabled');
+                $(".fc-prev-button").prop('disabled', false);
+              }
+              // Future
+              if (maxDate >= currentView.start && maxDate <= currentView.end) {
+                $(".fc-next-button").prop('disabled', true);
+                $(".fc-next-button").addClass('fc-state-disabled');
+              } else {
+                $(".fc-next-button").removeClass('fc-state-disabled');
+                $(".fc-next-button").prop('disabled', false);
+              }
+            }
+
+
           });
         });
       },
