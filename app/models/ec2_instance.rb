@@ -74,6 +74,7 @@ class EC2Instance < SimpleDelegator
       public_ip:     public_ip_address,
       block_devices: block_device_mappings,
       root_device_name: root_device_name,
+      availability_zone: placement.availability_zone,
     }
   end
 
@@ -102,5 +103,28 @@ class EC2Instance < SimpleDelegator
     return self.elastic_ip.presence ||
            self.public_ip_address.presence ||
            self.private_ip_address
+  end
+
+  def attachable_volumes(availability_zone)
+    client.describe_volumes(
+      filters: [{
+        name: "availability-zone",
+        values: [availability_zone],
+      }])
+      .volumes
+      .select { |volume| volume.state == 'available' }
+      .map { |volume|
+        tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
+        volume.tags = tags_hash
+        volume
+      }
+  end
+
+  def attach_volume(volume_id, device_name)
+    client.attach_volume(
+      volume_id: volume_id,
+      instance_id: @physical_id,
+      device: device_name,
+    )
   end
 end
