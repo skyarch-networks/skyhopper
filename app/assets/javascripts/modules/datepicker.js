@@ -39,13 +39,9 @@ exports.install = function(Vue, lang){
 
       dp.on("dp.show", function (e) {
         if(e.target.placeholder === "End"){
-          var start = $("input[type='hidden']").val();
-          var min = new Date(start);
-          dp.data("DateTimePicker").minDate(min);
+          dp.data("DateTimePicker").minDate(new Date($("input[type='hidden']").val()));
         }else if(e.target.id === "op-sched-end"){
-          var start = $("#op-sched-start").val();
-          var min = new Date(start);
-          dp.data("DateTimePicker").minDate(min);
+          dp.data("DateTimePicker").minDate(new Date($("#op-sched-start").val()));
         }
       });
 
