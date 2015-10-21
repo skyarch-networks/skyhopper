@@ -33,7 +33,6 @@ $ sudo gem install bundler
 
 ```sh
 $ sudo yum install nodejs npm --enablerepo=epel
-$ sudo npm update -g npm
 $ node -v
 v0.10.33
 ```
