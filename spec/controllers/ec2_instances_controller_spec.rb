@@ -153,6 +153,41 @@ describe Ec2InstancesController, type: :controller do
     end
   end
 
+  describe '#attachable_volumes' do
+    let(:availability_zone) { 'us-east-1' }
+    let(:resp) { [{hoge: :fuga}] }
+    let(:instance){double('instance', attachable_volumes: resp)}
+    let(:req) { get :attachable_volumes, id: physical_id, infra_id: infra.id, availability_zone: availability_zone }
+    before do
+      allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
+      req
+    end
+
+    should_be_success
+
+    it 'should render' do
+      expect(response.body).to eq({attachable_volumes: resp}.to_json)
+    end
+  end
+
+  describe '#attach_volume' do
+    let(:volume_id) { 'vol-1234ab' }
+    let(:device_name) { '/dev/sdf' }
+    let(:resp) { {hoge: :fuga} }
+    let(:instance){double('instance', attach_volume: resp)}
+    let(:req) { post :attach_volume, id: physical_id, infra_id: infra.id, volume_id: volume_id, device_name: device_name }
+    before do
+      allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
+      req
+    end
+
+    should_be_success
+
+    it 'should render' do
+      expect(response.body).to eq(resp.to_json)
+    end
+  end
+
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
       def authorize(*)end # XXX: pundit hack
