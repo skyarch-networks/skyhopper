@@ -64,7 +64,7 @@ class ElbController < ApplicationController
       elb.create_listener(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)
     rescue => error
       # Rollback start
-      
+
       # UPDATE 2015/10/08 START
       # 以前はリスナーに登録した証明書を削除すると
       # リスナーのSSLCertificateIdがInvalid-Certificateとなり
@@ -87,10 +87,10 @@ class ElbController < ApplicationController
         old_listener['load_balancer_port'],
         old_listener['instance_protocol'],
         old_listener['instance_port'],
-        old_listener['ssl_certificate_id']
+        old_listener['ssl_certificate_id'],
       )
       # UPDATE 2015/10/08 END
-      
+
       # Rollback end
       raise error
     end
