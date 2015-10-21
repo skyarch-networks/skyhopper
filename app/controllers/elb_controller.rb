@@ -58,23 +58,39 @@ class ElbController < ApplicationController
     infra = Infrastructure.find(infra_id)
     elb   = ELB.new(infra, elb_name)
 
+    old_listener = elb.describe_listener(old_load_balancer_port.to_i)
+    elb.delete_listener(old_load_balancer_port)
     begin
-      old_listener = elb.describe_listener(old_load_balancer_port.to_i)
-      elb.delete_listener(old_load_balancer_port)
       elb.create_listener(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)
     rescue => error
       # Rollback start
-      begin
-        elb.create_listener(
-          old_listener['protocol'],
-          old_listener['load_balancer_port'],
-          old_listener['instance_protocol'],
-          old_listener['instance_port'],
-          old_listener['ssl_certificate_id'],
-        )
-      rescue
-        raise 'Failed to rollback. Data might have been lost.'
-      end
+      
+      # UPDATE 2015/10/08 START
+      # 以前はリスナーに登録した証明書を削除すると
+      # リスナーのSSLCertificateIdがInvalid-Certificateとなり
+      # その状態でロールバックを行うと失敗していたが
+      # 現在はリスナーに登録した証明書を削除しようとするとエラーが出るため
+      # rollback_error周りの処理を削除
+      #begin
+      #  elb.create_listener(
+      #    old_listener['protocol'],
+      #    old_listener['load_balancer_port'],
+      #    old_listener['instance_protocol'],
+      #    old_listener['instance_port'],
+      #    old_listener['ssl_certificate_id']
+      #  )
+      #rescue => rollback_error
+      #  raise 'Failed to rollback. Data might have been lost.'
+      #end
+      elb.create_listener(
+        old_listener['protocol'],
+        old_listener['load_balancer_port'],
+        old_listener['instance_protocol'],
+        old_listener['instance_port'],
+        old_listener['ssl_certificate_id']
+      )
+      # UPDATE 2015/10/08 END
+      
       # Rollback end
       raise error
     end
