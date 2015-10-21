@@ -468,12 +468,17 @@ en:
     instances:         'Instances'
     state:             'State'
     reason_code:       'Reason Code'
+    attach:            'Attach'
+    attachable_volumes: 'Attachable Volumes'
+    device_name:       'Device Name'
+    set_device_name:   'Set Device Name'
     none:              'None'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
       registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
+      volume_attached:       '%{volume_id} has attached to %{instance_id}. Device name is %{device}'
       created_listener_to_elb: 'Created the listener from the ELB.'
       deleted_listener_to_elb: 'Deleted the listener from the ELB.'
       uploaded_certificate: 'Uploaded the certificate.'
@@ -531,8 +536,6 @@ en:
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'
     list_of_snapshots: 'List of Snapshots'
-    btn:
-      create:          'Create'
     msg:
       no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'

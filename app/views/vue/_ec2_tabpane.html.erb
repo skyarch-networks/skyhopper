@@ -65,6 +65,19 @@
                 </ul>
               </bootstrap-tooltip>
             </span>
+            <bootstrap-tooltip title="<%= t 'ec2_instances.attach' %>" class="dropdown" id="attachButton">
+              <a v-on="click: load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
+              <ul id="attachVolume" class="dropdown-menu">
+<!--                 <li><a href="#">Create Volume</a></li>
+                <li role="separator" class="divider"></li> -->
+                <li class="dropdown-header"><%= t 'ec2_instances.attachable_volumes' %></li>
+                <li class="dropdown-header" v-if="loading_volumes"><div-loader></div-loader></li>
+                <li v-repeat="volume: attachable_volumes" v-show="!loading_volumes">
+                  <a v-on="click: attach_volume(volume.volume_id)" href="#">{{volume.volume_id}} (Name: {{volume.tags.Name}}, size: {{volume.size}} GiB, type: {{volume.volume_type}})</a>
+                </li>
+                <li class="disabled" v-if="!loading_volumes && !attachable_volumes.length"><a href="#"><%= t 'ec2_instances.none' %></a></li>
+              </ul>
+            </bootstrap-tooltip>
           </td>
         </tr>
         <tr>
@@ -366,7 +379,7 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
-          <button v-on="click: create_snapshot(volume_selected)" class="btn btn-primary"><%= t('snapshots.btn.create') %></button>
+          <button v-on="click: create_snapshot(volume_selected)" class="btn btn-primary"><%= t('helpers.links.create') %></button>
           <button v-on="click: delete_selected_snapshots()" v-attr="disabled: !selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
