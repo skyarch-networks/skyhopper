@@ -11,7 +11,7 @@ require_relative '../spec_helper'
 describe Ec2InstancePolicy do
   subject{described_class}
 
-  %i[change_scale? start? stop? reboot? serverspec_status? register_to_elb? deregister_from_elb?].each do |action|
+  %i[change_scale? start? stop? reboot? serverspec_status? register_to_elb? deregister_from_elb? attachable_volumes? attach_volume?].each do |action|
     permissions action do
       context 'when allow' do
         let(:infra){create(:infrastructure)}

@@ -17,15 +17,26 @@ fi
 
 export RAILS_ENV=production
 
+pid_file() {
+  pid_path="${SKYHOPPER_PATH}/tmp/pids/foreman.pid"
+  echo -n $pid_path
+}
 
 get_pid() {
-  pid_path="${SKYHOPPER_PATH}/tmp/pids/unicorn.pid"
+  pid_path=$(pid_file)
   if [ -f "${pid_path}" ]; then
-    cat $SKYHOPPER_PATH/tmp/pids/unicorn.pid
+    cat $pid_path
   else
     return 1
   fi
 }
+
+# $1: pid
+save_pid() {
+  pid_path=$(pid_file)
+  echo -n $1 > $pid_path
+}
+
 
 start() {
   cd $SKYHOPPER_PATH
@@ -36,41 +47,30 @@ start() {
   bundle exec rake assets:precompile
 
 
-  echo -e "\e[1m=====\e[32m Start Websocket Server as daemon\e[m"
-  ./bin/ws_proxy --log ./log/ws_proxy.production.log &
+  echo -e "\e[1m=====\e[32m Start Rails/Sidekiq/Websocket servers\e[m"
+  bundle exec foreman start > /dev/null 2>&1 &
   pid=$!
-  echo -n $pid > ./tmp/pids/ws_proxy.pid
-
-  echo -e "\e[1m=====\e[32m Start Sidekiq as daemon\e[m"
-  bundle exec sidekiq -e production -d
-
-  echo -e "\e[1m=====\e[32m Start Rails Server as daemon\e[m"
-  bundle exec unicorn_rails -E production -D -p3000
+  save_pid $pid
 }
 
 stop() {
-  echo -e "\e[1m=====\e[32m Kill Websocket Server daemon\e[m"
-  kill $(cat ./tmp/pids/ws_proxy.pid)
-
-  echo -e "\e[1m=====\e[32m Kill Sidekiq daemon\e[m"
-  kill $(cat ./tmp/pids/sidekiq.pid)
-
+  echo -e "\e[1m=====\e[32m Kill Rails/Sidekiq/Websocket Servers\e[m"
   pid=$(get_pid)
-  echo -e "\e[1m=====\e[32m Kill Rails Server daemon\e[m"
   kill $pid
+  rm $(pid_file)
 }
 
 status() {
   pid=$(get_pid)
   if [ $? -ne 0 ] ; then
-    echo "stop SkyHopper"
+    echo "SkyHopper is stopping"
     return
   fi
 
   if kill -0 "${pid}" > /dev/null 2>&1 ; then
-    echo "running SkyHopper"
+    echo "SkyHopper is running"
   else
-    echo "stop SkyHopper"
+    echo "SkyHopper is stopping"
   fi
 }
 

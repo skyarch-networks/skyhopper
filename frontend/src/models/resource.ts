@@ -31,4 +31,5 @@ export default class Resource extends ModelBase {
       })
     );
   }
+
 }

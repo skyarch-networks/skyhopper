@@ -48,7 +48,7 @@
             this.reversed[key] = !this.reversed[key];
       },
       pop: function(){
-         $('#role').popover();
+         $('#role').popover('toggle');
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;

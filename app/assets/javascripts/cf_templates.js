@@ -100,12 +100,12 @@
     }
   });
 
-
+  var editor;
   $(document).ready(function(){
     cf_templatesIndex();
 
     if ($('#description').length > 0) {
-      var editor = ace.edit("description");
+      editor = ace.edit("description");
       var textarea = $('#cf_template_value');
       editor.getSession().setValue(textarea.val());
       editor.getSession().on('change', function(){
@@ -120,6 +120,7 @@
       $("#ace-loading").hide();
     }
   });
+  
 
   $(document).on("click", ".show-template", function () {
     var cf_template_id = $(this).closest("a").attr("data-managejson-id");
