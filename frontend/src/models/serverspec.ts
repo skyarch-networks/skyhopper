@@ -15,12 +15,13 @@ export default class Serverspec extends ModelBase {
 
   static ajax = new AjaxSet.Resources('serverspecs');
 
-  create(fname: string, value: string): JQueryPromise<any> {
+  create(fname: string, value: string, infra_id: number): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       Serverspec.ajax.create({
         serverspec: {
-          name:  fname,
-          value: value,
+          name:              fname,
+          value:             value,
+          infrastructure_id: infra_id,
         }
       })
     );

@@ -13,7 +13,7 @@
     "favico.js": "~0.3.7",
     "bootstrap": "~3.3.4",
     "bootswatch-dist": "paper",
-    "ajax_set.js": "https://github.com/pocke/ajax_set.js.git",
+    "ajax_set.js": "https://github.com/pocke/ajax_set.js.git#106d927aba64fa99220a1199973d41f2a448bd2c",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
     "noty": "~2.3.5",
     "animate.css": "~3.3.0",
