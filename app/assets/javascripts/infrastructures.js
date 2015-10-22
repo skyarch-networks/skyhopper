@@ -1846,7 +1846,7 @@
           self.loading = false;
           self.$parent.show_operation_sched();
           alert_success(function () {
-          })(t('resources.msg.created'));
+          })(t('operation_scheduler.msg.saved'));
         }).fail(alert_and_show_infra);
       },
       get_sched: function (ec2){

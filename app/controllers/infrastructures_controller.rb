@@ -328,7 +328,7 @@ class InfrastructuresController < ApplicationController
     end
 
 
-    render text: I18n.t('resources.msg.created'), status: 200 and return
+    render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
 

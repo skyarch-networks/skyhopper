@@ -205,6 +205,8 @@ en:
       friday: 'Friday'
       saturday: 'Saturday'
       sunday: 'Sunday'
+    msg:
+      saved: 'Operation Schedule successfully saved.'
 
   nodes:
     bootstrap:   'Bootstrap'
