@@ -215,16 +215,16 @@ class InfrastructuresController < ApplicationController
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
-    
+
     list_server_certificates = elb.list_server_certificates
-    
+
     @server_certificate_name_items = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
       {
         text: crt['server_certificate_name'],
         value: crt['arn'],
       }
     end
-    
+
     @server_certificates = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
       {
         name: crt['server_certificate_name'],
@@ -266,6 +266,69 @@ class InfrastructuresController < ApplicationController
     @s3 = S3.new(infrastructure, @bucket_name)
 
     render partial: 'show_s3'
+  end
+
+
+  # GET /infreastructures/get_schedule
+  # @param [Integer] infra_id
+  # @param [String]  physical_id
+  def get_schedule
+    infra_id = params.require(:infra_id)
+    physical_id = params.require(:physical_id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+
+    @operation_schedule = resource.operation_durations.order("created_at desc")
+
+    respond_to do |format|
+      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
+        include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
+                  {resource: {only: [:physical_id]}} ])
+      }
+    end
+  end
+
+  # POST /infrastructures/save_schedule
+  # @param [Integer] infra_id
+  # @param [String] physical_id
+  # @param [Object] selected_instance
+  def save_schedule
+    physical_id = params.require(:physical_id)
+    selected_instance =  params.require(:selected_instance)
+    ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
+    start_time = Time.zone.at(selected_instance[:start_date].to_time.to_i).to_time
+    end_time = Time.zone.at(selected_instance[:end_date].to_time.to_i).to_time
+    if ops_exists
+      ops_exists.start_date = selected_instance[:start_date].to_datetime
+      ops_exists.end_date =  selected_instance[:end_date].to_datetime
+      ops_exists.save
+
+      recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
+      recur_exits.repeats = selected_instance[:repeat_freq].to_i
+      recur_exits.start_time = start_time
+      recur_exits.end_time = end_time
+      recur_exits.dates = selected_instance[:dates]
+      recur_exits.save
+    else
+      begin
+        ops = OperationDuration.create!(
+          resource_id:  selected_instance[:id],
+          start_date:   selected_instance[:start_date].to_datetime,
+          end_date:     selected_instance[:end_date].to_datetime
+        )
+        RecurringDate.create!(
+          operation_duration_id: ops.id,
+          repeats: selected_instance[:repeat_freq].to_i,
+          start_time:  start_time,
+          end_time: end_time,
+          dates: selected_instance[:dates],
+        )
+      rescue => ex
+        render text: ex.message, status: 500 and return
+      end
+    end
+
+
+    render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
 

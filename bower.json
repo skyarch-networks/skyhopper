@@ -27,6 +27,7 @@
     "selectize": "~0.12.1",
     "microplugin": "~0.0.3",
     "sifter": "~0.4.3",
+    "fullcalendar": "~2.4.0",
     "selectize-bootswatch": "5e9042f617"
   }
 }
