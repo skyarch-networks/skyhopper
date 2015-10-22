@@ -27,7 +27,7 @@ function render_infrastructures(value, key, lang){
   var isDelete = $('#delete-'+value[0]+'').attr('class');
   var disabled;
     if(value[1] != "CREATE_COMPLETE")
-      disabled = 'disabled'
+      disabled = 'disabled';
 
   var ret =  "<div class='btn-group'>"+
           "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-info-sign'>" +
