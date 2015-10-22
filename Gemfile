@@ -42,7 +42,7 @@ gem 'ace-rails-ap'
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
-gem 'ridley'
+gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
 

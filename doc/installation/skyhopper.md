@@ -34,7 +34,7 @@ $ sudo gem install bundler
 ```sh
 $ sudo yum install nodejs npm --enablerepo=epel
 $ node -v
-v0.10.33
+v0.10.36
 ```
 
 ## bower のインストール
