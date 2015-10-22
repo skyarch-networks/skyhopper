@@ -159,7 +159,7 @@ input[type="number"] {
     box-shadow: none;
 }
 
-#resizable{
+.resizable{
   padding: 20px;
   width: 1000px;
   resize: both;

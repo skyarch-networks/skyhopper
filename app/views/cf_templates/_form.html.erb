@@ -15,7 +15,7 @@
 
   <div class="form-group">
     <%= f.label :value, t('cf_templates.cf_template'), class: 'control-label col-sm-4' %>
-    <div class="col-sm-5" id="resizable">
+    <div class="col-sm-5 resizable">
       <span id="ace-loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
       <%= f.text_area :value, size: "20x10", class: "form-control", required: true, style: 'display: none' %>
       <div id="description"></div>
