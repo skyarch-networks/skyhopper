@@ -320,7 +320,7 @@ class InfrastructuresController < ApplicationController
           repeats: selected_instance[:repeat_freq].to_i,
           start_time:  start_time,
           end_time: end_time,
-          dates: selected_instance[:dates]
+          dates: selected_instance[:dates],
         )
       rescue => ex
         render text: ex.message, status: 500 and return
