@@ -2057,7 +2057,7 @@
                            region: item.region,
                            keypairname: item.keypairname,
                            //  ec2_private_key_id: item.ec2_private_key_id,
-                           id: item.id,
+                           id: [item.id,item.status],
                    };
                  }
                  self.loading = false;
