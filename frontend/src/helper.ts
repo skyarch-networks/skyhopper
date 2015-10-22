@@ -92,6 +92,7 @@ module Modal {
     modal_base.children().draggable({
       cursor: "move",
       containment: ".modal-backdrop",
+      handle: ".modal-header",
     });
 
     return dfd;
