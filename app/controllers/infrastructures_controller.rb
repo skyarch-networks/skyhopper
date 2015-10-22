@@ -315,15 +315,13 @@ class InfrastructuresController < ApplicationController
           start_date:   selected_instance[:start_date].to_datetime,
           end_date:     selected_instance[:end_date].to_datetime
         )
-
-        recur = ops.recurring_dates.create(
+        RecurringDate.create!(
           operation_duration_id: ops.id,
           repeats: selected_instance[:repeat_freq].to_i,
-          start_time: start_time,
+          start_time:  start_time,
           end_time: end_time,
+          dates: selected_instance[:dates]
         )
-        recur.dates = selected_instance[:dates]
-        recur.save
       rescue => ex
         render text: ex.message, status: 500 and return
       end
