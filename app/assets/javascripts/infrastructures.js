@@ -2050,7 +2050,7 @@
                        created_at: date,
                        //  ec2_private_key_id: item.ec2_private_key_id,
                        status: item.status,
-                       id: item.id,
+                       id: [item.id,item.status],
                        };
                  }else{
                    return {stack_name: item.stack_name,
