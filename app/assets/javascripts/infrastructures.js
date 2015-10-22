@@ -1835,8 +1835,6 @@
           _.forEach(data, function(item){
             self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
             self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
-            self.sel_instance.start_time = moment(item.recurring_date[0].start_time).utcOffset ("Asia/Tokyo").format('h:mm a');
-            self.sel_instance.end_time = moment(item.recurring_date[0].end_time).utcOffset ("Asia/Tokyo").format('h:mm a');
           });
         });
       },
