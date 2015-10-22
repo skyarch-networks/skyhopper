@@ -47,7 +47,7 @@ class VueMain extends Vue {
       data => bootstrap_alert(t('serverspecs.serverspec'), data),
       modal_for_ajax_std_error()
     ).then(() => {
-      location.href = "/serverspecs";
+      location.href = `/serverspecs${location.search}`;
     });
   }
 
