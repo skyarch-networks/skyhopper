@@ -147,6 +147,7 @@ ja:
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
+      operation_schedule:   '運用スケジュール'
       add:                  '新規インフラ'
       change_scale:         'スケールの変更'
       generate_serverspec:  'Serverspec の生成'
@@ -172,6 +173,39 @@ ja:
       empty-list:                  'インフラストラクチャのリストは空です.'
       loading-list:                'インフラストラクチャのロード中です...'
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
+
+  operation_scheduler:
+    title: '運用スケジューラ'
+    modal_title: 'スケジュールを管理'
+    recurring: '繰り返し'
+    duration: '期間'
+    recurring-content: 'インスタンスは以下で選択した日付に応じて、スタート/ストップします。'
+    duration-content: '指定された開始日と終了日の間は、インスタンスが起動し続けます。
+                       また、選択された時間によってスタート/ストップします。'
+    every: 'すべて:'
+    start_date: '開始日'
+    end_date: '終了日'
+    start_time: '時間:'
+    end_time: '時間:'
+    btn:
+      view_sched: 'スケジュールを表示'
+      manage_sched: 'スケジュールを管理'
+    desc:
+      everyday: '毎日'
+      weekdays: '平日 (月曜日 - 金曜日)'
+      weekends: '週末 (土曜日 & 日曜日)'
+      specific_dates: '特定の日付 (その他)'
+    dates:
+      monday: '月曜日'
+      tuesday: '火曜日'
+      wednesday: '水曜日'
+      thursday: '木曜日'
+      friday: '金曜日'
+      saturday: '土曜日'
+      sunday: '日曜日'
+    msg:
+      saved: '運転スケジュールは正常に保存。'
+
 
   nodes:
     bootstrap:   'Bootstrap'
