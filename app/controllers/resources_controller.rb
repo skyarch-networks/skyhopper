@@ -62,4 +62,5 @@ class ResourcesController < ApplicationController
 
     render text: I18n.t('resources.msg.created') and return
   end
+  
 end

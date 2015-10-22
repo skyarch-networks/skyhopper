@@ -137,6 +137,29 @@ class Ec2InstancesController < ApplicationController
   end
 
 
+  def attachable_volumes
+    physical_id       = params.require(:id)
+    infra_id          = params.require(:infra_id)
+    availability_zone = params.require(:availability_zone)
+
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    volumes = instance.attachable_volumes(availability_zone)
+
+    render json: {attachable_volumes: volumes}
+  end
+
+  def attach_volume
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+    volume_id   = params.require(:volume_id)
+    device_name = params.require(:device_name)
+
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    resp = instance.attach_volume(volume_id, device_name)
+
+    render json: resp
+  end
+
   private
 
   def notify_ec2_status(instance, status)
