@@ -173,7 +173,7 @@ en:
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
-      invalid_keypair:		   'Invalid key pair! Please check the keypair file.'
+      invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   operation_scheduler:
     title: 'Operation Scheduler'
@@ -188,8 +188,6 @@ en:
     btn:
       view_sched: 'View Schedule'
       manage_sched: 'Manage Schedule'
-      cancel: 'Cancel'
-      save: 'Save'
     desc:
       everyday: 'Everyday'
       weekdays: 'Weekdays (Monday - Friday)'

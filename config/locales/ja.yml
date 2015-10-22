@@ -147,7 +147,7 @@ ja:
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
-      operation_schedule:   '運転スケジュール'
+      operation_schedule:   '運用スケジュール'
       add:                  '新規インフラ'
       change_scale:         'スケールの変更'
       generate_serverspec:  'Serverspec の生成'
@@ -175,20 +175,18 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   operation_scheduler:
-    title: '操作スケジューラ'
-    modal_title: 'スケジュールを管理します'
-    recurring: '繰り返し発生します'
-    duration: 'デュレーション'
-    every: 'すべて：'
+    title: '運用スケジューラ'
+    modal_title: 'スケジュールを管理'
+    recurring: '繰り返し'
+    duration: '期間'
+    every: 'すべて:'
     start_date: '開始日'
     end_date: '終了日'
-    start_time: '時間：'
-    end_time: '時間：'
+    start_time: '時間:'
+    end_time: '時間:'
     btn:
-      view_sched: '表示スケジュール'
-      manage_sched: 'スケジュールを管理します'
-      cancel: 'キャンセル'
-      save: 'セーブ'
+      view_sched: 'スケジュールを表示'
+      manage_sched: 'スケジュールを管理'
     desc:
       everyday: '毎日'
       weekdays: '平日 (月曜日 - 金曜日)'
