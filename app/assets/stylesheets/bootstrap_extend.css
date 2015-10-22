@@ -159,6 +159,14 @@ input[type="number"] {
     box-shadow: none;
 }
 
+#resizable{
+  padding: 20px;
+  width: 1000px;
+  resize: both;
+  overflow: auto;
+}
+
+
 .ssp th {
   background: rgb(252, 255, 255);
 }
@@ -170,6 +178,8 @@ input[type="number"] {
 .ssp th:nth-child(even){
   background: rgba(98, 105, 106, 0.13);
 }
+
+
 
 h1, .h1 {
   font-size: 36px;
