@@ -1,10 +1,13 @@
 /// <reference path="../../declares.d.ts" />
+/// <reference path="../../query-string.d.ts" />
 
 import ResourcePanel     from './resource-panel';
 import ItPanel           from './it-panel';
 import Serverspec        from '../models/serverspec';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
+
+import * as qs from 'query-string';
 
 class VueMain extends Vue {
   private ast: ASTInterface.Describe[];
@@ -20,7 +23,7 @@ class VueMain extends Vue {
       methods: {
         addDescribe:    this.addDescribe,
         removeDescribe: this.removeDescribe,
-        save:         this.save,
+        save:           this.save,
       },
       computed: {
         rubyCode:     this._rubyCode,
@@ -40,13 +43,16 @@ class VueMain extends Vue {
   }
 
   save(): void {
-    bootstrap_prompt("Serverspec Generator", "filename").done((fname) => {
+    bootstrap_prompt("Serverspec Generator", "filename").then((fname) => {
       const s = new Serverspec();
-      s.create(fname, this.rubyCode).done(function (data) {
-        bootstrap_alert(t('serverspecs.serverspec'), data).done(() => {
-          location.href = "/serverspecs";
-        });
-      }).fail(modal_for_ajax_std_error());
+      const infra_id_str: string = qs.parse(location.search).infrastructure_id;
+      const infra_id: number = infra_id_str ? parseInt(infra_id_str) : null;
+      return s.create(fname, this.rubyCode, infra_id);
+    }).then(
+      data => bootstrap_alert(t('serverspecs.serverspec'), data),
+      modal_for_ajax_std_error()
+    ).then(() => {
+      location.href = `/serverspecs${location.search}`;
     });
   }
 
