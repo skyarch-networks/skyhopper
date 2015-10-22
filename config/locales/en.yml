@@ -148,6 +148,7 @@ en:
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
+      operation_schedule:   'Operation Schedule'
       add:                  'New Infrastructure'
       change_scale:         'Change scale'
       generate_serverspec:  'Generate Serverspec'
@@ -172,8 +173,40 @@ en:
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
-      invalid_keypair:		   'Invalid key pair! Please check the keypair file.'
+      invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
+  operation_scheduler:
+    title: 'Operation Scheduler'
+    modal_title: 'Manage Schedule'
+    recurring: 'Recurring'
+    duration: 'Duration'
+    recurring-content: 'The dates in which the instance will start/stop depending on the choices below.'
+    duration-content: 'The duration of the instance to run. Depending in the specified start and end date.
+                      Also, the time it will start/stops depends on the time choosen'
+    every: 'Every:'
+    start_date: 'Start Date'
+    end_date: 'End Date'
+    start_time: 'Time:'
+    end_time: 'Time:'
+
+    btn:
+      view_sched: 'View Schedule'
+      manage_sched: 'Manage Schedule'
+    desc:
+      everyday: 'Everyday'
+      weekdays: 'Weekdays (Monday - Friday)'
+      weekends: 'Weekends (Saturday & Sunday)'
+      specific_dates: 'Specific dates (other)'
+    dates:
+      monday: 'Monday'
+      tuesday: 'Tuesday'
+      wednesday: 'Wednesday'
+      thursday: 'Thursday'
+      friday: 'Friday'
+      saturday: 'Saturday'
+      sunday: 'Sunday'
+    msg:
+      saved: 'Operation Schedule successfully saved.'
 
   nodes:
     bootstrap:   'Bootstrap'
