@@ -8,9 +8,9 @@
       <div class="modal-body">
         <div class="col-md-12">
           <h4><%= I18n.t('operation_scheduler.duration')%> <small><a href="#" id="duration" v-on="click:pop('duration')"
-            data-content="The duration of the instance to run. Depending in the specified start and end date."
+            data-content="<%= I18n.t('operation_scheduler.duration-content')%>"
             rel="popover" data-toggle="popover" data-trigger="focus"
-            data-original-title="Duration"
+            data-original-title="<%= I18n.t('operation_scheduler.duration')%>"
             class="popover-help">
             <span class="glyphicon glyphicon-question-sign"></span></a>
             </small>
@@ -35,11 +35,11 @@
         <div class="col-md-12">
           <hr>
           <h4> <%= I18n.t('operation_scheduler.recurring')%> <small><a href="#" id="recurring" v-on="click:pop('recurring')"
-                               data-content="The time when the instance starts and stops depending on the selected options"
+                               data-content="<%= I18n.t('operation_scheduler.recurring-content')%>"
                                data-toggle="popover"
                                data-trigger="focus"
                                rel="popover"
-                               data-original-title="Recurring schedule"
+                               data-original-title="<%= I18n.t('operation_scheduler.recurring')%>"
                                class="popover-help">
             <span class="glyphicon glyphicon-question-sign"></span></a>
           </small></h4>
