@@ -8,5 +8,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
+
 bundle exec foreman start
-bundle exec crono -C config/cronotab.rb    -L log/crono.log -P crono.pid  RAILS_ENV=development
+
