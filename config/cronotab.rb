@@ -21,7 +21,7 @@ class Operation_worker
 
   def perform
     Rake::Task['crono:hello'].invoke
-    now = Time.new
+    now = Time.zone.now
     operation = OperationDuration.all
     operation.each do |item|
       resource = Resource.find(item.resource_id)
@@ -29,7 +29,7 @@ class Operation_worker
       if now >= item.start_date && now <= item.end_date
         puts item.inspect
         recurring = RecurringDate.find_by(operation_duration_id: item.id)
-        puts case recurring.repeats
+        case recurring.repeats
                when "everyday"
                  evaluate_evr(recurring.start_time.to_time,
                    recurring.end_time.to_time,
