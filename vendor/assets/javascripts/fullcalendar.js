@@ -1,0 +1,1 @@
+../../bower_components/fullcalendar/dist/fullcalendar.js

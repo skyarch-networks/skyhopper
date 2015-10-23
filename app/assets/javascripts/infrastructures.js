@@ -13,6 +13,7 @@
   google.load('visualization',   '1.0',   {'packages':['corechart']});
 
   var current_infra = null;
+  var app;
 
   ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
 
@@ -24,8 +25,8 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var infraindex = require('./modules/loadindex');
+  var newVM = require('./modules/newVM');
   var queryString = require('query-string').parse(location.search);
-
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
@@ -38,7 +39,8 @@
   var Snapshot       = require('models/snapshot').default;
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
-  Vue.use(require('./modules/ace'), false, 'json', '20');
+  Vue.use(require('./modules/timepicker'), queryString.lang);
+  Vue.use(require('./modules/ace'), false, 'json', '25');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -568,8 +570,10 @@
       monitoring.show().done(function (data) {
         self.before_register = data.before_register;
         self.templates       = data.templates;
+        console.log(data.templates);
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
+
     },
     filters: {
       roundup: function (val) { return (Math.ceil(val));},
@@ -859,7 +863,7 @@
         var self = this;
         if (self.protocol !== "HTTPS" && self.protocol !== "SSL") {
           self.ssl_certificate_id = "";
-        } 
+        }
       },
       create_listener: function(){
         var self = this;
@@ -999,6 +1003,8 @@
       sort_asc:            false,
       schedule_type:       '',
       schedule:            {},
+      loading_volumes:     false,
+      attachable_volumes:  [],
 
     };},
     template: '#ec2-tabpane-template',
@@ -1292,6 +1298,26 @@
       sorting_by: function (key) {
         return this.sort_key === key;
       },
+      load_volumes: function () {
+        if ($("#attachButton.dropdown.open").length) {return;}
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        this.loading_volumes = true;
+        ec2.attachable_volumes(this.ec2.availability_zone).done(function (data) {
+          self.attachable_volumes = data.attachable_volumes;
+          self.loading_volumes = false;
+        });
+      },
+      attach_volume: function (volume_id) {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
+          ec2.attach_volume(volume_id, device_name).done(function (data) {
+            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
+          });
+        });
+        $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
+      },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));}
     },
@@ -1339,6 +1365,37 @@
         }
       },
       selected_any: function () { return _.any(this.snapshots, 'selected', true); },
+      suggest_device_name: function () {
+        // TODO: iikanji ni sitai
+        var suggested_device_letter_code = 102; // same as aws default 'f'
+        var device_letter_codes = _(this.ec2.block_devices).chain()
+          .pluck('device_name')
+          .map(function (name) {
+            if (/sd([a-z])$/.test(name)) {
+              var letter = name.slice(-1);
+              if ('a' <= letter && letter <= 'z') {
+                return letter.charCodeAt(0);
+              } else {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          })
+          .filter()
+          .sort()
+          .value();
+
+        while (device_letter_codes.indexOf(suggested_device_letter_code) !== -1) {
+          if (suggested_device_letter_code === 122) { // 'z'
+            suggested_device_letter_code = 63;        // '?'
+            break;
+          }
+          suggested_device_letter_code++;
+        }
+
+        return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
+      }
     },
     ready: function () {
       var self = this;
@@ -1704,201 +1761,213 @@
     }
   });
 
-  var newVM = function (stack) {
-    return new Vue({
-      template: '#infra-show-template',
-      data: {
-        current_infra: {
-          stack: stack,
-          resources : {},
-          events: [],
-          templates: {histories: null, globals: null},
-          add_modify: {name: "", detail: "", value: ""},
-        },
-        tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
-        tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
-        loading: true,  // trueにすると、loading-tabpaneが表示される。
+
+  Vue.component('operation-sched-tabpane',  {
+    template: '#operation-sched-tabpane-template',
+    data: function () {return {
+      event_loading:   false,
+      instances: null,
+      dates: [{day: t('operation_scheduler.dates.monday'),   checked: false, value : 1},
+              {day: t('operation_scheduler.dates.tuesday'),  checked: false, value : 2},
+              {day: t('operation_scheduler.dates.wednesday'),checked: false, value : 3},
+              {day: t('operation_scheduler.dates.thursday'), checked: false, value : 4},
+              {day: t('operation_scheduler.dates.friday'),   checked: false, value : 5},
+              {day: t('operation_scheduler.dates.saturday'), checked: false, value : 6},
+              {day: t('operation_scheduler.dates.sunday'),   checked: false, value : 0}],
+      default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D h:mm a'),
+      default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D h:mm a'),
+      time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('h:mm a'),
+      time_end: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(19).minute(0).format('h:mm a'),
+      modes: [{desc: t('operation_scheduler.desc.everyday'), value: 1},
+        {desc: t('operation_scheduler.desc.weekdays'), value: 2},
+        {desc: t('operation_scheduler.desc.weekends'), value: 3},
+        {desc: t('operation_scheduler.desc.specific_dates'), value: 4},],
+      sel_instance: {
+        start_date: null,
+        end_date: null,
+        start_time: null,
+        end_time: null,
+        repeat_freq: null,
       },
-      methods:{
-        screen_name: function (res) {
-          if (res.screen_name) {
-            return res.screen_name + ' / ' + res.physical_id;
-          } else {
-            return res.physical_id;
-          }
-        },
-        show_ec2: function (physical_id) {
-          this.show_tabpane('ec2');
-          this.loading = true;
-          this.tabpaneGroupID = physical_id;
-        },
-        show_rds: function (physical_id) {
-          this.show_tabpane('rds');
-          this.tabpaneGroupID = physical_id;
-          this.loading = true;
-        },
-        show_elb: function (physical_id) {
-          this.show_tabpane('elb');
-          this.tabpaneGroupID = physical_id;
-          this.loading = true;
-        },
-        show_s3: function (physical_id) {
-          this.show_tabpane('s3');
-          this.tabpaneGroupID = physical_id;
-          this.loading = true;
-        },
-        show_add_modify: function () {
-          var self = this;
-          self.loading = true;
-          self.$event.preventDefault();
-
-          var cft = new CFTemplate(current_infra);
-          cft.new().done(function (data) {
-            self.current_infra.templates.histories = data.histories;
-            self.current_infra.templates.globals = data.globals;
-
-            self.show_tabpane('add_modify');
-          }).fail(alert_danger());
-        },
-
-        show_add_ec2: function () { this.show_tabpane('add-ec2'); },
-
-        show_cf_history: function () {
-          var self = this;
-          self.$event.preventDefault();
-          self.show_tabpane('cf_history');
-          self.loading = true;
-        },
-        show_event_logs: function () {
-          if (this.no_stack) {return;}
-          var self = this;
-          self.loading = true;
-          self.$event.preventDefault();
-
-          current_infra.stack_events().done(function (res) {
-            self.current_infra.events = res.stack_events;
-            self.show_tabpane('event_logs');
+      sources: [],
+      is_specific: null,
+    };},
+    methods: {
+      repeat_selector: function() {
+        if(parseInt(this.sel_instance.repeat_freq) === 1){
+          $("#days-selector").hide();
+          _.forEach(this.dates, function(item){
+            item.checked = true;
           });
-        },
-        show_infra_logs: function () {
-          var self = this;
-          self.$event.preventDefault();
-          self.show_tabpane('infra_logs');
-          self.loading = true;
-        },
-        show_monitoring: function () {
-          if (this.no_stack) {return;}
-          var self = this;
-          self.show_tabpane('monitoring');
-          self.loading = true;
-        },
-        show_edit_monitoring: function () {
-          if (this.no_stack) {return;}
-          var self = this;
-          self.show_tabpane('edit-monitoring');
-          self.loading = true;
-        },
-        show_update_template: function () {
-          if (this.no_stack) {return;}
-          var self = this;
-          self.show_tabpane('update-template');
-          self.loading = true;
-        },
-
-
-        tabpane_active: function (id) { return this.tabpaneID === id; },
-
-        show_tabpane: function (id) {
-          var self = this;
-          self.loading = false;
-          self.tabpaneGroupID = null;
-          // 一旦 tabpane を null にすることで、同じ tabpane をリロードできるようにする。
-          self.tabpaneID = null;
-          Vue.nextTick(function () {
-            self.tabpaneID = id;
+        }else if(parseInt(this.sel_instance.repeat_freq) === 2){
+          $("#days-selector").hide();
+          _.forEach(this.dates, function(item){
+            item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
-        },
-        update_serverspec_status: function (physical_id) {
-          var ec2 = new EC2Instance(current_infra, physical_id);
-          var self = this;
-          ec2.serverspec_status().done(function (data) {
-            var r = _.find(self.current_infra.resources.ec2_instances, function (v) {
-              return v.physical_id === physical_id;
-            });
-            r.serverspec_status = data;
+        }else if(parseInt(this.sel_instance.repeat_freq) === 3){
+          $("#days-selector").hide();
+          _.forEach(this.dates, function(item){
+            item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0);
           });
-        },
+        }else{
+          _.forEach(this.dates, function(item){
+            item.checked = false;
+            $("#days-selector input").attr('disabled', false);
+            $("#days-selector").show();
+          });
+        }
       },
-      filters: {
-        toLocaleString: toLocaleString,
+      pop: function(e){
+        if(e === 'duration'){
+          $("#duration").popover('toggle');
+        }else if(e === 'recurring'){
+          $("#recurring").popover('toggle');
+        }
       },
-      computed: {
-        no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
-        in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
-        stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
-
-        status_label_class: function () {
-          var resp = "label-";
-          var type = this.current_infra.stack.status.type;
-          if (type === "OK") {
-            resp += 'success';
-          } else if (type === "NG") {
-            resp += "danger";
-          } else {
-            resp += "default";
-          }
-          return resp;
-        },
-      },
-      ready: function () {
+      manage_sched: function (instance) {
         var self = this;
-        console.log(self);
-        if (stack.status.type === 'OK') {
-          var res = new Resource(current_infra);
-          res.index().done(function (resources) {
-            _.forEach(resources.ec2_instances, function (v) {
-              v.serverspec_status = true;
-            });
-            self.current_infra.resources = resources;
-            // show first tab
-            var instance = _(resources).values().flatten().first();
-            var physical_id = instance.physical_id;
-            if (instance.type_name === "AWS::EC2::Instance") {
-              self.show_ec2(physical_id);
-            } else if (instance.type_name === "AWS::RDS::DBInstance"){
-              self.show_rds(physical_id);
-            } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
-              self.show_elb(physical_id);
-            } else {  // S3
-              self.show_s3(physical_id);
-            }
-
-            _.forEach(self.current_infra.resources.ec2_instances, function (v) {
-              self.update_serverspec_status(v.physical_id);
-            });
+        self.sel_instance = instance;
+        current_infra.get_schedule(instance.physical_id).done(function  (data){
+          self.sel_instance.physical_id = instance.physical_id;
+          _.forEach(data, function(item){
+            self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
+            self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
           });
-        }
-        else if (stack.status.type === 'IN_PROGRESS') {
-          stack_in_progress(current_infra);
-          self.$data.loading = false;
-        }
-        else if (stack.status.type === 'NG') {
-          current_infra.stack_events().done(function (res) {
-            self.$data.current_infra.events = res.stack_events;
-            self.$data.loading = false;
-          });
-        } else if (stack.status.type === "NONE") {
-          // no stack info
-          self.$data.loading = false;
-        }
+        });
       },
-    });
-  };
-  var app;
+      save_sched: function () {
+        var self = this;
+        self.$parent.loading = true;
+        self.sel_instance.dates = self.dates;
+        current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
+          self.loading = false;
+          self.$parent.show_operation_sched();
+          alert_success(function () {
+          })(t('operation_scheduler.msg.saved'));
+        }).fail(alert_and_show_infra);
+      },
+      get_sched: function (ec2){
+        var self = this;
+        self.$parent.show_operation_sched();
+        current_infra.get_schedule(ec2.physical_id).done(function  (data){
+          console.log(data);
+          var events = [];
+          events = data.map(function (item) {
+            var dow = [];
+            if(item.recurring_date.repeats === "other"){
+              _.forEach(item.recurring_date.dates, function(date){
+                if(date.checked === "true")
+                  dow.push(parseInt(date.value));
+              });
+            }else if(item.recurring_date.repeats === "everyday"){
+              dow = [1,2,3,4,5,6,0];
+            }else if(item.recurring_date.repeats === "weekdays"){
+              dow = [1,2,3,4,5];
+            }else{
+              dow = [0,6];
+            }
+            return {
+              title: item.resource.physical_id,
+              start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+              dow: dow,
+            };
+          });
+          $('#calendar').fullCalendar({
+            header: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'month,agendaWeek,agendaDay,agendaFourDay'
+            },
+            defaultView: 'agendaWeek',
+            events: events,
+            allDayDefault: false,
+            lang: queryString.lang,
+            viewRender: function(currentView){
+              var minDate = moment(data[0].start_date).utcOffset ("Asia/Tokyo"),
+                maxDate = moment(data[0].end_date).utcOffset ("Asia/Tokyo");
 
+              if (minDate >= currentView.start && minDate <= currentView.end) {
+                $(".fc-prev-button").prop('disabled', true);
+                $(".fc-prev-button").addClass('fc-state-disabled');
+              }
+              else {
+                $(".fc-prev-button").removeClass('fc-state-disabled');
+                $(".fc-prev-button").prop('disabled', false);
+              }
+              // Future
+              if (maxDate >= currentView.start && maxDate <= currentView.end) {
+                $(".fc-next-button").prop('disabled', true);
+                $(".fc-next-button").addClass('fc-state-disabled');
+              } else {
+                $(".fc-next-button").removeClass('fc-state-disabled');
+                $(".fc-next-button").prop('disabled', false);
+              }
+            }
+          });
+        });
+      },
+    },
+    computed: {
+      has_selected: function() {
+        return _.some(this.dates, function(c){
+          return c.checked;
+        });
+      },
+      is_specific: function(){
+        return (parseInt(this.sel_instance.repeat_freq) === 4);
+      },
+      save_sched_err: function () {
+        var self = this.sel_instance;
+        return (self.start_date && self.end_date && self.repeat_freq);
+      },
+    },
+    created: function(){
+      var self = this;
+      var res = new Resource(current_infra);
+      var events = [];
+      //TODO: get all assigned dates and print to calendar. :D
+      res.index().done(function (resources) {
+        _.forEach(resources.ec2_instances, function (v) {
+          current_infra.get_schedule(v.physical_id).done(function  (data){
+            var events = data.map(function (item) {
+              var dow = [];
+              if(item.recurring_date.repeats === "other"){
+                _.forEach(item.recurring_date.dates, function(date){
+                  if(date.checked === "true")
+                    dow.push(parseInt(date.value));
+                });
+              }else if(item.recurring_date.repeats === "everyday"){
+                dow = [1,2,3,4,5,6,0];
+              }else if(item.recurring_date.repeats === "weekdays"){
+                dow = [1,2,3,4,5];
+              }else{
+                dow = [0,6];
+              }
+              return {
+                title: item.resource.physical_id,
+                start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+                dow: dow,
+                ranges: [{
+                  start: item.start_date,
+                  end: item.end_date,
+                }]
+              };
+            });
+            self.sources.push(events);
+          });
 
+        });
+        self.instances = resources;
 
-
+      });
+    },
+    ready: function () {
+      var self = this;
+      self.$parent.loading = false;
+    }
+  });
 
   // register the grid component
   Vue.component('demo-grid', {
@@ -1978,14 +2047,14 @@
                        created_at: date,
                        //  ec2_private_key_id: item.ec2_private_key_id,
                        status: item.status,
-                       id: item.id,
+                       id: [item.id,item.status],
                        };
                  }else{
                    return {stack_name: item.stack_name,
                            region: item.region,
                            keypairname: item.keypairname,
                            //  ec2_private_key_id: item.ec2_private_key_id,
-                           id: item.id,
+                           id: [item.id,item.status],
                    };
                  }
                  self.loading = false;
@@ -2045,7 +2114,39 @@
       app.$destroy();
     }
     current_infra.show().done(function (stack) {
-      app = newVM(stack);
+      app = newVM(stack,
+        Resource,
+        EC2Instance,
+        current_infra,
+        CFTemplate,
+        alert_danger,
+        stack_in_progress,
+        ''
+      );
+      l.$destroy();
+      app.$mount(SHOW_INFRA_ID);
+    });
+  };
+
+  var show_sched = function (infra_id) {
+    current_infra = new Infrastructure(infra_id);
+
+    var l = new Loader();
+    l.$mount(SHOW_INFRA_ID);
+    if (app) {
+      app.$destroy();
+    }
+    current_infra.show().done(function (stack) {
+      app = newVM(
+        stack,
+        Resource,
+        EC2Instance,
+        current_infra,
+        CFTemplate,
+        alert_danger,
+        stack_in_progress,
+        'show_sched'
+      );
       l.$destroy();
       app.$mount(SHOW_INFRA_ID);
     });
@@ -2152,6 +2253,14 @@
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
     show_infra(infra_id);
+  });
+
+  $(document).on('click', '.operation-sched', function (e) {
+    e.preventDefault();
+    $(this).closest('tbody').children('tr').removeClass('info');
+    $(this).closest('tr').addClass('info');
+    var infra_id = $(this).attr('infrastructure-id');
+    show_sched(infra_id);
   });
 
   $(document).on('click', '.detach-infra', function (e) {
