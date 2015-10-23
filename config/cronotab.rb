@@ -122,7 +122,7 @@ class Operation_worker
     if instance.status == :stopped
       instance.start
       notify_ec2_status(instance, :running)
-      puts "Started: #{instance.physical_id} "
+      Rails.logger.debug "Started: #{instance.physical_id} "
     end
 
   end
@@ -131,7 +131,7 @@ class Operation_worker
     if instance.status == :running
       instance.stop
       notify_ec2_status(instance, :stopped)
-      puts "Stopped: #{instance.physical_id}"
+      Rails.logger.debug "Stopped: #{instance.physical_id}"
     end
   end
 
@@ -149,4 +149,4 @@ class Operation_worker
 
 end
 
-Crono.perform(Operation_worker).every 5.seconds
+Crono.perform(Operation_worker).every 60.seconds
