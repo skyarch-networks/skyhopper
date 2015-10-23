@@ -15,7 +15,6 @@ class Operation_worker
     operation.each do |item|
       resource = Resource.find(item.resource_id)
       if now >= item.start_date && now <= item.end_date
-        puts item.inspect
         recurring = RecurringDate.find_by(operation_duration_id: item.id)
         case recurring.repeats
           when "everyday"
