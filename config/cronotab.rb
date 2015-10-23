@@ -21,7 +21,7 @@ class Operation_worker
 
   def perform
     Rake::Task['crono:hello'].invoke
-    now = Time.zone.now
+    now = Time.new.in_time_zone
     operation = OperationDuration.all
     operation.each do |item|
       resource = Resource.find(item.resource_id)
@@ -53,18 +53,24 @@ class Operation_worker
   end
 
   def evaluate_evr(start_time, end_time, now, instance)
-    if start_time <= now.to_time
+    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
+    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
+    from_now =  now.strftime( "%H%M%S%N" ).to_i
+    if start <= from_now && end_ >= from_now
       start(instance)
-    elsif  end_time >= now.to_time
+    else
       stop(instance)
     end
   end
 
   def evaluate_weekdays(start_time, end_time, now, instance)
+    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
+    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
+    from_now =  now.strftime( "%H%M%S%N" ).to_i
     if now.wday != 0 && now.wday != 1
-      if start_time <= now.to_time
+      if start <= from_now && end_ >= from_now
         start(instance)
-      else end_time >= now.to_time
+      else
         stop(instance)
       end
     else
@@ -73,10 +79,14 @@ class Operation_worker
   end
 
   def evaluate_weekends(start_time, end_time, now, instance)
+    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
+    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
+    from_now =  now.strftime( "%H%M%S%N" ).to_i
+
     if now.wday == 0 && now.wday == 1
-      if start_time <= now.to_time
+      if start <= from_now && end_ >= from_now
         start(instance)
-      else end_time >= now.to_time
+      else
         stop(instance)
       end
     else
@@ -86,6 +96,10 @@ class Operation_worker
 
   def evaluate_other(start_time, end_time, now, instance, dates)
     dow =  Array.new
+    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
+    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
+    from_now =  now.strftime( "%H%M%S%N" ).to_i
+
     dates.each do |item|
       if item[1]["checked"] == "true"
         dow.push(item[1]["value"].to_i)
@@ -93,10 +107,10 @@ class Operation_worker
     end
 
     if dow.include? now.wday
-      if start_time <= now.to_time
+      if start <= from_now && end_ >= from_now
         start(instance)
-      else end_time >= now.to_time
-      stop(instance)
+      else
+        stop(instance)
       end
     else
       stop(instance)
@@ -104,19 +118,20 @@ class Operation_worker
 
   end
 
-
   def start(instance)
     if instance.status == :stopped
       instance.start
       notify_ec2_status(instance, :running)
+      puts "Started: #{instance.physical_id} "
     end
 
   end
 
   def stop(instance)
     if instance.status == :running
-      instance.start
+      instance.stop
       notify_ec2_status(instance, :stopped)
+      puts "Stopped: #{instance.physical_id}"
     end
   end
 
@@ -134,4 +149,4 @@ class Operation_worker
 
 end
 
-Crono.perform(Operation_worker).every 60.seconds
+Crono.perform(Operation_worker).every 5.seconds
