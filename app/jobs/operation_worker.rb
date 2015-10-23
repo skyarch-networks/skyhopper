@@ -9,13 +9,11 @@
 class Operation_worker
 
   def perform
-    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
-    Rake::Task['crono:hello'].invoke
+    # ws = WSConnector.new('notifications', User.find(user_id).ws_key)
     now = Time.new.in_time_zone
     operation = OperationDuration.all
     operation.each do |item|
       resource = Resource.find(item.resource_id)
-      instance = resource.infrastructure.instance(resource.physical_id)
       if now >= item.start_date && now <= item.end_date
         puts item.inspect
         recurring = RecurringDate.find_by(operation_duration_id: item.id)
@@ -23,68 +21,68 @@ class Operation_worker
           when "everyday"
             evaluate_evr(recurring.start_time.to_time,
                          recurring.end_time.to_time,
-                         now, instance
+                         now, resource
             )
           when "weekdays"
             evaluate_weekdays(recurring.start_time.to_time,
-                              recurring.end_time.to_time, now, instance
+                              recurring.end_time.to_time, now, resource
             )
           when "weekends"
             evaluate_weekends(recurring.start_time.to_time,
-                              recurring.end_time.to_time, now, instance
+                              recurring.end_time.to_time, now, resource
             )
           when "other"
             evaluate_other(recurring.start_time.to_time,
                            recurring.end_time.to_time,
-                           now, instance, recurring.dates)
+                           now, resource, recurring.dates)
         end
       end
     end
   end
 
-  def evaluate_evr(start_time, end_time, now, instance)
+  def evaluate_evr(start_time, end_time, now, resource)
     start = start_time.utc.strftime( "%H%M%S%N" ).to_i
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
     from_now =  now.strftime( "%H%M%S%N" ).to_i
     if start <= from_now && end_ >= from_now
-      start(instance)
+      start(resource)
     else
-      stop(instance)
+      stop(resource)
     end
   end
 
-  def evaluate_weekdays(start_time, end_time, now, instance)
+  def evaluate_weekdays(start_time, end_time, now, resource)
     start = start_time.utc.strftime( "%H%M%S%N" ).to_i
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
     from_now =  now.strftime( "%H%M%S%N" ).to_i
     if now.wday != 0 && now.wday != 1
       if start <= from_now && end_ >= from_now
-        start(instance)
+        start(resource)
       else
-        stop(instance)
+        stop(resource)
       end
     else
-      stop(instance)
+      stop(resource)
     end
   end
 
-  def evaluate_weekends(start_time, end_time, now, instance)
+  def evaluate_weekends(start_time, end_time, now, resource)
     start = start_time.utc.strftime( "%H%M%S%N" ).to_i
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
     from_now =  now.strftime( "%H%M%S%N" ).to_i
 
     if now.wday == 0 && now.wday == 1
       if start <= from_now && end_ >= from_now
-        start(instance)
+        start(resource)
       else
-        stop(instance)
+        stop(resource)
       end
     else
-      stop(instance)
+      stop(resource)
     end
   end
 
-  def evaluate_other(start_time, end_time, now, instance, dates)
+  def evaluate_other(start_time, end_time, now, resource, dates)
     dow =  Array.new
     start = start_time.utc.strftime( "%H%M%S%N" ).to_i
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
@@ -98,9 +96,9 @@ class Operation_worker
 
     if dow.include? now.wday
       if start <= from_now && end_ >= from_now
-        start(instance)
+        start(resource)
       else
-        stop(instance)
+        stop(resource)
       end
     else
       stop(instance)
@@ -108,29 +106,31 @@ class Operation_worker
 
   end
 
-  def start(instance)
+  def start(resource)
+    instance = resource.infrastructure.instance(resource.physical_id)
     if instance.status == :stopped
       instance.start
-      notify_ec2_status(instance, :running)
+      notify_ec2_status(resource, "Started: #{instance.physical_id} ")
       Rails.logger.debug "Started: #{instance.physical_id} "
     end
 
   end
 
-  def stop(instance)
+  def stop(resource)
+    instance = resource.infrastructure.instance(resource.physical_id)
     if instance.status == :running
       instance.stop
-      notify_ec2_status(instance, :stopped)
+      notify_ec2_status(resource, "Started: #{instance.physical_id} ")
       Rails.logger.debug "Stopped: #{instance.physical_id}"
     end
   end
 
-  def notify_ec2_status(instance, status)
+  def notify_ec2_status(resource, details)
     Thread.new_with_db do
-      ws = WSConnector.new('ec2_status', instance.physical_id)
+      ws = WSConnector.new('ec2_status', resource.physical_id)
       begin
-        instance.wait_status(status)
-        ws.push_as_json(error: nil, msg: "#{instance.physical_id} status is #{status}")
+        InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, details: details)
+        ws.push_as_json(error: nil, msg: "#{resource.physical_id} status is #{details}")
       rescue => ex
         ws.push_error(ex)
       end
