@@ -42,7 +42,7 @@ gem 'ace-rails-ap'
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
-gem 'ridley'
+gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
 
@@ -51,6 +51,7 @@ gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
 gem 'sidekiq' # for Active Job
+gem 'foreman', require: false
 
 group :development, :test do
   # debug
@@ -58,8 +59,10 @@ group :development, :test do
   gem "better_errors"
   gem 'binding_of_caller'
   gem 'bullet'
+  gem 'pry'
   gem "pry-rails"
   gem "pry-doc"
+  gem 'pry-remote'
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'

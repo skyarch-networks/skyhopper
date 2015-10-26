@@ -34,7 +34,9 @@ SkyHopper::Application.routes.draw do
       get  'show_elb'
       get  'show_s3'
       get  'stack_events'
+      get  'get_schedule'
       post 'delete_stack'
+      post 'save_schedule'
     end
   end
 
@@ -66,9 +68,11 @@ SkyHopper::Application.routes.draw do
       get  'serverspec_status'
       post 'register_to_elb'
       post 'deregister_from_elb'
+      get  'attachable_volumes'
+      post 'attach_volume'
     end
   end
-  
+
   resources :elb, only: [] do
     collection do
       post 'create_listener'

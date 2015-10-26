@@ -148,6 +148,7 @@ en:
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
+      operation_schedule:   'Operation Schedule'
       add:                  'New Infrastructure'
       change_scale:         'Change scale'
       generate_serverspec:  'Generate Serverspec'
@@ -172,8 +173,40 @@ en:
       generate_serverspec_confirm: 'Generate serverspec to verify access to RDS Instance?'
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
-      invalid_keypair:		   'Invalid key pair! Please check the keypair file.'
+      invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
+  operation_scheduler:
+    title: 'Operation Scheduler'
+    modal_title: 'Manage Schedule'
+    recurring: 'Recurring'
+    duration: 'Duration'
+    recurring-content: 'The dates in which the instance will start/stop depending on the choices below.'
+    duration-content: 'The duration of the instance to run. Depending in the specified start and end date.
+                      Also, the time it will start/stops depends on the time choosen'
+    every: 'Every:'
+    start_date: 'Start Date'
+    end_date: 'End Date'
+    start_time: 'Time:'
+    end_time: 'Time:'
+
+    btn:
+      view_sched: 'View Schedule'
+      manage_sched: 'Manage Schedule'
+    desc:
+      everyday: 'Everyday'
+      weekdays: 'Weekdays (Monday - Friday)'
+      weekends: 'Weekends (Saturday & Sunday)'
+      specific_dates: 'Specific dates (other)'
+    dates:
+      monday: 'Monday'
+      tuesday: 'Tuesday'
+      wednesday: 'Wednesday'
+      thursday: 'Thursday'
+      friday: 'Friday'
+      saturday: 'Saturday'
+      sunday: 'Sunday'
+    msg:
+      saved: 'Operation Schedule successfully saved.'
 
   nodes:
     bootstrap:   'Bootstrap'
@@ -468,12 +501,17 @@ en:
     instances:         'Instances'
     state:             'State'
     reason_code:       'Reason Code'
+    attach:            'Attach'
+    attachable_volumes: 'Attachable Volumes'
+    device_name:       'Device Name'
+    set_device_name:   'Set Device Name'
     none:              'None'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
       registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
+      volume_attached:       '%{volume_id} has attached to %{instance_id}. Device name is %{device}'
       created_listener_to_elb: 'Created the listener from the ELB.'
       deleted_listener_to_elb: 'Deleted the listener from the ELB.'
       uploaded_certificate: 'Uploaded the certificate.'
@@ -531,8 +569,6 @@ en:
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'
     list_of_snapshots: 'List of Snapshots'
-    btn:
-      create:          'Create'
     msg:
       no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'

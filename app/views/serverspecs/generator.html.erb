@@ -1,5 +1,10 @@
 <div class="container" id="main" v-cloak>
-  <h2 class="page-header"><%=t('serverspecs.generator.title')%></h2>
+  <h2 class="page-header">
+    <%=t('serverspecs.generator.title')%>
+    <% if @infra %>
+      <small><%= ('for ' + link_to(@infra.stack_name, infrastructures_path(project_id: @infra.project_id, infrastructure_id: @infra.id))).html_safe %></small>
+    <% end %>
+  </h2>
 
   <div class="row">
     <div class="col-xs-6">
@@ -24,7 +29,7 @@
   <div class="row form-actions-top">
     <button class="btn btn-primary" v-on="click: save()"><%=t('helpers.titles.save')%></button>
     <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-      serverspecs_path, class: 'btn-default btn' %>
+      serverspecs_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
   </div>
 </div>
 
