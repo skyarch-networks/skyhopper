@@ -14,7 +14,7 @@ class Operation_worker
     operation = OperationDuration.all
     operation.each do |item|
       resource = Resource.find(item.resource_id)
-      if now >= item.start_date && now <= item.end_date
+      if now.strftime( "%Y%m%d%H%M%S%N" ).to_i >= item.start_date.utc.strftime( "%Y%m%d%H%M%S%N" ).to_i && now.strftime( "%Y%m%d%H%M%S%N" ).to_i <= item.end_date.utc.strftime( "%Y%m%d%H%M%S%N" ).to_i
         recurring = RecurringDate.find_by(operation_duration_id: item.id)
         case recurring.repeats
           when "everyday"
@@ -35,6 +35,8 @@ class Operation_worker
                            recurring.end_time.to_time,
                            now, resource, recurring.dates)
         end
+      else
+        stop(resource)
       end
     end
   end
@@ -54,7 +56,7 @@ class Operation_worker
     start = start_time.utc.strftime( "%H%M%S%N" ).to_i
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
     from_now =  now.strftime( "%H%M%S%N" ).to_i
-    if now.wday != 0 && now.wday != 1
+    if now.wday != 0 && now.wday != 6
       if start <= from_now && end_ >= from_now
         start(resource)
       else
@@ -70,7 +72,7 @@ class Operation_worker
     end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
     from_now =  now.strftime( "%H%M%S%N" ).to_i
 
-    if now.wday == 0 && now.wday == 1
+    if now.wday == 0 && now.wday == 6
       if start <= from_now && end_ >= from_now
         start(resource)
       else
