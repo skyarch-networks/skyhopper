@@ -1869,7 +1869,6 @@
         self.sel_instance.dates = self.dates;
         current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
           self.loading = false;
-          self.$parent.show_operation_sched();
           alert_success(function () {
           })(t('operation_scheduler.msg.saved'));
           self.get_sched(self.sel_instance);
