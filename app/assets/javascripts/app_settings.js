@@ -8,6 +8,7 @@
 
 (function () {
   "use strict";
+  var modal = require('modal');
 
   //  ----------------------------- variables
 
@@ -27,7 +28,7 @@
       data: {
         settings: JSON.stringify(settings)
       },
-    }).fail(modal_for_ajax_std_error());
+    }).fail(modal.AlertForAjaxStdError());
   };
 
   var chef_create = function () {
@@ -41,7 +42,7 @@
       },
       dataType: "json",
 
-    }).fail(modal_for_ajax_std_error());
+    }).fail(modal.AlertForAjaxStdError());
   };
 
 

@@ -37,6 +37,7 @@
   var RDSInstance    = require('models/rds_instance').default;
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
+  var modal          = require('modal');
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
@@ -66,7 +67,7 @@
   // Utilities
   var alert_success = function (callback) {
     return function (msg) {
-      var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg);
+      var dfd = modal.Alert(t('infrastructures.infrastructure'), msg);
       if (callback) {
         dfd.done(callback);
       }
@@ -76,9 +77,9 @@
   var alert_danger = function (callback) {
     return function (msg) {
       if (!jsonParseErr(msg) && JSON.parse(msg).error) {
-        modal_for_ajax_std_error(callback)(msg);
+        modal.AlertForAjaxStdError(callback)(msg);
       } else {
-        var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
+        var dfd = modal.Alert(t('infrastructures.infrastructure'), msg, 'danger');
         if (callback) { dfd.done(callback); }
       }
     };
@@ -802,7 +803,7 @@
 
       deregister: function (physical_id) {
         var self = this;
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, physical_id);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -814,7 +815,7 @@
       },
       register: function () {
         var self = this;
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
           var ec2 = new EC2Instance(current_infra, self.selected_ec2);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -905,7 +906,7 @@
       delete_listener: function(load_balancer_port){
         var self = this;
         self.load_balancer_port = load_balancer_port;
-        bootstrap_confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
+        modal.Confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -935,7 +936,7 @@
       delete_server_certificate: function(server_certificate_name){
         var self = this;
         self.server_certificate_name = server_certificate_name;
-        bootstrap_confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
+        modal.Confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -1119,7 +1120,7 @@
         var security_bool = (security === "security");
         var exec_bool = (exec === "exec");
 
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
           var dfd = ec2.yum_update(security_bool, exec_bool).fail(
             // cook start fail
             alert_danger(self._show_ec2)
@@ -1226,11 +1227,11 @@
       },
       create_snapshot: function (volume_id) {
         var self = this;
-        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
+        modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
           snapshot.create(volume_id, self.physical_id).progress(function (data) {
-            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+            modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
           }).done(function (data) {
             if ($('#snapshots-modal.in').length) {
               self.load_snapshots();
@@ -1270,7 +1271,7 @@
         var snapshots    = _.select(this.snapshots, 'selected', true);
         var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
         var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
-        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+        modal.Confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
           var s = new Snapshot(current_infra.id);
 
           _.each(snapshots, function (snapshot) {
@@ -1314,9 +1315,9 @@
       attach_volume: function (volume_id) {
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
+        modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
           ec2.attach_volume(volume_id, device_name).done(function (data) {
-            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
+            modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
           });
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
@@ -2185,29 +2186,29 @@
 
 
   var detach = function (infra_id) {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
+    modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
+        modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
           location.reload();
         });
-      }).fail(modal_for_ajax_std_error()).always(l.$destroy);
+      }).fail(modal.AlertForAjaxStdError()).always(l.$destroy);
     });
   };
 
   var delete_stack = function (infra_id) {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
+    modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
       infra.delete_stack().done(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
+        modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
           show_infra(infra_id);
         });
         // TODO: reload
-      }).fail(modal_for_ajax_std_error(function () {
+      }).fail(modal.AlertForAjaxStdError(function () {
         show_infra(infra_id);
       })).always(l.$destroy);
     });
@@ -2216,10 +2217,10 @@
 
   // for infrastructures#new
   var new_ec2_key = function () {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
-      bootstrap_prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
+    modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
+      modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
         if(!name){
-          bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+          modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
           return;
         }
 
@@ -2254,7 +2255,7 @@
           document.body.appendChild(a);
           a.click();
         }).fail(function (xhr) {
-          bootstrap_alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+          modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
         });
       });
     });
