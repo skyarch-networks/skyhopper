@@ -84,7 +84,7 @@ class ServerspecsController < ApplicationController
   # GET /serverspecs/generator
   def generator
     @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
-    @resource_types = Serverspec.resource_types.map(&:underscore)
+    @resource_types = ServerspecInfo.resource_types.map(&:underscore)
   end
 
   # DELETE /serverspecs/1
