@@ -180,6 +180,7 @@ en:
     modal_title: 'Manage Schedule'
     recurring: 'Recurring'
     duration: 'Duration'
+    screen_name: 'Screen Name'
     recurring-content: 'The dates in which the instance will start/stop depending on the choices below.'
     duration-content: 'The duration of the instance to run. Depending in the specified start and end date.
                       Also, the time it will start/stops depends on the time choosen'
