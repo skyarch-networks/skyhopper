@@ -179,6 +179,7 @@ ja:
     modal_title: 'スケジュールを管理'
     recurring: '繰り返し'
     duration: '期間'
+    screen_name: 'ハンドルネーム'
     recurring-content: 'インスタンスは以下で選択した日付に応じて、スタート/ストップします。'
     duration-content: '指定された開始日と終了日の間は、インスタンスが起動し続けます。
                        また、選択された時間によってスタート/ストップします。'
