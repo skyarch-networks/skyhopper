@@ -7,7 +7,7 @@ import Serverspec        from '../models/serverspec';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
-import {Prompt, Alert, AlertForAjaxStdError} from 'modal';
+import {Prompt, Alert, AlertForAjaxStdError} from '../modal';
 
 import * as qs from 'query-string';
 

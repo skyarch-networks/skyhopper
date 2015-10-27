@@ -8,7 +8,7 @@
 
 /// <reference path="../declares.d.ts" />
 
-import {Confirm} from 'modal';
+import {Confirm} from './modal';
 
 class Server {
   // Parameter for Ajax.

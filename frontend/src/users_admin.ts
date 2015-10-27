@@ -9,7 +9,7 @@
 
 /// <reference path="../declares.d.ts" />
 
-import {Confirm, Alert, AlertForAjaxStdError} from 'modal';
+import {Confirm, Alert, AlertForAjaxStdError} from './modal';
 
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
