@@ -77,7 +77,7 @@
   var alert_danger = function (callback) {
     return function (msg) {
       if (!jsonParseErr(msg) && JSON.parse(msg).error) {
-        modal_for_ajax_std_error(callback)(msg);
+        modal.AlertForAjaxStdError(callback)(msg);
       } else {
         var dfd = modal.Alert(t('infrastructures.infrastructure'), msg, 'danger');
         if (callback) { dfd.done(callback); }
@@ -2166,7 +2166,7 @@
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
           location.reload();
         });
-      }).fail(modal_for_ajax_std_error()).always(l.$destroy);
+      }).fail(modal.AlertForAjaxStdError()).always(l.$destroy);
     });
   };
 
@@ -2180,7 +2180,7 @@
           show_infra(infra_id);
         });
         // TODO: reload
-      }).fail(modal_for_ajax_std_error(function () {
+      }).fail(modal.AlertForAjaxStdError(function () {
         show_infra(infra_id);
       })).always(l.$destroy);
     });
