@@ -7,6 +7,8 @@ import Serverspec        from '../models/serverspec';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
+import {Prompt, Alert, ModalForAjaxStdError} from 'modal';
+
 import * as qs from 'query-string';
 
 class VueMain extends Vue {
@@ -43,14 +45,14 @@ class VueMain extends Vue {
   }
 
   save(): void {
-    bootstrap_prompt("Serverspec Generator", "filename").then((fname) => {
+    Prompt("Serverspec Generator", "filename").then((fname) => {
       const s = new Serverspec();
       const infra_id_str: string = qs.parse(location.search).infrastructure_id;
       const infra_id: number = infra_id_str ? parseInt(infra_id_str) : null;
       return s.create(fname, this.rubyCode, infra_id);
     }).then(
-      data => bootstrap_alert(t('serverspecs.serverspec'), data),
-      modal_for_ajax_std_error()
+      data => Alert(t('serverspecs.serverspec'), data),
+      ModalForAjaxStdError()
     ).then(() => {
       location.href = `/serverspecs${location.search}`;
     });

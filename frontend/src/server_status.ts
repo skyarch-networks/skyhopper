@@ -8,6 +8,8 @@
 
 /// <reference path="../declares.d.ts" />
 
+import {Confirm} from 'modal';
+
 class Server {
   // Parameter for Ajax.
   private params: {kind: string};
@@ -113,7 +115,7 @@ class App extends Vue {
 
   // confirm and start server.
   start(): void {
-    bootstrap_confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
+    Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
       this.model.start();
       this.status(true);
     });
@@ -121,7 +123,7 @@ class App extends Vue {
 
   // confirm and stop server.
   stop(): void {
-    bootstrap_confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
+    Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
       this.model.stop();
       this.status(true);
     });
