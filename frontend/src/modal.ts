@@ -133,8 +133,6 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
 };
 
 // alias names. TODO: Delete the following functions
-// const bootstrap_confirm = Modal.confirm;
-// const bootstrap_alert   = Modal.alert;
 // const bootstrap_prompt  = Modal.prompt;
 
 

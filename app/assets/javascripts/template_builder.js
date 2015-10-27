@@ -7,6 +7,7 @@
 //
 
 (function() {
+  var modal = require('modal');
 
   /* structure of selected_resources
     selected_resources = {
@@ -85,7 +86,7 @@
         $("#resource-properties").html(data);
       },
       error   : function (data) {
-        bootstrap_alert(t('template_builder.template_builder'), data.responseText, "danger");
+        modal.Alert(t('template_builder.template_builder'), data.responseText, "danger");
       }
     });
   };
@@ -122,7 +123,7 @@
       });
     }
     catch (e) {
-      bootstrap_alert(t('template_builder.template_builder'), e.message, "danger");
+      modal.Alert(t('template_builder.template_builder'), e.message, "danger");
       return false;
     }
 
@@ -291,7 +292,7 @@
 
   $(document).on("click", ".remove-resource", function () {
     var clicked = $(this);
-    require('modal').Confirm(t('template_builder.template_builder'), t('js.template_builder.msg.confirm_delete'), "danger").done(function () {
+    modal.Confirm(t('template_builder.template_builder'), t('js.template_builder.msg.confirm_delete'), "danger").done(function () {
       remove_resource( clicked.closest("tr").attr("resource-name") );
     });
   });
@@ -299,10 +300,10 @@
   $(document).on("click", ".add-resource", function () {
     var resource_name = $("#resource-name").val();
     if ( resource_name === "" ) {
-      bootstrap_alert(t('template_builder.template_builder'), t('js.template_builder.msg.resource_name_required'), "danger");
+      modal.Alert(t('template_builder.template_builder'), t('js.template_builder.msg.resource_name_required'), "danger");
     }
     else if ($('.property-heading.text-error').size() !== 0) {
-      bootstrap_alert(t('template_builder.template_builder'), t('js.template_builder.msg.property_missing'), "danger");
+      modal.Alert(t('template_builder.template_builder'), t('js.template_builder.msg.property_missing'), "danger");
     }
     else {
       add_resource(resource_name);
@@ -311,11 +312,11 @@
 
   $(document).on("click", "#build-template", function () {
     if ( $("#template_name").val() === "" ) {
-      bootstrap_alert(t('template_builder.template_builder'), t('js.template_builder.msg.subject_required'), "danger");
+      modal.Alert(t('template_builder.template_builder'), t('js.template_builder.msg.subject_required'), "danger");
       return;
     }
     if ( selected_resources_is_empty() ) {
-      bootstrap_alert(t('template_builder.template_builder'), t('js.template_builder.msg.resources_empty'), "danger");
+      modal.Alert(t('template_builder.template_builder'), t('js.template_builder.msg.resources_empty'), "danger");
       return;
     }
 
@@ -329,12 +330,12 @@
         parameters: JSON.stringify(parameters)
       },
       success : function (data, status, xhr) {
-        bootstrap_alert(t('template_builder.template_builder'), data).done(function () {
+        modal.Alert(t('template_builder.template_builder'), data).done(function () {
           location.href = '/cf_templates';
         });
       },
       error   : function (xhr, status, error) {
-        bootstrap_alert(t('template_builder.template_builder'), xhr.responseText, "danger");
+        modal.Alert(t('template_builder.template_builder'), xhr.responseText, "danger");
       }
     });
   });

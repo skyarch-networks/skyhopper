@@ -67,7 +67,7 @@
   // Utilities
   var alert_success = function (callback) {
     return function (msg) {
-      var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg);
+      var dfd = modal.Alert(t('infrastructures.infrastructure'), msg);
       if (callback) {
         dfd.done(callback);
       }
@@ -79,7 +79,7 @@
       if (!jsonParseErr(msg) && JSON.parse(msg).error) {
         modal_for_ajax_std_error(callback)(msg);
       } else {
-        var dfd = bootstrap_alert(t('infrastructures.infrastructure'), msg, 'danger');
+        var dfd = modal.Alert(t('infrastructures.infrastructure'), msg, 'danger');
         if (callback) { dfd.done(callback); }
       }
     };
@@ -1231,7 +1231,7 @@
           var snapshot = new Snapshot(current_infra.id);
 
           snapshot.create(volume_id, self.physical_id).progress(function (data) {
-            bootstrap_alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+            modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
           }).done(function (data) {
             if ($('#snapshots-modal.in').length) {
               self.load_snapshots();
@@ -1317,7 +1317,7 @@
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
           ec2.attach_volume(volume_id, device_name).done(function (data) {
-            bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
+            modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
           });
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
@@ -2163,7 +2163,7 @@
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
+        modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
           location.reload();
         });
       }).fail(modal_for_ajax_std_error()).always(l.$destroy);
@@ -2176,7 +2176,7 @@
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
       infra.delete_stack().done(function (msg) {
-        bootstrap_alert(t('infrastructures.infrastructure'), msg).done(function () {
+        modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
           show_infra(infra_id);
         });
         // TODO: reload
@@ -2192,7 +2192,7 @@
     modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
       bootstrap_prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
         if(!name){
-          bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+          modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
           return;
         }
 
@@ -2227,7 +2227,7 @@
           document.body.appendChild(a);
           a.click();
         }).fail(function (xhr) {
-          bootstrap_alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+          modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
         });
       });
     });
