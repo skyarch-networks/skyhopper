@@ -14,7 +14,6 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp
-.crono.pid
 
 # Ignore Vim swap fils
 .sw[a-z]
