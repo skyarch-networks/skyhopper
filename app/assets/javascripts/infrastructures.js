@@ -1794,8 +1794,33 @@
       },
       sources: [],
       is_specific: null,
+      data: null,
+      columns: null,
+      sortKey: '',
+      filterKey: '',
+      reversed: {},
+      option: ['operation_sched'],
+      lang: null,
+      pages: 10,
+      pageNumber: 0,
     };},
     methods: {
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
+      sortBy: function (key) {
+        if(key !== 'id')
+          this.sortKey = key;
+        this.reversed[key] = !this.reversed[key];
+      },
+      showPrev: function(){
+        if(this.pageNumber === 0) return;
+        this.pageNumber--;
+      },
+      showNext: function(){
+        if(this.isEndPage) return;
+        this.pageNumber++;
+      },
       repeat_selector: function() {
         if(parseInt(this.sel_instance.repeat_freq) === 1){
           $("#days-selector").hide();
@@ -1847,6 +1872,7 @@
           self.$parent.show_operation_sched();
           alert_success(function () {
           })(t('operation_scheduler.msg.saved'));
+          self.get_sched(self.sel_instance);
         }).fail(alert_and_show_infra);
       },
       get_sched: function (ec2){
@@ -1925,45 +1951,48 @@
         return (self.start_date && self.end_date && self.repeat_freq);
       },
     },
+    isStartPage: function(){
+      return (this.pageNumber === 0);
+    },
+    isEndPage: function(){
+      return ((this.pageNumber + 1) * this.pages >= this.data.length);
+    },
+    filters:{
+      wrap: wrap,
+      listen: listen,
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
+    },
     created: function(){
       var self = this;
       var res = new Resource(current_infra);
       var events = [];
       //TODO: get all assigned dates and print to calendar. :D
+      self.columns = ['physical_id', 'screen_name', 'id'];
       res.index().done(function (resources) {
-        _.forEach(resources.ec2_instances, function (v) {
-          current_infra.get_schedule(v.physical_id).done(function  (data){
-            var events = data.map(function (item) {
-              var dow = [];
-              if(item.recurring_date.repeats === "other"){
-                _.forEach(item.recurring_date.dates, function(date){
-                  if(date.checked === "true")
-                    dow.push(parseInt(date.value));
-                });
-              }else if(item.recurring_date.repeats === "everyday"){
-                dow = [1,2,3,4,5,6,0];
-              }else if(item.recurring_date.repeats === "weekdays"){
-                dow = [1,2,3,4,5];
-              }else{
-                dow = [0,6];
-              }
-              return {
-                title: item.resource.physical_id,
-                start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-                end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-                dow: dow,
-                ranges: [{
-                  start: item.start_date,
-                  end: item.end_date,
-                }]
-              };
-            });
-            self.sources.push(events);
-          });
 
+        self.data = resources.ec2_instances.map(function (item) {
+          return {
+            physical_id: item.physical_id,
+            screen_name: item.screen_name,
+            id: item,
+          };
         });
-        self.instances = resources;
 
+        self.$parent.loading = false;
+        $("#loading_results").hide();
+        var empty = t('serverspecs.msg.empty-results');
+        if(self.data.length === 0){ $('#empty_results').show().html(empty);}
+      });
+    },
+    compiled: function () {
+      // initialize reverse state
+      var self = this;
+      this.columns.forEach(function (key) {
+        self.reversed.$add(key, false);
       });
     },
     ready: function () {
