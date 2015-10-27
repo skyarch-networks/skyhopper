@@ -37,6 +37,7 @@
   var RDSInstance    = require('models/rds_instance').default;
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
+  var modal          = require('modal');
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
@@ -802,7 +803,7 @@
 
       deregister: function (physical_id) {
         var self = this;
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, physical_id);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -814,7 +815,7 @@
       },
       register: function () {
         var self = this;
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
           var ec2 = new EC2Instance(current_infra, self.selected_ec2);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -905,7 +906,7 @@
       delete_listener: function(load_balancer_port){
         var self = this;
         self.load_balancer_port = load_balancer_port;
-        bootstrap_confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
+        modal.Confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -935,7 +936,7 @@
       delete_server_certificate: function(server_certificate_name){
         var self = this;
         self.server_certificate_name = server_certificate_name;
-        bootstrap_confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
+        modal.Confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
           var ec2 = new EC2Instance(current_infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
@@ -1119,7 +1120,7 @@
         var security_bool = (security === "security");
         var exec_bool = (exec === "exec");
 
-        bootstrap_confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
+        modal.Confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(function () {
           var dfd = ec2.yum_update(security_bool, exec_bool).fail(
             // cook start fail
             alert_danger(self._show_ec2)
@@ -1226,7 +1227,7 @@
       },
       create_snapshot: function (volume_id) {
         var self = this;
-        bootstrap_confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
+        modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
           var snapshot = new Snapshot(current_infra.id);
 
           snapshot.create(volume_id, self.physical_id).progress(function (data) {
@@ -1270,7 +1271,7 @@
         var snapshots    = _.select(this.snapshots, 'selected', true);
         var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
         var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
-        bootstrap_confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+        modal.Confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
           var s = new Snapshot(current_infra.id);
 
           _.each(snapshots, function (snapshot) {
@@ -2157,7 +2158,7 @@
 
 
   var detach = function (infra_id) {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
+    modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
@@ -2170,7 +2171,7 @@
   };
 
   var delete_stack = function (infra_id) {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
+    modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
       l.$mount(SHOW_INFRA_ID);
@@ -2188,7 +2189,7 @@
 
   // for infrastructures#new
   var new_ec2_key = function () {
-    bootstrap_confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
+    modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
       bootstrap_prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
         if(!name){
           bootstrap_alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');

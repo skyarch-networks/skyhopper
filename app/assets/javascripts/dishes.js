@@ -7,6 +7,7 @@
 //
 
 (function () {                //  for file local scope
+  var modal = require('modal');
 
   var ajax_dish = new AjaxSet.Resources("dishes");
   ajax_dish.add_member("validate", "POST");
@@ -304,7 +305,7 @@
 
 
   $(document).on('click', '.validate-dish', function (e) {
-    bootstrap_confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
+    modal.Confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
       var dish_id = current_dish_id();
 
       validate(dish_id).done(function (data) {

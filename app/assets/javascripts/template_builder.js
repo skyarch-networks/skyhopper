@@ -291,7 +291,7 @@
 
   $(document).on("click", ".remove-resource", function () {
     var clicked = $(this);
-    bootstrap_confirm(t('template_builder.template_builder'), t('js.template_builder.msg.confirm_delete'), "danger").done(function () {
+    require('modal').Confirm(t('template_builder.template_builder'), t('js.template_builder.msg.confirm_delete'), "danger").done(function () {
       remove_resource( clicked.closest("tr").attr("resource-name") );
     });
   });
