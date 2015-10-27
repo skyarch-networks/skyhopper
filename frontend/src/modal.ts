@@ -134,7 +134,7 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
 
 
 // Example: $.ajax().done(...).fail(modal_for_ajax_std_error(function(){doSomething();}));
-export function ModalForAjaxStdError(callback?: () => void) {
+export function AlertForAjaxStdError(callback?: () => void) {
   return function (xhr: XMLHttpRequest | string): void {
     const t = typeof xhr === "string" ? xhr : xhr.responseText;
     const ex = JSON.parse(t).error;

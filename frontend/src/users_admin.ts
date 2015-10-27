@@ -9,7 +9,7 @@
 
 /// <reference path="../declares.d.ts" />
 
-import {Confirm, Alert, ModalForAjaxStdError} from 'modal';
+import {Confirm, Alert, AlertForAjaxStdError} from 'modal';
 
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
@@ -38,7 +38,7 @@ namespace UsersAdmin {
       btn.after(frag);
       (<any>ajax).sync_zabbix().done((data: string) => {
         Alert(t('users.title'), data).done(reload);
-      }).fail(ModalForAjaxStdError(reload));
+      }).fail(AlertForAjaxStdError(reload));
     };
 
     Confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
@@ -134,7 +134,7 @@ namespace UsersAdmin {
             text: `${client_name}/${project.name}[${project.code}]`,
           };
         });
-      }).fail(ModalForAjaxStdError());
+      }).fail(AlertForAjaxStdError());
     }
 
     add(): void {
@@ -185,7 +185,7 @@ namespace UsersAdmin {
         Alert(t('users.title'), data).done(() => {
           show_edit(this.user.id);
         });
-      }).fail(ModalForAjaxStdError(() => {
+      }).fail(AlertForAjaxStdError(() => {
         show_edit(this.user.id);
       }));
     }
@@ -200,7 +200,7 @@ namespace UsersAdmin {
       l.$remove();
       app = new App(data);
       app.$mount().$appendTo('#user-edit');
-    }).fail(ModalForAjaxStdError(() => {
+    }).fail(AlertForAjaxStdError(() => {
       l.$remove();
     }));
   }

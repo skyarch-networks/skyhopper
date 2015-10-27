@@ -7,7 +7,7 @@ import Serverspec        from '../models/serverspec';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
-import {Prompt, Alert, ModalForAjaxStdError} from 'modal';
+import {Prompt, Alert, AlertForAjaxStdError} from 'modal';
 
 import * as qs from 'query-string';
 
@@ -52,7 +52,7 @@ class VueMain extends Vue {
       return s.create(fname, this.rubyCode, infra_id);
     }).then(
       data => Alert(t('serverspecs.serverspec'), data),
-      ModalForAjaxStdError()
+      AlertForAjaxStdError()
     ).then(() => {
       location.href = `/serverspecs${location.search}`;
     });
