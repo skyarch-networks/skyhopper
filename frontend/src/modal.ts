@@ -132,9 +132,6 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
   return dfd;
 };
 
-// alias names. TODO: Delete the following functions
-// const bootstrap_prompt  = Modal.prompt;
-
 
 // Example: $.ajax().done(...).fail(modal_for_ajax_std_error(function(){doSomething();}));
 export function ModalForAjaxStdError(callback?: () => void) {

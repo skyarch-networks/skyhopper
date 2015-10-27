@@ -1315,7 +1315,7 @@
       attach_volume: function (volume_id) {
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
-        bootstrap_prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
+        modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
           ec2.attach_volume(volume_id, device_name).done(function (data) {
             modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
           });
@@ -2190,7 +2190,7 @@
   // for infrastructures#new
   var new_ec2_key = function () {
     modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
-      bootstrap_prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
+      modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
         if(!name){
           modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
           return;
