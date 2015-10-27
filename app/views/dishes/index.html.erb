@@ -1,3 +1,5 @@
+<% provide(:title, I18n.t('dishes.dish')) %>
+
 <%- model_class = Dish -%>
 <% allow_change = @project_id ? current_user.admin? : current_user.master? && current_user.admin? %>
 <% client_id    = Project.find(@project_id).client_id  if @project_id %>
