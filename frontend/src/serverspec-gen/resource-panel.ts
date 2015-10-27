@@ -47,6 +47,11 @@ export default Vue.extend({
       $(down).addClass("glyphicon-chevron-up");
     },
   },
+  computed: {
+    title: function () {
+      return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
+    },
+  },
   ready: function() {
     console.log(this);
   }
