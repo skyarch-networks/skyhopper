@@ -29,6 +29,19 @@ describe('AST', () => {
   it{should be_running}
 end`);
       });
+
+      it('name is blank', () => {
+        const d = new AST.Describe({
+          resourceType: 'selinux',
+          name: '',
+          body: [],
+        });
+        assert(d.to_ruby() ===
+`describe selinux do
+
+end`
+        );
+      });
     });
   });
 
