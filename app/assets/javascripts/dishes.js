@@ -12,9 +12,11 @@
   ajax_dish.add_member("validate", "POST");
 
   //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
+  var wrap        = require('./modules/wrap');
+  var listen      = require('./modules/listen');
   var dishesIndex = require('./modules/loadindex');
+  var modal       = require('modal');
+
   var queryString = require('query-string').parse(location.search);
 
   var app;
@@ -227,7 +229,7 @@
       tr.addClass('info');
 
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
   });
 
@@ -240,13 +242,13 @@
     }).done(function (data) {
       dish_body().html(data);
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
 
     //ajax_dish.edit({id: dish_id}).done(function(data){
     //  dish_body().html(data);
     //}).fail(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data.responseText);
+    //  modal.Alert(t('dishes.dish'), data.responseText);
     //});
   });
 
@@ -286,33 +288,33 @@
         serverspecs : serverspec_ids
       }
     }).done(function (data) {
-      bootstrap_alert(t('dishes.dish'), data).done(function () {
+      modal.Alert(t('dishes.dish'), data).done(function () {
         show_dish(current_dish_id());
       });
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
 
     //ajax_dish.update({id: dish_id, runlist: runlist, serverspecs: serverspec_ids}).done(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data).done(function(){
+    //  modal.Alert(t('dishes.dish'), data).done(function(){
     //    show_dish(current_dish_id());
     //  });
     //}).fail(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data.responseText);
+    //  modal.Alert(t('dishes.dish'), data.responseText);
     //});
   });
 
 
   $(document).on('click', '.validate-dish', function (e) {
-    bootstrap_confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
+    modal.Confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
       var dish_id = current_dish_id();
 
       validate(dish_id).done(function (data) {
-        bootstrap_alert(t('dishes.dish'), data).done(function() {
+        modal.Alert(t('dishes.dish'), data).done(function() {
           show_dish(dish_id);
         });
       }).fail(function (data) {
-        bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+        modal.Alert(t('dishes.dish'), data.responseText, 'danger');
       });
     });
   });
