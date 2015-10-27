@@ -7,6 +7,8 @@
 //
 
 $(document).ready(function() {
+  var modal = require('modal');
+
   // ajaxで何度もこのファイルが読まれるため、イベントをアンバインドする必要がある
   $(document).off('click.edit_runlist dblclick.edit_runlist change.edit_runlist');
 
@@ -43,7 +45,7 @@ $(document).ready(function() {
             cache[list] = recipes.children();
           },
           error    : function (XMLHttpRequest, textStatus, errorThrown) {
-            bootstrap_alert(t('infrastructures.infrastructure'), textStatus, "danger");
+            modal.Alert(t('infrastructures.infrastructure'), textStatus, "danger");
           }
         });
       }else{
@@ -55,7 +57,7 @@ $(document).ready(function() {
   // RecipeをRunlistに追加
   function addSelectedRecipes() {
     if (!($("#cookbooks").val() && $("#recipes").val())) {
-      bootstrap_alert(t('infrastructures.infrastructure'), t('js.edit_runlist.msg.recipe_not_select'), "danger");
+      modal.Alert(t('infrastructures.infrastructure'), t('js.edit_runlist.msg.recipe_not_select'), "danger");
       return;
     }
 
@@ -81,7 +83,7 @@ $(document).ready(function() {
   function addSelectedRoles() {
     if (!$("#roles").val()) {
       // TODO: I18n
-      bootstrap_alert(t('infrastructures.infrastructure'), "Any roles are not selected.", "danger");
+      modal.Alert(t('infrastructures.infrastructure'), "Any roles are not selected.", "danger");
       return;
     }
 
