@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-repeat="events" v-class="event_tr_class(status)">
+        <tr v-for="events" :class="{event_tr_class(status)}">
           <td v-text="toLocaleString(time)"></td>
           <td v-text="type"></td>
           <td v-text="logical"></td>
