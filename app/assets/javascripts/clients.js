@@ -12,39 +12,41 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
-  var clientIndex = require('./modules/loadindex');
 
   var app;
+
+
+
 
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {}
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1
+      })
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['client'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
-          };
+        };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
-          if(key !== 'id')
+          if(key !== 'id'){
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+          }
+
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -68,7 +70,6 @@
         var self = this;
         self.loading = true;
         var id =  queryString.client_id;
-        self.columns = ['code','name', 'id'];
 
        $.ajax({
            cache: false,
@@ -101,7 +102,12 @@
  });
 
 
-  $(document).ready(function(){
-    clientIndex();
-  });
+  var demo = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['code','name', 'id'],
+      gridData: []
+    }
+  })
 })();
