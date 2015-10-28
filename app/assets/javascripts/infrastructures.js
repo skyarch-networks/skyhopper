@@ -176,7 +176,7 @@
       cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
         self.params = data;
         _.each(data, function (val, key) {
-          self.result.$set(key, val.Default);
+          Vue.set(self.result, key, val.Default);
         });
         app.loading = false;
       }).fail(alert_danger(function () {

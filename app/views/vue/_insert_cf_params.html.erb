@@ -5,9 +5,11 @@
       <label class="col-sm-3 control-label" :attr="key" v-text="key"></label>
 
       <div class="col-md-7">
-        <select v-if="val.AllowedValues" id="{{key}}" v-model="result[key]" :options="val.AllowedValues" class="form-control" required="">
+        <select v-if="val.AllowedValues" id="{{key}}" v-model="result[key]" class="form-control" required="">
+          <option v-for="option in val.AllowedValues" v-bind:value="option">
+            {{ option }}
+          </option>
         </select>
-
         <input v-if="!val.AllowedValues" id="{{key}}" v-model="result[key]" class="form-control" type="text" required="">
         <span class="help-block" v-text="val.Description"></span>
       </div>
