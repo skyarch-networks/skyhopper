@@ -3,20 +3,20 @@
 <div v-if="empty" class="alert alert-warning"><%= I18n.t('nodes.msg.attr_not_exists')%></div>
 
 <form class="form-horizontal">
-  <div v-repeat="attr: attributes" class="form-group">
-    <label for="{{* $key | toID}}" class="col-sm-3 control-label">{{* $key}}</label>
+  <div v-for="(key, attr) in attributes" class="form-group">
+    <label for="{{* key | toID}}" class="col-sm-3 control-label">{{* key}}</label>
     <div class="col-sm-5">
-      <input v-model="attr.value" id="{{* $key | toID}}" type="{{* attr.input_type}}" class="form-control" v-attr="required: attr.required">
+      <input v-model="attr.value" id="{{* key | toID}}" type="{{* attr.input_type}}" class="form-control" :attr="{required: attr.required}">
       <%# TODO: Design is Muzukashii%>
-      <button v-if="attr.default" v-on="click: use_default(attr)" class="btn btn-default btn-sm" type="button">Use Default</button>
+      <button v-if="attr.default" @click="use_default(attr)" class="btn btn-default btn-sm" type="button">Use Default</button>
       <span class="help-block">{{* attr.description}}</span>
     </div>
   </div>
 
   <div v-if="!loading" class="form-actions-top">
-    <button v-on="click: update()"   class="btn btn-sm btn-primary" v-attr="disabled: empty"><%= t 'common.btn.save_changes' %></button>
+    <button @click="update()"   class="btn btn-sm btn-primary" :attr="{disabled: empty}"><%= t 'common.btn.save_changes' %></button>
     <%# XXX: button タグだとChromeにおいて謎のRelaodが走ってしまうため、aタグにしている(submitが走ってる気がする)。NC-457 %>
-    <a v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></a>
+    <a @click="show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></a>
   </div>
   <div v-if="loading" class="form-actions-top">
     <div-loader></div-loader>

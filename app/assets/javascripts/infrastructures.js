@@ -1483,7 +1483,7 @@
         if (self.recipes[self.selected_cookbook]) { return; }
 
         self.ec2.recipes(self.selected_cookbook).done(function (data) {
-          self.recipes.$add(self.selected_cookbook, data);
+          Vue.set(self.recipes, self.selected_cookbook, data);
         }).fail(alert_danger());
       },
       update: function () {
