@@ -4,13 +4,13 @@
   <h4 class="page-header"><%= t 'serverspecs.global' %></h4>
   <div class="checkbox">
     <label class="checkbox">
-      <input type="checkbox" v-model="checked_auto_generated" v-attr="disabled: !available_auto_generated">
+      <input type="checkbox" v-model="checked_auto_generated" :attr="{disabled: !available_auto_generated}">
       <%= t 'serverspecs.auto_generated' %>
     </label>
   </div>
   <p class="muted"><%= t 'serverspecs.msg.auto_generated_disabled_html' %></p>
 
-  <div v-repeat="s: globals" class="checkbox">
+  <div v-for="s in globals" class="checkbox">
     <label class="checkbox">
       <input type="checkbox" v-model="s.checked">
       {{s.name}}
@@ -21,7 +21,7 @@
 
 <div class="col-md-6 col-sm-6">
   <h4 class="page-header"><%= t 'serverspecs.individual' %></h4>
-  <div v-repeat="s: individuals" class="checkbox">
+  <div v-for="s in individuals" class="checkbox">
     <label class="checkbox">
       <input type="checkbox" v-model="s.checked">
       {{s.name}}
@@ -32,9 +32,9 @@
 
 <div class="col-md-12 col-sm-12">
   <div v-if="!loading" class="form-actions-top">
-    <button v-on="click: run()"      class="btn btn-sm btn-primary" v-attr="disabled: !can_run"><%= t 'serverspecs.btn.run' %></button>
+    <button @click="run()"      class="btn btn-sm btn-primary" :attr="{disabled: !can_run}"><%= t 'serverspecs.btn.run' %></button>
     <button class="btn btn-sm btn-warning" href="#change-schedule-modal" data-toggle="modal"><%= t 'schedules.change_schedule' %></button>
-    <button v-on="click: show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
+    <button @click="show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
   </div>
 
   <div v-if="loading" class="form-actions-top">
@@ -55,28 +55,28 @@
       <div class="modal-body">
         <div class="checkbox">
           <label>
-            <input type="checkbox" v-model="enabled" v-attr="disabled: loading_s"><%= t 'schedules.run_periodically' %>
+            <input type="checkbox" v-model="enabled" :attr="{disabled: loading_s}"><%= t 'schedules.run_periodically' %>
           </label>
         </div>
         <form class="form-inline">
           <div class="form-group" v-if="enabled">
-            <select v-model="frequency" v-attr="disabled: loading_s" class="form-control">
+            <select v-model="frequency" :attr="{disabled: loading_s}" class="form-control">
               <% ServerspecSchedule::frequencies.keys.each do |f| %>
                 <option value=<%= f %>><%= t "schedules.frequency.#{f}" %></option>
               <% end %>
             </select>
-            <select v-model="day_of_week" v-attr="disabled: loading_s" v-if="frequency === 'weekly'" class="form-control">
+            <select v-model="day_of_week" :attr="{disabled: loading_s}" v-if="frequency === 'weekly'" class="form-control">
               <% ServerspecSchedule::day_of_weeks.keys.each do |e| %>
                 <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
               <% end %>
             </select>
-            <select v-model="time" v-attr="disabled: loading_s" v-if="frequency !== 'intervals'" class="form-control">
+            <select v-model="time" :attr="{disabled: loading_s}" v-if="frequency !== 'intervals'" class="form-control">
               <% 0.upto(23) do |n| %>
                 <option><%= n %></option>
               <% end %>
             </select>
             <label v-if="frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
-            <input type="number" min="1" max="12" v-model="time" v-attr="disabled: loading_s" v-if="frequency === 'intervals'" class="form-control">
+            <input type="number" min="1" max="12" v-model="time" :attr="{disabled: loading_s}" v-if="frequency === 'intervals'" class="form-control">
             <label v-if="frequency === 'intervals'"><%= t 'schedules.hours' %></label>
             <div v-if="frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
           </div>
@@ -86,7 +86,7 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: change_schedule()" v-attr="disabled: !all_filled" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button @click="change_schedule()" :attr="{disabled: !all_filled}" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>
