@@ -2011,9 +2011,9 @@
       filterKey: String
     },
     data: function () {
-      var sortOrders = {}
+      var sortOrders = {};
       this.columns.forEach(function (key) {
-        sortOrders[key] = 1
+        sortOrders[key] = 1;
       })
       return {
         sortKey: '',
@@ -2023,8 +2023,8 @@
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
-          };
-      },
+      };
+    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
@@ -2267,8 +2267,7 @@
         else
           this.gridColumns = ['stack_name','region', 'keypairname', 'id'];
     },
-
-  })
+  });
 
 
   $(document).ready(function(){

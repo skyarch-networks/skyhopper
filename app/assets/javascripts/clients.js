@@ -27,10 +27,10 @@
       filterKey: String
     },
     data: function () {
-      var sortOrders = {}
+      var sortOrders = {};
       this.columns.forEach(function (key) {
-        sortOrders[key] = 1
-      })
+        sortOrders[key] = 1;
+      });
       return {
         sortKey: '',
         sortOrders: sortOrders,
@@ -109,5 +109,5 @@
       gridColumns: ['code','name', 'id'],
       gridData: []
     }
-  })
+  });
 })();
