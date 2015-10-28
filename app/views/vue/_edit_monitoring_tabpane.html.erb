@@ -15,11 +15,11 @@
 <%= render 'monitorings/modal_trigger_setting_description' %>
 
 <form>
-  <div class="row" v-repeat="master: master_monitorings">
+  <div class="row" v-for="master in master_monitorings">
     <div class="col-md-2 col-sm-6" style="height: 32px">
       <div class="checkbox" style="margin-top: 5px; margin-bottom: 5px">
         <label>
-          <input type="checkbox" v-model="checked: master.checked">
+          <input type="checkbox" :attr="{checked: master.checked}" v-model="master.checked">
           {{master.name}}
         </label>
       </div>
@@ -43,10 +43,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-repeat="s: web_scenarios">
-                <td v-repeat="v: s">{{v}}</td>
+              <tr v-for="s in web_scenarios">
+                <td v-for="v in s">{{v}}</td>
                 <td class="actions">
-                  <a v-on="click: delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
+                  <a @click="delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
                 </td>
               </tr>
             </tbody>
@@ -63,6 +63,6 @@
 </form>
 
 <div class="form-actions-top">
-  <a v-if="!loading" href="#" class="btn btn-sm btn-primary" v-on="click: submit()"><%= t 'helpers.titles.save' %></a>
+  <a v-if="!loading" href="#" class="btn btn-sm btn-primary" @click="submit()"><%= t 'helpers.titles.save' %></a>
   <div-loader v-if="loading"></div-loader>
 </div>
