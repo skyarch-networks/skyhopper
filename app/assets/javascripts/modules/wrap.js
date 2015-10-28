@@ -15,6 +15,8 @@ module.exports = function(value, option){
     return render_user_admin(value);
   }else if (option[0] === 'serverspec_results') {
     return render_serverspecs_results(value);
+  }else if(option[0] === 'operation_sched'){
+    return render_ops_sched(value);
   }else{
     return value;
   }
@@ -131,5 +133,15 @@ function render_serverspecs_results(value){
     return t ('serverspecs.created_at');
   }else{
     return value;
+  }
+}
+
+function render_ops_sched(value){
+  if (value === 'physical_id'){
+    return t('serverspecs.serverspecs');
+  }else if(value === 'screen_name'){
+    return t('operation_scheduler.screen_name');
+  }else if(value === 'id'){
+    return t ('common.actions');
   }
 }

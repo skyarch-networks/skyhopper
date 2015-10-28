@@ -1,27 +1,47 @@
-<h3><%= I18n.t('operation_scheduler.title')%> </h3>
-<hr>
-
-<table class="table">
-  <thead>
+<h3 class="page-header"><%= I18n.t('operation_scheduler.title')%></small></h3>
+<div class="col-sm-12">
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form><hr>
+  </div>
+  <span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+  <table class="table table-hover ssp">
     <tr>
-      <th>PHYSICAL ID</th>
-      <th>Name</th>
-      <th>Operation</th>
+      <th v-repeat="key: columns"
+          v-class="active: sortKey === key">
+        <text v-html="key | wrap option"></text>
+        <span v-on="click:sortBy(key)" v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+
+      </th>
     </tr>
-  </thead>
-  <tbody>
-    <tr v-repeat="ec2: instances.ec2_instances">
-      <td>{{ec2.physical_id}}</td>
-      <td>{{ec2.screen_name}}</td>
-      <td>
-        <button class="btn btn-xs btn-primary"  v-on="click: get_sched(ec2)"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
-        <button class="btn btn-xs btn-success"  v-on="click: manage_sched(ec2)" data-toggle="modal" data-target="#manage_schedule">
+    </thead>
+    <tbody class="tbody-infra-log">
+    <tr v-repeat="
+        entry: data
+        | filterBy filterKey
+        | orderBy sortKey reversed[sortKey]
+        | paginate">
+      <td v-repeat="key: columns">
+        <text v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+        <span v-if="key === 'id'">
+          <button class="btn btn-xs btn-primary"  v-on="click: get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
+          <button class="btn btn-xs btn-success"  v-on="click: manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
           <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched')%></button>
+        </span>
       </td>
     </tr>
-  <!--TODO: other instances-->
-  </tbody>
-</table>
+    <td id="empty_results" style="display: none;"></td>
+    </tbody>
+  </table>
+  <nav v-if="data.length >= 10">
+    <ul class="pager">
+      <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+      <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
+      <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+    </ul>
+  </nav>
+</div>
 
 <%= render 'infrastructures/modal/modal_manage_schedule' %>
 
