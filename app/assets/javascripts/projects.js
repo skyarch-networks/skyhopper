@@ -12,39 +12,35 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
-  var projectIndex = require('./modules/loadindex');
-
   var app;
 
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {}
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1
+      })
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['project'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -71,8 +67,6 @@
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
-        self.columns = ['code','name', 'cloud_provider', 'access_key', 'id'];
-
        $.ajax({
            cache: false,
            url:'projects?client_id='+id+'&lang='+self.lang,
@@ -107,7 +101,12 @@
  });
 
 
-  $(document).ready(function(){
-    projectIndex();
+  var projectIndex = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['code','name', 'cloud_provider', 'access_key', 'id'],
+      gridData: []
+    }
   });
 })();

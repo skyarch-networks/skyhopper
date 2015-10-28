@@ -24,7 +24,7 @@
 //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var infraindex = require('./modules/loadindex');
+  //var infraindex = require('./modules/loadindex');
   var newVM = require('./modules/newVM');
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
@@ -1977,14 +1977,19 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {}
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1
+      })
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         loading: true,
         option: ['infrastructure'],
         lang: queryString.lang,
@@ -1992,18 +1997,11 @@
         pageNumber: 0,
           };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -2030,11 +2028,6 @@
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
-        if (id >3)
-          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
-        else
-          self.columns = ['stack_name','region', 'keypairname', 'id'];
-
        $.ajax({
            cache: false,
            url:'/infrastructures?&project_id='+id,
@@ -2095,16 +2088,6 @@
         show_infra(current_infra.id);
       }
     });
-  };
-
-  var index = function(){
-
-    if (app){
-      app.$destroy();
-    }else{
-      infraindex = infraindex();
-    }
-
   };
 
   var SHOW_INFRA_ID = '#infra-show';
@@ -2243,8 +2226,25 @@
 // ================================================================
 // event bindings
 // ================================================================
+  var index = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: [],
+      gridData: []
+    },
+    created: function(){
+        if (queryString.project_id >3)
+          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          this.gridColumns = ['stack_name','region', 'keypairname', 'id'];
+    },
+
+  })
+
+
   $(document).ready(function(){
-    index();
+
     $('#infrastructure_region').selectize({
       create: false,
       sortField: 'text'
