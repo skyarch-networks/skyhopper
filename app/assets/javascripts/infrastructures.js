@@ -176,7 +176,7 @@
       cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
         self.params = data;
         _.each(data, function (val, key) {
-          self.result.$add(key, val.Default);
+          self.result.$set(key, val.Default);
         });
         app.loading = false;
       }).fail(alert_danger(function () {
@@ -1009,6 +1009,8 @@
       schedule:            {},
       loading_volumes:     false,
       attachable_volumes:  [],
+      change_status: t('ec2_instances.change_status'),
+      attach_vol: t('ec2_instances.attach'),
 
     };},
     template: '#ec2-tabpane-template',

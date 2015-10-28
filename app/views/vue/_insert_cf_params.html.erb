@@ -1,22 +1,22 @@
 <div>
   <h4 class="page-header"><%= t 'cf_templates.insert_parameters' %></h4>
   <form class="form-horizontal">
-    <div v-repeat="p: params" class="form-group">
-      <label class="col-sm-3 control-label" v-attr="for: $key" v-text="$key"></label>
+    <div v-for="(key , val) in params" class="form-group">
+      <label class="col-sm-3 control-label" :attr="key" v-text="key"></label>
 
       <div class="col-md-7">
-        <select v-if="p.AllowedValues" id="{{$key}}" v-model="result[$key]" options="p.AllowedValues" class="form-control" required="">
+        <select v-if="val.AllowedValues" id="{{key}}" v-model="result[key]" :options="val.AllowedValues" class="form-control" required="">
         </select>
 
-        <input v-if="!p.AllowedValues" id="{{$key}}" v-model="result[$key]" class="form-control" type="text" required="">
-        <span class="help-block" v-text="p.Description"></span>
+        <input v-if="!val.AllowedValues" id="{{key}}" v-model="result[key]" class="form-control" type="text" required="">
+        <span class="help-block" v-text="val.Description"></span>
       </div>
     </div>
   </form>
 
   <div v-if="!loading" class="form-actions-top">
-    <button v-on="click: submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
-    <button v-on="click: back()"   class="btn btn-default"><%= t 'helpers.links.back' %></button>
+    <button @click="submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
+    <button @click="back()"   class="btn btn-default"><%= t 'helpers.links.back' %></button>
   </div>
   <div v-if="loading" class="form-actions-top">
     <div-loader></div-loader>
