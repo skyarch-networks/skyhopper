@@ -9,7 +9,6 @@
 //browserify functions for vue filters functionality
 var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
-var serverspecIndex = require('./modules/loadindex');
 var queryString = require('query-string').parse(location.search);
 
 Vue.use(require('./modules/ace'), true, 'ruby');
@@ -22,32 +21,30 @@ var app;
 Vue.component('demo-grid', {
   template: '#grid-template',
   replace: true,
-  props: ['data', 'columns', 'filter-key'],
+  props: {
+    data: Array,
+    columns: Array,
+    filterKey: String
+  },
   data: function () {
+    var sortOrders = {};
+    this.columns.forEach(function (key) {
+      sortOrders[key] = 1;
+    });
     return {
-      data: null,
-      columns: null,
       sortKey: '',
-      filterKey: '',
-      reversed: {},
+      sortOrders: sortOrders,
       option: ['serverspec'],
       lang: queryString.lang,
       pages: 10,
       pageNumber: 0,
         };
-    },
-  compiled: function () {
-    // initialize reverse state
-      var self = this;
-      this.columns.forEach(function (key) {
-          self.reversed.$add(key, false);
-       });
   },
   methods: {
     sortBy: function (key) {
         if(key !== 'id')
           this.sortKey = key;
-          this.reversed[key] = !this.reversed[key];
+          this.sortOrders[key] = this.sortOrders[key] * -1;
     },
     showPrev: function(){
         if(this.pageNumber === 0) return;
@@ -70,8 +67,6 @@ Vue.component('demo-grid', {
       var il = new Loader();
       var self = this;
       self.loading = true;
-      self.columns = ['name','description', 'id'];
-
      $.ajax({
          cache: false,
          url:'serverspecs?lang='+self.lang,
@@ -102,9 +97,13 @@ Vue.component('demo-grid', {
   }
 });
 
-
-$(document).ready(function(){
-  serverspecIndex();
+var serverspecIndex = new Vue({
+  el: '#indexElement',
+  data: {
+    searchQuery: '',
+    gridColumns: ['name','description', 'id'],
+    gridData: []
+  }
 });
 
 $(document).on("click", ".show-value", function(){
