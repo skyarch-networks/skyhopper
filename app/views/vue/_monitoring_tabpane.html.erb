@@ -30,7 +30,7 @@
               </div>
               <div class="panel-collapse collapse" id="monitorings-{{r.physical_id}}">
                 <div class="list-group">
-                  <a href="#" v-for="value in uncommons" class="list-group-item" @click="show_zabbix_graph(r.physical_id, item)">{{value.name}}</a>
+                  <a href="#" v-for="value in uncommons" class="list-group-item" @click="show_zabbix_graph(r.physical_id, value.item)">{{value.name}}</a>
                   <a href="#" @click="show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
                 </div>
               </div>
@@ -70,9 +70,9 @@
                       <span class="input-group-addon">
                           <span>To: </span>
                       </span>
-                      <input :attr="disabled: isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                      <input :attr="{disabled: isTo}" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
                       <span class="input-group-addon">
-                          <button :attr="disabled: isShow" v-on="click: showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
+                          <button :attr="{disabled: isShow}" @click="showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
                       </span>
                   </div>
               </div>
