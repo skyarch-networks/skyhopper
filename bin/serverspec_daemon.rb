@@ -54,6 +54,7 @@ class ServerspecInfoRemote
       res.push(:exist)
     end
 
+    # TODO: get parameter infomation, chain infomation...
     return res.concat(ms.map(&:to_s).select{|m|m.end_with?('?')}.map{|m| :"be_#{m.chop}"})
   end
 
