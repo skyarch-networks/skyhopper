@@ -20,7 +20,7 @@
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" :text="<%= t('ec2_instances.changing_status') %>"></div-loader>
+            <div-loader v-if="ec2_status_changing" :text="changing_status"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>

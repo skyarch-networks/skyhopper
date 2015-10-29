@@ -1011,6 +1011,7 @@
       attachable_volumes:  [],
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
+      changing_status: t('ec2_instances.changing_status'),
 
     };},
     template: '#ec2-tabpane-template',
