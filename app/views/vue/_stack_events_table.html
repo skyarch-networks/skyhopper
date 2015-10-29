@@ -11,12 +11,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="events" :class="{event_tr_class(status)}">
-          <td v-text="toLocaleString(time)"></td>
-          <td v-text="type"></td>
-          <td v-text="logical"></td>
-          <td v-text="status"></td>
-          <td v-text="reason"></td>
+        <tr v-for="v in events" :class="event_tr_class(v.status)">
+          <td v-text="toLocaleString(v.time)"></td>
+          <td v-text="v.type"></td>
+          <td v-text="v.logical"></td>
+          <td v-text="v.status"></td>
+          <td v-text="v.reason"></td>
         </tr>
       </tbody>
     </table>
