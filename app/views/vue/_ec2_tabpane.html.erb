@@ -24,7 +24,8 @@
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <bootstrap-tooltip :title="change_status" inline-template>
+            <bootstrap-tooltip :title="change_status">
+              <template slot="content">
               <div class="btn-group">
                 <button href="#" :class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" :attr="{disabled: ec2_status_changing}">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
@@ -35,6 +36,7 @@
                   <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#">Reboot</a></li>
                 </ul>
               </div>
+              </template>
             </bootstrap-tooltip>
           </td>
         </tr>
@@ -51,7 +53,8 @@
           <td>EBS</td>
           <td colspan="2">
             <span v-for="block_device in ec2.block_devices" class="dropdown">
-              <bootstrap-tooltip :title="block_device.device_name" inline-template>
+              <bootstrap-tooltip :title="block_device.device_name">
+                <template slot="content">
                 <a @click="volume_selected = block_device.ebs.volume_id" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   {{block_device.ebs.volume_id}}
                   <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
@@ -63,9 +66,11 @@
                   <li><a href="#snapshots-modal" data-toggle="modal"><%= t('snapshots.list_of_snapshots') %></a></li>
                   <li><a @click="open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
                 </ul>
+                </template>
               </bootstrap-tooltip>
             </span>
-            <bootstrap-tooltip :title="attach_vol" class="dropdown" id="attachButton" inline-template>
+            <bootstrap-tooltip :title="attach_vol" class="dropdown" id="attachButton">
+              <template slot="content">
               <a @click="load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
               <ul id="attachVolume" class="dropdown-menu">
 <!--                 <li><a href="#">Create Volume</a></li>
@@ -77,6 +82,7 @@
                 </li>
                 <li class="disabled" v-if="!loading_volumes && !attachable_volumes.length"><a href="#"><%= t 'ec2_instances.none' %></a></li>
               </ul>
+              </template>
             </bootstrap-tooltip>
           </td>
         </tr>
@@ -117,7 +123,7 @@
 
     <button :attr="{disabled: !running}" v-if="!loading" @click="bootstrap()" class="btn btn-primary">
       <bootstrap-tooltip v-if="!running" title="<%= t('nodes.msg.stopped') %>">
-        <%= t 'nodes.btn.bootstrap_with_chef_server' %>
+        <temlate slot="content"><%= t 'nodes.btn.bootstrap_with_chef_server' %></temlate>
       </bootstrap-tooltip>
       <span v-if="running"> <%= t 'nodes.btn.bootstrap_with_chef_server' %></span>
     </button>
@@ -137,19 +143,19 @@
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_cook_status' %></h6>
       <bootstrap-tooltip :title.once="cook_time">
-        <span :class="cook_status_class" class="label">{{cook_status}}</span>
+        <template slot="content"><span :class="cook_status_class" class="label">{{cook_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
       <bootstrap-tooltip :title.once="serverspec_time">
-        <span :class="serverspec_status_class" class="label">{{serverspec_status}}</span>
+        <template slot="content"><span :class="serverspec_status_class" class="label">{{serverspec_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_update_status' %></h6>
       <bootstrap-tooltip :title.once="update_time">
-        <span :class="update_status_class" class="label">{{update_status}}</span>
+        <template slot="content"><span :class="update_status_class" class="label">{{update_status}}</span></template>
       </bootstrap-tooltip>
     </div>
   </div>
@@ -355,11 +361,11 @@
         <table v-if="!loading_snapshots" class="table table-condensed table-hover">
           <thead>
             <th></th>
-            <!--<th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{caret: sorting_by('tags.Name'),   caret-reversed: sort_asc}"></span></th>-->
-            <!--<th class="col-md-2" @click="sort_by('snapshot_id')">ID<span             :class="{caret: sorting_by('snapshot_id'), caret-reversed: sort_asc}"></span></th>-->
-            <!--<th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{caret: sorting_by('state'),       caret-reversed: sort_asc}"></span></th>-->
-            <!--<th class=""         @click="sort_by('start_time')" >Date<span           :class="{caret: sorting_by('start_time'),  caret-reversed: sort_asc}"></span></th>-->
-            <!--<th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{caret: sorting_by('encrypted'),   caret-reversed: sort_asc}"></span></th>-->
+            <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
+            <th class="col-md-2" @click="sort_by('snapshot_id')">ID<span             :class="{'caret': sorting_by('snapshot_id'), 'caret-reversed': sort_asc}"></span></th>
+            <th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{'caret': sorting_by('state'),       'caret-reversed': sort_asc}"></span></th>
+            <th class=""         @click="sort_by('start_time')" >Date<span           :class="{'caret': sorting_by('start_time'),  'caret-reversed': sort_asc}"></span></th>
+            <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
           </thead>
           <tbody>
             <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" :transition="fade">
