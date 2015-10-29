@@ -14,10 +14,31 @@ describe ServerspecInfo do
     it {is_expected.to be_a DRbObject}
   end
 
-  describe '.resource_types' do
-    subject{ServerspecInfo.resource_types}
-    it {is_expected.to be_a Array}
-    it {is_expected.to be_all{|x| x.is_a? String}}
-    it {is_expected.to include 'Selinux'}
+  describe '.get' do
+    subject{ServerspecInfo.get}
+    it {is_expected.to be_a Hash}
+    it {is_expected.not_to be_empty}
+
+    it 'has Selinux key' do
+      expect(subject.keys).to be_a Array
+      expect(subject.keys).to include :Selinux
+    end
+
+    it 'matchers' do
+      is_expected.not_to be_empty
+      subject.each do |_, value|
+        expect(value[:matchers]).to be_a Array
+        expect(value[:matchers]).to be_all{|x|x.is_a? Symbol}
+        expect(value[:matchers]).not_to include :be_exists
+      end
+    end
+
+    it 'its_targets' do
+      is_expected.not_to be_empty
+      subject.each do |_, value|
+        expect(value[:its_targets]).to be_a Array
+        expect(value[:matchers]).to be_all{|x|x.is_a? Symbol}
+      end
+    end
   end
 end

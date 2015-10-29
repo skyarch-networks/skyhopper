@@ -8,10 +8,65 @@ require 'drb/acl'
 uri = 'druby://localhost:3100'
 
 class ServerspecInfoRemote
+=begin
+{
+  RESOURCE_TYPE: {
+    matchers: [:be_readable, ...]
+    },
+    its_targets: [:md5sum, ...]
+  },
+  _: {
+    ...
+  }
+}
+=end
+  def get
+    types = resource_types
+    res = {}
+
+    types.each do |t|
+      res[t] = {}
+      res[t][:matchers] = matchers(t)
+      res[t][:its_targets] = its_targets(t)
+    end
+
+    return res
+  end
+
+  private
+  # @return [Array<Symbol>]
   def resource_types
     t = Serverspec::Type.constants
     t.delete(:Base)
-    return t.map(&:to_s)
+    return t
+  end
+
+  # @param [Symbol] resource_type
+  # @return [Array<Symbol>]
+  def matchers(resource_type)
+    klass = Serverspec::Type.const_get(resource_type)
+    ms = klass.instance_methods(false)
+
+    res = []
+
+    # Ref: https://www.relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/exist-matcher
+    if ms.delete(:exists?)
+      res.push(:exist)
+    end
+
+    return res.concat(ms.map(&:to_s).select{|m|m.end_with?('?')}.map{|m| :"be_#{m.chop}"})
+  end
+
+
+  # @param [Symbol] resource_type
+  # @return [Array<Symbol>]
+  def its_targets(resource_type)
+    klass = Serverspec::Type.const_get(resource_type)
+    ms = klass.instance_methods(false)
+
+    return ms
+      .reject{|m| m.to_s.end_with?('?')}
+      .select{|m| klass.instance_method(m).parameters.empty?}
   end
 end
 

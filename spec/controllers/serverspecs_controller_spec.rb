@@ -176,6 +176,33 @@ describe ServerspecsController, type: :controller do
     end
   end # end of patch #update
 
+  describe 'GET #generator' do
+    let(:req){get :generator}
+    before{req}
+
+    context 'when have infra id' do
+      let(:infra){create(:infrastructure)}
+      let(:req){get :generator, infrastructure_id: infra.id}
+
+      should_be_success
+      it 'should assign @infra' do
+        expect(assigns[:infra]).to eq infra
+      end
+    end
+
+    context 'when not have infra id' do
+      should_be_success
+      it 'should not assign @infra' do
+        expect(assigns[:infra]).to be_nil
+      end
+    end
+
+    it 'should assign @resource_types' do
+      expect(assigns[:resource_types]).to be_a Array
+      expect(assigns[:resource_types]).to be_all{|x|x.is_a? String}
+    end
+  end
+
   describe 'DELETE #destroy' do
     let(:new_serverspec){create(:serverspec)}
     let(:delete_request){delete :destroy, id: new_serverspec.id}

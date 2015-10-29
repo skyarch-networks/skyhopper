@@ -9,7 +9,7 @@
 # TODO: test
 module ServerspecInfo
   class << self
-    delegate :resource_types, to: :remote
+    delegate :get, to: :remote
 
     def remote
       ::DRbObject.new_with_uri('druby://localhost:3100')
