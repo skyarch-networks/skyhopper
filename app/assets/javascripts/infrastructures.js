@@ -1599,12 +1599,23 @@
 
   Vue.component('serverspec-results-tabpane', {
     template: '#serverspec-results-tabpane-template',
-    data: function () {return {
-        data: null,
-        columns: null,
+    replace: true,
+    props: {
+      data: {
+        type: Array,
+        required: false,
+      },
+      columns: Array,
+      filterKey: String
+    },
+    data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
+      return {
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['serverspec_results'],
         lang: null,
         pages: 10,
@@ -1618,7 +1629,7 @@
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -1674,13 +1685,6 @@
         var empty = t('serverspecs.msg.empty-results');
         if(self.data.length === 0){ $('#empty_results').show().html(empty);}
       }).fail(alert_danger(self.show_ec2));
-    },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
     },
   });
 

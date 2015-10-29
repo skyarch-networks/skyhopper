@@ -99,7 +99,7 @@
         <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
         <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
-        <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"       ></serverspec-results-tabpane>
+        <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"   :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
         <operation-sched-tabpane v-if="tabpane_active('operation-sched')"></operation-sched-tabpane>
     </div>
   </div>
