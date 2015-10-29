@@ -1774,7 +1774,18 @@
 
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
-    data: function () {return {
+    replace: true,
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
+    data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
+      return {
       event_loading:   false,
       instances: null,
       dates: [{day: t('operation_scheduler.dates.monday'),   checked: false, value : 1},
@@ -1801,11 +1812,8 @@
       },
       sources: [],
       is_specific: null,
-      data: null,
-      columns: null,
       sortKey: '',
-      filterKey: '',
-      reversed: {},
+      sortOrders: sortOrders,
       option: ['operation_sched'],
       lang: null,
       pages: 10,
@@ -1977,7 +1985,6 @@
       var res = new Resource(current_infra);
       var events = [];
       //TODO: get all assigned dates and print to calendar. :D
-      self.columns = ['physical_id', 'screen_name', 'id'];
       res.index().done(function (resources) {
 
         self.data = resources.ec2_instances.map(function (item) {
@@ -1992,13 +1999,6 @@
         $("#loading_results").hide();
         var empty = t('serverspecs.msg.empty-results');
         if(self.data.length === 0){ $('#empty_results').show().html(empty);}
-      });
-    },
-    compiled: function () {
-      // initialize reverse state
-      var self = this;
-      this.columns.forEach(function (key) {
-        self.reversed.$add(key, false);
       });
     },
     ready: function () {
