@@ -2,10 +2,10 @@
   <div class="col-md-3 col-sm-3">
     <h4 class="page-header">History</h4>
     <div class="list-group">
-      <a href="#" class="list-group-item" v-repeat="history" v-class="active: active(id)" v-on="click: get(id)">
-        <bootstrap-tooltip title="{{* detail}}">
-          <h4 class="list-group-item-heading">{{name}}</h4>
-          <p class="list-group-item-text">{{toLocaleString(created_at)}}</p>
+      <a href="#" class="list-group-item" v-for="v in history" :class="{active: active(v.id)}" @click="get(v.id)">
+        <bootstrap-tooltip title="{{* v.detail}}">
+          <h4 class="list-group-item-heading">{{v.name}}</h4>
+          <p class="list-group-item-text">{{toLocaleString(v.created_at)}}</p>
         </bootstrap-tooltip>
       </a>
     </div>
@@ -28,7 +28,7 @@
           <th>Value</th>
         </thead>
         <tbody>
-          <tr v-repeat="p: current.params">
+          <tr v-for="p in current.params">
             <td v-text="p.parameter_key"></td>
             <td v-text="p.parameter_value"></td>
           </tr>

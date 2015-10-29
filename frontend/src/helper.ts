@@ -28,8 +28,7 @@ Vue.component('bootstrap-tooltip', {
   },
   template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content></content></span>',
   compiled: function () {
-    console.log(this.title);
-    console.log(this.$el);
+    console.log(this);
     $(this.$el).tooltip();
   },
 });
