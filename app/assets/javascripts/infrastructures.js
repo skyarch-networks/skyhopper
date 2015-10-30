@@ -673,7 +673,7 @@
 
         this.monitoring.update_templates(templates).done(function ()  {
           self.loading = false;
-          self.$parent.show_update_template();
+          self.$parent.show_edit_monitoring();
           alert_success(function (){
           })(t('monitoring.msg.update_templates'));
         }).fail(alert_and_show_infra);
