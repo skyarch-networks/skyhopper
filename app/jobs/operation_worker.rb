@@ -19,7 +19,6 @@ class Operation_worker
         if now >= item.start_date && now <= item.end_date
           start_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
           end_time = item.recurring_date.start_time.strftime( "%H%M%S%N" ).to_i
-          now_time = now.strftime( "%H%M%S%N" ).to_i
           case item.recurring_date
             when "everyday"
               evaluate_evr(start_time, end_time, now, resource)
