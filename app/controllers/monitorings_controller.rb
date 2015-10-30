@@ -59,7 +59,7 @@ class MonitoringsController < ApplicationController
         linked_resources.push({resource: item.physical_id, templates: merged, linked: true})
       else
         unlinked.each do |d|
-            merged.push({name: d, checked: false})
+          merged.push({name: d, checked: false})
         end
         linked_resources.push({resource: item.physical_id, templates: merged, linked: false})
       end
