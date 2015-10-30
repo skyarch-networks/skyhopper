@@ -728,7 +728,6 @@
       this.monitoring.show().done(function (data) {
         self.before_register = data.before_register;
         self.templates       = data.templates;
-        console.log(data.templates);
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },

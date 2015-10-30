@@ -42,19 +42,29 @@ class MonitoringsController < ApplicationController
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
 
     merged = []
+    linked_resources = []
     resources = @infra.resources.ec2
-    linked = @zabbix.get_linked_templates(resources.last.physical_id)
-    unlinked = @zabbix.available_templates
+    resources.each do |item|
+      linked = @zabbix.get_linked_templates(item.physical_id)
+      puts linked.inspect
+      if linked
+        unlinked = @zabbix.available_templates
 
-    unlinked.each do |link|
-      if linked.include?(link)
-        merged.push({name: link, checked: true})
+        unlinked.each do |link|
+          if linked.include?(link)
+            merged.push({name: link, checked: true})
+          else
+            merged.push({name: link, checked: false})
+          end
+        end
+        linked_resources.push({resource: item.physical_id, linked: merged})
       else
-        merged.push({name: link, checked: false})
+        linked_resources.push({resource: item.physical_id, linked: nil})
       end
     end
 
-    @templates = merged
+
+    @templates = linked_resources
 
     @resources = @infra.resources.ec2
 
