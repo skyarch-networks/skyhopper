@@ -313,7 +313,7 @@ class InfrastructuresController < ApplicationController
         ops = OperationDuration.create!(
           resource_id:  selected_instance[:id],
           start_date:   start_date,
-          end_date:     end_date
+          end_date:     end_date,
         )
         RecurringDate.create!(
           operation_duration_id: ops.id,
