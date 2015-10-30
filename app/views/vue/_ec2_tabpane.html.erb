@@ -27,7 +27,7 @@
             <bootstrap-tooltip :title="change_status">
               <template slot="content">
               <div class="btn-group">
-                <button href="#" :class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" :attr="{disabled: ec2_status_changing}">
+                <button href="#" :class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" :disabled="ec2_status_changing">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
@@ -121,7 +121,7 @@
 
   <div class="form-actions-top col-xs-12">
 
-    <button :attr="{disabled: !running}" v-if="!loading" @click="bootstrap()" class="btn btn-primary">
+    <button :disabled="!running" v-if="!loading" @click="bootstrap()" class="btn btn-primary">
       <bootstrap-tooltip v-if="!running" title="<%= t('nodes.msg.stopped') %>">
         <temlate slot="content"><%= t 'nodes.btn.bootstrap_with_chef_server' %></temlate>
       </bootstrap-tooltip>
@@ -188,10 +188,10 @@
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">
       <div :class="{'border-blink': cook_status === 'UnExecuted' && ec2.attribute_set}" class="btn-group dropup">
-        <button @click="cook({whyrun: true})" :attr="{disabled: !ec2.attribute_set}" class="btn btn-sm btn-primary">
+        <button @click="cook({whyrun: true})" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook_in_why_run_mode'%>
         </button>
-        <button type="button" :attr="{disabled: !ec2.attribute_set}" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -217,7 +217,7 @@
         </ul>
       </div>
       <div class="dropup" style="display: inline-block">
-        <button :attr="{disabled: cook_status !== 'Success'}" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+        <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
           <%= t('serverspecs.serverspec') %>
           <span class="caret"></span>
         </button>
@@ -284,7 +284,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button @click="change_scale()" :attr="{disabled: !change_scale_type_to}" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button @click="change_scale()" :disabled="!change_scale_type_to" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
       </div>
@@ -306,28 +306,28 @@
       <div class="modal-body">
         <div class="checkbox">
           <label>
-            <input type="checkbox" v-model="schedule.enabled" :attr="{disabled: loading_s}"><%= t 'schedules.run_periodically' %>
+            <input type="checkbox" v-model="schedule.enabled" :disabled="loading_s"><%= t 'schedules.run_periodically' %>
           </label>
         </div>
         <form class="form-inline">
           <div class="form-group" v-if="schedule.enabled">
-            <select v-model="schedule.frequency" :attr="{disabled: loading_s}" class="form-control">
+            <select v-model="schedule.frequency" :disabled="loading_s" class="form-control">
               <% Schedule::frequencies.keys.each do |f| %>
                 <option value=<%= f %>><%= t "schedules.frequency.#{f}" %></option>
               <% end %>
             </select>
-            <select v-model="schedule.day_of_week" :attr="{disabled: loading_s}" v-if="schedule.frequency === 'weekly'" class="form-control">
+            <select v-model="schedule.day_of_week" :disabled="loading_s" v-if="schedule.frequency === 'weekly'" class="form-control">
               <% Schedule::day_of_weeks.keys.each do |e| %>
                 <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
               <% end %>
             </select>
-            <select v-model="schedule.time" :attr="{disabled: loading_s}" v-if="schedule.frequency !== 'intervals'" class="form-control">
+            <select v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency !== 'intervals'" class="form-control">
               <% 0.upto(23) do |n| %>
                 <option><%= n %></option>
               <% end %>
             </select>
             <label v-if="schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
-            <input type="number" min="1" max="12" v-model="schedule.time" :attr="{disabled: loading_s}" v-if="schedule.frequency === 'intervals'" class="form-control">
+            <input type="number" min="1" max="12" v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency === 'intervals'" class="form-control">
             <label v-if="schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
             <div v-if="schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
           </div>
@@ -337,7 +337,7 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button @click="change_schedule()" :attr="{disabled: !filled_all}" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button @click="change_schedule()" :disabled="!filled_all" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>
@@ -352,7 +352,7 @@
 
       <div class="modal-header">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <button class="close" style="margin-right: 10px;" @click="load_snapshots()" :attr="{disabled: loading_snapshots}"><small><span class="glyphicon glyphicon-refresh"></span></small></button>
+        <button class="close" style="margin-right: 10px;" @click="load_snapshots()" :disabled="loading_snapshots"><small><span class="glyphicon glyphicon-refresh"></span></small></button>
         <h4 class="modal-title">Snapshots of {{volume_selected}}</h4>
       </div>
 
@@ -386,7 +386,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button @click="create_snapshot(volume_selected)" class="btn btn-primary"><%= t('helpers.links.create') %></button>
-          <button @click="delete_selected_snapshots()" :attr="{disabled: !selected_any || loading_snapshots}" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
+          <button @click="delete_selected_snapshots()" :disabled="!selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>

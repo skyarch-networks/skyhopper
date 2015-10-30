@@ -6,7 +6,7 @@
   <div v-for="(key, attr) in attributes" class="form-group">
     <label for="{{* key | toID}}" class="col-sm-3 control-label">{{* key}}</label>
     <div class="col-sm-5">
-      <input v-model="attr.value" id="{{* key | toID}}" type="{{* attr.input_type}}" class="form-control" :attr="{required: attr.required}">
+      <input v-model="attr.value" id="{{* key | toID}}" type="{{* attr.input_type}}" class="form-control" :required="attr.required">
       <%# TODO: Design is Muzukashii%>
       <button v-if="attr.default" @click="use_default(attr)" class="btn btn-default btn-sm" type="button">Use Default</button>
       <span class="help-block">{{* attr.description}}</span>
@@ -14,7 +14,7 @@
   </div>
 
   <div v-if="!loading" class="form-actions-top">
-    <button @click="update()"   class="btn btn-sm btn-primary" :attr="{disabled: empty}"><%= t 'common.btn.save_changes' %></button>
+    <button @click="update()"   class="btn btn-sm btn-primary" :disabled="empty"><%= t 'common.btn.save_changes' %></button>
     <%# XXX: button タグだとChromeにおいて謎のRelaodが走ってしまうため、aタグにしている(submitが走ってる気がする)。NC-457 %>
     <a @click="show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></a>
   </div>

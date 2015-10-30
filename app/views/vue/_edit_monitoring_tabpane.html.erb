@@ -19,7 +19,7 @@
     <div class="col-md-2 col-sm-6" style="height: 32px">
       <div class="checkbox" style="margin-top: 5px; margin-bottom: 5px">
         <label>
-          <input type="checkbox" :attr="{checked: master.checked}" v-model="master.checked">
+          <input type="checkbox" :checked="master.checked" v-model="master.checked">
           {{master.name}}
         </label>
       </div>

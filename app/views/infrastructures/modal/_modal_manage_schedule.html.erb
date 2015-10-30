@@ -58,14 +58,14 @@
           <div class="col-lg-12">
             <div id="days-selector" class="col-sm-6" style="display: none">
               <div class="checkbox" v-for="d in dates">
-                <label><input :attr="{checked: d.checked}" v-model="d.checked" type="checkbox"> {{d.day}}</label>
+                <label><input :checked="d.checked" v-model="d.checked" type="checkbox"> {{d.day}}</label>
               </div>
             </div>
           </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= I18n.t('helpers.links.cancel')%></button>
-        <button type="button" class="btn btn-primary" @click="save_sched()" :attr="{disabled: !save_sched_err}" data-dismiss="modal"><%= I18n.t('helpers.titles.save')%></button>
+        <button type="button" class="btn btn-primary" @click="save_sched()" :disabled="!save_sched_err" data-dismiss="modal"><%= I18n.t('helpers.titles.save')%></button>
       </div>
     </div>
   </div>

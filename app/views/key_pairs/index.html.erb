@@ -13,7 +13,7 @@
     <div class="panel-group">
       <div class="form-group">
         <label><%= t('key_pairs.region') %></label>
-        <button class="btn btn-default btn-sm" style="float: right" :attr="{disabled: loading}" @click="reload"><span class="glyphicon glyphicon-refresh"></span></button>
+        <button class="btn btn-default btn-sm" style="float: right" :disabled="loading" @click="reload"><span class="glyphicon glyphicon-refresh"></span></button>
       </div>
       <div class="panel panel-primary" v-if="regions">
         <div class="list-group">

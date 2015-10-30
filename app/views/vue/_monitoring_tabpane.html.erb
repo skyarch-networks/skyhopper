@@ -70,9 +70,9 @@
                       <span class="input-group-addon">
                           <span>To: </span>
                       </span>
-                      <input :attr="{disabled: isTo}" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                      <input :disabled="isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
                       <span class="input-group-addon">
-                          <button :attr="{disabled: isShow}" @click="showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
+                          <button :disabled="isShow" @click="showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
                       </span>
                   </div>
               </div>
