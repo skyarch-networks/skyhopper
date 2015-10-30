@@ -1859,8 +1859,9 @@
         current_infra.get_schedule(instance.physical_id).done(function  (data){
           self.sel_instance.physical_id = instance.physical_id;
           _.forEach(data, function(item){
-            self.sel_instance.start_date = moment(item.start_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
-            self.sel_instance.end_date = moment(item.end_date).utcOffset ("Asia/Tokyo").format('YYYY/MM/D h:mm a');
+            console.log(item)
+            self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D h:mm a');
+            self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D h:mm a');
           });
         });
       },
@@ -1868,6 +1869,8 @@
         var self = this;
         self.$parent.loading = true;
         self.sel_instance.dates = self.dates;
+        self.sel_instance.start_date = moment(self.sel_instance.start_date).unix();
+        self.sel_instance.end_date = moment(self.sel_instance.end_date).unix();
         current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
           self.loading = false;
           alert_success(function () {

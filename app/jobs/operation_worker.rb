@@ -13,39 +13,36 @@ class Operation_worker
     now = Time.new.in_time_zone
     operation = OperationDuration.all
     operation.each do |item|
-      resource = Resource.find(item.resource_id)
-      if now.strftime( "%Y%m%d%H%M%S%N" ).to_i >= item.start_date.utc.strftime( "%Y%m%d%H%M%S%N" ).to_i && now.strftime( "%Y%m%d%H%M%S%N" ).to_i <= item.end_date.utc.strftime( "%Y%m%d%H%M%S%N" ).to_i
-        recurring = RecurringDate.find_by(operation_duration_id: item.id)
-        case recurring.repeats
-          when "everyday"
-            evaluate_evr(recurring.start_time.to_time,
-                         recurring.end_time.to_time,
-                         now, resource
-            )
-          when "weekdays"
-            evaluate_weekdays(recurring.start_time.to_time,
-                              recurring.end_time.to_time, now, resource
-            )
-          when "weekends"
-            evaluate_weekends(recurring.start_time.to_time,
-                              recurring.end_time.to_time, now, resource
-            )
-          when "other"
-            evaluate_other(recurring.start_time.to_time,
-                           recurring.end_time.to_time,
-                           now, resource, recurring.dates)
+      # Check if resource is still available.
+      if Resource.exists?(item.resource_id)
+        resource = Resource.find(item.resource_id)
+        if now >= item.start_date && now <= item.end_date
+          start_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
+          end_time = item.recurring_date.start_time.strftime( "%H%M%S%N" ).to_i
+          now_time = now.strftime( "%H%M%S%N" ).to_i
+          case item.recurring_date
+            when "everyday"
+              evaluate_evr(start_time, end_time, now, resource)
+            when "weekdays"
+              evaluate_weekdays(start_time, end_time, now, resource)
+            when "weekends"
+              evaluate_weekends(start_time, end_time, now, resource)
+            when "other"
+              evaluate_other(start_time, end_time, now, resource, item.recurring_date.dates)
+          end
+        else
+          stop(resource)
         end
       else
-        stop(resource)
+        OperationDuration.where(resource_id: item.resource_id).destroy_all
       end
+
     end
   end
 
   def evaluate_evr(start_time, end_time, now, resource)
-    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
-    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
-    from_now =  now.strftime( "%H%M%S%N" ).to_i
-    if start <= from_now && end_ >= from_now
+    now_time = now.strftime( "%H%M%S%N" ).to_i
+    if start_time <= now_time && end_time >= now_time
       start(resource)
     else
       stop(resource)
@@ -53,11 +50,9 @@ class Operation_worker
   end
 
   def evaluate_weekdays(start_time, end_time, now, resource)
-    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
-    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
-    from_now =  now.strftime( "%H%M%S%N" ).to_i
+    now_time = now.strftime( "%H%M%S%N" ).to_i
     if now.wday != 0 && now.wday != 6
-      if start <= from_now && end_ >= from_now
+      if start_time <= now_time && end_time >= now_time
         start(resource)
       else
         stop(resource)
@@ -68,12 +63,9 @@ class Operation_worker
   end
 
   def evaluate_weekends(start_time, end_time, now, resource)
-    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
-    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
-    from_now =  now.strftime( "%H%M%S%N" ).to_i
-
+    now_time = now.strftime( "%H%M%S%N" ).to_i
     if now.wday == 0 && now.wday == 6
-      if start <= from_now && end_ >= from_now
+      if start_time <= now_time && end_time >= now_time
         start(resource)
       else
         stop(resource)
@@ -84,11 +76,8 @@ class Operation_worker
   end
 
   def evaluate_other(start_time, end_time, now, resource, dates)
+    now_time = now.strftime( "%H%M%S%N" ).to_i
     dow =  Array.new
-    start = start_time.utc.strftime( "%H%M%S%N" ).to_i
-    end_ = end_time.utc.strftime( "%H%M%S%N" ).to_i
-    from_now =  now.strftime( "%H%M%S%N" ).to_i
-
     dates.each do |item|
       if item[1]["checked"] == "true"
         dow.push(item[1]["value"].to_i)
@@ -96,7 +85,7 @@ class Operation_worker
     end
 
     if dow.include? now.wday
-      if start <= from_now && end_ >= from_now
+      if start_time <= now_time && end_time >= now_time
         start(resource)
       else
         stop(resource)
