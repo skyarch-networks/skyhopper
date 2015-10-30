@@ -368,7 +368,7 @@
             <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
           </thead>
           <tbody>
-            <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" :transition="fade">
+            <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" transition="fade">
               <td><input v-model="snapshot.selected" type="checkbox"></td>
               <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
               <td v-text="snapshot.snapshot_id"></td>
