@@ -509,81 +509,6 @@
     },
   });
 
-  Vue.component("update-template-tabpane",{
-    template: "#update-template-tabpane-template",
-    data: function(){return{
-      loading: false,
-      page: 0,
-      dispItemSize: 10,
-      templates: [],
-      before_register: false,
-    };},
-    methods:{
-      update_templates: function () {
-        if (!this.has_selected) {return;}
-        var self = this;
-        self.loading = true;
-        var templates = _(this.templates).filter(function (t) {
-          return t.checked;
-        }).map(function(t)  {
-          return t.name;
-        }).value();
-
-        this.monitoring.update_templates(templates).done(function ()  {
-          self.loading = false;
-          self.$parent.show_update_template();
-          alert_success(function (){
-          })(t('monitoring.msg.update_templates'));
-        }).fail(alert_and_show_infra);
-      },
-      showPrev: function () {
-        if(this.isStartPage) return;
-        this.page--;
-        console.log(this.page);
-      },
-      showNext: function () {
-        if(this.isEndPage) return;
-        this.page++;
-        console.log(this.page);
-      },
-      close: function ()  {
-        this.$parent.show_update_template();
-      },
-    },
-    computed:{
-      monitoring: function () { return new Monitoring(current_infra); },
-      has_selected: function() {
-        return _.some(this.templates, function(c){
-          return c.checked;
-        });
-      },
-      dispItems: function(){
-        var startPage = this.page * this.dispItemSize;
-        return this.templates.slice(startPage, startPage + this.dispItemSize);
-      },
-      isStartPage: function(){
-        return (this.page === 0);
-      },
-      isEndPage: function(){
-        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
-      },
-    },
-    created: function () {
-      var self = this;
-      var monitoring = new Monitoring(current_infra);
-      monitoring.show().done(function (data) {
-        self.before_register = data.before_register;
-        self.templates       = data.templates;
-        console.log(data.templates);
-        self.$parent.loading = false;
-      }).fail(alert_and_show_infra);
-
-    },
-    filters: {
-      roundup: function (val) { return (Math.ceil(val));},
-    },
-  });
-
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
@@ -595,14 +520,21 @@
       postgresql_rds_host: null,
       add_scenario: {},
       loading: false,
+      temp_loading: false,
       page: 0,
       dispItemSize: 10,
       templates: [],
+      linked_resources: [],
       before_register: false,
+      sel_resource: null,
     };},
     methods: {
       type: function (master) { return Monitoring.type(master); },
-
+      edit_temp: function(resource) {
+        self = this;
+        self.sel_resource = resource;
+        self.templates = resource.templates;
+      },
       delete_step: function (step) {
         this.web_scenarios = _.filter(this.web_scenarios, function (s) {
           return s[0] !== step[0];
@@ -664,18 +596,15 @@
       update_templates: function () {
         if (!this.has_selected) {return;}
         var self = this;
-        self.loading = true;
         var templates = _(this.templates).filter(function (t) {
           return t.checked;
         }).map(function(t)  {
           return t.name;
         }).value();
-
-        this.monitoring.update_templates(templates).done(function ()  {
-          self.loading = false;
+        self.temp_loading = true;
+        this.monitoring.update_templates(self.sel_resource.resource, templates).done(function ()  {
+          self.temp_loading = false;
           self.$parent.show_edit_monitoring();
-          alert_success(function (){
-          })(t('monitoring.msg.update_templates'));
         }).fail(alert_and_show_infra);
       },
       showPrev: function () {
@@ -709,6 +638,7 @@
     },
     created: function () {
       var self = this;
+      self.temp_loading = true;
       this.monitoring.edit().done(function (data) {
         self.master_monitorings      = data.master_monitorings;
         self.selected_monitoring_ids = data.selected_monitoring_ids;
@@ -727,8 +657,9 @@
 
       this.monitoring.show().done(function (data) {
         self.before_register = data.before_register;
-        self.templates       = data.templates;
+        self.linked_resources = data.linked_resources;
         self.$parent.loading = false;
+        self.temp_loading = false;
       }).fail(alert_and_show_infra);
     },
     filters: {

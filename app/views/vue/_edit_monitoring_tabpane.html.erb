@@ -63,28 +63,33 @@
   </div>
 </form>
 <hr>
-
-<div class="row">
-  <div v-if="before_register">
-    <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
-    <div class="alert alert-warning">
-      <%= t 'monitoring.msg.before_create_host' %>
-    </div>
-    <button v-if="!creating"  data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
-    <%= render 'monitorings/modal_trigger_register_description' %>
-  </div>
-
-  <div class="col-md-12 col-sm-12" v-if="!before_register">
-    <h4 class="page-header"><%= t 'monitoring.linked_templates' %> <small>
-      <a href="#" data-toggle="modal" data-target="#edit-templates" class="btn-link"><span class="glyphicon glyphicon-edit"></span><%= t 'monitoring.btn.edit' %></a></small>
-    </h4>
-    <ul v-repeat="l: templates">
-      <li v-if="l.checked">{{l.name}}</li>
-    </ul>
+<div-loader v-if="temp_loading"></div-loader>
+<div class="row" v-if="!temp_loading">
+  <div class="col-md-4 col-sm-6">
+    <h4 class="page-header"><%= t 'monitoring.zabbix_templates' %></h4>
+    <table class="table table-condensed">
+      <tr>
+        <th>Physical ID</th>
+        <th>Linked</th>
+        <th></th></tr>
+      <tr v-repeat="l: linked_resources">
+        <td>{{l.resource}}</td>
+        <td v-if="l.linked"><%= glyphicon 'ok text-success' %></td>
+        <td v-if="!l.linked"><%= glyphicon 'remove text-danger' %></td>
+        <td v-if="l.linked">
+          <a href="#" data-toggle="modal" v-on="click: edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-default">
+            <%= glyphicon 'edit' %> <%= t 'monitoring.btn.edit' %></a>
+        </td>
+        <td v-if="!l.linked">
+          <a href="#" data-toggle="modal" v-on="click: edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-primary">
+            <%= glyphicon 'link' %> <%= t 'monitoring.btn.link' %></a>
+        </td>
+      </tr>
+    </table>
     <%= render 'monitorings/modal_update_templates' %>
   </div>
+  <div class="col-md-8 col-sm-6"></div>
 </div>
-
 
 <div class="form-actions-top">
   <a v-if="!loading" href="#" class="btn btn-sm btn-primary" v-on="click: submit()"><%= t 'helpers.titles.save' %></a>

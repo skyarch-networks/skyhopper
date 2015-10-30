@@ -85,7 +85,7 @@ class Zabbix
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
     if host_id
-      selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id).map{|x|x['name']}
+      selected_templates = @sky_zabbix.template.get(output: ['name', 'description'], hostids: host_id).map{|x|x['name']}
       return selected_templates
     else
       return nil
