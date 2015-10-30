@@ -304,8 +304,8 @@ class InfrastructuresController < ApplicationController
 
       recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
       recur_exits.repeats = selected_instance[:repeat_freq].to_i
-      recur_exits.start_time = start_date.strftime("%H:%M").to_time
-      recur_exits.end_time = end_date.strftime("%H:%M").to_time
+      recur_exits.start_time = start_date.strftime("%H:%M")
+      recur_exits.end_time = end_date.strftime("%H:%M")
       recur_exits.dates = selected_instance[:dates]
       recur_exits.save
     else
