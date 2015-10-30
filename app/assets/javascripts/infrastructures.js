@@ -595,6 +595,10 @@
       postgresql_rds_host: null,
       add_scenario: {},
       loading: false,
+      page: 0,
+      dispItemSize: 10,
+      templates: [],
+      before_register: false,
     };},
     methods: {
       type: function (master) { return Monitoring.type(master); },
@@ -657,9 +661,51 @@
             self.loading = false;
           }));
       },
+      update_templates: function () {
+        if (!this.has_selected) {return;}
+        var self = this;
+        self.loading = true;
+        var templates = _(this.templates).filter(function (t) {
+          return t.checked;
+        }).map(function(t)  {
+          return t.name;
+        }).value();
+
+        this.monitoring.update_templates(templates).done(function ()  {
+          self.loading = false;
+          self.$parent.show_update_template();
+          alert_success(function (){
+          })(t('monitoring.msg.update_templates'));
+        }).fail(alert_and_show_infra);
+      },
+      showPrev: function () {
+        if(this.isStartPage) return;
+        this.page--;
+        console.log(this.page);
+      },
+      showNext: function () {
+        if(this.isEndPage) return;
+        this.page++;
+        console.log(this.page);
+      },
     },
     computed: {
       monitoring: function () { return new Monitoring(current_infra); },
+      has_selected: function() {
+        return _.some(this.templates, function(c){
+          return c.checked;
+        });
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        return this.templates.slice(startPage, startPage + this.dispItemSize);
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.templates.length);
+      },
     },
     created: function () {
       var self = this;
@@ -678,6 +724,16 @@
           alert_and_show_infra(xhr.responseText);
         }
       });
+
+      this.monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.templates       = data.templates;
+        console.log(data.templates);
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra);
+    },
+    filters: {
+      roundup: function (val) { return (Math.ceil(val));},
     },
   });
 

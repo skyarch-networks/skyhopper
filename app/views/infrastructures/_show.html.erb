@@ -44,9 +44,6 @@
           <li v-class="disabled : no_stack">
             <a href="#" tabindex="-1" v-on="click: show_edit_monitoring()"><%= t 'monitoring.config' %></a>
           </li>
-          <li v-class="disabled : no_stack">
-            <a href="#" tabindex="-1" v-on="click: show_update_template()"><%= t 'monitoring.template' %></a>
-          </li>
           <li class="divider"></li>
           <li>
             <a href="#" tabindex="-1" v-on="click: show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
@@ -90,7 +87,6 @@
         <stack-events-table      v-if="tabpane_active('event_logs')"       events="{{* current_infra.events}}"></stack-events-table>
         <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
         <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
-        <update-template-tabpane v-if="tabpane_active('update-template')"  ></update-template-tabpane>
         <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>
         <ec2-tabpane             v-if="tabpane_active('ec2')"              physical_id="{{* tabpaneGroupID}}"></ec2-tabpane>
         <rds-tabpane             v-if="tabpane_active('rds')"              physical_id="{{* tabpaneGroupID}}"></rds-tabpane>
