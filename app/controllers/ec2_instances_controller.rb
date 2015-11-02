@@ -77,6 +77,39 @@ class Ec2InstancesController < ApplicationController
     render text: I18n.t('ec2_instances.msg.stop_ec2')
   end
 
+  # POST /ec2_instances/i-hogehoge/detach
+  def detach
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+
+    resource = Resource.find_by(physical_id: physical_id)
+    resource.destroy
+
+    infra_logger_success("#{physical_id} has been detached.")
+
+    notify_ec2_status(resource, :detached)
+
+    render text: I18n.t('ec2_instances.msg.detach_ec2')
+  end
+
+  # POST /ec2_instances/i-hogehoge/detach
+  def terminate
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+
+
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    instance.terminate
+    resource = Resource.find_by(physical_id: physical_id)
+    resource.destroy
+
+    infra_logger_success("#{physical_id} has been terminated.")
+
+    notify_ec2_status(instance, :terminated)
+
+    render text: I18n.t('ec2_instances.msg.terminate_ec2')
+  end
+
   # POST /ec2_instances/i-hogehoge/reboot
   # XXX: reboot しても status が変わらない気がする?
   def reboot

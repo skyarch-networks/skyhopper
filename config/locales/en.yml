@@ -510,6 +510,8 @@ en:
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
+      detach_ec2:            'EC2 instance has been detached'
+      terminate_ec2:            'EC2 instance has been terminated'
       registered_to_elb:     'EC2 instance was successfully registered to ELB.'
       deregistered_from_elb: 'EC2 instance was successfully deregisterd from ELB.'
       volume_attached:       '%{volume_id} has attached to %{instance_id}. Device name is %{device}'

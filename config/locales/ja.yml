@@ -510,6 +510,8 @@ ja:
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
+      detach_ec2:            'EC2インスタンスがデタッチされています'
+      terminate_ec2:            'EC2インスタンスが終了しました'
       registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
       volume_attached:       '%{instance_id} に %{volume_id} をアタッチしました。 デバイス名は %{device} です。'

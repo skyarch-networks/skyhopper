@@ -30,12 +30,16 @@
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
-                  <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
-                  <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
+                  <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#"><%= glyphicon 'play' %> Start</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#"><%= glyphicon 'stop' %> Stop</a></li>
+                  <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#"><%= glyphicon 'repeat' %> Reboot</a></li>
+                  <li><a href="#detach-ec2-modal" data-toggle="modal"><%= glyphicon 'eject' %> <%= t 'helpers.links.detach' %></a></li>
+                  <li><a href="#terminate-ec2-modal" data-toggle="modal"><%= glyphicon 'trash text-danger' %> <%= t 'helpers.links.terminate' %></a></li>
                 </ul>
               </div>
             </bootstrap-tooltip>
+            <%= render 'infrastructures/modal/modal_detach_ec2' %>
+            <%= render 'infrastructures/modal/modal_terminate_ec2' %>
           </td>
         </tr>
         <tr>
@@ -76,8 +80,7 @@
                   <a v-on="click: attach_volume(volume.volume_id)" href="#">{{volume.volume_id}} (Name: {{volume.tags.Name}}, size: {{volume.size}} GiB, type: {{volume.volume_type}})</a>
                 </li>
                 <li class="disabled" v-if="!loading_volumes && !attachable_volumes.length"><a href="#"><%= t 'ec2_instances.none' %></a></li>
-              </ul>
-            </bootstrap-tooltip>
+              </ul></bootstrap-tooltip>
           </td>
         </tr>
         <tr>
