@@ -80,7 +80,6 @@ class Ec2InstancesController < ApplicationController
   # POST /ec2_instances/i-hogehoge/detach
   def detach
     physical_id = params.require(:id)
-    infra_id    = params.require(:infra_id)
 
     resource = Resource.find_by(physical_id: physical_id)
     resource.destroy
