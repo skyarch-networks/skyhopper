@@ -41,20 +41,32 @@ class MonitoringsController < ApplicationController
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
 
-    merged = []
-    resources = @infra.resources.ec2
-    linked = @zabbix.get_linked_templates(resources.last.physical_id)
-    unlinked = @zabbix.available_templates
 
-    unlinked.each do |link|
-      if linked.include?(link)
-        merged.push({name: link, checked: true})
+    linked_resources = []
+    resources = @infra.resources.ec2
+    resources.each do |item|
+      merged = []
+      linked = @zabbix.get_linked_templates(item.physical_id)
+      unlinked = @zabbix.available_templates
+      if linked
+        unlinked.each do |link|
+          if linked.include?(link)
+            merged.push({name: link, checked: true})
+          else
+            merged.push({name: link, checked: false})
+          end
+        end
+        linked_resources.push({resource: item.physical_id, templates: merged, linked: true})
       else
-        merged.push({name: link, checked: false})
+        unlinked.each do |d|
+          merged.push({name: d, checked: false})
+        end
+        linked_resources.push({resource: item.physical_id, templates: merged, linked: false})
       end
     end
 
-    @templates = merged
+
+    @linked_resources = linked_resources
 
     @resources = @infra.resources.ec2
 
@@ -62,10 +74,10 @@ class MonitoringsController < ApplicationController
 
   # POST /monitorings/:id/update_templates
   def update_templates
-    resources = @infra.resources.ec2
+    physical_id = params.require(:physical_id)
     new_templates = params.require(:templates)
-    resources.each do |resource|
-      prev_templates = @zabbix.get_linked_templates(resource.physical_id)
+    prev_templates = @zabbix.get_linked_templates(physical_id)
+    if prev_templates
       clear_templates = []
 
       # compare if the previous templates was removed and push to clear list
@@ -77,11 +89,34 @@ class MonitoringsController < ApplicationController
         end
       end
 
-      @zabbix.templates_update_host(resource.physical_id, new_templates, clear_templates)
+      @zabbix.templates_update_host(physical_id, new_templates, clear_templates)
+      infra_logger_success("#{physical_id} Templates Updated!")
+      render nothing: true and return
+    else
+      z = @zabbix
+      begin
+        reqs = []
+        z.create_host(@infra, physical_id)
+
+        # TODO: Batch request
+        reqs.push z.templates_link_host(physical_id, new_templates)
+        item_info_cpu   = z.create_cpu_usage_item(physical_id)
+        item_info_mysql = z.create_mysql_login_item(physical_id)
+        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   physical_id)
+        reqs.push z.create_mysql_login_trigger(item_info_mysql, physical_id)
+        z.batch(*reqs)
+      rescue => ex
+        @infra.detach_zabbix()
+
+        render text: ex.message, status: 500 and return
+      end
+
+      @zabbix.templates_link_host(physical_id, new_templates)
+      infra_logger_success("#{physical_id} is linked to Zabbix!")
+      render nothing: true and return
     end
 
-    infra_logger_success("Templates Updated!")
-    render nothing: true and return
+
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -228,7 +263,7 @@ class MonitoringsController < ApplicationController
       render text: ex.message, status: 500 and return
     end
 
-    infra_logger_success("Infrastructure registerd to zabbix")
+    infra_logger_success("Infrastructure is registered to Zabbix")
     render nothing: true and return
   end
 

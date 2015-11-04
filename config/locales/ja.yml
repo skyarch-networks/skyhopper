@@ -372,7 +372,7 @@ ja:
     explanation_triggers: 'トリガーの説明'
     register_host:        'インフラストラクチャを Zabbix Server に登録'
     before_reg_title:     '先に進む前に、テンプレートを選択してください。'
-    linked_templates:     '登録されたテンプレート'
+    zabbix_templates:     'Zabbixのテンプレート'
     template:             '監視テンプレート'
     btn:
       create: '登録'
