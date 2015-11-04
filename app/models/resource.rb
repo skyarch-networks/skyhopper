@@ -7,6 +7,9 @@
 #
 
 class Resource < ActiveRecord::Base
+  before_destroy :detach_zabbix
+  before_destroy :detach_chef
+
   belongs_to :infrastructure
   belongs_to :dish
   has_many :resource_serverspecs
@@ -45,4 +48,20 @@ class Resource < ActiveRecord::Base
       value: 'un_executed',
     )}
   end
+
+  def detach_chef
+    Node.new(self.physical_id).delete
+  end
+
+  def detach_zabbix
+    s = AppSetting.get
+    begin
+      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+      z.delete_hosts_by_resource(self.physical_id)
+    rescue => ex
+      return self if ex.message.include("physical id not found.")
+      raise ex
+    end
+  end
+  self
 end

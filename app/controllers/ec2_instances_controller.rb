@@ -91,7 +91,7 @@ class Ec2InstancesController < ApplicationController
     render text: I18n.t('ec2_instances.msg.detach_ec2')
   end
 
-  # POST /ec2_instances/i-hogehoge/detach
+  # POST /ec2_instances/i-hogehoge/terminate
   def terminate
     physical_id = params.require(:id)
     infra_id    = params.require(:infra_id)
