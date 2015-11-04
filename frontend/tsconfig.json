@@ -30,6 +30,7 @@
     "src/serverspec-gen/ast.ts",
     "src/serverspec-gen/it-panel.ts",
     "src/serverspec-gen/resource-panel.ts",
+    "src/serverspec-gen/selectable-input.ts",
     "src/serverspec-gen/serverspec_info.ts",
     "src/serverspec-gen/ui.ts",
     "test/serverspec-gen/ast_test.ts"

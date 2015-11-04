@@ -1,0 +1,12 @@
+<label v-text="label" v-attr="for: id">
+</label>
+
+<input type="checkbox" v-model="manual">
+
+<div v-if="manual">
+  <input v-attr="id: id" type="text" class="form-control" required v-model="selected">
+</div>
+
+<div v-if="!manual">
+  <select v-attr="id: id" v-model="selected" options="opt"></select>
+</div>

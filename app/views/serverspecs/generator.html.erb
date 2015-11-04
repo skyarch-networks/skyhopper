@@ -38,5 +38,6 @@
 var SERVERSPEC_INFO =  <%= @serverspec_info.to_json.html_safe %>
 </script>
 
-<script id="resource-panel-template" type="text/template"> <%= render 'gen_resource' %> </script>
-<script id="it-panel-template"       type="text/template"> <%= render 'gen_it' %> </script>
+<script id="resource-panel-template"   type="text/template"> <%= render 'gen_resource' %> </script>
+<script id="it-panel-template"         type="text/template"> <%= render 'gen_it' %> </script>
+<script id="selectable-input-template" type="text/template"> <%= render 'gen_selectable_input' %> </script>

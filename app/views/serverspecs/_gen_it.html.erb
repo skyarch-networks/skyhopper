@@ -9,6 +9,8 @@
 
   <div class="panel-body collapse in">
     <div class="form-group" v-if="it.type === 'its'">
+      <selectable-input label="Name" options="{{resource.its_targets}}" selected="{{@ it.name}}"></selectable-input>
+
       <label>
         Name
         <input type="text" class="form-control" required v-model="it.name">
