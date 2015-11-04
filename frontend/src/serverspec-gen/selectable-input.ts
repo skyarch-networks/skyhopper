@@ -27,9 +27,6 @@ export default Vue.extend({
 
   },
   computed: {
-    opt: function () {
-      return this.options.map((o: string) => {return {text: o, value: o}; });
-    },
     manual: function () {
       return this.manual_check || this.force_manual;
     },

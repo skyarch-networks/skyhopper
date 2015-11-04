@@ -57,8 +57,8 @@ export default Vue.extend({
     },
 
     // return [{text: TYPE, value: TYPE}, ...]
-    resourceTypesOpt: function () {
-      return _.keys(this.serverspec_info).map((t: string) => {return {text: t, value: t}; });
+    resourceTypes: function () {
+      return _.keys(this.serverspec_info);
     },
 
     // return selected resource info
