@@ -16,7 +16,7 @@
       </button>
 
       <div v-repeat="desc: ast">
-        <resource-panel desc="{{@ desc}}" idx="{{$index}}" resource_types="{{resourceTypes}}"></resource-panel>
+        <resource-panel desc="{{@ desc}}" idx="{{$index}}" serverspec_info="{{info}}"></resource-panel>
       </div>
     </div>
 

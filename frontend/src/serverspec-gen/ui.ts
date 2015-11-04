@@ -21,7 +21,6 @@ class VueMain extends Vue {
   private info: Info.ServerspecInfo;
 
   private rubyCode:      string;
-  private resourceTypes: string[];
 
   constructor(ast: ASTInterface.Describe[], info: Info.ServerspecInfo) {
     this.ast  = ast;
@@ -39,7 +38,6 @@ class VueMain extends Vue {
       },
       computed: {
         rubyCode:     this._rubyCode,
-        resourceTypes: this._resourceTypes,
       },
       ready: () => { console.log(this); }
     });
@@ -77,10 +75,6 @@ class VueMain extends Vue {
     return `require 'serverspec_helper'
 
 ${ast.to_ruby()}`;
-  }
-
-  _resourceTypes(): string[] {
-    return _.keys(this.info);
   }
 }
 

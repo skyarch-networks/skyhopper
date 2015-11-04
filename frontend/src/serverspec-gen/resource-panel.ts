@@ -13,8 +13,8 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
-    resource_types: {
-      type: Array,
+    serverspec_info: {
+      type: Object,
       required: true,
     },
   },
@@ -56,7 +56,7 @@ export default Vue.extend({
       return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
     },
     resourceTypesOpt: function () {
-      return this.resource_types.map((t: string) => {return {text: t, value: t}; });
+      return _.keys(this.serverspec_info).map((t: string) => {return {text: t, value: t}; });
     },
   },
   ready: function() {
