@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'active_support'
+require 'active_support/core_ext'
 require 'serverspec'
 require 'json'
 require 'drb/drb'
@@ -25,9 +27,11 @@ class ServerspecInfoRemote
     res = {}
 
     types.each do |t|
-      res[t] = {}
-      res[t][:matchers] = matchers(t)
-      res[t][:its_targets] = its_targets(t)
+      snaked_t = t.to_s.underscore.to_sym
+
+      res[snaked_t] = {}
+      res[snaked_t][:matchers] = matchers(t)
+      res[snaked_t][:its_targets] = its_targets(t)
     end
 
     return res

@@ -16,7 +16,7 @@
       </button>
 
       <div v-repeat="desc: ast">
-        <resource-panel desc="{{@ desc}}" idx="{{$index}}"></resource-panel>
+        <resource-panel desc="{{@ desc}}" idx="{{$index}}" resource_types="{{resourceTypes}}"></resource-panel>
       </div>
     </div>
 
@@ -34,5 +34,9 @@
   </div>
 </div>
 
-<script id="resource-panel-template" type="text/template"> <%= render partial: 'gen_resource', locals: {resource_types: @resource_types} %> </script>
+<script type="text/javascript">
+var SERVERSPEC_INFO =  <%= @serverspec_info.to_json.html_safe %>
+</script>
+
+<script id="resource-panel-template" type="text/template"> <%= render 'gen_resource' %> </script>
 <script id="it-panel-template"       type="text/template"> <%= render 'gen_it' %> </script>

@@ -197,9 +197,8 @@ describe ServerspecsController, type: :controller do
       end
     end
 
-    it 'should assign @resource_types' do
-      expect(assigns[:resource_types]).to be_a Array
-      expect(assigns[:resource_types]).to be_all{|x|x.is_a? String}
+    it 'should assign @serverspec_info' do
+      expect(assigns[:serverspec_info]).to be_a Hash
     end
   end
 

@@ -13,6 +13,10 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
+    resource_types: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
     addIt: function () {
@@ -50,6 +54,9 @@ export default Vue.extend({
   computed: {
     title: function () {
       return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
+    },
+    resourceTypesOpt: function () {
+      return this.resource_types.map((t: string) => {return {text: t, value: t}; });
     },
   },
   ready: function() {

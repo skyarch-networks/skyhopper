@@ -21,7 +21,8 @@ describe ServerspecInfo do
 
     it 'has Selinux key' do
       expect(subject.keys).to be_a Array
-      expect(subject.keys).to include :Selinux
+      expect(subject.keys).to include :selinux
+      expect(subject.keys).to be_all{|type| type.to_s =~ /^[a-z0-9_]+$/}
     end
 
     it 'matchers' do
