@@ -26,7 +26,12 @@ Vue.component('bootstrap-tooltip', {
       required: true,
     },
   },
-  template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content class="content"><slot name="content"></slot></content></span>',
+  template: `
+<span data-toggle="tooltip" data-original-title="{{title}}">
+  <content class="content">
+    <slot name="content"></slot>
+  </content>
+</span>`,
   compiled: function () {
     console.log(this);
     $(this.$el).tooltip();
