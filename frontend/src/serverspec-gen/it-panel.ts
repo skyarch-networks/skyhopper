@@ -12,7 +12,11 @@ export default Vue.extend({
     idx: {
       type: Number,
       required: true,
-    }
+    },
+    resource: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
 
