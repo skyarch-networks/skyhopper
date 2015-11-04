@@ -3,7 +3,7 @@
 export default Vue.extend({
   template: '#selectable-input-template',
   el: () => {return document.createElement('div'); },
-  data: () => {return {manual: false, id: _.uniqueId('selectable-input-id-')}; },
+  data: () => {return {manual_check: false, id: _.uniqueId('selectable-input-id-')}; },
   props: {
     label: {
       type: String,
@@ -30,8 +30,15 @@ export default Vue.extend({
     opt: function () {
       return this.options.map((o: string) => {return {text: o, value: o}; });
     },
+    manual: function () {
+      return this.manual_check || this.force_manual;
+    },
+    force_manual: function () { return this.options.length === 0; },
   },
   ready: function() {
+    if (!this.force_manual) {
+      this.selected = this.options[0];
+    }
     console.log(this);
   },
 });

@@ -1,9 +1,7 @@
 <label v-text="label" v-attr="for: id"></label>
 
-<br>
-
-<label>
-  Manual: <input type="checkbox" v-model="manual">
+<label class="pull-right" v-if="!force_manual">
+  Manual: <input type="checkbox" v-model="manual_check">
 </label>
 
 <div v-if="manual">
@@ -11,5 +9,5 @@
 </div>
 
 <div v-if="!manual">
-  <select v-attr="id: id" v-model="selected" options="opt"></select>
+  <select v-attr="id: id" class="form-control" v-model="selected" options="opt"></select>
 </div>
