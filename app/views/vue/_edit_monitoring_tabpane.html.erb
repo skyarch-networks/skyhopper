@@ -14,6 +14,7 @@
 
 <%= render 'monitorings/modal_trigger_setting_description' %>
 
+
 <form>
   <div class="row" v-for="master in master_monitorings">
     <div class="col-md-2 col-sm-6" style="height: 32px">
@@ -61,6 +62,34 @@
     </div>
   </div>
 </form>
+<hr>
+<div-loader v-if="temp_loading"></div-loader>
+<div class="row" v-if="!temp_loading">
+  <div class="col-md-4 col-sm-6">
+    <h4 class="page-header"><%= t 'monitoring.zabbix_templates' %></h4>
+    <table class="table table-condensed">
+      <tr>
+        <th>Physical ID</th>
+        <th>Linked</th>
+        <th></th></tr>
+      <tr v-repeat="l: linked_resources">
+        <td>{{l.resource}}</td>
+        <td v-if="l.linked"><%= glyphicon 'ok text-success' %></td>
+        <td v-if="!l.linked"><%= glyphicon 'remove text-danger' %></td>
+        <td v-if="l.linked">
+          <a href="#" data-toggle="modal" v-on="click: edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-default">
+            <%= glyphicon 'edit' %> <%= t 'monitoring.btn.edit' %></a>
+        </td>
+        <td v-if="!l.linked">
+          <a href="#" data-toggle="modal" v-on="click: edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-primary">
+            <%= glyphicon 'link' %> <%= t 'monitoring.btn.link' %></a>
+        </td>
+      </tr>
+    </table>
+    <%= render 'monitorings/modal_update_templates' %>
+  </div>
+  <div class="col-md-8 col-sm-6"></div>
+</div>
 
 <div class="form-actions-top">
   <a v-if="!loading" href="#" class="btn btn-sm btn-primary" @click="submit()"><%= t 'helpers.titles.save' %></a>
