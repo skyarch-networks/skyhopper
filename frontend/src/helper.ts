@@ -43,7 +43,8 @@ const Loader = Vue.extend({
   props: {
     text: {
       type: String,
-      default: t('common.msg.loading'),
+      // XXX: When test, t is undefined...
+      default: typeof t !== 'undefined' ? t('common.msg.loading') : "",
     },
   },
 });
