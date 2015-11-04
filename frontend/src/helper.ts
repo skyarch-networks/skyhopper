@@ -43,11 +43,9 @@ const Loader = Vue.extend({
   props: {
     text: {
       type: String,
+      default: t('common.msg.loading'),
     },
   },
-  data: () => {return {
-    text: t('common.msg.loading'),
-  }; },
 });
 
 Vue.component('div-loader', Loader);
