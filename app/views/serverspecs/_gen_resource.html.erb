@@ -31,7 +31,7 @@
     <button class="btn btn-success" v-on="click: addIts(desc)"><%=t('serverspecs.generator.add_its')%></button>
 
     <div v-repeat="it: desc.body">
-      <it-panel it="{{@ it}}" idx="{{$index}}">
+      <it-panel it="{{@ it}}" idx="{{$index}}" resource="{{resource}}">
       </it-panel>
     </div>
   </div>
