@@ -38,7 +38,8 @@ describe ServerspecInfo do
       is_expected.not_to be_empty
       subject.each do |_, value|
         expect(value[:its_targets]).to be_a Array
-        expect(value[:matchers]).to be_all{|x|x.is_a? Symbol}
+        expect(value[:its_targets]).to be_all{|x|x.is_a? Symbol}
+        expect(value[:its_targets]).to be_all{|x| x.to_s.start_with? ':'}
       end
     end
   end

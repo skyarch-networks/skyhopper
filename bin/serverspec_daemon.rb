@@ -72,6 +72,7 @@ class ServerspecInfoRemote
     return ms
       .reject{|m| m.to_s.end_with?('?')}
       .select{|m| klass.instance_method(m).parameters.empty?}
+      .map{|m| :":#{m}"}
   end
 end
 
