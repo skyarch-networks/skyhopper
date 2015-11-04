@@ -1,6 +1,6 @@
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <button class="btn btn-danger pull-right btn-xs" @click="$parent.removeDescribe(idx)"><span class="glyphicon glyphicon-remove"></span></button>
+    <button class="btn btn-danger pull-right btn-xs" @click="$parent.removeDescribe(desc)"><span class="glyphicon glyphicon-remove"></span></button>
     <span class="pull-right">&nbsp&nbsp</span>
     <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
     <h3 class="panel-title">{{title}}</h3>
@@ -32,7 +32,7 @@
     <button class="btn btn-success" @click="addIts(desc)"><%=t('serverspecs.generator.add_its')%></button>
 
     <div v-for="it in desc.body">
-      <it-panel :it.sync="it" :idx="$index" :resource="resource">
+      <it-panel :it.sync="it" :resource="resource">
       </it-panel>
     </div>
   </div>

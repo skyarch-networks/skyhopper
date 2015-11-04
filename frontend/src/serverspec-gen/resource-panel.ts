@@ -1,5 +1,7 @@
 /// <reference path="../../declares.d.ts" />
 
+import * as ASTInterface from './ast-interface';
+
 export default Vue.extend({
   template: '#resource-panel-template',
   el: () => { return document.createElement('div'); },
@@ -7,10 +9,6 @@ export default Vue.extend({
     desc: {
       type: Object,
       twoWay: true,
-      required: true,
-    },
-    idx: {
-      type: Number,
       required: true,
     },
     serverspec_info: {
@@ -36,8 +34,8 @@ export default Vue.extend({
       });
     },
 
-    removeIt: function(idx: number) {
-      this.desc.body.$remove(idx);
+    removeIt: function(it: ASTInterface.It|ASTInterface.Its) {
+      this.desc.body.$remove(it);
     },
 
     accordionToggle: function () {
