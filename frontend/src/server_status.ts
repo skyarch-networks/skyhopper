@@ -88,9 +88,10 @@ class App extends Vue {
   static TEMPLATE_ID = '#toggle-button-template';
 
   private state: string;
-  constructor(private model: Server) {
+  constructor(private model: Server, el: HTMLElement) {
     super();
     this._init({
+      el: el,
       data: {state: this.state},
       template: App.TEMPLATE_ID,
       methods: {
@@ -191,10 +192,10 @@ class App extends Vue {
 }
 
 function Build(kind: string): void {
-  const vm = new App(new Server(kind));
-  const e = document.createElement('div');
-  vm.$mount(e);
-  vm.$after(App.TEMPLATE_ID);
+  const el = document.createElement('div');
+  const parent = document.querySelector(App.TEMPLATE_ID).parentElement;
+  parent.appendChild(el);
+  const vm = new App(new Server(kind), el);
 };
 
 function Available(): boolean {
