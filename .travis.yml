@@ -13,6 +13,7 @@ branches:
   except: /^no-ci-.*$/
 
 before_script:
+  - bundle exec ruby bin/serverspec_daemon.rb &
   - mkdir ~/.chef
   - cp .travis/knife.rb ~/.chef/knife.rb
   - cp .travis/test.pem ~/.chef/test.pem
