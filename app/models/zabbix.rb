@@ -696,7 +696,7 @@ class Zabbix
   def delete_hosts_by_resource(physical_id)
     host_id = get_host_id(physical_id)
     return if host_id == nil
-    delete_hosts(host_id)
+    delete_hosts([host_id])
   end
 
   # MySQL関連のアイテムを取得する際はkindが"search"になります
