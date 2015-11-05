@@ -13,11 +13,11 @@
     <div class="panel-group">
       <div class="form-group">
         <label><%= t('key_pairs.region') %></label>
-        <button class="btn btn-default btn-sm" style="float: right" v-attr="disabled: loading" v-on="click: reload"><span class="glyphicon glyphicon-refresh"></span></button>
+        <button class="btn btn-default btn-sm" style="float: right" :disabled="loading" @click="reload"><span class="glyphicon glyphicon-refresh"></span></button>
       </div>
       <div class="panel panel-primary" v-if="regions">
         <div class="list-group">
-          <a href="#" v-on="click: switch_region(region.name)" v-repeat="region: regions" v-class="active: region.selected, disabled: has_no_key_pairs(region.name)" class="list-group-item">
+          <a href="#" @click="switch_region(region.name)" v-for="region in regions" :class="{active: region.selected, disabled: has_no_key_pairs(region.name)}" class="list-group-item">
             {{region.name}}
             <span class="badge" v-text="number_of_key_pairs(region.name) | zero_as_blank"></span>
           </a>
@@ -40,14 +40,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-repeat="key_pair : key_pairs" v-show="is_selected(key_pair.region)">
+        <tr v-for="key_pair in key_pairs" v-show="is_selected(key_pair.region)">
           <td>{{key_pair.name}}</td>
           <td>{{key_pair.fingerprint}}</td>
           <td>{{key_pair.region}}</td>
           <td>{{key_pair.using_sign}}</td>
           <% if @allow_change %>
             <td>
-              <button class="btn-link" v-if="!key_pair.using" v-on="click: delete_key_pair(key_pair)">
+              <button class="btn-link" v-if="!key_pair.using" @click="delete_key_pair(key_pair)">
                 <span class="glyphicon glyphicon-trash"></span>
               </button>
             </td>

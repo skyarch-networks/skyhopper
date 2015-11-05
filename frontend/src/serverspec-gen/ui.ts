@@ -50,8 +50,8 @@ class VueMain extends Vue {
     this.ast.push({resourceType: "command", name: "NAME", body: []});
   }
 
-  removeDescribe(idx: number): void {
-    (<any>this.ast).$remove(idx);
+  removeDescribe(desc: ASTInterface.Describe): void {
+    (<any>this.ast).$remove(desc);
   }
 
   save(): void {

@@ -210,8 +210,8 @@ function render_user_admin(value, key, lang){
     var email = value[1];
     return image+" "+email;
   }else if (key === 'role') {
-    var admin = (value[0] ? "<span class='label label-info'>admin</span>" : "");
-    var master = (value[1] ? "<span class='label label-warning'>master</span>" : "");
+    var admin = (value[1] ? "<span class='label label-info'>admin</span>" : "");
+    var master = (value[0] ? "<span class='label label-warning'>master</span>" : "");
 
     return master+"  "+admin;
   }else{
