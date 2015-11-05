@@ -22,7 +22,7 @@
       <div class="col-md-2 col-sm-3">
         <div class="panel-group">
           <div v-if="uncommons.length !== 0">
-            <div class="panel panel-default" v-repeat="r: resources">
+            <div class="panel panel-default" v-for="r in resources">
               <div class="panel-heading">
                 <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" href="#monitorings-{{*r.physical_id}}">{{*r.physical_id}}</a>
@@ -30,8 +30,8 @@
               </div>
               <div class="panel-collapse collapse" id="monitorings-{{r.physical_id}}">
                 <div class="list-group">
-                  <a href="#" v-repeat="uncommons" class="list-group-item" v-on="click: show_zabbix_graph(r.physical_id, item)">{{*name}}</a>
-                  <a href="#" v-on="click: show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
+                  <a href="#" v-for="value in uncommons" class="list-group-item" @click="show_zabbix_graph(r.physical_id, value.item)">{{value.name}}</a>
+                  <a href="#" @click="show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
                 </div>
               </div>
             </div>
@@ -45,7 +45,7 @@
             </div>
             <div class="panel-collapse collapse" id="shared">
               <div class="list-group">
-                <a v-repeat="commons" href="#" class="list-group-item" v-on="click: show_url()">{{*name}}</a>
+                <a v-for="val in commons" href="#" class="list-group-item" @click="show_url()">{{val.name}}</a>
               </div>
             </div>
           </div>
@@ -70,9 +70,9 @@
                       <span class="input-group-addon">
                           <span>To: </span>
                       </span>
-                      <input v-attr="disabled: isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                      <input :disabled="isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
                       <span class="input-group-addon">
-                          <button v-attr="disabled: isShow" v-on="click: showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
+                          <button :disabled="isShow" @click="showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
                       </span>
                   </div>
               </div>
@@ -91,10 +91,10 @@
           <%# URL %>
           <div class="row" v-if="showing_url">
             <div class="col-md-11 col-sm-12">
-              <blockquote class="h5" v-repeat="url_status">
+              <blockquote class="h5" v-for="value in url_status">
                 <div class="h5">
-                  <strong><u>{{name}}</u>
-                    <span v-class="text-success: status === 'OK', text-danger: status !== 'OK'">{{status}}</span>
+                  <strong><u>{{value.name}}</u>
+                    <span :class="{text-success: status === 'OK', text-danger: status !== 'OK'}">{{value.status}}</span>
                   </strong>
                 </div>
 
@@ -111,11 +111,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-repeat="data">
-                      <td>{{url}}</td>
-                      <td>{{response_code}}</td>
-                      <td>{{download_speed}}</td>
-                      <td>{{response_time}}</td>
+                    <tr v-for="item in data">
+                      <td>{{item.url}}</td>
+                      <td>{{item.response_code}}</td>
+                      <td>{{item.download_speed}}</td>
+                      <td>{{item.response_time}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -141,7 +141,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-repeat="p: problems" v-class="danger: p.value === '1'">
+          <tr v-for="p in problems" :class="{danger: p.value === '1'}">
             <td v-text="p.hosts"></td>
             <td v-text="p.triggerid"></td>
             <td v-text="p.description"></td>

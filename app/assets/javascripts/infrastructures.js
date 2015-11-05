@@ -24,7 +24,7 @@
 //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var infraindex = require('./modules/loadindex');
+  //var infraindex = require('./modules/loadindex');
   var newVM = require('./modules/newVM');
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
@@ -176,7 +176,7 @@
       cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
         self.params = data;
         _.each(data, function (val, key) {
-          self.result.$add(key, val.Default);
+          Vue.set(self.result, key, val.Default);
         });
         app.loading = false;
       }).fail(alert_danger(function () {
@@ -716,7 +716,7 @@
       },
     },
     data: function () {return {
-      rds: null,
+      rds: {},
       serverspec: {},
     };},
     template: '#rds-tabpane-template',
@@ -750,7 +750,7 @@
         return !!(s.username && s.password && s.database);
       },
     },
-    compiled: function () {
+    created: function () {
       var self = this;
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
@@ -995,7 +995,9 @@
       schedule:            {},
       loading_volumes:     false,
       attachable_volumes:  [],
-
+      change_status: t('ec2_instances.change_status'),
+      attach_vol: t('ec2_instances.attach'),
+      changing_status: t('ec2_instances.changing_status'),
     };},
     template: '#ec2-tabpane-template',
     methods: {
@@ -1467,7 +1469,7 @@
         if (self.recipes[self.selected_cookbook]) { return; }
 
         self.ec2.recipes(self.selected_cookbook).done(function (data) {
-          self.recipes.$add(self.selected_cookbook, data);
+          Vue.set(self.recipes, self.selected_cookbook, data);
         }).fail(alert_danger());
       },
       update: function () {
@@ -1583,12 +1585,23 @@
 
   Vue.component('serverspec-results-tabpane', {
     template: '#serverspec-results-tabpane-template',
-    data: function () {return {
-        data: null,
-        columns: null,
+    replace: true,
+    props: {
+      data: {
+        type: Array,
+        required: false,
+      },
+      columns: Array,
+      filterKey: String
+    },
+    data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
+      return {
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['serverspec_results'],
         lang: null,
         pages: 10,
@@ -1602,7 +1615,7 @@
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -1658,13 +1671,6 @@
         var empty = t('serverspecs.msg.empty-results');
         if(self.data.length === 0){ $('#empty_results').show().html(empty);}
       }).fail(alert_danger(self.show_ec2));
-    },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
     },
   });
 
@@ -1754,7 +1760,18 @@
 
   Vue.component('operation-sched-tabpane',  {
     template: '#operation-sched-tabpane-template',
-    data: function () {return {
+    replace: true,
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
+    data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
+      return {
       event_loading:   false,
       instances: null,
       dates: [{day: t('operation_scheduler.dates.monday'),   checked: false, value : 1},
@@ -1781,11 +1798,8 @@
       },
       sources: [],
       is_specific: null,
-      data: null,
-      columns: null,
       sortKey: '',
-      filterKey: '',
-      reversed: {},
+      sortOrders: sortOrders,
       option: ['operation_sched'],
       lang: null,
       pages: 10,
@@ -1957,7 +1971,6 @@
       var res = new Resource(current_infra);
       var events = [];
       //TODO: get all assigned dates and print to calendar. :D
-      self.columns = ['physical_id', 'screen_name', 'id'];
       res.index().done(function (resources) {
 
         self.data = resources.ec2_instances.map(function (item) {
@@ -1974,13 +1987,6 @@
         if(self.data.length === 0){ $('#empty_results').show().html(empty);}
       });
     },
-    compiled: function () {
-      // initialize reverse state
-      var self = this;
-      this.columns.forEach(function (key) {
-        self.reversed.$add(key, false);
-      });
-    },
     ready: function () {
       var self = this;
       self.$parent.loading = false;
@@ -1991,33 +1997,31 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         loading: true,
         option: ['infrastructure'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
-          };
-      },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
+      };
     },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -2037,18 +2041,12 @@
       },
     },
     created: function (){
-        var il = new Loader();
         var self = this;
         self.loading = true;
         var id =  queryString.project_id;
         var monthNames = ["January", "February", "March", "April", "May", "June",
                           "July", "August", "September", "October", "November", "December"
                           ];
-        if (id >3)
-          self.columns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
-        else
-          self.columns = ['stack_name','region', 'keypairname', 'id'];
-
        $.ajax({
            cache: false,
            url:'/infrastructures?&project_id='+id,
@@ -2111,22 +2109,13 @@
     });
   };
 
-  var index = function(){
-
-    if (app){
-      app.$destroy();
-    }else{
-      infraindex = infraindex();
-    }
-
-  };
-
   var SHOW_INFRA_ID = '#infra-show';
 
   var show_infra = function (infra_id) {
     current_infra = new Infrastructure(infra_id);
 
     var l = new Loader();
+    l.text = "Loading...";
     l.$mount(SHOW_INFRA_ID);
     if (app) {
       app.$destroy();
@@ -2150,6 +2139,7 @@
     current_infra = new Infrastructure(infra_id);
 
     var l = new Loader();
+    l.text = "Loading...";
     l.$mount(SHOW_INFRA_ID);
     if (app) {
       app.$destroy();
@@ -2175,6 +2165,7 @@
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
+      l.text = "Loading...";
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
@@ -2188,6 +2179,7 @@
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
+      l.text = "Loading...";
       l.$mount(SHOW_INFRA_ID);
       infra.delete_stack().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
@@ -2257,8 +2249,24 @@
 // ================================================================
 // event bindings
 // ================================================================
+  var index = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: [],
+      gridData: []
+    },
+    created: function(){
+        if (queryString.project_id >3)
+          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+        else
+          this.gridColumns = ['stack_name','region', 'keypairname', 'id'];
+    },
+  });
+
+
   $(document).ready(function(){
-    index();
+
     $('#infrastructure_region').selectize({
       create: false,
       sortField: 'text'

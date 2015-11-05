@@ -14,9 +14,7 @@
   //browserify functions for vue filters functionality
   var wrap        = require('./modules/wrap');
   var listen      = require('./modules/listen');
-  var dishesIndex = require('./modules/loadindex');
   var modal       = require('modal');
-
   var queryString = require('query-string').parse(location.search);
 
   var app;
@@ -24,32 +22,30 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['dish'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -72,8 +68,6 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  queryString.client_id;
-        self.columns = ['name','detail', 'status', 'id'];
 
        $.ajax({
            cache: false,
@@ -105,10 +99,13 @@
       roundup: function (val) { return (Math.ceil(val));},
     }
  });
-
-
-  $(document).ready(function(){
-    dishesIndex();
+  var dishIndex = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['name','detail', 'status', 'id'],
+      gridData: []
+    }
   });
 
   //    -----------------     functions

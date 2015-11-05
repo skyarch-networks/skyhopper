@@ -12,39 +12,36 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
-  var cf_templatesIndex = require('./modules/loadindex');
 
   var app;
 
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['cf_template'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -64,11 +61,8 @@
       },
     },
     created: function (){
-        var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  queryString.client_id;
-        self.columns = ['subject','details', 'id'];
 
        $.ajax({
            cache: false,
@@ -102,7 +96,6 @@
 
   var editor;
   $(document).ready(function(){
-    cf_templatesIndex();
 
     if ($('#description').length > 0) {
       editor = ace.edit("description");
@@ -120,7 +113,16 @@
       $("#ace-loading").hide();
     }
   });
-  
+
+  var cf_templatesIndex = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['subject','details', 'id'],
+      gridData: []
+    }
+  });
+
 
   $(document).on("click", ".show-template", function () {
     var cf_template_id = $(this).closest("a").attr("data-managejson-id");

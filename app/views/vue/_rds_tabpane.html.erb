@@ -68,7 +68,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t 'helpers.links.cancel' %></button>
-        <button class="btn btn-primary" v-on="click: gen_serverspec()" v-attr="disabled: !gen_serverspec_enable"><%= t 'infrastructures.btn.generate_serverspec' %></button>
+        <button class="btn btn-primary" @click="gen_serverspec()" :disabled="!gen_serverspec_enable"><%= t 'infrastructures.btn.generate_serverspec' %></button>
       </div>
     </div>
   </div>
@@ -94,7 +94,7 @@
 
       <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-        <button class="btn btn-warning" v-on="click: change_scale()"><%= t('helpers.links.change') %></button>
+        <button class="btn btn-warning" @click="change_scale()"><%= t('helpers.links.change') %></button>
       </div>
     </div>
   </div>
