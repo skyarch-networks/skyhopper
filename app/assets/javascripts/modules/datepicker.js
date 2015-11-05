@@ -32,7 +32,7 @@ exports.install = function(Vue, lang){
           dp.data("DateTimePicker").maxDate(current);
           vm.$set(key, moment(e.date._d).unix());
         }else{
-          vm.$set(key, moment(e.date._d).format('YYYY/MM/D h:mm a'));
+          vm.$set(key, moment(e.date._d).format('YYYY/MM/D H:mm'));
         }
 
         if(e.target.placeholder === "Start" || e.target.id === "op-sched-start")
