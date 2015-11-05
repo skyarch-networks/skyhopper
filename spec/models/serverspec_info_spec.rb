@@ -28,9 +28,12 @@ describe ServerspecInfo do
     it 'matchers' do
       is_expected.not_to be_empty
       subject.each do |_, value|
-        expect(value[:matchers]).to be_a Array
-        expect(value[:matchers]).to be_all{|x|x.is_a? Symbol}
-        expect(value[:matchers]).not_to include :be_exists
+        expect(value[:matchers]).to be_a Hash
+
+        expect(value[:matchers].keys).to be_all{|x| x.is_a? Symbol}
+        expect(value[:matchers].values).to be_all{|x| x.is_a? Hash}
+        expect(value[:matchers].values).to be_all{|x| x.has_key? :parameters}
+        expect(value[:matchers].values).to be_all{|x| x.has_key? :chains}
       end
     end
 

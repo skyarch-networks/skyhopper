@@ -56,7 +56,7 @@ class ServerspecInfoRemote
 
     # Ref: https://www.relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/exist-matcher
     if ms.delete(:exists?)
-      res[:exist] = {arguments: [], chains: []}
+      res[:exist] = {parameters: [], chains: []}
     end
 
     ms.select!{|m| m.to_s.end_with? '?'}
