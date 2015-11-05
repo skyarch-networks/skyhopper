@@ -3,7 +3,9 @@
 
 import ResourcePanel     from './resource-panel';
 import ItPanel           from './it-panel';
+import SelectableInput   from './selectable-input';
 import Serverspec        from '../models/serverspec';
+import * as Info         from './serverspec_info';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
@@ -11,12 +13,20 @@ import {Prompt, Alert, AlertForAjaxStdError} from '../modal';
 
 import * as qs from 'query-string';
 
-class VueMain extends Vue {
-  private ast: ASTInterface.Describe[];
-  private rubyCode:     string;
+// This is defined by rails in eruby.
+declare const SERVERSPEC_INFO: Info.ServerspecInfo;
 
-  constructor(ast: ASTInterface.Describe[]) {
-    this.ast = ast;
+
+class VueMain extends Vue {
+  private ast:  ASTInterface.Describe[];
+  private info: Info.ServerspecInfo;
+
+  private rubyCode:      string;
+
+  constructor(ast: ASTInterface.Describe[], info: Info.ServerspecInfo) {
+    this.ast  = ast;
+    this.info = info;
+
     super({
       el: '#main',
       data: {
@@ -72,5 +82,6 @@ ${ast.to_ruby()}`;
 if (document.querySelector('#main')) {
   Vue.component("resource-panel", ResourcePanel);
   Vue.component("it-panel", ItPanel);
-  const __ = new VueMain([]);
+  Vue.component("selectable-input", SelectableInput);
+  const __ = new VueMain([], SERVERSPEC_INFO);
 }

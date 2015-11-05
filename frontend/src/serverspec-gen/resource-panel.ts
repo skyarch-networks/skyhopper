@@ -13,6 +13,10 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
+    serverspec_info: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
     addIt: function () {
@@ -50,6 +54,16 @@ export default Vue.extend({
   computed: {
     title: function () {
       return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
+    },
+
+    // return [{text: TYPE, value: TYPE}, ...]
+    resourceTypesOpt: function () {
+      return _.keys(this.serverspec_info).map((t: string) => {return {text: t, value: t}; });
+    },
+
+    // return selected resource info
+    resource: function () {
+      return this.serverspec_info[this.desc.resourceType];
     },
   },
   ready: function() {
