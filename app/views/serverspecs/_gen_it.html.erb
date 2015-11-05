@@ -15,7 +15,7 @@
     </div>
 
     <div class="form-group">
-      <selectable-input label="Matcher" :options="resource.matchers" :selected.sync="it.matcher.name"></selectable-input>
+      <selectable-input label="Matcher" :options="matcher_names" :selected.sync="it.matcher.name"></selectable-input>
     </div>
 
     <div class="form-group">
@@ -24,6 +24,5 @@
         <input type="checkbox" class="form-control" v-model="it.should">
       </label>
     </div>
-
   </div>
 </div>

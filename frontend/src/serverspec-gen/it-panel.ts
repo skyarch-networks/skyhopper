@@ -15,7 +15,6 @@ export default Vue.extend({
     },
   },
   methods: {
-
     // XXX: DRY (resource-panel.ts)
     accordionToggle: function () {
       const el = (<HTMLElement>this.$el).querySelector('.collapse');
@@ -28,7 +27,11 @@ export default Vue.extend({
       $(up).addClass("glyphicon-chevron-down");
       $(down).addClass("glyphicon-chevron-up");
     },
-
+  },
+  computed: {
+    matcher_names: function () {
+      return _.keys(this.resource.matchers);
+    },
   },
   ready: function() {
     console.log(this);
