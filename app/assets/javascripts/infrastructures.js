@@ -2041,7 +2041,6 @@
       },
     },
     created: function (){
-        var il = new Loader();
         var self = this;
         self.loading = true;
         var id =  queryString.project_id;
@@ -2116,6 +2115,7 @@
     current_infra = new Infrastructure(infra_id);
 
     var l = new Loader();
+    l.text = "Loading...";
     l.$mount(SHOW_INFRA_ID);
     if (app) {
       app.$destroy();
@@ -2139,6 +2139,7 @@
     current_infra = new Infrastructure(infra_id);
 
     var l = new Loader();
+    l.text = "Loading...";
     l.$mount(SHOW_INFRA_ID);
     if (app) {
       app.$destroy();
@@ -2164,6 +2165,7 @@
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
+      l.text = "Loading...";
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
@@ -2177,6 +2179,7 @@
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
       var infra = new Infrastructure(infra_id);
       var l = new Loader();
+      l.text = "Loading...";
       l.$mount(SHOW_INFRA_ID);
       infra.delete_stack().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
