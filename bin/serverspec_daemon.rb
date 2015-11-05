@@ -13,7 +13,12 @@ class ServerspecInfoRemote
 =begin
 {
   RESOURCE_TYPE: {
-    matchers: [:be_readable, ...],
+    matchers: {
+      be_readable: {
+        parameters: [:name1, name2],
+        chains:    [:name1, name2],
+      },
+    },
     its_targets: [:md5sum, ...],
   },
 }
@@ -42,22 +47,42 @@ class ServerspecInfoRemote
   end
 
   # @param [Symbol] resource_type
-  # @return [Array<Symbol>]
+  # @return [Hash{Symbol => Hash}] {NAME: {parameters: [...], chains: [...]}}
   def matchers(resource_type)
     klass = Serverspec::Type.const_get(resource_type)
     ms = klass.instance_methods(false)
 
-    res = []
+    res = {}
 
     # Ref: https://www.relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/exist-matcher
     if ms.delete(:exists?)
-      res.push(:exist)
+      res[:exist] = {arguments: [], chains: []}
     end
 
-    # TODO: get parameter infomation, chain infomation...
-    return res.concat(ms.map(&:to_s).select{|m|m.end_with?('?')}.map{|m| :"be_#{m.chop}"})
+    ms.select!{|m| m.to_s.end_with? '?'}
+
+    ms.each do |name|
+      res[to_be_style(name)] = matcher_detail(klass, name)
+    end
+
+    return res
   end
 
+  # @param [Class] klass
+  # @param [Symbol] matcher_name `hoge?` style name
+  # @return [Hash{Symbol => Array}] {parameters: [...], chains: [...]}
+  def matcher_detail(klass, matcher_name)
+    method = klass.instance_method(matcher_name)
+    params = method.parameters.map(&:last)
+    # TODO: chains, もしチェインが存在すればparamsはemptyになるべき
+    return {parameters: params, chains: []}
+  end
+
+  # hoge? => be_hoge
+  # @param [Symbol] name
+  def to_be_style(name)
+    return :"be_#{name.to_s.chop}"
+  end
 
   # @param [Symbol] resource_type
   # @return [Array<Symbol>]
@@ -67,7 +92,7 @@ class ServerspecInfoRemote
 
     return ms
       .reject{|m| m.to_s.end_with?('?')}
-      .select{|m| klass.instance_method(m).parameters.empty?}
+      .select{|m| klass.instance_method(m).arity == 0}
       .map{|m| :":#{m}"}
   end
 end
