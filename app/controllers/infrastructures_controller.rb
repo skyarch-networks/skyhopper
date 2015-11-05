@@ -297,6 +297,7 @@ class InfrastructuresController < ApplicationController
     ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
     start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone
     end_date = Time.at(selected_instance[:end_date].to_i).in_time_zone
+
     if ops_exists
       ops_exists.start_date = start_date
       ops_exists.end_date =  end_date
@@ -314,6 +315,7 @@ class InfrastructuresController < ApplicationController
           resource_id:  selected_instance[:id],
           start_date:   start_date,
           end_date:     end_date,
+          user_id: current_user.id,
         )
         RecurringDate.create!(
           operation_duration_id: ops.id,

@@ -9,7 +9,7 @@
 class Operation_worker
 
   def perform
-    # ws = WSConnector.new('notifications', User.find(user_id).ws_key)
+
     now = Time.new.in_time_zone
     operation = OperationDuration.all
     operation.each do |item|
@@ -21,13 +21,13 @@ class Operation_worker
           end_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
           case item.recurring_date.repeats
             when "everyday"
-              evaluate_evr(start_time, end_time, now, resource)
+              evaluate_evr(start_time, end_time, now, resource, item.user_id)
             when "weekdays"
-              evaluate_weekdays(start_time, end_time, now, resource)
+              evaluate_weekdays(start_time, end_time, now, resource, item.user_id)
             when "weekends"
-              evaluate_weekends(start_time, end_time, now, resource)
+              evaluate_weekends(start_time, end_time, now, resource, item.user_id)
             when "other"
-              evaluate_other(start_time, end_time, now, resource, item.recurring_date.dates)
+              evaluate_other(start_time, end_time, now, resource, item.recurring_date.dates, item.user_id)
           end
         else
           stop(resource)
@@ -39,42 +39,42 @@ class Operation_worker
     end
   end
 
-  def evaluate_evr(start_time, end_time, now, resource)
+  def evaluate_evr(start_time, end_time, now, resource, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
     if start_time <= now_time && end_time >= now_time
-      start(resource)
+      start(resource, user_id)
     else
-      stop(resource)
+      stop(resource, user_id)
     end
   end
 
-  def evaluate_weekdays(start_time, end_time, now, resource)
+  def evaluate_weekdays(start_time, end_time, now, resource, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
     if now.wday != 0 && now.wday != 6
       if start_time <= now_time && end_time >= now_time
-        start(resource)
+        start(resource, user_id)
       else
-        stop(resource)
+        stop(resource, user_id)
       end
     else
-      stop(resource)
+      stop(resource, user_id)
     end
   end
 
-  def evaluate_weekends(start_time, end_time, now, resource)
+  def evaluate_weekends(start_time, end_time, now, resource, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
     if now.wday == 0 || now.wday == 6
       if start_time <= now_time && end_time >= now_time
-        start(resource)
+        start(resource, user_id)
       else
-        stop(resource)
+        stop(resource, user_id)
       end
     else
-      stop(resource)
+      stop(resource, user_id)
     end
   end
 
-  def evaluate_other(start_time, end_time, now, resource, dates)
+  def evaluate_other(start_time, end_time, now, resource, dates, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
     dow =  Array.new
     dates.each do |item|
@@ -85,45 +85,40 @@ class Operation_worker
 
     if dow.include? now.wday
       if start_time <= now_time && end_time >= now_time
-        start(resource)
+        start(resource, user_id)
       else
-        stop(resource)
+        stop(resource, user_id)
       end
     else
-      stop(resource)
+      stop(resource, user_id)
     end
 
   end
 
-  def start(resource)
+  def start(resource, user_id)
+    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
+
     instance = resource.infrastructure.instance(resource.physical_id)
     if instance.status == :stopped
       instance.start
-      notify_ec2_status(resource, "Started: #{instance.physical_id} ")
-      Rails.logger.debug "Started: #{instance.physical_id} "
+      log_msg = "Started: #{instance.physical_id}. As Scheduled."
+      log = InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, user_id: user_id, details: log_msg, status: true)
+      ws.push_as_json({message: log.details, status: true, timestamp: Time.zone.now.to_s})
     end
 
   end
 
-  def stop(resource)
+  def stop(resource, user_id)
+    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
     instance = resource.infrastructure.instance(resource.physical_id)
     if instance.status == :running
       instance.stop
-      notify_ec2_status(resource, "Started: #{instance.physical_id} ")
-      Rails.logger.debug "Stopped: #{instance.physical_id}"
+      log_msg = "Stopped: #{instance.physical_id}. As Scheduled."
+
+      log = InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, user_id: user_id, details: log_msg, status: true)
+      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
     end
   end
 
-  def notify_ec2_status(resource, details)
-    Thread.new_with_db do
-      ws = WSConnector.new('ec2_status', resource.physical_id)
-      begin
-        InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, details: details)
-        ws.push_as_json(error: nil, msg: "#{resource.physical_id} status is #{details}")
-      rescue => ex
-        ws.push_error(ex)
-      end
-    end
-  end
 
 end
