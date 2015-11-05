@@ -3,18 +3,30 @@
 
 import ResourcePanel     from './resource-panel';
 import ItPanel           from './it-panel';
+import SelectableInput   from './selectable-input';
 import Serverspec        from '../models/serverspec';
+import * as Info         from './serverspec_info';
 import * as ASTInterface from './ast-interface';
 import * as AST          from './ast';
 
+import {Prompt, Alert, AlertForAjaxStdError} from '../modal';
+
 import * as qs from 'query-string';
 
-class VueMain extends Vue {
-  private ast: ASTInterface.Describe[];
-  private rubyCode:     string;
+// This is defined by rails in eruby.
+declare const SERVERSPEC_INFO: Info.ServerspecInfo;
 
-  constructor(ast: ASTInterface.Describe[]) {
-    this.ast = ast;
+
+class VueMain extends Vue {
+  private ast:  ASTInterface.Describe[];
+  private info: Info.ServerspecInfo;
+
+  private rubyCode:      string;
+
+  constructor(ast: ASTInterface.Describe[], info: Info.ServerspecInfo) {
+    this.ast  = ast;
+    this.info = info;
+
     super({
       el: '#main',
       data: {
@@ -38,19 +50,19 @@ class VueMain extends Vue {
     this.ast.push({resourceType: "command", name: "NAME", body: []});
   }
 
-  removeDescribe(idx: number): void {
-    (<any>this.ast).$remove(idx);
+  removeDescribe(desc: ASTInterface.Describe): void {
+    (<any>this.ast).$remove(desc);
   }
 
   save(): void {
-    bootstrap_prompt("Serverspec Generator", "filename").then((fname) => {
+    Prompt("Serverspec Generator", "filename").then((fname) => {
       const s = new Serverspec();
       const infra_id_str: string = qs.parse(location.search).infrastructure_id;
       const infra_id: number = infra_id_str ? parseInt(infra_id_str) : null;
       return s.create(fname, this.rubyCode, infra_id);
     }).then(
-      data => bootstrap_alert(t('serverspecs.serverspec'), data),
-      modal_for_ajax_std_error()
+      data => Alert(t('serverspecs.serverspec'), data),
+      AlertForAjaxStdError()
     ).then(() => {
       location.href = `/serverspecs${location.search}`;
     });
@@ -70,5 +82,6 @@ ${ast.to_ruby()}`;
 if (document.querySelector('#main')) {
   Vue.component("resource-panel", ResourcePanel);
   Vue.component("it-panel", ItPanel);
-  const __ = new VueMain([]);
+  Vue.component("selectable-input", SelectableInput);
+  const __ = new VueMain([], SERVERSPEC_INFO);
 }

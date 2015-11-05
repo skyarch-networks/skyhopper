@@ -53,6 +53,7 @@ gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
 gem 'sidekiq' # for Active Job
+gem 'crono' # for Active Job
 gem 'foreman', require: false
 
 group :development, :test do

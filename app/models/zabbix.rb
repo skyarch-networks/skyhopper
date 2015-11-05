@@ -84,8 +84,13 @@ class Zabbix
   # @return [Array<String>] list of linked templates
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    selected_templates = @sky_zabbix.template.get(output: ['name'], hostids: host_id).map{|x|x['name']}
-    return selected_templates
+    if host_id
+      selected_templates = @sky_zabbix.template.get(output: ['name', 'description'], hostids: host_id).map{|x|x['name']}
+      return selected_templates
+    else
+      return nil
+    end
+
   end
 
   # トリガーのオンオフを切り替える

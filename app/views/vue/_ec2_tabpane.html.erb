@@ -20,21 +20,23 @@
           <td>Status</td>
           <td>
             <%# TODO: I18n %>
-            <div-loader v-if="ec2_status_changing" text="<%= t('ec2_instances.changing_status') %>"></div-loader>
+            <div-loader v-if="ec2_status_changing" :text="changing_status"></div-loader>
             <span v-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
-            <bootstrap-tooltip title="<%= t('ec2_instances.change_status') %>">
+            <bootstrap-tooltip :title="change_status">
+              <template slot="content">
               <div class="btn-group">
-                <button href="#" v-class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" v-attr="disabled: ec2_status_changing">
+                <button href="#" :class="ec2_btn_class" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" :disabled="ec2_status_changing">
                   <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li v-class="disabled: running"><a v-on="click: start_ec2()"  href="#">Start</a></li>
-                  <li v-class="disabled: stopped"><a v-on="click: stop_ec2()"   href="#">Stop</a></li>
-                  <li v-class="disabled: stopped"><a v-on="click: reboot_ec2()" href="#">Reboot</a></li>
+                  <li :class="{disabled: running}"><a @click="start_ec2()"  href="#">Start</a></li>
+                  <li :class="{disabled: stopped}"><a @click="stop_ec2()"   href="#">Stop</a></li>
+                  <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#">Reboot</a></li>
                 </ul>
               </div>
+              </template>
             </bootstrap-tooltip>
           </td>
         </tr>
@@ -50,33 +52,37 @@
         <tr>
           <td>EBS</td>
           <td colspan="2">
-            <span v-repeat="block_device: ec2.block_devices" class="dropdown">
-              <bootstrap-tooltip title="Device name: {{block_device.device_name}}">
-                <a v-on="click: volume_selected = block_device.ebs.volume_id" v-class="btn-primary: is_root_device(block_device.device_name)" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span v-for="block_device in ec2.block_devices" class="dropdown">
+              <bootstrap-tooltip :title="block_device.device_name">
+                <template slot="content">
+                <a @click="volume_selected = block_device.ebs.volume_id" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   {{block_device.ebs.volume_id}}
                   <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="dropdown-header"><%= t('snapshots.snapshot') %></li>
-                  <li><a v-on="click: create_snapshot(block_device.ebs.volume_id)" href="#"><%= t('snapshots.create_snapshot') %></a></li>
+                  <li><a @click="create_snapshot(block_device.ebs.volume_id)" href="#"><%= t('snapshots.create_snapshot') %></a></li>
                   <li><a href="#snapshots-modal" data-toggle="modal"><%= t('snapshots.list_of_snapshots') %></a></li>
-                  <li><a v-on="click: open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
+                  <li><a @click="open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
                 </ul>
+                </template>
               </bootstrap-tooltip>
             </span>
-            <bootstrap-tooltip title="<%= t 'ec2_instances.attach' %>" class="dropdown" id="attachButton">
-              <a v-on="click: load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
+            <bootstrap-tooltip :title="attach_vol" class="dropdown" id="attachButton">
+              <template slot="content">
+              <a @click="load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
               <ul id="attachVolume" class="dropdown-menu">
 <!--                 <li><a href="#">Create Volume</a></li>
                 <li role="separator" class="divider"></li> -->
                 <li class="dropdown-header"><%= t 'ec2_instances.attachable_volumes' %></li>
                 <li class="dropdown-header" v-if="loading_volumes"><div-loader></div-loader></li>
-                <li v-repeat="volume: attachable_volumes" v-show="!loading_volumes">
-                  <a v-on="click: attach_volume(volume.volume_id)" href="#">{{volume.volume_id}} (Name: {{volume.tags.Name}}, size: {{volume.size}} GiB, type: {{volume.volume_type}})</a>
+                <li v-for="volume in attachable_volumes" v-show="!loading_volumes">
+                  <a @click="attach_volume(volume.volume_id)" href="#">{{volume.volume_id}} (Name: {{volume.tags.Name}}, size: {{volume.size}} GiB, type: {{volume.volume_type}})</a>
                 </li>
                 <li class="disabled" v-if="!loading_volumes && !attachable_volumes.length"><a href="#"><%= t 'ec2_instances.none' %></a></li>
               </ul>
+              </template>
             </bootstrap-tooltip>
           </td>
         </tr>
@@ -120,9 +126,9 @@
 
   <div class="form-actions-top col-xs-12">
 
-    <button v-attr="disabled: !running" v-if="!loading" v-on="click: bootstrap()" class="btn btn-primary">
+    <button :disabled="!running" v-if="!loading" @click="bootstrap()" class="btn btn-primary">
       <bootstrap-tooltip v-if="!running" title="<%= t('nodes.msg.stopped') %>">
-        <%= t 'nodes.btn.bootstrap_with_chef_server' %>
+        <temlate slot="content"><%= t 'nodes.btn.bootstrap_with_chef_server' %></temlate>
       </bootstrap-tooltip>
       <span v-if="running"> <%= t 'nodes.btn.bootstrap_with_chef_server' %></span>
     </button>
@@ -141,20 +147,20 @@
 
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_cook_status' %></h6>
-      <bootstrap-tooltip title="{{* cook_time}}">
-        <span v-class="cook_status_class" class="label">{{cook_status}}</span>
+      <bootstrap-tooltip :title.once="cook_time">
+        <template slot="content"><span :class="cook_status_class" class="label">{{cook_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
-      <bootstrap-tooltip title="{{* serverspec_time}}">
-        <span v-class="serverspec_status_class" class="label">{{serverspec_status}}</span>
+      <bootstrap-tooltip :title.once="serverspec_time">
+        <template slot="content"><span :class="serverspec_status_class" class="label">{{serverspec_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_update_status' %></h6>
-      <bootstrap-tooltip title="{{* update_time}}">
-        <span v-class="update_status_class" class="label">{{update_status}}</span>
+      <bootstrap-tooltip :title.once="update_time">
+        <template slot="content"><span :class="update_status_class" class="label">{{update_status}}</span></template>
       </bootstrap-tooltip>
     </div>
   </div>
@@ -170,9 +176,9 @@
         </tr>
       </thead>
       <tbody v-if="!runlist_empty">
-        <tr v-repeat="ec2.runlist" v-class="success: is_role($value)">
-          <td v-text="runlist_type($value)"></td>
-          <td v-text="runlist_name($value)"></td>
+        <tr v-for="r in ec2.runlist" :class="{success: is_role(r)}">
+          <td v-text="runlist_type(r)"></td>
+          <td v-text="runlist_name(r)"></td>
         </tr>
       </tbody>
       <tbody v-if="runlist_empty">
@@ -186,20 +192,20 @@
   <%# Buttons %>
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">
-      <div v-class="border-blink: cook_status === 'UnExecuted' && ec2.attribute_set" class="btn-group dropup">
-        <button v-on="click: cook({whyrun: true})" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary">
+      <div :class="{'border-blink': cook_status === 'UnExecuted' && ec2.attribute_set}" class="btn-group dropup">
+        <button @click="cook({whyrun: true})" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook_in_why_run_mode'%>
         </button>
-        <button type="button" v-attr="disabled: !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-          <li><a v-on="click: cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
+          <li><a @click="cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
         </ul>
       </div>
-      <button v-on="click: edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
-      <button v-on="click: edit_attr()" class="btn btn-sm btn-default" v-class="border-blink: !ec2.attribute_set"><%= t 'nodes.btn.instance_settings' %></button>
+      <button @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
+      <button @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
       <div class="dropup" style="display: inline-block">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
@@ -207,22 +213,22 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'check')"><%=t('ec2_instances.btn.check_security_update')%></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('security', 'exec')"><%=t('ec2_instances.btn.exec_security_update')%></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'check')"><%=t('ec2_instances.btn.check_all_update')%></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: yum_update('all', 'exec')"><%=t('ec2_instances.btn.exec_all_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="yum_update('security', 'check')"><%=t('ec2_instances.btn.check_security_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="yum_update('security', 'exec')"><%=t('ec2_instances.btn.exec_security_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="yum_update('all', 'check')"><%=t('ec2_instances.btn.check_all_update')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="yum_update('all', 'exec')"><%=t('ec2_instances.btn.exec_all_update')%></a></li>
           <li class="dropdown-header"><%=t('schedules.schedule')%></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" v-on="click: open_yum_schedule_modal()"><%=t('schedules.change_schedule')%></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-toggle="modal" @click="open_yum_schedule_modal()"><%=t('schedules.change_schedule')%></a></li>
         </ul>
       </div>
       <div class="dropup" style="display: inline-block">
-        <button v-attr="disabled: cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+        <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
           <%= t('serverspecs.serverspec') %>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: select_serverspec()"><%= t('serverspecs.run') %></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" v-on="click: serverspec_results()"><%= t('serverspecs.results') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="select_serverspec()"><%= t('serverspecs.run') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="serverspec_results()"><%= t('serverspecs.results') %></a></li>
         </ul>
       </div>
       <div class="pull-right">
@@ -238,7 +244,7 @@
           <select class="form-control input-sm" v-model="selected_dish" options="dish_option"></select>
 
           <div class="input-group-btn">
-            <button class="btn btn-info btn-sm" v-class="disabled: selected_dish === '0'" v-on="click: apply_dish()">
+            <button class="btn btn-info btn-sm" :class="{disabled: selected_dish === '0'}" @click="apply_dish()">
               <%= t 'nodes.btn.apply_dish' %>
             </button>
           </div>
@@ -283,7 +289,7 @@
       <div class="modal-footer">
         <div v-if="!loading">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: change_scale()" v-attr="disabled: !change_scale_type_to" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button @click="change_scale()" :disabled="!change_scale_type_to" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
       </div>
@@ -305,28 +311,28 @@
       <div class="modal-body">
         <div class="checkbox">
           <label>
-            <input type="checkbox" v-model="schedule.enabled" v-attr="disabled: loading_s"><%= t 'schedules.run_periodically' %>
+            <input type="checkbox" v-model="schedule.enabled" :disabled="loading_s"><%= t 'schedules.run_periodically' %>
           </label>
         </div>
         <form class="form-inline">
           <div class="form-group" v-if="schedule.enabled">
-            <select v-model="schedule.frequency" v-attr="disabled: loading_s" class="form-control">
+            <select v-model="schedule.frequency" :disabled="loading_s" class="form-control">
               <% Schedule::frequencies.keys.each do |f| %>
                 <option value=<%= f %>><%= t "schedules.frequency.#{f}" %></option>
               <% end %>
             </select>
-            <select v-model="schedule.day_of_week" v-attr="disabled: loading_s" v-if="schedule.frequency === 'weekly'" class="form-control">
+            <select v-model="schedule.day_of_week" :disabled="loading_s" v-if="schedule.frequency === 'weekly'" class="form-control">
               <% Schedule::day_of_weeks.keys.each do |e| %>
                 <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
               <% end %>
             </select>
-            <select v-model="schedule.time" v-attr="disabled: loading_s" v-if="schedule.frequency !== 'intervals'" class="form-control">
+            <select v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency !== 'intervals'" class="form-control">
               <% 0.upto(23) do |n| %>
                 <option><%= n %></option>
               <% end %>
             </select>
             <label v-if="schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
-            <input type="number" min="1" max="12" v-model="schedule.time" v-attr="disabled: loading_s" v-if="schedule.frequency === 'intervals'" class="form-control">
+            <input type="number" min="1" max="12" v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency === 'intervals'" class="form-control">
             <label v-if="schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
             <div v-if="schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
           </div>
@@ -336,7 +342,7 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-          <button v-on="click: change_schedule()" v-attr="disabled: !filled_all" class="btn btn-warning"><%= t('helpers.links.change') %></button>
+          <button @click="change_schedule()" :disabled="!filled_all" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>
@@ -351,7 +357,7 @@
 
       <div class="modal-header">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <button class="close" style="margin-right: 10px;" v-on="click: load_snapshots()" v-attr="disabled: loading_snapshots"><small><span class="glyphicon glyphicon-refresh"></span></small></button>
+        <button class="close" style="margin-right: 10px;" @click="load_snapshots()" :disabled="loading_snapshots"><small><span class="glyphicon glyphicon-refresh"></span></small></button>
         <h4 class="modal-title">Snapshots of {{volume_selected}}</h4>
       </div>
 
@@ -360,14 +366,14 @@
         <table v-if="!loading_snapshots" class="table table-condensed table-hover">
           <thead>
             <th></th>
-            <th class=""         v-on="click: sort_by('tags.Name')"  >Name<span      v-class="caret: sorting_by('tags.Name'),   caret-reversed: sort_asc"></span></th>
-            <th class="col-md-2" v-on="click: sort_by('snapshot_id')">ID<span        v-class="caret: sorting_by('snapshot_id'), caret-reversed: sort_asc"></span></th>
-            <th class="col-md-2" v-on="click: sort_by('state')"      >State<span     v-class="caret: sorting_by('state'),       caret-reversed: sort_asc"></span></th>
-            <th class=""         v-on="click: sort_by('start_time')" >Date<span      v-class="caret: sorting_by('start_time'),  caret-reversed: sort_asc"></span></th>
-            <th class=""         v-on="click: sort_by('encrypted')"  >Encrypted<span v-class="caret: sorting_by('encrypted'),   caret-reversed: sort_asc"></span></th>
+            <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
+            <th class="col-md-2" @click="sort_by('snapshot_id')">ID<span             :class="{'caret': sorting_by('snapshot_id'), 'caret-reversed': sort_asc}"></span></th>
+            <th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{'caret': sorting_by('state'),       'caret-reversed': sort_asc}"></span></th>
+            <th class=""         @click="sort_by('start_time')" >Date<span           :class="{'caret': sorting_by('start_time'),  'caret-reversed': sort_asc}"></span></th>
+            <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
           </thead>
           <tbody>
-            <tr v-repeat="snapshot: snapshots" v-on="click: select_snapshot(snapshot)" v-class="info: snapshot.selected" v-transition="fade">
+            <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" transition="fade">
               <td><input v-model="snapshot.selected" type="checkbox"></td>
               <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
               <td v-text="snapshot.snapshot_id"></td>
@@ -384,8 +390,8 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
-          <button v-on="click: create_snapshot(volume_selected)" class="btn btn-primary"><%= t('helpers.links.create') %></button>
-          <button v-on="click: delete_selected_snapshots()" v-attr="disabled: !selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
+          <button @click="create_snapshot(volume_selected)" class="btn btn-primary"><%= t('helpers.links.create') %></button>
+          <button @click="delete_selected_snapshots()" :disabled="!selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>

@@ -19,7 +19,6 @@ module SkyHopper
     # config.time_zone = 'Central Time (US & Canada)'
     config.time_zone = 'Tokyo'
     # config.active_record.default_timezone = :local
-
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :ja
@@ -53,6 +52,7 @@ module SkyHopper
     # Version information
     config.my_version = 'Version 1.0.0'
 
+    config.browserify_rails.paths << /frontend\//
   end
 end
 

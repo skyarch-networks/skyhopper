@@ -48,10 +48,11 @@ export default class Monitoring extends ModelBase {
     );
   }
 
-  update_templates(templates: any[] = []): JQueryPromise<any> {
+  update_templates(physical_id: String, templates: any[] = []): JQueryPromise<any> {
      return this.WrapAndResolveReject(() =>
       (<any>Monitoring.ajax).update_templates({
         templates: templates,
+        physical_id: physical_id,
         id: this.infra.id
       })
     );

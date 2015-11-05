@@ -1,5 +1,7 @@
 /// <reference path="../../declares.d.ts" />
 
+import * as ASTInterface from './ast-interface';
+
 export default Vue.extend({
   template: '#resource-panel-template',
   el: () => { return document.createElement('div'); },
@@ -9,8 +11,8 @@ export default Vue.extend({
       twoWay: true,
       required: true,
     },
-    idx: {
-      type: Number,
+    serverspec_info: {
+      type: Object,
       required: true,
     },
   },
@@ -32,8 +34,8 @@ export default Vue.extend({
       });
     },
 
-    removeIt: function(idx: number) {
-      this.desc.body.$remove(idx);
+    removeIt: function(it: ASTInterface.It|ASTInterface.Its) {
+      this.desc.body.$remove(it);
     },
 
     accordionToggle: function () {
@@ -45,6 +47,21 @@ export default Vue.extend({
       $(down).removeClass("glyphicon-chevron-down");
       $(up).addClass("glyphicon-chevron-down");
       $(down).addClass("glyphicon-chevron-up");
+    },
+  },
+  computed: {
+    title: function () {
+      return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
+    },
+
+    // return [{text: TYPE, value: TYPE}, ...]
+    resourceTypes: function () {
+      return _.keys(this.serverspec_info);
+    },
+
+    // return selected resource info
+    resource: function () {
+      return this.serverspec_info[this.desc.resourceType];
     },
   },
   ready: function() {
