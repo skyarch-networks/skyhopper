@@ -13,13 +13,9 @@ class ServerspecInfoRemote
 =begin
 {
   RESOURCE_TYPE: {
-    matchers: [:be_readable, ...]
-    },
-    its_targets: [:md5sum, ...]
+    matchers: [:be_readable, ...],
+    its_targets: [:md5sum, ...],
   },
-  _: {
-    ...
-  }
 }
 =end
   def get
