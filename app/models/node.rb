@@ -85,6 +85,11 @@ knife bootstrap #{fqdn} \
     n.save
   end
 
+  def uninstall_chef(infra, &block)
+    cmd = 'sudo yum remove chef'
+    exec_knife_ssh_noblock(cmd, infra, &block)
+  end
+
   # node.cook do |line|
   #   # line is chef-clinet log
   # end
@@ -271,7 +276,7 @@ knife bootstrap #{fqdn} \
     fqdn = infra.instance(@name).fqdn
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
-
+    puts cmd
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
@@ -284,6 +289,24 @@ knife bootstrap #{fqdn} \
       raise CookError unless w.value.success?
     end
     return true
+  ensure
+    ec2key.close_temp
+  end
+
+  def exec_knife_ssh_noblock(command, infra)
+    ec2key = infra.ec2_private_key
+    puts ec2key.output_temp(prefix: @name)
+    fqdn = infra.instance(@name).fqdn
+
+    cmd = <<-EOS
+            ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}
+          EOS
+    puts cmd
+    out, err, status = Open3.capture3(cmd)
+    unless status.success?
+      raise CookError, out + err
+    end
+    return out, err, status
   ensure
     ec2key.close_temp
   end

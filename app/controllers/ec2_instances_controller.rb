@@ -80,8 +80,16 @@ class Ec2InstancesController < ApplicationController
   # POST /ec2_instances/i-hogehoge/detach
   def detach
     physical_id = params.require(:id)
-
+    infra_id    = params.require(:infra_id)
+    infra = Infrastructure.find(infra_id)
+    log = []
+    
     resource = Resource.find_by(physical_id: physical_id)
+    resource.detach_chef(infra) do |line|
+      ws.push_as_json({v: line})
+      Rails.logger.debug "cooking#{mode_string} #{physical_id} > #{line}"
+      log << line
+    end
     resource.destroy
 
     infra_logger_success("#{physical_id} has been detached.")
