@@ -63,7 +63,7 @@ class Operation_worker
 
   def evaluate_weekends(start_time, end_time, now, resource)
     now_time = now.strftime( "%H%M%S%N" ).to_i
-    if now.wday == 0 && now.wday == 6
+    if now.wday == 0 || now.wday == 6
       if start_time <= now_time && end_time >= now_time
         start(resource)
       else
