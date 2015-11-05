@@ -108,8 +108,8 @@ end`
           name: 'have_rule',
           args: ['"-P INPUT ACCEPT"'],
           chains: [
-            {name: 'with_table', args: ['"mangle"']},
-            {name: 'with_chain', args: ['"INPUT"']},
+            {name: 'with_table', arg: '"mangle"'},
+            {name: 'with_chain', arg: '"INPUT"'},
           ],
         });
         assert(m.to_ruby() === 'have_rule("-P INPUT ACCEPT").with_table("mangle").with_chain("INPUT")');
@@ -120,7 +120,7 @@ end`
   describe('Chain', () => {
     describe('#to_ruby', () => {
       it('should expected ruby code fragment', () => {
-        const chain = new AST.Chain({name: "by", args: ["'hoge'"]});
+        const chain = new AST.Chain({name: "by", arg: "'hoge'"});
         assert(chain.to_ruby() === ".by('hoge')");
       });
     });
