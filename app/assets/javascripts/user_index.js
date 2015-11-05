@@ -11,7 +11,6 @@
   //browserify functions for vue filters functionality
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
-  var adminIndex = require('./modules/loadindex');
   var md5 = require('md5');
   var queryString = require('query-string').parse(location.search);
 
@@ -20,32 +19,31 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['user_admin'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
-          };
-      },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
+      };
     },
     methods: {
       sortBy: function (key) {
-          if(key !== 'id' && key !== 'role')
+          if(key !== 'id' && key !== 'role'){
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
+          }
       },
       pop: function(){
          $('#role').popover('toggle');
@@ -71,7 +69,6 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        self.columns = ['role', 'email', 'last_sign_in_at', 'id'];
         $.ajax({
             cache: false,
             url:'users_admin?lang='+self.lang,
@@ -106,7 +103,12 @@
  });
 
 
-  $(document).ready(function(){
-    adminIndex();
+  var clientIndex = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['role', 'email', 'last_sign_in_at', 'id'],
+      gridData: []
+    }
   });
 })();

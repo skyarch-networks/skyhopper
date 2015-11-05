@@ -26,7 +26,12 @@ Vue.component('bootstrap-tooltip', {
       required: true,
     },
   },
-  template: '<span data-toggle="tooltip" data-original-title="{{title}}"><content></content></span>',
+  template: `
+<span data-toggle="tooltip" data-original-title="{{title}}">
+  <content class="content">
+    <slot name="content"></slot>
+  </content>
+</span>`,
   compiled: function () {
     console.log(this);
     $(this.$el).tooltip();
@@ -38,11 +43,10 @@ const Loader = Vue.extend({
   props: {
     text: {
       type: String,
+      // XXX: When test, t is undefined...
+      default: typeof t !== 'undefined' ? t('common.msg.loading') : "",
     },
   },
-  data: () => {return {
-    text: t('common.msg.loading'),
-  }; },
 });
 
 Vue.component('div-loader', Loader);
