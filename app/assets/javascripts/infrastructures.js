@@ -1781,10 +1781,10 @@
               {day: t('operation_scheduler.dates.friday'),   checked: false, value : 5},
               {day: t('operation_scheduler.dates.saturday'), checked: false, value : 6},
               {day: t('operation_scheduler.dates.sunday'),   checked: false, value : 0}],
-      default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D h:mm a'),
-      default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D h:mm a'),
-      time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('h:mm a'),
-      time_end: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(19).minute(0).format('h:mm a'),
+      default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D H:mm'),
+      default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D H:mm'),
+      time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('H:mm'),
+      time_end: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(19).minute(0).format('H:mm'),
       modes: [{desc: t('operation_scheduler.desc.everyday'), value: 1},
         {desc: t('operation_scheduler.desc.weekdays'), value: 2},
         {desc: t('operation_scheduler.desc.weekends'), value: 3},
@@ -1859,8 +1859,9 @@
         current_infra.get_schedule(instance.physical_id).done(function  (data){
           self.sel_instance.physical_id = instance.physical_id;
           _.forEach(data, function(item){
-            self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D h:mm a');
-            self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D h:mm a');
+            self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D H:mm');
+            self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D H:mm');
+
           });
         });
       },
@@ -1969,6 +1970,7 @@
       roundup: function (val) { return (Math.ceil(val));},
     },
     created: function(){
+
       var self = this;
       var res = new Resource(current_infra);
       var events = [];
@@ -2273,7 +2275,7 @@
       create: false,
       sortField: 'text'
     });
-    moment().locale(queryString.lang);
+    moment.locale(queryString.lang);
   });
 
   $(document).on('click', '.show-infra', function (e) {

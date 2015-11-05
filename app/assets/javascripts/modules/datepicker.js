@@ -6,8 +6,9 @@ exports.install = function(Vue, lang){
     bind: function () {
       var vm = this.vm;
       var key = this.expression;
+      moment.locale(lang);
       var dp = $(this.el).datetimepicker({
-        format: 'YYYY/MM/D h:mm a',
+        format: 'YYYY/MM/D H:mm',
         showTodayButton: true,
         locale: lang,
         tooltips: {
@@ -33,16 +34,15 @@ exports.install = function(Vue, lang){
         }else{
           vm.$set(key, moment(e.date._d).format('YYYY/MM/D h:mm a'));
         }
-        if(e.target.placeholder === "Start")
+
+        if(e.target.placeholder === "Start" || e.target.id === "op-sched-start")
           $("input[type='hidden']").val(e.date._d);
+
       });
 
       dp.on("dp.show", function (e) {
-        if(e.target.placeholder === "End"){
+        if(e.target.placeholder === "End" || e.target.id === "op-sched-end")
           dp.data("DateTimePicker").minDate(new Date($("input[type='hidden']").val()));
-        }else if(e.target.id === "op-sched-end"){
-          dp.data("DateTimePicker").minDate(new Date($("#op-sched-start").val()));
-        }
       });
 
 
