@@ -2273,6 +2273,7 @@
       create: false,
       sortField: 'text'
     });
+    moment().locale(queryString.lang);
   });
 
   $(document).on('click', '.show-infra', function (e) {
