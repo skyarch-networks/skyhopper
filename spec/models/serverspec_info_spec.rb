@@ -30,10 +30,13 @@ describe ServerspecInfo do
       subject.each do |_, value|
         expect(value[:matchers]).to be_a Hash
 
-        expect(value[:matchers].keys).to be_all{|x| x.is_a? Symbol}
+        expect(value[:matchers].keys).to   be_all{|x| x.is_a? Symbol}
         expect(value[:matchers].values).to be_all{|x| x.is_a? Hash}
-        expect(value[:matchers].values).to be_all{|x| x.has_key? :parameters}
-        expect(value[:matchers].values).to be_all{|x| x.has_key? :chains}
+
+        expect(value[:matchers].values).to be_all{|x| x[:parameters].is_a? Array}
+        expect(value[:matchers].values).to be_all{|x| x[:parameters].all?{|y| y.is_a? Symbol}}
+        expect(value[:matchers].values).to be_all{|x| x[:chains].is_a? Array}
+        expect(value[:matchers].values).to be_all{|x| x[:chains].all?{|y| y.is_a? Symbol}}
       end
     end
 

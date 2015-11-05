@@ -73,9 +73,21 @@ class ServerspecInfoRemote
   # @return [Hash{Symbol => Array}] {parameters: [...], chains: [...]}
   def matcher_detail(klass, matcher_name)
     method = klass.instance_method(matcher_name)
-    params = method.parameters.map(&:last)
-    # TODO: chains, もしチェインが存在すればparamsはemptyになるべき
-    return {parameters: params, chains: []}
+    chains = chain_detail(matcher_name)
+    params = chains.empty? ? method.parameters.map(&:last) : []
+
+    return {parameters: params, chains: chains}
+  end
+
+  # @param [Symbol] matcher_name `hoge?` style name
+  # @return [Array<Symbol>] chain names
+  def chain_detail(matcher_name)
+    klass = Class.new
+    klass.include RSpec::Matchers
+    instance = klass.new
+    matcher = instance.__send__(to_be_style(matcher_name))
+
+    return matcher.methods(false).reject{|x|x == :matches?}
   end
 
   # hoge? => be_hoge
