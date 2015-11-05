@@ -1,4 +1,5 @@
 /// <reference path="../../declares.d.ts" />
+Vue.config.debug = true;
 
 export default Vue.extend({
   template: '#it-panel-template',
@@ -31,6 +32,10 @@ export default Vue.extend({
   computed: {
     matcher_names: function () {
       return _.keys(this.resource.matchers);
+    },
+    chains: function () {
+      const m = this.resource.matchers[this.it.matcher.name];
+      return m ? m.chains : [];
     },
   },
   ready: function() {

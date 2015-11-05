@@ -2,7 +2,6 @@
   <div class="panel-heading">
     <button class="btn btn-danger pull-right btn-xs" @click="$parent.removeIt(it)"><span class="glyphicon glyphicon-remove"></span></button>
 
-    <!--what's this?-->
     <span class="pull-right">&nbsp&nbsp</span>
     <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
     <h3 v-if="it.type === 'it'"  class="panel-title">{{it.matcher.name}}</h3>
@@ -23,5 +22,7 @@
     <div class="form-group">
       <selectable-input label="Matcher" :options="matcher_names" :selected.sync="it.matcher.name"></selectable-input>
     </div>
+
+    <arg-list :args="chains"></arg-list>
   </div>
 </div>
