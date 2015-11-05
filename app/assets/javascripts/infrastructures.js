@@ -716,7 +716,7 @@
       },
     },
     data: function () {return {
-      rds: null,
+      rds: {},
       serverspec: {},
     };},
     template: '#rds-tabpane-template',
@@ -750,7 +750,7 @@
         return !!(s.username && s.password && s.database);
       },
     },
-    compiled: function () {
+    created: function () {
       var self = this;
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
