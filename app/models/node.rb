@@ -82,11 +82,9 @@ knife bootstrap #{fqdn} \
   def delete_node
     cmd = <<-EOS
             knife node delete #{@name} -y
-    EOS
+          EOS
     out, err, status = Open3.capture3(cmd)
-    unless status.success?
-      raise CookError, out + err
-    end
+    
     return out, err, status
   end
 
