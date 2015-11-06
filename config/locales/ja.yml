@@ -507,6 +507,7 @@ ja:
     device_name:       'デバイス名'
     set_device_name:   'デバイス名の設定'
     none:              'なし'
+    ec2_instance:      'EC2インスタンス'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
@@ -522,6 +523,11 @@ ja:
       private_key_droppable: '使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください。'
       public_key_certificate_droppable: '使用するパブリックキー証明書を入力するか、パブリックキー証明書ファイルをここにドラッグアンドドロップしてください。'
       certificate_chain_droppable: '（オプション） 使用する証明書チェーンを入力するか、証明書チェーンファイルをここにドラッグアンドドロップしてください。'
+      detach:               'このインスタンスはSkyHopperサービスから削除されます。しかし、インスタンスはまだAWS上で利用できるようになります。
+                            以下のサービスは、また、 EC2インスタンスフロン切り離されます。'
+      terminate:            'このインスタンスはSkyhopperサービスから削除されます。
+                            インスタンスが終了したときにルートEBSボリュームを削除するためにEBS担保インスタンスで、デフォルトのアクションです。
+                            任意のローカルドライブ上のストレージが失われます。'
     btn:
       register:   'インスタンスを登録'
       deregister: 'インスタンスの登録を解除'
@@ -540,6 +546,8 @@ ja:
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
       delete_listener: 'ELBからリスナーを削除しますか?'
       delete_certificate: '証明書を削除しますか?'
+      detach:     'あなたはskyhopperからリブログEC2インスタンスをデタッチしてもよろしいですか？'
+      terminate:  'あなたはこのEC2インスタンスを終了してもよろしいですか？'
 
   ec2_private_keys:
     msg:

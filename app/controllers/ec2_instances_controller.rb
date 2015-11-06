@@ -96,7 +96,6 @@ class Ec2InstancesController < ApplicationController
     physical_id = params.require(:id)
     infra_id    = params.require(:infra_id)
 
-
     instance = Infrastructure.find(infra_id).instance(physical_id)
     instance.terminate
     resource = Resource.find_by(physical_id: physical_id)
