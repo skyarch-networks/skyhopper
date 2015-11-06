@@ -8,6 +8,7 @@
 
 class Resource < ActiveRecord::Base
   before_destroy :detach_zabbix
+  before_destroy :detach_chef
 
   belongs_to :infrastructure
   belongs_to :dish
@@ -48,10 +49,8 @@ class Resource < ActiveRecord::Base
     )}
   end
 
-  def detach_chef(infra)
-    node = Node.new(self.physical_id)
-    node.uninstall_chef(infra)
-    node.delete
+  def detach_chef
+    Node.new(self.physical_id).delete_node
   end
 
   def detach_zabbix

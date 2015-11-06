@@ -79,16 +79,24 @@ knife bootstrap #{fqdn} \
     ChefAPI.destroy('client', @name)
   end
 
+  def delete_node
+    cmd = <<-EOS
+            knife node delete #{@name} -y
+    EOS
+    puts cmd
+    out, err, status = Open3.capture3(cmd)
+    unless status.success?
+      raise CookError, out + err
+    end
+    return out, err, status
+  end
+
   def update_runlist(runlist)
     n = ChefAPI.find(:node, @name)
     n.run_list = runlist
     n.save
   end
 
-  def uninstall_chef(infra, &block)
-    cmd = 'sudo yum remove chef'
-    exec_knife_ssh_noblock(cmd, infra, &block)
-  end
 
   # node.cook do |line|
   #   # line is chef-clinet log
@@ -293,21 +301,5 @@ knife bootstrap #{fqdn} \
     ec2key.close_temp
   end
 
-  def exec_knife_ssh_noblock(command, infra)
-    ec2key = infra.ec2_private_key
-    puts ec2key.output_temp(prefix: @name)
-    fqdn = infra.instance(@name).fqdn
 
-    cmd = <<-EOS
-            ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}
-          EOS
-    puts cmd
-    out, err, status = Open3.capture3(cmd)
-    unless status.success?
-      raise CookError, out + err
-    end
-    return out, err, status
-  ensure
-    ec2key.close_temp
-  end
 end
