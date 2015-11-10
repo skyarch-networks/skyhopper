@@ -49,6 +49,11 @@ class ResourcesController < ApplicationController
       render text: "Cannot find #{physical_id}", status: 400; return
     end
 
+    unless infra.instance(physical_id).describe_keypair == infra.keypairname
+      # TODO: I18n
+      render text: "#{physical_id}: Keypair does not matched to this Infrastructure!", status: 400; return
+    end
+
     begin
       Resource.create!(
         infrastructure_id: infra_id,
@@ -62,5 +67,5 @@ class ResourcesController < ApplicationController
 
     render text: I18n.t('resources.msg.created') and return
   end
-  
+
 end

@@ -78,6 +78,11 @@ class EC2Instance < SimpleDelegator
     }
   end
 
+  def describe_keypair
+    reload
+    return key_name
+  end
+
   # for compatibility
   def status
     reload
