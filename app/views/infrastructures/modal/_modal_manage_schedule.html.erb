@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <div class="col-md-12">
-          <h4><%= I18n.t('operation_scheduler.duration')%> <small><a href="#" id="duration" v-on="click:pop('duration')"
+          <h4><%= I18n.t('operation_scheduler.duration')%> <small><a href="#" id="duration" @click="pop('duration')"
             data-content="<%= I18n.t('operation_scheduler.duration-content')%>"
             rel="popover" data-toggle="popover" data-trigger="focus"
             data-original-title="<%= I18n.t('operation_scheduler.duration')%>"
@@ -19,22 +19,23 @@
             <div class="row">
               <div class="col-md-6">
                 <%= I18n.t('operation_scheduler.start_date')%> & <%= I18n.t('operation_scheduler.start_time')%><input type="text" v-datepicker="sel_instance.start_date" v-model="sel_instance.start_date" class="form-control" id="op-sched-start">
-                <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.start_date = default_start">Default</button>
+                <button class="btn btn-default btn-sm" type="button" @click="sel_instance.start_date = default_start">Default</button>
                 <span class="help-block">{{default_start}}</span>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6">
                 <%= I18n.t('operation_scheduler.end_date')%> & <%= I18n.t('operation_scheduler.end_time')%><input type="text" v-datepicker="sel_instance.end_date" v-model="sel_instance.end_date" class="form-control" id="op-sched-end">
-                <button class="btn btn-default btn-sm" type="button" v-on="click: sel_instance.end_date = default_end">Default (+1 year)</button>
+                <button class="btn btn-default btn-sm" type="button" @click="sel_instance.end_date = default_end">Default (+1 year)</button>
                 <span class="help-block">{{default_end}}</span>
+                <input type="hidden">
               </div>
             </div>
           </div>
         </div>
         <div class="col-md-12">
           <hr>
-          <h4> <%= I18n.t('operation_scheduler.recurring')%> <small><a href="#" id="recurring" v-on="click:pop('recurring')"
+          <h4> <%= I18n.t('operation_scheduler.recurring')%> <small><a href="#" id="recurring" @click="pop('recurring')"
                                data-content="<%= I18n.t('operation_scheduler.recurring-content')%>"
                                data-toggle="popover"
                                data-trigger="focus"
@@ -46,10 +47,10 @@
           <div class="form-group">
             <label class="col-lg-2 control-label"><%= I18n.t('operation_scheduler.every')%> </label>
             <div class="col-lg-10">
-              <div class="radio" v-repeat="modes">
+              <div class="radio" v-for="mode in modes">
                 <label>
-                  <input type="radio" v-on="change: repeat_selector()" id="desc" v-model="sel_instance.repeat_freq" name="sel_instance.repeat_freq" align="bottom" value="{{value}}">
-                  {{desc}}
+                  <input type="radio" @change="repeat_selector()" id="desc" v-model="sel_instance.repeat_freq" name="sel_instance.repeat_freq" align="bottom" value="{{mode.value}}">
+                  {{mode.desc}}
                 </label>
               </div>
             </div>
@@ -57,15 +58,15 @@
           </div>
           <div class="col-lg-12">
             <div id="days-selector" class="col-sm-6" style="display: none">
-              <div class="checkbox" v-repeat="d: dates">
-                <label><input v-attr="checked: d.checked" v-model="d.checked" type="checkbox"> {{d.day}}</label>
+              <div class="checkbox" v-for="d in dates">
+                <label><input :checked="d.checked" v-model="d.checked" type="checkbox"> {{d.day}}</label>
               </div>
             </div>
           </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= I18n.t('helpers.links.cancel')%></button>
-        <button type="button" class="btn btn-primary" v-on="click: save_sched()" v-attr="disabled: !save_sched_err" data-dismiss="modal"><%= I18n.t('helpers.titles.save')%></button>
+        <button type="button" class="btn btn-primary" @click="save_sched()" :disabled="!save_sched_err" data-dismiss="modal"><%= I18n.t('helpers.titles.save')%></button>
       </div>
     </div>
   </div>

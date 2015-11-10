@@ -3,11 +3,12 @@
   <table class="table table-hover ssp">
   <thead>
     <tr>
-      <th v-repeat="key: columns"
-        v-class="active: sortKey === key">
-        <text v-html="key | wrap option"></text>
-          <span v-on="click:sortBy(key)" v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" v-class="reversed[key] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          <i v-if="key === 'role'"><a href="#" id="role" v-on="click:pop()"
+      <th v-for=" key in columns"
+          :class="{active: sortKey == key}"
+          @click="sortBy(key)">
+        <span v-html="key | wrap option"></span>
+          <span v-if="key !== 'id' && key !== 'role'" class="pull-right glyphicon" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+          <i v-if="key === 'role'"><a href="#" id="role" @click="pop()"
             data-content="<%= t('users.msg.role')%>"
             data-placement="right"
             rel="popover"
@@ -19,37 +20,37 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-class="infrastructure-row: option === 'infrastructure'" v-repeat="
-        entry: data
+      <tr v-for="
+        entry in data
         | filterBy filterKey
-        | orderBy sortKey reversed[sortKey]
+        | orderBy sortKey sortOrders[sortKey]
         | paginate">
-        <td v-repeat="key: columns">
-          <text id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+        <td v-for="key in columns">
+          <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         </td>
       </tr>
     </tbody>
   </table>
   <nav v-if="data.length >= 10">
     <ul class="pager">
-      <li class="{{isStartPage ? 'disabled' : '' }}"><a v-on="click: showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+      <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
         <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
-      <li class="{{isEndPage ? 'disabled' : '' }}"><a v-on="click: showNext()" v-attr="disabled: !isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+      <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
     </ul>
   </nav>
 </script>
 
 <!-- demo root element -->
 
-<div id="indexElement">
+<div id="indexElement" v-el:node>
   <div class="input-group">
       <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
       <hr>
   </div>
   <demo-grid
-    data="{{gridData}}"
-    columns="{{gridColumns}}"
-    filter-key="{{searchQuery}}">
+  :data="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery">
   </demo-grid>
 </div>
 

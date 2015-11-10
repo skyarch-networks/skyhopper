@@ -79,11 +79,23 @@ knife bootstrap #{fqdn} \
     ChefAPI.destroy('client', @name)
   end
 
+  def delete_node
+    cmd = <<-EOS
+            knife node delete #{@name} -y
+          EOS
+    out, err, status = Open3.capture3(cmd)
+    unless status.success? || status.exitstatus == 100
+      raise CookError, out + err
+    end
+    return out, err, status
+  end
+
   def update_runlist(runlist)
     n = ChefAPI.find(:node, @name)
     n.run_list = runlist
     n.save
   end
+
 
   # node.cook do |line|
   #   # line is chef-clinet log
@@ -271,7 +283,6 @@ knife bootstrap #{fqdn} \
     fqdn = infra.instance(@name).fqdn
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
-
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
@@ -287,4 +298,6 @@ knife bootstrap #{fqdn} \
   ensure
     ec2key.close_temp
   end
+
+
 end

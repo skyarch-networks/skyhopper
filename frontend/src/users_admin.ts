@@ -9,6 +9,8 @@
 
 /// <reference path="../declares.d.ts" />
 
+import {Confirm, Alert, AlertForAjaxStdError} from './modal';
+
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
   ajax.add_collection('sync_zabbix', 'PUT');
@@ -35,11 +37,11 @@ namespace UsersAdmin {
       show_loading(p);
       btn.after(frag);
       (<any>ajax).sync_zabbix().done((data: string) => {
-        bootstrap_alert(t('users.title'), data).done(reload);
-      }).fail(modal_for_ajax_std_error(reload));
+        Alert(t('users.title'), data).done(reload);
+      }).fail(AlertForAjaxStdError(reload));
     };
 
-    bootstrap_confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
+    Confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
   }
 
   interface ProjectResp {
@@ -132,7 +134,7 @@ namespace UsersAdmin {
             text: `${client_name}/${project.name}[${project.code}]`,
           };
         });
-      }).fail(modal_for_ajax_std_error());
+      }).fail(AlertForAjaxStdError());
     }
 
     add(): void {
@@ -171,7 +173,7 @@ namespace UsersAdmin {
           body.password = password;
           body.password_confirmation = password_confirmation;
         } else {
-          bootstrap_alert(t("users.title"), "Password confirmation does not match Password", "danger");
+          Alert(t("users.title"), "Password confirmation does not match Password", "danger");
           return;
         }
       }
@@ -180,10 +182,10 @@ namespace UsersAdmin {
         id: this.user.id,
         body: JSON.stringify(body),
       }).done((data) => {
-        bootstrap_alert(t('users.title'), data).done(() => {
+        Alert(t('users.title'), data).done(() => {
           show_edit(this.user.id);
         });
-      }).fail(modal_for_ajax_std_error(() => {
+      }).fail(AlertForAjaxStdError(() => {
         show_edit(this.user.id);
       }));
     }
@@ -198,7 +200,7 @@ namespace UsersAdmin {
       l.$remove();
       app = new App(data);
       app.$mount().$appendTo('#user-edit');
-    }).fail(modal_for_ajax_std_error(() => {
+    }).fail(AlertForAjaxStdError(() => {
       l.$remove();
     }));
   }

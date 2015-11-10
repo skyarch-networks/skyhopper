@@ -1,17 +1,18 @@
 <!-- resources TABs -->
 <%# TODO: DRY %>
-
-<li v-repeat="ec2: current_infra.resources.ec2_instances" v-class="active: tabpaneGroupID === ec2.physical_id" v-on="click: show_ec2(ec2.physical_id)">
+<li v-for="ec2 in current_infra.resources.ec2_instances" :class="{active: tabpaneGroupID === ec2.physical_id}" @click="show_ec2(ec2.physical_id)">
   <a href="#">
     <span class="label label-warning">EC2</span>&nbsp;
     <small>{{screen_name(ec2)}}</small>
     <small v-if="tabpane_active(ec2.physical_id)"><%= glyphicon 'refresh' %></small>
     <!-- workaround http://stackoverflow.com/questions/18730116/twitter-bootstrap-3-0-how-do-i-badge-badge-important-now -->
-    <bootstrap-tooltip v-if="!ec2.serverspec_status" title="<%= t('infrastructures.serverspec_failed') %>" class="badge progress-bar-danger">!</bootstrap-tooltip>
+    <bootstrap-tooltip v-if="!ec2.serverspec_status" :title="serverspec_failed" class="badge progress-bar-danger">
+      <template slot="content">!</template>
+    </bootstrap-tooltip>
   </a>
 </li>
 
-<li v-repeat="rds: current_infra.resources.rds_instances" v-class="active: tabpaneGroupID === rds.physical_id" v-on="click: show_rds(rds.physical_id)">
+<li v-for="rds in current_infra.resources.rds_instances" :class="{active: tabpaneGroupID === rds.physical_id}" @click="show_rds(rds.physical_id)">
   <a href="#">
     <span class="label label-info">RDS</span>&nbsp;
     <small>{{screen_name(rds)}}</small>
@@ -19,7 +20,7 @@
   </a>
 </li>
 
-<li v-repeat="elb: current_infra.resources.elb_instances" v-class="active: tabpaneGroupID === elb.physical_id" v-on="click: show_elb(elb.physical_id)">
+<li v-for="elb in current_infra.resources.elb_instances" :class="{active: tabpaneGroupID === elb.physical_id}" @click="show_elb(elb.physical_id)">
   <a href="#">
     <span class="label label-warning">ELB</span>&nbsp;
     <small>{{screen_name(elb)}}</small>
@@ -27,7 +28,7 @@
   </a>
 </li>
 
-<li v-repeat="s3: current_infra.resources.s3_buckets" v-class="active: tabpaneGroupID === s3.physical_id" v-on="click: show_s3(s3.physical_id)">
+<li v-for="s3 in current_infra.resources.s3_buckets" :class="{active: tabpaneGroupID === s3.physical_id}" @click="show_s3(s3.physical_id)">
   <a href="#">
     <span class="label label-danger">S3</span>&nbsp;
     <small>{{screen_name(s3)}}</small>&nbsp;

@@ -275,6 +275,18 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
+  detach_ec2(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+        (<any>EC2Instance.ajax_ec2).detach(this.params)
+    );
+  }
+
+  terminate_ec2(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+        (<any>EC2Instance.ajax_ec2).terminate(this.params)
+    );
+  }
+
   reboot_ec2(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
@@ -398,6 +410,8 @@ EC2Instance.ajax_ec2.add_member('change_scale', 'POST');
 EC2Instance.ajax_ec2.add_member("start", "POST");
 EC2Instance.ajax_ec2.add_member("stop", "POST");
 EC2Instance.ajax_ec2.add_member("reboot", "POST");
+EC2Instance.ajax_ec2.add_member("detach", "POST");
+EC2Instance.ajax_ec2.add_member("terminate", "POST");
 EC2Instance.ajax_ec2.add_member('serverspec_status', 'GET');
 EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');

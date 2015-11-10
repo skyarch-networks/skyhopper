@@ -9,10 +9,10 @@ export default Vue.extend({
       twoWay: true,
       required: true,
     },
-    idx: {
-      type: Number,
+    resource: {
+      type: Object,
       required: true,
-    }
+    },
   },
   methods: {
 

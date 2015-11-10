@@ -24,5 +24,6 @@
 //= require share
 //= require helper
 //= require utils
-//= require server_status
 //= require notification_center
+
+require('server_status').Do();

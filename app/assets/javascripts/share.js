@@ -205,6 +205,7 @@ $(document).ready(function () {
 $(document).on("dragover", ".allow_textfile_drop", function(){
   event.preventDefault();
 });
+
 $(document).on("drop", ".allow_textfile_drop", function(){
   self = this;
   event.preventDefault();

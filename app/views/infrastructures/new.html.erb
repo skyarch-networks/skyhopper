@@ -1,3 +1,4 @@
+<% provide(:title, I18n.t('infrastructures.infrastructure')+" | "+I18n.t('helpers.titles.new')) %>
 <%- model_class = Infrastructure -%>
 <div class="page-header">
   <h1><%=t '.title', default: [:'helpers.titles.new', 'New %{model}'], model: model_class.model_name.human.titleize %></h1>

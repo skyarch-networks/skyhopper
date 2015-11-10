@@ -39,7 +39,7 @@ ErrorHandler is module of controller error handling.
 
 ### クライアント側での処理の仕方
 
-クライアント側では、`modal_for_ajax_std_error`メソッドを使用することで簡単にエラーを表示することが出来ます。
+クライアント側では、`modal.AlertForAjaxStdError`メソッドを使用することで簡単にエラーを表示することが出来ます。
 詳細は`helper.js`を参照してください。
 =end
 module Concerns::ErrorHandler
