@@ -1039,6 +1039,31 @@
         ec2.reboot_ec2()
           .fail(alert_danger(self._show_ec2));
       },
+      detach_ec2: function () {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
+
+          ec2.detach_ec2()
+            .done(alert_success(function () {
+              show_infra(current_infra.id);
+            }))
+            .fail(alert_danger(self._show_ec2));
+        });
+
+      },
+      terminate_ec2: function () {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.terminate'), 'danger').done(function () {
+          ec2.terminate_ec2()
+            .done(alert_success(function () {
+              show_infra(current_infra.id);
+            }))
+            .fail(alert_danger(self._show_ec2));
+        });
+
+      },
       _cook: function (method_name, params) {
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
