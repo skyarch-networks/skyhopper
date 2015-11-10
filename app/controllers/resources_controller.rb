@@ -54,6 +54,11 @@ class ResourcesController < ApplicationController
       render text: "#{physical_id}: Keypair does not matched to this Infrastructure!", status: 400; return
     end
 
+    unless infra.instance(physical_id).status != :terminated
+      # TODO: I18n
+      render text: "Cannot add #{physical_id}. if status is terminated.", status: 400; return
+    end
+
     begin
       Resource.create!(
         infrastructure_id: infra_id,
