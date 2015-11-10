@@ -47,6 +47,8 @@ describe InfrastructuresController, type: :controller do
     let(:stack_status){{available: stack_availability, message: "stack_message", status: ""}}
 
     before do
+      allow_any_instance_of(Resource).to receive(:detach_chef)
+      allow_any_instance_of(Resource).to receive(:detach_zabbix)
       ec2_resource
       rds_resource
       s3bucket_resource
