@@ -63,5 +63,4 @@ class Resource < ActiveRecord::Base
       raise ex
     end
   end
-  self
 end
