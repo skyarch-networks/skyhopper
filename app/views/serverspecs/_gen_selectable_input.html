@@ -1,0 +1,15 @@
+<label v-text="label" :for="id"></label>
+
+<label class="pull-right" v-if="!force_manual">
+  Manual: <input type="checkbox" v-model="manual_check">
+</label>
+
+<div v-if="manual">
+  <input :id="id" type="text" class="form-control" required v-model="selected">
+</div>
+
+<div v-else>
+  <select :id="id" class="form-control" v-model="selected">
+    <option v-for="o in options" :value="o">{{o}}</option>
+  </select>
+</div>

@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   has_many :infrastructure_logs,  dependent: :nullify
 
   has_many :user_projects
+  has_many :operation_durations
   has_many :projects, through: :user_projects
 
   # Include default devise modules. Others available are:

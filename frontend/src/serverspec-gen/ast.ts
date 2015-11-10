@@ -64,7 +64,8 @@ export class Describe {
 
   to_ruby(): string {
     const body = this.body.map(x => "  " + x.to_ruby()).join("\n");
-    return `describe ${this.resourceType}('${this.name}') do
+    const args = this.name === "" ? "" : `('${this.name}')`;
+    return `describe ${this.resourceType}${args} do
 ${body}
 end`;
   }

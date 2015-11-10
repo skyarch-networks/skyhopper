@@ -12,9 +12,9 @@
   ajax_dish.add_member("validate", "POST");
 
   //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
-  var dishesIndex = require('./modules/loadindex');
+  var wrap        = require('./modules/wrap');
+  var listen      = require('./modules/listen');
+  var modal       = require('modal');
   var queryString = require('query-string').parse(location.search);
 
   var app;
@@ -22,32 +22,30 @@
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
-    props: ['data', 'columns', 'filter-key'],
+    props: {
+      data: Array,
+      columns: Array,
+      filterKey: String
+    },
     data: function () {
+      var sortOrders = {};
+      this.columns.forEach(function (key) {
+        sortOrders[key] = 1;
+      });
       return {
-        data: null,
-        columns: null,
         sortKey: '',
-        filterKey: '',
-        reversed: {},
+        sortOrders: sortOrders,
         option: ['dish'],
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
           };
       },
-    compiled: function () {
-      // initialize reverse state
-        var self = this;
-        this.columns.forEach(function (key) {
-            self.reversed.$add(key, false);
-         });
-    },
     methods: {
       sortBy: function (key) {
           if(key !== 'id')
             this.sortKey = key;
-            this.reversed[key] = !this.reversed[key];
+            this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
           if(this.pageNumber === 0) return;
@@ -70,8 +68,6 @@
         var il = new Loader();
         var self = this;
         self.loading = true;
-        var id =  queryString.client_id;
-        self.columns = ['name','detail', 'status', 'id'];
 
        $.ajax({
            cache: false,
@@ -103,10 +99,13 @@
       roundup: function (val) { return (Math.ceil(val));},
     }
  });
-
-
-  $(document).ready(function(){
-    dishesIndex();
+  var dishIndex = new Vue({
+    el: '#indexElement',
+    data: {
+      searchQuery: '',
+      gridColumns: ['name','detail', 'status', 'id'],
+      gridData: []
+    }
   });
 
   //    -----------------     functions
@@ -227,7 +226,7 @@
       tr.addClass('info');
 
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
   });
 
@@ -240,13 +239,13 @@
     }).done(function (data) {
       dish_body().html(data);
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
 
     //ajax_dish.edit({id: dish_id}).done(function(data){
     //  dish_body().html(data);
     //}).fail(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data.responseText);
+    //  modal.Alert(t('dishes.dish'), data.responseText);
     //});
   });
 
@@ -286,33 +285,33 @@
         serverspecs : serverspec_ids
       }
     }).done(function (data) {
-      bootstrap_alert(t('dishes.dish'), data).done(function () {
+      modal.Alert(t('dishes.dish'), data).done(function () {
         show_dish(current_dish_id());
       });
     }).fail(function (data) {
-      bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
     });
 
     //ajax_dish.update({id: dish_id, runlist: runlist, serverspecs: serverspec_ids}).done(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data).done(function(){
+    //  modal.Alert(t('dishes.dish'), data).done(function(){
     //    show_dish(current_dish_id());
     //  });
     //}).fail(function(data){
-    //  bootstrap_alert(t('dishes.dish'), data.responseText);
+    //  modal.Alert(t('dishes.dish'), data.responseText);
     //});
   });
 
 
   $(document).on('click', '.validate-dish', function (e) {
-    bootstrap_confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
+    modal.Confirm(t('dishes.dish'), t('js.dishes.msg.ask_validate')).done(function () {
       var dish_id = current_dish_id();
 
       validate(dish_id).done(function (data) {
-        bootstrap_alert(t('dishes.dish'), data).done(function() {
+        modal.Alert(t('dishes.dish'), data).done(function() {
           show_dish(dish_id);
         });
       }).fail(function (data) {
-        bootstrap_alert(t('dishes.dish'), data.responseText, 'danger');
+        modal.Alert(t('dishes.dish'), data.responseText, 'danger');
       });
     });
   });

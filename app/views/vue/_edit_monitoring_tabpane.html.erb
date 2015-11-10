@@ -14,12 +14,13 @@
 
 <%= render 'monitorings/modal_trigger_setting_description' %>
 
+
 <form>
-  <div class="row" v-repeat="master: master_monitorings">
+  <div class="row" v-for="master in master_monitorings">
     <div class="col-md-2 col-sm-6" style="height: 32px">
       <div class="checkbox" style="margin-top: 5px; margin-bottom: 5px">
         <label>
-          <input type="checkbox" v-model="checked: master.checked">
+          <input type="checkbox" :checked="master.checked" v-model="master.checked">
           {{master.name}}
         </label>
       </div>
@@ -43,10 +44,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-repeat="s: web_scenarios">
-                <td v-repeat="v: s">{{v}}</td>
+              <tr v-for="s in web_scenarios">
+                <td v-for="v in s">{{v}}</td>
                 <td class="actions">
-                  <a v-on="click: delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
+                  <a @click="delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
                 </td>
               </tr>
             </tbody>
@@ -61,8 +62,36 @@
     </div>
   </div>
 </form>
+<hr>
+<div-loader v-if="temp_loading"></div-loader>
+<div class="row" v-if="!temp_loading">
+  <div class="col-md-4 col-sm-6">
+    <h4 class="page-header"><%= t 'monitoring.zabbix_templates' %></h4>
+    <table class="table table-condensed">
+      <tr>
+        <th>Physical ID</th>
+        <th>Linked</th>
+        <th></th></tr>
+      <tr v-for="l in linked_resources">
+        <td>{{l.resource}}</td>
+        <td v-if="l.linked"><%= glyphicon 'ok text-success' %></td>
+        <td v-if="!l.linked"><%= glyphicon 'remove text-danger' %></td>
+        <td v-if="l.linked">
+          <a href="#" data-toggle="modal" @click="edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-default">
+            <%= glyphicon 'edit' %> <%= t 'monitoring.btn.edit' %></a>
+        </td>
+        <td v-if="!l.linked">
+          <a href="#" data-toggle="modal" @click="edit_temp(l)" data-target="#edit-templates" class="btn btn-sm btn-primary">
+            <%= glyphicon 'link' %> <%= t 'monitoring.btn.link' %></a>
+        </td>
+      </tr>
+    </table>
+    <%= render 'monitorings/modal_update_templates' %>
+  </div>
+  <div class="col-md-8 col-sm-6"></div>
+</div>
 
 <div class="form-actions-top">
-  <a v-if="!loading" href="#" class="btn btn-sm btn-primary" v-on="click: submit()"><%= t 'helpers.titles.save' %></a>
+  <a v-if="!loading" href="#" class="btn btn-sm btn-primary" @click="submit()"><%= t 'helpers.titles.save' %></a>
   <div-loader v-if="loading"></div-loader>
 </div>

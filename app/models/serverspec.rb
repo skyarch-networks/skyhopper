@@ -64,21 +64,5 @@ class Serverspec < ActiveRecord::Base
         description:       description,
       )
     end
-
-    # XXX: too slow, because `require serverspec` is slow...
-    # @return [Array<String>]
-    def resource_types
-      ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
-      opts = %w[-rjson -rserverspec -e]
-      code = <<-EOS
-        t = Serverspec::Type.constants
-        t.delete(:Base)
-        print JSON.generate(t)
-      EOS
-
-      return IO.popen([ruby_cmd, *opts, code]) do |io|
-        JSON.parse(io.read)
-      end
-    end
   end
 end

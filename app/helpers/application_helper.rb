@@ -7,6 +7,16 @@
 #
 
 module ApplicationHelper
+
+  def full_title(page_title)
+    base_title = "SkyHopper"  # to set up their own application name
+    if page_title.empty?
+      base_title
+    else
+      "#{base_title} | #{page_title} "
+    end
+  end
+
   def gravatar(email)
     require 'digest/md5'
     email_address = email.downcase
