@@ -13,6 +13,7 @@ en:
       edit: "Edit"
       show: "Show"
       detach: "Detach"
+      terminate: "Terminate"
       close: "Close"
       change: "Change"
       create: "Create"
