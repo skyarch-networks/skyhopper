@@ -50,12 +50,11 @@ export default Vue.extend({
     },
   },
   computed: {
-    title: function () {
+    title: function (): string {
       return this.desc.name === '' ? this.desc.resourceType : `${this.desc.resourceType}(${this.desc.name})`;
     },
 
-    // return [{text: TYPE, value: TYPE}, ...]
-    resourceTypes: function () {
+    resourceTypes: function (): string[] {
       return _.keys(this.serverspec_info);
     },
 
