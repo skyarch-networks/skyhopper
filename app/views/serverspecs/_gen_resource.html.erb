@@ -2,7 +2,7 @@
   <div class="panel-heading">
     <button class="btn btn-danger pull-right btn-xs" @click="$parent.removeDescribe(desc)"><span class="glyphicon glyphicon-remove"></span></button>
     <span class="pull-right">&nbsp&nbsp</span>
-    <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
+    <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon" :class="class_up_down"></span></button>
     <h3 class="panel-title">{{title}}</h3>
   </div>
 
