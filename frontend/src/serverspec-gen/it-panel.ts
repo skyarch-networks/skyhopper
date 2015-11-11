@@ -33,9 +33,13 @@ export default Vue.extend({
     matcher_names: function () {
       return _.keys(this.resource.matchers);
     },
-    chains: function () {
+    matcher_chains: function () {
       const m = this.resource.matchers[this.it.matcher.name];
       return m ? m.chains : [];
+    },
+    matcher_params: function () {
+      const m = this.resource.matchers[this.it.matcher.name];
+      return m ? m.parameters : [];
     },
   },
   ready: function() {
