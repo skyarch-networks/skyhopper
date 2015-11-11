@@ -51,7 +51,8 @@ exports.install = function(Vue, options, mode, lines){
       update: function (value, oldValue) {
           this.silent = true;
           this.editor.getSession().setValue(value);
-          this.editor.navigateLineEnd();
+          console.log(this.editor.getLastVisibleRow());
+          this.editor.gotoLine(this.editor.getLastVisibleRow(), 1, true);
           this.silent = false;
       }
   });
