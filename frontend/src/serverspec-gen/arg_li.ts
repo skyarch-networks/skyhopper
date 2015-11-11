@@ -1,7 +1,7 @@
 /// <reference path="../../declares.d.ts" />
 
 export default Vue.extend({
-  template: '#arg-list-template',
+  template: '#arg-li-template',
   el: () => {return document.createElement('div'); },
   props: {
     args: {
