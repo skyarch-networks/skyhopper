@@ -241,8 +241,11 @@
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
     data: function () {return {
-      logs: [],
-      page: {},
+      logs:     [],
+      page:     {},
+      theme:   'terminal',
+      mode:    'sh',
+      options: true,
     };},
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
@@ -985,6 +988,10 @@
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
+      theme:               'terminal',
+      mode:                'sh',
+      lines:                30,
+      options:             true,
       selected_dish:       null,
       ec2:                 {},
       volume_selected:     '',
@@ -1090,19 +1097,19 @@
       watch_cook: function (dfd) {
         var self = this;
         var infra_id = current_infra.id;
-        var el = document.getElementById("cook-status");
-
+        var el = document.getElementById("add_modify_value");
+        //console.log(el);
         // 更新されるたびにスクロールすると、scrollHeight 等が重い処理なのでブラウザが固まってしまう。
         // そのため、100msに1回スクロールするようにしている。
-        (function () {
-          var scroll = function () {
-            Vue.nextTick(function () {
-              el.scrollTop = el.scrollHeight;
-              if (self.inprogress) { setTimeout(scroll, 100); }
-            });
-          };
-          scroll();
-        })();
+        //(function () {
+        //  var scroll = function () {
+        //    Vue.nextTick(function () {
+        //      el.scrollTop = el.scrollHeight;
+        //      if (self.inprogress) { setTimeout(scroll, 100); }
+        //    });
+        //  };
+        //  scroll();
+        //})();
 
         dfd.done(function () {
           if(infra_id !== current_infra.id){return;}
