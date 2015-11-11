@@ -24,5 +24,6 @@ export interface Matcher {
 
 export interface Chain {
   name: string;
-  args: string[];
+  arg:  string;
+  use:  boolean;
 }

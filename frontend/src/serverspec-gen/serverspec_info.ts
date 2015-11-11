@@ -5,6 +5,15 @@ export interface ServerspecInfo {
 }
 
 export interface Resource {
-  matchers: string[];
+  matchers: Matchers;
   its_targets: string[];
+}
+
+export interface Matchers {
+  [matcher_name: string]: Matcher;
+}
+
+export interface Matcher {
+  parameters: string[];
+  chains:     string[];
 }
