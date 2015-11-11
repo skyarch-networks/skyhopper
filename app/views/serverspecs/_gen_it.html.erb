@@ -27,8 +27,9 @@
       <arg-li v-for="c in it.matcher.chains" :name="c.name" :value.sync="c.arg">
       </arg-li>
 
-<%#       <arg-li v-for="name in matcher_params" :name="name" :value="params[$index]">
-      </arg-li> %>
+      <%# https://github.com/vuejs/vue/issues/1730 %>
+      <arg-li v-for="a in it.matcher.args" track-by="$index" :name="matcher_params[$index]" :value.sync="a">
+      </arg-li>
     </ul>
   </div>
 </div>

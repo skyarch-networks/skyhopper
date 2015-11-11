@@ -40,14 +40,20 @@ export default Vue.extend({
 
     matcher_chains: function () { return this._matcher ? this._matcher.chains     : []; },
     matcher_params: function () { return this._matcher ? this._matcher.parameters : []; },
+
   },
   ready: function() {
-    this.$watch('matcher_chains', (v: string[]) => {
+    this.$watch('matcher_chains', (names: string[]) => {
       this.$set("it.matcher.chains", []);
-      v.forEach((name, n) => {
-        this.it.matcher.chains.$set(n, {name: name, arg: "poyoyo"});
+      names.forEach((name, n) => {
+        this.it.matcher.chains.$set(n, {name: name, arg: ""});
       });
     });
+
+    this.$watch('matcher_params', (names: string[]) => {
+      this.it.matcher.args = names.map( __ => "" );
+    });
+
     console.log("it-panel", this);
   },
 });
