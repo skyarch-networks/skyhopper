@@ -46,13 +46,17 @@ export default Vue.extend({
 
   },
   ready: function() {
-    this.$watch('matcher_chains', (names: string[]) => {
+    const update_chains = (names: string[]) => {
       this.it.matcher.chains = names.map( name => ({name, arg: "", use: false}));
-    });
+    };
+    update_chains(this.matcher_chains);
+    this.$watch('matcher_chains', update_chains);
 
-    this.$watch('matcher_params', (names: string[]) => {
+    const update_params = (names: string[]) => {
       this.it.matcher.args = names.map( __ => "" );
-    });
+    };
+    update_params(this.matcher_params);
+    this.$watch('matcher_params', update_params);
 
     console.log("it-panel", this);
   },
