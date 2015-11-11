@@ -23,7 +23,12 @@
       <selectable-input label="Matcher" :options="matcher_names" :selected.sync="it.matcher.name"></selectable-input>
     </div>
 
-    <arg-list :args="matcher_chains" :results="it.matcher.chains"></arg-list>
-    <arg-list :args="matcher_params" :results="[]"></arg-list>
+    <ul>
+      <arg-li v-for="c in it.matcher.chains" :name="c.name" :value.sync="c.arg">
+      </arg-li>
+
+<%#       <arg-li v-for="name in matcher_params" :name="name" :value="params[$index]">
+      </arg-li> %>
+    </ul>
   </div>
 </div>

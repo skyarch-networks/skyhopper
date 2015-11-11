@@ -1,4 +1,7 @@
 /// <reference path="../../declares.d.ts" />
+
+import * as ASTInterface from './ast-interface';
+
 Vue.config.debug = true;
 
 export default Vue.extend({
@@ -39,6 +42,12 @@ export default Vue.extend({
     matcher_params: function () { return this._matcher ? this._matcher.parameters : []; },
   },
   ready: function() {
-    console.log(this);
+    this.$watch('matcher_chains', (v: string[]) => {
+      this.$set("it.matcher.chains", []);
+      v.forEach((name, n) => {
+        this.it.matcher.chains.$set(n, {name: name, arg: "poyoyo"});
+      });
+    });
+    console.log("it-panel", this);
   },
 });
