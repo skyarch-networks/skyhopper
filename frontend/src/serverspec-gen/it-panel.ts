@@ -30,17 +30,13 @@ export default Vue.extend({
     },
   },
   computed: {
-    matcher_names: function () {
-      return _.keys(this.resource.matchers);
-    },
-    matcher_chains: function () {
-      const m = this.resource.matchers[this.it.matcher.name];
-      return m ? m.chains : [];
-    },
-    matcher_params: function () {
-      const m = this.resource.matchers[this.it.matcher.name];
-      return m ? m.parameters : [];
-    },
+    matcher_names:  function () { return _.keys(this.resource.matchers); },
+
+    // for internal
+    _matcher:       function () { return this.resource.matchers[this.it.matcher.name]; },
+
+    matcher_chains: function () { return this._matcher ? this._matcher.chains     : []; },
+    matcher_params: function () { return this._matcher ? this._matcher.parameters : []; },
   },
   ready: function() {
     console.log(this);
