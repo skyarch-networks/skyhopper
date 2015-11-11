@@ -37,8 +37,16 @@ save_pid() {
   echo -n $1 > $pid_path
 }
 
+test_or_create_pids_dir() {
+  pids_path="${SKYHOPPER_PATH}/tmp/pids"
+  if [ ! -d $pids_path ]; then
+    mkdir -p $pids_path
+  fi
+}
 
 start() {
+  test_or_create_pids_dir
+
   cd $SKYHOPPER_PATH
   echo -e "\e[1m=====\e[32m Generating i18n-js dictionary\e[m"
   bundle exec rake i18n:js:export
