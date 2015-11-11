@@ -3,7 +3,7 @@
     <button class="btn btn-danger pull-right btn-xs" @click="$parent.removeIt(it)"><span class="glyphicon glyphicon-remove"></span></button>
 
     <span class="pull-right">&nbsp&nbsp</span>
-    <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon glyphicon-chevron-down"></span></button>
+    <button class="btn btn-default pull-right btn-xs" @click="accordionToggle"><span class="glyphicon" :class="class_up_down"></span></button>
     <h3 v-if="it.type === 'it'"  class="panel-title">{{it.matcher.name}}</h3>
     <h3 v-if="it.type === 'its'" class="panel-title">{{it.name}} {{it.matcher.name}}</h3>
   </div>
@@ -15,6 +15,7 @@
 
     <div class="form-group">
       <label>
+        <%# TODO: Improve Style... %>
         Should/Should not <input type="checkbox" v-model="it.should">
       </label>
     </div>
