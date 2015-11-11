@@ -54,6 +54,8 @@ class ServerspecInfoRemote
 
     res = {}
 
+    res[:be] = {parameters: [:object], chains: []}
+
     # Ref: https://www.relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/exist-matcher
     if ms.delete(:exists?)
       res[:exist] = {parameters: [], chains: []}
