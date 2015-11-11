@@ -138,7 +138,7 @@ export function AlertForAjaxStdError(callback?: () => void) {
   return function (xhr: XMLHttpRequest | string): void {
     const t = typeof xhr === "string" ? xhr : xhr.responseText;
     const ex = JSON.parse(t).error;
-    const dfd = Alert(ex.kind, ex.message, 'danger');
+    const dfd = Alert(ex.kind, _.escape(ex.message), 'danger');
     if (callback) { dfd.done(callback); }
   };
 };
