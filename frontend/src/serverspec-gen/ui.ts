@@ -4,7 +4,7 @@
 import ResourcePanel     from './resource-panel';
 import ItPanel           from './it-panel';
 import SelectableInput   from './selectable-input';
-import ArgList           from './arg_list';
+import ArgLi             from './arg_li';
 import Serverspec        from '../models/serverspec';
 import * as Info         from './serverspec_info';
 import * as ASTInterface from './ast-interface';
@@ -84,6 +84,6 @@ if (document.querySelector('#main')) {
   Vue.component("resource-panel", ResourcePanel);
   Vue.component("it-panel", ItPanel);
   Vue.component("selectable-input", SelectableInput);
-  Vue.component("arg-list", ArgList);
+  Vue.component("arg-li", ArgLi);
   const __ = new VueMain([], SERVERSPEC_INFO);
 }
