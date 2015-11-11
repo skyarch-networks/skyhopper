@@ -1,6 +1,6 @@
 <ul>
   <li v-for="arg in args">
-    {{arg}}
-    <input type="text">
+    {{arg}}&nbsp;
+    <input type="text" v-model="results[$index]['arg']">
   </li>
 </ul>

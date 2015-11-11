@@ -23,7 +23,7 @@
       <selectable-input label="Matcher" :options="matcher_names" :selected.sync="it.matcher.name"></selectable-input>
     </div>
 
-    <arg-list :args="matcher_chains"></arg-list>
-    <arg-list :args="matcher_params"></arg-list>
+    <arg-list :args="matcher_chains" :results="it.matcher.chains"></arg-list>
+    <arg-list :args="matcher_params" :results="[]"></arg-list>
   </div>
 </div>
