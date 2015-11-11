@@ -123,12 +123,14 @@ export class Matcher {
 export class Chain {
   private name: string;
   private arg:  string;
+  private use:  boolean; // workaround
   constructor(c: ASTInterface.Chain) {
     this.name = c.name;
     this.arg  = c.arg;
+    this.use  = c.use;
   }
 
   to_ruby(): string {
-    return `.${this.name}(${this.arg})`;
+    return this.use ? `.${this.name}(${this.arg})` : "";
   }
 }

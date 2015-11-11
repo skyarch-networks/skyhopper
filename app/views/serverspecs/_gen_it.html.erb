@@ -24,11 +24,19 @@
     </div>
 
     <ul>
-      <arg-li v-for="c in it.matcher.chains" :name="c.name" :value.sync="c.arg">
+      <arg-li
+        v-for="c in it.matcher.chains"
+        :name="c.name"
+        :value.sync="c.arg"
+        :use.sync="c.use">
       </arg-li>
 
-      <%# https://github.com/vuejs/vue/issues/1730 %>
-      <arg-li v-for="a in it.matcher.args" track-by="$index" :name="matcher_params[$index]" :value.sync="a">
+      <%# Why track-by? => https://github.com/vuejs/vue/issues/1730 %>
+      <arg-li
+        v-for="a in it.matcher.args"
+        track-by="$index"
+        :name="matcher_params[$index]"
+        :value.sync="a">
       </arg-li>
     </ul>
   </div>

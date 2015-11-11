@@ -44,7 +44,7 @@ export default Vue.extend({
   },
   ready: function() {
     this.$watch('matcher_chains', (names: string[]) => {
-      this.it.matcher.chains = names.map( name => ({name, arg: ""}));
+      this.it.matcher.chains = names.map( name => ({name, arg: "", use: false}));
     });
 
     this.$watch('matcher_params', (names: string[]) => {
