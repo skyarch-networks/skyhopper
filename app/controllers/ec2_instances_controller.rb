@@ -54,7 +54,7 @@ class Ec2InstancesController < ApplicationController
 
     items = infra.ec2.describe_instance_status[:instance_statuses]
     resp = []
-    items.each do |item, index|
+    items.each do |item|
       unless infra.resources.where(physical_id: item[:instance_id]).exists?
         resp.push({physical_id: item[:instance_id]})
       end
