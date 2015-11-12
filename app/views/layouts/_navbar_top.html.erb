@@ -17,7 +17,7 @@
 
 <% if user_signed_in? %>
         <li class="dropdown">
-          <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= t('common.btn.settings') %> <b class="caret"></b></a>
+          <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= fa 'cogs' %> <%= t('common.btn.settings') %> <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
   <% if current_user.admin? && current_user.master? %>
             <li role="presentation"><%= link_to 'Zabbix Server', edit_zabbix_app_settings_path %></li>
@@ -30,7 +30,7 @@
         </li>
 <% end %>
         <li class="dropdown">
-          <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= t 'common.btn.lang'%> <b class="caret"></b></a>
+          <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= fa 'globe' %> <%= t 'common.btn.lang'%> <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
             <%
             base_path = request.path_info
