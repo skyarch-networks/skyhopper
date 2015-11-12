@@ -190,6 +190,8 @@
     data: function () {return {
       physical_id: '',
       screen_name: '',
+      physical_ids: null,
+      manual: false,
     };},
     methods: {
       submit: function () {
@@ -201,7 +203,25 @@
           .fail(alert_and_show_infra);
       },
     },
-    created: function () {console.log(this);},
+    created: function () {
+      console.log(this);
+      var self = this;
+      var res = new EC2Instance(current_infra, "");
+      res.available_resources().done(function (data){
+        self.physical_ids = data;
+      });
+
+      $('#add_ec2_physical_id').selectize({
+        delimiter: ',',
+        persist: false,
+        create: function(input) {
+          return {
+            value: input,
+            text: input
+          }
+        }
+      });
+    },
   });
 
   Vue.component("cf-history-tabpane", {

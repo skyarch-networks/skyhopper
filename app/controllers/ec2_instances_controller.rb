@@ -46,6 +46,23 @@ class Ec2InstancesController < ApplicationController
     render text: I18n.t('nodes.msg.changed_scale', type: type) and return
   end
 
+  # GET /ec2_instances/available_resources
+  # @param [Integer] infra_id
+  def available_resources
+    infra_id = params.require(:infra_id)
+    infra = Infrastructure.find(infra_id)
+
+    items = infra.ec2.describe_instance_status[:instance_statuses]
+    resp = []
+    items.each do |item|
+      if !infra.resources.where(physical_id: item[:instance_id]).exists?
+        resp.push({physical_id: item[:instance_id]})
+      end
+    end
+
+    render json: resp and return
+  end
+
   # TODO: return ec2 status
   # XXX: DRY (Ref: ServerStateConroller)
 

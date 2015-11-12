@@ -15,6 +15,7 @@
  *= require bootstrap-datetimepicker.min
  *= require selectize.paper
  *= require fullcalendar
+ *= require font-awesome
  */
 
 @font-face {
