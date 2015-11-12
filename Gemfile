@@ -46,8 +46,7 @@ gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
 
-gem "knife-windows", "~> 0.8.6"
-gem "knife-ec2"
+gem "knife-windows"
 gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
