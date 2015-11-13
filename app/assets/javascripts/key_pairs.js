@@ -10,6 +10,7 @@
   'use strict';
 
   Vue.component('div-loader', Loader);
+  var modal          = require('modal');
 
   var kpvm = new Vue({
     el: '#key-pairs-page',
@@ -52,23 +53,26 @@
       },
       delete_key_pair: function (key_pair) {
         var self = this;
-        if (!confirm(t('key_pairs.msg.confirm', {name: key_pair.name}))) {return;}
-        $.ajax({
-          type: 'DELETE',
-          url: '/key_pairs/' + key_pair.name,
-          data: {
-            project_id: self.project_id,
-            region: key_pair.region
-          }
-        }).done(function () {
-          var index = self.key_pairs.indexOf(key_pair);
-          $('.table > tbody > tr:nth-child(' + (index + 1) + ')').fadeOut('normal', function () {
-            self.key_pairs.$remove(key_pair);
-            if (self.has_no_key_pairs(key_pair.region)) {
-              self.switch_region('All');
+
+        modal.Confirm(t('key_pairs.key_pairs'), t('key_pairs.msg.confirm', {name: key_pair.name})).done(function () {
+          $.ajax({
+            type: 'DELETE',
+            url: '/key_pairs/' + key_pair.name,
+            data: {
+              project_id: self.project_id,
+              region: key_pair.region
             }
+          }).done(function () {
+            var index = self.key_pairs.indexOf(key_pair);
+            $('.table > tbody > tr:nth-child(' + (index + 1) + ')').fadeOut('normal', function () {
+              self.key_pairs.$remove(key_pair);
+              if (self.has_no_key_pairs(key_pair.region)) {
+                self.switch_region('All');
+              }
+            });
           });
         });
+        //if (!confirm(t('key_pairs.msg.confirm', {name: key_pair.name}))) {return;}
       },
       reload: function () {
         var self = this;
@@ -108,4 +112,5 @@
       }
     }
   });
+
 })();
