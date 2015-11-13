@@ -1046,8 +1046,7 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
-
-          ec2.detach_ec2()
+          ec2.detach_ec2(self.x_zabbix, self.x_chef)
             .done(alert_success(function () {
               show_infra(current_infra.id);
             }))

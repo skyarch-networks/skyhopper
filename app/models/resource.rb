@@ -7,8 +7,6 @@
 #
 
 class Resource < ActiveRecord::Base
-  before_destroy :detach_zabbix
-  before_destroy :detach_chef
 
   belongs_to :infrastructure
   belongs_to :dish
