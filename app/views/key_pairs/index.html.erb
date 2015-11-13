@@ -27,6 +27,10 @@
   </div>
   <div class="col-md-10">
     <div-loader v-if="loading"></div-loader>
+    <div class="input-group" v-if="!loading">
+      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+      <hr>
+    </div>
     <table class="table table-hover" v-if="!loading">
       <thead>
         <tr>
@@ -40,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="key_pair in key_pairs | paginate" v-show="is_selected(key_pair.region)">
+        <tr v-for="key_pair in key_pairs | filterBy filterKey | paginate" v-show="is_selected(key_pair.region)">
           <td>{{key_pair.name}}</td>
           <td>{{key_pair.fingerprint}}</td>
           <td>{{key_pair.region}}</td>

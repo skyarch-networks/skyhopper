@@ -22,6 +22,7 @@
       key_pairs: null,
       project_id: null,
       regions: null,
+      filterKey: '',
     },
     methods: {
       switch_region: function (region_name) {
