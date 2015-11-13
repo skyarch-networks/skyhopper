@@ -82,11 +82,8 @@ class Ec2InstancesController < ApplicationController
     physical_id = params.require(:id)
     zabbix = params.require(:zabbix)
     chef = params.require(:chef)
-
-    puts zabbix.inspect
-    puts chef.inspect
-
     resource = Resource.find_by(physical_id: physical_id)
+
     if zabbix == "true"
       resource.detach_zabbix
     end
@@ -94,6 +91,7 @@ class Ec2InstancesController < ApplicationController
     if chef == "true"
       resource.detach_chef
     end
+    
     resource.destroy
 
     infra_logger_success("#{physical_id} has been detached.")
