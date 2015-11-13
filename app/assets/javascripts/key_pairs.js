@@ -17,6 +17,11 @@
     data: {
       selected: 'All',
       loading: true,
+      pages: 10,
+      pageNumber: 0,
+      key_pairs: null,
+      project_id: null,
+      regions: null,
     },
     methods: {
       switch_region: function (region_name) {
@@ -72,7 +77,6 @@
             });
           });
         });
-        //if (!confirm(t('key_pairs.msg.confirm', {name: key_pair.name}))) {return;}
       },
       reload: function () {
         var self = this;
@@ -100,16 +104,39 @@
           self.loading = false;
         });
       },
+      showPrev: function(){
+        if(this.pageNumber === 0) return;
+        this.pageNumber--;
+      },
+      showNext: function(){
+        if(this.isEndPage) return;
+        this.pageNumber++;
+      },
     },
     computed: {
+      isStartPage: function(){
+        return (this.pageNumber === 0);
+      },
+      isEndPage: function(){
+        return ((this.pageNumber + 1) * this.pages >= this.key_pairs.length);
+      },
     },
     created: function () {
       this.reload();
     },
+    ready: function ()  {
+      console.log(this.key_pairs);
+    },
     filters: {
       zero_as_blank: function (str) {
         return (str === 0) ? null : str;
-      }
+
+      },
+      paginate: function(list) {
+        var index = this.pageNumber * this.pages;
+        return list.slice(index, index + this.pages);
+      },
+      roundup: function (val) { return (Math.ceil(val));},
     }
   });
 
