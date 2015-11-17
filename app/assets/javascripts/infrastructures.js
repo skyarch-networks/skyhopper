@@ -995,6 +995,7 @@
       schedule:            {},
       loading_volumes:     false,
       attachable_volumes:  [],
+      sec_group: 'The security groups to which the instance belongs. A security group is a collection of firewall rules that restrict the network traffic for the instance. Click View rules to see the rules for the specific group.',
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
       changing_status: t('ec2_instances.changing_status'),
@@ -1421,7 +1422,6 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
-
         var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;

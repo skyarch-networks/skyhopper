@@ -156,6 +156,7 @@ en:
       template_history:     'CloudFormation Template History'
       stack_eventlog:       'Stack Eventlog'
       infrastructure_log:   'Operation Log'
+      view_rules:           'View Rules'
     msg:
       created:                     'Infrastructure was successfully created.'
       updated:                     'Infrastructure was successfully updated.'

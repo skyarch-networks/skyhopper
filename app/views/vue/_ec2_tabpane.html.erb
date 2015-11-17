@@ -105,6 +105,28 @@
           <td><%= link_and_dropdown_ssh('ec2.public_ip') %></td>
           <td><%= copy_to_clipboard_button('ec2.public_ip') %></td>
         </tr>
+        <tr>
+            <td>
+              <bootstrap-tooltip :title="sec_group">
+                <template slot="content">
+                  Security Groups
+                </template>
+              </bootstrap-tooltip>
+            </td>
+          <td>
+              <text v-for="t in ec2.security_groups">
+                <bootstrap-tooltip :title="t.group_name">
+                  <template slot="content">
+                    <a>{{t.group_id}}</a>, &nbsp
+                  </template>
+                </bootstrap-tooltip>
+              </text>
+          </td>
+          <td><button href="#" role="button" class="btn btn-xs btn-default" data-toggle="modal">
+                <%= t 'infrastructures.btn.view_rules' %>
+              </button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>

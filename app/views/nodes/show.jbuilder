@@ -20,6 +20,8 @@ json.number_of_security_updates @number_of_security_updates
 json.yum_schedule  @yum_schedule
 json.snapshot_schedules @snapshot_schedules
 
+json.security_groups @security_groups
+
 if @info
   json.info do
     json.cook_status       @info[:cook_status]
