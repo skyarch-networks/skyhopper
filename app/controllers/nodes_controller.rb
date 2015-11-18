@@ -239,12 +239,9 @@ class NodesController < ApplicationController
 
   # GET /nodes/:id/get_rules
   def get_rules
-    physical_id = params.require(:id)
     group_ids = params.require(:group_ids)
-
+    
     rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
-
-    puts rules_summary.inspect
     @rules_summary = rules_summary[:security_groups]
   end
 
