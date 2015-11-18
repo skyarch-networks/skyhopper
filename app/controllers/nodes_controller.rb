@@ -237,6 +237,17 @@ class NodesController < ApplicationController
     @current_attributes = node.get_attributes
   end
 
+  # GET /nodes/:id/get_rules
+  def get_rules
+    physical_id = params.require(:id)
+    group_ids = params.require(:group_ids)
+
+    rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+
+    puts rules_summary.inspect
+    @rules_summary = rules_summary[:security_groups]
+  end
+
   # PUT /nodes/:id/yum_update
   def yum_update
     physical_id = params.require(:id)
@@ -276,7 +287,6 @@ class NodesController < ApplicationController
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
   end
-
 
   # TODO: refactor
   def cook_node(infrastructure, physical_id, whyrun)

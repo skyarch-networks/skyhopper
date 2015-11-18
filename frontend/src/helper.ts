@@ -25,9 +25,13 @@ Vue.component('bootstrap-tooltip', {
       type: String,
       required: true,
     },
+    placement: {
+      type: String,
+      required: false,
+    },
   },
   template: `
-<span data-toggle="tooltip" data-original-title="{{title}}">
+<span data-toggle="tooltip" data-placement="{{placement}}" data-original-title="{{title}}">
   <content class="content">
     <slot name="content"></slot>
   </content>

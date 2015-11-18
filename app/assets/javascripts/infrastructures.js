@@ -995,6 +995,9 @@
       schedule:            {},
       loading_volumes:     false,
       attachable_volumes:  [],
+      max_sec_group:       null,
+      rules_summary:       null,
+      placement:          'left',
       sec_group: 'The security groups to which the instance belongs. A security group is a collection of firewall rules that restrict the network traffic for the instance. Click View rules to see the rules for the specific group.',
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
@@ -1183,6 +1186,7 @@
       },
 
       is_role:      function (run) { return run.indexOf("role") !== -1; },
+      is_first:     function (index) { return (index === 0); },
       runlist_type: function (run) { return run.replace(/\[.+\]$/, ""); },
       runlist_name: function (run) { return run.replace(/^.+\[(.+)\]$/, "$1"); },
 
@@ -1337,7 +1341,21 @@
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
       },
       toLocaleString: toLocaleString,
-      capitalize: function (str) {return _.capitalize(_.camelCase(str));}
+      capitalize: function (str) {return _.capitalize(_.camelCase(str));},
+      get_rules: function (){
+        var self = this;
+        var group_ids = [];
+        self.ec2.security_groups.forEach(function (value, key) {
+          group_ids.push(value["group_id"]);
+        });
+
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        ec2.get_rules(group_ids).done(function (data) {
+          self.rules_summary = data.rules_summary;
+          console.log(data.rules_summary);
+
+        });
+      }
     },
     computed: {
       ec2_btn_class: function () {
@@ -1422,6 +1440,7 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
+        self.max_sec_group = data.security_groups.length-1;
         var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
