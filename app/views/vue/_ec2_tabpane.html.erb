@@ -1,6 +1,6 @@
 <div>
   <h3 class="page-header">
-    {{physical_id}}&nbsp;<small>{{ec2.public_ip}}</small>
+    {{physical_id}}&nbsp;<small>{{ec2.public_ip}} </small>
   </h3>
 
   <div class="col-xs-12">
@@ -33,9 +33,9 @@
                 <ul class="dropdown-menu">
                   <li :class="{disabled: running}"><a @click="start_ec2()"  href="#"><%= glyphicon 'play' %> Start</a></li>
                   <li :class="{disabled: stopped}"><a @click="stop_ec2()"   href="#"><%= glyphicon 'stop' %> Stop</a></li>
-                  <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#"><%= glyphicon 'repeat' %> Reboot</a></li>
+                  <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#"><%= fa 'retweet' %> Reboot</a></li>
                   <li><a href="#detach-ec2-modal" data-toggle="modal"><%= glyphicon 'eject' %> <%= t 'helpers.links.detach' %></a></li>
-                  <li><a href="#terminate-ec2-modal" data-toggle="modal"><%= glyphicon 'trash text-danger' %> <%= t 'helpers.links.terminate' %></a></li>
+                  <li><a href="#terminate-ec2-modal" data-toggle="modal"><%= fa 'ban text-danger' %> <%= t 'helpers.links.terminate' %></a></li>
                 </ul>
               </div>
               </template>

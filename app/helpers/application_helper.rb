@@ -120,4 +120,9 @@ module ApplicationHelper
     return false unless name
     return "<span class=\"glyphicon glyphicon-#{name}\"></span>".html_safe
   end
+
+  def fa(name = nil)
+    return false unless name
+    return "<span class=\"fa fa-#{name}\"></span>".html_safe
+  end
 end

@@ -16,7 +16,7 @@
 
       <li class="active">
         <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
-        <a v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
+        <a v-if="in_progress" @click="show_tabpane('default')"><%= fa 'cog fa-spin fa-lg'%> <%= t 'infrastructures.in_progress' %></a>
         <a v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
       </li>
 

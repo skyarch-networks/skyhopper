@@ -7,7 +7,7 @@
 #
 
 class Ec2InstancePolicy < ApplicationPolicy
-  %i[change_scale? start? stop? reboot? detach? terminate? serverspec_status? register_to_elb? deregister_from_elb? attachable_volumes? attach_volume?].each do |action|
+  %i[change_scale? start? stop? reboot? available_resources? detach? terminate? serverspec_status? register_to_elb? deregister_from_elb? attachable_volumes? attach_volume?].each do |action|
     define_method(action) do
       user.allow?(record)
     end
