@@ -124,7 +124,7 @@
               </span>
           </td>
           <td>
-              <button href="#view-rules-modal" @click="get_rules()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+              <button href="#view-rules-modal" @click="view_rules()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
                 <%= glyphicon 'info-sign' %> <%= t 'infrastructures.btn.view_rules' %>
               </button>
               <button href="#change-rules-modal" @click="get_rules()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
@@ -138,7 +138,6 @@
 </div>
 
 <%= render 'infrastructures/modal/modal_change_rules' %>
-<%= render 'infrastructures/modal/modal_view_rules' %>
 
 <div class="alert alert-danger col-xs-12" v-if="ec2.chef_error">
   <h4>Connection Error</h4>

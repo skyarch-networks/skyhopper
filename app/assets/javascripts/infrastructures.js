@@ -971,6 +971,40 @@
     },
   });
 
+  Vue.component('view-rules', {
+    template: '#vuew-rules-tabpane-template',
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
+    data: function () { return{
+      loading:        false,
+      rules_summary:  null,
+    };},
+    methods: {
+      get_rules: function (){
+        var self = this;
+        var group_ids = [];
+        self.ec2.security_groups.forEach(function (value, key) {
+          group_ids.push(value["group_id"]);
+        });
+
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        ec2.get_rules(group_ids).done(function (data) {
+          self.rules_summary = data.rules_summary;
+          console.log(data.rules_summary);
+        });
+      }
+    },
+    ready: function(){
+      console.log(this);
+      this.get_rules();
+      this.loading = false;
+    }
+  });
+
   Vue.component('ec2-tabpane', {
     props: {
       physical_id: {
@@ -998,7 +1032,7 @@
       max_sec_group:       null,
       rules_summary:       null,
       placement:          'left',
-      sec_group: 'The security groups to which the instance belongs. A security group is a collection of firewall rules that restrict the network traffic for the instance. Click View rules to see the rules for the specific group.',
+      sec_group: t('ec2_instances.msg.security_groups'),
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
       changing_status: t('ec2_instances.changing_status'),
@@ -1168,6 +1202,10 @@
       },
       serverspec_results: function() {
         this.$parent.tabpaneID = 'serverspec_results';
+        this._loading();
+      },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
         this._loading();
       },
 
