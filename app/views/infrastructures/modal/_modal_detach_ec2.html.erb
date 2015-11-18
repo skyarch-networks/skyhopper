@@ -12,10 +12,18 @@
         <h4 class="alert alert-warning"><%= glyphicon 'warning-sign' %> Warning</h4>
         <p>
           <%= t('ec2_instances.msg.detach') %>
-          <ul>
-            <li>Zabbix</li>
-            <li>Chef</li>
-          </ul>
+          <div class="input-group">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" checked="true" v-model="x_zabbix"> Zabbix
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" checked="true" v-model="x_chef"> Chef
+              </label>
+            </div>
+          </div>
         </p>
       </div>
 

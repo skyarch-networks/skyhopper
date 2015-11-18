@@ -275,9 +275,9 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
-  detach_ec2(): JQueryPromise<any> {
+  detach_ec2(zabbix: boolean, chef: boolean): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-        (<any>EC2Instance.ajax_ec2).detach(this.params)
+        (<any>EC2Instance.ajax_ec2).detach(_.merge({zabbix: zabbix, chef: chef}, this.params))
     );
   }
 
