@@ -263,6 +263,14 @@ export default class EC2Instance extends ModelBase {
     };
   }
 
+  available_resources(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).available_resources(
+        {infra_id: this.params.infra_id}
+      )
+    );
+  }
+
   start_ec2(): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>EC2Instance.ajax_ec2).start(this.params)
@@ -275,9 +283,9 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
-  detach_ec2(): JQueryPromise<any> {
+  detach_ec2(zabbix: boolean, chef: boolean): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-        (<any>EC2Instance.ajax_ec2).detach(this.params)
+        (<any>EC2Instance.ajax_ec2).detach(_.merge({zabbix: zabbix, chef: chef}, this.params))
     );
   }
 
@@ -417,6 +425,7 @@ EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
 EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');
+EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
 
 EC2Instance.ajax_serverspec.add_collection('select', 'GET');
 EC2Instance.ajax_serverspec.add_collection('results', 'GET');

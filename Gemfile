@@ -39,6 +39,7 @@ gem 'unicorn-rails'
 
 gem 'ace-rails-ap'
 
+gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'

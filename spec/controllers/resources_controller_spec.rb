@@ -29,8 +29,10 @@ describe ResourcesController do
     let(:ec2_exists){true}
     let(:req){post :create, infra_id: infra.id, physical_id: physical_id, screen_name: screen_name}
 
+    let(:aws_instance){double(:aws_instance, exists?: ec2_exists, describe_keypair: infra.keypairname, status: :running)}
+
     before do
-      allow_any_instance_of(Infrastructure).to receive_message_chain(:instance, :exists?).and_return(ec2_exists)
+      allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(aws_instance)
     end
     before{req}
 

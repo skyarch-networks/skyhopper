@@ -46,6 +46,23 @@ class Ec2InstancesController < ApplicationController
     render text: I18n.t('nodes.msg.changed_scale', type: type) and return
   end
 
+  # GET /ec2_instances/available_resources
+  # @param [Integer] infra_id
+  def available_resources
+    infra_id = params.require(:infra_id)
+    infra = Infrastructure.find(infra_id)
+
+    items = infra.ec2.describe_instance_status[:instance_statuses]
+    resp = []
+    items.each do |item|
+      unless infra.resources.where(physical_id: item[:instance_id]).exists?
+        resp.push({physical_id: item[:instance_id]})
+      end
+    end
+
+    render json: resp and return
+  end
+
   # TODO: return ec2 status
   # XXX: DRY (Ref: ServerStateConroller)
 
@@ -80,8 +97,18 @@ class Ec2InstancesController < ApplicationController
   # POST /ec2_instances/i-hogehoge/detach
   def detach
     physical_id = params.require(:id)
-
+    zabbix = params.require(:zabbix)
+    chef = params.require(:chef)
     resource = Resource.find_by(physical_id: physical_id)
+
+    if zabbix == "true"
+      resource.detach_zabbix
+    end
+
+    if chef == "true"
+      resource.detach_chef
+    end
+    
     resource.destroy
 
     infra_logger_success("#{physical_id} has been detached.")
@@ -99,6 +126,8 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     instance.terminate
     resource = Resource.find_by(physical_id: physical_id)
+    resource.detach_zabbix
+    resource.detach_chef
     resource.destroy
 
     infra_logger_success("#{physical_id} has been terminated.")

@@ -22,7 +22,7 @@
 
 
     <div class="col-xs-6">
-      <h2 class="page-header"><%=t('serverspecs.generator.generated')%></h2>
+      <h3><%=t('serverspecs.generator.generated')%></h3>
       <pre v-ace="rubyCode"><code v-text="rubyCode"></code></pre>
     </div>
   </div>
@@ -41,3 +41,4 @@ var SERVERSPEC_INFO =  <%= @serverspec_info.to_json.html_safe %>
 <script id="resource-panel-template"   type="text/template"> <%= render 'gen_resource' %> </script>
 <script id="it-panel-template"         type="text/template"> <%= render 'gen_it' %> </script>
 <script id="selectable-input-template" type="text/template"> <%= render 'gen_selectable_input' %> </script>
+<script id="arg-li-template"           type="text/template"> <%= render 'gen_arg_li' %> </script>
