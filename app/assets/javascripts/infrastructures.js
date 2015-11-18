@@ -191,7 +191,6 @@
       physical_id: '',
       screen_name: '',
       physical_ids: null,
-      manual: false,
     };},
     methods: {
       submit: function () {

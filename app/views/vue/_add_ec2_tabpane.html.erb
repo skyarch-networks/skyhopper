@@ -4,12 +4,9 @@
   <div class="form-group">
     <label class="col-xs-3 control-label" for="add_ec2_physical_id">physical_id</label>
     <div class="col-xs-7">
-      <select  v-if="!manual" id="add_ec2_physical_id" class="form-control" v-model="physical_id" placeholder="select physical id">
+      <select id="add_ec2_physical_id" class="form-control" v-model="physical_id" placeholder="select physical id">
         <option v-for="t in physical_ids" value="{{t.physical_id}}" v-text="t.physical_id"></option>
       </select>
-      <input v-if="manual" type="text" class="form-control" v-model="physical_id" placeholder="physical id">
-
-      <input type="checkbox" v-model="manual" placeholder="physical id"> Manual
     </div>
   </div>
 
