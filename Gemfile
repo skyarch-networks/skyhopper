@@ -51,7 +51,7 @@ gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
-gem 'sidekiq' # for Active Job
+gem 'sidekiq', "~> 3.4.2" # for Active Job
 gem 'crono' # for Active Job
 gem 'foreman', require: false
 
