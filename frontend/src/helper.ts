@@ -42,6 +42,10 @@ Vue.component('bootstrap-tooltip', {
   },
 });
 
+Vue.component('tr-helper', {
+  template: `<tr><slot name="content"></slot><tr>`,
+});
+
 const Loader = Vue.extend({
   template: '<span><div class="loader"></div> {{text}}</span>',
   props: {

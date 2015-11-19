@@ -990,11 +990,15 @@
     },
   });
 
-  Vue.component('view-rules', {
-    template: '#vuew-rules-tabpane-template',
+  Vue.component('view-rules-tabpane', {
+    template: '#view-rules-tabpane-template',
     props: {
       physical_id: {
         type: String,
+        required: true,
+      },
+      security_groups: {
+        type: Array,
         required: true,
       },
     },
@@ -1003,24 +1007,24 @@
       rules_summary:  null,
     };},
     methods: {
-      get_rules: function (){
+      get_rules: function ()  {
         var self = this;
         var group_ids = [];
-        self.ec2.security_groups.forEach(function (value, key) {
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        self.security_groups.forEach(function (value, key) {
           group_ids.push(value["group_id"]);
         });
 
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
         ec2.get_rules(group_ids).done(function (data) {
           self.rules_summary = data.rules_summary;
           console.log(data.rules_summary);
         });
       }
     },
-    ready: function(){
+    ready: function() {
       console.log(this);
       this.get_rules();
-      this.loading = false;
+      this.$parent.loading = false;
     }
   });
 
@@ -1224,6 +1228,7 @@
       },
       view_rules: function () {
         this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.ec2.security_groups;
         this._loading();
       },
 

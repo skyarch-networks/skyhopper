@@ -97,7 +97,7 @@
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
         <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"   :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
         <operation-sched-tabpane v-if="tabpane_active('operation-sched')" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
-        <view-rules-tabpane v-if="tabpane_active('view-rules')" :physical_id.once="tabpaneGroupID"></view-rules-tabpane>
+        <view-rules-tabpane v-if="tabpane_active('view-rules')" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID"></view-rules-tabpane>
     </div>
   </div>
 </div>
@@ -124,4 +124,4 @@
 <script id="serverspec-results-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_results_tabpane' %> </script>
 
 <script id="operation-sched-tabpane-template" type="text/template"> <%=	render 'vue/operation_sched_tabpane' %> </script>
-<script id="vuew-rules-tabpane-template" type="text/template"> <%=	render 'vue/view_rules_tabpane' %> </script>
+<script id="view-rules-tabpane-template" type="text/template"> <%=	render 'vue/view_rules_tabpane' %> </script>
