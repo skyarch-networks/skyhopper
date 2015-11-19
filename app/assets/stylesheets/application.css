@@ -16,6 +16,7 @@
  *= require bootstrap-table
  *= require selectize.paper
  *= require fullcalendar
+ *= require font-awesome
  */
 
 @font-face {
