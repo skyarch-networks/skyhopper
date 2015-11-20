@@ -23,6 +23,7 @@
       project_id: null,
       regions: null,
       filterKey: '',
+      selected_key_pairs: null,
     },
     methods: {
       switch_region: function (region_name) {
@@ -144,8 +145,10 @@
               isSelected.push(value);
             }
           });
+          this.selected_key_pairs = isSelected;
           return isSelected.slice(index, index + this.pages);
         }else{
+          this.selected_key_pairs = list;
           return list.slice(index, index + this.pages);
         }
 
