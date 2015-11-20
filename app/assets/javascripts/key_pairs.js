@@ -119,7 +119,7 @@
         return (this.pageNumber === 0);
       },
       isEndPage: function(){
-        return ((this.pageNumber + 1) * this.pages >= this.key_pairs.length);
+        return ((this.pageNumber + 1) * this.pages >= this.number_of_key_pairs(this.selected));
       },
     },
     created: function () {
@@ -134,8 +134,20 @@
 
       },
       paginate: function(list) {
+        var self = this;
         var index = this.pageNumber * this.pages;
-        return list.slice(index, index + this.pages);
+        var isSelected = [];
+        if(self.selected != 'All'){
+          list.forEach(function (value, key) {
+            if(value.region === self.selected){
+              isSelected.push(value);
+            }
+          });
+          return isSelected.slice(index, index + this.pages);
+        }else{
+          return list.slice(index, index + this.pages);
+        }
+
       },
       roundup: function (val) { return (Math.ceil(val));},
     }
