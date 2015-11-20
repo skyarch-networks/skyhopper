@@ -94,7 +94,7 @@
               <blockquote class="h5" v-for="value in url_status">
                 <div class="h5">
                   <strong><u>{{value.name}}</u>
-                    <span :class="{text-success: status === 'OK', text-danger: status !== 'OK'}">{{value.status}}</span>
+                    <span :class="{'text-success': value.status === 'OK', 'text-danger': value.status !== 'OK'}">{{value.status}}</span>
                   </strong>
                 </div>
 
@@ -111,7 +111,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item in data">
+                    <tr v-for="item in value.data">
                       <td>{{item.url}}</td>
                       <td>{{item.response_code}}</td>
                       <td>{{item.download_speed}}</td>
