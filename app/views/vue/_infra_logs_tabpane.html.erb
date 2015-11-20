@@ -17,7 +17,7 @@
     <tr v-if="log.long">
       <td colspan="4" class="hidden-row">
         <div class="accordion-body collapse" id="logbody-{{log.id}}">
-          <pre style="margin: 5px" v-text="log.details"></pre>
+          <div style="margin: 5px" autofocus v-ace="log.details" :mode="mode" :theme="theme" :options="options" name="description" id="add_modify_value"></div>
         </div>
       </td>
     </tr>
