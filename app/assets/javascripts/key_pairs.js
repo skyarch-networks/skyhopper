@@ -38,6 +38,7 @@
         _.find(this.regions, function (region) {
           return region.name === region_name;
         }).selected = true;
+        this.pageNumber = 0
       },
       key_pairs_by_region: function (region_name) {
         return _.select(this.key_pairs, function (key_pair) {
