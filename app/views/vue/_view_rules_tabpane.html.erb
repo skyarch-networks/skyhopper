@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="span*">
-    <table class="table table-bordered">
+    <table class="table table-bordered text-center">
       <thead>
       <!--Top headers-->
       <tr>
@@ -47,23 +47,66 @@
                 <td v-for="s in inbound.ip_ranges">{{s.cidr_ip}}</td>
                 <!--First Outbound-->
                 <template v-for="outbound in rule.ip_permissions_egress" track-by="$index">
-                  <td v-if="$index == 0">{{outbound.ip_protocol}}</td>
-                  <td v-if="$index == 0">{{outbound.from_port}}</td>
-                  <td v-if="$index == 0">{{outbound.ip_ranges[0].cidr_ip}}</></td>
+                  <td v-if="$index == 0">
+                    <span v-if="outbound.ip_protocol === '-1'">
+                      All
+                    </span>
+                    <span v-else>
+                      {{outbound.ip_protocol}}
+                    </span>
+                  </td>
+                  <td v-if="$index == 0">
+                    <span v-if="outbound.from_port === outbound.to_port">
+                      <span v-if="!outbound.from_port">
+                        All
+                      </span>
+                      <span v-else>
+                        {{outbound.from_port}}
+                      </span>
+                    </span>
+                    <span v-else>
+                    {{outbound.from_port}}-{{outbound.to_port}}
+                    </span>
+                  </td>
+                  <td v-if="$index == 0">{{outbound.ip_ranges[0].cidr_ip}}</td>
                 </template>
                 </tr>
               </template>
               <template v-else>
                 <!--next inbound-->
                 <tr>
-                  <td>{{inbound.from_port}}</td>
                   <td>{{inbound.ip_protocol}}</td>
+                  <td v-if="inbound.from_port === inbound.to_port">
+                      <span v-if="inbound.from_port === -1">
+                        All
+                      </span>
+                      <span v-else>
+                        {{inbound.from_port}}
+                      </span>
+                  </td>
+                  <td v-else>{{inbound.from_port}}-{{inbound.to_port}}</td>
                   <!--Source IP-->
                   <td v-for="s in inbound.ip_ranges">{{s.cidr_ip}}</td>
                   <!--First Outbound-->
                   <template v-if="index < rule.ip_permissions_egress.length">
-                    <td v-cloak="index === 0">{{rule.ip_permissions_egress[index].ip_protocol}}</td>
-                    <td v-cloak="index === 0">{{rule.ip_permissions_egress[index].from_port}}-{{rule.ip_permissions_egress[index].to_port}}</td>
+                    <td v-cloak="index === 0">
+                      <span v-if="rule.ip_permissions_egress[index].ip_protocol === '-1'">
+                        All
+                      </span>
+                      <span v-else>
+                        {{rule.ip_permissions_egress[index].ip_protocol}}
+                      </span>
+                    </td>
+                    <td v-cloak="index === 0">
+                      <span v-if="rule.ip_permissions_egress[index].from_port === rule.ip_permissions_egress[index].to_port">
+                        <span v-if="rule.ip_permissions_egress[index].from_port">
+                          {{rule.ip_permissions_egress[index].from_port}}
+                        </span><span v-else>All</span>
+                      </span>
+                      <span v-else>
+                        {{rule.ip_permissions_egress[index].from_port}}-{{rule.ip_permissions_egress[index].to_port}}
+                      </span>
+                    </td>
                     <td v-cloak="index === 0">{{rule.ip_permissions_egress[index].ip_ranges[0].cidr_ip}}</td>
                   </template>
                 </tr>
@@ -80,12 +123,38 @@
                   <!--First Outbound-->
                   <template v-for="inbound in rule.ip_permissions" track-by="$index">
                     <td v-if="$index == 0">{{inbound.ip_protocol}}</td>
-                    <td v-if="$index == 0">{{inbound.from_port}}</td>
+                    <td v-if="$index == 0">
+                      <span v-if="inbound.from_port === inbound.to_port">
+                        <span v-if="inbound.from_port === -1">
+                          All
+                        </span>
+                        <span>
+                          {{inbound.from_port}}
+                        </span>
+                      </span>
+                      <span v-else>
+                        {{inbound.from_port}}-{{inbound.to_port}}
+                      </span>
+                    </td>
                     <td v-if="$index == 0">{{inbound.ip_ranges[0].cidr_ip}}</td>
                   </template>
 
-                  <td>{{outbound.ip_protocol}}</td>
-                  <td v-if="outbound.from_port === outbound.to_port">{{outbound.from_port}}</td>
+                  <td>
+                    <span v-if="outbound.ip_protocol === '-1'">
+                      All
+                    </span>
+                    <span v-else>
+                      {{outbound.ip_protocol}}
+                    </span>
+                  </td>
+                  <td v-if="outbound.from_port === outbound.to_port">
+                    <span v-if="!outbound.from_port">
+                        All
+                      </span>
+                      <span v-else>
+                        {{outbound.from_port}}
+                      </span>
+                  </td>
                   <td v-else>{{outbound.from_port}}-{{outbound.to_port}}</td>
                   <!--Source IP-->
                   <td v-for="s in outbound.ip_ranges">{{s.cidr_ip}}</td>
@@ -97,7 +166,11 @@
                 <tr>
                   <template v-if="index < rule.ip_permissions.length">
                     <td v-cloak="index === 0">{{rule.ip_permissions[index].ip_protocol}}</td>
-                    <td v-cloak="index === 0">{{rule.ip_permissions[index].from_port}}-{{rule.ip_permissions[index].to_port}}</td>
+                    <td v-cloak="index === 0">
+                      <span v-if="rule.ip_permissions[index].from_port === rule.ip_permissions[index].to_port">
+                        {{rule.ip_permissions[index].from_port}}
+                      </span>
+                    </td>
                     <td v-cloak="index === 0">{{rule.ip_permissions[index].ip_ranges[0].cidr_ip}}</td>
                   </template>
                   <template v-else>
