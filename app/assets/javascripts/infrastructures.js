@@ -1018,9 +1018,11 @@
 
         ec2.get_rules(group_ids).done(function (data) {
           self.rules_summary = data.rules_summary;
-          console.log(data.rules_summary[0].ip_permissions_egress);
         });
-      }
+      },
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
     },
     ready: function() {
       console.log(this);
