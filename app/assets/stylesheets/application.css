@@ -13,7 +13,6 @@
  *= require_tree .
  *= require animate.min
  *= require bootstrap-datetimepicker.min
- *= require bootstrap-table
  *= require selectize.paper
  *= require fullcalendar
  *= require font-awesome

@@ -1005,6 +1005,7 @@
     data: function () { return{
       loading:        false,
       rules_summary:  null,
+      ip: null,
     };},
     methods: {
       get_rules: function ()  {
@@ -1017,7 +1018,7 @@
 
         ec2.get_rules(group_ids).done(function (data) {
           self.rules_summary = data.rules_summary;
-          console.log(data.rules_summary);
+          console.log(data.rules_summary[0].ip_permissions_egress);
         });
       }
     },
@@ -1025,6 +1026,18 @@
       console.log(this);
       this.get_rules();
       this.$parent.loading = false;
+    },
+    filters:{
+      screen: function(list, index) {
+        var self = this;
+        console.log(self.ip);
+        if(self.ip == list[0].cidr_ip){
+          return '';
+        }else{
+          self.ip = list[0].cidr_ip;
+          return list;
+        }
+      },
     }
   });
 
