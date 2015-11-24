@@ -156,7 +156,6 @@ en:
       template_history:     'CloudFormation Template History'
       stack_eventlog:       'Stack Eventlog'
       infrastructure_log:   'Operation Log'
-      view_rules:           'View Rules'
     msg:
       created:                     'Infrastructure was successfully created.'
       updated:                     'Infrastructure was successfully updated.'
@@ -175,6 +174,21 @@ en:
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
+
+  security_groups:
+    associated:   'Security Groups associated with %{physical_id}'
+    description:  'Description'
+    group_id:     'Group ID'
+    inbound:      'Inbound'
+    outbound:     'Outbound'
+    type:         'Type'
+    protocol:     'Protocol'
+    port_range:   'Port Range'
+    source:       'Source'
+    btn:
+      view_rules:           'View Rules'
+      change_groups:        'Change Security Groups'
+
 
   operation_scheduler:
     title: 'Operation Scheduler'
