@@ -240,8 +240,33 @@ class NodesController < ApplicationController
   # GET /nodes/:id/get_rules
   def get_rules
     group_ids = params.require(:group_ids)
-    
+
     rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+
+    rules_summary[:security_groups].map do |item|
+       item
+       item.ip_permissions.map do |inbound|
+         inbound
+         if inbound.from_port == -1 || inbound.from_port == nil || inbound.from_port == 0
+           inbound.user_id_group_pairs = 'All'
+         elsif inbound.from_port == 5439
+           inbound.user_id_group_pairs = 'Redshift'
+         else
+           inbound.user_id_group_pairs = Socket.getservbyport(inbound.from_port)
+         end
+       end
+       item.ip_permissions_egress.map do |outbound|
+         outbound
+         if outbound.from_port == -1 || outbound.from_port == nil || outbound.from_port == 0
+           outbound.user_id_group_pairs = 'All'
+         elsif outbound.from_port == 5439
+           outbound.user_id_group_pairs = 'Redshift'
+         else
+           outbound.user_id_group_pairs = Socket.getservbyport(outbound.from_port)
+         end
+       end
+    end
+
     @rules_summary = rules_summary[:security_groups]
   end
 

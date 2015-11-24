@@ -183,7 +183,8 @@ ja:
       type:         'タイプ'
       protocol:     'プロトコル'
       port_range:   'ポート範囲'
-      source:       '送信先'
+      source:       '送信元'
+      destination:  '送信先'
       btn:
         view_rules:           'ルールの表示'
         change_groups:        'セキュリティグループの変更'

@@ -185,6 +185,7 @@ en:
     protocol:     'Protocol'
     port_range:   'Port Range'
     source:       'Source'
+    destination:  'Destination'
     btn:
       view_rules:           'View Rules'
       change_groups:        'Change Security Groups'

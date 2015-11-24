@@ -1020,6 +1020,7 @@
           self.rules_summary = data.rules_summary;
         });
       },
+
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
       },
