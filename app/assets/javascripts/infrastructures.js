@@ -1031,18 +1031,6 @@
       this.get_rules();
       this.$parent.loading = false;
     },
-    filters:{
-      screen: function(list, index) {
-        var self = this;
-        console.log(self.ip);
-        if(self.ip == list[0].cidr_ip){
-          return '';
-        }else{
-          self.ip = list[0].cidr_ip;
-          return list;
-        }
-      },
-    }
   });
 
   Vue.component('ec2-tabpane', {
