@@ -395,7 +395,7 @@ en:
       not_selected:            'Monitoring options not selected yet.'
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
       not_running:             'Zabbix Server is not running.'
-      not_set:                 ': was not selected in zabbix Templates. Please select template in the templates tab.'
+      not_set:                 ': was not selected in zabbix Templates. Please select template in the configuration tab.'
       trigger_setting_warning: 'Threshold will be updated only if you have selected items.'
       page:                    'Page'
       of:                      'of'

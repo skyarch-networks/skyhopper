@@ -396,7 +396,7 @@ ja:
       invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
-      not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視テンプレート]タブでテンプレートを選択してください。'
+      not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
       page:                    'ページ'
       of:                      'の'
       no_data: |
