@@ -175,7 +175,7 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   security_groups:
-      associated:   '%{physical_id} と関連付けられたセキュリティグループ'
+      associated:   'と関連付けられたセキュリティグループ'
       description:  '説明'
       group_id:     'グループ ID'
       inbound:      'インバウンド'

@@ -1006,6 +1006,7 @@
       loading:        false,
       rules_summary:  null,
       ip: null,
+      lang: queryString.lang,
     };},
     methods: {
       get_rules: function ()  {

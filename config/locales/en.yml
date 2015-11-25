@@ -176,7 +176,7 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   security_groups:
-    associated:   'Security Groups associated with %{physical_id}'
+    associated:   'Security Groups associated with'
     description:  'Description'
     group_id:     'Group ID'
     inbound:      'Inbound'
