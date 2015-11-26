@@ -76,6 +76,7 @@ class EC2Instance < SimpleDelegator
       root_device_name: root_device_name,
       platform: platform,
       availability_zone: placement.availability_zone,
+      security_groups: security_groups,
     }
   end
 

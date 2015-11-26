@@ -21,6 +21,7 @@ json.yum_schedule  @yum_schedule
 json.snapshot_schedules @snapshot_schedules
 
 json.platform @platform
+json.security_groups @security_groups
 
 if @info
   json.info do

@@ -60,6 +60,8 @@ class NodesController < ApplicationController
     @instance_summary = instance.summary
     @platform = @instance_summary[:platform]
 
+
+    @security_groups = @instance_summary[:security_groups]
     @snapshot_schedules = {}
     @instance_summary[:block_devices].each do |block_device|
       volume_id = block_device.ebs.volume_id
@@ -236,6 +238,37 @@ class NodesController < ApplicationController
     @current_attributes = node.get_attributes
   end
 
+  # GET /nodes/:id/get_rules
+  def get_rules
+    group_ids = params.require(:group_ids)
+    rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+
+    rules_summary[:security_groups].map do |item|
+      check_socket(item.ip_permissions)
+      check_socket(item.ip_permissions_egress)
+    end
+
+    @rules_summary = rules_summary[:security_groups]
+  end
+
+  def check_socket(field)
+    field.map do |set|
+      if set.from_port == -1 || set.from_port == nil || set.from_port == 0
+        set.user_id_group_pairs = 'All'
+      elsif set.from_port == 5439
+        set.user_id_group_pairs = 'Redshift'
+      else
+        begin
+          set.user_id_group_pairs = Socket.getservbyport(set.from_port, set.ip_protocol)
+        rescue
+          set.user_id_group_pairs = 'Unknown'
+        end
+      end
+    end
+
+    return field
+  end
+
   # PUT /nodes/:id/yum_update
   def yum_update
     physical_id = params.require(:id)
@@ -275,7 +308,6 @@ class NodesController < ApplicationController
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
   end
-
 
   # TODO: refactor
   def cook_node(infrastructure, physical_id, whyrun)

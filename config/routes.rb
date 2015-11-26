@@ -55,6 +55,7 @@ SkyHopper::Application.routes.draw do
       post 'apply_dish'
       put  'update_attributes'
       get  'edit_attributes'
+      get  'get_rules'
       post 'schedule_yum'
     end
   end
@@ -71,6 +72,7 @@ SkyHopper::Application.routes.draw do
       post 'register_to_elb'
       post 'deregister_from_elb'
       get  'attachable_volumes'
+      get  'available_resources'
       post 'attach_volume'
     end
   end

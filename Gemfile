@@ -27,7 +27,7 @@ gem 'libv8'
 gem 'jbuilder'
 
 # Modularize javascript code in application
-gem 'browserify-rails'
+gem 'browserify-rails', '~> 1.5.0'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -39,6 +39,7 @@ gem 'unicorn-rails'
 
 gem 'ace-rails-ap'
 
+gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
@@ -51,9 +52,11 @@ gem "chef", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
-gem 'sidekiq' # for Active Job
+gem 'sidekiq', "~> 3.4.2" # for Active Job
 gem 'crono' # for Active Job
 gem 'foreman', require: false
+
+gem "bootstrap-table-rails"
 
 group :development, :test do
   # debug

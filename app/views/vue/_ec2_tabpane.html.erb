@@ -1,6 +1,6 @@
 <div>
   <h3 class="page-header">
-    {{physical_id}}&nbsp;<small>{{ec2.public_ip}}</small>
+    {{physical_id}}&nbsp;<small>{{ec2.public_ip}} </small>
   </h3>
 
   <div class="col-xs-12">
@@ -33,9 +33,9 @@
                 <ul class="dropdown-menu">
                   <li :class="{disabled: running}"><a @click="start_ec2()"  href="#"><%= glyphicon 'play' %> Start</a></li>
                   <li :class="{disabled: stopped}"><a @click="stop_ec2()"   href="#"><%= glyphicon 'stop' %> Stop</a></li>
-                  <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#"><%= glyphicon 'repeat' %> Reboot</a></li>
+                  <li :class="{disabled: stopped}"><a @click="reboot_ec2()" href="#"><%= fa 'retweet' %> Reboot</a></li>
                   <li><a href="#detach-ec2-modal" data-toggle="modal"><%= glyphicon 'eject' %> <%= t 'helpers.links.detach' %></a></li>
-                  <li><a href="#terminate-ec2-modal" data-toggle="modal"><%= glyphicon 'trash text-danger' %> <%= t 'helpers.links.terminate' %></a></li>
+                  <li><a href="#terminate-ec2-modal" data-toggle="modal"><%= fa 'ban text-danger' %> <%= t 'helpers.links.terminate' %></a></li>
                 </ul>
               </div>
               </template>
@@ -110,10 +110,31 @@
           <td><text class="text text-primary" v-text="ec2.platform"></text></td>
           <td></td>
         </tr>
+        <tr>
+            <td>
+              <bootstrap-tooltip :title="sec_group">
+                <template slot="content">
+                  Security Groups
+                </template>
+              </bootstrap-tooltip>
+            </td>
+          <td>
+            <button href="#view-rules-modal" @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+              <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
+            </button>
+          </td>
+          <td>
+              <button href="#change-rules-modal" @click="get_rules()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+                <%= t 'security_groups.btn.change_groups' %>
+              </button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<%= render 'infrastructures/modal/modal_change_rules' %>
 
 <div class="alert alert-danger col-xs-12" v-if="ec2.chef_error">
   <h4>Connection Error</h4>

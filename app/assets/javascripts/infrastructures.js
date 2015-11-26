@@ -187,6 +187,7 @@
     data: function () {return {
       physical_id: '',
       screen_name: '',
+      physical_ids: null,
     };},
     methods: {
       submit: function () {
@@ -198,7 +199,25 @@
           .fail(alert_and_show_infra);
       },
     },
-    created: function () {console.log(this);},
+    created: function () {
+      console.log(this);
+      var self = this;
+      var res = new EC2Instance(current_infra, "");
+      res.available_resources().done(function (data){
+        self.physical_ids = data;
+      });
+
+      $('#add_ec2_physical_id').selectize({
+        delimiter: ',',
+        persist: false,
+        create: function(input) {
+          return {
+            value: input,
+            text: input
+          }
+        }
+      });
+    },
   });
 
   Vue.component("cf-history-tabpane", {
@@ -968,6 +987,49 @@
     },
   });
 
+  Vue.component('view-rules-tabpane', {
+    template: '#view-rules-tabpane-template',
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+      security_groups: {
+        type: Array,
+        required: true,
+      },
+    },
+    data: function () { return{
+      loading:        false,
+      rules_summary:  null,
+      ip: null,
+      lang: queryString.lang,
+    };},
+    methods: {
+      get_rules: function ()  {
+        var self = this;
+        var group_ids = [];
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        self.security_groups.forEach(function (value, key) {
+          group_ids.push(value["group_id"]);
+        });
+
+        ec2.get_rules(group_ids).done(function (data) {
+          self.rules_summary = data.rules_summary;
+        });
+      },
+
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
+    },
+    ready: function() {
+      console.log(this);
+      this.get_rules();
+      this.$parent.loading = false;
+    },
+  });
+
   Vue.component('ec2-tabpane', {
     props: {
       physical_id: {
@@ -992,6 +1054,10 @@
       schedule:            {},
       loading_volumes:     false,
       attachable_volumes:  [],
+      max_sec_group:       null,
+      rules_summary:       null,
+      placement:          'left',
+      sec_group: t('ec2_instances.msg.security_groups'),
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
       changing_status: t('ec2_instances.changing_status'),
@@ -1043,8 +1109,7 @@
         var self = this;
         var ec2 = new EC2Instance(current_infra, self.physical_id);
         modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
-
-          ec2.detach_ec2()
+          ec2.detach_ec2(self.x_zabbix, self.x_chef)
             .done(alert_success(function () {
               show_infra(current_infra.id);
             }))
@@ -1163,6 +1228,11 @@
         this.$parent.tabpaneID = 'serverspec_results';
         this._loading();
       },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.ec2.security_groups;
+        this._loading();
+      },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
 
@@ -1179,6 +1249,7 @@
       },
 
       is_role:      function (run) { return run.indexOf("role") !== -1; },
+      is_first:     function (index) { return (index === 0); },
       runlist_type: function (run) { return run.replace(/\[.+\]$/, ""); },
       runlist_name: function (run) { return run.replace(/^.+\[(.+)\]$/, "$1"); },
 
@@ -1333,7 +1404,21 @@
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
       },
       toLocaleString: toLocaleString,
-      capitalize: function (str) {return _.capitalize(_.camelCase(str));}
+      capitalize: function (str) {return _.capitalize(_.camelCase(str));},
+      get_rules: function (){
+        var self = this;
+        var group_ids = [];
+        self.ec2.security_groups.forEach(function (value, key) {
+          group_ids.push(value["group_id"]);
+        });
+
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        ec2.get_rules(group_ids).done(function (data) {
+          self.rules_summary = data.rules_summary;
+          console.log(data.rules_summary);
+
+        });
+      }
     },
     computed: {
       ec2_btn_class: function () {
@@ -1418,7 +1503,7 @@
       var ec2 = new EC2Instance(current_infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
-
+        self.max_sec_group = data.security_groups.length-1;
         var dish_id = '0';
         if (self.ec2.selected_dish) {
           dish_id = self.ec2.selected_dish.id;
