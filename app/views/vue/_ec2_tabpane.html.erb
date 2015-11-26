@@ -105,9 +105,14 @@
           <td><%= link_and_dropdown_ssh('ec2.public_ip') %></td>
           <td><%= copy_to_clipboard_button('ec2.public_ip') %></td>
         </tr>
-        <tr v-if="ec2.platform">
+        <tr>
           <td> Platform </td>
-          <td><text class="text text-primary" v-text="ec2.platform"></text></td>
+          <td v-if="ec2.platform">
+            <%= fa 'windows' %> Windows
+          </td>
+          <td v-else>
+            <%= fa 'linux' %> Linux
+          </td>
           <td></td>
         </tr>
         <tr>
