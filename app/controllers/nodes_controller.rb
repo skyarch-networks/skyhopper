@@ -250,7 +250,12 @@ class NodesController < ApplicationController
        elsif inbound.from_port == 5439
          inbound.user_id_group_pairs = 'Redshift'
        else
-         inbound.user_id_group_pairs = Socket.getservbyport(inbound.from_port)
+         begin
+           inbound.user_id_group_pairs = Socket.getservbyport(inbound.from_port)
+         rescue
+           inbound.user_id_group_pairs = 'Unknown'
+         end
+
        end
      end
      item.ip_permissions_egress.map do |outbound|
@@ -259,7 +264,11 @@ class NodesController < ApplicationController
        elsif outbound.from_port == 5439
          outbound.user_id_group_pairs = 'Redshift'
        else
-         outbound.user_id_group_pairs = Socket.getservbyport(outbound.from_port)
+         begin
+           outbound.user_id_group_pairs = Socket.getservbyport(outbound.from_port)
+         rescue
+           outbound.user_id_group_pairs = 'Unknown'
+         end
        end
      end
     end
