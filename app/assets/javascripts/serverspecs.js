@@ -117,3 +117,7 @@ $(document).on("click", ".show-value", function(){
   });
   document.getElementById('value').style.display='';
 });
+
+
+
+require("serverspec-gen");

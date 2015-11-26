@@ -7,13 +7,13 @@
     "removeComments": true,
     "noLib": false,
     "outDir": "dest/",
-    "module": "commonjs",
-    "moduleResolution": "classic"
+    "module": "commonjs"
   },
   "files": [
     "src/helper.ts",
     "src/modal.ts",
     "src/server_status.ts",
+    "src/serverspec-gen.ts",
     "src/users_admin.ts",
     "src/models/base.ts",
     "src/models/cf_template.ts",
