@@ -13,7 +13,7 @@ class NodePolicy < ApplicationPolicy
   end
 
 
-  %i[run_bootstrap? edit? update? cook? apply_dish? update_attributes? edit_attributes? yum_update? schedule_yum?].each do |action|
+  %i[run_bootstrap? edit? update? cook? apply_dish? get_rules? update_attributes? edit_attributes? yum_update? schedule_yum?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end

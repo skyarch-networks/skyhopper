@@ -55,6 +55,8 @@ gem 'sidekiq', "~> 3.4.2" # for Active Job
 gem 'crono' # for Active Job
 gem 'foreman', require: false
 
+gem "bootstrap-table-rails"
+
 group :development, :test do
   # debug
   gem "tapp"
