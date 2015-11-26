@@ -240,14 +240,13 @@ class NodesController < ApplicationController
   # GET /nodes/:id/get_rules
   def get_rules
     group_ids = params.require(:group_ids)
-
     rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
 
     rules_summary[:security_groups].map do |item|
      check_socket(item.ip_permissions)
      check_socket(item.ip_permissions_egress)
     end
-
+    
     @rules_summary = rules_summary[:security_groups]
   end
 
