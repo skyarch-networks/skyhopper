@@ -31,7 +31,7 @@
     "mocha": "^2.3.3",
     "phantomjs": "^1.9.18",
     "power-assert": "^1.0.1",
-    "serverspec-generator": "/home/pocke/ghq/github.com/skyarch-networks/serverspec-generator/serverspec-generator-0.0.1.tgz",
+    "serverspec-generator": "https://github.com/skyarch-networks/serverspec-generator/releases/download/v0.0.1/serverspec-generator-0.0.1.tgz",
     "tsd": "^0.6.3",
     "tslint": "^2.4.2",
     "typescript": "~1.6.2"
