@@ -15,11 +15,7 @@
 
 
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#{{rule.group_id}}" aria-expanded="true" aria-controls="{{rule.group_id}}">
-                  <bootstrap-tooltip :title="rule.group_name" :placement="placement">
-                    <template slot="content">
-                    <h4 class="panel-title">{{rule.group_id}}</h4>
-                    </template>
-                  </bootstrap-tooltip>
+                    <h4 class="panel-title">{{rule.group_id}} <small>({{rule.group_name}})</small></h4>
                 </a>
 
 
