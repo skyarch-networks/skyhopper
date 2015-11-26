@@ -175,6 +175,8 @@ GEM
     github-markup (1.4.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    gssapi (1.2.0)
+      ffi (>= 1.0.1)
     guard (2.13.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, <= 4.0)
@@ -189,12 +191,15 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    gyoku (1.3.1)
+      builder (>= 2.1.2)
     hashie (2.1.2)
     highline (1.7.8)
     hiredis (0.6.0)
     hitimes (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    httpclient (2.7.0.1)
     i18n (0.7.0)
     i18n-js (2.1.2)
       i18n
@@ -208,6 +213,10 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.10.0)
+    knife-windows (1.1.1)
+      nokogiri
+      winrm (~> 1.3)
+      winrm-s (~> 0.3.0)
     less (2.6.0)
       commonjs (~> 0.2.7)
     less-rails (2.7.0)
@@ -220,6 +229,10 @@ GEM
     listen (3.0.5)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    little-plugger (1.1.4)
+    logging (2.0.0)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.10)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
@@ -255,6 +268,7 @@ GEM
     nio4r (1.1.1)
     nokogiri (1.6.6.4)
       mini_portile (~> 0.6.0)
+    nori (2.6.0)
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -418,6 +432,7 @@ GEM
       tins (<= 1.6.0)
     ruby-prof (0.15.8)
     ruby-progressbar (1.7.5)
+    rubyntlm (0.4.0)
     sass (3.4.19)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
@@ -454,7 +469,7 @@ GEM
       net-ssh (~> 2.7)
       net-telnet
       sfl
-    sprockets (3.4.0)
+    sprockets (3.4.1)
       rack (> 1, < 3)
     sprockets-rails (2.3.3)
       actionpack (>= 3.0)
@@ -498,6 +513,17 @@ GEM
       hashie (>= 2.0.2, < 4.0.0)
     warden (1.2.3)
       rack (>= 1.0)
+    winrm (1.3.5)
+      builder (>= 2.1.2)
+      gssapi (~> 1.2)
+      gyoku (~> 1.0)
+      httpclient (~> 2.2, >= 2.2.0.2)
+      logging (>= 1.6.1, < 3.0)
+      nori (~> 2.0)
+      rubyntlm (~> 0.4.0)
+      uuidtools (~> 2.1.2)
+    winrm-s (0.3.1)
+      winrm (~> 1.3.0)
     wmi-lite (1.0.0)
     yard (0.8.7.6)
 
@@ -534,6 +560,7 @@ DEPENDENCIES
   i18n-js
   jbuilder
   kaminari
+  knife-windows
   less-rails
   libv8
   mysql2 (~> 0.3.20)

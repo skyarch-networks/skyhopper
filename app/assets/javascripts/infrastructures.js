@@ -43,9 +43,6 @@
   Vue.use(require('./modules/timepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '25');
 
-
-
-
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {

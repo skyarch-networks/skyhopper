@@ -106,6 +106,16 @@
           <td><%= copy_to_clipboard_button('ec2.public_ip') %></td>
         </tr>
         <tr>
+          <td> Platform </td>
+          <td v-if="ec2.platform">
+            <%= fa 'windows' %> Windows
+          </td>
+          <td v-else>
+            <%= fa 'linux' %> Linux
+          </td>
+          <td></td>
+        </tr>
+        <tr>
             <td>
               <bootstrap-tooltip :title="sec_group">
                 <template slot="content">
