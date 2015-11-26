@@ -183,11 +183,26 @@
                     <td v-cloak="index === 0">{{rule.ip_permissions[index].ip_ranges[0].cidr_ip}}</td>
                   </template>
                   <template v-else>
-                    <td>-</td><td>-</td><td>-</td>
+                    <td>-</td><td>-</td><td>-</td><td>-</td>
                   </template>
-
-                  <td>{{outbound.from_port}}</td>
-                  <td>{{outbound.ip_protocol}}</td>
+                  <td>{{outbound.user_id_group_pairs}}</td>
+                  <td>
+                    <span v-if="outbound.ip_protocol === '-1'">
+                      All
+                    </span>
+                    <span v-else>
+                      {{outbound.ip_protocol}}
+                    </span>
+                  </td>
+                  <td v-if="outbound.from_port === outbound.to_port">
+                    <span v-if="!outbound.from_port">
+                        All
+                      </span>
+                      <span v-else>
+                        {{outbound.from_port}}
+                      </span>
+                  </td>
+                  <td v-else>{{outbound.from_port}}-{{outbound.to_port}}</td>
                   <!--Source IP-->
                   <td v-for="s in outbound.ip_ranges">{{s.cidr_ip}}</td>
                   <!--First Outbound-->
