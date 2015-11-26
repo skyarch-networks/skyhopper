@@ -175,6 +175,22 @@ en:
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
+  security_groups:
+    associated:   'Security Groups associated with'
+    description:  'Description'
+    group_id:     'Group ID'
+    inbound:      'Inbound'
+    outbound:     'Outbound'
+    type:         'Type'
+    protocol:     'Protocol'
+    port_range:   'Port Range'
+    source:       'Source'
+    destination:  'Destination'
+    btn:
+      view_rules:           'View Rules'
+      change_groups:        'Change Security Groups'
+
+
   operation_scheduler:
     title: 'Operation Scheduler'
     modal_title: 'Manage Schedule'
@@ -528,6 +544,9 @@ en:
       terminate:            'This instance will be removed from Skyhopper service.
                              On an EBS-backed instance, the default action is for the root EBS volume to be deleted when the instance is terminated.
                              Storage on any local drives will be lost.'
+      security_groups:  'The security groups to which the instance belongs.
+                         A security group is a collection of firewall rules that restrict the network traffic for the instance.
+                         Click View rules to see the rules for the specific group.'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'

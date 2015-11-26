@@ -55,6 +55,7 @@ SkyHopper::Application.routes.draw do
       post 'apply_dish'
       put  'update_attributes'
       get  'edit_attributes'
+      get  'get_rules'
       post 'schedule_yum'
     end
   end

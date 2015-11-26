@@ -174,6 +174,21 @@ ja:
       loading-list:                'インフラストラクチャのロード中です...'
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
+  security_groups:
+      associated:   'と関連付けられたセキュリティグループ'
+      description:  '説明'
+      group_id:     'グループ ID'
+      inbound:      'インバウンド'
+      outbound:     'アウトバウンド'
+      type:         'タイプ'
+      protocol:     'プロトコル'
+      port_range:   'ポート範囲'
+      source:       '送信元'
+      destination:  '送信先'
+      btn:
+        view_rules:           'ルールの表示'
+        change_groups:        'セキュリティグループの変更'
+
   operation_scheduler:
     title: '運用スケジューラ'
     modal_title: 'スケジュールを管理'
@@ -528,6 +543,9 @@ ja:
       terminate:            'このインスタンスはSkyhopperサービスから削除されます。
                             インスタンスが終了したときにルートEBSボリュームを削除するためにEBS担保インスタンスで、デフォルトのアクションです。
                             任意のローカルドライブ上のストレージが失われます。'
+      security_groups:  'インスタンスに割り当てられるセキュリティグループです。
+                        セキュリティグループは、インスタンスのネットワーク通信を制限するファイアウォールルールのコレクションです。
+                        特定のグループのルールを参照するには、[ルールの表示] をクリックします。'
     btn:
       register:   'インスタンスを登録'
       deregister: 'インスタンスの登録を解除'
