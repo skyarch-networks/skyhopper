@@ -250,6 +250,28 @@ class NodesController < ApplicationController
     @rules_summary = rules_summary[:security_groups]
   end
 
+  # GET /nodes/:id/get_security_groups
+  def get_security_groups
+    physical_id = params.require(:id)
+    av_g = @infra.ec2.describe_security_groups() # Available groups
+    instance = @infra.instance(physical_id)
+    ex = [] #existing groups array
+    return_params = [] #filtered security groups
+    instance.security_groups.each do |sec_group|
+      ex.push(sec_group[:group_id])
+    end
+
+    av_g[:security_groups].each do |a|
+      if ex.include? a[:group_id]
+        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: true})
+      else
+        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: false})
+      end
+    end
+
+    @params = return_params
+  end
+
   def check_socket(field)
     field.map do |set|
       if set.from_port == -1 || set.from_port == nil || set.from_port == 0

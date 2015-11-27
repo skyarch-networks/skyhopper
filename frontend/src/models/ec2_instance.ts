@@ -116,6 +116,12 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
+  get_security_groups(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).get_security_groups(this.params)
+    );
+  }
+
   edit(): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       EC2Instance.ajax_node.edit(this.params)
@@ -416,6 +422,7 @@ EC2Instance.ajax_node.add_member('cook', 'PUT');
 EC2Instance.ajax_node.add_member('yum_update', 'PUT');
 EC2Instance.ajax_node.add_member('run_bootstrap', 'GET');
 EC2Instance.ajax_node.add_member('get_rules', 'GET');
+EC2Instance.ajax_node.add_member('get_security_groups', 'GET');
 EC2Instance.ajax_node.add_member('apply_dish', 'POST');
 EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
 EC2Instance.ajax_node.add_member('update_attributes', 'PUT');

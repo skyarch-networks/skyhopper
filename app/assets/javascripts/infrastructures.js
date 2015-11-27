@@ -1408,17 +1408,11 @@
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},
-      get_rules: function (){
+      get_security_groups: function (){
         var self = this;
-        var group_ids = [];
-        self.ec2.security_groups.forEach(function (value, key) {
-          group_ids.push(value["group_id"]);
-        });
-
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         ec2.get_security_groups().done(function (data) {
-          self.rules_summary = data.rules_summary;
-          console.log(data.rules_summary);
+          self.rules_summary = data.params;
         });
       }
     },

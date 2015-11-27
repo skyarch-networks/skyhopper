@@ -56,6 +56,7 @@ SkyHopper::Application.routes.draw do
       put  'update_attributes'
       get  'edit_attributes'
       get  'get_rules'
+      get  'get_security_groups'
       post 'schedule_yum'
     end
   end
