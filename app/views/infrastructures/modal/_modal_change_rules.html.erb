@@ -5,27 +5,27 @@
 
       <div class="modal-header bg-info">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Security Groups associated with #{{physical_id}}</h4>
+        <h4 class="modal-title" v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
+        <h4 class="modal-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
       </div>
 
       <div class="modal-body">
 
-
-        <ul class="nav nav-pills">
-          <button class="btn btn-sm btn-primary">Create Security Group</button>
-        </ul>
-        <hr>
         <table class="table table-condensed">
           <thead>
           <tr>
-            <th>Security Group ID</th>
+            <th width="20"></th>
+            <th width="100">Security Group ID</th>
             <th>Name</th>
             <th>Description</th>
           </tr>
           </thead>
           <tbody>
-          <tr >
-
+          <tr v-for="r in rules_summary" :class="{info: r.checked}" @click="check(r)">
+            <td><input type="checkbox" v-model="r.checked"></td>
+            <td>{{r.group_id}}</td>
+            <td><div class="truncate"> {{r.group_name}}</div></td>
+            <td><div class="truncate">{{r.description}}</div></td>
           </tr>
           </tbody>
         </table>
@@ -33,7 +33,8 @@
       </div>
       <div class="modal-footer">
         <div v-if="!loading_s">
-          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
+          <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Assign Security Groups</button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>

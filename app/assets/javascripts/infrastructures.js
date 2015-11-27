@@ -1060,6 +1060,7 @@
       max_sec_group:       null,
       rules_summary:       null,
       placement:          'left',
+      lang:               queryString.lang,
       sec_group: t('ec2_instances.msg.security_groups'),
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
@@ -1414,6 +1415,9 @@
         ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.params;
         });
+      },
+      check: function (i) {
+          i.checked= !i.checked;
       }
     },
     computed: {
