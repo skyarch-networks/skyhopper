@@ -1044,6 +1044,7 @@
       loading:             false,
       loading_s:           false,
       loading_snapshots:   false,
+      loading_groups:      false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
@@ -1411,9 +1412,11 @@
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},
       get_security_groups: function (){
         var self = this;
+        self.loading_groups = true;
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.params;
+          self.loading_groups = false;
         });
       },
       check: function (i) {
