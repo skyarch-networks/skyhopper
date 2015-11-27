@@ -70,7 +70,7 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
     result[@name][:Properties].merge!(
       ImageId: {
         'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
-      }
+      },
     )
 
     return result
