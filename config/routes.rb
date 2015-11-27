@@ -53,6 +53,7 @@ SkyHopper::Application.routes.draw do
       put  'yum_update'
       get  'run_bootstrap'
       post 'apply_dish'
+      post 'submit_groups'
       put  'update_attributes'
       get  'edit_attributes'
       get  'get_rules'

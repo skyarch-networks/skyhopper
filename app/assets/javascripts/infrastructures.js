@@ -1418,6 +1418,20 @@
       },
       check: function (i) {
           i.checked= !i.checked;
+      },
+      submit_groups: function(){
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var group_ids = _(this.rules_summary).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        }).value();
+
+        ec2.submit_groups(group_ids)
+          .done(alert_success(self._show_ec2))
+          .fail(alert_danger(self._show_ec2));
+
       }
     },
     computed: {
@@ -1426,6 +1440,11 @@
           return 'btn-success';
         }
         return 'btn-default';
+      },
+      has_selected: function() {
+        return _.some(this.rules_summary, function(c){
+          return c.checked;
+        });
       },
       cook_status_class:       function () { return this._label_class(this.cook_status); },
       serverspec_status_class: function () { return this._label_class(this.serverspec_status); },

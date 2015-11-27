@@ -189,6 +189,8 @@ en:
     btn:
       view_rules:           'View Rules'
       change_groups:        'Change Security Groups'
+    msg:
+      change_success:        'Change Security Groups Success!'
 
 
   operation_scheduler:

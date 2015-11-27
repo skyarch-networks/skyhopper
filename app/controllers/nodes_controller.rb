@@ -262,14 +262,23 @@ class NodesController < ApplicationController
     end
 
     av_g[:security_groups].each do |a|
-      if ex.include? a[:group_id]
-        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: true})
-      else
-        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: false})
+      checked = ex.include? a[:group_id]
+      if a[:vpc_id] == instance.vpc.id
+        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
       end
     end
 
     @params = return_params
+  end
+
+  # POST /nodes/i-0b8e7f12/submit_groups
+  def submit_groups
+    physical_id = params.require(:id)
+    group_ids     = params.require(:group_ids)
+
+    @infra.ec2.modify_instance_attribute({instance_id: physical_id, groups: group_ids})
+
+    render text: I18n.t('security_groups.msg.change_success')
   end
 
   def check_socket(field)
