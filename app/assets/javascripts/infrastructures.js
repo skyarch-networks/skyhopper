@@ -1416,10 +1416,9 @@
         });
 
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        ec2.get_rules(group_ids).done(function (data) {
+        ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.rules_summary;
           console.log(data.rules_summary);
-
         });
       }
     },

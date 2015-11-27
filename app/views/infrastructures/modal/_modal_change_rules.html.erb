@@ -9,65 +9,26 @@
       </div>
 
       <div class="modal-body">
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-          <div class="panel panel-primary" v-for="rule in rules_summary" track-by="$index">
-            <div class="panel-heading" role="tab" id="{{rule.vpc_id}}">
 
 
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#{{rule.group_id}}" aria-expanded="true" aria-controls="{{rule.group_id}}">
-                    <h4 class="panel-title">{{rule.group_id}} <small>({{rule.group_name}})</small></h4>
-                </a>
+        <ul class="nav nav-pills">
+          <button class="btn btn-sm btn-primary">Create Security Group</button>
+        </ul>
+        <hr>
+        <table class="table table-condensed">
+          <thead>
+          <tr>
+            <th>Security Group ID</th>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr >
 
-
-            </div>
-            <div id="{{rule.group_id}}" :class="{in: is_first($index)}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{rule.vpc_id}}">
-              <div class="panel-body">
-                <b>Description:</b>  {{rule.description}}
-                <hr>
-                <div class="col-sm-6">
-                  <b class="col-xs-offset-5">Inbound</b>
-                  <table class="table table-condensed">
-                    <tr>
-                      <th>Port</th>
-                      <th>Protocol</th>
-                      <th>Source</th>
-                    </tr>
-                    <tr v-for="inbound in rule.ip_permissions">
-                      <td>{{inbound.from_port}}</td>
-                      <td>{{inbound.ip_protocol}}</td>
-                      <td>
-                        <span v-for="s in inbound.ip_ranges">
-                          {{s.cidr_ip}}
-                        </span>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="col-sm-6">
-                  <b class="col-xs-offset-5">Outbound</b>
-                  <table class="table table-condensed">
-                    <tr>
-                      <th>Port</th>
-                      <th>Protocol</th>
-                      <th>Source</th>
-                    </tr>
-                    <tr v-for="outbound in rule.ip_permissions_egress">
-                      <td v-if="outbound.from_port">{{outbound.from_port}}</td>
-                      <td v-else>All</td>
-                      <td v-if="outbound.ip_protocol != -1">{{outbound.ip_protocol}}</td>
-                      <td v-else>All</td>
-                      <td>
-                        <span v-for="v in outbound.ip_ranges">
-                          {{v.cidr_ip}}
-                        </span>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </tr>
+          </tbody>
+        </table>
 
       </div>
       <div class="modal-footer">
