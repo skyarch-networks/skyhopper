@@ -292,7 +292,6 @@ class InfrastructuresController < ApplicationController
   # @param [String] physical_id
   # @param [Object] selected_instance
   def save_schedule
-    physical_id = params.require(:physical_id)
     selected_instance =  params.require(:selected_instance)
     ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
     start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone

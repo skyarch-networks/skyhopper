@@ -103,7 +103,7 @@ class TemplateBuilder::Resource
     result = {
       @name => self.class.duped_resource_base.deep_merge(
         Properties: @properties,
-      ),
+      )
     }
     return result
   end
