@@ -178,7 +178,8 @@ en:
   security_groups:
     associated:   'Security Groups associated with'
     description:  'Description'
-    group_id:     'Group ID'
+    group_id:     'Security Group ID'
+    group_name:   'Security Group Name'
     inbound:      'Inbound'
     outbound:     'Outbound'
     type:         'Type'
@@ -186,9 +187,11 @@ en:
     port_range:   'Port Range'
     source:       'Source'
     destination:  'Destination'
+    name:         'Name'
     btn:
       view_rules:           'View Rules'
       change_groups:        'Change Security Groups'
+      assign:               'Assign Security Groups'
     msg:
       change_success:        'Change Security Groups Success!'
 

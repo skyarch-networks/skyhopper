@@ -15,10 +15,10 @@
           <thead>
           <tr>
             <th width="20"></th>
-            <th width="100">Security Group ID</th>
-            <th>Security Group Name</th>
-            <th>Description</th>
-            <th>Name Tag</th>
+            <th width="100"><%= t'security_groups.group_id' %></th>
+            <th><%= t 'security_groups.group_name' %></th>
+            <th><%= t 'security_groups.description' %></th>
+            <th>Name</th>
           </tr>
           </thead>
           <tbody>
@@ -37,7 +37,9 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">Assign Security Groups</button>
+          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">
+            <%= t 'security_groups.btn.assign' %>
+          </button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>
