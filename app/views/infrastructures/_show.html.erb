@@ -37,6 +37,9 @@
           <li :class="{disabled : no_stack}">
             <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
           </li>
+          <li :class="{disabled : no_stack}">
+            <a href="#" tabindex="-1" @click="show_sec_roups()"><%= t 'infrastructures.btn.security_groups' %></a>
+          </li>
           <li class="divider"></li>
           <li :class="{disabled : no_stack}">
             <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
