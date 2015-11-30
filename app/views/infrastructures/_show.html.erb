@@ -38,7 +38,7 @@
             <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
           </li>
           <li :class="{disabled : no_stack}">
-            <a href="#" tabindex="-1" @click="show_sec_roups()"><%= t 'infrastructures.btn.security_groups' %></a>
+            <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'infrastructures.btn.security_groups' %></a>
           </li>
           <li class="divider"></li>
           <li :class="{disabled : no_stack}">
@@ -88,7 +88,7 @@
         <add-ec2-tabpane         v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
         <cf-history-tabpane      v-if="tabpane_active('cf_history')"       ></cf-history-tabpane>
         <stack-events-table      v-if="tabpane_active('event_logs')"       :events.once="current_infra.events"></stack-events-table>
-        <security-groups-tabpane v-if="tabpane_active('event_logs')"       :physical_id.once="tabpaneGroupID"></security-groups-tabpane>
+        <security-groups-tabpane v-if="tabpane_active('security_groups')"  ></security-groups-tabpane>
         <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
         <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
         <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>
@@ -113,6 +113,7 @@
 <script id="add-ec2-tabpane-template"         type="text/template"> <%= render 'vue/add_ec2_tabpane' %> </script>
 <script id="cf-history-tabpane-template"      type="text/template"> <%= render 'vue/cf_history_tabpane' %> </script>
 <script id="infra-logs-tabpane-template"      type="text/template"> <%= render 'vue/infra_logs_tabpane'  %> </script>
+<script id="security-groups-tabpane-template" type="text/template"> <%= render 'vue/security_groups_tabpane' %> </script>
 <script id="monitoring-tabpane-template"      type="text/template"> <%= render 'vue/monitoring_tabpane' %> </script>
 <script id="edit-monitoring-tabpane-template" type="text/template"> <%= render 'vue/edit_monitoring_tabpane' %> </script>
 <script id="update-template-tabpane-template" type="text/template"> <%= render 'vue/update_template_tabpane' %> </script>

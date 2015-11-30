@@ -1035,32 +1035,25 @@
 
   Vue.component('security-groups-tabpane', {
     template: '#security-groups-tabpane-template',
-    props: {
-      physical_id: {
-        type: String,
-        required: true,
-      },
-    },
     data: function () { return{
       loading:        false,
       rules_summary:  null,
+      vpcs:           null,
+      vpc:            null,
       ip: null,
       lang: queryString.lang,
     };},
     methods: {
       get_rules: function ()  {
         var self = this;
-        var group_ids = [];
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
-        self.security_groups.forEach(function (value, key) {
-          group_ids.push(value["group_id"]);
-        });
-
-        ec2.get_rules(group_ids).done(function (data) {
+        var ec2 = new EC2Instance(current_infra, '');
+        ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
+          self.vpcs = data.vpcs;
+          console.log(data.vpcs);
+          self.$parent.loading = false;
         });
       },
-
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
       },
@@ -1070,6 +1063,18 @@
       this.get_rules();
       this.$parent.loading = false;
     },
+    filters: {
+      trim: function (str) {
+        var showChar = 50;
+        return (str.length > showChar) ? str.substr(0, showChar)+"..." : str;
+      },
+      disp: function (value) {
+        console.log(value);
+        
+        return value;
+      },
+    },
+
   });
 
   Vue.component('ec2-tabpane', {
