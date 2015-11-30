@@ -1068,11 +1068,6 @@
         var showChar = 50;
         return (str.length > showChar) ? str.substr(0, showChar)+"..." : str;
       },
-      disp: function (value) {
-        console.log(value);
-        
-        return value;
-      },
     },
 
   });

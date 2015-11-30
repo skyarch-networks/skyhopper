@@ -22,7 +22,7 @@
         <div class="form-group">
           <label class="control-label">VPC</label>
           <select class="form-control" v-model="vpc">
-            <option v-for="v in vpcs | disp" v-bind:value="v.vpc_id">{{v}}</option>
+            <option v-for="v in vpcs" v-bind:value="v.vpc_id">{{v.vpc_id}} ({{v.cidr_block}}) | {{v.tags[0].value}}</option>
           </select>
         </div>
       </div>
