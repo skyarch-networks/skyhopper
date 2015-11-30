@@ -1033,6 +1033,45 @@
     },
   });
 
+  Vue.component('security-groups-tabpane', {
+    template: '#security-groups-tabpane-template',
+    props: {
+      physical_id: {
+        type: String,
+        required: true,
+      },
+    },
+    data: function () { return{
+      loading:        false,
+      rules_summary:  null,
+      ip: null,
+      lang: queryString.lang,
+    };},
+    methods: {
+      get_rules: function ()  {
+        var self = this;
+        var group_ids = [];
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        self.security_groups.forEach(function (value, key) {
+          group_ids.push(value["group_id"]);
+        });
+
+        ec2.get_rules(group_ids).done(function (data) {
+          self.rules_summary = data.rules_summary;
+        });
+      },
+
+      show_ec2: function () {
+        this.$parent.show_ec2(this.physical_id);
+      },
+    },
+    ready: function() {
+      console.log(this);
+      this.get_rules();
+      this.$parent.loading = false;
+    },
+  });
+
   Vue.component('ec2-tabpane', {
     props: {
       physical_id: {

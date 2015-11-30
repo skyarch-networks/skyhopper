@@ -191,6 +191,8 @@ ja:
         assign:               'セキュリティグループの割り当て'
       msg:
         change_success:        'セキュリティの変更グループの成功！'
+        error:  'エラー'
+        error_msg: '少なくとも 1 つのセキュリティグループを選択する必要があります。'
 
   operation_scheduler:
     title: '運用スケジューラ'

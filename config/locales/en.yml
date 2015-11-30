@@ -194,6 +194,8 @@ en:
       assign:               'Assign Security Groups'
     msg:
       change_success:        'Change Security Groups Success!'
+      error:  'Error!'
+      error_msg: 'you need to select at least one security group.'
 
 
   operation_scheduler:
