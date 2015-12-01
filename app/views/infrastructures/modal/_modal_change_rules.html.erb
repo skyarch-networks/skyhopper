@@ -5,8 +5,8 @@
       <div-loader v-if="loading_groups"></div-loader>
       <div class="modal-header bg-info">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
-        <h4 class="modal-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
+        <h4 class="panel-title" v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
+        <h4 class="panel-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
       </div>
 
       <div class="modal-body" v-if="!loading_groups">

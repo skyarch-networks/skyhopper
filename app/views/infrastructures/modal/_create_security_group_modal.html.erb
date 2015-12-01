@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-header bg-primary">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Create Security Group</h4>
+        <h4 class="panel-title">Create Security Group</h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -22,9 +22,40 @@
         <div class="form-group">
           <label class="control-label">VPC</label>
           <select class="form-control" v-model="vpc">
-            <option v-for="v in vpcs" v-bind:value="v.vpc_id">{{v.vpc_id}} ({{v.cidr_block}}) | {{v.tags[0].value}}</option>
+            <option v-for="v in vpcs" v-bind:value="v.vpc_id">{{v.name}}</option>
           </select>
+          * denotes default VPC
         </div>
+
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#inbound" data-toggle="tab" aria-expanded="true">Inbound</a></li>
+          <li class=""><a href="#outbound" data-toggle="tab" aria-expanded="false">Outbound</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade active in" id="inbound">
+            <table class="table table-condensed">
+              <tr>
+                <th>Type</th>
+                <th>Protocol</th>
+                <th>Range</th>
+                <th>Source</th>
+              </tr>
+            </table>
+            <button class="btn btn-xs btn-default">Add rule</button>
+          </div>
+          <div class="tab-pane fade" id="outbound">
+            <table class="table table-condensed">
+              <tr>
+                <th>Type</th>
+                <th>Protocol</th>
+                <th>Range</th>
+                <th>Source</th>
+              </tr>
+            </table>
+            <button class="btn btn-xs btn-default">Add rule</button>
+          </div>
+        </div>
+
       </div>
       <div class="modal-footer">
         <div v-if="!loading_s">

@@ -1040,6 +1040,9 @@
       rules_summary:  null,
       vpcs:           null,
       vpc:            null,
+      group_name:     null,
+      description:    null,
+      name:           null,
       ip: null,
       lang: queryString.lang,
     };},
@@ -1049,8 +1052,26 @@
         var ec2 = new EC2Instance(current_infra, '');
         ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
-          self.vpcs = data.vpcs;
-          console.log(data.vpcs);
+          var vpcs = [];
+          _.forEach(data.vpcs, function (vpc) {
+            var name = null;
+              if(vpc.is_default) {
+                if(vpc.tags[0]){
+                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") | " + vpc.tags[0].value +" *";
+                }else{
+                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") *";
+                }
+              }else {
+                if(vpc.tags[0])
+                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") |" + vpc.tags[0].value;
+                else
+                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") |";
+              }
+            vpcs.push({vpc_id: vpc.vpc_id, name: name});
+          });
+          self.vpcs = vpcs;
+          console.log(self.vpcs);
+
           self.$parent.loading = false;
         });
       },
