@@ -289,6 +289,16 @@ class NodesController < ApplicationController
     render text: I18n.t('security_groups.msg.change_success')
   end
 
+  # POST /nodes/i-0b8e7f12/create_groups
+  def create_group
+    group_params     = params.require(:group_params)
+
+    group_id = @infra.ec2.create_security_group({group_name: group_params[0], description: group_params[1], vpc_id: group_params[3]})
+    @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{key: 'Name', value: group_params[2]}])
+
+    render text: I18n.t('security_groups.msg.change_success')
+  end
+
   def check_socket(field)
     field.map do |set|
       if set.from_port == -1 || set.from_port == nil || set.from_port == 0

@@ -142,6 +142,9 @@
                   </td>
                   <td v-if="$index == 0">{{inbound.ip_ranges[0].cidr_ip}}</td>
                 </template>
+                <template v-if="rule.ip_permissions.length <= 0">
+                  <td>-</td><td>-</td><td>-</td><td>-</td>
+                </template>
                 <td>{{outbound.user_id_group_pairs}}</td>
                 <td>
                     <span v-if="outbound.ip_protocol === '-1'">

@@ -1043,6 +1043,31 @@
       group_name:     null,
       description:    null,
       name:           null,
+      types: ["Custom TCP Rule",
+        "Custom UDP Rule",
+        "Custom ICMP Rule",
+        "Custom Protocol",
+        "All TCP",
+        "All UDP",
+        "All ICMP",
+        "All Traffic",
+        "SSH",
+        "SMTP",
+        "DNS (UDP)",
+        "DNS (TCP)",
+        "HTTP",
+        "POP3",
+        "IMAP",
+        "LDAP",
+        "HTTPS",
+        "IMAPS",
+        "POP3S",
+        "MS SQL",
+        "MYSQL/ Aurora",
+        "RDP",
+        "Redshift",
+        "Oracle-RDS",
+      ],
       ip: null,
       lang: queryString.lang,
     };},
@@ -1052,31 +1077,47 @@
         var ec2 = new EC2Instance(current_infra, '');
         ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
+          console.log(data.rules_summary);
           var vpcs = [];
           _.forEach(data.vpcs, function (vpc) {
             var name = null;
               if(vpc.is_default) {
                 if(vpc.tags[0]){
-                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") | " + vpc.tags[0].value +" *";
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") | " + vpc.tags[0].value +" *";
                 }else{
-                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") *";
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") *";
                 }
               }else {
                 if(vpc.tags[0])
-                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") |" + vpc.tags[0].value;
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") |" + vpc.tags[0].value;
                 else
-                  name = vpc.vpc_id + "(" + vpc.cidr_block + ") |";
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") |";
               }
             vpcs.push({vpc_id: vpc.vpc_id, name: name});
           });
           self.vpcs = vpcs;
-          console.log(self.vpcs);
 
           self.$parent.loading = false;
         });
       },
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
+      },
+      create_group: function () {
+        var ec2 = new EC2Instance(current_infra, '');
+        ec2.create_group(
+          [this.group_name,
+          this.description,
+          this.name,
+          this.vpc]
+        ).done(
+          alert_success(this.get_rules())
+        )
+         .fail(alert_danger(this._show_ec2));
+        this.this.group_name = null;
+        this.this.description = null;
+        this.this.name = null;
+        this.this.vpc = null;
       },
     },
     ready: function() {

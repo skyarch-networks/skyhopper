@@ -54,6 +54,7 @@ SkyHopper::Application.routes.draw do
       get  'run_bootstrap'
       post 'apply_dish'
       post 'submit_groups'
+      post 'create_group'
       put  'update_attributes'
       get  'edit_attributes'
       get  'get_rules'
