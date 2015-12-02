@@ -1,0 +1,200 @@
+{
+  "rules": [
+    {
+      "type": "Custom TCP Rule",
+      "protocol": "TCP",
+      "port": "",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "Custom UDP Rule",
+      "protocol": "UDP",
+      "port": "",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "Custom ICMP Rule",
+      "protocol": [
+        "Echo Reply",
+        "Destination Unreachable",
+        "Source Quench",
+        "Redirect Message",
+        "Alternate Host Address",
+        "Echo Request",
+        "Router Advertisement",
+        "Router Solicitation",
+        "Time Exceeded",
+        "Parameter Problem: Bad IP header",
+        "Timestamp",
+        "Timestamp Reply",
+        "Information Request",
+        "Information Reply",
+        "Address Mask Request",
+        "Address Mask Reply",
+        "Traceroute",
+        "Datagram Conversion Error",
+        "Mobile Host Redirect",
+        "Where Are You",
+        "Here I Am",
+        "Mobile Registration Request",
+        "Mobile Registration Reply",
+        "Domain Name Reply",
+        "SKIP Algorithm Discovery",
+        "'Photuris Securty Failure'",
+        "All"
+      ],
+      "port": "",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "Custom protocol",
+      "protocol": "",
+      "port": "all",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "All TCP",
+      "protocol": "TCP",
+      "port": "0 - 65535",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "All UDP",
+      "protocol": "UDP",
+      "port": "0 - 65535",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "All ICMP",
+      "protocol": "ICMP",
+      "port": "0 - 65535",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "All TCP",
+      "protocol": "TCP",
+      "port": "0 - 65535",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "All traffic",
+      "protocol": "All",
+      "port": "0 - 65535",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "SSH",
+      "protocol": "TCP",
+      "port": "22",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "SMTP",
+      "protocol": "TCP",
+      "port": "25",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "DNS(UDP)",
+      "protocol": "UDP",
+      "port": "53",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "DNS(TCP)",
+      "protocol": "TCP",
+      "port": "53",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "HTTP",
+      "protocol": "UDP",
+      "port": "80",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "POP3",
+      "protocol": "TCP",
+      "port": "110",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "POP3",
+      "protocol": "TCP",
+      "port": "110",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "IMAP",
+      "protocol": "TCP",
+      "port": "143",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "LDAP",
+      "protocol": "TCP",
+      "port": "389",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "HTTPS",
+      "protocol": "TCP",
+      "port": "443",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "SMTPS",
+      "protocol": "TCP",
+      "port": "465",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "IMAPS",
+      "protocol": "TCP",
+      "port": "993",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "POP3S",
+      "protocol": "TCP",
+      "port": "995",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "MS SQL",
+      "protocol": "TCP",
+      "port": "1433",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "MYSQL/Aurora",
+      "protocol": "TCP",
+      "port": "3306",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "RDP",
+      "protocol": "TCP",
+      "port": "3389",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "Redshift",
+      "protocol": "TCP",
+      "port": "5439",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "PostgreSQL",
+      "protocol": "TCP",
+      "port": "5432",
+      "source": "0.0.0.0/0"
+    },
+    {
+      "type": "Oracle-RDS",
+      "protocol": "TCP",
+      "port": "1521",
+      "source": "0.0.0.0/0"
+    }
+  ]
+}

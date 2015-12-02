@@ -1043,31 +1043,7 @@
       group_name:     null,
       description:    null,
       name:           null,
-      types: ["Custom TCP Rule",
-        "Custom UDP Rule",
-        "Custom ICMP Rule",
-        "Custom Protocol",
-        "All TCP",
-        "All UDP",
-        "All ICMP",
-        "All Traffic",
-        "SSH",
-        "SMTP",
-        "DNS (UDP)",
-        "DNS (TCP)",
-        "HTTP",
-        "POP3",
-        "IMAP",
-        "LDAP",
-        "HTTPS",
-        "IMAPS",
-        "POP3S",
-        "MS SQL",
-        "MYSQL/ Aurora",
-        "RDP",
-        "Redshift",
-        "Oracle-RDS",
-      ],
+      inbound: [],
       ip: null,
       lang: queryString.lang,
     };},
@@ -1077,7 +1053,7 @@
         var ec2 = new EC2Instance(current_infra, '');
         ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
-          console.log(data.rules_summary);
+          console.log(data)
           var vpcs = [];
           _.forEach(data.vpcs, function (vpc) {
             var name = null;
@@ -1100,10 +1076,17 @@
           self.$parent.loading = false;
         });
       },
+      add_rule: function (target) {
+        var self = this;
+        if(target === "inbound"){
+          self.inbound.push(self.types)
+        }
+      },
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
       },
       create_group: function () {
+        this.$parent.loading = true;
         var ec2 = new EC2Instance(current_infra, '');
         ec2.create_group(
           [this.group_name,
@@ -1118,6 +1101,7 @@
         this.this.description = null;
         this.this.name = null;
         this.this.vpc = null;
+        this.$parent.loading = false;
       },
     },
     ready: function() {

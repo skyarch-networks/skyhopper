@@ -33,7 +33,7 @@
           <th v-else rowspan="{{rule.ip_permissions_egress.length+1}}">{{rule.group_id}}</th>
         </tr>
 
-        <!--If inbound contents is greater than outbound contents, inbound will be the base loop-->
+        <!--If inbound contents is greater than outbound contents, inbounr>will be the base loop-->
         <template v-if="rule.ip_permissions.length > rule.ip_permissions_egress.length">
           <template v-for="(index, inbound) in rule.ip_permissions">
             <template v-if="index == 0">

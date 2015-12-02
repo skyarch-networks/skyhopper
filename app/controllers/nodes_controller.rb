@@ -249,13 +249,17 @@ class NodesController < ApplicationController
     end
     vpcs = @infra.ec2.describe_vpcs()
 
+
     rules_summary[:security_groups].map do |item|
       check_socket(item.ip_permissions)
       check_socket(item.ip_permissions_egress)
     end
-
+    sec_groups = File.read("public/security_groups.json")
     @rules_summary = rules_summary[:security_groups]
     @vpcs = vpcs[:vpcs]
+    @sec_groups = sec_groups
+    puts @sec_groups.to_json
+
   end
 
   # GET /nodes/:id/get_security_groups
@@ -277,6 +281,7 @@ class NodesController < ApplicationController
     end
 
     @params = return_params
+
   end
 
   # POST /nodes/i-0b8e7f12/submit_groups
