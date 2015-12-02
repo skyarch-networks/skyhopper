@@ -58,6 +58,7 @@ class NodesController < ApplicationController
 
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
+    @platform = @instance_summary[:platform]
 
 
     @security_groups = @instance_summary[:security_groups]
