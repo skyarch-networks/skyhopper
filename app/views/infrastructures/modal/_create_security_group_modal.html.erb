@@ -10,11 +10,11 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="control-label">Security Group Name</label>
-          <input class="form-control" type="text" v-model="group_name">
+          <input class="form-control" type="text" v-model="group_name" required>
         </div>
         <div class="form-group">
           <label class="control-label">Description</label>
-          <input class="form-control" type="text" v-model="description">
+          <input class="form-control" type="text" v-model="description" required>
         </div>
         <div class="form-group">
           <label class="control-label">Name</label>
@@ -22,19 +22,19 @@
         </div>
         <div class="form-group">
           <label class="control-label">VPC</label>
-          <select class="form-control" v-model="vpc">
+          <select class="form-control" v-model="vpc" required>
             <option v-for="v in vpcs" v-bind:value="v.vpc_id">{{v.name}}</option>
           </select>
           * denotes default VPC
         </div>
 
-        <div class="form-group">
-          <label class="control-label">Attach to: </label>
-          <select class="form-control" v-model="physical_id">
-            <option v-for="v in ec2_instances" v-bind:value="v.physical_id">{{v.screen_name}} / {{v.physical_id}}</option>
-          </select>
-          (optional)
-        </div>
+        <!--<div class="form-group">-->
+          <!--<label class="control-label">Attach to: </label>-->
+          <!--<select class="form-control" v-model="physical_id">-->
+            <!--<option v-for="v in ec2_instances" v-bind:value="v.physical_id">{{v.screen_name}} / {{v.physical_id}}</option>-->
+          <!--</select>-->
+          <!--(optional)-->
+        <!--</div>-->
 
         <!--<ul class="nav nav-tabs">-->
           <!--<li class="active"><a href="#inbound" data-toggle="tab" aria-expanded="true">Inbound</a></li>-->
@@ -80,7 +80,9 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button @click="create_group()" :disabled="!required_filed" data-dismiss="modal" class="btn btn-primary"><%= t('helpers.links.create') %></button>
+          <button class="btn btn-primary" @click="create_group()" :disabled="!required_filed" data-dismiss="modal" aria-hidden="true">
+            <%= t('helpers.links.create') %>
+          </button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>

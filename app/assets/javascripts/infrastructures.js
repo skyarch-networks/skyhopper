@@ -1051,6 +1051,7 @@
       ip: null,
       lang: queryString.lang,
       type: [],
+      physical_id: null,
     };},
     methods: {
       get_rules: function ()  {

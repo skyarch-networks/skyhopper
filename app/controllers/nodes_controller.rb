@@ -255,7 +255,7 @@ class NodesController < ApplicationController
       check_socket(item.ip_permissions)
       check_socket(item.ip_permissions_egress)
     end
-    
+
     sec_groups = File.read("public/security_groups.json")
     @rules_summary = rules_summary[:security_groups]
     @vpcs = vpcs[:vpcs]
@@ -299,6 +299,16 @@ class NodesController < ApplicationController
 
     group_id = @infra.ec2.create_security_group({group_name: group_params[0], description: group_params[1], vpc_id: group_params[3]})
     @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{key: 'Name', value: group_params[2]}])
+
+    # if group_params[4]
+    #   instance = @infra.instance(group_params[4])
+    #   ex = [] #existing groups array
+    #   instance.security_groups.each do |sec_group|
+    #     ex.push(sec_group[:group_id])
+    #   end
+    #   ex.push(group_id[:group_id])
+    #   @infra.ec2.modify_instance_attribute({instance _id: group_params[4], groups: ex})
+    # end
 
     render text: I18n.t('security_groups.msg.change_success')
   end
