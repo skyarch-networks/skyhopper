@@ -251,6 +251,37 @@ class NodesController < ApplicationController
     @rules_summary = rules_summary[:security_groups]
   end
 
+  # GET /nodes/:id/get_security_groups
+  def get_security_groups
+    physical_id = params.require(:id)
+    av_g = @infra.ec2.describe_security_groups() # Available groups
+    instance = @infra.instance(physical_id)
+    ex = [] #existing groups array
+    return_params = [] #filtered security groups
+    instance.security_groups.each do |sec_group|
+      ex.push(sec_group[:group_id])
+    end
+
+    av_g[:security_groups].each do |a|
+      checked = ex.include? a[:group_id]
+      if a[:vpc_id] == instance.vpc.id
+        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
+      end
+    end
+
+    @params = return_params
+  end
+
+  # POST /nodes/i-0b8e7f12/submit_groups
+  def submit_groups
+    physical_id = params.require(:id)
+    group_ids     = params.require(:group_ids)
+
+    @infra.ec2.modify_instance_attribute({instance_id: physical_id, groups: group_ids})
+
+    render text: I18n.t('security_groups.msg.change_success')
+  end
+
   def check_socket(field)
     field.map do |set|
       if set.from_port == -1 || set.from_port == nil || set.from_port == 0

@@ -226,3 +226,11 @@ input:focus:invalid,
 textarea:focus:invalid {
   box-shadow: 0 -2px 0 #e51c23 inset !important;
 }
+
+.truncate {
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
