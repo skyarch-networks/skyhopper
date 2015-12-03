@@ -88,7 +88,7 @@
         <add-ec2-tabpane         v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
         <cf-history-tabpane      v-if="tabpane_active('cf_history')"       ></cf-history-tabpane>
         <stack-events-table      v-if="tabpane_active('event_logs')"       :events.once="current_infra.events"></stack-events-table>
-        <security-groups-tabpane v-if="tabpane_active('security_groups')"  ></security-groups-tabpane>
+        <security-groups-tabpane v-if="tabpane_active('security_groups')"  :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
         <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
         <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
         <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>

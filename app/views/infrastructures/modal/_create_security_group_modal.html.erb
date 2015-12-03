@@ -28,47 +28,59 @@
           * denotes default VPC
         </div>
 
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#inbound" data-toggle="tab" aria-expanded="true">Inbound</a></li>
-          <li class=""><a href="#outbound" data-toggle="tab" aria-expanded="false">Outbound</a></li>
-        </ul>
-        <div id="myTabContent" class="tab-content">
-          <div class="tab-pane fade active in" id="inbound">
-            <table class="table table-condensed">
-              <tr>
-                <th>Type</th>
-                <th>Protocol</th>
-                <th>Range</th>
-                <th>Source</th>
-              </tr>
-              <tr>
-                <td>
-                  <select class="form-control">
-                    <option v-for="t in types">{{t}}</option>
-                  </select>
-                </td>
-              </tr>
-            </table>
-            <button class="btn btn-xs btn-default">Add rule</button>
-          </div>
-          <div class="tab-pane fade" id="outbound">
-            <table class="table table-condensed">
-              <tr>
-                <th>Type</th>
-                <th>Protocol</th>
-                <th>Range</th>
-                <th>Source</th>
-              </tr>
-            </table>
-            <button class="btn btn-xs btn-default">Add rule</button>
-          </div>
+        <div class="form-group">
+          <label class="control-label">Attach to: </label>
+          <select class="form-control" v-model="physical_id">
+            <option v-for="v in ec2_instances" v-bind:value="v.physical_id">{{v.screen_name}} / {{v.physical_id}}</option>
+          </select>
+          (optional)
         </div>
+
+        <!--<ul class="nav nav-tabs">-->
+          <!--<li class="active"><a href="#inbound" data-toggle="tab" aria-expanded="true">Inbound</a></li>-->
+          <!--<li class=""><a href="#outbound" data-toggle="tab" aria-expanded="false">Outbound</a></li>-->
+        <!--</ul>-->
+        <!---->
+        <!--<div id="myTabContent" class="tab-content">-->
+          <!--<div class="tab-pane fade active in" id="inbound">-->
+            <!--<table class="table table-condensed">-->
+              <!--<tr>-->
+                <!--<th>Type</th>-->
+                <!--<th>Protocol</th>-->
+                <!--<th>Range</th>-->
+                <!--<th>Source</th>-->
+              <!--</tr>-->
+              <!--<tr v-for="ib in inbound" track-by="$index">-->
+                <!--<td>-->
+                  <!--<select class="form-control" v-model="type[$index]">-->
+                    <!--<option v-for="(k,i) in ib" v-bind:value="k">{{i.type}}</option>-->
+                  <!--</select>-->
+                <!--</td>-->
+                <!--<td>{{inbound[$index][type[$index]].protocol}}</td>-->
+                <!--<td>{{inbound[$index][type[$index]].port}}</td>-->
+                <!--<td>{{inbound[$index][type[$index]].source}}</td>-->
+              <!--</tr>-->
+            <!--</table>-->
+            <!--<button @click="add_rule('inbound')" class="btn btn-xs btn-default">Add rule</button>-->
+          <!--</div>-->
+          <!--<div class="tab-pane fade" id="outbound">-->
+            <!--<table class="table table-condensed">-->
+              <!--<tr>-->
+                <!--<th>Type</th>-->
+                <!--<th>Protocol</th>-->
+                <!--<th>Range</th>-->
+                <!--<th>Source</th>-->
+              <!--</tr>-->
+            <!--</table>-->
+            <!--<button class="btn btn-xs btn-default">Add rule</button>-->
+          <!--</div>-->
+        <!--</div>-->
 
       </div>
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button @click="create_group()" data-dismiss="modal" class="btn btn-primary"><%= t('helpers.links.create') %></button>
+          <button @click="create_group()" :disabled="!required_filed" data-dismiss="modal" class="btn btn-primary"><%= t('helpers.links.create') %></button>
         </div>
         <div-loader v-if="loading_s"></div-loader>
       </div>

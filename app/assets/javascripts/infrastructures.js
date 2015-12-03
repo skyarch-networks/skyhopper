@@ -1032,6 +1032,12 @@
 
   Vue.component('security-groups-tabpane', {
     template: '#security-groups-tabpane-template',
+    props: {
+      ec2_instances: {
+        type: Array,
+        required: true,
+      },
+    },
     data: function () { return{
       loading:        false,
       rules_summary:  null,
@@ -1041,8 +1047,10 @@
       description:    null,
       name:           null,
       inbound: [],
+      sec_group: null,
       ip: null,
       lang: queryString.lang,
+      type: [],
     };},
     methods: {
       get_rules: function ()  {
@@ -1050,7 +1058,8 @@
         var ec2 = new EC2Instance(current_infra, '');
         ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
-          console.log(data)
+
+          self.sec_group = data.sec_groups;
           var vpcs = [];
           _.forEach(data.vpcs, function (vpc) {
             var name = null;
@@ -1072,17 +1081,20 @@
 
           self.$parent.loading = false;
         });
+
       },
       add_rule: function (target) {
         var self = this;
         if(target === "inbound"){
-          self.inbound.push(self.types)
+          self.inbound.push(self.sec_group);
         }
+        console.log(self.inbound);
       },
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
       },
       create_group: function () {
+        if(!this.group_name && this.description && this.vpc) {return;}
         this.$parent.loading = true;
         var ec2 = new EC2Instance(current_infra, '');
         ec2.create_group(
@@ -1094,11 +1106,17 @@
           alert_success(this.get_rules())
         )
          .fail(alert_danger(this._show_ec2));
-        this.this.group_name = null;
-        this.this.description = null;
-        this.this.name = null;
-        this.this.vpc = null;
+        this.group_name = null;
+        this.description = null;
+        this.name = null;
+        this.vpc = null;
         this.$parent.loading = false;
+      },
+    },
+    computed: {
+      required_filed: function () {
+        var self = this;
+        return (self.group_name && self.description);
       },
     },
     ready: function() {
