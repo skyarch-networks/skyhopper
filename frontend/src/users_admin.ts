@@ -10,7 +10,7 @@
 /// <reference path="../declares.d.ts" />
 
 import {Confirm, Alert, AlertForAjaxStdError} from './modal';
-import 'user_index'
+import 'user_index';
 
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
