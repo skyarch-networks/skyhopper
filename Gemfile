@@ -27,7 +27,7 @@ gem 'libv8'
 gem 'jbuilder'
 
 # Modularize javascript code in application
-gem 'browserify-rails', '~> 1.5.0'
+gem 'browserify-rails'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
