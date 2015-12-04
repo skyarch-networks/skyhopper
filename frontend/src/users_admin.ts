@@ -5,11 +5,12 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-//= require user_index
+
 
 /// <reference path="../declares.d.ts" />
 
 import {Confirm, Alert, AlertForAjaxStdError} from './modal';
+import 'user_index'
 
 namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
