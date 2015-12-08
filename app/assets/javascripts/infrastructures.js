@@ -43,9 +43,6 @@
   Vue.use(require('./modules/timepicker'), queryString.lang);
   Vue.use(require('./modules/ace'), false, 'json', '25');
 
-
-
-
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
     if (_.trim(str) === '') {
@@ -1044,6 +1041,7 @@
       loading:             false,
       loading_s:           false,
       loading_snapshots:   false,
+      loading_groups:      false,
       inprogress:          false, // for cook
       ec2_status_changing: false,
       chef_console_text:   '',
@@ -1060,6 +1058,7 @@
       max_sec_group:       null,
       rules_summary:       null,
       placement:          'left',
+      lang:               queryString.lang,
       sec_group: t('ec2_instances.msg.security_groups'),
       change_status: t('ec2_instances.change_status'),
       attach_vol: t('ec2_instances.attach'),
@@ -1408,19 +1407,31 @@
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},
-      get_rules: function (){
+      get_security_groups: function (){
         var self = this;
-        var group_ids = [];
-        self.ec2.security_groups.forEach(function (value, key) {
-          group_ids.push(value["group_id"]);
-        });
-
+        self.loading_groups = true;
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        ec2.get_rules(group_ids).done(function (data) {
-          self.rules_summary = data.rules_summary;
-          console.log(data.rules_summary);
-
+        ec2.get_security_groups().done(function (data) {
+          self.rules_summary = data.params;
+          self.loading_groups = false;
         });
+      },
+      check: function (i) {
+          i.checked= !i.checked;
+      },
+      submit_groups: function(){
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var group_ids = _(this.rules_summary).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        }).value();
+
+        ec2.submit_groups(group_ids)
+          .done(alert_success(self._show_ec2))
+          .fail(alert_danger(self._show_ec2));
+
       }
     },
     computed: {
@@ -1429,6 +1440,11 @@
           return 'btn-success';
         }
         return 'btn-default';
+      },
+      has_selected: function() {
+        return _.some(this.rules_summary, function(c){
+          return c.checked;
+        });
       },
       cook_status_class:       function () { return this._label_class(this.cook_status); },
       serverspec_status_class: function () { return this._label_class(this.serverspec_status); },

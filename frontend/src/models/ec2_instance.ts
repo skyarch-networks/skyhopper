@@ -109,10 +109,23 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
+  submit_groups(group_ids: Array<any>) {
+    const params = _.merge(this.params, group_ids ? {group_ids: group_ids} : {});
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).submit_groups(params)
+    );
+  }
+
   get_rules(group_ids: Array<any>): JQueryPromise<any> {
     const params = _.merge(this.params, group_ids ? {group_ids: group_ids} : []);
     return this.WrapAndResolveReject(() =>
       (<any>EC2Instance.ajax_node).get_rules(params)
+    );
+  }
+
+  get_security_groups(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).get_security_groups(this.params)
     );
   }
 
@@ -416,7 +429,9 @@ EC2Instance.ajax_node.add_member('cook', 'PUT');
 EC2Instance.ajax_node.add_member('yum_update', 'PUT');
 EC2Instance.ajax_node.add_member('run_bootstrap', 'GET');
 EC2Instance.ajax_node.add_member('get_rules', 'GET');
+EC2Instance.ajax_node.add_member('get_security_groups', 'GET');
 EC2Instance.ajax_node.add_member('apply_dish', 'POST');
+EC2Instance.ajax_node.add_member('submit_groups', 'POST');
 EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
 EC2Instance.ajax_node.add_member('update_attributes', 'PUT');
 EC2Instance.ajax_node.add_member('schedule_yum', 'POST');
