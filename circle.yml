@@ -19,6 +19,6 @@ database:
     - "echo Skip rake db:hogehoge"
 
 
-# test:
-#   override:
-#     - "cd frontend && npm test"
+test:
+  override:
+    - 'echo ''Skip cd frontend && npm test'''
