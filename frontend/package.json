@@ -12,10 +12,11 @@
   },
   "dependencies": {
     "bower": "^1.5.3",
+    "brace": "0.7.0",
     "browserify": "~> 10.2.4",
     "browserify-incremental": "^3.0.1",
     "md5": "^2.0.0",
-    "serverspec-generator": "https://github.com/skyarch-networks/serverspec-generator/releases/download/v0.0.2/serverspec-generator-0.0.2.tgz",
+    "serverspec-generator": "0.0.2",
     "query-string": "^2.4.1",
     "vue-ace": "0.0.1"
   },
