@@ -27,8 +27,8 @@ class TemplateBuilder::Parameter
   def build
     param = {
       @name => {
-        Type: @type,
-      },
+        Type: @type
+      }
     }
 
     case @type

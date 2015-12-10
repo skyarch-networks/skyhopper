@@ -23,7 +23,7 @@ class Infrastructure < ActiveRecord::Base
 
   # 将来的にproject_id もuniqueに含める?
   validates :stack_name, uniqueness: {
-    scope: [:region],
+    scope: [:region]
   }
   validates :stack_name, format: {with: /\A[a-zA-Z][a-zA-Z0-9-]*$\z/}, length: {maximum: 128}
 
