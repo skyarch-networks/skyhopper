@@ -41,7 +41,11 @@
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
-  Vue.use(require('./modules/ace'), false, 'json', '25');
+
+  var vace = require('vue-ace');
+  require('brace/mode/json');
+  require('brace/theme/github');
+  Vue.use(vace, false, 'json', '25');
 
   // Vueに登録したfilterを、外から見る方法ってないのかな。
   var jsonParseErr = function (str) {
@@ -214,7 +218,7 @@
           return {
             value: input,
             text: input
-          }
+          };
         }
       });
     },
@@ -1011,7 +1015,7 @@
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
-          group_ids.push(value["group_id"]);
+          group_ids.push(value.group_id);
         });
 
         ec2.get_rules(group_ids).done(function (data) {

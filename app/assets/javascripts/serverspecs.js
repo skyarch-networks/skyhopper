@@ -11,8 +11,6 @@ var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
 var queryString = require('query-string').parse(location.search);
 
-require('vue').use(require('./modules/ace'), true, 'ruby');
-
 
 var app;
 
