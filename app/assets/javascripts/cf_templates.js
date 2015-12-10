@@ -12,6 +12,9 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
+  var ace = require('brace');
+  require('brace/theme/github');
+  require('brace/mode/json');
 
   var app;
 
@@ -136,8 +139,15 @@
       success : function (data) {
         $("#template-information").html(data);
       }
+    }).done(function () {
+      var viewer = ace.edit('cf_value');
+      viewer.setOptions({
+        maxLines: Infinity,
+        minLines: 15,
+        readOnly: true
+      });
+      viewer.setTheme("ace/theme/github");
+      viewer.getSession().setMode("ace/mode/json");
     });
   });
-
-
 })();
