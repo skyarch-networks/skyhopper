@@ -294,6 +294,7 @@ class NodesController < ApplicationController
   end
 
   # POST /nodes/i-0b8e7f12/create_groups
+  # POST /nodes/create_group/:group_params
   def create_group
     group_params     = params.require(:group_params)
 

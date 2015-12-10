@@ -1095,7 +1095,7 @@
         this.$parent.show_ec2(this.physical_id);
       },
       create_group: function () {
-        if(!this.group_name && this.description && this.vpc) {return;}
+        if(!this.group_name && this.description && this.vpc && this.name) {return;}
         this.$parent.loading = true;
         var ec2 = new EC2Instance(current_infra, '');
         ec2.create_group(
@@ -1117,7 +1117,7 @@
     computed: {
       required_filed: function () {
         var self = this;
-        return (self.group_name && self.description);
+        return (self.group_name && self.description && self.name && self.vpc);
       },
     },
     ready: function() {

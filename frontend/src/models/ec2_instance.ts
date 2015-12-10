@@ -438,11 +438,11 @@ EC2Instance.ajax_node.add_member('get_rules', 'GET');
 EC2Instance.ajax_node.add_member('get_security_groups', 'GET');
 EC2Instance.ajax_node.add_member('apply_dish', 'POST');
 EC2Instance.ajax_node.add_member('submit_groups', 'POST');
-EC2Instance.ajax_node.add_member('create_group', 'POST');
 EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
 EC2Instance.ajax_node.add_member('update_attributes', 'PUT');
 EC2Instance.ajax_node.add_member('schedule_yum', 'POST');
 EC2Instance.ajax_node.add_collection('recipes', 'GET');
+EC2Instance.ajax_node.add_collection('create_group', 'POST');
 
 EC2Instance.ajax_ec2.add_member('change_scale', 'POST');
 EC2Instance.ajax_ec2.add_member("start", "POST");

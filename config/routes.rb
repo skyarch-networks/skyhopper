@@ -47,6 +47,7 @@ SkyHopper::Application.routes.draw do
   resources :nodes, only: [:update, :show, :edit] do
     collection do
       get  'recipes'
+      post 'create_group'
     end
     member do
       put  'cook'
@@ -54,7 +55,6 @@ SkyHopper::Application.routes.draw do
       get  'run_bootstrap'
       post 'apply_dish'
       post 'submit_groups'
-      post 'create_group'
       put  'update_attributes'
       get  'edit_attributes'
       get  'get_rules'
