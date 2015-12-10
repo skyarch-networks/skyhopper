@@ -31,6 +31,9 @@
     },
     "power-assert/power-assert.d.ts": {
       "commit": "d0adccc436197cc7c3559322721e9df86b892bd6"
+    },
+    "query-string/query-string.d.ts": {
+      "commit": "923c5431d9447db9d5cf41adc5914e3c94c1ff10"
     }
   }
 }

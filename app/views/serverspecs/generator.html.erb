@@ -10,8 +10,7 @@
   <div id="vue-serverspec-gen"></div>
 
   <div class="row form-actions-top">
-    TODO
-    <button class="btn btn-primary" @click="save()"><%=t('helpers.titles.save')%></button>
+    <button class="btn btn-primary save-serverspec-btn"><%=t('helpers.titles.save')%></button>
     <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
       serverspecs_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
   </div>
