@@ -196,10 +196,6 @@ describe ServerspecsController, type: :controller do
         expect(assigns[:infra]).to be_nil
       end
     end
-
-    it 'should assign @serverspec_info' do
-      expect(assigns[:serverspec_info]).to be_a Hash
-    end
   end
 
   describe 'DELETE #destroy' do

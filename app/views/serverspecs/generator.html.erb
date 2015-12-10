@@ -1,5 +1,5 @@
 <% provide(:title, I18n.t('serverspecs.generator.title')) %>
-<div class="container" id="main" v-cloak>
+<div class="container">
   <h2 class="page-header">
     <%=t('serverspecs.generator.title')%>
     <% if @infra %>
@@ -7,38 +7,11 @@
     <% end %>
   </h2>
 
-  <div class="row">
-    <div class="col-xs-6">
-
-      <h3><%=t('serverspecs.generator.resources')%></h3>
-      <button class="btn btn-default" @click="addDescribe()">
-        <span class="glyphicon glyphicon-plus-sign"></span> <%=t('serverspecs.generator.add_resource')%>
-      </button>
-
-      <div v-for="desc in ast">
-        <resource-panel :desc.sync="desc" :serverspec_info="info"></resource-panel>
-      </div>
-    </div>
-
-
-    <div class="col-xs-6">
-      <h3><%=t('serverspecs.generator.generated')%></h3>
-      <pre v-ace="rubyCode"><code v-text="rubyCode"></code></pre>
-    </div>
-  </div>
+  <div id="vue-serverspec-gen"></div>
 
   <div class="row form-actions-top">
-    <button class="btn btn-primary" @click="save()"><%=t('helpers.titles.save')%></button>
+    <button class="btn btn-primary save-serverspec-btn"><%=t('helpers.titles.save')%></button>
     <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
       serverspecs_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
   </div>
 </div>
-
-<script type="text/javascript">
-var SERVERSPEC_INFO =  <%= @serverspec_info.to_json.html_safe %>
-</script>
-
-<script id="resource-panel-template"   type="text/template"> <%= render 'gen_resource' %> </script>
-<script id="it-panel-template"         type="text/template"> <%= render 'gen_it' %> </script>
-<script id="selectable-input-template" type="text/template"> <%= render 'gen_selectable_input' %> </script>
-<script id="arg-li-template"           type="text/template"> <%= render 'gen_arg_li' %> </script>
