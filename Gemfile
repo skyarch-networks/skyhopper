@@ -37,8 +37,6 @@ end
 # Use unicorn as the app server
 gem 'unicorn-rails'
 
-gem 'ace-rails-ap'
-
 gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
