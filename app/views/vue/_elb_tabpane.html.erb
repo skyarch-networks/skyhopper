@@ -90,7 +90,7 @@
   <div class="form-actions-top col-xs-12" v-if="unregistereds.length !== 0">
     <div class="input-group col-xs-12 col-sm-5">
       <select class="form-control input-sm" v-model="selected_ec2">
-        <option>Select!</option>
+        <option></option>
         <option v-for="x in unregistereds" :value="x.physical_id">{{* x.screen_name}}</option>
       </select>
       <div class="input-group-btn">
