@@ -34,11 +34,11 @@
           <li>
             <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
           </li>
-          <li :class="{disabled : no_stack}">
-            <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
+          <li>
+            <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
           </li>
           <li :class="{disabled : no_stack}">
-            <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
+            <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
           </li>
           <li class="divider"></li>
           <li :class="{disabled : no_stack}">
