@@ -15,7 +15,8 @@
     "browserify": "~> 10.2.4",
     "browserify-incremental": "^3.0.1",
     "md5": "^2.0.0",
-    "query-string": "^2.4.1"
+    "query-string": "^2.4.1",
+    "vue-ace": "0.0.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
@@ -23,7 +24,7 @@
     "gulp-tsd": "0.0.4",
     "gulp-tslint": "^3.2.0",
     "gulp-typescript": "^2.9.2",
-    "serverspec-generator": "https://github.com/skyarch-networks/serverspec-generator/releases/download/v0.0.1/serverspec-generator-0.0.1.tgz",
+    "serverspec-generator": "https://github.com/skyarch-networks/serverspec-generator/releases/download/v0.0.2/serverspec-generator-0.0.2.tgz",
     "tsd": "^0.6.3",
     "tslint": "^2.4.2",
     "typescript": "~1.6.2"
