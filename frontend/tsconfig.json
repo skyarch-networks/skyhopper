@@ -7,13 +7,13 @@
     "removeComments": true,
     "noLib": false,
     "outDir": "dest/",
-    "module": "commonjs",
-    "moduleResolution": "classic"
+    "module": "commonjs"
   },
   "files": [
     "src/helper.ts",
     "src/modal.ts",
     "src/server_status.ts",
+    "src/serverspec-gen.ts",
     "src/users_admin.ts",
     "src/models/base.ts",
     "src/models/cf_template.ts",
@@ -25,15 +25,6 @@
     "src/models/resource.ts",
     "src/models/s3_bucket.ts",
     "src/models/serverspec.ts",
-    "src/models/snapshot.ts",
-    "src/serverspec-gen/arg_li.ts",
-    "src/serverspec-gen/ast-interface.ts",
-    "src/serverspec-gen/ast.ts",
-    "src/serverspec-gen/it-panel.ts",
-    "src/serverspec-gen/resource-panel.ts",
-    "src/serverspec-gen/selectable-input.ts",
-    "src/serverspec-gen/serverspec_info.ts",
-    "src/serverspec-gen/ui.ts",
-    "test/serverspec-gen/ast_test.ts"
+    "src/models/snapshot.ts"
   ]
 }

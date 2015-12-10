@@ -84,7 +84,6 @@ class ServerspecsController < ApplicationController
   # GET /serverspecs/generator
   def generator
     @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
-    @serverspec_info = ServerspecInfo.get # TODO: SnakeCase
   end
 
   # DELETE /serverspecs/1
