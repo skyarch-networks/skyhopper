@@ -91,7 +91,7 @@
     <div class="input-group col-xs-12 col-sm-5">
       <select class="form-control input-sm" v-model="selected_ec2">
         <option></option>
-        <option v-for="x in unregistereds" :value="x.physical_id">{{* x.screen_name}}</option>
+        <option v-for="x in unregistereds" :value="x.physical_id">{{* x.screen_name}} / {{x.physical_id}}</option>
       </select>
       <div class="input-group-btn">
         <button class="btn btn-primary btn-sm" @click="register()" :disabled="!selected_ec2">
