@@ -32,9 +32,9 @@
 
       </tr>
       <tr  v-if="filteredLength === 0 && data.length > 0">
-        <td><h4 class="text text-danger"> No results found. </h4></td>
+        <td v-if="lang === 'en'"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
+        <td v-if="lang === 'ja'"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
       </tr>
-
     </tbody>
   </table>
   <nav v-if="data.length >= 10 && filteredLength >= 10">
@@ -50,7 +50,7 @@
 
 <div id="indexElement" v-el:node>
   <div class="col-md-4 input-group">
-      <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
       <hr>
   </div>
   <demo-grid

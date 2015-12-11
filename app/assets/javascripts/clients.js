@@ -12,7 +12,6 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
-
   var app;
 
 
