@@ -9,21 +9,10 @@
 <%= render 'vue/index' %>
 
 <table class="table table-hover hidden">
-  <!-- <thead>
-    <tr>
-      <th><%= t 'infrastructures.stackname' %></th>
-      <th><%= t 'infrastructures.region' %></th>
-      <th><%= t 'infrastructures.keypair' %></th>
-      <th><%= t 'common.actions' %></th>
-    </tr>
-  </thead> -->
+
   <tbody>
     <% @infrastructures.each do |infra| %>
-      <!-- <tr class="infrastructure-row">
-        <td><%= infra.stack_name %></td>
-        <td><%= infra.region %></td>
-        <td><%= infra.keypairname || t('infrastructures.msg.no_keypair') %></td>
-        <td> -->
+
         <td>
           <%= button_show_infra(infra) %>
 
@@ -38,9 +27,6 @@
   </tbody>
 </table>
 
-<!-- <div class="text-center">
-  <%= paginate(@infrastructures) %>
-</div> -->
 
 <%= button_add_infra(@selected_project) %>
 

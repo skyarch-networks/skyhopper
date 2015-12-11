@@ -9,7 +9,7 @@
         <h4 class="modal-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" v-if="rules_summary">
 
         <table class="table table-condensed">
           <thead>
@@ -22,7 +22,9 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="r in rules_summary" :class="{info: r.checked}" @click="check(r)">
+          <tr v-for="r in dispItems
+          | filterBy filterKey
+          | paginate" :class="{info: r.checked}" @click="check(r)">
             <td><input type="checkbox" v-model="r.checked"></td>
             <td>{{r.group_id}}</td>
             <td><div class="truncate"> {{r.group_name}}</div></td>
@@ -32,6 +34,13 @@
           </tr>
           </tbody>
         </table>
+        <nav v-if="rules_summary">
+          <ul class="pager">
+            <li class="{{isStartPage ? 'disabled' : '' }}"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+            <li class="{{isEndPage ? 'disabled' : '' }}"><a   @click="showNext" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+          </ul>
+          <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="rules_summary.length / 10 | roundup"></span>
+        </nav>
 
       </div>
       <div class="modal-footer">
@@ -46,4 +55,3 @@
     </div>
   </div>
 </div>
-
