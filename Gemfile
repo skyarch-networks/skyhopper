@@ -69,6 +69,7 @@ group :development, :test do
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
+  gem 'xray-rails'
 
   gem 'quiet_assets'
 
