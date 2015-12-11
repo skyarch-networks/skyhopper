@@ -630,12 +630,10 @@
       showPrev: function () {
         if(this.isStartPage) return;
         this.page--;
-        console.log(this.page);
       },
       showNext: function () {
         if(this.isEndPage) return;
         this.page++;
-        console.log(this.page);
       },
     },
     computed: {
