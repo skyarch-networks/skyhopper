@@ -23,15 +23,21 @@
       <tr v-for="
         entry in data
         | filterBy filterKey
+        | count
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
         <td v-for="key in columns">
           <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         </td>
+
       </tr>
+      <tr  v-if="filteredLength === 0 && data.length > 0">
+        <td><h4 class="text text-danger"> No results found. </h4></td>
+      </tr>
+
     </tbody>
   </table>
-  <nav v-if="data.length >= 10">
+  <nav v-if="data.length >= 10 && filteredLength >= 10">
     <ul class="pager">
       <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
         <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
@@ -54,6 +60,6 @@
   </demo-grid>
 </div>
 
-<div id="empty" style="display: none;"></div>
+<div  id="empty" style="display: none;"></div>
 <span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
 <hr>
