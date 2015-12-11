@@ -1061,6 +1061,8 @@
       rules_summary:       null,
       page: 0,
       dispItemSize: 10,
+      filteredLength: null,
+      filterKey: '',
       placement:          'left',
       lang:               queryString.lang,
       sec_group: t('ec2_instances.msg.security_groups'),
@@ -1418,6 +1420,7 @@
         ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.params;
           self.loading_groups = false;
+          self.filteredLength = data.params.length;
         });
       },
       check: function (i) {
@@ -1596,6 +1599,12 @@
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
       roundup: function (val) { return (Math.ceil(val));},
+      count: function (arr) {
+        // record length
+        this.$set('filteredLength', arr.length);
+        // return it intact
+        return arr;
+      },
     },
   });
 
