@@ -26,4 +26,3 @@
 //= require selectize
 //= require fullcalendar
 //= require lang-all
-//= require xray
