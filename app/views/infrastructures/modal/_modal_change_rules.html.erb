@@ -41,7 +41,7 @@
           </tr>
           </tbody>
         </table>
-        <nav v-if="rules_summary.length >=10">
+        <nav v-if="filterKey === ''">
           <ul class="pager">
             <li class="{{isStartPage ? 'disabled' : '' }}"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
             <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="rules_summary.length / 10 | roundup"></span>
