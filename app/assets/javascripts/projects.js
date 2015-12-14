@@ -34,6 +34,7 @@
         lang: queryString.lang,
         pages: 10,
         pageNumber: 0,
+        filteredLength: null,
           };
       },
     methods: {
@@ -85,6 +86,7 @@
              self.$emit('data-loaded');
              var empty = t('projects.msg.empty-list');
              if(self.data.length === 0){ $('#empty').show().html(empty);}
+             self.filteredLength = data.length;
            }
          });
          $("#loading").hide();
@@ -97,7 +99,13 @@
         return list.slice(index, index + this.pages);
       },
       roundup: function (val) { return (Math.ceil(val));},
-    }
+      count: function (arr) {
+        // record length
+        this.$set('filteredLength', arr.length);
+        // return it intact
+        return arr;
+      },
+    },
  });
 
 

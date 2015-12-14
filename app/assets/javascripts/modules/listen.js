@@ -26,7 +26,7 @@ function render_infrastructures(value, key, lang){
   var href = $('#edit-'+value[0]+'').attr('href');
   var isDelete = $('#delete-'+value[0]+'').attr('class');
   var disabled;
-    if(value[1] != "CREATE_COMPLETE")
+    if(value[1] != "CREATE_COMPLETE" && value[1] != "UPDATE_COMPLETE")
       disabled = 'disabled';
 
   var ret =  "<div class='btn-group'>"+

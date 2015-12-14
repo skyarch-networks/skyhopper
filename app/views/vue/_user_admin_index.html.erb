@@ -21,11 +21,16 @@
       <tr v-for="
         entry in data
         | filterBy filterKey in 'email[1]'
+        | count
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
         <td v-for="key in columns">
           <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         </td>
+      </tr>
+      <tr  v-if="filteredLength === 0 && data.length > 0">
+      <td v-if="lang === 'en'"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
+      <td v-if="lang === 'ja'"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
       </tr>
     </tbody>
   </table>
@@ -42,7 +47,7 @@
 
 <div id="indexElement">
   <div class="input-group">
-    <input type="text" name="query" v-model="searchQuery" class="form-control" placeholder="<%= t 'users.search' %>">
+    <input type="text" name="query" v-model="searchQuery" debounce="500" class="form-control" placeholder="<%= t 'users.search' %>">
     <hr>
   </div>
   <demo-grid

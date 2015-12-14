@@ -34,6 +34,7 @@ Vue.component('demo-grid', {
       lang: queryString.lang,
       pages: 10,
       pageNumber: 0,
+      filteredLength: null,
         };
   },
   methods: {
@@ -78,6 +79,7 @@ Vue.component('demo-grid', {
            self.$emit('data-loaded');
            var empty = t('projects.msg.empty-list');
            if(self.data.length === 0){ $('#empty').show().html(empty);}
+           self.filteredLength = data.length;
          }
        });
        $("#loading").hide();
@@ -90,6 +92,12 @@ Vue.component('demo-grid', {
       return list.slice(index, index + this.pages);
     },
     roundup: function (val) { return (Math.ceil(val));},
+    count: function (arr) {
+      // record length
+      this.$set('filteredLength', arr.length);
+      // return it intact
+      return arr;
+    }
   }
 });
 
