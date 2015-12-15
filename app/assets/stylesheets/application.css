@@ -16,6 +16,8 @@
  *= require selectize.paper
  *= require fullcalendar
  *= require font-awesome
+ *= require offline-theme-chrome
+ *= require offline-language-english
  */
 
 .modal-header {
