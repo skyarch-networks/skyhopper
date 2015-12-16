@@ -31,6 +31,12 @@ class ELB
     return data.instance_states.map(&:to_hash)
   end
 
+  # return instance description.
+  # @return [Array<Hash{Symbol => String}>]
+  def security_groups
+    return details.security_groups
+  end
+
   # @return [Array<Hash{Symbol => String}>]
   def listeners
     return details.listener_descriptions.map(&:listener).map(&:to_hash).map do |l|
@@ -148,6 +154,15 @@ class ELB
     return nil
   end
 
+
+  # register EC2 instance to ELB
+  # @param [Array] security group id.
+  def elb_submit_groups(group_ids)
+    @elb.apply_security_groups_to_load_balancer(
+      load_balancer_name: @name,
+      security_groups: group_ids,
+    )
+  end
 
   private
 

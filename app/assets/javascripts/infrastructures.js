@@ -802,6 +802,7 @@
       instance_protocol: '',
       instance_port: '',
       ssl_certificate_id: '',
+      security_groups: null,
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -955,6 +956,36 @@
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
       label_class: function (state) { return 'label-' + this.state(state);},
+      check: function (i) {
+          i.checked= !i.checked;
+      },
+      reload: function(){
+        this.$parent.show_elb(this.physical_id);
+      },
+      elb_submit_groups: function(){
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, '');
+        var group_ids = _(this.security_groups).filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        }).value();
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+
+        ec2.elb_submit_groups(group_ids, self.physical_id)
+          .done(alert_success(reload))
+          .fail(alert_danger(reload));
+
+      }
+    },
+    computed: {
+      has_selected: function() {
+        return _.some(this.security_groups, function(c){
+          return c.checked;
+        });
+      },
     },
     compiled: function () {
       var self = this;
@@ -964,6 +995,7 @@
         self.dns_name = data.dns_name;
         self.listeners = data.listeners;
         self.server_certificates = data.server_certificates;
+        self.security_groups = data.security_groups;
         self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;

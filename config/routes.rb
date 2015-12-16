@@ -73,6 +73,7 @@ SkyHopper::Application.routes.draw do
       get  'serverspec_status'
       post 'register_to_elb'
       post 'deregister_from_elb'
+      post 'elb_submit_groups'
       get  'attachable_volumes'
       get  'available_resources'
       post 'attach_volume'
