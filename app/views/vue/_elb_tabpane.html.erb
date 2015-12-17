@@ -121,7 +121,9 @@
           </tr>
           </tbody>
         </table>
-        <button class="btn btn-info" data-toggle="modal" @click="view_rules()" role="button"><%= t 'security_groups.btn.view_rules' %></button>
+        <button class="btn btn-info" data-toggle="modal" @click="view_rules()" role="button">
+          <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
+        </button>
         <button class="btn btn-default" data-toggle="modal" @click="change_set()" role="button" href="#change-rules-modal"><%= t 'security_groups.btn.change_groups' %></button>
       </div>
     </div>

@@ -451,6 +451,7 @@ EC2Instance.ajax_ec2.add_member("detach", "POST");
 EC2Instance.ajax_ec2.add_member("terminate", "POST");
 EC2Instance.ajax_ec2.add_member('serverspec_status', 'GET');
 EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
+EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('elb_submit_groups', 'POST');
 EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
 EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');

@@ -978,7 +978,13 @@
           .done(alert_success(reload))
           .fail(alert_danger(reload));
 
-      }
+      },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.security_groups;
+        this.$parent.instance_type = 'elb';
+      },
+
     },
     computed: {
       has_selected: function() {
@@ -1034,6 +1040,10 @@
         type: Array,
         required: true,
       },
+      instance_type:{
+        type: String,
+        required: true,
+      }
     },
     data: function () { return{
       loading:        false,
@@ -1047,7 +1057,12 @@
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
-          group_ids.push(value.group_id);
+          if(self.instance_type === 'elb'){
+            if(value.checked)
+              group_ids.push(value.group_id);
+          }else{
+            group_ids.push(value.group_id);
+          }
         });
 
         ec2.get_rules(group_ids).done(function (data) {
@@ -1056,10 +1071,14 @@
       },
 
       show_ec2: function () {
-        this.$parent.show_ec2(this.physical_id);
+        if(this.instance_type === 'elb')
+          this.$parent.show_elb(this.physical_id);
+        else
+          this.$parent.show_ec2(this.physical_id);
+
       },
     },
-    ready: function() {
+    compiled: function() {
       console.log(this);
       this.get_rules();
       this.$parent.loading = false;
@@ -1270,6 +1289,7 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.ec2.security_groups;
         this._loading();
+        this.$parent.instance_type = 'ec2';
       },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
@@ -2446,6 +2466,7 @@
       sortField: 'text'
     });
     moment.locale(queryString.lang);
+
   });
 
   $(document).on('click', '.show-infra', function (e) {

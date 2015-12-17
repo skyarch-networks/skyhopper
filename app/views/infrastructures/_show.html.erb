@@ -97,7 +97,7 @@
         <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
         <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"   :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
         <operation-sched-tabpane v-if="tabpane_active('operation-sched')" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
-        <view-rules-tabpane v-if="tabpane_active('view-rules')" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID"></view-rules-tabpane>
+        <view-rules-tabpane v-if="tabpane_active('view-rules')" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
     </div>
   </div>
 </div>
