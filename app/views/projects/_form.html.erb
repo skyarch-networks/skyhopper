@@ -1,6 +1,6 @@
 <%= form_for @project, html: { class: 'form-horizontal', role: 'form' } do |f| %>
   <div class="form-group">
-    <%= f.label :client_id, t('clients.client'), class: 'control-label col-sm-2' %>
+    <%= f.label :client_name, t('clients.client'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <%= f.text_field :client_name, value: @project.client.name, class: 'form-control', readonly: true %>
       <%= f.hidden_field :client_id %>

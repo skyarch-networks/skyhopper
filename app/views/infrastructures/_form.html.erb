@@ -1,6 +1,6 @@
 <%= form_for @infrastructure, html: { class: 'form-horizontal', multipart: true, role: 'form' } do |f| %>
   <div class="form-group">
-    <%= f.label :projec_id, t('projects.project'), class: 'control-label col-sm-2' %>
+    <%= f.label :project_name, t('projects.project'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <%= f.text_field :project_name, value: @infrastructure.project.name, class: 'form-control', readonly: true %>
       <%= f.hidden_field :project_id %>
