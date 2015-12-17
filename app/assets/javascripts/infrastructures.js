@@ -983,8 +983,7 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.security_groups;
         this.$parent.instance_type = 'elb';
-      },
-
+      }
     },
     computed: {
       has_selected: function() {
@@ -1074,10 +1073,9 @@
 
       show_ec2: function () {
         if(this.instance_type === 'elb')
-          this.$parent.show_ec2(this.physical_id);
+          this.$parent.show_elb(this.physical_id);
         else
           this.$parent.show_ec2(this.physical_id);
-
       },
     },
     compiled: function() {
