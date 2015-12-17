@@ -209,11 +209,11 @@ class InfrastructuresController < ApplicationController
     infra = Infrastructure.find(infra_id)
     elb = ELB.new(infra, physical_id)
 
-    sc_g = infra.ec2.describe_security_groups()
+    sc_g = infra.ec2.describe_security_groups().to_h
     security_groups = []
-    sc_g[:security_groups].each do |a|
-      checked = elb.security_groups.include? a[:group_id]
-      security_groups.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
+    sc_g[:security_groups].each do |a_hash|
+      a_hash[:checked] = elb.security_groups.include? a_hash[:group_id]
+      security_groups.push(a_hash)
     end
 
     @ec2_instances = elb.instances

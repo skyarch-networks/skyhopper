@@ -965,11 +965,11 @@
       elb_submit_groups: function(){
         var self = this;
         var ec2 = new EC2Instance(current_infra, '');
-        var group_ids = _(this.security_groups).filter(function (t) {
+        var group_ids = this.security_groups.filter(function (t) {
           return t.checked;
         }).map(function (t) {
           return t.group_id;
-        }).value();
+        });
         var reload = function () {
           self.$parent.show_elb(self.physical_id);
         };
@@ -988,7 +988,7 @@
     },
     computed: {
       has_selected: function() {
-        return _.some(this.security_groups, function(c){
+        return this.security_groups.some(function(c){
           return c.checked;
         });
       },
@@ -1009,6 +1009,8 @@
       }).fail(alert_and_show_infra);
     },
   });
+
+
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
@@ -1072,7 +1074,7 @@
 
       show_ec2: function () {
         if(this.instance_type === 'elb')
-          this.$parent.show_elb(this.physical_id);
+          this.$parent.show_ec2(this.physical_id);
         else
           this.$parent.show_ec2(this.physical_id);
 
@@ -1478,15 +1480,15 @@
       submit_groups: function(){
         var self = this;
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        var group_ids = _(this.rules_summary).filter(function (t) {
+        var group_ids = this.rules_summary.filter(function (t) {
           return t.checked;
         }).map(function (t) {
           return t.group_id;
-        }).value();
+        });
 
         ec2.submit_groups(group_ids)
-          .done(alert_success(self._show_ec2))
-          .fail(alert_danger(self._show_ec2));
+          .done(alert_success(self.show_ec2))
+          .fail(alert_danger(self.show_ec2));
 
       }
     },
@@ -1498,7 +1500,7 @@
         return 'btn-default';
       },
       has_selected: function() {
-        return _.some(this.rules_summary, function(c){
+        return this.rules_summary.some( function(c){
           return c.checked;
         });
       },
