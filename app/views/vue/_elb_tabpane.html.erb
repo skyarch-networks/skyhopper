@@ -4,11 +4,9 @@
 <div class="panel-group">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
-      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
         <h4 class="panel-title">
             DNS name
         </h4>
-      </a>
     </div>
     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
@@ -138,6 +136,22 @@
     </div>
     <div id="collapseFive" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFive">
       <div class="panel-body">
+
+        <div class="form-actions-top col-xs-12" v-if="unregistereds.length !== 0">
+          <div class="input-group col-xs-12 col-sm-5">
+            Unregistered Instances
+            <select class="form-control input-sm" v-model="selected_ec2">
+              <option></option>
+              <option v-for="x in unregistereds" :value="x.physical_id">{{* x.screen_name}} / {{x.physical_id}}</option>
+            </select>
+            <div class="input-group-btn">
+              <button class="btn btn-primary btn-sm" @click="register()" :disabled="!selected_ec2">
+                <%= I18n.t('ec2_instances.btn.register') %>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="col-md-4 col-sm-6 col-xs-12" v-for="e in ec2_instances">
           <div class="panel" :class="panel_class(e.state)">
             <div class="panel-heading">
@@ -170,19 +184,6 @@
   </div>
 </div>
 
-  <div class="form-actions-top col-xs-12" v-if="unregistereds.length !== 0">
-    <div class="input-group col-xs-12 col-sm-5">
-      <select class="form-control input-sm" v-model="selected_ec2">
-        <option></option>
-        <option v-for="x in unregistereds" :value="x.physical_id">{{* x.screen_name}} / {{x.physical_id}}</option>
-      </select>
-      <div class="input-group-btn">
-        <button class="btn btn-primary btn-sm" @click="register()" :disabled="!selected_ec2">
-          <%= I18n.t('ec2_instances.btn.register') %>
-        </button>
-      </div>
-    </div>
-  </div>
 
 
 
