@@ -1,113 +1,172 @@
 <h3 class="page-header">{{* physical_id}}</h3>
 
-<div class="col-sm-12">
-  <h4 class="page-header">DNS name</h4>
-  <a :href="'http://' + dns_name" target="_blank">{{dns_name}}</a>
 
-  <h4 class="page-header"><%=t('ec2_instances.listeners')%></h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th><%=t('ec2_instances.protocol')%></th>
-        <th><%=t('ec2_instances.lb_port')%></th>
-        <th><%=t('ec2_instances.instance_protocol')%></th>
-        <th><%=t('ec2_instances.instance_port')%></th>
-        <th><%=t('ec2_instances.certificate_name')%></th>
-        <th><%=t('ec2_instances.btn.edit_to_elb_listener')%></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr v-for="l in listeners">
-        <td v-text="l.protocol"></td>
-        <td v-text="l.load_balancer_port"></td>
-        <td v-text="l.instance_protocol"></td>
-        <td v-text="l.instance_port"></td>
-        <td v-text="ssl_certificate_id_to_name(l.ssl_certificate_id)"></td>
-        <td>
-          <button
-            @click="set_edit_listener_modal_default_value(l.protocol, l.load_balancer_port, l.instance_protocol, l.instance_port, l.ssl_certificate_id)"
-            class="btn btn-xs btn-default" data-toggle="modal"
-            role="button" href="#edit-listener-modal">
-            <%=t('helpers.links.edit')%>
-          </button>
-          <button @click="delete_listener(l.load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <button @click="set_create_listener_modal_default_value()" class="btn btn-default" data-toggle="modal" role="button" href="#create-listener-modal"><%=t('ec2_instances.btn.create_to_elb_listener')%></button>
-
-  <h4 class="page-header"><%=t('ec2_instances.certificate')%></h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th><%=t('ec2_instances.certificate_name')%></th> <th><%=t('ec2_instances.expiration_date')%></th> <th><%=t('ec2_instances.btn.edit_certificate')%></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr v-for="s in server_certificates">
-        <td v-text="s.name"></td>
-        <td v-text="expiration_date(s.expiration)"></td>
-        <td>
-          <button @click="delete_server_certificate(s.name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <button class="btn btn-default" data-toggle="modal" role="button" href="#upload-server-certificate-modal"><%=t('ec2_instances.btn.upload_certificate')%></button>
-
-  <h4 class="page-header"><%=t('security_groups.title')%></h4>
-  <table class="table table-condensed">
-    <thead>
-    <tr>
-      <th width="200"><%= t'security_groups.group_id' %></th>
-      <th><%= t 'security_groups.group_name' %></th>
-      <th><%= t 'security_groups.description' %></th>
-      <th>Name</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="ss in security_groups" v-show="ss.checked">
-      <td>{{ss.group_id}}</td>
-      <td><div class="truncate"> {{ss.group_name}}</div></td>
-      <td><div class="truncate">{{ss.description}}</div></td>
-      <td v-if="ss.tags[0].key === 'Name'">{{ss.tags[0].value}}</td>
-      <td v-else></td>
-    </tr>
-    </tbody>
-  </table>
-  <button class="btn btn-default" data-toggle="modal" @click="change_set()" role="button" href="#change-rules-modal"><%= t 'security_groups.btn.change_groups' %></button>
-
-
-  <h4 class="page-header"><%=t('ec2_instances.instances')%></h4>
-  <div class="col-md-4 col-sm-6 col-xs-12" v-for="e in ec2_instances">
-    <div class="panel" :class="panel_class(e.state)">
-      <div class="panel-heading">
-          <a href="#" @click="show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
-      </div>
-      <table class="table">
-        <tbody>
-          <tr>
-            <th><%=t('ec2_instances.state')%></td>
-            <td><span class="label" :class="label_class(e.state)">{{* e.state}}</span></td>
-          </tr>
-          <tr>
-            <th><%=t('ec2_instances.reason_code')%></td>
-            <td>{{* e.reason_code}}</td>
-          </tr>
-          <tr>
-            <th><%=t('ec2_instances.description')%></td>
-            <td>{{* e.description}}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="panel-footer">
-        <button class="btn btn-danger btn-xs" @click="deregister(e.instance_id)"><%= I18n.t('ec2_instances.btn.deregister') %></button>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          DNS name
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <a :href="'http://' + dns_name" target="_blank">{{dns_name}}</a>
       </div>
     </div>
   </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          <%=t('ec2_instances.listeners')%>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><%=t('ec2_instances.protocol')%></th>
+              <th><%=t('ec2_instances.lb_port')%></th>
+              <th><%=t('ec2_instances.instance_protocol')%></th>
+              <th><%=t('ec2_instances.instance_port')%></th>
+              <th><%=t('ec2_instances.certificate_name')%></th>
+              <th><%=t('ec2_instances.btn.edit_to_elb_listener')%></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="l in listeners">
+              <td v-text="l.protocol"></td>
+              <td v-text="l.load_balancer_port"></td>
+              <td v-text="l.instance_protocol"></td>
+              <td v-text="l.instance_port"></td>
+              <td v-text="ssl_certificate_id_to_name(l.ssl_certificate_id)"></td>
+              <td>
+                <button
+                  @click="set_edit_listener_modal_default_value(l.protocol, l.load_balancer_port, l.instance_protocol, l.instance_port, l.ssl_certificate_id)"
+                  class="btn btn-xs btn-default" data-toggle="modal"
+                  role="button" href="#edit-listener-modal">
+                  <%=t('helpers.links.edit')%>
+                </button>
+                <button @click="delete_listener(l.load_balancer_port)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button @click="set_create_listener_modal_default_value()" class="btn btn-default" data-toggle="modal" role="button" href="#create-listener-modal"><%=t('ec2_instances.btn.create_to_elb_listener')%></button>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+          <%=t('ec2_instances.certificate')%>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><%=t('ec2_instances.certificate_name')%></th> <th><%=t('ec2_instances.expiration_date')%></th> <th><%=t('ec2_instances.btn.edit_certificate')%></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="s in server_certificates">
+              <td v-text="s.name"></td>
+              <td v-text="expiration_date(s.expiration)"></td>
+              <td>
+                <button @click="delete_server_certificate(s.name)" class="btn btn-xs btn-danger" data-toggle="modal" role="button"><%=t('helpers.links.destroy')%></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-default" data-toggle="modal" role="button" href="#upload-server-certificate-modal"><%=t('ec2_instances.btn.upload_certificate')%></button>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingFour">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+          <%=t('security_groups.title')%>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFour">
+      <div class="panel-body">
+        <table class="table table-condensed">
+          <thead>
+          <tr>
+            <th width="200"><%= t'security_groups.group_id' %></th>
+            <th><%= t 'security_groups.group_name' %></th>
+            <th><%= t 'security_groups.description' %></th>
+            <th>Name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="ss in security_groups" v-show="ss.checked">
+            <td>{{ss.group_id}}</td>
+            <td><div class="truncate"> {{ss.group_name}}</div></td>
+            <td><div class="truncate">{{ss.description}}</div></td>
+            <td v-if="ss.tags[0].key === 'Name'">{{ss.tags[0].value}}</td>
+            <td v-else></td>
+          </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-info" data-toggle="modal" @click="view_rules()" role="button"><%= t 'security_groups.btn.view_rules' %></button>
+        <button class="btn btn-default" data-toggle="modal" @click="change_set()" role="button" href="#change-rules-modal"><%= t 'security_groups.btn.change_groups' %></button>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingFive">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+          <%=t('ec2_instances.instances')%>
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFive" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingFive">
+      <div class="panel-body">
+        <div class="col-md-4 col-sm-6 col-xs-12" v-for="e in ec2_instances">
+          <div class="panel" :class="panel_class(e.state)">
+            <div class="panel-heading">
+                <a href="#" @click="show_ec2(e.instance_id)">{{* e.instance_id}}</a>&nbsp;
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th><%=t('ec2_instances.state')%></td>
+                  <td><span class="label" :class="label_class(e.state)">{{* e.state}}</span></td>
+                </tr>
+                <tr>
+                  <th><%=t('ec2_instances.reason_code')%></td>
+                  <td>{{* e.reason_code}}</td>
+                </tr>
+                <tr>
+                  <th><%=t('ec2_instances.description')%></td>
+                  <td>{{* e.description}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="panel-footer">
+              <button class="btn btn-danger btn-xs" @click="deregister(e.instance_id)"><%= I18n.t('ec2_instances.btn.deregister') %></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
   <div class="form-actions-top col-xs-12" v-if="unregistereds.length !== 0">
     <div class="input-group col-xs-12 col-sm-5">
@@ -122,7 +181,8 @@
       </div>
     </div>
   </div>
-</div>
+
+
 
 
 <%# modal for create listener %>
