@@ -2,7 +2,7 @@
   <div class="form-group">
     <%= f.label :projec_id, t('projects.project'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <%= uneditable_input(Project.find_by(id: @infrastructure.project_id).name) %>
+      <%= f.text_field :project_name, value: @infrastructure.project.name, class: 'form-control', readonly: true %>
       <%= f.hidden_field :project_id %>
     </div>
   </div>
@@ -26,7 +26,7 @@
     <label class="col-sm-2 control-label"><%= t 'app_settings.aws_keypair' %></label>
     <div class="col-sm-5">
 <% if controller.action_name == "edit" ||  controller.action_name == "update" %>
-      <%= uneditable_input(@infrastructure.ec2_private_key.name) if @infrastructure.ec2_private_key_id %>
+      <%= f.text_field :key_name, value: @infrastructure.ec2_private_key.name, class: 'form-control', readonly: true if @infrastructure.ec2_private_key_id %>
       <%= uneditable_input(t('infrastructures.msg.no_keypair')) unless @infrastructure.ec2_private_key_id %>
 <% else %>
       <p class="help-block"><%= t('ec2_private_keys.msg.enter_or_generate') %></p>
