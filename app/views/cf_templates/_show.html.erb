@@ -7,14 +7,4 @@
   <pre><%= @cf_template.detail %></pre>
   <h5><%= t('cf_templates.cf_template') %></h5>
   <pre id="cf_value"><%= @cf_template.value %></pre>
-  <script >
-    var viewer = ace.edit('cf_value');
-    viewer.setOptions({
-      maxLines: Infinity,
-      minLines: 15,
-      readOnly: true
-    });
-    viewer.setTheme("ace/theme/github");
-    viewer.getSession().setMode("ace/mode/json");
-  </script>
 </div>

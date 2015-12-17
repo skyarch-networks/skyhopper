@@ -156,6 +156,10 @@ input[type="number"] {
     color: #ffffff;
 }
 
+.text-info {
+    color: #0099cc;
+}
+
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info {
     background: #0e8db8;
 }

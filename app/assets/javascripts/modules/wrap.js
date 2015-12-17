@@ -138,7 +138,7 @@ function render_serverspecs_results(value){
 
 function render_ops_sched(value){
   if (value === 'physical_id'){
-    return t('serverspecs.serverspecs');
+    return "Physical ID";
   }else if(value === 'screen_name'){
     return t('operation_scheduler.screen_name');
   }else if(value === 'id'){

@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ace-rails-ap (4.0.1)
     actionmailer (4.2.5)
       actionpack (= 4.2.5)
       actionview (= 4.2.5)
@@ -49,12 +48,12 @@ GEM
       activesupport (>= 3.0.0)
       rspec
     awesome_print (1.6.1)
-    aws-sdk (2.2.5)
-      aws-sdk-resources (= 2.2.5)
-    aws-sdk-core (2.2.5)
+    aws-sdk (2.2.6)
+      aws-sdk-resources (= 2.2.6)
+    aws-sdk-core (2.2.6)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.5)
-      aws-sdk-core (= 2.2.5)
+    aws-sdk-resources (2.2.6)
+      aws-sdk-core (= 2.2.6)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -113,7 +112,7 @@ GEM
     chef-config (12.5.1)
       mixlib-config (~> 2.0)
       mixlib-shellout (~> 2.0)
-    chef-zero (4.3.2)
+    chef-zero (4.4.0)
       ffi-yajl (~> 2.2)
       hashie (>= 2.0, < 4.0)
       mixlib-log (~> 1.3)
@@ -143,7 +142,7 @@ GEM
       activesupport (~> 4.0)
     database_cleaner (1.5.1)
     debug_inspector (0.0.2)
-    devise (3.5.2)
+    devise (3.5.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
@@ -273,12 +272,11 @@ GEM
     notiffany (0.0.8)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    ohai (8.7.0)
+    ohai (8.8.1)
       chef-config (>= 12.5.0.alpha.1, < 13)
       ffi (~> 1.9)
       ffi-yajl (~> 2.2)
       ipaddress
-      mime-types (~> 2.0)
       mixlib-cli
       mixlib-config (~> 2.0)
       mixlib-log
@@ -313,7 +311,7 @@ GEM
       rack (~> 1.4)
     rack-test (0.6.3)
       rack (>= 1.0)
-    railroady (1.4.1)
+    railroady (1.4.2)
     rails (4.2.5)
       actionmailer (= 4.2.5)
       actionpack (= 4.2.5)
@@ -430,10 +428,10 @@ GEM
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.7)
       tins (<= 1.6.0)
-    ruby-prof (0.15.8)
+    ruby-prof (0.15.9)
     ruby-progressbar (1.7.5)
     rubyntlm (0.4.0)
-    sass (3.4.19)
+    sass (3.4.20)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -444,11 +442,11 @@ GEM
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
     semverse (1.2.1)
-    serverspec (2.24.3)
+    serverspec (2.25.0)
       multi_json
       rspec (~> 3.0)
       rspec-its
-      specinfra (~> 2.43)
+      specinfra (~> 2.46)
     sfl (2.2)
     shellany (0.0.1)
     sidekiq (3.4.2)
@@ -464,9 +462,9 @@ GEM
     simplecov-html (0.10.0)
     sky_zabbix (2.2.0.1.1)
     slop (3.6.0)
-    specinfra (2.44.7)
+    specinfra (2.47.0)
       net-scp
-      net-ssh (~> 2.7)
+      net-ssh (>= 2.7, < 3.1)
       net-telnet
       sfl
     sprockets (3.5.2)
@@ -512,7 +510,7 @@ GEM
     varia_model (0.5.0)
       buff-extensions (~> 1.0)
       hashie (>= 2.0.2, < 4.0.0)
-    warden (1.2.3)
+    warden (1.2.4)
       rack (>= 1.0)
     winrm (1.3.6)
       builder (>= 2.1.2)
@@ -526,13 +524,15 @@ GEM
     winrm-s (0.3.1)
       winrm (~> 1.3.0)
     wmi-lite (1.0.0)
+    xray-rails (0.1.17)
+      coffee-rails
+      rails (>= 3.1.0)
     yard (0.8.7.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  ace-rails-ap
   activerecord-import
   autodoc
   awesome_print
@@ -599,6 +599,7 @@ DEPENDENCIES
   therubyracer
   uglifier
   unicorn-rails
+  xray-rails
   yard
 
 BUNDLED WITH

@@ -37,8 +37,6 @@ end
 # Use unicorn as the app server
 gem 'unicorn-rails'
 
-gem 'ace-rails-ap'
-
 gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
@@ -71,6 +69,7 @@ group :development, :test do
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
+  gem 'xray-rails'
 
   gem 'quiet_assets'
 
