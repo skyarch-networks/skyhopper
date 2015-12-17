@@ -16,7 +16,7 @@
     "browserify": "~> 10.2.4",
     "browserify-incremental": "^3.0.1",
     "md5": "^2.0.0",
-    "serverspec-generator": "0.0.2",
+    "serverspec-generator": "0.1.0",
     "query-string": "^2.4.1",
     "vue-ace": "0.0.1"
   },
