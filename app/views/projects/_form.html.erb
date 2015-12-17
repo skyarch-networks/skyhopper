@@ -2,7 +2,7 @@
   <div class="form-group">
     <%= f.label :client_id, t('clients.client'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <%= uneditable_input(Client.find_by(id: @project.client_id).name) %>
+      <%= f.text_field :client_name, value: @project.client.name, class: 'form-control', readonly: true %>
       <%= f.hidden_field :client_id %>
     </div>
   </div>
@@ -10,8 +10,7 @@
     <%= f.label :code, t('projects.code'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <% if @project.client.is_for_system? %>
-        <%= uneditable_input(@project.code) %>
-        <%= f.hidden_field :code %>
+        <%= f.text_field :code, class: 'form-control', readonly: true %>
       <% else %>
         <%= f.text_field :code, class: 'form-control', required: true %>
       <% end %>
@@ -21,8 +20,7 @@
     <%= f.label :name, t('projects.name'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <% if @project.client.is_for_system? %>
-        <%= uneditable_input(@project.name) %>
-        <%= f.hidden_field :name %>
+        <%= f.text_field :name, class: 'form-control', readonly: true %>
       <% else %>
         <%= f.text_field :name, class: 'form-control', required: true %>
       <% end %>
