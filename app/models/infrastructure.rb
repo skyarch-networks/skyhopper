@@ -183,6 +183,6 @@ class Infrastructure < ActiveRecord::Base
   def client
     c = Client.arel_table
     p = Project.arel_table
-    return Client.where(c[:id].eq(p.project(p[:client_id]).where(p[:id].eq(project_id)))).first
+    return Client.find_by(c[:id].eq(p.project(p[:client_id]).where(p[:id].eq(project_id))))
   end
 end

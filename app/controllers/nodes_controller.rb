@@ -384,14 +384,14 @@ class NodesController < ApplicationController
 
   # TODO: DRY
   def exec_yum_update(infra, physical_id, security=true, exec=false)
-    Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
+    Thread.new_with_db(infra, physical_id, current_user.id) do |this_infra, this_physical_id, user_id|
       yum_screen_name = "yum "
       yum_screen_name << " check" unless exec
       yum_screen_name << " security" if security
       yum_screen_name << " update"
-      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
+      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: this_infra.id, user_id: user_id)
 
-      r = infra.resource(physical_id)
+      r = infra.resource(this_physical_id)
       r.status.yum.inprogress!
       r.status.serverspec.un_executed! if exec
 
