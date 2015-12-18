@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - 'vendor/**/*'
+    - 'spec/**/*'
   RunRailsCops: true
   DisplayCopNames: true
 
