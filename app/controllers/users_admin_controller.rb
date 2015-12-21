@@ -46,7 +46,7 @@ class UsersAdminController < ApplicationController
 
     e = -> (ex) {
       flash[:alert] = ex.message
-      redirect_to(action: :new)
+      render action: :new
     }
 
     begin
