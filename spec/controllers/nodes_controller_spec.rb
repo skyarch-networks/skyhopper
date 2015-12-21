@@ -67,7 +67,7 @@ describe NodesController, type: :controller do
 
     let(:dish){create(:dish)}
     let(:details){{
-      "run_list" => ['a', 'b', 'f'],
+      "run_list" => ['a', 'b', 'f']
     }}
     before do
       allow_any_instance_of(Node).to receive(:details).and_return(details)
