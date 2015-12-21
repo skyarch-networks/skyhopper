@@ -19,7 +19,7 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 
 1. Installation of Ruby
 1. Installation of Node.js
-1. Installing the necessary for SkyHopper
+1. Installing the necessary packages for SkyHopper
 1. Setting up a reverse proxy
 1. Starting of Services
 1. Downloading/Cloning SkyHopper from GitHub
