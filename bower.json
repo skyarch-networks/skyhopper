@@ -20,7 +20,6 @@
     "jquery": "~2.1.4",
     "jquery-ujs": "~1.0.3",
     "jquery-ui": "~1.11.4",
-    "vue": "~1.0.7",
     "lodash": "~3.9.3",
     "zeroclipboard": "~2.2.0",
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
