@@ -1,7 +1,7 @@
 # SkyHopper
 システム自動構築ツール
 
-## Languange
+## Language
 [English](README_EN.md)
 
 [日本語](README.md)

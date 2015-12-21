@@ -1,7 +1,7 @@
 # SkyHopper
 A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 
-## Languange
+## Language
 [English](README_EN.md)
 
 [日本語](README.md)
