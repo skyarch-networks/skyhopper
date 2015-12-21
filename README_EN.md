@@ -2,7 +2,8 @@
 A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 
 ## Languange
-[English |](README_EN.md)
+[English](README_EN.md)
+
 [ Japanese](README.md)
 
 http://www.skyarch.net/blog/?p=2709
@@ -13,7 +14,7 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 
 ### Deploying Applications
 
-[doc/installation/skyhopper.md](doc/installation/en/skyhopper.md)
+[doc/installation/en/skyhopper.md](doc/installation/en/skyhopper.md)
 
 1. Installation of Ruby
 1. Installation of Node.js

@@ -1,12 +1,11 @@
 # SkyHopper deployment procedure
 
-[Cookbooks for SkyHopper](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper)
-By using the Cookbooks, you can automate your system by installing a package.
+By using [SkyHopper Cookbooks](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper), you can automate your system by installing a package.
 
-Cookbook を使用した場合は、[MySQL ユーザーの作成](#user-content-mysql-ユーザーの作成) から実行していきます。
+If you used cookbook, we will proceed to [Creating MySQL user](#user-content-creating-mysq-user).
 
 
-## Prefered Operation System
+## Prefered OS
 
 Amazon Linux (RHEL System)
 
@@ -113,7 +112,7 @@ Up to this point it can should be executed by Chef.
 $ git checkout v1.9.0
 ```
 
-### Creating a MySQL user
+### Creating MySQL user
 
 ```sh
 $ mysql -uroot
