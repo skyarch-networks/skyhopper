@@ -11,6 +11,7 @@
     "test": "karma start --single-run"
   },
   "dependencies": {
+    "bootstrap": "^3.3.6",
     "bower": "^1.5.3",
     "brace": "0.7.0",
     "browserify": "~> 10.2.4",
