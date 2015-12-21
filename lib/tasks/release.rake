@@ -2,8 +2,8 @@ namespace :release do
   desc 'Generate release note template'
   task :note_gen do
     fetch = 'git fetch'
-    puts fetch
-    # system(fetch)
+    STDERR.puts fetch
+    system(fetch)
 
     # get PRs
     log = `git log origin/master..origin/develop --oneline --merges`.split("\n")
