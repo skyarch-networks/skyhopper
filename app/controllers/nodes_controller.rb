@@ -240,21 +240,32 @@ class NodesController < ApplicationController
 
   # GET /nodes/:id/get_rules
   def get_rules
-    group_ids = params.require(:group_ids)
-    rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+    group_ids = params[:group_ids] || []
+
+    if group_ids.length > 0
+      rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+    else
+      rules_summary = @infra.ec2.describe_security_groups()
+
+    end
+    vpcs = @infra.ec2.describe_vpcs()
+
 
     rules_summary[:security_groups].map do |item|
       check_socket(item.ip_permissions)
       check_socket(item.ip_permissions_egress)
     end
 
+    sec_groups = File.read("public/security_groups.json")
     @rules_summary = rules_summary[:security_groups]
+    @vpcs = vpcs[:vpcs]
+    @sec_groups = JSON.parse(sec_groups)
   end
 
   # GET /nodes/:id/get_security_groups
   def get_security_groups
     physical_id = params.require(:id)
-    av_g = @infra.ec2.describe_security_groups() # Available groups
+    av_g = @infra.ec2.describe_security_groups().to_h # Available groups
     instance = @infra.instance(physical_id)
     ex = [] #existing groups array
     return_params = [] #filtered security groups
@@ -262,10 +273,10 @@ class NodesController < ApplicationController
       ex.push(sec_group[:group_id])
     end
 
-    av_g[:security_groups].each do |a|
-      checked = ex.include? a[:group_id]
-      if a[:vpc_id] == instance.vpc.id
-        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
+    av_g[:security_groups].each do |a_hash|
+      if a_hash[:vpc_id] == instance.vpc.id
+        a_hash[:checked] = ex.include? a_hash[:group_id]
+        return_params.push(a_hash)
       end
     end
 
@@ -278,6 +289,17 @@ class NodesController < ApplicationController
     group_ids     = params.require(:group_ids)
 
     @infra.ec2.modify_instance_attribute({instance_id: physical_id, groups: group_ids})
+
+    render text: I18n.t('security_groups.msg.change_success')
+  end
+
+  # POST /nodes/i-0b8e7f12/create_groups
+  # POST /nodes/create_group/:group_params
+  def create_group
+    group_params     = params.require(:group_params)
+
+    group_id = @infra.ec2.create_security_group({group_name: group_params[0], description: group_params[1], vpc_id: group_params[3]})
+    @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{key: 'Name', value: group_params[2]}])
 
     render text: I18n.t('security_groups.msg.change_success')
   end

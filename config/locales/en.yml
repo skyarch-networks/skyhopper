@@ -176,6 +176,7 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   security_groups:
+    title:        'Security Groups'
     associated:   'Security Groups associated with'
     description:  'Description'
     group_id:     'Security Group ID'
@@ -188,12 +189,18 @@ en:
     source:       'Source'
     destination:  'Destination'
     name:         'Name'
+    list_all:     'List of all Security Groups'
+    denotes:      '* denotes default VPC'
     btn:
       view_rules:           'View Rules'
       change_groups:        'Change Security Groups'
       assign:               'Assign Security Groups'
+      security_groups:      'Security Groups'
+      create:               'Create Security Group'
     msg:
       change_success:        'Change Security Groups Success!'
+      error:  'Error!'
+      error_msg: 'you need to select at least one security group.'
 
 
   operation_scheduler:

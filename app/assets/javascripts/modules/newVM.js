@@ -13,6 +13,7 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
       tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
       spec_Columns: ['serverspec', 'resource', 'message', 'status', 'created_at'],
       sec_group: null,
+      instance_type: null,
       ops_sched_Columns: ['physical_id', 'screen_name', 'id'],
       serverspec_failed: t('infrastructures.serverspec_failed'),
       loading: true,  // trueにすると、loading-tabpaneが表示される。
@@ -82,6 +83,12 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
         var self = this;
         self.$event.preventDefault();
         self.show_tabpane('infra_logs');
+        self.loading = true;
+      },
+      show_sec_groups: function () {
+        var self = this;
+        self.$event.preventDefault();
+        self.show_tabpane('security_groups');
         self.loading = true;
       },
       show_monitoring: function () {

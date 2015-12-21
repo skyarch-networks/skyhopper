@@ -175,9 +175,11 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   security_groups:
+      title:        'セキュリティグループ'
       associated:   'と関連付けられたセキュリティグループ'
       description:  '説明'
       group_id:     'グループ ID'
+      group_name:   'グループ名'
       inbound:      'インバウンド'
       outbound:     'アウトバウンド'
       type:         'タイプ'
@@ -185,12 +187,18 @@ ja:
       port_range:   'ポート範囲'
       source:       '送信元'
       destination:  '送信先'
+      list_all:     'すべてのセキュリティグループのリスト'
+      denotes:      '* デフォルトの VPC であることを示します'
       btn:
         view_rules:           'ルールの表示'
         change_groups:        'セキュリティグループの変更'
         assign:               'セキュリティグループの割り当て'
+        security_groups:      'セキュリティグループ'
+        create:               'セキュリティグループの作成'
       msg:
-        change_success:        'セキュリティの変更グループの成功！'
+        change_success:        'セキュリティグループの変更に成功しました'
+        error:  'エラー'
+        error_msg: '少なくとも 1 つのセキュリティグループを選択する必要があります。'
 
   operation_scheduler:
     title: '運用スケジューラ'

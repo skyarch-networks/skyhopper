@@ -802,6 +802,7 @@
       instance_protocol: '',
       instance_port: '',
       ssl_certificate_id: '',
+      security_groups: null,
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -955,6 +956,41 @@
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
       label_class: function (state) { return 'label-' + this.state(state);},
+      check: function (i) {
+          i.checked= !i.checked;
+      },
+      reload: function(){
+        this.$parent.show_elb(this.physical_id);
+      },
+      elb_submit_groups: function(){
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, '');
+        var group_ids = this.security_groups.filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        });
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+
+        ec2.elb_submit_groups(group_ids, self.physical_id)
+          .done(alert_success(reload))
+          .fail(alert_danger(reload));
+
+      },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.security_groups;
+        this.$parent.instance_type = 'elb';
+      }
+    },
+    computed: {
+      has_selected: function() {
+        return this.security_groups.some(function(c){
+          return c.checked;
+        });
+      },
     },
     compiled: function () {
       var self = this;
@@ -964,6 +1000,7 @@
         self.dns_name = data.dns_name;
         self.listeners = data.listeners;
         self.server_certificates = data.server_certificates;
+        self.security_groups = data.security_groups;
         self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;
@@ -971,6 +1008,8 @@
       }).fail(alert_and_show_infra);
     },
   });
+
+
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
@@ -1002,6 +1041,10 @@
         type: Array,
         required: true,
       },
+      instance_type:{
+        type: String,
+        required: true,
+      }
     },
     data: function () { return{
       loading:        false,
@@ -1015,7 +1058,12 @@
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
-          group_ids.push(value.group_id);
+          if(self.instance_type === 'elb'){
+            if(value.checked)
+              group_ids.push(value.group_id);
+          }else{
+            group_ids.push(value.group_id);
+          }
         });
 
         ec2.get_rules(group_ids).done(function (data) {
@@ -1024,7 +1072,107 @@
       },
 
       show_ec2: function () {
+        if(this.instance_type === 'elb')
+          this.$parent.show_elb(this.physical_id);
+        else
+          this.$parent.show_ec2(this.physical_id);
+      },
+    },
+    compiled: function() {
+      console.log(this);
+      this.get_rules();
+      this.$parent.loading = false;
+    },
+  });
+
+  Vue.component('security-groups-tabpane', {
+    template: '#security-groups-tabpane-template',
+    props: {
+      ec2_instances: {
+        type: Array,
+        required: true,
+      },
+    },
+    data: function () { return{
+      loading:        false,
+      rules_summary:  null,
+      vpcs:           null,
+      vpc:            null,
+      group_name:     null,
+      description:    null,
+      name:           null,
+      inbound: [],
+      sec_group: null,
+      ip: null,
+      lang: queryString.lang,
+      type: [],
+      physical_id: null,
+    };},
+    methods: {
+      get_rules: function ()  {
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, '');
+        ec2.get_rules().done(function (data) {
+          self.rules_summary = data.rules_summary;
+
+          self.sec_group = data.sec_groups;
+          var vpcs = [];
+          _.forEach(data.vpcs, function (vpc) {
+            var name = null;
+              if(vpc.is_default) {
+                if(vpc.tags[0]){
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") | " + vpc.tags[0].value +" *";
+                }else{
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") *";
+                }
+              }else {
+                if(vpc.tags[0])
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") |" + vpc.tags[0].value;
+                else
+                  name = vpc.vpc_id + " (" + vpc.cidr_block + ") |";
+              }
+            vpcs.push({vpc_id: vpc.vpc_id, name: name});
+          });
+          self.vpcs = vpcs;
+
+          self.$parent.loading = false;
+        });
+
+      },
+      add_rule: function (target) {
+        var self = this;
+        if(target === "inbound"){
+          self.inbound.push(self.sec_group);
+        }
+        console.log(self.inbound);
+      },
+      show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
+      },
+      create_group: function () {
+        if(!this.group_name && this.description && this.vpc && this.name) {return;}
+        this.$parent.loading = true;
+        var ec2 = new EC2Instance(current_infra, '');
+        ec2.create_group(
+          [this.group_name,
+          this.description,
+          this.name,
+          this.vpc]
+        ).done(
+          alert_success(this.get_rules())
+        )
+         .fail(alert_danger(this._show_ec2));
+        this.group_name = null;
+        this.description = null;
+        this.name = null;
+        this.vpc = null;
+        this.$parent.loading = false;
+      },
+    },
+    computed: {
+      required_filed: function () {
+        var self = this;
+        return (self.group_name && self.description && self.name && self.vpc);
       },
     },
     ready: function() {
@@ -1032,6 +1180,13 @@
       this.get_rules();
       this.$parent.loading = false;
     },
+    filters: {
+      trim: function (str) {
+        var showChar = 50;
+        return (str.length > showChar) ? str.substr(0, showChar)+"..." : str;
+      },
+    },
+
   });
 
   Vue.component('ec2-tabpane', {
@@ -1238,6 +1393,7 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.ec2.security_groups;
         this._loading();
+        this.$parent.instance_type = 'ec2';
       },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
@@ -1426,15 +1582,15 @@
       submit_groups: function(){
         var self = this;
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        var group_ids = _(this.rules_summary).filter(function (t) {
+        var group_ids = this.rules_summary.filter(function (t) {
           return t.checked;
         }).map(function (t) {
           return t.group_id;
-        }).value();
+        });
 
         ec2.submit_groups(group_ids)
-          .done(alert_success(self._show_ec2))
-          .fail(alert_danger(self._show_ec2));
+          .done(alert_success(self.show_ec2))
+          .fail(alert_danger(self.show_ec2));
 
       }
     },
@@ -1446,7 +1602,7 @@
         return 'btn-default';
       },
       has_selected: function() {
-        return _.some(this.rules_summary, function(c){
+        return this.rules_summary.some( function(c){
           return c.checked;
         });
       },
@@ -2414,6 +2570,7 @@
       sortField: 'text'
     });
     moment.locale(queryString.lang);
+
   });
 
   $(document).on('click', '.show-infra', function (e) {
