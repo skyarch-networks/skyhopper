@@ -1,5 +1,5 @@
 namespace :release do
-  desc 'Generate release note'
+  desc 'Generate release note template'
   task :note_gen do
     fetch = 'git fetch'
     puts fetch
