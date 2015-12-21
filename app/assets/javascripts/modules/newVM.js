@@ -85,6 +85,12 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
         self.show_tabpane('infra_logs');
         self.loading = true;
       },
+      show_sec_groups: function () {
+        var self = this;
+        self.$event.preventDefault();
+        self.show_tabpane('security_groups');
+        self.loading = true;
+      },
       show_monitoring: function () {
         if (this.no_stack) {return;}
         var self = this;
