@@ -2,7 +2,7 @@
 A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 
 ## Languange
-[English](README_EN.md)
+[English](README_EN.md) |
 [Japanese](README.md)
 
 http://www.skyarch.net/blog/?p=2709
