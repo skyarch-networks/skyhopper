@@ -265,7 +265,7 @@ class NodesController < ApplicationController
   # GET /nodes/:id/get_security_groups
   def get_security_groups
     physical_id = params.require(:id)
-    av_g = @infra.ec2.describe_security_groups() # Available groups
+    av_g = @infra.ec2.describe_security_groups().to_h # Available groups
     instance = @infra.instance(physical_id)
     ex = [] #existing groups array
     return_params = [] #filtered security groups
@@ -273,10 +273,10 @@ class NodesController < ApplicationController
       ex.push(sec_group[:group_id])
     end
 
-    av_g[:security_groups].each do |a|
-      checked = ex.include? a[:group_id]
-      if a[:vpc_id] == instance.vpc.id
-        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
+    av_g[:security_groups].each do |a_hash|
+      if a_hash[:vpc_id] == instance.vpc.id
+        a_hash[:checked] = ex.include? a_hash[:group_id]
+        return_params.push(a_hash)
       end
     end
 

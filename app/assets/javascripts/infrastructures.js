@@ -802,6 +802,7 @@
       instance_protocol: '',
       instance_port: '',
       ssl_certificate_id: '',
+      security_groups: null,
     };},
     template: '#elb-tabpane-template',
     methods: {
@@ -955,6 +956,41 @@
 
       panel_class: function (state) { return 'panel-' + this.state(state);},
       label_class: function (state) { return 'label-' + this.state(state);},
+      check: function (i) {
+          i.checked= !i.checked;
+      },
+      reload: function(){
+        this.$parent.show_elb(this.physical_id);
+      },
+      elb_submit_groups: function(){
+        var self = this;
+        var ec2 = new EC2Instance(current_infra, '');
+        var group_ids = this.security_groups.filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        });
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+
+        ec2.elb_submit_groups(group_ids, self.physical_id)
+          .done(alert_success(reload))
+          .fail(alert_danger(reload));
+
+      },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.security_groups;
+        this.$parent.instance_type = 'elb';
+      }
+    },
+    computed: {
+      has_selected: function() {
+        return this.security_groups.some(function(c){
+          return c.checked;
+        });
+      },
     },
     compiled: function () {
       var self = this;
@@ -964,6 +1000,7 @@
         self.dns_name = data.dns_name;
         self.listeners = data.listeners;
         self.server_certificates = data.server_certificates;
+        self.security_groups = data.security_groups;
         self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;
@@ -971,6 +1008,8 @@
       }).fail(alert_and_show_infra);
     },
   });
+
+
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
@@ -1002,6 +1041,10 @@
         type: Array,
         required: true,
       },
+      instance_type:{
+        type: String,
+        required: true,
+      }
     },
     data: function () { return{
       loading:        false,
@@ -1015,7 +1058,12 @@
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
-          group_ids.push(value.group_id);
+          if(self.instance_type === 'elb'){
+            if(value.checked)
+              group_ids.push(value.group_id);
+          }else{
+            group_ids.push(value.group_id);
+          }
         });
 
         ec2.get_rules(group_ids).done(function (data) {
@@ -1024,10 +1072,13 @@
       },
 
       show_ec2: function () {
-        this.$parent.show_ec2(this.physical_id);
+        if(this.instance_type === 'elb')
+          this.$parent.show_elb(this.physical_id);
+        else
+          this.$parent.show_ec2(this.physical_id);
       },
     },
-    ready: function() {
+    compiled: function() {
       console.log(this);
       this.get_rules();
       this.$parent.loading = false;
@@ -1342,6 +1393,7 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.ec2.security_groups;
         this._loading();
+        this.$parent.instance_type = 'ec2';
       },
 
       _show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
@@ -1530,15 +1582,15 @@
       submit_groups: function(){
         var self = this;
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        var group_ids = _(this.rules_summary).filter(function (t) {
+        var group_ids = this.rules_summary.filter(function (t) {
           return t.checked;
         }).map(function (t) {
           return t.group_id;
-        }).value();
+        });
 
         ec2.submit_groups(group_ids)
-          .done(alert_success(self._show_ec2))
-          .fail(alert_danger(self._show_ec2));
+          .done(alert_success(self.show_ec2))
+          .fail(alert_danger(self.show_ec2));
 
       }
     },
@@ -1550,7 +1602,7 @@
         return 'btn-default';
       },
       has_selected: function() {
-        return _.some(this.rules_summary, function(c){
+        return this.rules_summary.some( function(c){
           return c.checked;
         });
       },
@@ -2518,6 +2570,7 @@
       sortField: 'text'
     });
     moment.locale(queryString.lang);
+
   });
 
   $(document).on('click', '.show-infra', function (e) {
