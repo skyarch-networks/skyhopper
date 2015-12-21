@@ -455,6 +455,7 @@ ja:
     mfa_secret:        'MFA の秘密鍵'
     search:            'メールアドレスで検索'
     create_new_user:   '新規ユーザーの作成'
+    create_admin_user: '管理者ユーザーの作成'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'
