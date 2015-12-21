@@ -237,3 +237,18 @@ textarea:focus:invalid {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* CSS used here will be applied after bootstrap.css */
+.tb-row {
+  position: relative;
+}
+
+.hover-btn {
+  position: absolute;
+  left: 20px;
+  display: none;
+}
+
+.tb-row:hover .hover-btn {
+  display: block;
+}
