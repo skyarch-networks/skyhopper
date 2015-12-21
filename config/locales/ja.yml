@@ -191,7 +191,7 @@ ja:
         change_groups:        'セキュリティグループの変更'
         assign:               'セキュリティグループの割り当て'
       msg:
-        change_success:        'セキュリティの変更グループの成功！'
+        change_success:        'セキュリティグループの変更に成功しました'
 
   operation_scheduler:
     title: '運用スケジューラ'
