@@ -1,9 +1,9 @@
 <%- if controller_name != 'sessions' %>
-  <%= link_to "Sign in", new_session_path(resource_name) %><br />
+  <%= link_to t('common.btn.login'), new_session_path(resource_name) %><br />
 <% end -%>
 
 <%- if devise_mapping.registerable? && controller_name != 'registrations' && User.can_sign_up? %>
-  <%= link_to "Sign up", new_registration_path(resource_name) %><br />
+  <%= link_to t('users.create_admin_user'), new_registration_path(resource_name) %><br />
 <% end -%>
 
 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
