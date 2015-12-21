@@ -11,6 +11,6 @@ class Monitoring < ActiveRecord::Base
   belongs_to :infrastructure
 
   validates :infrastructure_id, uniqueness: {
-    scope: [:master_monitoring_id],
+    scope: [:master_monitoring_id]
   }
 end

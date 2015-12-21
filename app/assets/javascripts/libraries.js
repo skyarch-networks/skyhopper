@@ -26,7 +26,4 @@
 //= require selectize
 //= require fullcalendar
 //= require lang-all
-//= require ace-rails-ap
-//= require ace/mode-javascript
-//= require ace/mode-json
-
+//= require offline.min

@@ -11,10 +11,6 @@ var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
 var queryString = require('query-string').parse(location.search);
 
-Vue.use(require('./modules/ace'), true, 'ruby');
-
-
-require('serverspec-gen/ui');
 
 var app;
 
@@ -38,6 +34,7 @@ Vue.component('demo-grid', {
       lang: queryString.lang,
       pages: 10,
       pageNumber: 0,
+      filteredLength: null,
         };
   },
   methods: {
@@ -82,6 +79,7 @@ Vue.component('demo-grid', {
            self.$emit('data-loaded');
            var empty = t('projects.msg.empty-list');
            if(self.data.length === 0){ $('#empty').show().html(empty);}
+           self.filteredLength = data.length;
          }
        });
        $("#loading").hide();
@@ -94,6 +92,12 @@ Vue.component('demo-grid', {
       return list.slice(index, index + this.pages);
     },
     roundup: function (val) { return (Math.ceil(val));},
+    count: function (arr) {
+      // record length
+      this.$set('filteredLength', arr.length);
+      // return it intact
+      return arr;
+    }
   }
 });
 
@@ -117,3 +121,7 @@ $(document).on("click", ".show-value", function(){
   });
   document.getElementById('value').style.display='';
 });
+
+
+
+require("serverspec-gen");

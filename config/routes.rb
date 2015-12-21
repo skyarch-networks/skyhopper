@@ -6,7 +6,7 @@ SkyHopper::Application.routes.draw do
   end
 
   devise_for :users, controllers: {
-    sessions: 'users/sessions',
+    sessions: 'users/sessions'
   }
 
   root to: 'root#root'
@@ -47,6 +47,7 @@ SkyHopper::Application.routes.draw do
   resources :nodes, only: [:update, :show, :edit] do
     collection do
       get  'recipes'
+      post 'create_group'
     end
     member do
       put  'cook'

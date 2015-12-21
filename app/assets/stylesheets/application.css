@@ -16,18 +16,9 @@
  *= require selectize.paper
  *= require fullcalendar
  *= require font-awesome
+ *= require offline-theme-chrome
+ *= require offline-language-english
  */
-
-@font-face {
-  font-family: 'glyphicon localized';
-
-  src: url('/assets/glyphicons-halflings-regular.eot');
-  src: url('/assets/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/assets/glyphicons-halflings-regular.woff') format('woff'), url('/assets/glyphicons-halflings-regular.ttf') format('truetype'), url('/assets/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
-}
-
-.glyphicon {
-  font-family: 'glyphicon localized' !important;
-}
 
 .modal-header {
   border-top-left-radius: 6px;
@@ -48,7 +39,7 @@
 
 @font-face {
   font-family: 'NotoSans';
-  src: url('/assets/NotoSansJP-Regular.otf') format('opentype');
+  src: url('/fonts/NotoSansJP-Regular.otf') format('opentype');
 }
 
 body {

@@ -5,8 +5,6 @@ http://www.skyarch.net/blog/?p=2709
 
 RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
 
-TypeScript: [![Circle CI](https://circleci.com/gh/skyarch-networks/skyhopper.svg?style=svg)](https://circleci.com/gh/skyarch-networks/skyhopper)
-
 ## デプロイ手順フロー
 
 ### アプリケーションのデプロイ

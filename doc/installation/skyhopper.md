@@ -60,6 +60,10 @@ server {
         listen 80;
         server_name skyhopper.local; #環境に合わせて設定
 
+        location ~ ^/(assets|fonts) {
+          root /home/ec2-user/skyhopper/public; # もしskyhopperをcloneした場所が異なる場合修正
+        }
+
         location / {
             proxy_set_header    X-Real-IP   \$remote_addr;
             proxy_set_header    Host    \$http_host;

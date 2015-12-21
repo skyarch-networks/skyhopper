@@ -156,6 +156,10 @@ input[type="number"] {
     color: #ffffff;
 }
 
+.text-info {
+    color: #0099cc;
+}
+
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info {
     background: #0e8db8;
 }
@@ -234,3 +238,17 @@ textarea:focus:invalid {
   text-overflow: ellipsis;
 }
 
+/* CSS used here will be applied after bootstrap.css */
+.tb-row {
+  position: relative;
+}
+
+.hover-btn {
+  position: absolute;
+  left: 20px;
+  display: none;
+}
+
+.tb-row:hover .hover-btn {
+  display: block;
+}

@@ -184,7 +184,7 @@ class Zabbix
         "expression",
       ],
       filter: {
-        host: hostname,
+        host: hostname
       },
       expandExpression: true,
       selectItems: [:key_],
@@ -297,7 +297,7 @@ class Zabbix
   def get_usergroup_ids(group_name)
     usergroup_info = @sky_zabbix.usergroup.get(
       filter: {
-        name: group_name,
+        name: group_name
       },
     )
 
@@ -317,7 +317,7 @@ class Zabbix
     hostgroup_info = @sky_zabbix.hostgroup.get(
       output: 'extend',
       filter: {
-        name: hostgroup_names,
+        name: hostgroup_names
       },
     )
 
@@ -705,10 +705,10 @@ class Zabbix
     @sky_zabbix.item.get(
       hostids: get_host_id(physical_id),
       :"#{kind}" => {
-        key_: item_keys,
+        key_: item_keys
       },
       output: [
-        :key_,
+        :key_
       ],
       selectTriggers: 'shorten',
     )
@@ -740,7 +740,7 @@ class Zabbix
       output: [:applicationid ],
       hostids: host_id,
       filter: {
-        name: names,
+        name: names
       },
     )
 
@@ -799,7 +799,7 @@ class Zabbix
     @sky_zabbix.host.get(
       hostids: hostid,
       output: [
-        :name,
+        :name
       ],
     )
   end
