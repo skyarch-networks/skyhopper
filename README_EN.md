@@ -4,8 +4,9 @@ A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 ## Languange
 [English](README_EN.md)
 
-[ Japanese](README.md)
+[日本語](README.md)
 
+## blog
 http://www.skyarch.net/blog/?p=2709
 
 RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
@@ -36,7 +37,7 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 
 ### Zabbix Server deployment procedure for SkyHopper
 
-[doc/installation/zabbix_server.md](doc/installation/zabbix_server.md)
+[doc/installation/zabbix_server.md](doc/installation/en/zabbix_server.md)
 
 
 ### Update procedure

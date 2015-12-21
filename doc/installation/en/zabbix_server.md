@@ -1,65 +1,66 @@
-Zabbix Server のデプロイ方法
+How to deploy the ZABBIX Server
 ============================
 
-SkyHopper は Zabbix と連携してインフラストラクチャの監視を行っています。
-そのため、SkyHopper をデプロイしたら、最初に Zabbix Server をデプロイする必要があります。
+SkyHopper with Zabbix for monitoring infrastructures.
+Therefore, After you deploy SkyHopper, you must first deploy the Zabbix Server.
 
 
-1 サインアップ
+1 Sign up
 -----------------
 
-デプロイ直後でユーザーが存在しないため、まずは SkyHopper にサインアップします。
+Since the user has not yet exists after deployment, It will require you to sign up to SkyHopper.
 
-デプロイした SkyHopper にアクセスし、Sign up へと進み、ユーザー名とメールアドレスを入力、Admin と Master にチェックを入れてユーザーを作成してください。
+Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
 
 
-2 Zabbix Server インフラストラクチャを選択
+2 Select a Zabbix Server Infrastructure
 --------------------------------------------
 
-Zabbix Server は、SkyHopper 上でインフラストラクチャとして管理されています。
-そのため、まずはそのインフラストラクチャを選択しましょう。
+Zabbix Server is managed as an infrastructure on SkyHopper.
+First of all, select the infrastructure.
 
-1. 顧客 SkyHopper の案件一覧をクリック
-2. 案件 ZabbixServer のインフラ一覧をクリック
-3. 存在するインフラの詳細をクリック
+1. Click the SkyHopper client
+2. Click Zabbix Server Project
+3. Click show button for more details
 
 
-3 Chef Server に登録
+3 Sign up to Chef Server
 ------------------------
 
-Chef を使用して Zabbix をインストールするため、まずは EC2 インスタンスを Chef Server に登録します。
+In order to install Zabbix using Chef, Please register first the EC2 instance to Chef Server
 
-Chef Server に登録 ボタンを押してください。
+Click bootstrap with chef server botton
 
 
-4 RunList を選択
+4 Select Runlist
 ------------------
 
-Runlistの編集 ボタンを押してください。 Runlistの編集画面が現れます。
-この画面で、どのレシピを使ってChefを実行するかを選択します。
-Zabbix Server をインストールするので、Role の中にある `zabbix_server` ロールをダブルクリックして Runlist に追加してください。
-変更の保存 ボタンを押すと変更が保存されます。
+Press the Edit Runlist button. So that Runlist editing screen will appear.
+In this screen, you can choose whether to perform a Chef by selecting any of the recipes.
+Since we only need to install the Zabbix Server, please double click `zabbix_server` to add to the runlist.
+To save changes, press the save changes button.
 
 
 5 Cook
 ------------
 
-Chef を実行します。
-Cook を実行している状況がリアルタイムに表示されます。
+Run chef by click cook button.
+Cook status is displayed in real time.
 
-Cookが終了したら Zabbix Server のデプロイは終了です。
-最後に、SkyHopper に Zabbix Server のユーザー情報を設定します。
+When the cook status has been successfully done, Zabbix Server Deployment is also done.
+Finally, SkyHopper will populate the user information for Zabbix Server.
 
-6 ユーザー情報の設定
+6 Setting up user information
 -------------------------
 
-画面左上の設定から、Zabbix Server を選択してください。
-username と password を入力してください。
-デフォルト値は、admin, ilikerandompasswords です。
+Choose Zabbix Server from the top left of the screen settings.
+Enter your username and password.
+The default value is admin and  ilikerandompasswords.
 
-最後に SkyHopper 上のユーザーと Zabbix のユーザーの情報の同期を行います。
-右上のユーザー名をクリックし、ユーザー管理のページに行ってください。
-そのページの `Zabbix Server と同期`ボタンを押すと、ユーザーが同期されます。
+Finally, we will do the synchronization of users and Zabbix user information on SkyHopper.
+
+please go to the user management page. by clicking on the top right of the page with the user name,  
+If you press the `Synchronize with Zabbix Server` button of the page, the user will be synchronized .
 
 
-以上で Zabbix Server の設定は完了です。
+Congratulations! Zabbix Server configuration is complete.

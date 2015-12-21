@@ -102,7 +102,7 @@ $ git clone https://github.com/skyarch-networks/skyhopper.git
 
 
 
-Up to this point it can should be executed by Chef.
+Up to this point it can be executed by Chef.
 
 ---------------------------------
 
