@@ -413,7 +413,7 @@ class NodesController < ApplicationController
       yum_screen_name << " update"
       infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: this_infra.id, user_id: user_id)
 
-      r = infra.resource(physical_id)
+      r = this_infra.resource(physical_id)
       r.status.yum.inprogress!
       r.status.serverspec.un_executed! if exec
 
