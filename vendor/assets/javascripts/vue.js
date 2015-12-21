@@ -1,0 +1,1 @@
+../../../frontend/node_modules/vue/dist/vue.js
