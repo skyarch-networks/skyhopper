@@ -2,9 +2,7 @@
 システム自動構築ツール
 
 ## Language
-[English](README_EN.md)
-
-[日本語](README.md)
+[English](README_EN.md) - [日本語](README.md)
 
 ## blog
 http://www.skyarch.net/blog/?p=2709
