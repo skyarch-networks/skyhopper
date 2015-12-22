@@ -1,1 +1,1 @@
-../../bower_components/lodash/lodash.js
+../../../frontend/node_modules/lodash/index.js
