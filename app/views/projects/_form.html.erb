@@ -41,7 +41,7 @@
   <div class="form-group">
     <%= f.label :secret_access_key, t('projects.secret_access_key'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <%= f.text_field :secret_access_key, class: 'form-control form-control-masked', required: true, pattern: '[^\s]+' %>
+      <%= f.text_field :secret_access_key, class: 'form-control form-control-masked', type: 'password', required: true, pattern: '[^\s]+' %>
     </div>
   </div>
 
