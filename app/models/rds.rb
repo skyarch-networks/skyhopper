@@ -22,13 +22,13 @@ class RDS < SimpleDelegator
     secret_access_key = infra.secret_access_key
     region            = infra.region
 
-    @rds = ::AWS::RDS.new(
+    @rds = Aws::RDS::Client.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
       region:            region,
     )
 
-    @db_instance = @rds.db_instances[physical_id]
+    @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)
     __setobj__(@db_instance)
   end
 
@@ -49,6 +49,10 @@ class RDS < SimpleDelegator
     else
       return "NO"
     end
+  end
+
+  def db_security
+    @db_instance
   end
 
   def change_scale(scale)
