@@ -14,8 +14,8 @@ describe ProjectParameter, type: :model do
       let(:project){create(:project)}
       let(:key){'key'}
       it 'should be uniq'do
-        param1 = create(:project_parameter, project: project, key: key)
-        param2 = build(:project_parameter, project: project, key: key)
+        _param1 = create(:project_parameter, project: project, key: key)
+        param2  = build(:project_parameter, project: project, key: key)
         expect(param2.save).to be false
       end
     end
