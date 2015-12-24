@@ -176,6 +176,7 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   security_groups:
+    title:        'Security Groups'
     associated:   'Security Groups associated with'
     description:  'Description'
     group_id:     'Security Group ID'
@@ -464,6 +465,8 @@ en:
     mfa_secret:        'Secret key of MFA'
     search:            'Search by email'
     create_new_user:   'Create New User'
+    create_admin_user: 'Create Administrator User'
+    remember_me:       'Remember me'
     btn:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'

@@ -30,7 +30,8 @@ class UsersAdminController < ApplicationController
   # register new user only by master
   # GET /users_admin/new
   def new
-    @user = User.new
+    @user = User.new(session[:form])
+    session[:form] = nil  # remove temporary form data
   end
 
   # create new user only by master
@@ -46,6 +47,11 @@ class UsersAdminController < ApplicationController
 
     e = -> (ex) {
       flash[:alert] = ex.message
+      session[:form] = {
+        email:  params[:user][:email],
+        admin:  params[:user][:admin],
+        master: params[:user][:master],
+      }
       redirect_to(action: :new)
     }
 

@@ -6,9 +6,12 @@ gem 'rails', '~> 4'
 gem 'mysql2', '~> 0.3.20'
 gem 'activerecord-import'
 
-# Use SCSS for stylesheets
+# Use SCSS as CSS compressor
 gem 'sass-rails'
-gem 'less-rails'
+
+# https://github.com/skyarch-networks/skyhopper/pull/165
+# sprockets-rails has some problems. we fix version until it's stable.
+gem 'sprockets-rails', '~> 2'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'#, '>= 1.3.0'

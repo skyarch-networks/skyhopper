@@ -175,6 +175,7 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   security_groups:
+      title:        'セキュリティグループ'
       associated:   'と関連付けられたセキュリティグループ'
       description:  '説明'
       group_id:     'グループ ID'
@@ -195,7 +196,7 @@ ja:
         security_groups:      'セキュリティグループ'
         create:               'セキュリティグループの作成'
       msg:
-        change_success:        'セキュリティの変更グループの成功！'
+        change_success:        'セキュリティグループの変更に成功しました'
         error:  'エラー'
         error_msg: '少なくとも 1 つのセキュリティグループを選択する必要があります。'
 
@@ -462,6 +463,8 @@ ja:
     mfa_secret:        'MFA の秘密鍵'
     search:            'メールアドレスで検索'
     create_new_user:   '新規ユーザーの作成'
+    create_admin_user: '管理者ユーザーの作成'
+    remember_me:       'ログイン状態を保持する'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'
