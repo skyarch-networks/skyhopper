@@ -6,9 +6,8 @@ gem 'rails', '~> 4'
 gem 'mysql2', '~> 0.3.20'
 gem 'activerecord-import'
 
-# Use SCSS for stylesheets
+# Use SCSS as CSS compressor
 gem 'sass-rails'
-gem 'less-rails'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'#, '>= 1.3.0'
