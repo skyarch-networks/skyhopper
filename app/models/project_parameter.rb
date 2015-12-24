@@ -8,4 +8,6 @@
 
 class ProjectParameter < ActiveRecord::Base
   belongs_to :project
+  validates :project_id, uniqueness: {scope: [:key]}
+  validates :key, format: { with: /\A[a-zA-Z_][a-zA-Z0-9_]*\Z/ }
 end
