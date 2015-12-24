@@ -19,8 +19,27 @@ PROJECT_PARAMETERS.forEach((p) => {
   p.changed = false;
 });
 
+const editable_div = Vue.extend({
+  template: '<div contenteditable @blur="on_blur">{{text}}</div>',
+  data: () => {return {}; },
+  props: {
+    text: {
+      twoWay: true,
+      required: true,
+      type: String,
+    },
+  },
+
+  methods: {
+    on_blur: function (e: any) { this.text = e.target.textContent; },
+  },
+});
+
 Vue.component('param-tr', {
   template: '#param-tr-template',
+  components: {
+    'editable-div': editable_div,
+  },
   data: () => {return {}; },
   props: {
     param: {
@@ -50,6 +69,7 @@ Vue.component('param-tr', {
 
   watch: {
     param: function () {
+      console.log('changed!');
       this.param.changed = true;
     },
   }

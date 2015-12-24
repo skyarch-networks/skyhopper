@@ -1,7 +1,11 @@
 <tr :class="klass">
   <td></td>
-  <td>{{param.key}}</td>
-  <td>{{param.value}}</td>
+  <td>
+    <editable-div :text.sync="param.key"></editable-div>
+  </td>
+  <td>
+    <editable-div :text.sync="param.value"></editable-div>
+  </td>
   <td>
     <button v-if="!param.remove" class="btn btn-danger btn-xs"  @click="remove()">Remove</button>
     <button v-else               class="btn btn-default btn-xs" @click="unremove()">UnRemove</button>
