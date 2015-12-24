@@ -1,10 +1,7 @@
 # SkyHopper
 システム自動構築ツール
 
-## Language
-[English](README_EN.md)
-
-[日本語](README.md)
+[English Readme](README_EN.md)
 
 ## blog
 http://www.skyarch.net/blog/?p=2709
