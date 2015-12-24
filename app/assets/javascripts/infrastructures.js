@@ -738,6 +738,7 @@
     data: function () {return {
       rds: {},
       serverspec: {},
+      security_groups: null,
     };},
     template: '#rds-tabpane-template',
     methods: {
@@ -763,6 +764,12 @@
         });
       },
       reload: function () { this.$parent.show_rds(this.physical_id); },
+      view_rules: function () {
+        this.$parent.tabpaneID = 'view-rules';
+        this.$parent.sec_group = this.security_groups;
+        this.$parent.instance_type = 'rds';
+        console.log(this.security_groups);
+      }
     },
     computed: {
       gen_serverspec_enable: function () {
@@ -775,6 +782,12 @@
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
         self.rds = data.rds;
+        self.security_groups = data.rds.vpc_security_groups.filter(function (r){
+          return r.status === "active";
+        }).map(function (r) {
+          return r.vpc_security_group_id;
+        });
+
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
     },
@@ -1070,17 +1083,34 @@
           self.rules_summary = data.rules_summary;
         });
       },
+      rds_rules: function ()  {
+        var self = this;
+        var group_ids = [];
+        var ec2 = new EC2Instance(current_infra, this.physical_id);
 
+        ec2.get_rules(self.security_groups).done(function (data) {
+          self.rules_summary = data.rules_summary;
+        });
+      },
       show_ec2: function () {
-        if(this.instance_type === 'elb')
+        if(this.instance_type === 'elb'){
           this.$parent.show_elb(this.physical_id);
-        else
+        }
+        else if(this.instance_type === 'rds'){
+          this.$parent.show_rds(this.physical_id);
+        }
+        else{
           this.$parent.show_ec2(this.physical_id);
+        }
       },
     },
     compiled: function() {
       console.log(this);
-      this.get_rules();
+      if (this.instance_type === 'rds')
+        this.rds_rules();
+      else
+        this.get_rules();
+
       this.$parent.loading = false;
     },
   });
