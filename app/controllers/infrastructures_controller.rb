@@ -193,7 +193,6 @@ class InfrastructuresController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
-    
     @rds          = rds
   end
 

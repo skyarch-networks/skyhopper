@@ -23,7 +23,7 @@
     </tr>
     <tr>
       <td>Endpoint Address</td>
-      <td colspan="2">{{rds.endpoint_address}}</td>
+      <td colspan="2">{{rds.endpoint.address}}</td>
     </tr>
     <tr>
       <td>Multi AZ</td>
@@ -33,6 +33,18 @@
       <td>Database Engine</td>
       <td colspan="2">{{rds.engine}}</td>
     </tr>
+    <tr>
+      <td> <%=t('security_groups.title')%> </td>
+      <td>
+        <button href="#view-rules-modal" @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+          <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
+        </button>
+      </td>
+      <td>
+        <button href="#change-rules-modal" @click="get_security_groups()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+          <%= t 'security_groups.btn.change_groups' %>
+        </button>
+      </td>
   </tbody>
 </table>
 
