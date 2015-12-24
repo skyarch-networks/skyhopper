@@ -1,0 +1,36 @@
+<% provide(:title, I18n.t('project_parameters.title')) %>
+
+<h2 class="page-header">
+  <%= t 'project_parameters.title' %>
+  <small>
+    for&nbsp;
+    <%= link_to(@project.name, projects_path(client_id: @project.client_id, project: @project)) %>
+  </small>
+</h2>
+
+<div id="project-parameter-index" v-cloak>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>key</th>
+        <th>value</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr v-for="p in params">
+        <td>{{p.key}}</td>
+        <td>{{p.value}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button class="btn btn-primary">Save</button>
+  <button class="btn btn-success">New Parameter</button>
+  <%= link_to(t('helpers.links.cancel'), projects_path(client_id: @project.client_id, project: @project), class: 'btn btn-default') %>
+</div>
+
+<script>
+var PROJECT_PARAMETERS = <%= @parameters.to_json.html_safe %>
+console.log(PROJECT_PARAMETERS)
+</script>

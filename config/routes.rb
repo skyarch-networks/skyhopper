@@ -14,6 +14,7 @@ SkyHopper::Application.routes.draw do
   resources :clients, except: :show
 
   resources :projects, except: :show
+  resources :project_parameters, except: :show
 
   resources :key_pairs, only: [:index, :destroy], param: :name do
     collection do
