@@ -205,12 +205,12 @@ $(document).ready(function () {
 $.event.props.push("dataTransfer");
 
 $(document).on("dragover", ".allow_textfile_drop", function(e){
-    e.preventDefault();
+  e.preventDefault();
 });
 
 $(document).on("drop", ".allow_textfile_drop", function(e){
   self = this;
-    e.preventDefault();
+  e.preventDefault();
   var file = e.dataTransfer.files[0];
   var fileReader = new FileReader();
   fileReader.onloadend = function(){
