@@ -108,7 +108,7 @@ class Ec2InstancesController < ApplicationController
     if chef == "true"
       resource.detach_chef
     end
-    
+
     resource.destroy
 
     infra_logger_success("#{physical_id} has been detached.")
@@ -194,6 +194,23 @@ class Ec2InstancesController < ApplicationController
     elb.deregister(physical_id)
 
     render text: I18n.t('ec2_instances.msg.deregistered_from_elb')
+  end
+
+  # POST /ec2_instances/:id/elb_submit_groups
+  # @param [Array] security groups array
+  # @param [String] elb_name ELB name
+  # @param [String] infra_id ID of Infrastructure
+  def elb_submit_groups
+    elb_name    = params.require(:elb_name)
+    infra_id    = params.require(:infra_id)
+    group_ids   = params.require(:group_ids)
+
+    infra = Infrastructure.find(infra_id)
+    elb   = ELB.new(infra, elb_name)
+
+    elb.elb_submit_groups(group_ids)
+
+    render text: I18n.t('security_groups.msg.change_success')
   end
 
 

@@ -22,7 +22,7 @@
 
 <li v-for="elb in current_infra.resources.elb_instances" :class="{active: tabpaneGroupID === elb.physical_id}" @click="show_elb(elb.physical_id)">
   <a href="#">
-    <span class="label label-warning">ELB</span>&nbsp;
+    <span class="label label-warning"> <%= fa 'balance-scale' %> ELB</span>&nbsp;
     <small>{{screen_name(elb)}}</small>
     <small v-if="tabpane_active(elb.physical_id)"><%= glyphicon 'refresh' %></small>
   </a>

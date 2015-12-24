@@ -176,6 +176,7 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   security_groups:
+    title:        'Security Groups'
     associated:   'Security Groups associated with'
     description:  'Description'
     group_id:     'Security Group ID'

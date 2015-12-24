@@ -209,9 +209,18 @@ class InfrastructuresController < ApplicationController
     infra = Infrastructure.find(infra_id)
     elb = ELB.new(infra, physical_id)
 
+    sc_g = infra.ec2.describe_security_groups().to_h
+    security_groups = []
+    sc_g[:security_groups].each do |a_hash|
+      a_hash[:checked] = elb.security_groups.include? a_hash[:group_id]
+      security_groups.push(a_hash)
+    end
+
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
     @listeners     = elb.listeners
+
+    @security_groups = security_groups
 
     ec2 = infra.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
