@@ -115,6 +115,12 @@ export default class EC2Instance extends ModelBase {
       (<any>EC2Instance.ajax_node).submit_groups(params)
     );
   }
+  create_group(group_params: Array<any>) {
+    const params = _.merge(this.params, group_params ? {group_params: group_params} : {});
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_node).create_group(params)
+    );
+  }
 
   get_rules(group_ids: Array<any>): JQueryPromise<any> {
     const params = _.merge(this.params, group_ids ? {group_ids: group_ids} : []);
@@ -347,6 +353,12 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
+  elb_submit_groups(group_ids: Array<any>, elb_name: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).elb_submit_groups(_.merge(this.params, {group_ids: group_ids, elb_name: elb_name}))
+    );
+  }
+
   create_listener(
     elb_name: string,
     protocol: string,
@@ -436,6 +448,7 @@ EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
 EC2Instance.ajax_node.add_member('update_attributes', 'PUT');
 EC2Instance.ajax_node.add_member('schedule_yum', 'POST');
 EC2Instance.ajax_node.add_collection('recipes', 'GET');
+EC2Instance.ajax_node.add_collection('create_group', 'POST');
 
 EC2Instance.ajax_ec2.add_member('change_scale', 'POST');
 EC2Instance.ajax_ec2.add_member("start", "POST");
@@ -446,6 +459,7 @@ EC2Instance.ajax_ec2.add_member("terminate", "POST");
 EC2Instance.ajax_ec2.add_member('serverspec_status', 'GET');
 EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
+EC2Instance.ajax_ec2.add_member('elb_submit_groups', 'POST');
 EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
 EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('available_resources', 'GET');

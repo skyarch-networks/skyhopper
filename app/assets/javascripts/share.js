@@ -202,14 +202,16 @@ $(document).ready(function () {
 });
 
 // allow textfile drop
-$(document).on("dragover", ".allow_textfile_drop", function(){
-  event.preventDefault();
+$.event.props.push("dataTransfer");
+
+$(document).on("dragover", ".allow_textfile_drop", function(e){
+  e.preventDefault();
 });
 
-$(document).on("drop", ".allow_textfile_drop", function(){
+$(document).on("drop", ".allow_textfile_drop", function(e){
   self = this;
-  event.preventDefault();
-  var file = event.dataTransfer.files[0];
+  e.preventDefault();
+  var file = e.dataTransfer.files[0];
   var fileReader = new FileReader();
   fileReader.onloadend = function(){
     $(self).val(fileReader.result).trigger("input");

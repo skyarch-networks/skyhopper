@@ -1,6 +1,9 @@
 # SkyHopper
 システム自動構築ツール
 
+[English Readme](README_EN.md)
+
+## blog
 http://www.skyarch.net/blog/?p=2709
 
 RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
