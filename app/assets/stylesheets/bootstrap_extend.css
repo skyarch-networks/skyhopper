@@ -252,3 +252,7 @@ textarea:focus:invalid {
 .tb-row:hover .hover-btn {
   display: block;
 }
+
+.form-control[readonly] {
+  background-color: #ddd;
+}
