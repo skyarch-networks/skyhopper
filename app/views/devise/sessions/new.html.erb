@@ -3,14 +3,14 @@
 <% if User.count != 0 %>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "form-horizontal", role: "form"}) do |f| %>
     <div class="form-group">
-      <%= f.label :email, class: 'control-label col-sm-2' %>
+      <%= f.label :email, t('users.email'), class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
         <%= f.email_field :email,  {autofocus: true, class: "form-control", required: true} %>
       </div>
     </div>
 
     <div class="form-group">
-      <%= f.label :password, class: 'control-label col-sm-2' %>
+      <%= f.label :password, t('users.password'), class: 'control-label col-sm-2' %>
       <div class="col-sm-5">
         <%= f.password_field :password, {class: "form-control", pattern: '[^\s]+', required: true} %>
       </div>
@@ -20,7 +20,7 @@
     <div class="form-group">
       <div class="col-sm-5 col-sm-offset-2">
         <div class="checkbox">
-          <%= f.check_box :remember_me %><%= f.label :remember_me %>
+          <%= f.check_box :remember_me %><%= f.label :remember_me, t('users.remember_me') %>
         </div>
       </div>
     </div>
