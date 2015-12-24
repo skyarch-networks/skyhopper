@@ -4,6 +4,7 @@ interface Parameter {
   value: string;
   project_id: number;
   remove: boolean;
+  changed: boolean;
 }
 
 interface Project {
@@ -14,7 +15,8 @@ declare const PROJECT_PARAMETERS: Parameter[];
 declare const PROJECT: Project;
 
 PROJECT_PARAMETERS.forEach((p) => {
-  p.remove = false;
+  p.remove  = false;
+  p.changed = false;
 });
 
 Vue.component('param-tr', {
@@ -32,6 +34,25 @@ Vue.component('param-tr', {
     remove:   function () { this.param.remove = true; },
     unremove: function () { this.param.remove = false; },
   },
+
+  computed: {
+    isNew: function () { return this.param.id === null; },
+    klass: function () {
+      if (this.param.remove) {
+        return ['danger'];
+      } else if (this.isNew) {
+        return ['success'];
+      } else if (this.changed) {
+        return ['info'];
+      }
+    },
+  },
+
+  watch: {
+    param: function () {
+      this.param.changed = true;
+    },
+  }
 });
 
 const ProjectParamApp = new Vue({
