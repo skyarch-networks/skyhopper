@@ -52,27 +52,27 @@ Vue.component('param-tr', {
   methods: {
     remove:   function () { this.param.remove = true; },
     unremove: function () { this.param.remove = false; },
+    change:   function () { this.param.changed = true; },
   },
 
   computed: {
     isNew: function () { return this.param.id === null; },
+
     klass: function () {
       if (this.param.remove) {
         return ['danger'];
       } else if (this.isNew) {
         return ['success'];
-      } else if (this.changed) {
+      } else if (this.param.changed) {
         return ['info'];
       }
     },
   },
 
   watch: {
-    param: function () {
-      console.log('changed!');
-      this.param.changed = true;
-    },
-  }
+    "param.key":   function () { this.change(); },
+    "param.value": function () { this.change(); },
+  },
 });
 
 const ProjectParamApp = new Vue({
