@@ -156,11 +156,11 @@
 
   <div class="form-actions-top col-xs-12">
 
-    <button :disabled="!running" v-if="!loading" @click="bootstrap()" class="btn btn-primary">
-      <bootstrap-tooltip v-if="!running" title="<%= t('nodes.msg.stopped') %>">
-        <temlate slot="content"><%= t 'nodes.btn.bootstrap_with_chef_server' %></temlate>
-      </bootstrap-tooltip>
-      <span v-if="running"> <%= t 'nodes.btn.bootstrap_with_chef_server' %></span>
+    <bootstrap-tooltip v-if="!running && !loading" title="<%= t('nodes.msg.stopped') %>" class="btn btn-primary disabled">
+      <temlate slot="content"><%= t 'nodes.btn.bootstrap_with_chef_server' %></temlate>
+    </bootstrap-tooltip>
+    <button v-if="running && !loading" @click="bootstrap()" class="btn btn-primary">
+      <span><%= t 'nodes.btn.bootstrap_with_chef_server' %></span>
     </button>
     <div-loader v-if="loading"></div-loader>
   </div>
