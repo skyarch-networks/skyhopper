@@ -21,7 +21,7 @@ module ApplicationHelper
     require 'digest/md5'
     email_address = email.downcase
     hash = Digest::MD5.hexdigest(email_address)
-    image_src = "http://www.gravatar.com/avatar/#{hash}"
+    image_src = "https://secure.gravatar.com/avatar/#{hash}"
 
     return image_tag(image_src, size: "24x24", class: "img-rounded gravatar-icon")
   end

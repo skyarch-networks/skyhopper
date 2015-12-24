@@ -265,7 +265,7 @@ class NodesController < ApplicationController
   # GET /nodes/:id/get_security_groups
   def get_security_groups
     physical_id = params.require(:id)
-    av_g = @infra.ec2.describe_security_groups() # Available groups
+    av_g = @infra.ec2.describe_security_groups().to_h # Available groups
     instance = @infra.instance(physical_id)
     ex = [] #existing groups array
     return_params = [] #filtered security groups
@@ -273,10 +273,10 @@ class NodesController < ApplicationController
       ex.push(sec_group[:group_id])
     end
 
-    av_g[:security_groups].each do |a|
-      checked = ex.include? a[:group_id]
-      if a[:vpc_id] == instance.vpc.id
-        return_params.push({group_name: a[:group_name], group_id: a[:group_id], description: a[:description], checked: checked, tags: a[:tags]})
+    av_g[:security_groups].each do |a_hash|
+      if a_hash[:vpc_id] == instance.vpc.id
+        a_hash[:checked] = ex.include? a_hash[:group_id]
+        return_params.push(a_hash)
       end
     end
 
@@ -406,14 +406,14 @@ class NodesController < ApplicationController
 
   # TODO: DRY
   def exec_yum_update(infra, physical_id, security=true, exec=false)
-    Thread.new_with_db(infra, physical_id, current_user.id) do |infra, physical_id, user_id|
+    Thread.new_with_db(infra, current_user.id) do |this_infra, user_id|
       yum_screen_name = "yum "
       yum_screen_name << " check" unless exec
       yum_screen_name << " security" if security
       yum_screen_name << " update"
-      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: infra.id, user_id: user_id)
+      infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: this_infra.id, user_id: user_id)
 
-      r = infra.resource(physical_id)
+      r = this_infra.resource(physical_id)
       r.status.yum.inprogress!
       r.status.serverspec.un_executed! if exec
 
@@ -424,18 +424,18 @@ class NodesController < ApplicationController
       log = []
 
       begin
-        node.yum_update(infra, security, exec) do |line|
+        node.yum_update(this_infra, security, exec) do |line|
           ws.push_as_json({v: line})
           Rails.logger.debug "#{yum_screen_name} #{physical_id} > #{line}"
           log << line
         end
       rescue => ex
         Rails.logger.debug(ex)
-        infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: this_infra.id, user_id: user_id)
         r.status.yum.failed!
         ws.push_as_json({v: false})
       else
-        infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infra.id, user_id: user_id)
+        infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: this_infra.id, user_id: user_id)
         r.status.yum.success!
         ws.push_as_json({v: true})
       end

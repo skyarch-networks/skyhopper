@@ -206,7 +206,7 @@ function render_user_admin(value, key, lang){
       del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/users_admin/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("helpers.links.destroy")+"</a>";
     return edit+del;
   }else if (key === 'email') {
-    var image = "<img class='img-rounded gravatar-icon' src='http://www.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
+    var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
     var email = value[1];
     return image+" "+email;
   }else if (key === 'role') {
