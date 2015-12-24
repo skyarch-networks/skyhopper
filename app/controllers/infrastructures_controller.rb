@@ -192,12 +192,8 @@ class InfrastructuresController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
-
-    @db_instance_class = rds.db_instance_class
-    @allocated_storage = rds.allocated_storage
-    @endpoint_address  = rds.endpoint_address
-    @multi_az          = rds.multi_az
-    @engine            = rds.engine
+    
+    @rds          = rds
   end
 
   # GET /infrastructures/show_elb
