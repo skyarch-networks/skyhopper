@@ -12,25 +12,29 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>key</th>
-        <th>value</th>
+        <th>Key</th>
+        <th>Value</th>
+        <th></th>
       </tr>
     </thead>
 
     <tbody>
-      <tr v-for="p in params">
-        <td>{{p.key}}</td>
-        <td>{{p.value}}</td>
-      </tr>
+      <template v-for="p in params">
+        <param-tr :param.sync="p"></param-tr>
+      </template>
     </tbody>
   </table>
 
-  <button class="btn btn-primary">Save</button>
-  <button class="btn btn-success">New Parameter</button>
+  <button class="btn btn-success" @click="add()">Add</button>
+  <button class="btn btn-primary" @click="save()">Save</button>
   <%= link_to(t('helpers.links.cancel'), projects_path(client_id: @project.client_id, project: @project), class: 'btn btn-default') %>
 </div>
 
 <script>
 var PROJECT_PARAMETERS = <%= @parameters.to_json.html_safe %>
-console.log(PROJECT_PARAMETERS)
+var PROJECT = <%= @project.attributes.slice('id').to_json.html_safe %>
+</script>
+
+<script id="param-tr-template" type="text/template">
+<%= render 'param_tr' %>
 </script>

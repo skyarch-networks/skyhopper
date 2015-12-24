@@ -1,0 +1,8 @@
+<tr :class="{danger: param.remove}">
+  <td>{{param.key}}</td>
+  <td>{{param.value}}</td>
+  <td>
+    <button v-if="!param.remove" class="btn btn-danger btn-xs"  @click="remove()">Remove</button>
+    <button v-else               class="btn btn-default btn-xs" @click="unremove()">UnRemove</button>
+  </td>
+</tr>
