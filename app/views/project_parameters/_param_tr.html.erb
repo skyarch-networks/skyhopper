@@ -1,5 +1,7 @@
 <tr :class="klass">
-  <td></td>
+  <td>
+    <span v-if="klass" class="label" :class="'label-' + klass">{{label_text}}</span>
+  </td>
   <td>
     <editable-div :text.sync="param.key"></editable-div>
   </td>

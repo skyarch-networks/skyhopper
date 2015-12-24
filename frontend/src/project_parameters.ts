@@ -66,6 +66,18 @@ Vue.component('param-tr', {
       } else if (this.param.changed) {
         return ['info'];
       }
+      return null;
+    },
+
+    label_text: function () {
+      if (this.param.remove) {
+        return 'Removed';
+      } else if (this.isNew) {
+        return 'New';
+      } else if (this.param.changed) {
+        return 'Edited';
+      }
+      return null;
     },
   },
 
