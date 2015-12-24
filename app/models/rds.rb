@@ -28,7 +28,7 @@ class RDS < SimpleDelegator
       region:            region,
     )
 
-    @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)
+    @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)[:db_instances][0] # get only 1 instance
     __setobj__(@db_instance)
   end
 
