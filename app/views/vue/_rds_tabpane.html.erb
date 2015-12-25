@@ -27,7 +27,10 @@
     </tr>
     <tr>
       <td>Multi AZ</td>
-      <td colspan="2">{{rds.multi_az}}</td>
+      <td colspan="2">
+        <span v-if="rds.multi_az">YES</span>
+        <span v-else="rds.multi_az">NO</span>
+      </td>
     </tr>
     <tr>
       <td>Database Engine</td>

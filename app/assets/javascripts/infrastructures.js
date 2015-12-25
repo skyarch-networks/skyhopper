@@ -768,7 +768,6 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.security_groups;
         this.$parent.instance_type = 'rds';
-        console.log(this.security_groups);
       }
     },
     computed: {
@@ -782,11 +781,8 @@
       var rds = new RDSInstance(current_infra, this.physical_id);
       rds.show().done(function (data) {
         self.rds = data.rds;
-        self.security_groups = data.rds.vpc_security_groups.filter(function (r){
-          return r.status === "active";
-        }).map(function (r) {
-          return r.vpc_security_group_id;
-        });
+        self.security_groups = data.security_groups;
+        console.log(data.security_groups);
 
         self.$parent.loading = false;
       }).fail(alert_and_show_infra);
@@ -1071,24 +1067,14 @@
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
-          if(self.instance_type === 'elb'){
-            if(value.checked)
+          if(self.instance_type === 'ec2'){
               group_ids.push(value.group_id);
           }else{
-            group_ids.push(value.group_id);
+            if(value.checked)
+              group_ids.push(value.group_id);
           }
         });
-
         ec2.get_rules(group_ids).done(function (data) {
-          self.rules_summary = data.rules_summary;
-        });
-      },
-      rds_rules: function ()  {
-        var self = this;
-        var group_ids = [];
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
-
-        ec2.get_rules(self.security_groups).done(function (data) {
           self.rules_summary = data.rules_summary;
         });
       },
@@ -1105,12 +1091,7 @@
       },
     },
     compiled: function() {
-      console.log(this);
-      if (this.instance_type === 'rds')
-        this.rds_rules();
-      else
-        this.get_rules();
-
+      this.get_rules();
       this.$parent.loading = false;
     },
   });

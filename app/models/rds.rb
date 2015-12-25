@@ -34,25 +34,14 @@ class RDS < SimpleDelegator
 
   # ----------------------------------- method wrapper
 
-
-  def engine_type
-    @db_instance.engine
-  end
-
-  def engine
-    "#{@db_instance.engine} (#{@db_instance.engine_version})"
-  end
-
-  def multi_az
-    if @db_instance.multi_az?
-      return "YES"
-    else
-      return "NO"
+  def security_groups
+    security_groups = []
+    @db_instance[:vpc_security_groups].each do |item|
+      if item.status == "active"
+        security_groups.push(item.vpc_security_group_id)
+      end
     end
-  end
-
-  def db_security
-    @db_instance
+    return security_groups
   end
 
   def change_scale(scale)
@@ -60,12 +49,14 @@ class RDS < SimpleDelegator
       raise ChangeScaleError, "Invalid type name: #{scale}"
     end
 
-    if scale == db_instance_class
+    if scale == @db_instance[:db_instance_class]
       return scale
     end
 
     begin
-      modify(db_instance_class: scale,  apply_immediately: true)
+      @rds.modify_db_instance({db_instance_class: scale,
+        db_instance_identifier: @db_instance.db_instance_identifier,
+        apply_immediately: true})
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end

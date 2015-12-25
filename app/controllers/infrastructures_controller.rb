@@ -191,9 +191,13 @@ class InfrastructuresController < ApplicationController
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:id)
 
+
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
+    sc_g = infra.ec2.describe_security_groups().to_h
+
     @rds          = rds
+    @security_groups = map_security_groups(sc_g, rds.security_groups)
   end
 
   # GET /infrastructures/show_elb
@@ -205,11 +209,8 @@ class InfrastructuresController < ApplicationController
     elb = ELB.new(infra, physical_id)
 
     sc_g = infra.ec2.describe_security_groups().to_h
-    security_groups = []
-    sc_g[:security_groups].each do |a_hash|
-      a_hash[:checked] = elb.security_groups.include? a_hash[:group_id]
-      security_groups.push(a_hash)
-    end
+    security_groups = map_security_groups(sc_g, elb.security_groups)
+
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
@@ -398,4 +399,14 @@ class InfrastructuresController < ApplicationController
 
     redirect_to path, alert: msg
   end
+
+  def map_security_groups(sc_g, resource)
+    security_groups = []
+    sc_g[:security_groups].each do |a_hash|
+      a_hash[:checked] = resource.include? a_hash[:group_id]
+      security_groups.push(a_hash)
+    end
+    return security_groups
+  end
+
 end
