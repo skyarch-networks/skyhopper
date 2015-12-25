@@ -263,6 +263,18 @@ class InfrastructuresController < ApplicationController
     render text: "change scale to #{type}" and return
   end
 
+  # POST /infreastructures/rds_submit_groups
+  def rds_submit_groups
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:id)
+    group_ids        = params.require(:group_ids)
+
+    rds = Infrastructure.find(infra_id).rds(physical_id)
+    rds.modify_security_groups(group_ids)
+
+    render text: I18n.t('security_groups.msg.change_success')
+  end
+
   def show_s3
     @bucket_name = params.require(:bucket_name)
     infra_id     = params.require(:id)

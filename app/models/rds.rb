@@ -54,7 +54,8 @@ class RDS < SimpleDelegator
     end
 
     begin
-      @rds.modify_db_instance({db_instance_class: scale,
+      @rds.modify_db_instance({
+        db_instance_class: scale,
         db_instance_identifier: @db_instance.db_instance_identifier,
         apply_immediately: true})
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
@@ -63,4 +64,16 @@ class RDS < SimpleDelegator
 
     scale
   end
+
+  def modify_security_groups(group_ids)
+    begin
+      @rds.modify_db_instance({
+        vpc_security_group_ids: group_ids,
+        db_instance_identifier: @db_instance.db_instance_identifier,
+        apply_immediately: true})
+    rescue AWS::RDS::Errors::InvalidParameterValue => ex
+      raise ChangeScaleError, ex.message
+    end
+  end
+
 end

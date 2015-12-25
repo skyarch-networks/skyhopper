@@ -768,13 +768,38 @@
         this.$parent.tabpaneID = 'view-rules';
         this.$parent.sec_group = this.security_groups;
         this.$parent.instance_type = 'rds';
-      }
+      },
+      rds_submit_groups: function(){
+        var self = this;
+        var rds = new RDSInstance(current_infra, this.physical_id);
+        var group_ids = this.security_groups.filter(function (t) {
+          return t.checked;
+        }).map(function (t) {
+          return t.group_id;
+        });
+        var reload = function () {
+          self.$parent.show_elb(self.physical_id);
+        };
+
+        rds.rds_submit_groups(group_ids, self.physical_id)
+          .done(alert_success(reload))
+          .fail(alert_danger(reload));
+
+      },
+
     },
     computed: {
       gen_serverspec_enable: function () {
         var s = this.serverspec;
         return !!(s.username && s.password && s.database);
       },
+      check: function (i) {
+          i.checked= !i.checked;
+      },
+      reload: function(){
+        this.$parent.show_elb(this.physical_id);
+      },
+      available: function () { return this.rds.db_instance_status === 'available'; },
     },
     created: function () {
       var self = this;
