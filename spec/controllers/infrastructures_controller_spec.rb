@@ -361,43 +361,17 @@ describe InfrastructuresController, type: :controller do
     let(:physical_id){"physical_id"}
     let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
 
-    instance_class    = "foo"
-    allocated_storage = "100"
-    endpoint_address  = "hoge.fuga"
-    multi_az          = true
-    engine            = 'mysql'
-
-    stubize_rds(
-      db_instance_class: instance_class,
-      allocated_storage: allocated_storage,
-      endpoint_address:  endpoint_address,
-      multi_az:          multi_az,
-      engine:            engine,
-    )
-
+    stubize_rds
     before{request_show_rds}
-
     subject{Infrastructure.find(infra.id)}
 
-    it 'should assign @db_instance_class' do
-      expect(assigns[:db_instance_class]).to eq instance_class
+    should_be_success
+
+    it 'should assign @rds' do
+      # _s3 defined by support/mocks/s3.rb
+      expect(assigns[:rds]).to eq _rds
     end
 
-    it 'should assign @allocated_storage' do
-      expect(assigns[:allocated_storage]).to eq allocated_storage
-    end
-
-    it 'should assign @endpoint_address' do
-      expect(assigns[:endpoint_address]).to eq endpoint_address
-    end
-
-    it 'should assign @multi_az' do
-      expect(assigns[:multi_az]).to eq multi_az
-    end
-
-    it 'should assign @engine' do
-      expect(assigns[:engine]).to eq engine
-    end
   end
 
   describe '#show_elb' do
