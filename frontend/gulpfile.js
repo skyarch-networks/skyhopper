@@ -3,7 +3,6 @@ var ts       = require('gulp-typescript');
 var tsd      = require('gulp-tsd');
 var tsconfig = require('gulp-tsconfig-files');
 var tslint   = require('gulp-tslint');
-var KarmaSrv = require('karma').Server;
 
 gulp.task('tsd', function (callback) {
   tsd({
