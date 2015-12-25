@@ -48,7 +48,7 @@ export default class RDSInstance extends ModelBase {
     );
   }
 
-  elb_submit_groups(group_ids: Array<any>): JQueryPromise<any> {
+  rds_submit_groups(group_ids: Array<any>): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>RDSInstance.ajax_infra).rds_submit_groups(_.merge(this.params, {group_ids: group_ids}))
     );

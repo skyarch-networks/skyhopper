@@ -739,6 +739,7 @@
       rds: {},
       serverspec: {},
       security_groups: null,
+      lang: queryString.lang,
     };},
     template: '#rds-tabpane-template',
     methods: {
@@ -778,7 +779,7 @@
           return t.group_id;
         });
         var reload = function () {
-          self.$parent.show_elb(self.physical_id);
+          self.$parent.show_rds(self.physical_id);
         };
 
         rds.rds_submit_groups(group_ids, self.physical_id)
@@ -786,20 +787,21 @@
           .fail(alert_danger(reload));
 
       },
-
+      check: function (i) {
+          i.checked= !i.checked;
+      }
     },
     computed: {
       gen_serverspec_enable: function () {
         var s = this.serverspec;
         return !!(s.username && s.password && s.database);
       },
-      check: function (i) {
-          i.checked= !i.checked;
-      },
-      reload: function(){
-        this.$parent.show_elb(this.physical_id);
-      },
       available: function () { return this.rds.db_instance_status === 'available'; },
+      has_selected: function() {
+        return this.security_groups.some(function(c){
+          return c.checked;
+        });
+      },
     },
     created: function () {
       var self = this;
