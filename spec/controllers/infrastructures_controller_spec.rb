@@ -372,6 +372,10 @@ describe InfrastructuresController, type: :controller do
       expect(assigns[:rds]).to eq _rds
     end
 
+    it 'should assign @security_groups' do
+      expect(assigns[:security_groups]).to eq security_groups
+    end
+
   end
 
   describe '#show_elb' do
@@ -380,7 +384,7 @@ describe InfrastructuresController, type: :controller do
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
     let(:listeners){['hoge']}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]])}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
 
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
@@ -404,6 +408,10 @@ describe InfrastructuresController, type: :controller do
 
     it 'should assign @unregistereds' do
       expect(assigns[:unregistereds]).to eq infra.resources.ec2
+    end
+
+    it 'should assign @security_groups' do
+      expect(assigns[:security_groups]).to eq security_groups
     end
   end
 

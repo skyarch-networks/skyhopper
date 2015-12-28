@@ -374,6 +374,16 @@ class InfrastructuresController < ApplicationController
     KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
+  # mapping of security groups by resource
+  def map_security_groups(sc_g, resource)
+    security_groups = []
+    sc_g[:security_groups].each do |a_hash|
+      a_hash[:checked] = resource.include? a_hash[:group_id]
+      security_groups.push(a_hash)
+    end
+    return security_groups
+  end
+
   # redirect to projects#index if specified project does not exist
   def project_exist
     return if params[:project_id].blank?
@@ -409,15 +419,6 @@ class InfrastructuresController < ApplicationController
     end
 
     redirect_to path, alert: msg
-  end
-
-  def map_security_groups(sc_g, resource)
-    security_groups = []
-    sc_g[:security_groups].each do |a_hash|
-      a_hash[:checked] = resource.include? a_hash[:group_id]
-      security_groups.push(a_hash)
-    end
-    return security_groups
   end
 
 end
