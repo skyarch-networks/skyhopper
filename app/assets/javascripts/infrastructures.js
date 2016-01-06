@@ -1075,7 +1075,79 @@
         if(this.instance_type === 'elb')
           this.$parent.show_elb(this.physical_id);
         else
-          this.$parent.show_ec2(this.physical_id);
+          this.$parent .show_ec2(this.physical_id);
+      },
+      print_pdf: function(){
+        var data = this.rules_summary.map(function (item){
+            return {
+              rowspan: item.ip_permissions.length,
+            };
+        });
+        console.log(data);
+        var docDefinition = {
+          content: [
+          {
+          style: 'tableExample',
+          color: '#444',
+          table: {
+              widths: [ 120, 100, 'auto', 'auto', 'auto', 'auto',  'auto', 'auto', 'auto', 'auto'],
+              // keepWithHeaderRows: 1,
+              body: [
+                  [
+                          { rowSpan: 2, text: 'Description',  style: 'tableHeader' },
+                          { rowSpan: 2, text: 'Group ID',style: 'tableHeader' },
+                          { colSpan: 4, text: 'Inbound', style: 'tableHeader' },
+                          'x','x','xx',
+                          { colSpan: 4, text: 'Outbound', style: 'tableHeader' },
+                          'x', 'x', 'x',
+                  ],
+                  ['x' , 'x',
+                    {text: 'Type', style: 'tableHeader' },
+                    {text: 'Protocol', style: 'tableHeader' },
+                    {text: 'Port Range',  style: 'tableHeader' },
+                    {text: 'Source',  style: 'tableHeader' },
+                    {text: 'Type',  style: 'tableHeader' },
+                    {text: 'Protocol', style: 'tableHeader' },
+                    {text: 'Port Range', style: 'tableHeader' },
+                    {text: 'Source',  style: 'tableHeader' },
+                   ],
+                   [data]
+              ]
+          }
+      },
+
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black'
+        }
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+        fontSize: 11,
+        alignment: 'center'
+      },
+      pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [ 20, 40, 20, 40 ],
+
+      };
+        pdfMake.createPdf(docDefinition).open();
       },
     },
     compiled: function() {
