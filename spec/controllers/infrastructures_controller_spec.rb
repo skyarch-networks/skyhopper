@@ -385,9 +385,9 @@ describe InfrastructuresController, type: :controller do
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
     let(:listeners){['hoge']}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]])}
     security_groups  = "hoge.fuga"
-    
+    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
+
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
       create(:ec2_resource, infrastructure: infra)
