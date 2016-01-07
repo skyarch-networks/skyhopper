@@ -359,10 +359,11 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    security_groups = 'test'
-    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
 
-    stubize_rds
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
+    security_groups = []
+
+    stubize_rds(security_groups: security_groups)
     before{request_show_rds}
     subject{Infrastructure.find(infra.id)}
     should_be_success
