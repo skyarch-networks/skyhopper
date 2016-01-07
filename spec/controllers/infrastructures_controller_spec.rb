@@ -365,7 +365,7 @@ describe InfrastructuresController, type: :controller do
     before{request_show_rds}
     subject{Infrastructure.find(infra.id)}
     should_be_success
-    security_groups  = "hoge.fuga"
+    let(:security_groups){['test']}
 
     it 'should assign @rds' do
       # _s3 defined by support/mocks/s3.rb
