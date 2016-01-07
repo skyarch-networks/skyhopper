@@ -11,13 +11,13 @@ class ProjectParametersController < ApplicationController
   # ------------- Auth
   before_action :authenticate_user!
 
-  before_action :set_project, only: [:index]
+  before_action :set_project, only: [:show]
   # TODO: authorize
   # before_action do
   #   authorize(@project)
   # end
 
-  def index
+  def show
     @parameters = @project.project_parameters
   end
 
