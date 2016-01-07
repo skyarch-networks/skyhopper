@@ -105,7 +105,16 @@ const ProjectParamApp = new Vue({
     },
 
     save: function () {
-      // TODO
+      const params = (<Parameter[]>this.params).filter(p => !p.remove);
+
+      $.ajax({
+        url: '/project_parameters',
+        method: "PUT",
+        data: {
+          project_id: this.project.id,
+          params: JSON.stringify(params),
+        },
+      });
     },
   },
 });
