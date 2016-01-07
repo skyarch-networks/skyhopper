@@ -359,8 +359,8 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
     let(:security_groups){['test']}
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
 
     stubize_rds
     before{request_show_rds}
@@ -384,7 +384,7 @@ describe InfrastructuresController, type: :controller do
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
     let(:listeners){['hoge']}
-    let(:security_groups){['test_data']}
+    let(:security_groups){[]}
     let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
 
     before do
