@@ -20,8 +20,6 @@ class InfrastructuresController < ApplicationController
 
   before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
-  before_action :keypair_validation, only: [:create]
-
   before_action do
     infra = @infrastructure || (
       project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
@@ -125,6 +123,7 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures
   # POST /infrastructures.json
   def create
+    keypair_validation
     infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
   rescue => ex
     flash[:alert] = ex.message

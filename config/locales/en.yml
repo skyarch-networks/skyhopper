@@ -467,6 +467,8 @@ en:
     mfa_secret:        'Secret key of MFA'
     search:            'Search by email'
     create_new_user:   'Create New User'
+    create_admin_user: 'Create Administrator User'
+    remember_me:       'Remember me'
     btn:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'
