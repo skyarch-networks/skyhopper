@@ -359,14 +359,13 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
-    let(:security_groups){['test']}
-    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
-    let(:rds){double('rds', rds: rds, security_groups: security_groups)}
+    security_groups = 'test'
+    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
+
     stubize_rds
     before{request_show_rds}
     subject{Infrastructure.find(infra.id)}
     should_be_success
-    let(:security_groups){['test']}
 
     it 'should assign @rds' do
       # _s3 defined by support/mocks/s3.rb
