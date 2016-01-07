@@ -359,14 +359,14 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_rds' do
     let(:physical_id){"physical_id"}
+    let(:security_groups){['test']}
     let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
-
+    let(:rds){double('rds', rds: rds, security_groups: security_groups)}
     stubize_rds
     before{request_show_rds}
     subject{Infrastructure.find(infra.id)}
-    security_groups  = "hoge.fuga"
-    stubize_rds(security_groups: security_groups)
     should_be_success
+    let(:security_groups){['test']}
 
     it 'should assign @rds' do
       # _s3 defined by support/mocks/s3.rb
@@ -374,7 +374,7 @@ describe InfrastructuresController, type: :controller do
     end
 
     it 'should assign @security_groups' do
-      expect(assigns[:security_groups]).to eq _security_groups
+      expect(assigns[:security_groups]).to eq security_groups
     end
 
   end
@@ -385,9 +385,9 @@ describe InfrastructuresController, type: :controller do
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
     let(:listeners){['hoge']}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]])}
-    security_groups  = "hoge.fuga"
-    
+    let(:security_groups){[]}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
+
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
       create(:ec2_resource, infrastructure: infra)

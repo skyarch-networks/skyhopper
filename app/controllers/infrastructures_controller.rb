@@ -189,14 +189,14 @@ class InfrastructuresController < ApplicationController
   def show_rds
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:id)
-
+    sc_g = infra.ec2.describe_security_groups().to_h
+    security_groups = map_security_groups(sc_g, elb.security_groups)
 
     infra = Infrastructure.find(infra_id)
     rds = RDS.new(infra, physical_id)
-    sc_g = infra.ec2.describe_security_groups().to_h
 
     @rds          = rds
-    @security_groups = map_security_groups(sc_g, rds.security_groups)
+    @security_groups = security_groups
   end
 
   # GET /infrastructures/show_elb
