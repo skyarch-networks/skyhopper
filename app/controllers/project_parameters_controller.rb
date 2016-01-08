@@ -25,16 +25,13 @@ class ProjectParametersController < ApplicationController
   # PUT /project_parameters
   def update
     # destroy されていない parameter の配列
-    parameters = JSON.parse(params.require(:params), symbolize_names: true)
+    parameters = JSON.parse(params.require(:parameters), symbolize_names: true)
 
     # Update すべきな parameters
     update_parameters = parameters.select{|p| p[:changed] && p[:id]}
     update_parameters.each do |p|
-      param_db = ProjectParameter.find(p[:id])
-      param_db.update!(
-        key: p[:key],
-        value: p[:value],
-      )
+      param_db = @project.project_parameters.find(p[:id])
+      param_db.update!(p.slice(:key, :value))
     end
 
     # Destroy すべきな parameters

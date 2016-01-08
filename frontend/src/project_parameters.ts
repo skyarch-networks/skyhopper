@@ -112,7 +112,7 @@ const ProjectParamApp = new Vue({
         method: "PUT",
         data: {
           project_id: this.project.id,
-          params: JSON.stringify(params),
+          parameters: JSON.stringify(params),
         },
       });
     },
