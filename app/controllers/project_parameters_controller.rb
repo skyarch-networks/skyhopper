@@ -28,14 +28,21 @@ class ProjectParametersController < ApplicationController
     parameters = JSON.parse(params.require(:params), symbolize_names: true)
 
     # Update すべきな parameters
-    update_parameters = parameters.select{|x| x[:changed] && x[:id]}
-    # TODO: Update
+    update_parameters = parameters.select{|p| p[:changed] && p[:id]}
+    update_parameters.each do |p|
+      param_db = ProjectParameter.find(p[:id])
+      param_db.update!(
+        key: p[:key],
+        value: p[:value],
+      )
+    end
 
-    # TODO: Destroy すべきな parameters
+    # Destroy すべきな parameters
+    destroy_parameters = @project.project_parameter_ids - parameters.map{|p|p[:id]}.compact
+    ProjectParameter.where(id: destroy_parameters).delete_all
 
     # Create すべきな parameters
-    create_parameters = parameters.select{|x| x[:id].nil?}
-    Rails.logger.info create_parameters
+    create_parameters = parameters.select{|p| p[:id].nil?}
     ProjectParameter.import create_parameters.map{|p| ProjectParameter.new(key: p[:key], value: p[:value], project: @project)}
 
     # TODO: I18n
