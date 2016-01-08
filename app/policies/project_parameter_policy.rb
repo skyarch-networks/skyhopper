@@ -7,12 +7,11 @@
 #
 
 class ProjectParameterPolicy < ApplicationPolicy
-  # admin :update?, :destroy?, :new?,
-  # def index?;true end
-  #
-  # %i[destroy? new? create?].each do |action|
-  #   define_method(action) do
-  #     user.master? and user.admin? and not record.client.is_for_system?
-  #   end
-  # end
+  def show?
+    user.allow?(record)
+  end
+
+  def update?
+    user.admin? && user.allow?(record)
+  end
 end

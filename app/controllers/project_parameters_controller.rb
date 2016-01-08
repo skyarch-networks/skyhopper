@@ -11,11 +11,11 @@ class ProjectParametersController < ApplicationController
   # ------------- Auth
   before_action :authenticate_user!
 
-  before_action :set_project, only: [:show, :update]
-  # TODO: authorize
-  # before_action do
-  #   authorize(@project)
-  # end
+  before_action :set_project
+  before_action do
+    def @project.policy_class;ProjectParameterPolicy;end
+    authorize(@project)
+  end
 
   def show
     @parameters = @project.project_parameters
