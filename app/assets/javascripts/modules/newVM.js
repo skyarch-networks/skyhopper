@@ -1,3 +1,11 @@
+//
+// Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 module.exports = function (stack, Resource, EC2Instance, current_infra, CFTemplate, alert_danger, stack_in_progress, current_tab) {
   return new Vue({
     template: '#infra-show-template',
