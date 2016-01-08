@@ -79,4 +79,16 @@ class User < ActiveRecord::Base
     ret[:mfa_use] = !mfa_secret_key.nil?
     return ret
   end
+
+  # 新しい MFA の鍵を作成して返す。
+  # XXX: 少し遅め(開発環境で100ms程度)
+  # @return [String] mfa の秘密鍵
+  # @return [String] QR code を HTML で表した文字列
+  def new_mfa_key
+    mfa_key = ROTP::Base32.random_base32
+    uri = ROTP::TOTP.new(mfa_key, issuer: 'SkyHopper').provisioning_uri("skyhopper/#{self.email}")
+    mfa_qrcode = RQRCode::QRCode.new(uri).as_html # XXX: ここが遅い
+
+    return mfa_key, mfa_qrcode
+  end
 end
