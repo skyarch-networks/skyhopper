@@ -1078,10 +1078,47 @@
           this.$parent .show_ec2(this.physical_id);
       },
       print_pdf: function(){
-        var data = this.rules_summary.map(function (item){
-            return {
-              rowspan: item.ip_permissions.length,
-            };
+        var data = [];
+        console.log(this.rules_summary);
+        this.rules_summary.forEach(function(v,i){
+          data.push({text: v.description, style: 'tableHeader', rowSpan: v.ip_permissions.length.toString()},
+            {text: v.group_id, style: 'tableHeader', rowSpan: v.ip_permissions.length.toString()},
+            v.ip_permissions[0].user_id_group_pairs,
+            v.ip_permissions[0].ip_protocol,
+            v.ip_permissions[0].from_port.toString(),
+            v.ip_permissions[0].ip_ranges[0].cidr_ip,
+            v.ip_permissions_egress[0].user_id_group_pairs,
+            v.ip_permissions_egress[0].ip_protocol,
+            v.ip_permissions_egress[0].from_port.toString(),
+            v.ip_permissions_egress[0].ip_ranges[0].cidr_ip
+          );
+
+          if(v.ip_permissions.length > 0 && v.ip_permissions_egress.length > 0){
+            v.ip_permissions.forEach(function(inbound,index){
+              if(index+1 < v.ip_permissions_egress.length){
+                data.push('','',
+                  v.ip_permissions[index].user_id_group_pairs,
+                  v.ip_permissions[index].ip_protocol,
+                  v.ip_permissions[index].from_port.toString(),
+                  v.ip_permissions[index].ip_ranges[0].cidr_ip,
+                  v.ip_permissions_egress[index].user_id_group_pairs,
+                  v.ip_permissions_egress[index].from_port,
+                  v.ip_permissions_egress[index].ip_protocol,
+                  v.ip_permissions_egress[index].ip_ranges[0].cidr_ip
+                );
+                console.log(v.ip_permissions_egress[index+1], index, 'less');
+              }else{
+                data.push('','',
+                  v.ip_permissions[index].user_id_group_pairs,
+                  v.ip_permissions[index].ip_protocol,
+                  v.ip_permissions[index].from_port.toString(),
+                  v.ip_permissions[index].ip_ranges[0].cidr_ip,
+                  '','','',''
+                );
+                console.log(v.ip_permissions[index], index, 'more');
+              }
+          });
+          }
         });
         console.log(data);
         var docDefinition = {
@@ -1111,7 +1148,7 @@
                     {text: 'Port Range', style: 'tableHeader' },
                     {text: 'Source',  style: 'tableHeader' },
                    ],
-                   [data]
+                   data
               ]
           }
       },
