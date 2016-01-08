@@ -26,9 +26,12 @@
     </tbody>
   </table>
 
-  <button class="btn btn-success" @click="add()">Add</button>
-  <button class="btn btn-primary" @click="save()">Save</button>
-  <%= link_to(t('helpers.links.cancel'), projects_path(client_id: @project.client_id, project: @project), class: 'btn btn-default') %>
+  <div-loader v-if="saving" text="Saving..."></div-loader>
+  <div v-else>
+    <button class="btn btn-success" @click="add()">Add</button>
+    <button class="btn btn-primary" @click="save()">Save</button>
+    <%= link_to(t('helpers.links.cancel'), projects_path(client_id: @project.client_id, project: @project), class: 'btn btn-default') %>
+  </div>
 </div>
 
 <script>

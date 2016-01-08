@@ -1,3 +1,13 @@
+//
+// Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
+import {Alert, AlertForAjaxStdError} from './modal';
+
 interface Parameter {
   id: number;
   key: string;
@@ -92,6 +102,7 @@ const ProjectParamApp = new Vue({
   data: {
     params: PROJECT_PARAMETERS,
     project: PROJECT,
+    saving: false,
   },
   methods: {
     add: function () {
@@ -107,6 +118,7 @@ const ProjectParamApp = new Vue({
     save: function () {
       const params = (<Parameter[]>this.params).filter(p => !p.remove);
 
+      this.saving = true;
       $.ajax({
         url: '/project_parameters',
         method: "PUT",
@@ -114,6 +126,12 @@ const ProjectParamApp = new Vue({
           project_id: this.project.id,
           parameters: JSON.stringify(params),
         },
+      }).fail(AlertForAjaxStdError(() => { location.reload(); }))
+      .then((data) => {
+        this.saving = false;
+        return Alert("Project Parameters", data);
+      }).then( () => {
+        location.reload();
       });
     },
   },
