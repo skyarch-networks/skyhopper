@@ -363,14 +363,14 @@ describe InfrastructuresController, type: :controller do
     let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
 
 
-    stubize_rds(security_groups: security_groups, rds: rds)
+    stubize_rds(security_groups: security_groups)
     before{request_show_rds}
     subject{Infrastructure.find(infra.id)}
     should_be_success
 
     it 'should assign @rds' do
       # _s3 defined by support/mocks/s3.rb
-      expect(assigns[:rds]).to eq rds
+      expect(assigns[:rds]).to eq _rds
     end
 
     it 'should assign @security_groups' do
