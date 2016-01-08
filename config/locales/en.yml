@@ -127,6 +127,8 @@ en:
 
   project_parameters:
     title: 'Parameter'
+    description_html: 'You can edit parameters for each project.<br />
+                  In CloudFormation and Cook, you can use edited parameters.'
     btn:
       remove:   'Remove'
       unremove: 'UnRemove'

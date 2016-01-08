@@ -127,6 +127,8 @@ ja:
 
   project_parameters:
     title: 'パラーメター'
+    description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
+                  ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
     btn:
       remove:   '削除'
       unremove: '削除取消'
