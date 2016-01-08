@@ -127,6 +127,15 @@ en:
 
   project_parameters:
     title: 'Parameter'
+    btn:
+      remove:   'Remove'
+      unremove: 'UnRemove'
+    msg:
+      updated: 'Parameters was successfully updated.'
+    label:
+      removed: 'Removed'
+      new:     'New'
+      edited:  'Edited'
 
   infrastructures:
     infrastructure:     'Infrastructure'

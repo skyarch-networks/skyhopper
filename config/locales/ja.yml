@@ -127,6 +127,16 @@ ja:
 
   project_parameters:
     title: 'パラーメター'
+    btn:
+      remove:   '削除'
+      unremove: '削除取消'
+    msg:
+      updated: 'パラメーターは正常に更新されました'
+    label:
+      removed: '削除済み'
+      new:     '新規'
+      edited:  '編集済み'
+
 
   infrastructures:
     infrastructure:     'インフラストラクチャ'

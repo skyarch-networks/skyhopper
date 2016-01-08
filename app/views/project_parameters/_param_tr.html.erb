@@ -9,7 +9,7 @@
     <editable-div :text.sync="param.value"></editable-div>
   </td>
   <td>
-    <button v-if="!param.remove" class="btn btn-danger btn-xs"  @click="remove()">Remove</button>
-    <button v-else               class="btn btn-default btn-xs" @click="unremove()">UnRemove</button>
+    <button v-if="!param.remove" class="btn btn-danger btn-xs"  @click="remove()"><%=t('project_parameters.btn.remove')%></button>
+    <button v-else               class="btn btn-default btn-xs" @click="unremove()"><%=t('project_parameters.btn.unremove')%></button>
   </td>
 </tr>

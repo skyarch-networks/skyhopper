@@ -81,11 +81,11 @@ Vue.component('param-tr', {
 
     label_text: function () {
       if (this.param.remove) {
-        return 'Removed';
+        return t('project_parameters.label.removed');
       } else if (this.isNew) {
-        return 'New';
+        return t('project_parameters.label.new');
       } else if (this.param.changed) {
-        return 'Edited';
+        return t('project_parameters.label.edited');
       }
       return null;
     },
@@ -129,7 +129,7 @@ const ProjectParamApp = new Vue({
       }).fail(AlertForAjaxStdError(() => { location.reload(); }))
       .then((data) => {
         this.saving = false;
-        return Alert("Project Parameters", data);
+        return Alert(t('project_parameters.title'), data);
       }).then( () => {
         location.reload();
       });
