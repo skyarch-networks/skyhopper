@@ -3,13 +3,23 @@
     <span v-if="klass" class="label" :class="'label-' + klass">{{label_text}}</span>
   </td>
   <td>
+<% if updatable %>
     <editable-div :text.sync="param.key"></editable-div>
+<% else %>
+    {{param.key}}
+<% end %>
   </td>
   <td>
+<% if updatable %>
     <editable-div :text.sync="param.value"></editable-div>
+<% else %>
+    {{param.value}}
+<% end %>
   </td>
   <td>
+<% if updatable %>
     <button v-if="!param.remove" class="btn btn-danger btn-xs"  @click="remove()"><%=t('project_parameters.btn.remove')%></button>
     <button v-else               class="btn btn-default btn-xs" @click="unremove()"><%=t('project_parameters.btn.unremove')%></button>
+<% end %>
   </td>
 </tr>

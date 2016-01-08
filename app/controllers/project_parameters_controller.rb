@@ -19,6 +19,7 @@ class ProjectParametersController < ApplicationController
 
   def show
     @parameters = @project.project_parameters
+    @updatable = ProjectParameterPolicy.new(current_user, @project).update?
   end
 
   # Create / Update / Destroy 全部やる

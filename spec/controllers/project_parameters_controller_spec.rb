@@ -15,16 +15,35 @@ describe ProjectParametersController, type: :controller do
 
   describe '#show' do
     let(:parameters){create_list(:project_parameter, 3, project: project)}
+    let(:req){get :show, project_id: project.id}
 
     before do
       parameters
-      get :show, project_id: project.id
+      req
     end
 
     should_be_success
 
     it 'should assign @parameters' do
       expect(assigns[:parameters]).to eq parameters
+    end
+
+    it 'should assign @read_only' do
+      expect(assigns[:updatable]).to be true
+    end
+
+    context 'when can not update user' do
+      let(:req){nil} # override request for re-login
+      login_user(admin: false)
+      before do
+        get :show, project_id: project.id
+      end
+
+      should_be_success
+
+      it 'should assign false into @read_only' do
+        expect(assigns[:updatable]).to be false
+      end
     end
   end
 

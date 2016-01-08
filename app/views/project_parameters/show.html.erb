@@ -28,8 +28,10 @@
 
   <div-loader v-if="saving" text="Saving..."></div-loader>
   <div v-else>
+<% if @updatable %>
     <button class="btn btn-success" @click="add()">Add</button>
     <button class="btn btn-primary" @click="save()">Save</button>
+<% end %>
     <%= link_to(t('helpers.links.cancel'), projects_path(client_id: @project.client_id, project: @project), class: 'btn btn-default') %>
   </div>
 </div>
@@ -40,5 +42,5 @@ var PROJECT = <%= @project.attributes.slice('id').to_json.html_safe %>
 </script>
 
 <script id="param-tr-template" type="text/template">
-<%= render 'param_tr' %>
+<%= render partial: 'param_tr', locals: {updatable: @updatable} %>
 </script>
