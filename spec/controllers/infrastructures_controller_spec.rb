@@ -358,25 +358,14 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#show_rds' do
-    let(:physical_id){"physical_id"}
-    let(:security_groups){[]}
-    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id, security_groups: security_groups }
+    let(:physical_id){SecureRandom.hex(30)}
 
+    stubize_rds
+    before do
+      get :show_rds, id: infra.id, physical_id: physical_id
+    end
 
-    stubize_rds(security_groups: security_groups)
-    before{request_show_rds}
-    subject{Infrastructure.find(infra.id)}
     should_be_success
-
-    it 'should assign @rds' do
-      # _s3 defined by support/mocks/s3.rb
-      expect(assigns[:rds]).to eq _rds
-    end
-
-    it 'should assign @security_groups' do
-      expect(assigns[:security_groups]).to eq security_groups
-    end
-
   end
 
   describe '#show_elb' do

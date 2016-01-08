@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
+  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb]
 
   before_action do
     infra = @infrastructure || (
@@ -186,28 +186,26 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('infrastructures.msg.delete_stack_started'), status: 202 and return
   end
 
+  # GET /infrastructures/:id/show_rds
   def show_rds
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:id)
-    sc_g = infra.ec2.describe_security_groups().to_h
-    security_groups = map_security_groups(sc_g, elb.security_groups)
+    sc_g = @infrastructure.ec2.describe_security_groups.to_h
+    security_groups = nil #map_security_groups(sc_g, elb.security_groups)
 
-    infra = Infrastructure.find(infra_id)
-    rds = RDS.new(infra, physical_id)
+    rds = RDS.new(@infrastructure, physical_id)
 
-    @rds          = rds
+    @rds             = rds
     @security_groups = security_groups
   end
 
-  # GET /infrastructures/show_elb
+  # GET /infrastructures/:id/show_elb
   def show_elb
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:id)
 
-    infra = Infrastructure.find(infra_id)
-    elb = ELB.new(infra, physical_id)
+    elb = ELB.new(@infrastructure, physical_id)
 
-    sc_g = infra.ec2.describe_security_groups().to_h
+    sc_g = @infrastructure.ec2.describe_security_groups().to_h
     security_groups = map_security_groups(sc_g, elb.security_groups)
 
 
@@ -217,7 +215,7 @@ class InfrastructuresController < ApplicationController
 
     @security_groups = security_groups
 
-    ec2 = infra.resources.ec2
+    ec2 = @infrastructure.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
 
     list_server_certificates = elb.list_server_certificates
