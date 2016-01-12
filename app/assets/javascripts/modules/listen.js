@@ -119,8 +119,8 @@ function render_projects(value, key, lang){
             "<a href='/key_pairs?lang="+lang+"&amp;project_id="+value+"'>"+t('key_pairs.key_pairs')+"</a>" +
           "</li>" +
         "</ul>" +
-      "</div>" +edit;
-       return ret+del;
+      "</div>";
+       return ret+edit+del;
   }else{
     return value;
   }

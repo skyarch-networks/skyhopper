@@ -33,7 +33,8 @@
 
             <%= link_to t('.edit', default: t("helpers.links.edit")),
               edit_project_path(project),
-              class: 'btn btn-default btn-xs' %>
+              class: 'btn btn-default btn-xs',
+              id: 'edit-'+project.id.to_s %>
 
             <%= button_delete_project(project) %>
 
