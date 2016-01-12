@@ -35,22 +35,6 @@ class ServerStatusController < ApplicationController
       render text: @server.status and return
     end
 
-    Thread.new do
-      ws = WSConnector.new('server_status', @server.kind)    # ws://HOST/server_status/(chef|zabbix)
-
-      before_status = ""
-      10.times do
-        status = @server.latest_status
-        ws.push(status)
-        break if status == :running && before_status == :pending
-        break if status == :stopped && before_status == :stopping
-        before_status = status
-        sleep(8)
-      end
-
-      ws.push("finish_ws")
-    end
-
     render text: @server.latest_status and return
   end
 
