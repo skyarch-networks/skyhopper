@@ -9,6 +9,7 @@
 module ProjectsHelper
   def button_delete_project(project)
     return nil unless Pundit.policy(current_user, project).destroy?
+    return nil if project.infrastructures.count > 0
     kid = 'delete-'+project.id.to_s
     link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
       project_path(project),

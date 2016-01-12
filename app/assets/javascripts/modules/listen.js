@@ -92,7 +92,7 @@ function render_infrastructures(value, key, lang){
 
 function render_clients(value, key, lang){
   if(key === 'id'){
-    var isEdit = $('#delete-'+value+'').attr('class');
+    var isEdit = $('#edit-'+value+'').attr('class');
     var isDelete = $('#delete-'+value+'').attr('class');
     var edit = '';
     var del = '';
