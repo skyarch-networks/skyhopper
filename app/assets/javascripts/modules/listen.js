@@ -93,8 +93,7 @@ function render_infrastructures(value, key, lang){
 
 function render_clients(value, key, lang){
   if(key === 'id'){
-    var isEdit = ( $('#edit-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
-    var edit = '';
+    var edit = ( $('#edit-'+value+'').attr('class') ?  " <a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : "");
     var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
     var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('clients.btn.show_projects')+"</a> ";
        return ret+edit+del;
