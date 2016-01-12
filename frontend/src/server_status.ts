@@ -114,7 +114,6 @@ class App extends Vue {
   start(): void {
     Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
       this.model.start();
-      this.status(true);
     });
   }
 
@@ -122,7 +121,6 @@ class App extends Vue {
   stop(): void {
     Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
       this.model.stop();
-      this.status(true);
     });
   }
 
