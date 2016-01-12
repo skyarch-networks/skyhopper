@@ -92,4 +92,12 @@ describe User, type: :model do
       end
     end
   end
+
+  describe '#new_mfa_key' do
+    it 'should return key and qr code' do
+      mfa_key, qr_code = user.new_mfa_key
+      expect(mfa_key).to be_a String
+      expect(qr_code).to be_a String
+    end
+  end
 end
