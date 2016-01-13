@@ -74,6 +74,7 @@
            success: function (data) {
              this.pages = data.length;
              self.data = data.map(function (item) {
+               console.log(item);
                var item_key = '*****'+item.access_key.substring(item.access_key.length-3,item.access_key.length);
                return {
                  code: item.code,

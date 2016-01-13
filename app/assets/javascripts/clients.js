@@ -76,10 +76,12 @@
            url:'clients?lang='+self.lang,
            success: function (data) {
              this.pages = data.length;
+             console.log(data);
              self.data = data.map(function (item) {
                return {
                  code: item.code,
                  name: item.name,
+                 projects: item.projects.length,
                  id: item.id,
                };
              });
@@ -113,7 +115,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'id'],
+      gridColumns: ['code','name', 'projects','id'],
       gridData: []
     }
   });

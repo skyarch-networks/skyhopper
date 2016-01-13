@@ -69,6 +69,8 @@ function render_clients(value){
     return t ('clients.code');
   }else if (value === 'name') {
     return t ('clients.name');
+  }else if (value === 'projects') {
+    return t ('clients.projects');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{
