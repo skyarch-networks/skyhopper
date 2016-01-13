@@ -116,6 +116,7 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     cloud_provider:    'Cloud Provider'
+    infras:            'No. of Infrastructures'
     btn:
       show_infrastructures: 'Show'
       add:                  'New Project'

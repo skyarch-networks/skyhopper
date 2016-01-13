@@ -116,6 +116,7 @@ ja:
     access_key:        'アクセスキー'
     secret_access_key: 'シークレットキー'
     cloud_provider:    'クラウド提供会社'
+    infras:            'インフラの号'
     btn:
       show_infrastructures: 'インフラ一覧'
       add:                  '新規案件'

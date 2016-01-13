@@ -57,6 +57,8 @@ function render_projects(value){
     return t ('projects.cloud_provider');
   }else if (value === 'access_key') {
     return t ('projects.access_key');
+  }else if (value === 'infras') {
+    return t ('projects.infras');
   }else if (value === 'id') {
     return t ('common.actions');
   }else{
