@@ -128,6 +128,7 @@ function render_projects(value, key, lang){
           "<li>" +
             "<a href='/dishes?lang="+lang+"&amp;project_id="+value+"'>"+t('dishes.dishes')+"</a>" +
             "<a href='/key_pairs?lang="+lang+"&amp;project_id="+value+"'>"+t('key_pairs.key_pairs')+"</a>" +
+            "<a href='/project_parameters?lang="+lang+"&amp;project_id="+value+"'>"+t('project_parameters.title')+"</a>" +
           "</li>" +
         "</ul>" +
       "</div>" +
