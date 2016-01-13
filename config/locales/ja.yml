@@ -125,6 +125,21 @@ ja:
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
 
+  project_parameters:
+    title: 'パラーメター'
+    description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
+                  ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
+    btn:
+      remove:   '削除'
+      unremove: '削除取消'
+    msg:
+      updated: 'パラメーターは正常に更新されました'
+    label:
+      removed: '削除済み'
+      new:     '新規'
+      edited:  '編集済み'
+
+
   infrastructures:
     infrastructure:     'インフラストラクチャ'
     genre:              '種別'
@@ -175,9 +190,11 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
 
   security_groups:
+      title:        'セキュリティグループ'
       associated:   'と関連付けられたセキュリティグループ'
       description:  '説明'
       group_id:     'グループ ID'
+      group_name:   'グループ名'
       inbound:      'インバウンド'
       outbound:     'アウトバウンド'
       type:         'タイプ'
@@ -185,12 +202,18 @@ ja:
       port_range:   'ポート範囲'
       source:       '送信元'
       destination:  '送信先'
+      list_all:     'すべてのセキュリティグループのリスト'
+      denotes:      '* デフォルトの VPC であることを示します'
       btn:
         view_rules:           'ルールの表示'
         change_groups:        'セキュリティグループの変更'
         assign:               'セキュリティグループの割り当て'
+        security_groups:      'セキュリティグループ'
+        create:               'セキュリティグループの作成'
       msg:
-        change_success:        'セキュリティの変更グループの成功！'
+        change_success:        'セキュリティグループの変更に成功しました'
+        error:  'エラー'
+        error_msg: '少なくとも 1 つのセキュリティグループを選択する必要があります。'
 
   operation_scheduler:
     title: '運用スケジューラ'
@@ -455,6 +478,8 @@ ja:
     mfa_secret:        'MFA の秘密鍵'
     search:            'メールアドレスで検索'
     create_new_user:   '新規ユーザーの作成'
+    create_admin_user: '管理者ユーザーの作成'
+    remember_me:       'ログイン状態を保持する'
     btn:
       add: '新規ユーザー'
       sync: 'Zabbix Server と同期'

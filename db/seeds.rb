@@ -78,6 +78,6 @@ template_paths.each do |path|
   parsed = JSON.parse(value)
   detail = parsed['Description']
 
-  CfTemplate.delete_all(name: name)
+  CfTemplate.where(name: name, infrastructure_id: nil).delete_all
   CfTemplate.create(name: name, detail: detail, value: value)
 end

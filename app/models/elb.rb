@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -29,6 +29,12 @@ class ELB
   def instances
     data = @elb.describe_instance_health(load_balancer_name: @name)
     return data.instance_states.map(&:to_hash)
+  end
+
+  # return instance description.
+  # @return [Array<Hash{Symbol => String}>]
+  def security_groups
+    return details.security_groups
   end
 
   # @return [Array<Hash{Symbol => String}>]
@@ -148,6 +154,15 @@ class ELB
     return nil
   end
 
+
+  # register EC2 instance to ELB
+  # @param [Array] security group id.
+  def elb_submit_groups(group_ids)
+    @elb.apply_security_groups_to_load_balancer(
+      load_balancer_name: @name,
+      security_groups: group_ids,
+    )
+  end
 
   private
 

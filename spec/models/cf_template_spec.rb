@@ -1,5 +1,5 @@
 # #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #

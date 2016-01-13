@@ -1,3 +1,11 @@
+//
+// Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+//
+// This software is released under the MIT License.
+//
+// http://opensource.org/licenses/mit-license.php
+//
+
 module.exports = function (value, key, option, lang) {
   if(option[0] === 'infrastructure'){
     return render_infrastructures(value, key, lang);
@@ -120,6 +128,7 @@ function render_projects(value, key, lang){
           "<li>" +
             "<a href='/dishes?lang="+lang+"&amp;project_id="+value+"'>"+t('dishes.dishes')+"</a>" +
             "<a href='/key_pairs?lang="+lang+"&amp;project_id="+value+"'>"+t('key_pairs.key_pairs')+"</a>" +
+            "<a href='/project_parameters?lang="+lang+"&amp;project_id="+value+"'>"+t('project_parameters.title')+"</a>" +
           "</li>" +
         "</ul>" +
       "</div>" +
@@ -206,7 +215,7 @@ function render_user_admin(value, key, lang){
       del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/users_admin/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("helpers.links.destroy")+"</a>";
     return edit+del;
   }else if (key === 'email') {
-    var image = "<img class='img-rounded gravatar-icon' src='http://www.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
+    var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
     var email = value[1];
     return image+" "+email;
   }else if (key === 'role') {

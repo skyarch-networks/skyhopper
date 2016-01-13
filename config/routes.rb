@@ -14,6 +14,7 @@ SkyHopper::Application.routes.draw do
   resources :clients, except: :show
 
   resources :projects, except: :show
+  resource :project_parameters, only: [:show, :update]
 
   resources :key_pairs, only: [:index, :destroy], param: :name do
     collection do
@@ -47,6 +48,7 @@ SkyHopper::Application.routes.draw do
   resources :nodes, only: [:update, :show, :edit] do
     collection do
       get  'recipes'
+      post 'create_group'
     end
     member do
       put  'cook'
@@ -73,6 +75,7 @@ SkyHopper::Application.routes.draw do
       get  'serverspec_status'
       post 'register_to_elb'
       post 'deregister_from_elb'
+      post 'elb_submit_groups'
       get  'attachable_volumes'
       get  'available_resources'
       post 'attach_volume'

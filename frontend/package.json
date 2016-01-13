@@ -11,13 +11,16 @@
     "test": "karma start --single-run"
   },
   "dependencies": {
+    "bootstrap": "^3.3.6",
     "bower": "^1.5.3",
     "brace": "0.7.0",
     "browserify": "~> 10.2.4",
     "browserify-incremental": "^3.0.1",
+    "lodash": "^3.10.1",
     "md5": "^2.0.0",
-    "serverspec-generator": "0.0.2",
     "query-string": "^2.4.1",
+    "serverspec-generator": "^1.0.0",
+    "vue": "^1.0.12",
     "vue-ace": "0.0.1"
   },
   "devDependencies": {

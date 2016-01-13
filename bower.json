@@ -11,7 +11,6 @@
   ],
   "dependencies": {
     "favico.js": "~0.3.7",
-    "bootstrap": "~3.3.4",
     "bootswatch-dist": "paper",
     "ajax_set.js": "https://github.com/pocke/ajax_set.js.git#106d927aba64fa99220a1199973d41f2a448bd2c",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
@@ -20,14 +19,13 @@
     "jquery": "~2.1.4",
     "jquery-ujs": "~1.0.3",
     "jquery-ui": "~1.11.4",
-    "vue": "~1.0.7",
-    "lodash": "~3.9.3",
     "zeroclipboard": "~2.2.0",
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
     "selectize": "~0.12.1",
     "microplugin": "~0.0.3",
     "sifter": "~0.4.3",
     "fullcalendar": "~2.4.0",
-    "selectize-bootswatch": "5e9042f617"
+    "selectize-bootswatch": "5e9042f617",
+    "offline": "~0.7.14"
   }
 }

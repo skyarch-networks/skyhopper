@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -13,7 +13,7 @@ class NodePolicy < ApplicationPolicy
   end
 
 
-  %i[run_bootstrap? edit? update? cook? apply_dish? submit_groups? get_rules? get_security_groups? update_attributes? edit_attributes? yum_update? schedule_yum?].each do |action|
+  %i[run_bootstrap? edit? update? cook? apply_dish? submit_groups? create_group? get_rules? get_security_groups? update_attributes? edit_attributes? yum_update? schedule_yum?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end

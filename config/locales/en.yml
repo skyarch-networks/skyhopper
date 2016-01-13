@@ -125,6 +125,19 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
 
+  project_parameters:
+    title: 'Parameter'
+    description_html: 'You can set/edit the parameters for each project.<br />
+                  Furthermore, you can use the given parameters in CloudFormation and Cook.'
+    btn:
+      remove:   'Remove'
+      unremove: 'Undo'
+    msg:
+      updated: 'Parameters was successfully updated.'
+    label:
+      removed: 'Removed'
+      new:     'New'
+      edited:  'Edited'
 
   infrastructures:
     infrastructure:     'Infrastructure'
@@ -176,6 +189,7 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
 
   security_groups:
+    title:        'Security Groups'
     associated:   'Security Groups associated with'
     description:  'Description'
     group_id:     'Security Group ID'
@@ -188,12 +202,18 @@ en:
     source:       'Source'
     destination:  'Destination'
     name:         'Name'
+    list_all:     'List of all Security Groups'
+    denotes:      '* denotes default VPC'
     btn:
       view_rules:           'View Rules'
       change_groups:        'Change Security Groups'
       assign:               'Assign Security Groups'
+      security_groups:      'Security Groups'
+      create:               'Create Security Group'
     msg:
       change_success:        'Change Security Groups Success!'
+      error:  'Error!'
+      error_msg: 'you need to select at least one security group.'
 
 
   operation_scheduler:
@@ -458,6 +478,8 @@ en:
     mfa_secret:        'Secret key of MFA'
     search:            'Search by email'
     create_new_user:   'Create New User'
+    create_admin_user: 'Create Administrator User'
+    remember_me:       'Remember me'
     btn:
       add: 'Add User'
       sync: 'Synchronize with Zabbix Server'

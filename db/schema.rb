@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105081349) do
+ActiveRecord::Schema.define(version: 20151224042738) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -136,6 +136,17 @@ ActiveRecord::Schema.define(version: 20151105081349) do
     t.integer  "user_id",     limit: 4
   end
 
+  create_table "project_parameters", force: :cascade do |t|
+    t.integer  "project_id", limit: 4,   null: false
+    t.string   "key",        limit: 255, null: false
+    t.string   "value",      limit: 255, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "project_parameters", ["project_id", "key"], name: "index_project_parameters_on_project_id_and_key", unique: true, using: :btree
+  add_index "project_parameters", ["project_id"], name: "index_project_parameters_on_project_id", using: :btree
+
   create_table "projects", force: :cascade do |t|
     t.string   "code",              limit: 255
     t.datetime "created_at"
@@ -255,6 +266,7 @@ ActiveRecord::Schema.define(version: 20151105081349) do
   add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade
   add_foreign_key "infrastructures", "ec2_private_keys", on_delete: :cascade
   add_foreign_key "infrastructures", "projects", on_delete: :cascade
+  add_foreign_key "project_parameters", "projects"
   add_foreign_key "projects", "clients", on_delete: :cascade
   add_foreign_key "user_projects", "projects", on_delete: :cascade
   add_foreign_key "user_projects", "users", on_delete: :cascade

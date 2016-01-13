@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -45,12 +45,12 @@ describe Node::Attribute do
     it do
       is_expected.to eq({
         'yum_releasever' => {
-          'releasever' => '2014.09',
+          'releasever' => '2014.09'
         },
         'zabbix' => {
           'agent' => {
-            'servers' => ['example.com'],
-          },
+            'servers' => ['example.com']
+          }
         },
       },)
     end

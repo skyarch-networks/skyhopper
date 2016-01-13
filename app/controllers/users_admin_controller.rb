@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -30,7 +30,8 @@ class UsersAdminController < ApplicationController
   # register new user only by master
   # GET /users_admin/new
   def new
-    @user = User.new
+    @user = User.new(session[:form])
+    session[:form] = nil  # remove temporary form data
   end
 
   # create new user only by master
@@ -46,6 +47,11 @@ class UsersAdminController < ApplicationController
 
     e = -> (ex) {
       flash[:alert] = ex.message
+      session[:form] = {
+        email:  params[:user][:email],
+        admin:  params[:user][:admin],
+        master: params[:user][:master],
+      }
       redirect_to(action: :new)
     }
 
@@ -80,10 +86,7 @@ class UsersAdminController < ApplicationController
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
 
-    # 新しい MFA の鍵を生成する
-    @mfa_key = ROTP::Base32.random_base32
-    uri = ROTP::TOTP.new(@mfa_key).provisioning_uri("skyhopper/#{user.email}")
-    @mfa_qrcode = RQRCode::QRCode.new(uri).as_html # XXX: ここが遅い(開発環境で100msぐらいはかかる)
+    @mfa_key, @mfa_qrcode = user.new_mfa_key
   end
 
   # PUT /users_admin/1

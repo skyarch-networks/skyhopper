@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -54,8 +54,14 @@ class ProjectsController < ApplicationController
   def new
     client_id = params.require(:client_id)
 
-    @project = Project.new
+    @project = Project.new(session[:form])
     @project.client_id = client_id
+
+    if session[:form]
+      @project[:access_key] = session[:form][:access_key]
+      @project[:secret_access_key] = session[:form][:secret_access_key]
+    end
+    session[:form] = nil
 
     @cloud_providers = CloudProvider.all
   end
@@ -70,7 +76,10 @@ class ProjectsController < ApplicationController
   def create
     @project = Project.new(project_params)
 
-    on_error = -> () {redirect_to new_project_path(client_id: params[:project][:client_id])}
+    on_error = -> () {
+      session[:form] = project_params
+      redirect_to new_project_path(client_id: params[:project][:client_id])
+    }
 
     unless @project.save
       flash[:alert] = @project.errors
@@ -96,7 +105,6 @@ class ProjectsController < ApplicationController
       # If use Project#destroy, Project detached from zabbix by model hook.
       @project.delete
       flash[:alert] = ex.message
-
       on_error.() and return
     end
   end

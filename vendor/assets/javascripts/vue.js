@@ -1,1 +1,1 @@
-../../bower_components/vue/dist/vue.js
+../../../frontend/node_modules/vue/dist/vue.js
