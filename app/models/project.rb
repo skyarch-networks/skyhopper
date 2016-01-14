@@ -10,7 +10,7 @@ class Project < ActiveRecord::Base
   belongs_to :client
   belongs_to :cloud_provider
 
-  has_many :infrastructures,    dependent: :destroy
+  has_many :infrastructures,    dependent: :restrict_with_error
   has_many :dishes,             dependent: :delete_all
   has_many :project_parameters, dependent: :delete_all
 

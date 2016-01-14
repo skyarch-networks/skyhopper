@@ -7,7 +7,7 @@
 #
 
 class Client < ActiveRecord::Base
-  has_many :projects, dependent: :destroy
+  has_many :projects, dependent: :restrict_with_error
   has_many :infrastructures, through: :projects
 
   validates :code,
