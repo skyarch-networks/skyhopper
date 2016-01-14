@@ -57,7 +57,7 @@ function render_projects(value){
     return t ('projects.cloud_provider');
   }else if (value === 'access_key') {
     return t ('projects.access_key');
-  }else if (value === 'infras') {
+  }else if (value === 'nums') {
     return t ('projects.infras');
   }else if (value === 'id') {
     return t ('common.actions');
@@ -71,7 +71,7 @@ function render_clients(value){
     return t ('clients.code');
   }else if (value === 'name') {
     return t ('clients.name');
-  }else if (value === 'projects') {
+  }else if (value === 'nums') {
     return t ('clients.projects');
   }else if (value === 'id') {
     return t ('common.actions');

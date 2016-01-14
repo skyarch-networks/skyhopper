@@ -80,7 +80,7 @@
                return {
                  code: item.code,
                  name: item.name,
-                 projects: item.projects.length,
+                 nums: item.projects.length,
                  id: item.id,
                };
              });
@@ -114,7 +114,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'projects','id'],
+      gridColumns: ['code','name', 'nums','id'],
       gridData: []
     }
   });

@@ -4,7 +4,7 @@
   <thead>
     <tr>
       <th v-for=" key in columns"
-          :class="{active: sortKey == key}"
+          :class="{active: sortKey == key, 'col-xs-1': 'nums' == key}"
           @click="sortBy(key)">
         <span v-html="key | wrap option"></span>
           <span v-if="key !== 'id' && key !== 'role'" class="pull-right glyphicon" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>

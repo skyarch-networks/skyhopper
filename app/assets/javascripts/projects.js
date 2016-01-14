@@ -80,7 +80,7 @@
                  name: item.name,
                  cloud_provider: item.cloud_provider.name,
                  access_key: item_key,
-                 infras: item.infrastructures.length,
+                 nums: item.infrastructures.length,
                  id: item.id,
                };
              });
@@ -114,7 +114,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'cloud_provider', 'access_key', 'infras', 'id'],
+      gridColumns: ['code','name', 'cloud_provider', 'access_key', 'nums', 'id'],
       gridData: []
     }
   });
