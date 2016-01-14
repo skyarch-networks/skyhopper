@@ -18,3 +18,4 @@ require 'rake'
 SkyHopper::Application.load_tasks
 
 Crono.perform(Operation_worker).every 30.seconds
+Crono.perform(ServerStateWorker).every 5.minutes
