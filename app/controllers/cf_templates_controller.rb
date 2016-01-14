@@ -202,16 +202,16 @@ class CfTemplatesController < ApplicationController
       action = stack.apply_template(cf_template.value, cf_template.parsed_cfparams)
     rescue => ex
       return {message: ex.message, status: false}
-    else
-      infrastructure.status = stack.status[:message]
-      infrastructure.save!
+    end
 
-      cf_template.update_cfparams
+    infrastructure.status = stack.status[:message]
+    infrastructure.save!
 
-      if cf_template.save
-        infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
-        return {message: t("cf_templates.msg.#{action.downcase}"), status: true}
-      end
+    cf_template.update_cfparams
+
+    if cf_template.save
+      infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
+      return {message: t("cf_templates.msg.#{action.downcase}"), status: true}
     end
   end
 end

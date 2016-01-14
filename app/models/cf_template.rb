@@ -28,7 +28,7 @@ class CfTemplate < ActiveRecord::Base
   end
 
   # create parameters set for cloudformation
-  def create_cfparams_set(infrastructure, params_inserted = nil)
+  def create_cfparams_set(infrastructure, params_inserted = {})
     parameters = []
     if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
       parameters.push(
@@ -37,10 +37,11 @@ class CfTemplate < ActiveRecord::Base
       )
     end
 
-    if params_inserted
-      params_inserted.each do |key, val|
-        parameters.push({ parameter_key: key, parameter_value: val })
-      end
+    params_inserted.each do |key, val|
+      parameters.push(
+        parameter_key: key,
+        parameter_value: val
+      )
     end
 
     @params_not_json = parameters.compact
