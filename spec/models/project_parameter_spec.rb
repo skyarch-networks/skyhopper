@@ -43,6 +43,12 @@ describe ProjectParameter, type: :model do
   describe '.exec' do
     subject{ProjectParameter.exec(target, project: project)}
 
+    context 'when project and project_id dont exist' do
+      it do
+        expect{ProjectParameter.exec("hogehoge")}.to raise_error ArgumentError
+      end
+    end
+
     context 'include no param' do
       let(:target){'hogehoge'}
       it {is_expected.to eq target}
