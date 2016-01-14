@@ -37,7 +37,7 @@ class CfTemplate < ActiveRecord::Base
       )
     end
 
-    params_inserted.each do |key, val|
+    params_inserted.try!(:each) do |key, val|
       parameters.push(
         parameter_key: key,
         parameter_value: val
