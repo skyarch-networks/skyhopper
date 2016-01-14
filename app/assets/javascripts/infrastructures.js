@@ -187,14 +187,25 @@
         // for project parameter
         Vue.nextTick(function () {
           var inputs = $(self.$el).parent().find('input');
+          var project_id = queryString.project_id;
           inputs.textcomplete([
             {
-              words: ['hoge', 'fuga', 'poyo', 'piyo', 'foo'],
               match: /\$\{((?:[a-zA-Z_][a-zA-Z0-9_]*)?)$/,
               search: function (term, callback) {
-                callback($.map(this.words, function (word) {
-                  return word.indexOf(term) === 0 ? word : null;
-                }));
+                $.ajax({
+                  url: '/project_parameters.json',
+                  method: 'GET',
+                  data: {
+                    project_id: project_id,
+                  }
+                }).then(function (params) {
+                  var p = params.map(function (param) {
+                    return param.key.indexOf(term) === 0 ? param.key : null;
+                  }).filter(function (param) {
+                    return param;
+                  });
+                  callback(p);
+                });
               },
               template: function (value) {
                 return '${' + value + '}';
