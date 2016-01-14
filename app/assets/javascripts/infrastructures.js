@@ -189,32 +189,7 @@
           var inputs = $(self.$el).parent().find('input');
           var project_id = queryString.project_id;
           inputs.textcomplete([
-            {
-              match: /\$\{((?:[a-zA-Z_][a-zA-Z0-9_]*)?)$/,
-              search: function (term, callback) {
-                $.ajax({
-                  url: '/project_parameters.json',
-                  method: 'GET',
-                  data: {
-                    project_id: project_id,
-                  }
-                }).then(function (params) {
-                  var p = params.map(function (param) {
-                    return param.key.indexOf(term) === 0 ? param.key : null;
-                  }).filter(function (param) {
-                    return param;
-                  });
-                  callback(p);
-                });
-              },
-              template: function (value) {
-                return '${' + value + '}';
-              },
-              replace: function (word) {
-                return "${" + word + '}';
-              },
-              index: 1,
-            }
+            require('complete_project_parameter').default(project_id),
           ]);
         });
       });
