@@ -11,12 +11,12 @@ require_relative '../spec_helper'
 describe ServerStatusController, type: :controller do
   login_user
 
-  let(:server){double(:server, start: nil, stop: nil, notify_latest_status: nil)}
+  let(:server){double(:server, start: nil, stop: nil)}
   before do
     allow(ServerState).to receive(:new).and_return(server)
   end
 
-  describe '#start' do
+  describe '#strat' do
     %w[chef zabbix].each do |kind|
       context "when #{kind}" do
         before{post :start, kind: kind}

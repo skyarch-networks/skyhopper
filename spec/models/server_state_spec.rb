@@ -100,22 +100,6 @@ describe ServerState, type: :model do
     end
   end
 
-  describe '#notify_latest_status' do
-    let(:ws) { double(:ws, push: nil) }
-
-    before do
-      allow(WSConnector).to receive(:new).and_return(ws)
-    end
-
-    servers.each do |kind|
-      let(:target) { server_status[kind].notify_latest_status }
-
-      it 'should return status' do
-        expect(target).to eq status
-      end
-    end
-  end
-
   describe '#start' do
     servers.each do |kind|
       context "when server is #{kind}" do
