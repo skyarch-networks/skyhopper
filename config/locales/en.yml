@@ -127,6 +127,19 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
 
+  project_parameters:
+    title: 'Parameter'
+    description_html: 'You can set/edit the parameters for each project.<br />
+                  Furthermore, you can use the given parameters in CloudFormation and Cook.'
+    btn:
+      remove:   'Remove'
+      unremove: 'Undo'
+    msg:
+      updated: 'Parameters was successfully updated.'
+    label:
+      removed: 'Removed'
+      new:     'New'
+      edited:  'Edited'
 
   infrastructures:
     infrastructure:     'Infrastructure'

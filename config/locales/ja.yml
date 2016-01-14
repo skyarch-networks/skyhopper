@@ -127,6 +127,21 @@ ja:
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
 
+  project_parameters:
+    title: 'パラーメター'
+    description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
+                  ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
+    btn:
+      remove:   '削除'
+      unremove: '削除取消'
+    msg:
+      updated: 'パラメーターは正常に更新されました'
+    label:
+      removed: '削除済み'
+      new:     '新規'
+      edited:  '編集済み'
+
+
   infrastructures:
     infrastructure:     'インフラストラクチャ'
     genre:              '種別'

@@ -7,17 +7,25 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-FactoryGirl.define do  factory :recurring_date do
+FactoryGirl.define do
+  factory :recurring_date do
     operation_duration_id "MyString"
-repeats 1
-start_time "2015-10-16 06:25:23"
-end_time "2015-10-16 06:25:23"
-dates "MyString"
+    repeats 1
+    start_time "2015-10-16 06:25:23"
+    end_time "2015-10-16 06:25:23"
+    dates "MyString"
   end
+
   factory :operation_duration do
     resource_id 1
-start_date "2015-10-16 06:24:20"
-end_date "2015-10-16 06:24:20"
+    start_date "2015-10-16 06:24:20"
+    end_date "2015-10-16 06:24:20"
+  end
+
+  factory :project_parameter do
+    sequence(:key){|n| "key#{n}"}
+    value {SecureRandom.base64(64)}
+    project
   end
 
   factory :serverspec_result do
