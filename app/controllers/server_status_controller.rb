@@ -15,7 +15,6 @@ class ServerStatusController < ApplicationController
   # @param [String] kind Server kind. "chef" or "zabbix"
   def start
     @server.start
-    @server.notify_latest_status
 
     render nothing: true
   end
@@ -24,7 +23,6 @@ class ServerStatusController < ApplicationController
   # @param [String] kind Server kind. "chef" or "zabbix"
   def stop
     @server.stop
-    @server.notify_latest_status
 
     render nothing: true
   end

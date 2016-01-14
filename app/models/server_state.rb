@@ -37,13 +37,6 @@ class ServerState
     return s
   end
 
-  def notify_latest_status
-    s = latest_status
-    ws = WSConnector.new('server_status', @kind)
-    ws.push(s)
-    s
-  end
-
   def start
     @server.start
   end
