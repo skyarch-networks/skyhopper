@@ -21,7 +21,7 @@ class ProjectParameter < ActiveRecord::Base
 
       params = self.where(project_id: project_id || project.id)
       re = /(?<!\\)\$\{(?<key>#{params.map(&:key).join('|')})\}/
-      target.gsub(re) do |matched|
+      target.gsub(re) do
         key = $~[:key]
         params.find_by(key: key).value
       end
