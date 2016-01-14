@@ -9,6 +9,7 @@
 class ServerStatusController < ApplicationController
   before_action :authenticate_user!
   before_action :set_server
+  after_action :watch_server_state, only: [:start, :stop]
 
 
   # POST /server/:kind/start
@@ -43,5 +44,9 @@ class ServerStatusController < ApplicationController
 
   def set_server
     @server = ServerState.new(params.require(:kind))
+  end
+
+  def watch_server_state
+    ServerStateWorker.perform_now(@server.kind)
   end
 end
