@@ -1,3 +1,8 @@
+interface ProjectParameter {
+  key: string;
+  value: string;
+}
+
 function strategyGen(project_id: number) {
   const ajax = $.ajax({
     url: '/project_parameters.json',
@@ -8,25 +13,24 @@ function strategyGen(project_id: number) {
   });
 
   return {
+    index: 1,
     match: /\$\{((?:[a-zA-Z_][a-zA-Z0-9_]*)?)$/,
 
     search: function (term: string, callback: Function) {
-      ajax.then((params: Array<any>) => {
-        const p = params
-          .map(pa => pa.key)
-          .filter(k => k.indexOf(term) === 0);
+      ajax.then((params: Array<ProjectParameter>) => {
+        const p = params.filter(k => k.key.indexOf(term) === 0);
         callback(p);
       });
     },
 
-    template: function (value: string) {
-      return '${' + value + '}';
+    template: function (param: ProjectParameter) {
+      // XXX: sanitize
+      return '${' + param.key + '} (' + param.value + ')';
     },
 
-    replace: function (word: string) {
-      return "${" + word + '}';
+    replace: function (param: ProjectParameter) {
+      return "${" + param.key + '}';
     },
-    index: 1,
   };
 }
 
