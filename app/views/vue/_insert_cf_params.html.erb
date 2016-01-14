@@ -10,7 +10,7 @@
             {{ option }}
           </option>
         </select>
-        <input v-if="!val.AllowedValues" id="{{key}}" v-model="result[key]" class="form-control" type="text" required="">
+        <input v-else id="{{key}}" v-model="result[key]" class="form-control" type="text" required="" autocomplete="off">
         <span class="help-block" v-text="val.Description"></span>
       </div>
     </div>
