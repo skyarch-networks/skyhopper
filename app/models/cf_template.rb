@@ -40,9 +40,10 @@ class CfTemplate < ActiveRecord::Base
     params_inserted.try!(:each) do |key, val|
       parameters.push(
         parameter_key: key,
-        parameter_value: val
+        parameter_value: ProjectParameter.exec(val, project_id: infrastructure.project_id),
       )
     end
+
 
     @params_not_json = parameters.compact
   end
