@@ -9,6 +9,7 @@
 class ServerStatusController < ApplicationController
   before_action :authenticate_user!
   before_action :set_server
+  after_action :watch_server_state, only: [:start, :stop]
 
 
   # POST /server/:kind/start
@@ -35,22 +36,6 @@ class ServerStatusController < ApplicationController
       render text: @server.status and return
     end
 
-    Thread.new do
-      ws = WSConnector.new('server_status', @server.kind)    # ws://HOST/server_status/(chef|zabbix)
-
-      before_status = ""
-      10.times do
-        status = @server.latest_status
-        ws.push(status)
-        break if status == :running && before_status == :pending
-        break if status == :stopped && before_status == :stopping
-        before_status = status
-        sleep(8)
-      end
-
-      ws.push("finish_ws")
-    end
-
     render text: @server.latest_status and return
   end
 
@@ -59,5 +44,9 @@ class ServerStatusController < ApplicationController
 
   def set_server
     @server = ServerState.new(params.require(:kind))
+  end
+
+  def watch_server_state
+    ServerStateWorker.perform_now(@server.kind)
   end
 end

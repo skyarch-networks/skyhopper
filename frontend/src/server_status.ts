@@ -71,10 +71,6 @@ class Server {
   watch(callback: (text: string) => void) {
     const ws = ws_connector('server_status', this.kind);
     ws.onmessage = function (msg) {
-      if (msg.data === 'finish_ws') {
-        ws.close();
-        return;
-      }
       callback(msg.data);
     };
   };
@@ -118,7 +114,6 @@ class App extends Vue {
   start(): void {
     Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
       this.model.start();
-      this.status(true);
     });
   }
 
@@ -126,7 +121,6 @@ class App extends Vue {
   stop(): void {
     Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
       this.model.stop();
-      this.status(true);
     });
   }
 
@@ -187,7 +181,7 @@ class App extends Vue {
   // Lifecycle
   private _created(): void {
     console.log(this);
-    this.status();
+    this.status(true);
   }
 }
 

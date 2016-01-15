@@ -19,7 +19,7 @@
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "query-string": "^2.4.1",
-    "serverspec-generator": "0.1.0",
+    "serverspec-generator": "^1.0.0",
     "vue": "^1.0.12",
     "vue-ace": "0.0.1"
   },
