@@ -9,6 +9,7 @@
 
 //= require jquery
 //= require jquery_ui
+//= require jquery.textcomplete
 //= require rails
 //= require ajax_set
 //= require i18n
