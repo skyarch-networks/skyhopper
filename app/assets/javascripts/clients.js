@@ -78,9 +78,8 @@
              this.pages = data.length;
              self.data = data.map(function (item) {
                return {
-                 code: item.code,
+                 code: [item.code,item.projects.length],
                  name: item.name,
-                 nums: item.projects.length,
                  id: item.id,
                };
              });
@@ -114,7 +113,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'nums','id'],
+      gridColumns: ['code','name','id'],
       gridData: []
     }
   });

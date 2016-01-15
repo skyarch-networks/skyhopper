@@ -84,8 +84,6 @@ function render_infrastructures(value, key, lang){
     if(value[0] === "CREATE_COMPLETE"){
       $('#ops-'+value[1]+'').removeClass('disabled');
     }
-    console.log('ops-',value[1]);
-    console.log('stat-',value[0]);
   }else{
     return value;
   }
@@ -97,6 +95,8 @@ function render_clients(value, key, lang){
     var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('clients.btn.show_projects')+"</a> ";
     var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='"+$('#delete-'+value+'').attr('class')+"' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
        return ret+edit+del;
+  }else if (key === 'code') {
+    return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('clients.projects')+"</span>";
   }else{
     return value;
   }
@@ -121,6 +121,8 @@ function render_projects(value, key, lang){
         "</ul>" +
       "</div>";
        return ret+edit+del;
+  }else if (key === 'code') {
+    return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('projects.infras')+"</span>";
   }else{
     return value;
   }
