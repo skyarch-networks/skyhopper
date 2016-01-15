@@ -30,9 +30,19 @@ module.exports = function (value, key, option, lang) {
 
 function render_infrastructures(value, key, lang){
   if(key === 'id'){
-  var isEdit = $('#edit-'+value[0]+'').attr('class');
   var href = $('#edit-'+value[0]+'').attr('href');
-  var isDelete = $('#delete-'+value[0]+'').attr('class');
+  var retEdit = ($('#edit-'+value[0]+'').attr('class') ? "<a class='"+$('#edit-'+value[0]+'').attr('class')+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " : "");
+  var retDetach = ($('#detach-'+value[0]+'').attr('class') ? "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> " : "");
+  var retDelete = ($('#delete-'+value[0]+'').attr('class') ? "<div class='btn-group'>"+
+      "<a class='"+$('#delete-'+value[0]+'').attr('class')+"' data-toggle='dropdown' href='#'>" +
+      " <span class='glyphicon glyphicon-remove'></span> "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
+      " </a> " +
+     "<ul class='dropdown-menu'>"+
+      "<li> " +
+       "<a class='delete-stack' infrastructure-id="+value[0]+" href='#'>Execute</a> " +
+    "</li>"+
+    "</ul>"+
+   "</div>" : "");
   var disabled;
     if(value[1] != "CREATE_COMPLETE" && value[1] != "UPDATE_COMPLETE")
       disabled = 'disabled';
@@ -55,18 +65,9 @@ function render_infrastructures(value, key, lang){
           "</ul>"+
     "</div>"+
     "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value[0]+"&amp;lang='"+lang+"'>Serverspecs</a> " +
-    "<a class='"+isEdit+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " +
-    "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> "+
-    "<div class='btn-group'>"+
-        "<a class='"+isDelete+"' data-toggle='dropdown' href='#'>" +
-        " <span class='glyphicon glyphicon-remove'></span> "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
-        " </a> " +
-       "<ul class='dropdown-menu'>"+
-        "<li> " +
-         "<a class='delete-stack' infrastructure-id="+value[0]+" href='#'>Execute</a> " +
-      "</li>"+
-      "</ul>"+
-     "</div>";
+    retEdit +
+    retDetach+
+    retDelete;
 
     return ret;
   }else if (key === 'status') {
@@ -92,16 +93,8 @@ function render_infrastructures(value, key, lang){
 
 function render_clients(value, key, lang){
   if(key === 'id'){
-    var isEdit = $('#delete-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
-
-
+    var edit = ( $('#edit-'+value+'').attr('class') ?  " <a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : "");
+    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
     var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('clients.btn.show_projects')+"</a> ";
        return ret+edit+del;
   }else{
@@ -112,13 +105,8 @@ function render_clients(value, key, lang){
 function render_projects(value, key, lang){
   if(key === 'id'){
     var isDelete = $('#delete-'+value+'').attr('class');
-    var del;
-    if(isDelete){
-     del = "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/projects/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
-    }else{
-     del = '';
-    }
-
+    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/projects/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
+    var edit = ( $('#edit-'+value+'').attr('class') ? " <a class='btn btn-default btn-xs' href='/projects/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> " : "");
     var ret = "<a class='btn btn-xs btn-info ' href='/infrastructures?lang="+lang+"&amp;project_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('projects.btn.show_infrastructures')+"</a> " +
       "<div class='btn-group'>" +
         "<a class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' href='#' aria-expanded='false'>" +
@@ -131,9 +119,8 @@ function render_projects(value, key, lang){
             "<a href='/project_parameters?lang="+lang+"&amp;project_id="+value+"'>"+t('project_parameters.title')+"</a>" +
           "</li>" +
         "</ul>" +
-      "</div>" +
-      " <a class='btn btn-default btn-xs' href='/projects/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> ";
-       return ret+del;
+      "</div>";
+       return ret+edit+del;
   }else{
     return value;
   }
