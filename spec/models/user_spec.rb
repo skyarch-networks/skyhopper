@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -90,6 +90,14 @@ describe User, type: :model do
       it 'mfa_use should not be true' do
         expect(subject[:mfa_use]).to be false
       end
+    end
+  end
+
+  describe '#new_mfa_key' do
+    it 'should return key and qr code' do
+      mfa_key, qr_code = user.new_mfa_key
+      expect(mfa_key).to be_a String
+      expect(qr_code).to be_a String
     end
   end
 end

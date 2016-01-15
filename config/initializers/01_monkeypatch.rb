@@ -62,7 +62,7 @@ module ErrorHandlize
     def format_error
       return {
         # TODO: I18n
-        message: self.message,
+        message: "not allowed to #{self.query} for this #{self.record.class.to_s.downcase}",
         kind:    self.class.to_s,
       }
     end

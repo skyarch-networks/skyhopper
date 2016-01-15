@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+// Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 //
 // This software is released under the MIT License.
 //
@@ -170,19 +170,29 @@
 
       back: function () { app.show_tabpane('add_modify'); },
     },
-    created: function () {
+    ready: function () {
       var self = this;
       console.log(self);
       var cft = new CFTemplate(current_infra);
-      cft.insert_cf_params(this.$parent.current_infra.add_modify).done(function (data) {
+      cft.insert_cf_params(this.$parent.current_infra.add_modify)
+      .fail(alert_danger(function () {
+        self.back();
+      })).then(function (data) {
         self.params = data;
         _.each(data, function (val, key) {
           Vue.set(self.result, key, val.Default);
         });
         app.loading = false;
-      }).fail(alert_danger(function () {
-        self.back();
-      }));
+      }).then(function () {
+        // for project parameter
+        Vue.nextTick(function () {
+          var inputs = $(self.$el).parent().find('input');
+          var project_id = queryString.project_id;
+          inputs.textcomplete([
+            require('complete_project_parameter').default(project_id),
+          ]);
+        });
+      });
     },
   });
 

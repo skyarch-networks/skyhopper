@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+// Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 //
 // This software is released under the MIT License.
 //
@@ -9,6 +9,7 @@
 
 //= require jquery
 //= require jquery_ui
+//= require jquery.textcomplete
 //= require rails
 //= require ajax_set
 //= require i18n
