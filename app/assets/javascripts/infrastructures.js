@@ -1097,27 +1097,27 @@
           ],
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 16,
           bold: true,
           margin: [0, 0, 0, 10]
         },
         subheader: {
-          fontSize: 16,
+          fontSize: 14,
           bold: true,
           margin: [0, 10, 0, 5]
         },
         tableExample: {
-          margin: [0, 5, 0, 15]
+          margin: [5, 5, 0, 15]
         },
         tableHeader: {
           bold: true,
-          fontSize: 12,
+          fontSize: 11,
           color: 'black'
         }
       },
       defaultStyle: {
         // alignment: 'justify'
-        fontSize: 11,
+        fontSize: 10,
         alignment: 'center'
       },
       pageSize: 'A4',
@@ -1126,7 +1126,9 @@
 
       };
         pdfMake.createPdf(docDefinition).open();
+        this.get_rules();
       },
+
     },
     compiled: function() {
       console.log(this);
