@@ -22,11 +22,12 @@
 // ================================================================
 
 //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
+  var wrap           = require('./modules/wrap');
+  var listen         = require('./modules/listen');
+  var tableRender    = require('./modules/table_render');
   //var infraindex = require('./modules/loadindex');
-  var newVM = require('./modules/newVM');
-  var queryString = require('query-string').parse(location.search);
+  var newVM          = require('./modules/newVM');
+  var queryString    = require('query-string').parse(location.search);
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
@@ -38,6 +39,7 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
   var modal          = require('modal');
+
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
@@ -1088,55 +1090,10 @@
           this.$parent .show_ec2(this.physical_id);
       },
       print_pdf: function(){
-        var data = [];
-        console.log(this.rules_summary);
-        this.rules_summary.forEach(function(v,i){
-          data.push(v.description,
-            v.group_id,
-            v.ip_permissions[0].user_id_group_pairs,
-            v.ip_permissions[0].ip_protocol,
-            v.ip_permissions[0].from_port.toString(),
-            v.ip_permissions[0].ip_ranges[0].cidr_ip,
-            v.ip_permissions_egress[0].user_id_group_pairs,
-            v.ip_permissions_egress[0].ip_protocol,
-            v.ip_permissions_egress[0].from_port.toString(),
-            v.ip_permissions_egress[0].ip_ranges[0].cidr_ip
-          );
-        });
-        console.log(data);
         var docDefinition = {
           content: [
-          {
-          style: 'tableExample',
-          color: '#444',
-          table: {
-              widths: [ 120, 100, 'auto', 'auto', 'auto', 'auto',  'auto', 'auto', 'auto', 'auto'],
-              // keepWithHeaderRows: 1,
-              body: [
-                  [
-                          { rowSpan: 2, text: 'Description',  style: 'tableHeader' },
-                          { rowSpan: 2, text: 'Group ID',style: 'tableHeader' },
-                          { colSpan: 4, text: 'Inbound', style: 'tableHeader' },
-                          'x','x','xx',
-                          { colSpan: 4, text: 'Outbound', style: 'tableHeader' },
-                          'x', 'x', 'x',
-                  ],
-                  ['x' , 'x',
-                    {text: 'Type', style: 'tableHeader' },
-                    {text: 'Protocol', style: 'tableHeader' },
-                    {text: 'Port Range',  style: 'tableHeader' },
-                    {text: 'Source',  style: 'tableHeader' },
-                    {text: 'Type',  style: 'tableHeader' },
-                    {text: 'Protocol', style: 'tableHeader' },
-                    {text: 'Port Range', style: 'tableHeader' },
-                    {text: 'Source',  style: 'tableHeader' },
-                   ],
-                   data
-              ]
-          }
-      },
-
-      ],
+            tableRender(this.rules_summary)
+          ],
       styles: {
         header: {
           fontSize: 18,

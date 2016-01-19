@@ -6,29 +6,123 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function(value, option){
+module.exports = function(data){
   return {
-     table: {
-         body: buildTableBody(data, columns)
-     }
- };
+    style: 'tableExample',
+    color: '#444',
+    table: {
+        widths: [ 120, 100, 'auto', 'auto', 'auto', 'auto',  'auto', 'auto', 'auto', 'auto'],
+        // keepWithHeaderRows: 1,
+        body: buildTableBody(data)
+    }
+  };
+
 };
 
 
-function buildTableBody(data, columns) {
+function buildTableBody(data) {
     var body = [];
+    var firstRow = [{ rowSpan: 2, text: 'Description',  style: 'tableHeader' },
+            { rowSpan: 2, text: 'Group ID',style: 'tableHeader' },
+            { colSpan: 4, text: 'Inbound', style: 'tableHeader' },
+            'x','x','xx',
+            { colSpan: 4, text: 'Outbound', style: 'tableHeader' },
+            'x', 'x', 'x',];
+    var secondRow = ['x' , 'x',
+      {text: 'Type', style: 'tableHeader' },
+      {text: 'Protocol', style: 'tableHeader' },
+      {text: 'Source',  style: 'tableHeader' },
+      {text: 'Port Range',  style: 'tableHeader' },
+      {text: 'Type',  style: 'tableHeader' },
+      {text: 'Protocol', style: 'tableHeader' },
+      {text: 'Port Range', style: 'tableHeader' },
+      {text: 'Source',  style: 'tableHeader' },
+    ];
 
-    body.push(columns);
+    body.push(firstRow, secondRow);
 
-    data.forEach(function(row) {
-        var dataRow = [];
+    data.forEach(function(v) {
+      body.push([{text: v.description, style: 'tableHeader', rowSpan: v.ip_permissions.length},
+               {text: v.group_id, style: 'tableHeader', rowSpan: v.ip_permissions.length},
+               v.ip_permissions[0].user_id_group_pairs,
+               v.ip_permissions[0].ip_protocol,
+               v.ip_permissions[0].from_port.toString(),
+               v.ip_permissions[0].ip_ranges[0].cidr_ip,
+               v.ip_permissions_egress[0].user_id_group_pairs,
+               v.ip_permissions_egress[0].ip_protocol,
+               v.ip_permissions_egress[0].from_port.toString(),
+               v.ip_permissions_egress[0].ip_ranges[0].cidr_ip
+      ]);
+      var inbound =  v.ip_permissions;
+      var outbound = v.ip_permissions_egress;
 
-        columns.forEach(function(column) {
-            dataRow.push(row[column].toString());
+      if(inbound.length > outbound.length){
+        inbound.forEach(function(v,index){
+            if(index !== 0 && outbound.length > index){
+              body.push(['','',
+                    v.user_id_group_pairs,
+                    v.ip_protocol,
+                    v.from_port.toString(),
+                    v.ip_ranges[0].cidr_ip,
+                    outbound[index].user_id_group_pairs,
+                    outbound[index].from_port,
+                    outbound[index].ip_protocol,
+                    outbound[index].ip_ranges[0].cidr_ip
+                  ]);
+            }else if (index !==0 && index > outbound.length) {
+              body.push(['','',
+                    v.user_id_group_pairs,
+                    v.ip_protocol,
+                    v.from_port.toString(),
+                    v.ip_ranges[0].cidr_ip,
+                    '',
+                    '',
+                    '',
+                    ''
+                  ]);
+            }
+
         });
-
-        body.push(dataRow);
-    });
-
+      }
+    console.log(body);
     return body;
+  }
+  );
+
+}
+
+
+
+
+function build_in_out_bound(inbound, outbound){
+ var build = [];
+    if(inbound.length > outbound.length){
+      inbound.forEach(function(v,index){
+          if(index !== 0 && outbound.length > index){
+            build.push(['','',
+                  v.user_id_group_pairs,
+                  v.ip_protocol,
+                  v.from_port.toString(),
+                  v.ip_ranges[0].cidr_ip,
+                  outbound[index].user_id_group_pairs,
+                  outbound[index].from_port,
+                  outbound[index].ip_protocol,
+                  outbound[index].ip_ranges[0].cidr_ip
+                ]);
+          }else if (index !==0 && index > outbound.length) {
+            build.push(['','',
+                  v.user_id_group_pairs,
+                  v.ip_protocol,
+                  v.from_port.toString(),
+                  v.ip_ranges[0].cidr_ip,
+                  '',
+                  '',
+                  '',
+                  ''
+                ]);
+          }
+      });
+    }
+  console.log(build);
+  return build;
 }
