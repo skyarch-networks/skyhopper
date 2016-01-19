@@ -13,7 +13,7 @@ You can also use SkyHopper in Ubuntu, Archlinux by installing the corresponding 
 
 ## Installing Ruby
 
-To install, you need ruby 2.2 version or higher
+To install, you need ruby 2.2 version(SkyHopper doesn't work with Ruby 2.3).
 
 ```sh
 $ sudo yum remove ruby ruby20

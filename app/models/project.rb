@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -10,8 +10,9 @@ class Project < ActiveRecord::Base
   belongs_to :client
   belongs_to :cloud_provider
 
-  has_many :infrastructures, dependent: :destroy
-  has_many :dishes,          dependent: :delete_all
+  has_many :infrastructures,    dependent: :destroy
+  has_many :dishes,             dependent: :delete_all
+  has_many :project_parameters, dependent: :delete_all
 
   has_many :user_projects
   has_many :users, through: :user_projects

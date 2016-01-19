@@ -25,6 +25,7 @@
               <li>
                 <%= link_to t('dishes.dishes'), dishes_path(project_id: project.id) %>
                 <%= link_to t('key_pairs.key_pairs'), key_pairs_path(project_id: project.id) %>
+                <%= link_to t('project_parameters.title'), project_parameters_path(project_id: project.id) %>
               </li>
             </ul>
           </div>
@@ -33,7 +34,8 @@
 
             <%= link_to t('.edit', default: t("helpers.links.edit")),
               edit_project_path(project),
-              class: 'btn btn-default btn-xs' %>
+              class: 'btn btn-default btn-xs',
+              id: 'edit-'+project.id.to_s %>
 
             <%= button_delete_project(project) %>
 

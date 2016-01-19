@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -41,11 +41,13 @@ module InfrastructuresHelper
   def button_detach_stack(infra, user: current_user)
     return nil unless Pundit.policy(user, infra).destroy?
 
+    kid = 'detach-'+infra.id.to_s
     if deleting?(infra.status)
       return link_to t('helpers.links.detach'), "#", class: "btn btn-xs btn-warning disabled"
     end
     return link_to t('helpers.links.detach'), '#', {
       class:               'btn btn-xs btn-warning detach-infra',
+      id: kid,
       'infrastructure-id': infra.id,
     }
   end
