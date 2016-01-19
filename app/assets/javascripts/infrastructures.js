@@ -1122,8 +1122,6 @@
       },
       pageSize: 'A4',
         pageOrientation: 'landscape',
-        pageMargins: [ 20, 40, 20, 40 ],
-
       };
         pdfMake.createPdf(docDefinition).open();
         this.get_rules();
