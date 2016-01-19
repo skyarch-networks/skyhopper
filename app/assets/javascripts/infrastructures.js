@@ -1090,9 +1090,10 @@
           this.$parent .show_ec2(this.physical_id);
       },
       print_pdf: function(){
+        var data = this.rules_summary;
         var docDefinition = {
           content: [
-            tableRender(this.rules_summary)
+            tableRender(data)
           ],
       styles: {
         header: {
