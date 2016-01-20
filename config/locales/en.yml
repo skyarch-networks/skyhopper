@@ -632,6 +632,7 @@ en:
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
       delete_snapshot: 'Are you sure you want to delete following snapshots?'
       creation_started: 'Snapshot creation has started.'
+      snapshot_is_protected: 'Cannot delete %{snapshot_id} because it is protected.'
 
   datepicker:
     today: 'Go to Today'

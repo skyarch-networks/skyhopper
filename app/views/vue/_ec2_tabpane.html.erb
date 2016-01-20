@@ -401,6 +401,7 @@
             <th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{'caret': sorting_by('state'),       'caret-reversed': sort_asc}"></span></th>
             <th class=""         @click="sort_by('start_time')" >Date<span           :class="{'caret': sorting_by('start_time'),  'caret-reversed': sort_asc}"></span></th>
             <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
+            <th></th>
           </thead>
           <tbody>
             <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" transition="fade">
@@ -410,6 +411,7 @@
               <td v-text="snapshot_status(snapshot)"></td>
               <td v-text="toLocaleString(snapshot.start_time)"></td>
               <td v-text="snapshot.encrypted"></td>
+              <td><i class="fa fa-lock" v-show="snapshot.tags.skyhopper_protect_this"></i></td>
             </tr>
             <tr v-if="!snapshots.length">
               <td colspan="8"><%= t('snapshots.msg.no_snapshots') %></td>

@@ -71,4 +71,10 @@ class Snapshot < SimpleDelegator
     resp.snapshots.first.state
   end
 
+  def protected?
+    tags.any? { |tag|
+      tag.key == 'skyhopper_protect_this' && tag.value != 'false'
+    }
+  end
+
 end
