@@ -12,7 +12,6 @@ module.exports = function(data){
     color: '#444',
     table: {
         widths: [ 120, 100, 'auto', 'auto', 'auto', 'auto',  'auto', 'auto', 'auto', 'auto'],
-        // keepWithHeaderRows: 1,
         body: buildTableBody(data)
     }
   };

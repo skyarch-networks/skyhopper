@@ -1091,8 +1091,37 @@
       },
       print_pdf: function(){
         var data = this.rules_summary;
+
+        var fonts = {
+        	Roboto: {
+        		normal: 'fonts/Roboto-Regular.ttf',
+        		bold: 'fonts/Roboto-Medium.ttf',
+        		italics: 'fonts/Roboto-Italic.ttf',
+        		bolditalics: 'fonts/Roboto-Italic.ttf'
+        	}
+        };
+
         var docDefinition = {
+          footer: function(currentPage, pageCount) {return {
+            text: currentPage.toString() + ' of ' + pageCount};},
           content: [
+            {
+            text: 'Security Groups',
+            style: 'header',
+            alignment: 'center'
+            },
+            {
+              text: ['Stack Name: ', { text: this.$parent.$data.current_infra.stack.name+'\n',  bold: true}],
+              alignment: 'left'
+            },
+            {
+              text: ['Physical ID: ', { text: this.physical_id.toString()+'\n',  bold: true}],
+              alignment: 'left'
+            },
+            {
+              text: ['Date: ', { text: moment().format('MMMM Do YYYY, h:mm:ss a')+'\n',  bold: true}],
+              alignment: 'left'
+            },
             tableRender(data)
           ],
       styles: {
@@ -1996,8 +2025,7 @@
               resource: item.resource.physical_id,
               message: [item.id,
                         item.resource.physical_id,
-                        item.message,
-                        item.serverspec_result_details],
+                                item.serverspec_result_details],
               status: item.status,
               created_at: last_log.toLocaleString()
             };
