@@ -94,6 +94,11 @@ group :development, :test do
   gem 'github-markup'
 
   gem 'rubocop', require: false
+
+  gem 'spring'
+  gem 'sprint'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-sidekiq'
 end
 
 # for Login
