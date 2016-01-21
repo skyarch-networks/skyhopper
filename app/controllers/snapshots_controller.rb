@@ -47,7 +47,7 @@ class SnapshotsController < ApplicationController
     snapshot.delete
 
     render nothing: true, status: 200
-  rescue Snapshot::VolumeProtectedError => e
+  rescue Snapshot::VolumeProtectedError
     render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: 403 and return
   end
 
