@@ -1119,7 +1119,7 @@
               alignment: 'left'
             },
             {
-              text: ['Date: ', { text: moment().format('MMMM Do YYYY, h:mm:ss a')+'\n',  bold: true}],
+              text: ['Date: ', { text: moment().format('MMMM DD YYYY, h:mm:ss a')+'\n',  bold: true}],
               alignment: 'left'
             },
             tableRender(data)
