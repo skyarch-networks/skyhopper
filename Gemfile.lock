@@ -260,7 +260,7 @@ GEM
     net-telnet (0.1.1)
     netrc (0.11.0)
     nio4r (1.2.0)
-    nokogiri (1.6.7.1)
+    nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     nori (2.6.0)
     notiffany (0.0.8)
@@ -561,6 +561,7 @@ DEPENDENCIES
   named_let
   net-scp
   net-ssh
+  nokogiri (>= 1.6.7.2)
   pry
   pry-doc
   pry-rails
