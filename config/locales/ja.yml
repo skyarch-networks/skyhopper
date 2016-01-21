@@ -632,6 +632,7 @@ ja:
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
       delete_snapshot: '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'
+      snapshot_is_protected: '%{snapshot_id} は保護されているため削除できません'
 
   datepicker:
     today: '今日'

@@ -1528,9 +1528,11 @@
           var s = new Snapshot(current_infra.id);
 
           _.each(snapshots, function (snapshot) {
-            s.destroy(snapshot.snapshot_id).done(function (msg) {
-              self.snapshots.$remove(snapshot);
-            });
+            s.destroy(snapshot.snapshot_id)
+              .done(function (msg) {
+                self.snapshots.$remove(snapshot);
+              })
+              .fail(alert_danger());
           });
         });
       },
