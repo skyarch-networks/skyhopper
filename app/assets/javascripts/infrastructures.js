@@ -1875,6 +1875,13 @@
       self.ec2.edit_attributes().done(function (data) {
         self.attributes = data;
         self.$parent.loading = false;
+        Vue.nextTick(function () {
+          var inputs = $(self.$el).parent().find('input');
+          var project_id = queryString.project_id;
+          inputs.textcomplete([
+            require('complete_project_parameter').default(project_id),
+          ]);
+        });
       }).fail(alert_danger(self.show_ec2));
     },
   });
