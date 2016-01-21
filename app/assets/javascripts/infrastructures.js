@@ -1067,16 +1067,7 @@
         var self = this;
         var group_ids = [];
         var ec2 = new EC2Instance(current_infra, this.physical_id);
-        self.security_groups.forEach(function (value, key) {
-          if(self.instance_type === 'elb'){
-            if(value.checked)
-              group_ids.push(value.group_id);
-          }else{
-            group_ids.push(value.group_id);
-          }
-        });
-
-        ec2.get_rules(group_ids).done(function (data) {
+        ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
         });
       },
