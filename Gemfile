@@ -118,3 +118,5 @@ gem 'rotp'
 gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
+
+gem 'nokogiri', '>= 1.6.7.2'
