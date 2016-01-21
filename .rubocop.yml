@@ -410,7 +410,7 @@ Style/Tab:
 Style/TrailingBlankLines:
   Enabled: false
 
-Style/TrailingComma:
+Style/TrailingCommaInLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma
 
