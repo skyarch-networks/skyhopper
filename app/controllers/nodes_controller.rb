@@ -240,13 +240,18 @@ class NodesController < ApplicationController
 
   # GET /nodes/:id/get_rules
   def get_rules
-    group_ids = params[:group_ids] || []
+    physical_id = params.require(:id)
+    group_ids = []
+    unless physical_id == ':id'
+      @infra.instance(physical_id).security_groups.each do |sec_group|
+        group_ids.push(sec_group[:group_id])
+      end
+    end
 
     if group_ids.length > 0
       rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
     else
       rules_summary = @infra.ec2.describe_security_groups()
-
     end
     vpcs = @infra.ec2.describe_vpcs()
 

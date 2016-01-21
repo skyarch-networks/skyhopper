@@ -123,9 +123,8 @@ export default class EC2Instance extends ModelBase {
   }
 
   get_rules(group_ids: Array<any>): JQueryPromise<any> {
-    const params = _.merge(this.params, group_ids ? {group_ids: group_ids} : []);
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_node).get_rules(params)
+      (<any>EC2Instance.ajax_node).get_rules(this.params)
     );
   }
 
