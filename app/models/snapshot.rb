@@ -11,6 +11,7 @@ require 'delegate'
 class Snapshot < SimpleDelegator
   class VolumeNotFoundError < StandardError; end
   class VolumeRetiredError < StandardError; end
+  class VolumeProtectedError < StandardError; end
 
   class << self
     def create(infra, volume_id, physical_id)
@@ -69,6 +70,11 @@ class Snapshot < SimpleDelegator
     )
 
     resp.snapshots.first.state
+  end
+
+  def delete
+    raise VolumeProtectedError if protected?
+    __getobj__.delete
   end
 
   def protected?

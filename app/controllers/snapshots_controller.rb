@@ -44,14 +44,11 @@ class SnapshotsController < ApplicationController
     snapshot_id = params.require(:snapshot_id)
 
     snapshot = Snapshot.new(@infra, snapshot_id)
-
-    if snapshot.protected?
-      render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: 403 and return
-    end
-
     snapshot.delete
 
     render nothing: true, status: 200
+  rescue Snapshot::VolumeProtectedError => e
+    render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: 403 and return
   end
 
   # POST /snapshots/schedule
