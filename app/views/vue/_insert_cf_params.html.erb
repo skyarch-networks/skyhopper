@@ -1,9 +1,7 @@
 <div>
   <h4 class="page-header"><%= t 'cf_templates.insert_parameters' %></h4>
 
-  <div class="bs-callout bs-callout-info">
-  <%=t('project_parameters.usage')%>
-  </div>
+  <%= project_params_usage %>
 
   <form class="form-horizontal">
     <div v-for="(key , val) in params" class="form-group">
