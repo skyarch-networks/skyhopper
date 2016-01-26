@@ -52,7 +52,7 @@ class ChefServer::Deployment
         stack_name:    stack_name,
         keypair_name:  keypair_name,
         keypair_value: keypair_value,
-        region:        region,
+        region:        region
       )
 
       stack = create_stack(infra, 'Chef Server', params: {
@@ -95,7 +95,7 @@ class ChefServer::Deployment
         stack_name:    stack_name,
         keypair_name:  keypair_name,
         keypair_value: keypair_value,
-        region:        region,
+        region:        region
       )
       template = ERB::Builder.new('zabbix_server').build
       stack = create_stack(infra, 'Zabbix Server', template: template)
@@ -121,7 +121,7 @@ class ChefServer::Deployment
         infrastructure_id: infra.id,
         name:              name,
         detail:            "#{name} auto generated",
-        value:             template,
+        value:             template
       )
       cf_template.create_cfparams_set(infra, params)
       cf_template.update_cfparams

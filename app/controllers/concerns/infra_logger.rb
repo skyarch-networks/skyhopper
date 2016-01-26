@@ -15,7 +15,7 @@ module Concerns::InfraLogger
     InfrastructureLog.success(
       infrastructure_id: infrastructure_id,
       details:           details,
-      user_id:           user_id,
+      user_id:           user_id
     )
   end
 
@@ -25,7 +25,7 @@ module Concerns::InfraLogger
     InfrastructureLog.fail(
       infrastructure_id: infrastructure_id,
       details:           details,
-      user_id:           user_id,
+      user_id:           user_id
     )
   end
 

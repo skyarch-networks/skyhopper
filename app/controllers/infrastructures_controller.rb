@@ -104,7 +104,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id,
+      project_id: project_id
     )
     @regions = @@regions
   end
@@ -322,14 +322,14 @@ class InfrastructuresController < ApplicationController
           resource_id:  selected_instance[:id],
           start_date:   start_date,
           end_date:     end_date,
-          user_id: current_user.id,
+          user_id: current_user.id
         )
         RecurringDate.create!(
           operation_duration_id: ops.id,
           repeats: selected_instance[:repeat_freq].to_i,
           start_time:  start_date.strftime("%H:%M"),
           end_time: end_date.strftime("%H:%M"),
-          dates: selected_instance[:dates],
+          dates: selected_instance[:dates]
         )
       rescue => ex
         render text: ex.message, status: 500 and return

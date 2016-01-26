@@ -61,7 +61,7 @@ class Serverspec < ActiveRecord::Base
         infrastructure_id: infra_id,
         name:              "RDS connection to #{host[/^([^\.]+)\./, 1]}",
         value:             spec_value,
-        description:       description,
+        description:       description
       )
     end
   end

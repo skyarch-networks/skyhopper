@@ -33,11 +33,11 @@ class ApplicationController < ActionController::Base
       return
     end
 
-
-    if I18n::available_locales.include?(lang.to_sym)
-      I18n.locale = lang
+    I18n.locale =
+      if I18n::available_locales.include?(lang.to_sym)
+        lang
     else
-      I18n.locale = nil
+      nil
     end
   end
 

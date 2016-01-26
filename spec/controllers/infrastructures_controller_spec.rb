@@ -372,7 +372,7 @@ describe InfrastructuresController, type: :controller do
       allocated_storage: allocated_storage,
       endpoint_address:  endpoint_address,
       multi_az:          multi_az,
-      engine:            engine,
+      engine:            engine
     )
 
     before{request_show_rds}
@@ -441,7 +441,7 @@ describe InfrastructuresController, type: :controller do
         :change_rds_scale,
         physical_id:   'hogehoge',
         id:            infra.id,
-        instance_type: type,
+        instance_type: type
       )
     }
 

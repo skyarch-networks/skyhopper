@@ -221,7 +221,7 @@ class NodesController < ApplicationController
 
     if ys.enabled?
       PeriodicYumJob.set(
-        wait_until: ys.next_run,
+        wait_until: ys.next_run
       ).perform_later(physical_id, @infra, current_user.id)
     end
 
@@ -246,10 +246,11 @@ class NodesController < ApplicationController
   def get_rules
     group_ids = params[:group_ids] || []
 
-    if group_ids.length > 0
-      rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
+    rules_summary =
+      if group_ids.length > 0
+        @infra.ec2.describe_security_groups({group_ids: group_ids})
     else
-      rules_summary = @infra.ec2.describe_security_groups()
+      @infra.ec2.describe_security_groups()
 
     end
     vpcs = @infra.ec2.describe_vpcs()

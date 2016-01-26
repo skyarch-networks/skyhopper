@@ -20,7 +20,7 @@ class TemplateBuilder
       KeyName: {
         Description: 'Name of an existing EC2 KeyPair to enable SSH access to the instance',
         Type: 'String',
-      }
+      },
     },
     Mappings: {},
     Resources: {},
@@ -135,7 +135,6 @@ class TemplateBuilder
     return result
   end
 
-  # rubocop:disable Rails/Delegate
   def to_json
     build.to_json
   end

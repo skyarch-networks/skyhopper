@@ -64,7 +64,7 @@ class ResourcesController < ApplicationController
         infrastructure_id: infra_id,
         physical_id:       physical_id,
         screen_name:       screen_name,
-        type_name:         type_name,
+        type_name:         type_name
       )
     rescue => ex
       render text: ex.message, status: 500 and return

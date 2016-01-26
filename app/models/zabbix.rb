@@ -52,7 +52,7 @@ class Zabbix
 
     return @sky_zabbix.template.build_massadd(
       hosts: [{hostid: host_id}],
-      templates: template_ids.map{|x| {templateid: x}},
+      templates: template_ids.map{|x| {templateid: x}}
     )
   end
 
@@ -140,7 +140,7 @@ class Zabbix
 
         @sky_zabbix.trigger.build_update(
           triggerid: item["triggers"].first["triggerid"],
-          expression: updating_expr,
+          expression: updating_expr
         )
       end
     end.flatten
@@ -150,7 +150,7 @@ class Zabbix
   def update_expression(trigger_id, expression)
     @sky_zabbix.trigger.update(
       expression: expression,
-      triggerid: trigger_id,
+      triggerid: trigger_id
     )
   end
 
@@ -167,7 +167,7 @@ class Zabbix
 
       @sky_zabbix.item.update(
         itemid: item_infos.first["itemid"],
-        key_: key + host_key,
+        key_: key + host_key
       )
 
       expression = "{#{r.physical_id}:mysql.login#{host_key}.last(0)}=1"
@@ -184,10 +184,10 @@ class Zabbix
         "expression",
       ],
       filter: {
-        host: hostname
+        host: hostname,
       },
       expandExpression: true,
-      selectItems: [:key_],
+      selectItems: [:key_]
     )
 
     # ホストネームの部分をHOSTNAMEと置換えている
@@ -222,7 +222,7 @@ class Zabbix
       }],
       groups: [
         groupid: hostgroup_id,
-      ],
+      ]
     )
   end
 
@@ -244,7 +244,7 @@ class Zabbix
       }],
       groups: [
         groupid: hostgroup_id,
-      ],
+      ]
     )
   end
 
@@ -253,7 +253,7 @@ class Zabbix
   # @return [String] ID of created hostgroup
   def add_hostgroup(group_name)
     return @sky_zabbix.hostgroup.create(
-      name: group_name,
+      name: group_name
     )["groupids"].first
   end
 
@@ -282,7 +282,7 @@ class Zabbix
   def change_mastergroup_rights(hostgroup_ids)
     @sky_zabbix.usergroup.massupdate(
       usrgrpids: [get_master_usergroup_id],
-      rights: hostgroup_ids.map{|id| {permission: PermissionRead, id: id}},
+      rights: hostgroup_ids.map{|id| {permission: PermissionRead, id: id}}
     )
   end
 
@@ -297,8 +297,8 @@ class Zabbix
   def get_usergroup_ids(group_name)
     usergroup_info = @sky_zabbix.usergroup.get(
       filter: {
-        name: group_name
-      },
+        name: group_name,
+      }
     )
 
     usergroup_ids = usergroup_info.map{|info| info["usrgrpid"]}
@@ -317,8 +317,8 @@ class Zabbix
     hostgroup_info = @sky_zabbix.hostgroup.get(
       output: 'extend',
       filter: {
-        name: hostgroup_names
-      },
+        name: hostgroup_names,
+      }
     )
 
     return hostgroup_info.map{|i| i["groupid"]}
@@ -340,13 +340,13 @@ class Zabbix
       usrgrps: [
         usrgrpid: group,
       ],
-      type: type,
+      type: type
     )['userids'].first
   end
 
   def get_user_id(username)
     user_info = @sky_zabbix.user.get(
-      filter: { alias: username },
+      filter: { alias: username }
     )
 
     return user_info.first['userid']
@@ -365,7 +365,7 @@ class Zabbix
       userid:  user_id,
       usrgrps: usergroup_ids,
       passwd:  password,
-      type:    type,
+      type:    type
     )
   end
 
@@ -427,7 +427,7 @@ class Zabbix
           itemids: item_info.first["itemid"],
           sortfield: 'clock',
           sortorder: 'ASC',
-          limit: 30,
+          limit: 30
         )
       else
         history_all =  @sky_zabbix.history.get(
@@ -437,7 +437,7 @@ class Zabbix
           sortfield: 'clock',
           sortorder: 'ASC',
           time_from: date_range[0],
-          time_till: date_range[1],
+          time_till: date_range[1]
         )
     end
 
@@ -465,7 +465,7 @@ class Zabbix
       sortfield: "lastchange",
       selectHosts: "refer",
       only_true: true,
-      monitored: true,
+      monitored: true
     )
 
     ids = infra.resources.ec2.map{|ec2| ec2.physical_id }
@@ -531,7 +531,7 @@ class Zabbix
       @sky_zabbix.httptest.build_create(
         name:  scenario_name,
         hostid: host_id,
-        steps: s_array,
+        steps: s_array
       )
     end
     @sky_zabbix.batch(*reqs)
@@ -570,7 +570,7 @@ class Zabbix
         "key_",
         "lastvalue",
       ],
-      webitems: "true",
+      webitems: "true"
     )
     webscenario_req = @sky_zabbix.httptest.build_get(
       hostids: host_id,
@@ -578,7 +578,7 @@ class Zabbix
         "name",
         "url",
       ],
-      output: ["name"],
+      output: ["name"]
     )
     items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
 
@@ -637,7 +637,7 @@ class Zabbix
       type: 0,
       value_type: 0,
       applications: application_ids,
-      interfaceid: interfaceid,
+      interfaceid: interfaceid
     )
   end
 
@@ -647,7 +647,7 @@ class Zabbix
     @sky_zabbix.trigger.build_create(
       description: "Can not login MySQL on {HOST.NAME}",
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
-      itemid: item_id,
+      itemid: item_id
     )
   end
 
@@ -665,7 +665,7 @@ class Zabbix
       type: 15,
       value_type: 0,
       applications: application_ids,
-      units: "%",
+      units: "%"
     )
   end
 
@@ -677,7 +677,7 @@ class Zabbix
     @sky_zabbix.trigger.build_create(
       description: "Calculated: CPU Usage is too high on {HOST.NAME}",
       expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
-      itemid: id,
+      itemid: id
     )
   end
 
@@ -705,12 +705,12 @@ class Zabbix
     @sky_zabbix.item.get(
       hostids: get_host_id(physical_id),
       :"#{kind}" => {
-        key_: item_keys
+        key_: item_keys,
       },
       output: [
-        :key_
+        :key_,
       ],
-      selectTriggers: 'shorten',
+      selectTriggers: 'shorten'
     )
   end
 
@@ -729,7 +729,7 @@ class Zabbix
   def get_hostinterface_id(host_id)
     interface_info = @sky_zabbix.hostinterface.get(
       output: "extend",
-      hostids: host_id,
+      hostids: host_id
     )
 
     return interface_info.first["interfaceid"]
@@ -740,8 +740,8 @@ class Zabbix
       output: [:applicationid ],
       hostids: host_id,
       filter: {
-        name: names
-      },
+        name: names,
+      }
     )
 
     # アプリケーションIDの配列を返す
@@ -758,14 +758,14 @@ class Zabbix
       selectSteps: "extend",
       selectHosts: "hostid",
       selectItems: "extend",
-      hostids: host_id.to_s,
+      hostids: host_id.to_s
     )
   end
 
   def get_web_scenario_id(host_id)
     data = @sky_zabbix.httptest.get(
       output: [:httptestid],
-      hostids: host_id.to_s,
+      hostids: host_id.to_s
     )
 
     return data.present? ? data.map{|scenario| scenario["httptestid"]} : nil
@@ -778,7 +778,7 @@ class Zabbix
     host_ids = get_host_ids(infra.resources.ec2.map{|e|e.physical_id})
 
     return @sky_zabbix.trigger.get(
-      hostids: host_ids,
+      hostids: host_ids
     ).map{|t|t[@sky_zabbix.trigger.pk]}
   end
 
@@ -799,8 +799,8 @@ class Zabbix
     @sky_zabbix.host.get(
       hostids: hostid,
       output: [
-        :name
-      ],
+        :name,
+      ]
     )
   end
 

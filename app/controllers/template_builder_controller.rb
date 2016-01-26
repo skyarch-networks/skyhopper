@@ -62,7 +62,7 @@ class TemplateBuilderController < ApplicationController
       name:              params.require(:subject),
       detail:            params[:detail],
       value:             template_builder.to_pretty_json,
-      user_id:           current_user.id,
+      user_id:           current_user.id
     )
 
     if @cf_template.save
