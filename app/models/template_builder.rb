@@ -106,10 +106,10 @@ class TemplateBuilder
     have_pv  = ec2s.any?{|ec2| ec2.virtual_type == :PV}
 
     if have_hvm
-      result[:Mappings].merge!(RegionMapHVM: @@ami_mappings[:HVM])
+      result[:Mappings][:RegionMapHVM] =  @@ami_mappings[:HVM]
     end
     if have_pv
-      result[:Mappings].merge!(RegionMapPV:  @@ami_mappings[:PV])
+      result[:Mappings][:RegionMapPV] = @@ami_mappings[:PV]
     end
 
     # set Description

@@ -11,8 +11,8 @@
 #
 # physical_id を host の名前として扱う。
 class Zabbix
-  DefaultUsergroupName = "No access to the frontend"
-  MasterUsergroupName = "master"
+  DefaultUsergroupName = "No access to the frontend".freeze
+  MasterUsergroupName = "master".freeze
 
   class ZabbixError < ::StandardError; end
 
@@ -159,10 +159,11 @@ class Zabbix
     key = "mysql.login"
     infra.resources.ec2.each do |r|
       item_infos = get_item_info(r.physical_id, key, "search")
-      if fqdn
-        host_key = "[" + fqdn + "]"
+      host_key =
+        if fqdn
+          "[" + fqdn + "]"
       else
-        host_key = ""
+        ""
       end
 
       @sky_zabbix.item.update(
@@ -419,9 +420,9 @@ class Zabbix
         0
       end
 
-    case date_range
+    history_all = case date_range
       when nil
-        history_all =  @sky_zabbix.history.get(
+        @sky_zabbix.history.get(
           output: "extend",
           history: type,
           itemids: item_info.first["itemid"],
@@ -430,7 +431,7 @@ class Zabbix
           limit: 30
         )
       else
-        history_all =  @sky_zabbix.history.get(
+        @sky_zabbix.history.get(
           output: "extend",
           history: type,
           itemids: item_info.first["itemid"],
@@ -593,11 +594,11 @@ class Zabbix
         h[key] = items_for_scenario.find{|x| x["key_"] =~ /^web\.test\.#{key}\[/}
       end
 
-      case h["fail"]["lastvalue"]
+      status = case h["fail"]["lastvalue"]
       when "0"
-        status = "OK"
+        "OK"
       else
-        status = h["error"]["lastvalue"]
+        h["error"]["lastvalue"]
       end
 
       # 上で取り出したアイテムにレスポンドコードを含むモノを取り出し、
