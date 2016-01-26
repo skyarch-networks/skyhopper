@@ -371,14 +371,15 @@ class InfrastructuresController < ApplicationController
     return if params[:project_id].blank?
     return if Project.exists?(id: params[:project_id])
 
-    if current_user.master?
-      if session[:client_id].present?
-        path = projects_path(client_id: session[:client_id])
+    path =
+      if current_user.master?
+        if session[:client_id].present?
+          projects_path(client_id: session[:client_id])
       else
-        path = clients_path
+        clients_path
       end
     else
-      path = projects_path
+      projects_path
     end
 
     redirect_to path, alert: "Project \##{params[:project_id]} does not exist."
@@ -390,13 +391,14 @@ class InfrastructuresController < ApplicationController
     return if Infrastructure.exists?(id: params[:id])
 
     msg = "Infrastructure \##{params[:id]} does not exist."
-    if session[:project_id].present?
-      path = infrastructures_path(project_id: session[:project_id])
+    path =
+      if session[:project_id].present?
+        infrastructures_path(project_id: session[:project_id])
     else
       if current_user.master?
-        path = clients_path
+        clients_path
       else
-        path = projects_path
+        projects_path
       end
     end
 
