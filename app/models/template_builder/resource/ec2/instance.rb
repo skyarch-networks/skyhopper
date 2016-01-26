@@ -8,7 +8,7 @@
 
 class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
 
-
+  #rubocop:disable Style/MutableConstant
   InstanceTypes = {}
   AWS::InstanceTypes[:current].each do |type|
     InstanceTypes[type.to_s] = {HVM: true}
@@ -67,11 +67,9 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
 
   def build
     result = super
-    result[@name][:Properties].merge!(
-      ImageId: {
-        'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"]
-      },
-    )
+    result[@name][:Properties][:ImageId] = {
+        'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
+      }
 
     return result
   end
