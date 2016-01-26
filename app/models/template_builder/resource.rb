@@ -66,10 +66,11 @@ class TemplateBuilder::Resource
   def set_refs_params(hash)
     props = {}
     each_exist_props(hash) do |prop, val|
-      if val.nil?
-        props[prop.name] = "#{@name}#{prop.name}"
+      props[prop.name] =
+        if val.nil?
+          "#{@name}#{prop.name}"
       else
-        props[prop.name] = val
+        val
       end
 
       @param_properties.add(prop)
@@ -111,7 +112,7 @@ class TemplateBuilder::Resource
   private
 
   # each_exist_props(hash){|prop, val|}
-  def each_exist_props(prop, &blk)
+  def each_exist_props(prop, _blk)
     properties = self.class.properties
     properties.each do |valid_prop|
       begin
@@ -120,7 +121,7 @@ class TemplateBuilder::Resource
         next
       end
 
-      blk.call(valid_prop, val)
+      yield(valid_prop, val)
     end
   end
 end
