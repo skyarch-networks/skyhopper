@@ -29,9 +29,9 @@ class ChefServer::Deployment
     error:          {percentage: nil, status: :error},
   }.freeze
 
-  UserPemID         = 'User'
-  OrgPemID          = 'Org'
-  TrustedCertsPemID = "TrustedCerts"
+  UserPemID         = 'User'.freeze
+  OrgPemID          = 'Org'.freeze
+  TrustedCertsPemID = "TrustedCerts".freeze
 
   class Error < StandardError; end
 
@@ -138,7 +138,7 @@ class ChefServer::Deployment
     end
 
     def __yield(data, msg = nil, &block)
-      block.call(data, msg) if block
+      yield(data, msg) if block
     end
   end
 
