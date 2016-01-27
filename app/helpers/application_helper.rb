@@ -52,8 +52,9 @@ module ApplicationHelper
   def breadcrumbs(client = nil, project = nil, infrastructure = nil)
     breadcrumb = '<ul class="breadcrumb">'
 
+    breadcrumb <<
     if client
-      breadcrumb << <<-EOF
+      <<-EOF
 <li><a href="#{clients_path}">#{client.name} (#{client.code})</a></li>
       EOF
     else
@@ -90,10 +91,10 @@ module ApplicationHelper
   def loading_with_message(message = nil)
     loading_tag = "<div class=\"loader\"></div>".html_safe
 
-    if message
-      loading_tag << " #{message}"
+    loading_tag << if message
+                     " #{message}"
     else
-      loading_tag << t('common.msg.loading')
+      t('common.msg.loading')
     end
 
     return loading_tag

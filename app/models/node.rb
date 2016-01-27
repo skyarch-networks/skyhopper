@@ -9,7 +9,7 @@
 class Node
   include ::Node::Attribute
 
-  ChefDefaultUser = "ec2-user"
+  ChefDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
 
   class BootstrapError < ::StandardError; end
