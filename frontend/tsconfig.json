@@ -10,6 +10,7 @@
     "module": "commonjs"
   },
   "files": [
+    "src/complete_project_parameter.ts",
     "src/helper.ts",
     "src/modal.ts",
     "src/project_parameters.ts",
