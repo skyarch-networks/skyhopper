@@ -69,11 +69,10 @@ class TemplateBuilder::Resource
       props[prop.name] =
         if val.nil?
           "#{@name}#{prop.name}"
-      else
-        val
-      end
-
-      @param_properties.add(prop)
+        else
+          val
+        end
+          @param_properties.add(prop)
     end
 
     set_refs(props)

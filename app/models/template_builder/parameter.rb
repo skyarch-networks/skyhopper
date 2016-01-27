@@ -15,9 +15,9 @@ class TemplateBuilder::Parameter
     @type =
       if property.data_type == String
         'String'.freeze
-    else # Array
-      'CommaDelimitedList'.freeze
-    end
+      else # Array
+        'CommaDelimitedList'.freeze
+      end
 
     @name = name.to_sym
     @property = property

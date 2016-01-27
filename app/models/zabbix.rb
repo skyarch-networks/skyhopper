@@ -162,9 +162,9 @@ class Zabbix
       host_key =
         if fqdn
           "[" + fqdn + "]"
-      else
-        ""
-      end
+        else
+          ""
+        end
 
       @sky_zabbix.item.update(
         itemid: item_infos.first["itemid"],
