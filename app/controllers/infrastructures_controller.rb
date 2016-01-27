@@ -375,12 +375,12 @@ class InfrastructuresController < ApplicationController
       if current_user.master?
         if session[:client_id].present?
           projects_path(client_id: session[:client_id])
+        else
+          clients_path
+        end
       else
-        clients_path
+        projects_path
       end
-    else
-      projects_path
-    end
 
     redirect_to path, alert: "Project \##{params[:project_id]} does not exist."
   end
