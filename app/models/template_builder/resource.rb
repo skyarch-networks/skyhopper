@@ -112,7 +112,7 @@ class TemplateBuilder::Resource
   private
 
   # each_exist_props(hash){|prop, val|}
-  def each_exist_props(prop, _blk)
+  def each_exist_props(prop, &_blk)
     properties = self.class.properties
     properties.each do |valid_prop|
       begin
@@ -121,7 +121,7 @@ class TemplateBuilder::Resource
         next
       end
 
-      yield(valid_prop, val)
+      yield valid_prop, val
     end
   end
 end
