@@ -36,9 +36,10 @@ class ApplicationController < ActionController::Base
     I18n.locale =
       if I18n::available_locales.include?(lang.to_sym)
         lang
-    else
-      nil
-    end
+      else
+        nil
+      end
+      
   end
 
   def set_notifications
