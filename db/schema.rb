@@ -204,6 +204,8 @@ ActiveRecord::Schema.define(version: 20160121085745) do
     t.datetime "updated_at",              null: false
   end
 
+  add_index "retention_policies", ["resource_id"], name: "index_retention_policies_on_resource_id", unique: true, using: :btree
+
   create_table "schedules", force: :cascade do |t|
     t.boolean  "enabled",                 default: false, null: false
     t.integer  "frequency",   limit: 4

@@ -6,5 +6,7 @@ class CreateRetentionPolicies < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    add_index :retention_policies, :resource_id, unique: true
   end
 end
