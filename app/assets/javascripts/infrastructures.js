@@ -1567,6 +1567,12 @@
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
       },
+      save_retention_policy: function (volume_id, enabled, max_amount) {
+        var snapshot = new Snapshot(current_infra.id);
+        snapshot.save_retention_policy(volume_id, enabled, max_amount)
+          .done(alert_success())
+          .fail(alert_danger());
+      },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},
       get_security_groups: function (){

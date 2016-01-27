@@ -73,6 +73,23 @@ class SnapshotsController < ApplicationController
 
   # end
 
+  def save_retention_policy
+    enabled   = params.require(:enabled)
+    volume_id = params.require(:volume_id)
+
+    if enabled == 'true'
+      max_amount = params.require(:max_amount)
+      policy = RetentionPolicy.find_or_create_by(resource_id: volume_id)
+      policy.max_amount = max_amount
+      policy.save!
+    else
+      policy = RetentionPolicy.find_by(resource_id: volume_id)
+      policy.try!(:destroy)
+    end
+
+    render text: t('snapshots.msg.policy_saved'), status: 200 and return
+  end
+
   private
 
   def notify_progress(snapshot)

@@ -76,6 +76,18 @@ export default class Snapshot extends ModelBase {
       })
     );
   }
+
+  save_retention_policy(volume_id: string, enabled: boolean, max_amount: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>Snapshot.ajax).save_retention_policy({
+        infra_id:   this.infra_id,
+        volume_id:  volume_id,
+        enabled:    enabled,
+        max_amount: max_amount
+      })
+    );
+  }
 }
 
 Snapshot.ajax.add_collection('schedule', 'POST');
+Snapshot.ajax.add_collection('save_retention_policy', 'POST');

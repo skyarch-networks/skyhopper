@@ -12,19 +12,19 @@
         <fieldset>
           <div class="form-group">
             <div class="col-md-6">
-              <label class="control-label" for="max_snapshots">
+              <label class="control-label" for="max_amount">
                 <input v-model="enabled" type="checkbox">
                 保持する最新のスナップショット数
               </label>
             </div>
             <div class="col-md-3">
-              <input :disabled="!enabled" v-model="max_snapshots" class="form-control" id="max_snapshots" type="number" min="5">
+              <input :disabled="!enabled" v-model="max_amount" class="form-control" id="max_amount" type="number" min="5">
             </div>
           </div>
 <!--           <div class="form-group">
-            <label class="control-label col-md-6" for="max_snapshots">いつから</label>
+            <label class="control-label col-md-6" for="max_amount">いつから</label>
             <div class="col-md-3">
-              <input :disabled="!enabled" v-model="max_snapshots" class="form-control" id="max_snapshots" type="number" min="1">日前
+              <input :disabled="!enabled" v-model="max_amount" class="form-control" id="max_amount" type="number" min="1">日前
             </div>
           </div> -->
         </fieldset>
@@ -32,7 +32,7 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
-          <button @click="save_policy" class="btn btn-primary"><%= t('helpers.titles.save') %></button>
+          <button @click="save_retention_policy(volume_selected, enabled, max_amount)" class="btn btn-primary"><%= t('helpers.titles.save') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
         </div>
         <div-loader v-if="loading"></div-loader>
