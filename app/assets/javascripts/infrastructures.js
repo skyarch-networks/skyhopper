@@ -1697,7 +1697,12 @@
       },
       dispItems: function(){
         var startPage = this.page * this.dispItemSize;
-        return this.rules_summary.slice(startPage, startPage + this.dispItemSize);
+        if (this.filterKey === ''){
+          return this.rules_summary.slice(startPage, startPage + this.dispItemSize);
+        }
+        else{
+          return this.rules_summary;
+        }
       },
       isStartPage: function(){
         return (this.page === 0);
