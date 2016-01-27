@@ -394,12 +394,10 @@ class InfrastructuresController < ApplicationController
     path =
       if session[:project_id].present?
         infrastructures_path(project_id: session[:project_id])
+    elsif current_user.master?
+      clients_path
     else
-      if current_user.master?
-        clients_path
-      else
-        projects_path
-      end
+      projects_path
     end
 
     redirect_to path, alert: msg
