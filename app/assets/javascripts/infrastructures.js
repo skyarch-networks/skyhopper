@@ -642,12 +642,10 @@
       showPrev: function () {
         if(this.isStartPage) return;
         this.page--;
-        console.log(this.page);
       },
       showNext: function () {
         if(this.isEndPage) return;
         this.page++;
-        console.log(this.page);
       },
     },
     computed: {
@@ -1295,6 +1293,10 @@
       attachable_volumes:  [],
       max_sec_group:       null,
       rules_summary:       null,
+      page: 0,
+      dispItemSize: 10,
+      filteredLength: null,
+      filterKey: '',
       placement:          'left',
       lang:               queryString.lang,
       sec_group: t('ec2_instances.msg.security_groups'),
@@ -1653,6 +1655,7 @@
         ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.params;
           self.loading_groups = false;
+          self.filteredLength = data.params.length;
         });
       },
       check: function (i) {
@@ -1671,7 +1674,15 @@
           .done(alert_success(self.show_ec2))
           .fail(alert_danger(self.show_ec2));
 
-      }
+      },
+      showPrev: function (){
+        if(this.isStartPage) return;
+        this.page--;
+      },
+      showNext: function (){
+        if(this.isEndPage) return;
+        this.page++;
+      },
     },
     computed: {
       ec2_btn_class: function () {
@@ -1752,6 +1763,21 @@
         }
 
         return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
+      },
+      dispItems: function(){
+        var startPage = this.page * this.dispItemSize;
+        if (this.filterKey === ''){
+          return this.rules_summary.slice(startPage, startPage + this.dispItemSize);
+        }
+        else{
+          return this.rules_summary;
+        }
+      },
+      isStartPage: function(){
+        return (this.page === 0);
+      },
+      isEndPage: function(){
+        return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length);
       }
     },
     ready: function () {
@@ -1812,6 +1838,13 @@
     },
     filters: {
       zero_as_null: function (str) { return (str === 0) ? null : str; },
+      roundup: function (val) { return (Math.ceil(val));},
+      count: function (arr) {
+        // record length
+        this.$set('filteredLength', arr.length);
+        // return it intact
+        return arr;
+      },
     },
   });
 
@@ -1944,6 +1977,13 @@
       self.ec2.edit_attributes().done(function (data) {
         self.attributes = data;
         self.$parent.loading = false;
+        Vue.nextTick(function () {
+          var inputs = $(self.$el).parent().find('input');
+          var project_id = queryString.project_id;
+          inputs.textcomplete([
+            require('complete_project_parameter').default(project_id),
+          ]);
+        });
       }).fail(alert_danger(self.show_ec2));
     },
   });

@@ -2,7 +2,8 @@
 
 <div v-if="empty" class="alert alert-warning"><%= I18n.t('nodes.msg.attr_not_exists')%></div>
 
-<form class="form-horizontal">
+<form v-else class="form-horizontal">
+  <%= project_params_usage %>
   <div v-for="(key, attr) in attributes" class="form-group">
     <label for="{{* key | toID}}" class="col-sm-3 control-label">{{* key}}</label>
     <div class="col-sm-5">
