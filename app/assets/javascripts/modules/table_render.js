@@ -90,10 +90,10 @@ function buildTableBody(data) {
                     eval_protocol(v.ip_protocol),
                     eval_port(v.from_port, v.tp_port),
                     v.ip_ranges[0].cidr_ip,
-                    '',
-                    '',
-                    '',
-                    ''
+                    'x',
+                    'x',
+                    'x',
+                    'x'
                   ]);
             }
 
@@ -117,10 +117,10 @@ function buildTableBody(data) {
                     eval_protocol(v.ip_protocol),
                     eval_port(v.from_port,v.to_port),
                     v.ip_ranges[0].cidr_ip,
-                    '',
-                    '',
-                    '',
-                    ''
+                    'x',
+                    'x',
+                    'x',
+                    'x'
                   ]);
             }
 
