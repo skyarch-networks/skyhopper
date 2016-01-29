@@ -1589,7 +1589,7 @@
             }
             else {
               delete retention_policies[volume_id];
-            };
+            }
             alert_success()(msg);
           }).fail(alert_danger());
       },
