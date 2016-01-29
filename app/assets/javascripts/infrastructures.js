@@ -1216,6 +1216,7 @@
       attachable_volumes:  [],
       max_sec_group:       null,
       rules_summary:       null,
+      editing_policy:      {},
       placement:          'left',
       lang:               queryString.lang,
       sec_group: t('ec2_instances.msg.security_groups'),
@@ -1567,11 +1568,30 @@
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
       },
+      edit_retention_policy: function (volume_id) {
+        var self = this;
+        if (Object.keys(self.ec2.retention_policies).includes(volume_id)) {
+          self.editing_policy = self.ec2.retention_policies[volume_id];
+          self.editing_policy.enabled = true;
+        }
+        else {
+          self.editing_policy = {}
+        }
+      },
       save_retention_policy: function (volume_id, enabled, max_amount) {
+        var self = this;
+        var retention_policies = this.ec2.retention_policies;
         var snapshot = new Snapshot(current_infra.id);
         snapshot.save_retention_policy(volume_id, enabled, max_amount)
-          .done(alert_success())
-          .fail(alert_danger());
+          .done(function (msg) {
+            if (enabled) {
+              retention_policies[volume_id] = self.editing_policy;
+            }
+            else {
+              delete retention_policies[volume_id];
+            };
+            alert_success()(msg);
+          }).fail(alert_danger());
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},

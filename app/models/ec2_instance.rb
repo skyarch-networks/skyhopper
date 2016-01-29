@@ -77,6 +77,7 @@ class EC2Instance < SimpleDelegator
       platform: platform,
       availability_zone: placement.availability_zone,
       security_groups: security_groups,
+      retention_policies: retention_policies,
     }
   end
 
@@ -133,5 +134,15 @@ class EC2Instance < SimpleDelegator
       instance_id: @physical_id,
       device: device_name,
     )
+  end
+
+  def retention_policies
+    volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
+    policies = RetentionPolicy.where(resource_id: volume_ids)
+    policies.map { |e|
+      [ e.resource_id,
+        { max_amount: e.max_amount }
+      ]
+    }.to_h
   end
 end

@@ -68,7 +68,7 @@
                   <li class="dropdown-header"><%= t('snapshots.snapshot') %></li>
                   <li><a @click="create_snapshot(block_device.ebs.volume_id)" href="#"><%= t('snapshots.create_snapshot') %></a></li>
                   <li><a href="#snapshots-modal" data-toggle="modal"><%= t('snapshots.list_of_snapshots') %></a></li>
-                  <li><a href="#retention-policy-modal" data-toggle="modal"><%= t('snapshots.retention_policy') %></a></li>
+                  <li><a @click="edit_retention_policy(block_device.ebs.volume_id)" href="#retention-policy-modal" data-toggle="modal"><%= t('snapshots.retention_policy') %></a></li>
                   <li><a @click="open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
                 </ul>
                 </template>
