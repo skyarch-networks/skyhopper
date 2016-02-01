@@ -26,7 +26,6 @@
     "sifter": "~0.4.3",
     "fullcalendar": "~2.4.0",
     "selectize-bootswatch": "5e9042f617",
-    "offline": "~0.7.14",
-    "pdfmake": "~0.1.20"
+    "offline": "~0.7.14"
   }
 }

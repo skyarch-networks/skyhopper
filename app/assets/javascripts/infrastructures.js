@@ -39,6 +39,9 @@
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
   var modal          = require('modal');
+  var createPdf      = require('pdfmake-browserified');
+  var map            = require('./modules/ipam00303.map.js'); // font style mapping
+  var data           = require('./modules/ipam00303.js'); // font data
 
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
@@ -1089,16 +1092,6 @@
       },
       print_pdf: function(){
         var data = this.rules_summary;
-
-        var fonts = {
-        	Roboto: {
-        		normal: 'fonts/Roboto-Regular.ttf',
-        		bold: 'fonts/Roboto-Medium.ttf',
-        		italics: 'fonts/Roboto-Italic.ttf',
-        		bolditalics: 'fonts/Roboto-Italic.ttf'
-        	}
-        };
-
         var docDefinition = {
           footer: function(currentPage, pageCount) {return {
             text: currentPage.toString() + ' of ' + pageCount};},
@@ -1140,17 +1133,18 @@
           bold: true,
           fontSize: 11,
           color: 'black'
-        }
+        },
       },
       defaultStyle: {
         // alignment: 'justify'
         fontSize: 10,
-        alignment: 'center'
+        alignment: 'center',
       },
       pageSize: 'A4',
         pageOrientation: 'landscape',
       };
-        pdfMake.createPdf(docDefinition).open();
+
+        createPdf(docDefinition, map, data).open();
         this.get_rules();
       },
 
@@ -1671,8 +1665,9 @@
         });
 
         ec2.submit_groups(group_ids)
-          .done(alert_success(self.show_ec2))
-          .fail(alert_danger(self.show_ec2));
+          .done(alert_success(self._show_ec2))
+          .fail(alert_danger(self._show_ec2));
+
 
       },
       showPrev: function (){

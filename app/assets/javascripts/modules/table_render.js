@@ -40,7 +40,7 @@ function buildTableBody(data) {
             { colSpan: 4, text: 'Outbound', style: 'tableHeader' },
             'x', 'x', 'x',];
     var secondRow = ['x' , 'x',
-      {text: 'Type', style: 'tableHeader' },
+      {text: '大矢', style: 'tableHeader' },
       {text: 'Protocol', style: 'tableHeader' },
       {text: 'Source',  style: 'tableHeader' },
       {text: 'Port Range',  style: 'tableHeader' },
@@ -52,7 +52,8 @@ function buildTableBody(data) {
 
     body.push(firstRow, secondRow);
 
-    data.forEach(function(v) {
+    data.forEach(function(v,index) {
+      console.log('item: ',index);
       var inbound =  v.ip_permissions;
       var outbound = v.ip_permissions_egress;
 
@@ -71,63 +72,88 @@ function buildTableBody(data) {
       inbound.shift(); // Remove first index
       outbound.shift();  // Remove first index
 
-      if(inbound.length > outbound.length){
-        inbound.forEach(function(v,index){
-            if(outbound.length > index){
-              body.push(['','',
-                    v.user_id_group_pairs,
-                    eval_protocol(v.ip_protocol),
-                    eval_port(v.from_port, v.to_port),
-                    v.ip_ranges[0].cidr_ip,
-                    outbound[index].user_id_group_pairs,
-                    eval_protocol(outbound[index].ip_protocol),
-                    eval_port(outbound[index].from_port, outbound[index].to_port),
-                    outbound[index].ip_ranges[0].cidr_ip
-                  ]);
-            }else{
-              body.push(['','',
-                    v.user_id_group_pairs,
-                    eval_protocol(v.ip_protocol),
-                    eval_port(v.from_port, v.tp_port),
-                    v.ip_ranges[0].cidr_ip,
-                    'x',
-                    'x',
-                    'x',
-                    'x'
-                  ]);
-            }
-
-        });
-      }else{
-        outbound.forEach(function(v,index){
-            if(inboound.length > index){
-              body.push(['','',
-                    v.user_id_group_pairs,
-                    eval_protocol(v.ip_protocol),
-                    eval_port(v.from_port.toString()),
-                    v.ip_ranges[0].cidr_ip,
-                    inboound[index].user_id_group_pairs,
-                    eval_protocol(inboound[index].ip_protocol),
-                    eval_port(inboound[index].from_port,inboound[index].to_port),
-                    inboound[index].ip_ranges[0].cidr_ip
-                  ]);
-            }else{
-              body.push(['','',
-                    v.user_id_group_pairs,
-                    eval_protocol(v.ip_protocol),
-                    eval_port(v.from_port,v.to_port),
-                    v.ip_ranges[0].cidr_ip,
-                    'x',
-                    'x',
-                    'x',
-                    'x'
-                  ]);
-            }
-
-        });
+      if(index==2){
+          body.push(firstRow, secondRow);
+          console.log(inbound);
+          console.log(outbound);
+          body.push([{text: v.description, style: 'tableHeader', rowSpan: inbound.length},
+                   {text: v.group_id, style: 'tableHeader', rowSpan: inbound.length},
+                   inbound[index].user_id_group_pairs,
+                   eval_protocol(inbound[index].ip_protocol),
+                   eval_port(inbound[index].from_port, inbound[index].to_port),
+                   inbound[index].ip_ranges[index].cidr_ip,
+                   outbound[index].user_id_group_pairs,
+                   eval_protocol(outbound[index].ip_protocol),
+                   eval_port(outbound[index].from_port, outbound[index].from_port),
+                   outbound[index].ip_ranges[index].cidr_ip2
+          ]);
+          inbound.shift(); // Remove first index
+          outbound.shift();
+          extract_next(inbound, outbound, body);
+      }else {
+        extract_next(inbound, outbound, body);
       }
-  }
-  );
-  console.log(body);
+
+  });
   return body;
+}
+
+
+function extract_next(inbound, outbound, body){
+  if(inbound.length > outbound.length){
+    inbound.forEach(function(v,index){
+        if(outbound.length > index){
+          body.push(['','',
+                v.user_id_group_pairs,
+                eval_protocol(v.ip_protocol),
+                eval_port(v.from_port, v.to_port),
+                v.ip_ranges[0].cidr_ip,
+                outbound[index].user_id_group_pairs,
+                eval_protocol(outbound[index].ip_protocol),
+                eval_port(outbound[index].from_port, outbound[index].to_port),
+                outbound[index].ip_ranges[0].cidr_ip
+              ]);
+        }else{
+          body.push(['','',
+                v.user_id_group_pairs,
+                eval_protocol(v.ip_protocol),
+                eval_port(v.from_port, v.tp_port),
+                v.ip_ranges[0].cidr_ip,
+                '-',
+                '-',
+                '-',
+                '-'
+              ]);
+        }
+
+    });
+  }else{
+    outbound.forEach(function(v,index){
+        if(inboound.length > index){
+          body.push(['','',
+                v.user_id_group_pairs,
+                eval_protocol(v.ip_protocol),
+                eval_port(v.from_port.toString()),
+                v.ip_ranges[0].cidr_ip,
+                inboound[index].user_id_group_pairs,
+                eval_protocol(inboound[index].ip_protocol),
+                eval_port(inboound[index].from_port,inboound[index].to_port),
+                inboound[index].ip_ranges[0].cidr_ip
+              ]);
+        }else{
+          body.push(['','',
+                v.user_id_group_pairs,
+                eval_protocol(v.ip_protocol),
+                eval_port(v.from_port,v.to_port),
+                v.ip_ranges[0].cidr_ip,
+                '-',
+                '-',
+                '-',
+                '-'
+              ]);
+        }
+
+    });
+  }
+
 }

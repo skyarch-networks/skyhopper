@@ -28,5 +28,3 @@
 //= require fullcalendar
 //= require lang-all
 //= require offline.min
-//= require pdfmake.min
-//= require vfs_fonts

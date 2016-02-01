@@ -1,1 +1,0 @@
-../../bower_components/pdfmake/build/vfs_fonts.js
