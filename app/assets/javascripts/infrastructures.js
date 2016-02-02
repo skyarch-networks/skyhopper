@@ -2393,7 +2393,7 @@
 
   var SHOW_INFRA_ID = '#infra-show';
 
-  var show_infra = function (infra_id) {
+  var show_infra = function (infra_id, current_tab) {
     current_infra = new Infrastructure(infra_id);
 
     var l = new Loader();
@@ -2410,38 +2410,12 @@
         CFTemplate,
         alert_danger,
         stack_in_progress,
-        ''
+        current_tab
       );
       l.$destroy();
       app.$mount(SHOW_INFRA_ID);
     });
   };
-
-  var show_sched = function (infra_id) {
-    current_infra = new Infrastructure(infra_id);
-
-    var l = new Loader();
-    l.text = "Loading...";
-    l.$mount(SHOW_INFRA_ID);
-    if (app) {
-      app.$destroy();
-    }
-    current_infra.show().done(function (stack) {
-      app = newVM(
-        stack,
-        Resource,
-        EC2Instance,
-        current_infra,
-        CFTemplate,
-        alert_danger,
-        stack_in_progress,
-        'show_sched'
-      );
-      l.$destroy();
-      app.$mount(SHOW_INFRA_ID);
-    });
-  };
-
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -2562,7 +2536,7 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-    show_infra(infra_id);
+    show_infra(infra_id, '');
   });
 
   $(document).on('click', '.operation-sched', function (e) {
@@ -2570,7 +2544,7 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-    show_sched(infra_id);
+    show_infra(infra_id, 'show_sched');
   });
 
   $(document).on('click', '.detach-infra', function (e) {
