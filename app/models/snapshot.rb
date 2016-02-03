@@ -9,6 +9,8 @@
 require 'delegate'
 
 class Snapshot < SimpleDelegator
+  PROTECTION_TAG_NAME = 'skyhopper_protect_this'
+
   class VolumeNotFoundError < StandardError; end
   class VolumeRetiredError < StandardError; end
   class VolumeProtectedError < StandardError; end
@@ -79,7 +81,7 @@ class Snapshot < SimpleDelegator
 
   def protected?
     tags.any? { |tag|
-      tag.key == 'skyhopper_protect_this' && tag.value != 'false'
+      tag.key == PROTECTION_TAG_NAME && tag.value != 'false'
     }
   end
 

@@ -29,7 +29,7 @@
               <td v-text="snapshot_status(snapshot)"></td>
               <td v-text="toLocaleString(snapshot.start_time)"></td>
               <td v-text="snapshot.encrypted"></td>
-              <td><i class="fa fa-lock" v-show="snapshot.tags.skyhopper_protect_this"></i></td>
+              <td><i class="fa fa-lock" v-show="snapshot.tags.<%= Snapshot::PROTECTION_TAG_NAME %>"></i></td>
             </tr>
             <tr v-if="!snapshots.length">
               <td colspan="8"><%= t('snapshots.msg.no_snapshots') %></td>
