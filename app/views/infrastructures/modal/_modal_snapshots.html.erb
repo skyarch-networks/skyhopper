@@ -40,6 +40,7 @@
 
       <div class="modal-footer">
         <div v-if="!loading">
+          <button @click="edit_retention_policy" href="#retention-policy-modal" data-toggle="modal" class="btn btn-info" style="float: left"><%= t('snapshots.retention_policy') %></button>
           <button @click="create_snapshot(volume_selected)" class="btn btn-primary"><%= t('helpers.links.create') %></button>
           <button @click="delete_selected_snapshots()" :disabled="!selected_any || loading_snapshots" class="btn btn-danger"><%= t('helpers.links.destroy') %></button>
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>

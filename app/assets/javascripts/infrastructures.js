@@ -1568,10 +1568,10 @@
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
       },
-      edit_retention_policy: function (volume_id) {
+      edit_retention_policy: function () {
         var self = this;
-        if (Object.keys(self.ec2.retention_policies).includes(volume_id)) {
-          self.editing_policy = self.ec2.retention_policies[volume_id];
+        if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
+          self.editing_policy = self.ec2.retention_policies[self.volume_selected];
           self.editing_policy.enabled = true;
         }
         else {
@@ -1590,6 +1590,7 @@
             else {
               delete retention_policies[volume_id];
             }
+            $('#retention-policy-modal').modal('hide');
             alert_success()(msg);
           }).fail(alert_danger());
       },
