@@ -40,6 +40,8 @@
   var Snapshot       = require('models/snapshot').default;
   var modal          = require('modal');
   var createPdf      = require('pdfmake-browserified');
+  var map            = require('./modules/ipam00303.map');
+  var data_mapping   = require('./modules/ipam00303');
 
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
@@ -1090,6 +1092,8 @@
       },
       print_pdf: function(){
         var data = this.rules_summary;
+        var defaultFont = Object.keys(map)[0];
+
         var docDefinition = {
           footer: function(currentPage, pageCount) {return {
             text: currentPage.toString() + ' of ' + pageCount};},
@@ -1137,12 +1141,14 @@
         // alignment: 'justify'
         fontSize: 10,
         alignment: 'center',
+        font: defaultFont
       },
       pageSize: 'A4',
         pageOrientation: 'landscape',
       };
+        console.log(data_mapping);
 
-        createPdf(docDefinition).open();
+        createPdf(docDefinition, map, data_mapping).open();
         this.get_rules();
       },
 

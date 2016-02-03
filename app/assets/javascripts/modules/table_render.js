@@ -33,21 +33,21 @@ function eval_protocol(ip_protocol){
 
 function buildTableBody(data) {
     var body = [];
-    var firstRow = [{ rowSpan: 2, text: 'Description',  style: 'tableHeader' },
-            { rowSpan: 2, text: 'Group ID',style: 'tableHeader' },
-            { colSpan: 4, text: 'Inbound', style: 'tableHeader' },
+    var firstRow = [{ rowSpan: 2, text: t('security_groups.description'),  style: 'tableHeader' },
+            { rowSpan: 2, text: t('security_groups.group_id'),style: 'tableHeader' },
+            { colSpan: 4, text: t('security_groups.inbound'), style: 'tableHeader' },
             'x','x','xx',
-            { colSpan: 4, text: 'Outbound', style: 'tableHeader' },
+            { colSpan: 4, text:  t('security_groups.outbound'), style: 'tableHeader' },
             'x', 'x', 'x',];
     var secondRow = ['x' , 'x',
-      {text: '大矢', style: 'tableHeader' },
-      {text: 'Protocol', style: 'tableHeader' },
-      {text: 'Source',  style: 'tableHeader' },
-      {text: 'Port Range',  style: 'tableHeader' },
-      {text: 'Type',  style: 'tableHeader' },
-      {text: 'Protocol', style: 'tableHeader' },
-      {text: 'Port Range', style: 'tableHeader' },
-      {text: 'Source',  style: 'tableHeader' },
+      {text: t('security_groups.type'), style: 'tableHeader' },
+      {text: t('security_groups.protocol'), style: 'tableHeader' },
+      {text: t('security_groups.port_range'),  style: 'tableHeader' },
+      {text: t('security_groups.source'),  style: 'tableHeader' },
+      {text: t('security_groups.type'),  style: 'tableHeader' },
+      {text: t('security_groups.protocol'), style: 'tableHeader' },
+      {text: t('security_groups.port_range'), style: 'tableHeader' },
+      {text: t('security_groups.source'),  style: 'tableHeader' },
     ];
 
     body.push(firstRow, secondRow);
