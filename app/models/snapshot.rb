@@ -9,7 +9,7 @@
 require 'delegate'
 
 class Snapshot < SimpleDelegator
-  PROTECTION_TAG_NAME = 'skyhopper_protect_this'
+  PROTECTION_TAG_NAME = 'skyhopper_protect_this'.freeze
 
   class VolumeNotFoundError < StandardError; end
   class VolumeRetiredError < StandardError; end
