@@ -193,6 +193,10 @@ class NodesController < ApplicationController
   def update_attributes
     physical_id = params.require(:id)
     attr  = JSON.parse(params.require(:attributes))
+    attr.each do |key, val|
+      next unless val
+      attr[key] = ProjectParameter.exec(val, project_id: @infra.project_id)
+    end
 
     node = Node.new(physical_id)
 
