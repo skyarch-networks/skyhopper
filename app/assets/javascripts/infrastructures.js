@@ -40,8 +40,6 @@
   var Snapshot       = require('models/snapshot').default;
   var modal          = require('modal');
   var createPdf      = require('pdfmake-browserified');
-  var map            = require('./modules/ipam00303.map.js'); // font style mapping
-  var data           = require('./modules/ipam00303.js'); // font data
 
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
@@ -1144,7 +1142,7 @@
         pageOrientation: 'landscape',
       };
 
-        createPdf(docDefinition, map, data).open();
+        createPdf(docDefinition).open();
         this.get_rules();
       },
 
