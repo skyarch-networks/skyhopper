@@ -6,33 +6,24 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class PeriodicSnapshotJob < ActiveJob::Base
+class SnapshotJob < ActiveJob::Base
   queue_as :default
 
   def perform(volume_id, physical_id, infra, user_id)
-    schedule = SnapshotSchedule.find_by(volume_id: volume_id)
+    @schedule = SnapshotSchedule.find_by(volume_id: volume_id)
 
-    if schedule.enabled
-      PeriodicSnapshotJob.set(
-        wait_until: schedule.next_run,
+    if @schedule.try(:enabled)
+      self.class.set(
+        wait_until: @schedule.next_run,
       ).perform_later(volume_id, physical_id, infra, user_id)
     end
 
     @ws = WSConnector.new('notifications', User.find(user_id).ws_key)
 
-    begin
-      create_snapshot(volume_id, physical_id, infra, user_id)
-    rescue Snapshot::VolumeNotFoundError, Snapshot::VolumeRetiredError => ex
-      schedule.destroy
-      infra_log(infra.id, user_id, false, "Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
-    end
+    create_snapshot(volume_id, physical_id, infra, user_id)
 
-    begin
-      policy = RetentionPolicy.find_by(resource_id: volume_id)
-      if policy
-        delete_outdated_snapshots(infra, volume_id, policy)
-      end
-    end
+    policy = RetentionPolicy.find_by(resource_id: volume_id)
+    delete_outdated_snapshots(infra, volume_id, policy) if policy
   end
 
   def create_snapshot(volume_id, physical_id, infra, user_id)
@@ -44,6 +35,9 @@ class PeriodicSnapshotJob < ActiveJob::Base
     end
 
     infra_log(infra.id, user_id, true, "Snapshot creation for #{snapshot.volume_id} has completed.\n Snapshot ID: #{snapshot.snapshot_id}")
+  rescue Snapshot::VolumeNotFoundError, Snapshot::VolumeRetiredError => ex
+    @schedule.destroy
+    infra_log(infra.id, user_id, false, "Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
   end
 
   def delete_outdated_snapshots(infra, volume_id, policy)
