@@ -12,9 +12,6 @@
 
   google.load('visualization',   '1.0',   {'packages':['corechart']});
 
-  var current_infra = null;
-  var app;
-
   ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
 
 // ================================================================
@@ -26,8 +23,12 @@
   var listen         = require('./modules/listen');
   var tableRender    = require('./modules/table_render');
   //var infraindex = require('./modules/loadindex');
+<<<<<<< HEAD
   var newVM          = require('./modules/newVM');
   var queryString    = require('query-string').parse(location.search);
+=======
+  var queryString = require('query-string').parse(location.search);
+>>>>>>> origin/develop
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
@@ -52,110 +53,28 @@
   require('brace/theme/github');
   Vue.use(vace, false, 'json', '25');
 
-  // Vueに登録したfilterを、外から見る方法ってないのかな。
-  var jsonParseErr = function (str) {
-    if (_.trim(str) === '') {
-      return 'JSON String is empty. Please input JSON.';
-    }
-    try {
-      JSON.parse(str);
-    } catch (ex) {
-      return ex;
-    }
-  };
-
-  var toLocaleString = function (datetext) {
-    var date = new Date(datetext);
-    return date.toLocaleString();
-  };
+  var helpers = require('infrastructures/helper.js');
+  var jsonParseErr         = helpers.jsonParseErr;
+  var toLocaleString       = helpers.toLocaleString;
+  var alert_success        = helpers.alert_success;
+  var alert_danger         = helpers.alert_danger;
+  var alert_and_show_infra = helpers.alert_and_show_infra;
 
 
-  // Utilities
-  var alert_success = function (callback) {
-    return function (msg) {
-      var dfd = modal.Alert(t('infrastructures.infrastructure'), msg);
-      if (callback) {
-        dfd.done(callback);
-      }
-    };
-  };
-
-  var alert_danger = function (callback) {
-    return function (msg) {
-      if (!jsonParseErr(msg) && JSON.parse(msg).error) {
-        modal.AlertForAjaxStdError(callback)(msg);
-      } else {
-        var dfd = modal.Alert(t('infrastructures.infrastructure'), msg, 'danger');
-        if (callback) { dfd.done(callback); }
-      }
-    };
-  };
-
-  var alert_and_show_infra = alert_danger(function () {
-    show_infra(current_infra.id);
-  });
-
-  Vue.component("stack-events-table", {
-    props: { events: Array, },
-    template: '#stack-events-table-template',
-    methods: {
-      event_tr_class: function (status) {
-        if      (status === "CREATE_COMPLETE")    { return "success"; }
-        else if (status.indexOf("FAILED") !== -1) { return "danger"; }
-        else if (status.indexOf("DELETE") !== -1) { return "warning"; }
-        return '';
-      },
-      toLocaleString: toLocaleString,
-    },
-    created: function () {
-      var self = this;
-      console.log(self);
-      this.$watch('events', function () {
-        $(self.$el).hide().fadeIn(800);
-      });
-    },
-  });
-
-  Vue.component("add-modify-tabpane", {
-    props: {
-      templates: {
-        type: Object,
-        required: true,
-      },
-      result: {
-        type: Object,
-        required: true,
-      },
-    },
-    data: function(){
-      return{selected_cft_id: null,};},
-    template: '#add-modify-tabpane-template',
-    methods: {
-      select_cft: function () {
-        var self = this;
-        var cft = _.find(self.templates.histories.concat(self.templates.globals), function (c) {
-          return c.id === self.selected_cft_id;
-        });
-        self.result.name   = cft.name;
-        self.result.detail = cft.detail;
-        self.result.value  = cft.value;
-
-      },
-      submit: function () {
-        if (this.jsonParseErr) {return;}
-        app.show_tabpane('insert-cf-params');
-        app.loading = true;
-      },
-    },
-    computed: {
-      jsonParseErr: function () { return jsonParseErr(this.result.value); },
-    },
-
-  });
+  Vue.component('stack-events-table', require('infrastructures/stack-events-table.js'));
+  Vue.component('add-modify-tabpane', require('infrastructures/add-modify-tabpane.js'));
 
 
   Vue.component("insert-cf-params", {
     template: '#insert-cf-params-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       params: {},
       result: {},
@@ -164,21 +83,24 @@
     methods: {
       submit: function () {
         this.loading = true;
-        var cft = new CFTemplate(current_infra);
+        var infra = new Infrastructure(this.infra_id);
+        var cft = new CFTemplate(infra);
         var self = this;
         cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(function () {
-          show_infra(current_infra.id);
+          show_infra(infra.id);
         })).fail(alert_danger(function () {
           self.loading = false;
         }));
       },
 
-      back: function () { app.show_tabpane('add_modify'); },
+      back: function () { this.$parent.show_tabpane('add_modify'); },
     },
     ready: function () {
       var self = this;
       console.log(self);
-      var cft = new CFTemplate(current_infra);
+
+      var infra = new Infrastructure(this.infra_id);
+      var cft = new CFTemplate(infra);
       cft.insert_cf_params(this.$parent.current_infra.add_modify)
       .fail(alert_danger(function () {
         self.back();
@@ -187,9 +109,8 @@
         _.each(data, function (val, key) {
           Vue.set(self.result, key, val.Default);
         });
-        app.loading = false;
-      }).then(function () {
-        // for project parameter
+        self.$parent.loading = false;
+
         Vue.nextTick(function () {
           var inputs = $(self.$el).parent().find('input');
           var project_id = queryString.project_id;
@@ -210,10 +131,11 @@
     };},
     methods: {
       submit: function () {
-        var res = new Resource(current_infra);
+        var infra = new Infrastructure(this.infra_id);
+        var res = new Resource(infra);
         res.create(this.physical_id, this.screen_name)
           .done(alert_success(function () {
-            show_infra(current_infra.id);
+            show_infra(infra.id);
           }))
           .fail(alert_and_show_infra);
       },
@@ -221,7 +143,8 @@
     created: function () {
       console.log(this);
       var self = this;
-      var res = new EC2Instance(current_infra, "");
+      var infra = new Infrastructure(this.infra_id);
+      var res = new EC2Instance(infra, "");
       res.available_resources().done(function (data){
         self.physical_ids = data;
       });
@@ -241,11 +164,20 @@
 
   Vue.component("cf-history-tabpane", {
     template: '#cf-history-tabpane-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       id: -1,
       current: null,
       history: [],
     };},
+
     methods: {
       active: function (id) { return this.id === id; },
       toLocaleString: toLocaleString,
@@ -254,7 +186,8 @@
         var self = this;
         self.id = id;
 
-        var cft = new CFTemplate(current_infra);
+        var infra = new Infrastructure(this.infra_id);
+        var cft = new CFTemplate(infra);
         cft.show(id).done(function (data) {
           self.current = data;
         }).fail(alert_and_show_infra);
@@ -265,7 +198,8 @@
     },
     created: function () {
       var self = this;
-      var cft = new CFTemplate(current_infra);
+      var infra = new Infrastructure(this.infra_id);
+      var cft = new CFTemplate(infra);
       cft.history().done(function (data) {
         self.history = data;
         self.$parent.loading = false;
@@ -275,19 +209,30 @@
 
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       logs: [],
       page: {},
     };},
+
     methods: {
       status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
       status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
       toLocaleString: toLocaleString,
     },
+
     created: function () {
       var self = this;
       console.log(self);
-      current_infra.logs().done(function (data) {
+      var infra = new Infrastructure(this.infra_id);
+      infra.logs().done(function (data) {
         self.logs = data.logs;
         self.page = data.page;
         self.$parent.loading = false;
@@ -300,7 +245,8 @@
       });
 
       this.$on('show', function (page) {
-        current_infra.logs(page).done(function (data) {
+        var infra = new Infrastructure(self.infra_id);
+        infra.logs(page).done(function (data) {
           self.logs = data.logs;
           self.page = data.page;
         }).fail(alert_and_show_infra);
@@ -313,6 +259,14 @@
   // TODO: .active をつける
   Vue.component("monitoring-tabpane", {
     template: "#monitoring-tabpane-template",
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       problems: null,
       creating: false,
@@ -335,6 +289,7 @@
       physical_id: null,
       item_id: null,
     };},
+
     methods: {
       show_problems: function () {
         var self = this;
@@ -498,7 +453,7 @@
       },
     },
     computed: {
-      monitoring: function ()    { return new Monitoring(current_infra); },
+      monitoring: function ()    { return new Monitoring(new Infrastructure(this.infra_id)); },
       no_problem: function ()    { return _.isEmpty(this.problems); },
       before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
       has_selected: function() {
@@ -525,7 +480,8 @@
     },
     created: function () {
       var self = this;
-      var monitoring = new Monitoring(current_infra);
+      var infra = new Infrastructure(this.infra_id);
+      var monitoring = new Monitoring(infra);
       monitoring.show().done(function (data) {
         self.before_register = data.before_register;
         self.commons         = data.monitor_selected_common;
@@ -547,6 +503,14 @@
 
   Vue.component("edit-monitoring-tabpane", {
     template: "#edit-monitoring-tabpane-template",
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       master_monitorings: [],
       selected_monitoring_ids: [],
@@ -563,6 +527,7 @@
       before_register: false,
       sel_resource: null,
     };},
+
     methods: {
       type: function (master) { return Monitoring.type(master); },
       edit_temp: function(resource) {
@@ -652,7 +617,7 @@
       },
     },
     computed: {
-      monitoring: function () { return new Monitoring(current_infra); },
+      monitoring: function () { return new Monitoring(new Infrastructure(this.infra_id)); },
       has_selected: function() {
         return _.some(this.templates, function(c){
           return c.checked;
@@ -742,20 +707,28 @@
   });
 
   Vue.component('rds-tabpane', {
+    template: '#rds-tabpane-template',
+
     props: {
       physical_id: {
         type: String,
         required: true,
       },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {return {
       rds: {},
       serverspec: {},
     };},
-    template: '#rds-tabpane-template',
+
     methods: {
       change_scale: function () {
-        var rds = new RDSInstance(current_infra, this.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var rds = new RDSInstance(infra, this.physical_id);
         rds.change_scale(this.change_scale_type_to).done(function (msg) {
           alert_success(self.reload)(msg);
           $('#change-scale-modal').modal('hide');
@@ -766,7 +739,8 @@
       },
       gen_serverspec: function () {
         var self = this;
-        var rds = new RDSInstance(current_infra, this.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var rds = new RDSInstance(infra, this.physical_id);
         rds.gen_serverspec(this.serverspec).done(function (msg) {
           alert_success(self.reload)(msg);
           $('#rds-serverspec-modal').modal('hide');
@@ -785,7 +759,8 @@
     },
     created: function () {
       var self = this;
-      var rds = new RDSInstance(current_infra, this.physical_id);
+      var infra = new Infrastructure(this.infra_id);
+      var rds = new RDSInstance(infra, this.physical_id);
       rds.show().done(function (data) {
         self.rds = data.rds;
         self.$parent.loading = false;
@@ -795,12 +770,19 @@
 
   // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {
+    template: '#elb-tabpane-template',
+
     props: {
       physical_id: {
         type: String,
         required: true,
       },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {return {
       ec2_instances: [],
       unregistereds: [],
@@ -817,14 +799,15 @@
       ssl_certificate_id: '',
       security_groups: null,
     };},
-    template: '#elb-tabpane-template',
+
     methods: {
       show_ec2: function (physical_id) { this.$parent.show_ec2(physical_id); },
 
       deregister: function (physical_id) {
         var self = this;
         modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(function () {
-          var ec2 = new EC2Instance(current_infra, physical_id);
+          var infra = new Infrastructure(self.infra_id);
+          var ec2 = new EC2Instance(infra, physical_id);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
           };
@@ -836,7 +819,8 @@
       register: function () {
         var self = this;
         modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(function () {
-          var ec2 = new EC2Instance(current_infra, self.selected_ec2);
+          var infra = new Infrastructure(self.infra_id);
+          var ec2 = new EC2Instance(infra, self.selected_ec2);
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
           };
@@ -892,7 +876,8 @@
       create_listener: function(){
         var self = this;
         self.loading = true;
-        var ec2 = new EC2Instance(current_infra, "");
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, "");
         var reload = function () {
           self.$parent.show_elb(self.physical_id);
         };
@@ -909,7 +894,8 @@
       update_listener: function(){
         var self = this;
         self.loading = true;
-        var ec2 = new EC2Instance(current_infra, "");
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, "");
         var reload = function () {
           self.$parent.show_elb(self.physical_id);
         };
@@ -927,7 +913,8 @@
         var self = this;
         self.load_balancer_port = load_balancer_port;
         modal.Confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(function () {
-          var ec2 = new EC2Instance(current_infra, "");
+          var infra = new Infrastructure(self.infra_id);
+          var ec2 = new EC2Instance(infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
           };
@@ -939,7 +926,8 @@
       upload_server_certificate: function(){
         var self = this;
         self.loading = true;
-        var ec2 = new EC2Instance(current_infra, "");
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, "");
         var reload = function () {
           self.$parent.show_elb(self.physical_id);
         };
@@ -957,7 +945,8 @@
         var self = this;
         self.server_certificate_name = server_certificate_name;
         modal.Confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(function () {
-          var ec2 = new EC2Instance(current_infra, "");
+          var infra = new Infrastructure(self.infra_id);
+          var ec2 = new EC2Instance(infra, "");
           var reload = function () {
             self.$parent.show_elb(self.physical_id);
           };
@@ -977,7 +966,8 @@
       },
       elb_submit_groups: function(){
         var self = this;
-        var ec2 = new EC2Instance(current_infra, '');
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, '');
         var group_ids = this.security_groups.filter(function (t) {
           return t.checked;
         }).map(function (t) {
@@ -1007,7 +997,8 @@
     },
     compiled: function () {
       var self = this;
-      current_infra.show_elb(this.physical_id).done(function (data) {
+      var infra = new Infrastructure(self.infra_id);
+      infra.show_elb(this.physical_id).done(function (data) {
         self.ec2_instances = data.ec2_instances;
         self.unregistereds = data.unregistereds;
         self.dns_name = data.dns_name;
@@ -1026,16 +1017,24 @@
 
   Vue.component('s3-tabpane', {
     template: '#s3-tabpane-template',
+
     props: {
       physical_id: {
         type: String,
         required: true,
       },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {return {html: ""};},
+
     compiled: function () {
       var self = this;
-      var s3 = new S3Bucket(current_infra, this.physical_id);
+      var infra = new Infrastructure(self.infra_id);
+      var s3 = new S3Bucket(infra, this.physical_id);
       s3.show().done(function (res) {
         self.html = res;
         self.$parent.loading = false;
@@ -1045,6 +1044,7 @@
 
   Vue.component('view-rules-tabpane', {
     template: '#view-rules-tabpane-template',
+
     props: {
       physical_id: {
         type: String,
@@ -1057,19 +1057,26 @@
       instance_type:{
         type: String,
         required: true,
-      }
+      },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () { return{
       loading:        false,
       rules_summary:  null,
       ip: null,
       lang: queryString.lang,
     };},
+
     methods: {
       get_rules: function ()  {
         var self = this;
         var group_ids = [];
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, this.physical_id);
         self.security_groups.forEach(function (value, key) {
           if(self.instance_type === 'elb'){
             if(value.checked)
@@ -1162,12 +1169,18 @@
 
   Vue.component('security-groups-tabpane', {
     template: '#security-groups-tabpane-template',
+
     props: {
       ec2_instances: {
         type: Array,
         required: true,
       },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () { return{
       loading:        false,
       rules_summary:  null,
@@ -1183,10 +1196,12 @@
       type: [],
       physical_id: null,
     };},
+
     methods: {
       get_rules: function ()  {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, '');
+        var infra = new Infrastructure(self.infra_id);
+        var ec2 = new EC2Instance(infra, '');
         ec2.get_rules().done(function (data) {
           self.rules_summary = data.rules_summary;
 
@@ -1227,7 +1242,8 @@
       create_group: function () {
         if(!this.group_name && this.description && this.vpc && this.name) {return;}
         this.$parent.loading = true;
-        var ec2 = new EC2Instance(current_infra, '');
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, '');
         ec2.create_group(
           [this.group_name,
           this.description,
@@ -1265,12 +1281,19 @@
   });
 
   Vue.component('ec2-tabpane', {
+    template: '#ec2-tabpane-template',
+
     props: {
       physical_id: {
         type: String,
         required: true,
       },
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {return {
       loading:             false,
       loading_s:           false,
@@ -1302,12 +1325,13 @@
       attach_vol: t('ec2_instances.attach'),
       changing_status: t('ec2_instances.changing_status'),
     };},
-    template: '#ec2-tabpane-template',
+
     methods: {
       bootstrap: function () {
         var self = this;
         self.loading = true;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
 
         ec2.bootstrap()
           .done(alert_success(self._show_ec2))
@@ -1319,7 +1343,8 @@
         this.ec2_status_changing = true;
 
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         ec2.start_ec2()
           .done(alert_success(self._show_ec2))
           .fail(alert_danger(self._show_ec2));
@@ -1330,7 +1355,8 @@
         this.ec2_status_changing = true;
 
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         ec2.stop_ec2()
           .done(alert_success(self._show_ec2))
           .fail(alert_danger(self._show_ec2));
@@ -1341,17 +1367,19 @@
         this.ec2_status_changing = true;
 
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         ec2.reboot_ec2()
           .fail(alert_danger(self._show_ec2));
       },
       detach_ec2: function () {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
           ec2.detach_ec2(self.x_zabbix, self.x_chef)
             .done(alert_success(function () {
-              show_infra(current_infra.id);
+              show_infra(infra.id);
             }))
             .fail(alert_danger(self._show_ec2));
         });
@@ -1359,11 +1387,12 @@
       },
       terminate_ec2: function () {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.terminate'), 'danger').done(function () {
           ec2.terminate_ec2()
             .done(alert_success(function () {
-              show_infra(current_infra.id);
+              show_infra(infra.id);
             }))
             .fail(alert_danger(self._show_ec2));
         });
@@ -1371,7 +1400,8 @@
       },
       _cook: function (method_name, params) {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
 
         var dfd = ec2[method_name](params);
         dfd.fail(
@@ -1391,7 +1421,6 @@
       },
       watch_cook: function (dfd) {
         var self = this;
-        var infra_id = current_infra.id;
         var el = document.getElementById("cook-status");
 
         // 更新されるたびにスクロールすると、scrollHeight 等が重い処理なのでブラウザが固まってしまう。
@@ -1407,21 +1436,20 @@
         })();
 
         dfd.done(function () {
-          if(infra_id !== current_infra.id){return;}
           // cook end
           self.chef_console_text = '';
           self.inprogress = false;
           self._show_ec2();
         }).progress(function (state, msg) {
           if (state !== 'update') {return;}
-          if(infra_id !== current_infra.id){return;}
 
           self.chef_console_text += msg;
         });
       },
 
       apply_dish: function () {
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, this.physical_id);
         ec2.apply_dish(this.selected_dish)
           .done(alert_success(this._show_ec2))
           .fail(alert_danger(this._show_ec2));
@@ -1430,7 +1458,8 @@
 
       yum_update: function (security, exec) {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
 
         var security_bool = (security === "security");
         var exec_bool = (exec === "exec");
@@ -1499,7 +1528,8 @@
       change_scale: function () {
         var self = this;
         self.loading = true;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         ec2.change_scale(self.change_scale_type_to).done(function (msg) {
           alert_success(self._show_ec2)(msg);
           $('#change-scale-modal').modal('hide');
@@ -1521,7 +1551,8 @@
       change_yum_schedule: function () {
         var self = this;
         self.loading_s = true;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         ec2.schedule_yum(self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
@@ -1534,7 +1565,7 @@
       change_snapshot_schedule: function () {
         var self = this;
         self.loading_s = true;
-        var s = new Snapshot(current_infra.id);
+        var s = new Snapshot(this.infra_id);
         s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
           self.loading_s = false;
           $('#change-schedule-modal').modal('hide');
@@ -1550,7 +1581,7 @@
       create_snapshot: function (volume_id) {
         var self = this;
         modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {volume_id: volume_id})).done(function () {
-          var snapshot = new Snapshot(current_infra.id);
+          var snapshot = new Snapshot(self.infra_id);
 
           snapshot.create(volume_id, self.physical_id).progress(function (data) {
             modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
@@ -1576,7 +1607,7 @@
       },
       load_snapshots: function () {
         var self = this;
-        var snapshot = new Snapshot(current_infra.id);
+        var snapshot = new Snapshot(this.infra_id);
         this.loading_snapshots = true;
         snapshot.index(this.volume_selected).done(function (data) {
           self.snapshots = _.map(data.snapshots, function (s) {
@@ -1594,7 +1625,7 @@
         var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
         var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
         modal.Confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
-          var s = new Snapshot(current_infra.id);
+          var s = new Snapshot(self.infra_id);
 
           _.each(snapshots, function (snapshot) {
             s.destroy(snapshot.snapshot_id).done(function (msg) {
@@ -1627,7 +1658,8 @@
       load_volumes: function () {
         if ($("#attachButton.dropdown.open").length) {return;}
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         this.loading_volumes = true;
         ec2.attachable_volumes(this.ec2.availability_zone).done(function (data) {
           self.attachable_volumes = data.attachable_volumes;
@@ -1636,7 +1668,8 @@
       },
       attach_volume: function (volume_id) {
         var self = this;
-        var ec2 = new EC2Instance(current_infra, self.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
         modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
           ec2.attach_volume(volume_id, device_name).done(function (data) {
             modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
@@ -1649,7 +1682,8 @@
       get_security_groups: function (){
         var self = this;
         self.loading_groups = true;
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, this.physical_id);
         ec2.get_security_groups().done(function (data) {
           self.rules_summary = data.params;
           self.loading_groups = false;
@@ -1661,7 +1695,8 @@
       },
       submit_groups: function(){
         var self = this;
-        var ec2 = new EC2Instance(current_infra, this.physical_id);
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, this.physical_id);
         var group_ids = this.rules_summary.filter(function (t) {
           return t.checked;
         }).map(function (t) {
@@ -1783,7 +1818,8 @@
       var self = this;
       console.log(self);
 
-      var ec2 = new EC2Instance(current_infra, this.physical_id);
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, this.physical_id);
       ec2.show().done(function (data) {
         self.ec2 = data;
         self.max_sec_group = data.security_groups.length-1;
@@ -1849,6 +1885,14 @@
 
   Vue.component('edit-runlist-tabpane', {
     template: '#edit-runlist-tabpane-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       recipes:           {},
       selected_cookbook: null,
@@ -1860,6 +1904,7 @@
       cookbooks:         null,
       roles:             null,
     };},
+
     methods: {
       get_recipes: function () {
         var self = this;
@@ -1930,7 +1975,7 @@
     computed: {
       current_recipes: function () { return this.recipes[this.selected_cookbook] || []; },
       physical_id:     function () { return this.$parent.tabpaneGroupID; },
-      ec2:             function () { return new EC2Instance(current_infra, this.physical_id); },
+      ec2:             function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
     },
     created: function () {
       var self = this;
@@ -1947,10 +1992,19 @@
 
   Vue.component("edit-attr-tabpane", {
     template: '#edit-attr-tabpane-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       attributes: null,
       loading:    false,
     };},
+
     methods: {
       update: function () {
         var self = this;
@@ -1968,7 +2022,7 @@
     },
     computed: {
       physical_id: function () { return this.$parent.tabpaneGroupID; },
-      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      ec2:         function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
       empty:       function () { return _.isEmpty(this.attributes); },
     },
     created: function () {
@@ -1990,14 +2044,20 @@
   Vue.component('serverspec-results-tabpane', {
     template: '#serverspec-results-tabpane-template',
     replace: true,
+
     props: {
       data: {
         type: Array,
         required: false,
       },
       columns: Array,
-      filterKey: String
+      filterKey: String,
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {
       var sortOrders = {};
       this.columns.forEach(function (key) {
@@ -2012,6 +2072,7 @@
         pageNumber: 0,
       };
     },
+
     methods:{
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -2032,7 +2093,7 @@
     },
     computed: {
       physical_id: function () { return this.$parent.tabpaneGroupID; },
-      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      ec2:         function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
       all_spec:    function () { return this.globals.concat(this.individuals); },
       isStartPage: function(){
           return (this.pageNumber === 0);
@@ -2079,6 +2140,14 @@
 
   Vue.component('serverspec-tabpane', {
     template: '#serverspec-tabpane-template',
+
+    props: {
+      infra_id: {
+        type: Number,
+        required: true,
+      },
+    },
+
     data: function () {return {
       available_auto_generated: null,
       individuals: null,
@@ -2090,6 +2159,7 @@
       day_of_week: null,
       time: null,
     };},
+
     methods: {
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -2125,7 +2195,7 @@
     },
     computed: {
       physical_id: function () { return this.$parent.tabpaneGroupID; },
-      ec2:         function () { return new EC2Instance(current_infra, this.physical_id); },
+      ec2:         function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
       all_spec:    function () { return this.globals.concat(this.individuals); },
       can_run:     function () { return !!_.find(this.all_spec, function(s){return s.checked;}) || this.checked_auto_generated; },
       next_run:    function () { return (new Date().getHours() + parseInt(this.time, 10)) % 24; },
@@ -2167,8 +2237,13 @@
     props: {
       data: Array,
       columns: Array,
-      filterKey: String
+      filterKey: String,
+      infra_id: {
+        type: Number,
+        required: true,
+      },
     },
+
     data: function () {
       var sortOrders = {};
       this.columns.forEach(function (key) {
@@ -2208,6 +2283,7 @@
       pages: 10,
       pageNumber: 0,
     };},
+
     methods: {
       show_ec2: function () {
         this.$parent.show_ec2(this.physical_id);
@@ -2259,7 +2335,8 @@
       manage_sched: function (instance) {
         var self = this;
         self.sel_instance = instance;
-        current_infra.get_schedule(instance.physical_id).done(function  (data){
+        var infra = new Infrastructure(this.infra_id);
+        infra.get_schedule(instance.physical_id).done(function  (data){
           self.sel_instance.physical_id = instance.physical_id;
           _.forEach(data, function(item){
             self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D H:mm');
@@ -2274,7 +2351,8 @@
         self.sel_instance.dates = self.dates;
         self.sel_instance.start_date = moment(self.sel_instance.start_date).unix();
         self.sel_instance.end_date = moment(self.sel_instance.end_date).unix();
-        current_infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
+        var infra = new Infrastructure(this.infra_id);
+        infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
           self.loading = false;
           alert_success(function () {
           })(t('operation_scheduler.msg.saved'));
@@ -2284,7 +2362,8 @@
       get_sched: function (ec2){
         var self = this;
         self.$parent.show_operation_sched();
-        current_infra.get_schedule(ec2.physical_id).done(function  (data){
+        var infra = new Infrastructure(this.infra_id);
+        infra.get_schedule(ec2.physical_id).done(function  (data){
           console.log(data);
           var events = [];
           events = data.map(function (item) {
@@ -2343,6 +2422,7 @@
         });
       },
     },
+
     computed: {
       has_selected: function() {
         return _.some(this.dates, function(c){
@@ -2356,13 +2436,10 @@
         var self = this.sel_instance;
         return (self.start_date && self.end_date && self.repeat_freq);
       },
+      isStartPage: function(){ return (this.pageNumber === 0); },
+      isEndPage: function(){ return ((this.pageNumber + 1) * this.pages >= this.data.length); },
     },
-    isStartPage: function(){
-      return (this.pageNumber === 0);
-    },
-    isEndPage: function(){
-      return ((this.pageNumber + 1) * this.pages >= this.data.length);
-    },
+
     filters:{
       wrap: wrap,
       listen: listen,
@@ -2372,10 +2449,11 @@
       },
       roundup: function (val) { return (Math.ceil(val));},
     },
-    created: function(){
 
+    created: function(){
       var self = this;
-      var res = new Resource(current_infra);
+      var infra = new Infrastructure(this.infra_id);
+      var res = new Resource(infra);
       var events = [];
       //TODO: get all assigned dates and print to calendar. :D
       res.index().done(function (resources) {
@@ -2427,69 +2505,71 @@
     },
     methods: {
       sortBy: function (key) {
-          if(key !== 'id')
-            this.sortKey = key;
-            this.sortOrders[key] = this.sortOrders[key] * -1;
+        if(key !== 'id')
+          this.sortKey = key;
+        this.sortOrders[key] = this.sortOrders[key] * -1;
       },
       showPrev: function(){
-          if(this.pageNumber === 0) return;
-          this.pageNumber--;
+        if(this.pageNumber === 0) return;
+        this.pageNumber--;
       },
       showNext: function(){
-          if(this.isEndPage) return;
-          this.pageNumber++;
+        if(this.isEndPage) return;
+        this.pageNumber++;
       },
     },
     computed: {
       isStartPage: function(){
-          return (this.pageNumber === 0);
+        return (this.pageNumber === 0);
       },
       isEndPage: function(){
-          return ((this.pageNumber + 1) * this.pages >= this.data.length);
+        return ((this.pageNumber + 1) * this.pages >= this.data.length);
       },
     },
     created: function (){
-        var self = this;
-        self.loading = true;
-        var id =  queryString.project_id;
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"
-                          ];
-       $.ajax({
-           cache: false,
-           url:'/infrastructures?&project_id='+id,
-           success: function (data) {
-             this.pages = data.length;
-             var nextColumns = [];
-             self.data = data.map(function (item) {
-                 var d = new Date(item.created_at);
-                 var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
-                 if(item.project_id > 3){
-                   return {stack_name: item.stack_name,
-                       region: item.region,
-                       keypairname: item.keypairname,
-                       created_at: date,
-                       //  ec2_private_key_id: item.ec2_private_key_id,
-                       status: item.status,
-                       id: [item.id,item.status],
-                       };
-                 }else{
-                   return {stack_name: item.stack_name,
-                           region: item.region,
-                           keypairname: item.keypairname,
-                           //  ec2_private_key_id: item.ec2_private_key_id,
-                           id: [item.id,item.status],
-                   };
-                 }
-                 self.loading = false;
-               });
-             self.$emit('data-loaded');
-             $("#loading").hide();
-             var empty = t('infrastructures.msg.empty-list');
-             if(self.data.length === 0){ $('#empty').show().html(empty);}
-             self.filteredLength = data.length;
-           }
-         });
+      var self = this;
+      self.loading = true;
+      var id =  queryString.project_id;
+      var monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      $.ajax({
+        cache: false,
+        url:'/infrastructures?&project_id='+id,
+      }).done(function (data) {
+        this.pages = data.length;
+        var nextColumns = [];
+        self.data = data.map(function (item) {
+          var d = new Date(item.created_at);
+          var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+          if(item.project_id > 3){
+            return {
+              stack_name: item.stack_name,
+              region: item.region,
+              keypairname: item.keypairname,
+              created_at: date,
+              //  ec2_private_key_id: item.ec2_private_key_id,
+              status: item.status,
+              id: [item.id,item.status],
+            };
+          }else{
+            return {
+              stack_name: item.stack_name,
+              region: item.region,
+              keypairname: item.keypairname,
+              //  ec2_private_key_id: item.ec2_private_key_id,
+              id: [item.id,item.status],
+            };
+          }
+          self.loading = false;
+        });
+        self.$emit('data-loaded');
+        $("#loading").hide();
+        var empty = t('infrastructures.msg.empty-list');
+        if(self.data.length === 0){ $('#empty').show().html(empty);}
+        self.filteredLength = data.length;
+      });
     },
     filters:{
       wrap: wrap,
@@ -2506,75 +2586,12 @@
         return arr;
       },
     }
- });
+  });
 
 
-  var stack_in_progress = function (infra) {
-    infra.stack_events().done(function (res) {
-      if(infra.id !== current_infra.id){return;}
-      app.$data.current_infra.events = res.stack_events;
-
-      if (res.stack_status.type === 'IN_PROGRESS') {
-        setTimeout(function () {
-          stack_in_progress(infra);
-        }, 15000);
-      } else {
-        show_infra(current_infra.id);
-      }
-    });
-  };
-
-  var SHOW_INFRA_ID = '#infra-show';
-
-  var show_infra = function (infra_id) {
-    current_infra = new Infrastructure(infra_id);
-
-    var l = new Loader();
-    l.text = "Loading...";
-    l.$mount(SHOW_INFRA_ID);
-    if (app) {
-      app.$destroy();
-    }
-    current_infra.show().done(function (stack) {
-      app = newVM(stack,
-        Resource,
-        EC2Instance,
-        current_infra,
-        CFTemplate,
-        alert_danger,
-        stack_in_progress,
-        ''
-      );
-      l.$destroy();
-      app.$mount(SHOW_INFRA_ID);
-    });
-  };
-
-  var show_sched = function (infra_id) {
-    current_infra = new Infrastructure(infra_id);
-
-    var l = new Loader();
-    l.text = "Loading...";
-    l.$mount(SHOW_INFRA_ID);
-    if (app) {
-      app.$destroy();
-    }
-    current_infra.show().done(function (stack) {
-      app = newVM(
-        stack,
-        Resource,
-        EC2Instance,
-        current_infra,
-        CFTemplate,
-        alert_danger,
-        stack_in_progress,
-        'show_sched'
-      );
-      l.$destroy();
-      app.$mount(SHOW_INFRA_ID);
-    });
-  };
-
+  var show = require('infrastructures/show_infra.js');
+  var show_infra = show.show_infra;
+  var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -2610,47 +2627,47 @@
 
   // for infrastructures#new
   var new_ec2_key = function () {
-    modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).done(function () {
-      modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name')).done(function (name) {
-        if(!name){
-          modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
-          return;
-        }
+    modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).then(function () {
+      return modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name'));
+    }).then(function (name) {
+      if(!name){
+        modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+        return;
+      }
 
-        var region_input = $('#infrastructure_region');
-        var region = region_input.val();
-        var project_id = $('#infrastructure_project_id').val();
+      var region_input = $('#infrastructure_region');
+      var region = region_input.val();
+      var project_id = $('#infrastructure_project_id').val();
 
-        $.ajax({
-          url: '/ec2_private_keys',
-          type: 'POST',
-          data: {
-            name:       name,
-            region:     region,
-            project_id: project_id,
-          },
-        }).done(function (key) {
-          var value = key.value;
-          var textarea = $('#keypair_value');
-          var keypair_name = $('#keypair_name');
-          textarea.val(value);
-          textarea.attr('readonly', true);
-          keypair_name.val(name);
-          keypair_name.attr('readonly', true);
-          region_input.attr('readonly', true);
-
-          // download file.
-          var file = new File([value], name + '.pem');
-          var url = window.URL.createObjectURL(file);
-          var a = document.createElement('a');
-          a.href = url;
-          a.setAttribute('download', file.name);
-          document.body.appendChild(a);
-          a.click();
-        }).fail(function (xhr) {
-          modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
-        });
+      return $.ajax({
+        url: '/ec2_private_keys',
+        type: 'POST',
+        data: {
+          name:       name,
+          region:     region,
+          project_id: project_id,
+        },
       });
+    }).done(function (key) {
+      var value = key.value;
+      var textarea = $('#keypair_value');
+      var keypair_name = $('#keypair_name');
+      textarea.val(value);
+      textarea.attr('readonly', true);
+      keypair_name.val(name);
+      keypair_name.attr('readonly', true);
+      region_input.attr('readonly', true);
+
+      // download file.
+      var file = new File([value], name + '.pem');
+      var url = window.URL.createObjectURL(file);
+      var a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', file.name);
+      document.body.appendChild(a);
+      a.click();
+    }).fail(function (xhr) {
+      modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
     });
   };
 
@@ -2695,7 +2712,7 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-    show_infra(infra_id);
+    show_infra(infra_id, '');
   });
 
   $(document).on('click', '.operation-sched', function (e) {
@@ -2703,7 +2720,7 @@
     $(this).closest('tbody').children('tr').removeClass('info');
     $(this).closest('tr').addClass('info');
     var infra_id = $(this).attr('infrastructure-id');
-    show_sched(infra_id);
+    show_infra(infra_id, 'show_sched');
   });
 
   $(document).on('click', '.detach-infra', function (e) {
