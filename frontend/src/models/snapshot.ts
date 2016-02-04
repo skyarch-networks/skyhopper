@@ -77,7 +77,7 @@ export default class Snapshot extends ModelBase {
     );
   }
 
-  save_retention_policy(volume_id: string, enabled: boolean, max_amount: string): JQueryPromise<any> {
+  save_retention_policy(volume_id: string, enabled: boolean, max_amount: number): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>Snapshot.ajax).save_retention_policy({
         infra_id:   this.infra_id,
