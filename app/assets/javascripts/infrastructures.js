@@ -12,8 +12,6 @@
 
   google.load('visualization',   '1.0',   {'packages':['corechart']});
 
-  var app;
-
   ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
 
 // ================================================================
@@ -65,7 +63,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -87,7 +84,7 @@
         }));
       },
 
-      back: function () { app.show_tabpane('add_modify'); },
+      back: function () { this.$parent.show_tabpane('add_modify'); },
     },
     ready: function () {
       var self = this;
@@ -103,7 +100,7 @@
         _.each(data, function (val, key) {
           Vue.set(self.result, key, val.Default);
         });
-        app.loading = false;
+        self.$parent.loading = false;
 
         Vue.nextTick(function () {
           var inputs = $(self.$el).parent().find('input');
@@ -163,7 +160,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -209,7 +205,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -260,7 +255,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -505,7 +499,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -717,7 +710,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -781,7 +773,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1028,7 +1019,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1064,7 +1054,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1120,7 +1109,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1234,7 +1222,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1798,7 +1785,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1906,7 +1892,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -1965,7 +1950,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -2057,7 +2041,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
@@ -2154,7 +2137,6 @@
       infra_id: {
         type: Number,
         required: true,
-        twoWay: true,
       },
     },
 
