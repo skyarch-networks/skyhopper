@@ -23,12 +23,8 @@
   var listen         = require('./modules/listen');
   var tableRender    = require('./modules/table_render');
   //var infraindex = require('./modules/loadindex');
-<<<<<<< HEAD
   var newVM          = require('./modules/newVM');
   var queryString    = require('query-string').parse(location.search);
-=======
-  var queryString = require('query-string').parse(location.search);
->>>>>>> origin/develop
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
