@@ -1584,7 +1584,7 @@
         var self = this;
         if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
           self.editing_policy = self.ec2.retention_policies[self.volume_selected];
-          self.editing_policy.enabled = true;
+          self.$set('editing_policy.enabled', true);
         }
         else {
           self.editing_policy = {}
