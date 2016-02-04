@@ -9,9 +9,11 @@
         <h4 class="panel-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
       </div>
 
-      <div class="modal-body" v-if="!loading_groups">
-
-
+      <div class="modal-body" v-if="rules_summary">
+        <div class="col-md-4 input-group">
+            <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+            <hr>
+        </div>
         <table class="table table-condensed">
           <thead>
           <tr>
@@ -23,7 +25,9 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="r in rules_summary" :class="{info: r.checked}" @click="check(r)">
+          <tr v-for="r in dispItems
+          | filterBy filterKey
+          | count" :class="{info: r.checked}" @click="check(r)">
             <td><input type="checkbox" v-model="r.checked"></td>
             <td>{{r.group_id}}</td>
             <td><div class="truncate"> {{r.group_name}}</div></td>
@@ -31,8 +35,19 @@
             <td v-if="r.tags[0].key === 'Name'">{{r.tags[0].value}}</td>
             <td v-else></td>
           </tr>
+          <tr  v-if="filteredLength === 0 && dispItems.length > 0">
+            <td v-if="lang === 'en'" colspan="4"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
+            <td v-if="lang === 'ja'" colspan="4"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
+          </tr>
           </tbody>
         </table>
+        <nav v-if="filterKey === ''">
+          <ul class="pager">
+            <li class="{{isStartPage ? 'disabled' : '' }}"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+            <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="rules_summary.length / 10 | roundup"></span>
+            <li class="{{isEndPage ? 'disabled' : '' }}"><a   @click="showNext" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+          </ul>
+        </nav>
 
         <div v-if="!has_selected" class="alert alert-dismissible alert-danger">
           <h4><%= t 'security_groups.msg.error' %></h4>
@@ -51,4 +66,3 @@
     </div>
   </div>
 </div>
-
