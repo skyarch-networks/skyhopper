@@ -1615,13 +1615,14 @@
           self.$set('editing_policy.enabled', true);
         }
         else {
-          self.editing_policy = {}
+          self.editing_policy = {};
         }
       },
       save_retention_policy: function (volume_id, enabled, max_amount) {
         var self = this;
         var retention_policies = this.ec2.retention_policies;
-        var snapshot = new Snapshot(current_infra.id);
+        var infra = new Infrastructure(this.infra_id);
+        var snapshot = new Snapshot(infra.id);
         snapshot.save_retention_policy(volume_id, enabled, max_amount)
           .done(function (msg) {
             if (enabled) {
