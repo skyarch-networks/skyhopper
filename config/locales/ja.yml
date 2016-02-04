@@ -131,6 +131,7 @@ ja:
     title: 'パラーメター'
     description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
                   ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
+    usage: '${NAME}のようにして、登録したパラメータを使用可能です'
     btn:
       remove:   '削除'
       unremove: '削除取消'
