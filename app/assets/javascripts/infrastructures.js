@@ -56,43 +56,7 @@
 
 
   Vue.component('stack-events-table', require('infrastructures/stack-events-table.js'));
-
-  Vue.component("add-modify-tabpane", {
-    props: {
-      templates: {
-        type: Object,
-        required: true,
-      },
-      result: {
-        type: Object,
-        required: true,
-      },
-    },
-    data: function(){
-      return{selected_cft_id: null,};},
-    template: '#add-modify-tabpane-template',
-    methods: {
-      select_cft: function () {
-        var self = this;
-        var cft = _.find(self.templates.histories.concat(self.templates.globals), function (c) {
-          return c.id === self.selected_cft_id;
-        });
-        self.result.name   = cft.name;
-        self.result.detail = cft.detail;
-        self.result.value  = cft.value;
-
-      },
-      submit: function () {
-        if (this.jsonParseErr) {return;}
-        app.show_tabpane('insert-cf-params');
-        app.loading = true;
-      },
-    },
-    computed: {
-      jsonParseErr: function () { return jsonParseErr(this.result.value); },
-    },
-
-  });
+  Vue.component('add-modify-tabpane', require('infrastructures/add-modify-tabpane.js'));
 
 
   Vue.component("insert-cf-params", {
