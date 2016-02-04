@@ -11,7 +11,6 @@ var Resource     = require('models/resource').default;
 var EC2Instance  = require('models/ec2_instance').default;
 var helpers      = require('infrastructures/helper.js');
 var alert_danger = helpers.alert_danger;
-var show_infra   = require('infrastructures/show_infra.js').show_infra;
 
 
 module.exports = function (stack, current_infra, current_tab) {
@@ -167,6 +166,7 @@ module.exports = function (stack, current_infra, current_tab) {
               self.stack_in_progress(current_infra);
             }, 15000);
           } else {
+            var show_infra = require('infrastructures/show_infra.js').show_infra;
             show_infra(current_infra.id);
           }
         });
