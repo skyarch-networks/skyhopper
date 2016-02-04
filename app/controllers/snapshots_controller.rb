@@ -108,6 +108,8 @@ class SnapshotsController < ApplicationController
 
       infra_logger_success("Snapshot creation for #{snapshot.volume_id} has completed.\n Snapshot ID: #{snapshot.snapshot_id}")
       ws.push('completed')
+
+      DeleteOutdatedSnapshotsJob.perform_later(snapshot.volume_id, @infra)
     end
   end
 

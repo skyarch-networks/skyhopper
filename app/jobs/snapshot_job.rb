@@ -22,8 +22,7 @@ class SnapshotJob < ActiveJob::Base
 
     create_snapshot(volume_id, physical_id, infra, user_id)
 
-    policy = RetentionPolicy.find_by(resource_id: volume_id)
-    delete_outdated_snapshots(infra, volume_id, policy) if policy
+    DeleteOutdatedSnapshotsJob.perform_later(volume_id, infra)
   end
 
   def create_snapshot(volume_id, physical_id, infra, user_id)
@@ -38,20 +37,6 @@ class SnapshotJob < ActiveJob::Base
   rescue Snapshot::VolumeNotFoundError, Snapshot::VolumeRetiredError => ex
     @schedule.destroy
     infra_log(infra.id, user_id, false, "Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
-  end
-
-  def delete_outdated_snapshots(infra, volume_id, policy)
-    snapshots = Snapshot.describe(infra, volume_id)
-    snapshots.sort_by! { |snapshot| snapshot.start_time }.reverse!
-    snapshots.delete_if { |snapshot|
-      snapshot.tags.has_key?(Snapshot::PROTECTION_TAG_NAME) &&
-        snapshot.tags[Snapshot::PROTECTION_TAG_NAME] != 'false'
-    }
-    outdated = snapshots[(policy.max_amount)..-1]
-    return if outdated.nil?
-    outdated.each do |snapshot|
-      infra.ec2.delete_snapshot(snapshot_id: snapshot.snapshot_id)
-    end
   end
 
   def infra_log(infra_id, user_id, status, details)
