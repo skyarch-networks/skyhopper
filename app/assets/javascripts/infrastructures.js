@@ -2485,45 +2485,33 @@
   });
 
 
-  var stack_in_progress = function (infra) {
-    infra.stack_events().done(function (res) {
-      app.$data.current_infra.events = res.stack_events;
-
-      if (res.stack_status.type === 'IN_PROGRESS') {
-        setTimeout(function () {
-          stack_in_progress(infra);
-        }, 15000);
-      } else {
-        show_infra(infra.id);
-      }
-    });
-  };
-
   var SHOW_INFRA_ID = '#infra-show';
 
-  var show_infra = function (infra_id, current_tab) {
-    var infra = new Infrastructure(infra_id);
+  var show_infra = (function () {
+    var app;
+    return function (infra_id, current_tab) {
+      var infra = new Infrastructure(infra_id);
 
-    var l = new Loader();
-    l.text = "Loading...";
-    l.$mount(SHOW_INFRA_ID);
-    if (app) {
-      app.$destroy();
-    }
-    infra.show().done(function (stack) {
-      app = newVM(stack,
-        Resource,
-        EC2Instance,
-        infra,
-        CFTemplate,
-        alert_danger,
-        stack_in_progress,
-        current_tab
-      );
-      l.$destroy();
-      app.$mount(SHOW_INFRA_ID);
-    });
-  };
+      var l = new Loader();
+      l.text = "Loading...";
+      l.$mount(SHOW_INFRA_ID);
+      if (app) {
+        app.$destroy();
+      }
+      infra.show().done(function (stack) {
+        app = newVM(stack,
+          Resource,
+          EC2Instance,
+          infra,
+          CFTemplate,
+          alert_danger,
+          current_tab
+        );
+        l.$destroy();
+        app.$mount(SHOW_INFRA_ID);
+      });
+    };
+  })();
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
