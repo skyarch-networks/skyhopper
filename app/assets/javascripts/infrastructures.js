@@ -53,64 +53,8 @@
 
   Vue.component('stack-events-table', require('infrastructures/stack-events-table.js'));
   Vue.component('add-modify-tabpane', require('infrastructures/add-modify-tabpane.js'));
+  Vue.component('insert-cf-params',   require('infrastructures/insert-cf-params.js'));
 
-
-  Vue.component("insert-cf-params", {
-    template: '#insert-cf-params-template',
-
-    props: {
-      infra_id: {
-        type: Number,
-        required: true,
-      },
-    },
-
-    data: function () {return {
-      params: {},
-      result: {},
-      loading: false,
-    };},
-    methods: {
-      submit: function () {
-        this.loading = true;
-        var infra = new Infrastructure(this.infra_id);
-        var cft = new CFTemplate(infra);
-        var self = this;
-        cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(function () {
-          show_infra(infra.id);
-        })).fail(alert_danger(function () {
-          self.loading = false;
-        }));
-      },
-
-      back: function () { this.$parent.show_tabpane('add_modify'); },
-    },
-    ready: function () {
-      var self = this;
-      console.log(self);
-
-      var infra = new Infrastructure(this.infra_id);
-      var cft = new CFTemplate(infra);
-      cft.insert_cf_params(this.$parent.current_infra.add_modify)
-      .fail(alert_danger(function () {
-        self.back();
-      })).then(function (data) {
-        self.params = data;
-        _.each(data, function (val, key) {
-          Vue.set(self.result, key, val.Default);
-        });
-        self.$parent.loading = false;
-
-        Vue.nextTick(function () {
-          var inputs = $(self.$el).parent().find('input');
-          var project_id = queryString.project_id;
-          inputs.textcomplete([
-            require('complete_project_parameter').default(project_id),
-          ]);
-        });
-      });
-    },
-  });
 
   Vue.component('add-ec2-tabpane', {
     template: '#add-ec2-tabpane-template',
