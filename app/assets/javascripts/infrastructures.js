@@ -1112,7 +1112,7 @@
               alignment: 'left'
             },
             {
-              text: ['Date: ', { text: moment().format('MMMM DD YYYY, h:mm:ss a')+'\n',  bold: true}],
+              text: ['Date: ', { text: moment().format('YYYY-MMMM-DD, h:mm:ss a')+'\n',  bold: true}],
               alignment: 'left'
             },
             tableRender(data)
@@ -1145,8 +1145,8 @@
       },
       pageSize: 'A4',
         pageOrientation: 'landscape',
+        pageMargins: [15, 30, 20, 30 ]
       };
-        console.log(data_mapping);
 
         createPdf(docDefinition, map, data_mapping).open();
         this.get_rules();

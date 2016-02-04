@@ -11,7 +11,7 @@ module.exports = function(data){
     style: 'tableExample',
     color: '#444',
     table: {
-        widths: [ 120, 100, 'auto', 'auto', 'auto', 'auto',  'auto', 'auto', 'auto', 'auto'],
+        widths: [ 120, 90, 'auto', 'auto', 'auto', 100,  'auto', 'auto', 'auto', 100],
         body: buildTableBody(data)
     }
   };
@@ -53,7 +53,6 @@ function buildTableBody(data) {
     body.push(firstRow, secondRow);
 
     data.forEach(function(v,index) {
-      console.log('item: ',index);
       var inbound =  v.ip_permissions;
       var outbound = v.ip_permissions_egress;
 
@@ -71,28 +70,8 @@ function buildTableBody(data) {
 
       inbound.shift(); // Remove first index
       outbound.shift();  // Remove first index
-
-      if(index==2){
-          body.push(firstRow, secondRow);
-          console.log(inbound);
-          console.log(outbound);
-          body.push([{text: v.description, style: 'tableHeader', rowSpan: inbound.length},
-                   {text: v.group_id, style: 'tableHeader', rowSpan: inbound.length},
-                   inbound[index].user_id_group_pairs,
-                   eval_protocol(inbound[index].ip_protocol),
-                   eval_port(inbound[index].from_port, inbound[index].to_port),
-                   inbound[index].ip_ranges[index].cidr_ip,
-                   outbound[index].user_id_group_pairs,
-                   eval_protocol(outbound[index].ip_protocol),
-                   eval_port(outbound[index].from_port, outbound[index].from_port),
-                   outbound[index].ip_ranges[index].cidr_ip2
-          ]);
-          inbound.shift(); // Remove first index
-          outbound.shift();
-          extract_next(inbound, outbound, body);
-      }else {
-        extract_next(inbound, outbound, body);
-      }
+      extract_next(inbound, outbound, body);
+      console.log('body_length', body.length);
 
   });
   return body;
