@@ -628,7 +628,7 @@ ja:
     schedule_snapshot: '作成スケジュールの変更'
     list_of_snapshots: 'スナップショットの一覧'
     retention_policy:  'リテンションポリシー'
-    snapshots_to_keep: '保持する最新のスナップショット数'
+    snapshots_to_keep: '最新から次の数だけ残して削除'
     msg:
       no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
