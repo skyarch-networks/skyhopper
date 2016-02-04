@@ -11,6 +11,7 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
     template: '#infra-show-template',
     data: {
       current_infra: {
+        id: parseInt(current_infra.id),
         stack: stack,
         resources : {},
         events: [],
