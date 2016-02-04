@@ -54,47 +54,7 @@
   Vue.component('stack-events-table', require('infrastructures/stack-events-table.js'));
   Vue.component('add-modify-tabpane', require('infrastructures/add-modify-tabpane.js'));
   Vue.component('insert-cf-params',   require('infrastructures/insert-cf-params.js'));
-
-
-  Vue.component('add-ec2-tabpane', {
-    template: '#add-ec2-tabpane-template',
-    data: function () {return {
-      physical_id: '',
-      screen_name: '',
-      physical_ids: null,
-    };},
-    methods: {
-      submit: function () {
-        var infra = new Infrastructure(this.infra_id);
-        var res = new Resource(infra);
-        res.create(this.physical_id, this.screen_name)
-          .done(alert_success(function () {
-            show_infra(infra.id);
-          }))
-          .fail(alert_and_show_infra);
-      },
-    },
-    created: function () {
-      console.log(this);
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var res = new EC2Instance(infra, "");
-      res.available_resources().done(function (data){
-        self.physical_ids = data;
-      });
-
-      $('#add_ec2_physical_id').selectize({
-        delimiter: ',',
-        persist: false,
-        create: function(input) {
-          return {
-            value: input,
-            text: input
-          };
-        }
-      });
-    },
-  });
+  Vue.component('add-ec2-tabpane',   require('infrastructures/add-ec2-tabpane.js'));
 
   Vue.component("cf-history-tabpane", {
     template: '#cf-history-tabpane-template',
