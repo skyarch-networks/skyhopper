@@ -1,3 +1,5 @@
+var toLocaleString = require('./helper.js').toLocaleString;
+
 module.exports = Vue.extend({
   props: { events: Array, },
   template: '#stack-events-table-template',
