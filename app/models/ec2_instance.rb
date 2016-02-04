@@ -143,6 +143,6 @@ class EC2Instance < SimpleDelegator
       [ e.resource_id,
         { max_amount: e.max_amount },
       ]
-    }.to_h
+    }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
   end
 end
