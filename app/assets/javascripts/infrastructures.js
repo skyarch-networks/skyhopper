@@ -22,7 +22,6 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   //var infraindex = require('./modules/loadindex');
-  var newVM = require('./modules/newVM');
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
   var CFTemplate     = require('models/cf_template').default;
@@ -2485,33 +2484,9 @@
   });
 
 
-  var SHOW_INFRA_ID = '#infra-show';
-
-  var show_infra = (function () {
-    var app;
-    return function (infra_id, current_tab) {
-      var infra = new Infrastructure(infra_id);
-
-      var l = new Loader();
-      l.text = "Loading...";
-      l.$mount(SHOW_INFRA_ID);
-      if (app) {
-        app.$destroy();
-      }
-      infra.show().done(function (stack) {
-        app = newVM(stack,
-          Resource,
-          EC2Instance,
-          infra,
-          CFTemplate,
-          alert_danger,
-          current_tab
-        );
-        l.$destroy();
-        app.$mount(SHOW_INFRA_ID);
-      });
-    };
-  })();
+  var show = require('infrastructures/show_infra.js');
+  var show_infra = show.show_infra;
+  var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {

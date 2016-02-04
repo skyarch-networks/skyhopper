@@ -6,7 +6,15 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function (stack, Resource, EC2Instance, current_infra, CFTemplate, alert_danger, current_tab) {
+var CFTemplate   = require('models/cf_template').default;
+var Resource     = require('models/resource').default;
+var EC2Instance  = require('models/ec2_instance').default;
+var helpers      = require('infrastructures/helper.js');
+var alert_danger = helpers.alert_danger;
+var show_infra   = require('infrastructures/show_infra.js').show_infra;
+
+
+module.exports = function (stack, current_infra, current_tab) {
   return new Vue({
     template: '#infra-show-template',
     data: {
