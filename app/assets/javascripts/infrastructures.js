@@ -48,11 +48,11 @@
   Vue.use(vace, false, 'json', '25');
 
   var helpers = require('infrastructures/helper.js');
-  var jsonParseErr         = jsonParseErr;
-  var toLocaleString       = toLocaleString;
-  var alert_success        = alert_success;
-  var alert_danger         = alert_danger;
-  var alert_and_show_infra = alert_and_show_infra;
+  var jsonParseErr         = helpers.jsonParseErr;
+  var toLocaleString       = helpers.toLocaleString;
+  var alert_success        = helpers.alert_success;
+  var alert_danger         = helpers.alert_danger;
+  var alert_and_show_infra = helpers.alert_and_show_infra;
 
 
   Vue.component("stack-events-table", {

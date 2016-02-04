@@ -1,3 +1,5 @@
+var modal = require('modal');
+
 // Vueに登録したfilterを、外から見る方法ってないのかな。
 var jsonParseErr = function (str) {
   if (_.trim(str) === '') {
