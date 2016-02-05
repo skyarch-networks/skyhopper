@@ -11,9 +11,10 @@ module.exports = function(data){
     style: 'tableExample',
     color: '#444',
     table: {
+        headerRows: 2,
         widths: [ 120, 90, 'auto', 'auto', 'auto', 100,  'auto', 'auto', 'auto', 100],
         body: buildTableBody(data)
-    }
+    },
   };
 
 };
@@ -33,29 +34,26 @@ function eval_protocol(ip_protocol){
 
 function buildTableBody(data) {
     var body = [];
-    var firstRow = [{ rowSpan: 2, text: t('security_groups.description'),  style: 'tableHeader' },
+
+    body.push([{ rowSpan: 2, text: t('security_groups.description'),  style: 'tableHeader' },
             { rowSpan: 2, text: t('security_groups.group_id'),style: 'tableHeader' },
             { colSpan: 4, text: t('security_groups.inbound'), style: 'tableHeader' },
             'x','x','xx',
             { colSpan: 4, text:  t('security_groups.outbound'), style: 'tableHeader' },
-            'x', 'x', 'x',];
-    var secondRow = ['x' , 'x',
-      {text: t('security_groups.type'), style: 'tableHeader' },
-      {text: t('security_groups.protocol'), style: 'tableHeader' },
-      {text: t('security_groups.port_range'),  style: 'tableHeader' },
-      {text: t('security_groups.source'),  style: 'tableHeader' },
-      {text: t('security_groups.type'),  style: 'tableHeader' },
-      {text: t('security_groups.protocol'), style: 'tableHeader' },
-      {text: t('security_groups.port_range'), style: 'tableHeader' },
-      {text: t('security_groups.source'),  style: 'tableHeader' },
-    ];
-
-    body.push(firstRow, secondRow);
+            'x', 'x', 'x',], ['x' , 'x',
+          {text: t('security_groups.type'), style: 'tableHeader' },
+          {text: t('security_groups.protocol'), style: 'tableHeader' },
+          {text: t('security_groups.port_range'),  style: 'tableHeader' },
+          {text: t('security_groups.source'),  style: 'tableHeader' },
+          {text: t('security_groups.type'),  style: 'tableHeader' },
+          {text: t('security_groups.protocol'), style: 'tableHeader' },
+          {text: t('security_groups.port_range'), style: 'tableHeader' },
+          {text: t('security_groups.source'),  style: 'tableHeader' },
+      ]);
 
     data.forEach(function(v,index) {
       var inbound =  v.ip_permissions;
       var outbound = v.ip_permissions_egress;
-
       body.push([{text: v.description, style: 'tableHeader', rowSpan: inbound.length},
                {text: v.group_id, style: 'tableHeader', rowSpan: inbound.length},
                inbound[0].user_id_group_pairs,
@@ -71,7 +69,6 @@ function buildTableBody(data) {
       inbound.shift(); // Remove first index
       outbound.shift();  // Remove first index
       extract_next(inbound, outbound, body);
-      console.log('body_length', body.length);
 
   });
   return body;
