@@ -24,8 +24,8 @@ function strategyGen(project_id: number) {
     },
 
     template: function (param: ProjectParameter) {
-      // XXX: sanitize
-      return '${' + param.key + '} (' + param.value + ')';
+      const v = $('<div>').text(param.value).html(); // escape
+      return '${' + param.key + '} (' + v + ')';
     },
 
     replace: function (param: ProjectParameter) {

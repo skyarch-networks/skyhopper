@@ -88,6 +88,14 @@ module InfrastructuresHelper
       class: 'btn btn-primary btn-sm'
   end
 
+  def project_params_usage
+    <<-EOS.html_safe
+<div class="bs-callout bs-callout-info">
+  #{t('project_parameters.usage')}
+</div>
+    EOS
+  end
+
 
   private
 
