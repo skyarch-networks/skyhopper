@@ -1242,6 +1242,7 @@
       attachable_volumes:  [],
       max_sec_group:       null,
       rules_summary:       null,
+      editing_policy:      {},
       page: 0,
       dispItemSize: 10,
       filteredLength: null,
@@ -1556,9 +1557,11 @@
           var s = new Snapshot(self.infra_id);
 
           _.each(snapshots, function (snapshot) {
-            s.destroy(snapshot.snapshot_id).done(function (msg) {
-              self.snapshots.$remove(snapshot);
-            });
+            s.destroy(snapshot.snapshot_id)
+              .done(function (msg) {
+                self.snapshots.$remove(snapshot);
+              })
+              .fail(alert_danger());
           });
         });
       },
@@ -1604,6 +1607,33 @@
           });
         });
         $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
+      },
+      edit_retention_policy: function () {
+        var self = this;
+        if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
+          self.editing_policy = self.ec2.retention_policies[self.volume_selected];
+          self.$set('editing_policy.enabled', true);
+        }
+        else {
+          self.editing_policy = {};
+        }
+      },
+      save_retention_policy: function (volume_id, enabled, max_amount) {
+        var self = this;
+        var retention_policies = this.ec2.retention_policies;
+        var infra = new Infrastructure(this.infra_id);
+        var snapshot = new Snapshot(infra.id);
+        snapshot.save_retention_policy(volume_id, enabled, max_amount)
+          .done(function (msg) {
+            if (enabled) {
+              retention_policies[volume_id] = self.editing_policy;
+            }
+            else {
+              delete retention_policies[volume_id];
+            }
+            $('#retention-policy-modal').modal('hide');
+            alert_success()(msg);
+          }).fail(alert_danger());
       },
       toLocaleString: toLocaleString,
       capitalize: function (str) {return _.capitalize(_.camelCase(str));},
