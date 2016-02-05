@@ -67,6 +67,7 @@ class NodesController < ApplicationController
       volume_id = block_device.ebs.volume_id
       @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
     end
+    @retention_policies = @instance_summary[:retention_policies]
 
     case @instance_summary[:status]
     when :terminated, :stopped
