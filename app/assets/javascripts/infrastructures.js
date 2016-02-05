@@ -1102,20 +1102,20 @@
             text: currentPage.toString() + ' of ' + pageCount};},
           content: [
             {
-            text: 'Security Groups',
+            text: t('security_groups.title'),
             style: 'header',
             alignment: 'center'
             },
             {
-              text: ['Stack Name: ', { text: this.$parent.$data.current_infra.stack.name+'\n',  bold: true}],
+              text: [t('infrastructures.stackname')+': ', { text: this.$parent.$data.current_infra.stack.name+'\n',  bold: true}],
               alignment: 'left'
             },
             {
-              text: ['Physical ID: ', { text: this.physical_id.toString()+'\n',  bold: true}],
+              text: [t('infrastructures.physical_id')+': ', { text: this.physical_id.toString()+'\n',  bold: true}],
               alignment: 'left'
             },
             {
-              text: ['Date: ', { text: moment().format('YYYY-MMMM-DD, h:mm:ss a')+'\n',  bold: true}],
+              text: [t('infrastructures.date')+': ', { text: moment().format('YYYY-MM-DD, HH:mm:ss')+'\n',  bold: true}],
               alignment: 'left'
             },
             tableRender(data)

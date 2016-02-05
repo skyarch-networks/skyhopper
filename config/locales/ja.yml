@@ -145,6 +145,8 @@ ja:
     infrastructure:     'インフラストラクチャ'
     genre:              '種別'
     stackname:          'スタック名'
+    physical_id:        'インスタンス ID'
+    date:               '日付'
     region:             'リージョン'
     keypair:            '鍵ペア名'
     creation_time:      '作成時刻'
