@@ -9,19 +9,19 @@
       </div>
 
       <div class="modal-body">
-        <fieldset>
-          <div class="form-group">
-            <div class="col-md-6">
-              <label class="control-label" for="editing_policy.max_amount">
+        <div class="form-inline form-group">
+          <div class="col-md-6">
+            <div class="checkbox">
+              <label class="control-label">
                 <input v-model="editing_policy.enabled" type="checkbox">
                 <%= t('snapshots.snapshots_to_keep') %>
               </label>
             </div>
-            <div class="col-md-3">
-              <input :disabled="!editing_policy.enabled" v-model="editing_policy.max_amount" class="form-control" id="editing_policy.max_amount" type="number" min="3">
-            </div>
           </div>
-        </fieldset>
+          <div class="col-md-3">
+            <input :disabled="!editing_policy.enabled" v-model="editing_policy.max_amount" id="editing_policy.max_amount" type="number" min="3">
+          </div>
+        </div>
       </div>
 
       <div class="modal-footer">
