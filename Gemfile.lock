@@ -461,7 +461,7 @@ GEM
       net-ssh (>= 2.7, < 3.1)
       net-telnet
       sfl
-    spring (1.6.2)
+    spring (1.6.3)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
     spring-commands-sidekiq (1.0.0)
