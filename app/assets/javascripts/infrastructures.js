@@ -56,34 +56,8 @@
   Vue.component('edit-monitoring-tabpane', require('infrastructures/edit-monitoring-tabpane.js'));
   Vue.component('rds-tabpane',             require('infrastructures/rds-tabpane.js'));
   Vue.component('elb-tabpane',             require('infrastructures/elb-tabpane.js'));
+  Vue.component('s3-tabpane',              require('infrastructures/s3-tabpane.js'));
 
-
-  Vue.component('s3-tabpane', {
-    template: '#s3-tabpane-template',
-
-    props: {
-      physical_id: {
-        type: String,
-        required: true,
-      },
-      infra_id: {
-        type: Number,
-        required: true,
-      },
-    },
-
-    data: function () {return {html: ""};},
-
-    compiled: function () {
-      var self = this;
-      var infra = new Infrastructure(self.infra_id);
-      var s3 = new S3Bucket(infra, this.physical_id);
-      s3.show().done(function (res) {
-        self.html = res;
-        self.$parent.loading = false;
-      }).fail(alert_and_show_infra);
-    },
-  });
 
   Vue.component('view-rules-tabpane', {
     template: '#view-rules-tabpane-template',
