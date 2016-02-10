@@ -52,10 +52,13 @@ module.exports = Vue.extend({
     },
 
     show_ec2: function () {
-      if(this.instance_type === 'elb')
+      if(this.instance_type === 'elb'){
         this.$parent.show_elb(this.physical_id);
-      else
+      }else if (this.instance_type === 'rds') {
+        this.$parent.show_rds(this.physical_id);
+      }else{
         this.$parent.show_ec2(this.physical_id);
+      }
     },
   },
   compiled: function() {
