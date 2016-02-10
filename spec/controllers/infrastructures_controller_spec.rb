@@ -358,46 +358,14 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#show_rds' do
-    let(:physical_id){"physical_id"}
-    let(:request_show_rds){ get :show_rds, id: infra.id, physical_id: physical_id }
+    let(:physical_id){SecureRandom.hex(30)}
 
-    instance_class    = "foo"
-    allocated_storage = "100"
-    endpoint_address  = "hoge.fuga"
-    multi_az          = true
-    engine            = 'mysql'
-
-    stubize_rds(
-      db_instance_class: instance_class,
-      allocated_storage: allocated_storage,
-      endpoint_address:  endpoint_address,
-      multi_az:          multi_az,
-      engine:            engine,
-    )
-
-    before{request_show_rds}
-
-    subject{Infrastructure.find(infra.id)}
-
-    it 'should assign @db_instance_class' do
-      expect(assigns[:db_instance_class]).to eq instance_class
+    stubize_rds
+    before do
+      get :show_rds, id: infra.id, physical_id: physical_id
     end
 
-    it 'should assign @allocated_storage' do
-      expect(assigns[:allocated_storage]).to eq allocated_storage
-    end
-
-    it 'should assign @endpoint_address' do
-      expect(assigns[:endpoint_address]).to eq endpoint_address
-    end
-
-    it 'should assign @multi_az' do
-      expect(assigns[:multi_az]).to eq multi_az
-    end
-
-    it 'should assign @engine' do
-      expect(assigns[:engine]).to eq engine
-    end
+    should_be_success
   end
 
   describe '#show_elb' do
@@ -406,7 +374,8 @@ describe InfrastructuresController, type: :controller do
     let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
     let(:dns_name){'hoge.example.com'}
     let(:listeners){['hoge']}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]])}
+    let(:security_groups){[]}
+    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
 
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
@@ -430,6 +399,10 @@ describe InfrastructuresController, type: :controller do
 
     it 'should assign @unregistereds' do
       expect(assigns[:unregistereds]).to eq infra.resources.ec2
+    end
+
+    it 'should assign @security_groups' do
+      expect(assigns[:security_groups]).to eq security_groups
     end
   end
 

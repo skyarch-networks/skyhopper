@@ -33,7 +33,7 @@ module ControllerMacros
   def should_be_success
     it do
       expect(response).to be_success,
-        -> () { "expected success, but response code is #{response.code}, response body is #{response.body.inspect}" }
+        -> () { "expected success, but response code is #{response.code}. #{request.flash.alert}" }
     end
   end
 
