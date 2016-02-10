@@ -19,6 +19,10 @@ module.exports = Vue.extend({
     page: {},
   };},
 
+  components: {
+    'vue-paginator': require('./vue-paginator'),
+  },
+
   methods: {
     status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
     status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
