@@ -43,26 +43,26 @@
   var alert_and_show_infra = helpers.alert_and_show_infra;
 
 
-  Vue.component('stack-events-table',      require('infrastructures/stack-events-table.js'));
-  Vue.component('add-modify-tabpane',      require('infrastructures/add-modify-tabpane.js'));
-  Vue.component('insert-cf-params',        require('infrastructures/insert-cf-params.js'));
-  Vue.component('add-ec2-tabpane',         require('infrastructures/add-ec2-tabpane.js'));
-  Vue.component('cf-history-tabpane',      require('infrastructures/cf-history-tabpane.js'));
-  Vue.component('infra-logs-tabpane',      require('infrastructures/infra-logs-tabpane.js'));
-  Vue.component('monitoring-tabpane',      require('infrastructures/monitoring-tabpane.js'));
-  Vue.component('edit-monitoring-tabpane', require('infrastructures/edit-monitoring-tabpane.js'));
-  Vue.component('rds-tabpane',             require('infrastructures/rds-tabpane.js'));
-  Vue.component('elb-tabpane',             require('infrastructures/elb-tabpane.js'));
-  Vue.component('s3-tabpane',              require('infrastructures/s3-tabpane.js'));
-  Vue.component('view-rules-tabpane',      require('infrastructures/view-rules-tabpane.js'));
-  Vue.component('security-groups-tabpane', require('infrastructures/security-groups-tabpane.js'));
-  Vue.component('ec2-tabpane',             require('infrastructures/ec2-tabpane.js'));
-  Vue.component('edit-runlist-tabpane',    require('infrastructures/edit-runlist-tabpane.js'));
-  Vue.component('edit-attr-tabpane',       require('infrastructures/edit-attr-tabpane.js'));
+  Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
+  Vue.component('add-modify-tabpane',         require('infrastructures/add-modify-tabpane.js'));
+  Vue.component('insert-cf-params',           require('infrastructures/insert-cf-params.js'));
+  Vue.component('add-ec2-tabpane',            require('infrastructures/add-ec2-tabpane.js'));
+  Vue.component('cf-history-tabpane',         require('infrastructures/cf-history-tabpane.js'));
+  Vue.component('infra-logs-tabpane',         require('infrastructures/infra-logs-tabpane.js'));
+  Vue.component('monitoring-tabpane',         require('infrastructures/monitoring-tabpane.js'));
+  Vue.component('edit-monitoring-tabpane',    require('infrastructures/edit-monitoring-tabpane.js'));
+  Vue.component('rds-tabpane',                require('infrastructures/rds-tabpane.js'));
+  Vue.component('elb-tabpane',                require('infrastructures/elb-tabpane.js'));
+  Vue.component('s3-tabpane',                 require('infrastructures/s3-tabpane.js'));
+  Vue.component('view-rules-tabpane',         require('infrastructures/view-rules-tabpane.js'));
+  Vue.component('security-groups-tabpane',    require('infrastructures/security-groups-tabpane.js'));
+  Vue.component('ec2-tabpane',                require('infrastructures/ec2-tabpane.js'));
+  Vue.component('edit-runlist-tabpane',       require('infrastructures/edit-runlist-tabpane.js'));
+  Vue.component('edit-attr-tabpane',          require('infrastructures/edit-attr-tabpane.js'));
   Vue.component('serverspec-results-tabpane', require('infrastructures/serverspec-results-tabpane.js'));
-  Vue.component('serverspec-tabpane',      require('infrastructures/serverspec-tabpane.js'));
-  Vue.component('operation-sched-tabpane', require('infrastructures/operation-sched-tabpane.js'));
-  Vue.component('demo-grid',               require('infrastructures/demo-grid.js'));
+  Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
+  Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
+  Vue.component('demo-grid',                  require('infrastructures/demo-grid.js'));
 
 
 
