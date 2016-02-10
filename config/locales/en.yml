@@ -97,6 +97,7 @@ en:
     client: 'Client'
     code:   'Code'
     name:   'Name'
+    projects: 'Project(s)'
     btn:
       show_projects: 'Show'
       add:           'New Client'
@@ -115,6 +116,7 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     cloud_provider:    'Cloud Provider'
+    infras:            'Infra(s)'
     btn:
       show_infrastructures: 'Show'
       add:                  'New Project'
