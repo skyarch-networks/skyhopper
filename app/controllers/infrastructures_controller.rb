@@ -263,7 +263,7 @@ class InfrastructuresController < ApplicationController
   def rds_submit_groups
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:id)
-    group_ids        = params.require(:group_ids)
+    group_ids   = params.require(:group_ids)
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
     rds.modify_security_groups(group_ids)
