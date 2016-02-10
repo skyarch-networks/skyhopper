@@ -22,12 +22,10 @@
   //var infraindex = require('./modules/loadindex');
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
-  var CFTemplate     = require('models/cf_template').default;
   var Infrastructure = require('models/infrastructure').default;
   var S3Bucket       = require('models/s3_bucket').default;
   var Dish           = require('models/dish').default;
   var EC2Instance    = require('models/ec2_instance').default;
-  var Monitoring     = require('models/monitoring').default;
   var RDSInstance    = require('models/rds_instance').default;
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
