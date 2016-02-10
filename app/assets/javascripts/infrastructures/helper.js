@@ -40,7 +40,8 @@ var alert_danger = function (callback) {
 };
 
 var alert_and_show_infra = alert_danger(function () {
-  show_infra(current_infra.id);
+  // XXX: doesn't work...
+  require('infrastructures/show_infra').show_infra(current_infra.id);
 });
 
 module.exports = {
