@@ -42,7 +42,7 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(self.infra_id);
       var ec2 = new EC2Instance(infra, this.physical_id);
       self.security_groups.forEach(function (value, key) {
-        if(self.instance_type === 'elb'){
+        if(self.instance_type === 'elb' || self.instance_type === 'rds'){
           if(value.checked)
             group_ids.push(value.group_id);
         }else{
@@ -56,10 +56,13 @@ module.exports = Vue.extend({
     },
 
     show_ec2: function () {
-      if(this.instance_type === 'elb')
+      if(this.instance_type === 'elb'){
         this.$parent.show_elb(this.physical_id);
-      else
-        this.$parent .show_ec2(this.physical_id);
+      }else if (this.instance_type === 'rds') {
+        this.$parent.show_rds(this.physical_id);
+      }else{
+        this.$parent.show_ec2(this.physical_id);
+      }
     },
     print_pdf: function(){
       var data = this.rules_summary;

@@ -32,6 +32,7 @@ SkyHopper::Application.routes.draw do
   resources :infrastructures do
     member do
       post 'change_rds_scale'
+      post 'rds_submit_groups'
       get  'show_rds'
       get  'show_elb'
       get  'show_s3'
