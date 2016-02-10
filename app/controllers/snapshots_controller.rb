@@ -47,6 +47,8 @@ class SnapshotsController < ApplicationController
     snapshot.delete
 
     render nothing: true, status: 200
+  rescue Snapshot::VolumeProtectedError
+    render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: 403 and return
   end
 
   # POST /snapshots/schedule
@@ -59,7 +61,7 @@ class SnapshotsController < ApplicationController
     ss.update_attributes!(schedule)
 
     if ss.enabled?
-      PeriodicSnapshotJob.set(
+      SnapshotJob.set(
         wait_until: ss.next_run
       ).perform_later(volume_id, physical_id, @infra, current_user.id)
     end
@@ -70,6 +72,23 @@ class SnapshotsController < ApplicationController
   # def restore
 
   # end
+
+  def save_retention_policy
+    enabled   = params.require(:enabled)
+    volume_id = params.require(:volume_id)
+
+    if enabled == 'true'
+      max_amount = params.require(:max_amount)
+      policy = RetentionPolicy.find_or_create_by(resource_id: volume_id)
+      policy.max_amount = max_amount
+      policy.save!
+    else
+      policy = RetentionPolicy.find_by(resource_id: volume_id)
+      policy.try!(:destroy)
+    end
+
+    render text: t('snapshots.msg.policy_saved'), status: 200 and return
+  end
 
   private
 
@@ -89,6 +108,8 @@ class SnapshotsController < ApplicationController
 
       infra_logger_success("Snapshot creation for #{snapshot.volume_id} has completed.\n Snapshot ID: #{snapshot.snapshot_id}")
       ws.push('completed')
+
+      DeleteOutdatedSnapshotsJob.perform_later(snapshot.volume_id, @infra)
     end
   end
 

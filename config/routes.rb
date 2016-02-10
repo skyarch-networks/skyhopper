@@ -25,6 +25,7 @@ SkyHopper::Application.routes.draw do
   resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
     collection do
       post 'schedule'
+      post 'save_retention_policy'
     end
   end
 

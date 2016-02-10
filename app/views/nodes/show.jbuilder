@@ -23,6 +23,8 @@ json.snapshot_schedules @snapshot_schedules
 json.platform @platform
 json.security_groups @security_groups
 
+json.retention_policies @retention_policies
+
 if @info
   json.info do
     json.cook_status       @info[:cook_status]

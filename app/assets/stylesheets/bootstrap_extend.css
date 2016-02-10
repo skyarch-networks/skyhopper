@@ -253,6 +253,7 @@ textarea:focus:invalid {
   display: block;
 }
 
-.form-control[readonly] {
+.form-control[readonly],
+.form-control[disabled] {
   background-color: #ddd;
 }
