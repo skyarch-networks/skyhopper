@@ -38,7 +38,7 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(self.infra_id);
       var ec2 = new EC2Instance(infra, this.physical_id);
       self.security_groups.forEach(function (value, key) {
-        if(self.instance_type === 'elb'){
+        if(self.instance_type === 'elb' || self.instance_type === 'rds'){
           if(value.checked)
             group_ids.push(value.group_id);
         }else{
