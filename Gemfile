@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4'
+gem 'rails', '~> 4.2.5.1'
 
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.3.20'
@@ -94,6 +94,11 @@ group :development, :test do
   gem 'github-markup'
 
   gem 'rubocop', require: false
+
+  gem 'spring'
+  gem 'sprint'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-sidekiq'
 end
 
 # for Login
@@ -118,3 +123,7 @@ gem 'rotp'
 gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
+
+gem 'nokogiri', '>= 1.6.7.2'
+
+gem 'rails-html-sanitizer', '~> 1.0.3'

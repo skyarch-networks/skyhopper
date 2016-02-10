@@ -129,6 +129,7 @@ ja:
     title: 'パラーメター'
     description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
                   ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
+    usage: '${NAME}のようにして、登録したパラメータを使用可能です'
     btn:
       remove:   '削除'
       unremove: '削除取消'
@@ -626,11 +627,15 @@ ja:
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'
     list_of_snapshots: 'スナップショットの一覧'
+    retention_policy:  'リテンションポリシー'
+    snapshots_to_keep: '最新から次の数だけ残して削除'
     msg:
       no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
       delete_snapshot: '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'
+      snapshot_is_protected: '%{snapshot_id} は保護されているため削除できません'
+      policy_saved:    'リテンションポリシーが保存されました'
 
   datepicker:
     today: '今日'

@@ -6,11 +6,19 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function (stack, Resource, EC2Instance, current_infra, CFTemplate, alert_danger, stack_in_progress, current_tab) {
+var CFTemplate   = require('models/cf_template').default;
+var Resource     = require('models/resource').default;
+var EC2Instance  = require('models/ec2_instance').default;
+var helpers      = require('infrastructures/helper.js');
+var alert_danger = helpers.alert_danger;
+
+
+module.exports = function (stack, current_infra, current_tab) {
   return new Vue({
     template: '#infra-show-template',
     data: {
       current_infra: {
+        id: parseInt(current_infra.id),
         stack: stack,
         resources : {},
         events: [],
@@ -147,6 +155,22 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
           r.serverspec_status = data;
         });
       },
+
+      stack_in_progress: function () {
+        var self = this;
+        current_infra.stack_events().done(function (res) {
+          self.$data.current_infra.events = res.stack_events;
+
+          if (res.stack_status.type === 'IN_PROGRESS') {
+            setTimeout(function () {
+              self.stack_in_progress(current_infra);
+            }, 15000);
+          } else {
+            var show_infra = require('infrastructures/show_infra.js').show_infra;
+            show_infra(current_infra.id);
+          }
+        });
+      },
     },
     filters: {
       toLocaleString: toLocaleString,
@@ -173,8 +197,6 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
       var self = this;
       console.log(self);
       if (stack.status.type === 'OK') {
-
-
         var res = new Resource(current_infra);
         res.index().done(function (resources) {
           _.forEach(resources.ec2_instances, function (v) {
@@ -200,16 +222,16 @@ module.exports = function (stack, Resource, EC2Instance, current_infra, CFTempla
             self.update_serverspec_status(v.physical_id);
           });
         });
-      }
-      else if (stack.status.type === 'IN_PROGRESS') {
-        stack_in_progress(current_infra);
+      } else if (stack.status.type === 'IN_PROGRESS') {
+        self.stack_in_progress(current_infra);
         self.$data.loading = false;
-      }
-      else if (stack.status.type === 'NG') {
+
+      } else if (stack.status.type === 'NG') {
         current_infra.stack_events().done(function (res) {
           self.$data.current_infra.events = res.stack_events;
           self.$data.loading = false;
         });
+
       } else if (stack.status.type === "NONE") {
         // no stack info
         self.$data.loading = false;

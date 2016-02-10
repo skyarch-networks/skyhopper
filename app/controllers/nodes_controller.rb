@@ -67,6 +67,7 @@ class NodesController < ApplicationController
       volume_id = block_device.ebs.volume_id
       @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
     end
+    @retention_policies = @instance_summary[:retention_policies]
 
     case @instance_summary[:status]
     when :terminated, :stopped
@@ -192,6 +193,10 @@ class NodesController < ApplicationController
   def update_attributes
     physical_id = params.require(:id)
     attr  = JSON.parse(params.require(:attributes))
+    attr.each do |key, val|
+      next unless val
+      attr[key] = ProjectParameter.exec(val, project_id: @infra.project_id)
+    end
 
     node = Node.new(physical_id)
 
