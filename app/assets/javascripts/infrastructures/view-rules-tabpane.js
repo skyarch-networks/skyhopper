@@ -2,9 +2,9 @@ var queryString    = require('query-string').parse(location.search);
 var Infrastructure = require('models/infrastructure').default;
 var EC2Instance    = require('models/ec2_instance').default;
 var createPdf      = require('pdfmake-browserified');
-var map            = require('.././modules/ipam00303.map');
-var data_mapping   = require('.././modules/ipam00303');
-var tableRender    = require('.././modules/table_render');
+var map            = require('../modules/ipam00303.map');
+var data_mapping   = require('../modules/ipam00303');
+var tableRender    = require('../modules/table_render');
 
 module.exports = Vue.extend({
   template: '#view-rules-tabpane-template',

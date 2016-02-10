@@ -26,7 +26,6 @@
     "pdfmake-browserified": "^0.1.4"
   },
   "devDependencies": {
-    "grunt-dump-dir": "^0.1.2",
     "gulp": "^3.9.0",
     "gulp-tsconfig-files": "icholy/gulp-tsconfig-files",
     "gulp-tsd": "0.0.4",
