@@ -11,7 +11,7 @@ class SnapshotPolicy < ApplicationPolicy
     user.allow?(record)
   end
 
-  %i[create? destroy? schedule?].each do |action|
+  %i[create? destroy? schedule? save_retention_policy?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end
