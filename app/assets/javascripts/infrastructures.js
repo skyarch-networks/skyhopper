@@ -26,7 +26,6 @@
   var S3Bucket       = require('models/s3_bucket').default;
   var Dish           = require('models/dish').default;
   var EC2Instance    = require('models/ec2_instance').default;
-  var RDSInstance    = require('models/rds_instance').default;
   var Resource       = require('models/resource').default;
   var Snapshot       = require('models/snapshot').default;
   var modal          = require('modal');
@@ -55,70 +54,8 @@
   Vue.component('infra-logs-tabpane',      require('infrastructures/infra-logs-tabpane.js'));
   Vue.component('monitoring-tabpane',      require('infrastructures/monitoring-tabpane.js'));
   Vue.component('edit-monitoring-tabpane', require('infrastructures/edit-monitoring-tabpane.js'));
+  Vue.component('rds-tabpane',             require('infrastructures/rds-tabpane.js'));
 
-
-
-  Vue.component('rds-tabpane', {
-    template: '#rds-tabpane-template',
-
-    props: {
-      physical_id: {
-        type: String,
-        required: true,
-      },
-      infra_id: {
-        type: Number,
-        required: true,
-      },
-    },
-
-    data: function () {return {
-      rds: {},
-      serverspec: {},
-    };},
-
-    methods: {
-      change_scale: function () {
-        var infra = new Infrastructure(this.infra_id);
-        var rds = new RDSInstance(infra, this.physical_id);
-        rds.change_scale(this.change_scale_type_to).done(function (msg) {
-          alert_success(self.reload)(msg);
-          $('#change-scale-modal').modal('hide');
-        }).fail(function (msg) {
-          alert_danger(self.reload)(msg);
-          $('#change-scale-modal').modal('hide');
-        });
-      },
-      gen_serverspec: function () {
-        var self = this;
-        var infra = new Infrastructure(this.infra_id);
-        var rds = new RDSInstance(infra, this.physical_id);
-        rds.gen_serverspec(this.serverspec).done(function (msg) {
-          alert_success(self.reload)(msg);
-          $('#rds-serverspec-modal').modal('hide');
-        }).fail(function (msg) {
-          alert_danger(self.reload)(msg);
-          $('#rds-serverspec-modal').modal('hide');
-        });
-      },
-      reload: function () { this.$parent.show_rds(this.physical_id); },
-    },
-    computed: {
-      gen_serverspec_enable: function () {
-        var s = this.serverspec;
-        return !!(s.username && s.password && s.database);
-      },
-    },
-    created: function () {
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      rds.show().done(function (data) {
-        self.rds = data.rds;
-        self.$parent.loading = false;
-      }).fail(alert_and_show_infra);
-    },
-  });
 
   // this.physical_id is a elb_name.
   Vue.component('elb-tabpane', {

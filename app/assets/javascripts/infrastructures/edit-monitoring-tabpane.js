@@ -2,7 +2,6 @@ var Infrastructure = require('models/infrastructure').default;
 var Monitoring     = require('models/monitoring').default;
 
 var helpers = require('infrastructures/helper.js');
-var toLocaleString = helpers.toLocaleString;
 var alert_success        = helpers.alert_success;
 var alert_danger         = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
