@@ -54,52 +54,8 @@
   Vue.component('stack-events-table', require('infrastructures/stack-events-table.js'));
   Vue.component('add-modify-tabpane', require('infrastructures/add-modify-tabpane.js'));
   Vue.component('insert-cf-params',   require('infrastructures/insert-cf-params.js'));
-  Vue.component('add-ec2-tabpane',   require('infrastructures/add-ec2-tabpane.js'));
-
-  Vue.component("cf-history-tabpane", {
-    template: '#cf-history-tabpane-template',
-
-    props: {
-      infra_id: {
-        type: Number,
-        required: true,
-      },
-    },
-
-    data: function () {return {
-      id: -1,
-      current: null,
-      history: [],
-    };},
-
-    methods: {
-      active: function (id) { return this.id === id; },
-      toLocaleString: toLocaleString,
-
-      get: function (id) {
-        var self = this;
-        self.id = id;
-
-        var infra = new Infrastructure(this.infra_id);
-        var cft = new CFTemplate(infra);
-        cft.show(id).done(function (data) {
-          self.current = data;
-        }).fail(alert_and_show_infra);
-      },
-    },
-    computed: {
-      currentExists: function () { return !!this.current; },
-    },
-    created: function () {
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var cft = new CFTemplate(infra);
-      cft.history().done(function (data) {
-        self.history = data;
-        self.$parent.loading = false;
-      }).fail(alert_and_show_infra);
-    },
-  });
+  Vue.component('add-ec2-tabpane',    require('infrastructures/add-ec2-tabpane.js'));
+  Vue.component('cf-history-tabpane', require('infrastructures/cf-history-tabpane.js'));
 
   Vue.component("infra-logs-tabpane", {
     template: '#infra-logs-tabpane-template',
