@@ -45,7 +45,7 @@ class ProjectsController < ApplicationController
       @projects = current_user.projects
     end
     respond_to do |format|
-      format.json
+      format.json { render json: @projects.as_json(include: [{infrastructures: {only: [:count]} }, {cloud_provider: {only: [:name]}}])}
       format.html
     end
   end

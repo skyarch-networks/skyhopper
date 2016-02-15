@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
+  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb]
 
   before_action do
     infra = @infrastructure || (
@@ -186,34 +186,27 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('infrastructures.msg.delete_stack_started'), status: 202 and return
   end
 
+  # GET /infrastructures/:id/show_rds
   def show_rds
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:id)
+    sc_g = @infrastructure.ec2.describe_security_groups.to_h
+    rds = RDS.new(@infrastructure, physical_id)
+    security_groups = map_security_groups(sc_g, rds.security_groups)
 
-    infra = Infrastructure.find(infra_id)
-    rds = RDS.new(infra, physical_id)
-
-    @db_instance_class = rds.db_instance_class
-    @allocated_storage = rds.allocated_storage
-    @endpoint_address  = rds.endpoint_address
-    @multi_az          = rds.multi_az
-    @engine            = rds.engine
+    @rds             = rds
+    @security_groups = security_groups
   end
 
-  # GET /infrastructures/show_elb
+  # GET /infrastructures/:id/show_elb
   def show_elb
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:id)
 
-    infra = Infrastructure.find(infra_id)
-    elb = ELB.new(infra, physical_id)
+    elb = ELB.new(@infrastructure, physical_id)
 
-    sc_g = infra.ec2.describe_security_groups().to_h
-    security_groups = []
-    sc_g[:security_groups].each do |a_hash|
-      a_hash[:checked] = elb.security_groups.include? a_hash[:group_id]
-      security_groups.push(a_hash)
-    end
+    sc_g = @infrastructure.ec2.describe_security_groups().to_h
+    security_groups = map_security_groups(sc_g, elb.security_groups)
+
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
@@ -221,7 +214,7 @@ class InfrastructuresController < ApplicationController
 
     @security_groups = security_groups
 
-    ec2 = infra.resources.ec2
+    ec2 = @infrastructure.resources.ec2
     @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
 
     list_server_certificates = elb.list_server_certificates
@@ -264,6 +257,18 @@ class InfrastructuresController < ApplicationController
     # TODO: status を取得
 
     render text: "change scale to #{type}" and return
+  end
+
+  # POST /infreastructures/rds_submit_groups
+  def rds_submit_groups
+    physical_id = params.require(:physical_id)
+    infra_id    = params.require(:id)
+    group_ids   = params.require(:group_ids)
+
+    rds = Infrastructure.find(infra_id).rds(physical_id)
+    rds.modify_security_groups(group_ids)
+
+    render text: I18n.t('security_groups.msg.change_success')
   end
 
   def show_s3
@@ -366,6 +371,16 @@ class InfrastructuresController < ApplicationController
     KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
+  # mapping of security groups by resource
+  def map_security_groups(sc_g, resource)
+    security_groups = []
+    sc_g[:security_groups].each do |a_hash|
+      a_hash[:checked] = resource.include? a_hash[:group_id]
+      security_groups.push(a_hash)
+    end
+    return security_groups
+  end
+
   # redirect to projects#index if specified project does not exist
   def project_exist
     return if params[:project_id].blank?
@@ -402,4 +417,5 @@ class InfrastructuresController < ApplicationController
 
     redirect_to path, alert: msg
   end
+
 end
