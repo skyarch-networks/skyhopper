@@ -6,6 +6,21 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
+// Data is the Rules summary of the assigned security group for the instance_type
+
+// Which contains inbound and outbound rules of the said security group
+// The main contents are: description, group ID, inbound and outbound rules
+/* Data eg.:
+  data = {
+    description: "fugafuga",
+    group_id: "sg-4b30d72f",
+    group_name: "hogehoge",
+    ip_permissions: Array,
+    ip_permissions_egress: Array
+    vpc_id: "not used"
+  }
+
+*/
 module.exports = function(data){
   return {
     style: 'tableExample',
@@ -36,6 +51,7 @@ function eval_protocol(ip_protocol){
 function buildTableBody(data) {
     var body = [];
 
+    console.log(data);
     body.push([{ rowSpan: 2, text: t('security_groups.description'),  style: 'tableHeader' },
             { rowSpan: 2, text: t('security_groups.group_id'),style: 'tableHeader' },
             { colSpan: 4, text: t('security_groups.inbound'), style: 'tableHeader' },
