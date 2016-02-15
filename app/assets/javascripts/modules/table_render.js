@@ -55,6 +55,21 @@ function buildTableBody(data) {
     data.forEach(function(v,index) {
       var inbound =  v.ip_permissions;
       var outbound = v.ip_permissions_egress;
+
+      push_initial(v,inbound, outbound, body);
+      inbound.shift(); // Remove first index
+      outbound.shift();  // Remove first index
+      extract_next(inbound, outbound, body);
+
+  });
+  return body;
+}
+
+function push_initial(v, inbound, outbound, body){
+  //Check if inbound lenght is greater than outbound lenght
+  if(inbound.length > outbound.length){
+    // If outbound has contents
+    if(outbound.length > 0){
       body.push([{text: v.description, style: 'tableHeader', rowSpan: inbound.length},
                {text: v.group_id, style: 'tableHeader', rowSpan: inbound.length},
                inbound[0].user_id_group_pairs,
@@ -66,14 +81,51 @@ function buildTableBody(data) {
                eval_port(outbound[0].from_port, outbound[0].from_port),
                outbound[0].ip_ranges[0].cidr_ip
       ]);
-
-      inbound.shift(); // Remove first index
-      outbound.shift();  // Remove first index
-      extract_next(inbound, outbound, body);
-
-  });
-  return body;
+      // Insert (-) if outbound doesn't exists
+    }else{
+        body.push([{text: v.description, style: 'tableHeader', rowSpan: inbound.length},
+                 {text: v.group_id, style: 'tableHeader', rowSpan: inbound.length},
+                 inbound[0].user_id_group_pairs,
+                 eval_protocol(inbound[0].ip_protocol),
+                 eval_port(inbound[0].from_port, inbound[0].to_port),
+                 inbound[0].ip_ranges[0].cidr_ip,
+                 '-',  '-',   '-', '-'
+        ]);
+      }
+      // IF outbound length is greated than inbound
+    }else if (inbound.length < outbound.length) {
+      // Check if inbound has contents
+      if(inbound.length > 0){
+        body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
+                 {text: v.group_id, style: 'tableHeader', rowSpan: outbound.length},
+                 inbound[0].user_id_group_pairs,
+                 eval_protocol(inbound[0].ip_protocol),
+                 eval_port(inbound[0].from_port, inbound[0].to_port),
+                 inbound[0].ip_ranges[0].cidr_ip,
+                 outbound[0].user_id_group_pairs,
+                 eval_protocol(outbound[0].ip_protocol),
+                 eval_port(outbound[0].from_port, outbound[0].from_port),
+                 outbound[0].ip_ranges[0].cidr_ip
+        ]);
+      }else {
+        body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
+                 {text: v.group_id, style: 'tableHeader', rowSpan: outbound.length},
+                 '-', '-', '-', '-',
+                 outbound[0].user_id_group_pairs,
+                 eval_protocol(outbound[0].ip_protocol),
+                 eval_port(outbound[0].from_port, outbound[0].from_port),
+                 outbound[0].ip_ranges[0].cidr_ip
+        ]);
+      }
+      //Push blank
+    }else {
+      body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
+               {text: v.group_id, style: 'tableHeader', rowSpan: outbound.length},
+               '-', '-', '-', '-','-','-','-','-'
+      ]);
+    }
 }
+
 
 
 function extract_next(inbound, outbound, body){
