@@ -67,9 +67,12 @@
       <div v-show="!loading" v-if="tabpane_active('default')">
         <%# No stack %>
         <div v-if="no_stack">
-          <div id="initTop" class="initialization">
-            <p><%= t 'infrastructures.msg.no_stack_info' %></p>
-            <pre v-text="current_infra.stack.message"></pre>
+          <div id="initTop" class="jumbotron">
+            <div class="container">
+              <h3 class="page-header"><%= t 'infrastructures.msg.no_stack_info' %></h3>
+              <pre v-text="current_infra.stack.message">
+              </pre>
+            </div>
           </div>
         </div>
 
