@@ -496,8 +496,8 @@ module.exports = Vue.extend({
       });
 
       ec2.submit_groups(group_ids)
-        .done(alert_success(self.show_ec2))
-        .fail(alert_danger(self.show_ec2));
+        .done(alert_success(self._show_ec2))
+        .fail(alert_danger(self._show_ec2));
 
     },
 
