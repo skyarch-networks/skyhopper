@@ -420,7 +420,8 @@ class Zabbix
         0
       end
 
-    history_all = case date_range
+    history_all =
+      case date_range
       when nil
         @sky_zabbix.history.get(
           output: "extend",
@@ -440,7 +441,7 @@ class Zabbix
           time_from: date_range[0],
           time_till: date_range[1]
         )
-    end
+      end
 
     # chart_data: ([time, value], [time, value])
     chart_data = []
@@ -594,12 +595,13 @@ class Zabbix
         h[key] = items_for_scenario.find{|x| x["key_"] =~ /^web\.test\.#{key}\[/}
       end
 
-      status = case h["fail"]["lastvalue"]
-      when "0"
-        "OK"
-      else
-        h["error"]["lastvalue"]
-      end
+      status =
+        case h["fail"]["lastvalue"]
+        when "0"
+          "OK"
+        else
+          h["error"]["lastvalue"]
+        end
 
       # 上で取り出したアイテムにレスポンドコードを含むモノを取り出し、
       # URLとレスポンドコードとダウンロードスピード (bytes/sec) をstep_valuesに格納
