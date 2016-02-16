@@ -250,10 +250,10 @@ class NodesController < ApplicationController
     rules_summary =
       if group_ids.length > 0
         @infra.ec2.describe_security_groups({group_ids: group_ids})
-    else
-      @infra.ec2.describe_security_groups()
+      else
+        @infra.ec2.describe_security_groups()
+      end
 
-    end
     vpcs = @infra.ec2.describe_vpcs()
 
 
