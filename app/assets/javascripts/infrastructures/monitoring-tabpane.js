@@ -65,7 +65,7 @@ module.exports = Vue.extend({
         alert_success(function () {
           self.$parent.show_edit_monitoring();
         })(t('monitoring.msg.created'));
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     show_url: function () {
@@ -78,7 +78,7 @@ module.exports = Vue.extend({
         self.error_message = null;
         self.loading_graph = false;
         self.showing_url = true;
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     showDate: function ()  {
@@ -97,7 +97,7 @@ module.exports = Vue.extend({
             self.drawChart(data, self.physical_id, self.item_key, ['value']);
           }
         });
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     drawChart: function (data, physical_id, title_name, columns) {
@@ -181,7 +181,7 @@ module.exports = Vue.extend({
             self.drawChart(data, physical_id, item_key, ['value']);
           }
         });
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     show_cloudwatch_graph: function (physical_id) {
@@ -195,7 +195,7 @@ module.exports = Vue.extend({
         Vue.nextTick(function () {
           self.drawChart(data, physical_id, 'NetworkInOut', ['NetworkIn', 'NetworkOut', 'Sum']);
         });
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     showPrev: function (){
@@ -248,7 +248,7 @@ module.exports = Vue.extend({
         self.show_problems();
       }
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(this.infra_id));
   },
 
   filters: {

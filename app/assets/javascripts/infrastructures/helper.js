@@ -39,10 +39,11 @@ var alert_danger = function (callback) {
   };
 };
 
-var alert_and_show_infra = alert_danger(function () {
-  // XXX: doesn't work...
-  require('infrastructures/show_infra').show_infra(current_infra.id);
-});
+var alert_and_show_infra = function (infra_id) {
+  return alert_danger(function () {
+    require('infrastructures/show_infra').show_infra(infra_id);
+  });
+};
 
 module.exports = {
   jsonParseErr:         jsonParseErr,

@@ -66,6 +66,6 @@ module.exports = Vue.extend({
     rds.show().done(function (data) {
       self.rds = data.rds;
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
   },
 });
