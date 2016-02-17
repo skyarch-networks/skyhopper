@@ -17,14 +17,10 @@
 // ================================================================
 
 //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
   //var infraindex = require('./modules/loadindex');
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
   var Infrastructure = require('models/infrastructure').default;
-  var EC2Instance    = require('models/ec2_instance').default;
-  var Resource       = require('models/resource').default;
   var modal          = require('modal');
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
@@ -34,13 +30,6 @@
   require('brace/mode/json');
   require('brace/theme/github');
   Vue.use(vace, false, 'json', '25');
-
-  var helpers = require('infrastructures/helper.js');
-  var jsonParseErr         = helpers.jsonParseErr;
-  var toLocaleString       = helpers.toLocaleString;
-  var alert_success        = helpers.alert_success;
-  var alert_danger         = helpers.alert_danger;
-  var alert_and_show_infra = helpers.alert_and_show_infra;
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
