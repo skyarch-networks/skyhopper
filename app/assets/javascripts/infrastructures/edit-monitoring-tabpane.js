@@ -116,7 +116,7 @@ module.exports = Vue.extend({
       this.monitoring.update_templates(self.sel_resource.resource, templates).done(function ()  {
         self.temp_loading = false;
         self.$parent.show_edit_monitoring();
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(this.infra_id));
     },
 
     showPrev: function () {
@@ -163,7 +163,7 @@ module.exports = Vue.extend({
       if (xhr.status === 400) { // before register zabbix
         self.$parent.show_monitoring();
       } else {
-        alert_and_show_infra(xhr.responseText);
+        alert_and_show_infra(this.infra_id)(xhr.responseText);
       }
     });
 
@@ -172,7 +172,7 @@ module.exports = Vue.extend({
       self.linked_resources = data.linked_resources;
       self.$parent.loading = false;
       self.temp_loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(this.infra_id));
   },
 
   filters: {

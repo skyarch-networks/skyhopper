@@ -30,7 +30,7 @@ module.exports = Vue.extend({
           var show_infra = require('./show_infra.js').show_infra;
           show_infra(infra.id);
         }))
-        .fail(alert_and_show_infra);
+        .fail(alert_and_show_infra(infra.id));
     },
   },
 

@@ -27,6 +27,6 @@ module.exports = Vue.extend({
     s3.show().done(function (res) {
       self.html = res;
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
   },
 });

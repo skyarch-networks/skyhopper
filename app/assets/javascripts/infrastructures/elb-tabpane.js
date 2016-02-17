@@ -258,7 +258,7 @@ module.exports = Vue.extend({
 
       self.$parent.loading = false;
       console.log(self);
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
   },
 });
 
