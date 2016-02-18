@@ -200,7 +200,6 @@ class InfrastructuresController < ApplicationController
   # GET /infrastructures/:id/show_elb
   def show_elb
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:id)
 
     elb = ELB.new(@infrastructure, physical_id)
 
