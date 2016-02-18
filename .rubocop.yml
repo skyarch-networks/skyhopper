@@ -240,6 +240,10 @@ Style/MultilineBlockLayout:
 Style/MultilineIfThen:
   Enabled: false
 
+Style/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
 Style/MultilineOperationIndentation:
   Enabled: false
 
