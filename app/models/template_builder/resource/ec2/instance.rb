@@ -68,8 +68,8 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
   def build
     result = super
     result[@name][:Properties][:ImageId] = {
-        'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
-      }
+      'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
+    }
 
     return result
   end

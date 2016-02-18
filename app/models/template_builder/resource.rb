@@ -72,7 +72,7 @@ class TemplateBuilder::Resource
         else
           val
         end
-          @param_properties.add(prop)
+      @param_properties.add(prop)
     end
 
     set_refs(props)
