@@ -53,15 +53,15 @@ module ApplicationHelper
     breadcrumb = '<ul class="breadcrumb">'
 
     breadcrumb <<
-    if client
-      <<-EOF
+      if client
+        <<-EOF
 <li><a href="#{clients_path}">#{client.name} (#{client.code})</a></li>
-      EOF
-    else
-      breadcrumb << <<-EOF
+        EOF
+      else
+        <<-EOF
 <li><a href="#{clients_path}">#{I18n.t("clients.client")}</a></li>
-      EOF
-    end
+        EOF
+      end
 
     if project
       breadcrumb << <<-EOF
