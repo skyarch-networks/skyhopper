@@ -91,11 +91,12 @@ module ApplicationHelper
   def loading_with_message(message = nil)
     loading_tag = "<div class=\"loader\"></div>".html_safe
 
-    loading_tag << if message
-                     " #{message}"
-    else
-      t('common.msg.loading')
-    end
+    loading_tag <<
+      if message
+        " #{message}"
+      else
+        t('common.msg.loading')
+      end
 
     return loading_tag
   end
