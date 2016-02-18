@@ -27,3 +27,4 @@
 //= require fullcalendar
 //= require lang-all
 //= require offline.min
+//= require clipboard
