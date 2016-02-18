@@ -10,7 +10,7 @@ class CoolLogFormater
     'WARN'  => :yellow,
     'INFO'  => :green,
     'DEBUG' => :blue,
-  }
+  }.freeze
 
   @@highline = HighLine.new
 

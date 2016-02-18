@@ -25,7 +25,7 @@ class RDS < SimpleDelegator
     @rds = Aws::RDS::Client.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region,
+      region:            region
     )
 
     @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)[:db_instances][0] # get only 1 instance

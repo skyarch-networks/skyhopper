@@ -105,12 +105,12 @@ describe Stack, type: :model do
       double(
         'rds',
         resource_type: 'AWS::RDS::DBInstance',
-        physical_resource_id:   'i-hogefuga',
+        physical_resource_id:   'i-hogefuga'
       ),
       double(
         'ec2',
         resource_type: 'AWS::EC2::Instance',
-        physical_resource_id:   'i-piyopoyo',
+        physical_resource_id:   'i-piyopoyo'
       ),
     ]}
     before do

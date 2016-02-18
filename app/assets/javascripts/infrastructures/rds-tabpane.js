@@ -110,6 +110,6 @@ module.exports = Vue.extend({
       self.security_groups = data.security_groups;
 
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
   },
 });

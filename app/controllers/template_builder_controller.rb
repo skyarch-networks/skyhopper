@@ -62,18 +62,16 @@ class TemplateBuilderController < ApplicationController
       name:              params.require(:subject),
       detail:            params[:detail],
       value:             template_builder.to_pretty_json,
-      user_id:           current_user.id,
+      user_id:           current_user.id
     )
 
     if @cf_template.save
       render text: I18n.t('cf_templates.msg.created')
+    elsif @cf_template.errors[:json]
+      render text: @cf_template.errors[:json], status: 500
     else
-      if @cf_template.errors[:json]
-        render text: @cf_template.errors[:json], status: 500
-      else
-        #TODO: error message
-        render text: "", status: 500
-      end
+      #TODO: error message
+      render text: "", status: 500
     end
   end
 

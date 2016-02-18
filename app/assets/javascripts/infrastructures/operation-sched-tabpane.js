@@ -143,7 +143,7 @@ module.exports = Vue.extend({
         alert_success(function () {
         })(t('operation_scheduler.msg.saved'));
         self.get_sched(self.sel_instance);
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(infra.id));
     },
 
     get_sched: function (ec2){

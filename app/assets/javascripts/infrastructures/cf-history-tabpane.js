@@ -33,7 +33,7 @@ module.exports = Vue.extend({
       var cft = new CFTemplate(infra);
       cft.show(id).done(function (data) {
         self.current = data;
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(infra.id));
     },
   },
   computed: {
@@ -46,6 +46,6 @@ module.exports = Vue.extend({
     cft.history().done(function (data) {
       self.history = data;
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
   },
 });

@@ -37,7 +37,7 @@ module.exports = Vue.extend({
       self.logs = data.logs;
       self.page = data.page;
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
 
     this.$watch('infra_logs', function (newVal, oldVal) {
       $(".popovermore").popover().click( function(e) {
@@ -50,7 +50,7 @@ module.exports = Vue.extend({
       infra.logs(page).done(function (data) {
         self.logs = data.logs;
         self.page = data.page;
-      }).fail(alert_and_show_infra);
+      }).fail(alert_and_show_infra(infra.id));
     });
   },
 });
