@@ -640,7 +640,7 @@ module.exports = Vue.extend({
         self.inprogress = true;
       }
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra);
+    }).fail(alert_and_show_infra(infra.id));
 
     var client = new ZeroClipboard($(".zeroclipboard-button"));
     client.on("ready", function (ready_event) {

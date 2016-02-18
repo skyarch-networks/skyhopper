@@ -7,7 +7,7 @@
 #
 
 module Node::Attribute
-  Key = 'normal'
+  Key = 'normal'.freeze
 
 
   # セットされている attribute を手に入れる。
