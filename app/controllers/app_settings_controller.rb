@@ -31,7 +31,7 @@ class AppSettingsController < ApplicationController
 
     ec2key = Ec2PrivateKey.create!(
       name:  keypair_name,
-      value: keypair_value,
+      value: keypair_value
     )
 
     settings[:ec2_private_key_id] = ec2key.id

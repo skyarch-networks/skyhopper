@@ -57,7 +57,7 @@ class ELB
   def register(physical_id)
     @elb.register_instances_with_load_balancer(
       load_balancer_name: @name,
-      instances: [{instance_id: physical_id}],
+      instances: [{instance_id: physical_id}]
     )
   end
 
@@ -66,7 +66,7 @@ class ELB
   def deregister(physical_id)
     @elb.deregister_instances_from_load_balancer(
       load_balancer_name: @name,
-      instances:[{instance_id: physical_id}],
+      instances:[{instance_id: physical_id}]
     )
   end
 
@@ -85,7 +85,7 @@ class ELB
         instance_protocol: instance_protocol,
         instance_port: instance_port,
         ssl_certificate_id: ssl_certificate_id,
-      }],
+      }]
     )
   end
 
@@ -94,7 +94,7 @@ class ELB
   def delete_listener(load_balancer_port)
     @elb.delete_load_balancer_listeners(
       load_balancer_name: @name,
-      load_balancer_ports: [ load_balancer_port ],
+      load_balancer_ports: [ load_balancer_port ]
     )
   end
 
@@ -108,14 +108,14 @@ class ELB
       @iam.upload_server_certificate(
         server_certificate_name: server_certificate_name,
         certificate_body: certificate_body,
-        private_key: private_key,
+        private_key: private_key
       )
     else
       @iam.upload_server_certificate(
         server_certificate_name: server_certificate_name,
         certificate_body: certificate_body,
         private_key: private_key,
-        certificate_chain: certificate_chain,
+        certificate_chain: certificate_chain
       )
     end
   end
@@ -124,7 +124,7 @@ class ELB
   # @param [String] server_certificate_name Certificate name".
   def delete_server_certificate(server_certificate_name)
     @iam.delete_server_certificate(
-      server_certificate_name: server_certificate_name,
+      server_certificate_name: server_certificate_name
     )
   end
 
@@ -138,7 +138,7 @@ class ELB
   # @return [Struct]
   def describe
     return @elb.describe_load_balancers(
-      load_balancer_names: [@name],
+      load_balancer_names: [@name]
     ).load_balancer_descriptions[0]
   end
 
@@ -160,7 +160,7 @@ class ELB
   def elb_submit_groups(group_ids)
     @elb.apply_security_groups_to_load_balancer(
       load_balancer_name: @name,
-      security_groups: group_ids,
+      security_groups: group_ids
     )
   end
 

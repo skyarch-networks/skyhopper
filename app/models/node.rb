@@ -9,7 +9,7 @@
 class Node
   include ::Node::Attribute
 
-  ChefDefaultUser = "ec2-user"
+  ChefDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
 
   class BootstrapError < ::StandardError; end
@@ -162,7 +162,7 @@ knife bootstrap #{fqdn} \
     cmd << "User=#{@user}"
     cmd << "FQDN=#{fqdn}"
     cmd << ruby_cmd << '-S rspec' << "-I #{Rails.root.join('serverspec', 'spec')}"
-    cmd << "#{run_spec_list_path.join(' ')}"
+    cmd << run_spec_list_path.join(' ').to_s
     cmd << local_path if selected_auto_generated
     cmd << '--format json'
     cmd = cmd.flatten.reject(&:blank?).join(" ")

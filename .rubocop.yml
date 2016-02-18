@@ -4,6 +4,7 @@ AllCops:
     - 'spec/factories.rb'
   Rails: true
   DisplayCopNames: true
+  TargetRubyVersion: 2.2
 
 Style/BlockDelimiters:
   Enabled: false
@@ -239,6 +240,10 @@ Style/MultilineBlockLayout:
 Style/MultilineIfThen:
   Enabled: false
 
+Style/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
 Style/MultilineOperationIndentation:
   Enabled: false
 
@@ -329,7 +334,7 @@ Style/SingleLineBlockParams:
 Style/SingleLineMethods:
   Enabled: false
 
-Style/SingleSpaceBeforeFirstArg:
+Style/SpaceBeforeFirstArg:
   Enabled: false
 
 Style/SpaceAfterColon:
@@ -338,7 +343,7 @@ Style/SpaceAfterColon:
 Style/SpaceAfterComma:
   Enabled: false
 
-Style/SpaceAfterControlKeyword:
+Style/SpaceAroundKeyword:
   Enabled: false
 
 Style/SpaceAfterMethodName:
@@ -372,9 +377,6 @@ Style/SpaceAroundEqualsInParameterDefault:
   Enabled: false
 
 Style/SpaceAroundOperators:
-  Enabled: false
-
-Style/SpaceBeforeModifierKeyword:
   Enabled: false
 
 Style/SpaceInsideBrackets:

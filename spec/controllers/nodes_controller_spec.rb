@@ -67,7 +67,7 @@ describe NodesController, type: :controller do
 
     let(:dish){create(:dish)}
     let(:details){{
-      "run_list" => ['a', 'b', 'f']
+      "run_list" => ['a', 'b', 'f'],
     }}
     before do
       allow_any_instance_of(Node).to receive(:details).and_return(details)
@@ -270,7 +270,7 @@ describe NodesController, type: :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param,
+          dish_id: dish.id.to_param
         ).and_return({status: false, message: msg})
         req
       end
@@ -288,7 +288,7 @@ describe NodesController, type: :controller do
           physical_id: physical_id,
           infrastructure: infra,
           runlist: dish.runlist,
-          dish_id: dish.id.to_param,
+          dish_id: dish.id.to_param
         ).and_return({status: true})
         req
       end

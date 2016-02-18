@@ -118,8 +118,8 @@ class EC2Instance < SimpleDelegator
       filters: [{
         name: "availability-zone",
         values: [availability_zone],
-      }])
-      .volumes
+      }]
+    ) .volumes
       .select { |volume| volume.state == 'available' }
       .map { |volume|
         tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
@@ -132,7 +132,7 @@ class EC2Instance < SimpleDelegator
     client.attach_volume(
       volume_id: volume_id,
       instance_id: @physical_id,
-      device: device_name,
+      device: device_name
     )
   end
 
