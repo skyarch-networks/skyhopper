@@ -2,7 +2,7 @@
 class ServerStateWorker < ActiveJob::Base
   def perform(*params)
     kinds =
-      if params.size == 0
+      if params.empty?
         %w[chef zabbix]
       else
         [params.first]

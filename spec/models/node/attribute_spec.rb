@@ -45,14 +45,14 @@ describe Node::Attribute do
     it do
       is_expected.to eq({
         'yum_releasever' => {
-          'releasever' => '2014.09'
+          'releasever' => '2014.09',
         },
         'zabbix' => {
           'agent' => {
-            'servers' => ['example.com']
-          }
+            'servers' => ['example.com'],
+          },
         },
-      },)
+      })
     end
   end
 end

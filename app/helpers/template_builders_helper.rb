@@ -96,7 +96,7 @@ module TemplateBuildersHelper
         options:         options_for_select(property.get_options),
         selected_option: t('common.please_select'),
         klass:           "col-md-3 col-sm-3 property-value",
-        attributes:      common_attr,
+        attributes:      common_attr
       )
     end
 
@@ -119,7 +119,7 @@ module TemplateBuildersHelper
       return parts_input(
         klass:       "form-control input-sm property-value",
         attributes:  common_attr,
-        placeholder: validate_rule(property.data_validator),
+        placeholder: validate_rule(property.data_validator)
       )
     end
   end
@@ -164,14 +164,14 @@ module TemplateBuildersHelper
         form_parts << "<div class=\"form-group\"><label>#{key}</label>"
         form_parts << parts_input(
           attributes: "#{common_attr} hash-key=\"#{val.name}\"",
-          klass: "input-sm",
+          klass: "input-sm"
         )
         form_parts << "</div>"
       end
     else
       form_parts << "<div class=\"form-group\">" + parts_input(
         attributes: common_attr,
-        klass: "input-sm",
+        klass: "input-sm"
       ) + "</div>"
     end
     return form_parts
@@ -204,7 +204,7 @@ module TemplateBuildersHelper
     hidden = parts_input(
       type:       "hidden",
       klass:      "property-value",
-      attributes: "property-type=\"#{property.name}\" data-type=\"array\"",
+      attributes: "property-type=\"#{property.name}\" data-type=\"array\""
     )
     return <<-EOS
     #{hidden}

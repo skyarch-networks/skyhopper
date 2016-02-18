@@ -33,14 +33,14 @@ class CfTemplate < ActiveRecord::Base
     if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
       parameters.push(
         parameter_key:   "KeyName",
-        parameter_value: infrastructure.keypairname,
+        parameter_value: infrastructure.keypairname
       )
     end
 
     params_inserted.try!(:each) do |key, val|
       parameters.push(
         parameter_key: key,
-        parameter_value: ProjectParameter.exec(val, project_id: infrastructure.project_id),
+        parameter_value: ProjectParameter.exec(val, project_id: infrastructure.project_id)
       )
     end
 

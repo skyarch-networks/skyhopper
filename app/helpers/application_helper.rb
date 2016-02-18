@@ -40,7 +40,7 @@ module ApplicationHelper
       Array(message).each do |msg|
         text = content_tag(:div,
           content_tag(:button, raw("&times;"), :class => "close", "data-dismiss" => "alert") + msg,
-          class: "alert fade in alert-#{type} alert-dismissible #{options[:class]}",
+          class: "alert fade in alert-#{type} alert-dismissible #{options[:class]}"
         )
         flash_messages << text if msg
       end
@@ -52,15 +52,16 @@ module ApplicationHelper
   def breadcrumbs(client = nil, project = nil, infrastructure = nil)
     breadcrumb = '<ul class="breadcrumb">'
 
-    if client
-      breadcrumb << <<-EOF
+    breadcrumb <<
+      if client
+        <<-EOF
 <li><a href="#{clients_path}">#{client.name} (#{client.code})</a></li>
-      EOF
-    else
-      breadcrumb << <<-EOF
+        EOF
+      else
+        <<-EOF
 <li><a href="#{clients_path}">#{I18n.t("clients.client")}</a></li>
-      EOF
-    end
+        EOF
+      end
 
     if project
       breadcrumb << <<-EOF
@@ -90,11 +91,12 @@ module ApplicationHelper
   def loading_with_message(message = nil)
     loading_tag = "<div class=\"loader\"></div>".html_safe
 
-    if message
-      loading_tag << " #{message}"
-    else
-      loading_tag << t('common.msg.loading')
-    end
+    loading_tag <<
+      if message
+        " #{message}"
+      else
+        t('common.msg.loading')
+      end
 
     return loading_tag
   end

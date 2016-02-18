@@ -34,7 +34,7 @@ module InfrastructuresHelper
       t('.edit', default: t("helpers.links.edit")),
       path,
       class: klass,
-      id: kid,
+      id: kid
     )
   end
 
