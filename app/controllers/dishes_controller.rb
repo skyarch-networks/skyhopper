@@ -64,7 +64,7 @@ class DishesController < ApplicationController
     @dish.update(
       runlist:     runlist,
       serverspec_ids: serverspec_ids,
-      status:      nil,
+      status:      nil
     )
 
     render text: I18n.t('dishes.msg.updated')

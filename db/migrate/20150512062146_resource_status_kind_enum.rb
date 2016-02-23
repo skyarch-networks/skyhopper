@@ -6,13 +6,13 @@ class ResourceStatusKindEnum < ActiveRecord::Migration
     'UnExecuted' => 3,
     'InProgress' => 4,
     nil          => 3,
-  }
+  }.freeze
 
   KindTable = {
     'serverspec' => 0,
     'cook'       => 1,
     'yum'        => 2,
-  }
+  }.freeze
 
   def up
     old = ResourceStatus.pluck(:value)

@@ -104,7 +104,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id,
+      project_id: project_id
     )
     @regions = @@regions
   end
@@ -200,7 +200,6 @@ class InfrastructuresController < ApplicationController
   # GET /infrastructures/:id/show_elb
   def show_elb
     physical_id = params.require(:physical_id)
-    infra_id    = params.require(:id)
 
     elb = ELB.new(@infrastructure, physical_id)
 
@@ -327,14 +326,14 @@ class InfrastructuresController < ApplicationController
           resource_id:  selected_instance[:id],
           start_date:   start_date,
           end_date:     end_date,
-          user_id: current_user.id,
+          user_id: current_user.id
         )
         RecurringDate.create!(
           operation_duration_id: ops.id,
           repeats: selected_instance[:repeat_freq].to_i,
           start_time:  start_date.strftime("%H:%M"),
           end_time: end_date.strftime("%H:%M"),
-          dates: selected_instance[:dates],
+          dates: selected_instance[:dates]
         )
       rescue => ex
         render text: ex.message, status: 500 and return
@@ -386,15 +385,16 @@ class InfrastructuresController < ApplicationController
     return if params[:project_id].blank?
     return if Project.exists?(id: params[:project_id])
 
-    if current_user.master?
-      if session[:client_id].present?
-        path = projects_path(client_id: session[:client_id])
+    path =
+      if current_user.master?
+        if session[:client_id].present?
+          projects_path(client_id: session[:client_id])
+        else
+          clients_path
+        end
       else
-        path = clients_path
+        projects_path
       end
-    else
-      path = projects_path
-    end
 
     redirect_to path, alert: "Project \##{params[:project_id]} does not exist."
   end
@@ -405,15 +405,14 @@ class InfrastructuresController < ApplicationController
     return if Infrastructure.exists?(id: params[:id])
 
     msg = "Infrastructure \##{params[:id]} does not exist."
-    if session[:project_id].present?
-      path = infrastructures_path(project_id: session[:project_id])
-    else
-      if current_user.master?
-        path = clients_path
+    path =
+      if session[:project_id].present?
+        infrastructures_path(project_id: session[:project_id])
+      elsif current_user.master?
+        clients_path
       else
-        path = projects_path
+        projects_path
       end
-    end
 
     redirect_to path, alert: msg
   end
