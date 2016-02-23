@@ -225,6 +225,10 @@ new Clipboard('[data-clipboard]').on('success', function (e) {
   var target = btn.find('.copied-hint-target');
   var hint_text = btn.attr('data-copied-hint');
   var orig_text = target.text();
+  btn.attr('disabled', true);
   target.text(hint_text);
-  setTimeout(function () { target.text(orig_text); }, 1000);
+  setTimeout(function () {
+    target.text(orig_text);
+    btn.attr('disabled', null);
+  }, 1000);
 });
