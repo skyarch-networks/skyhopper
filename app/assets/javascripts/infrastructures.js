@@ -10,8 +10,6 @@
 (function () {
   'use strict';
 
-  ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
-
 // ================================================================
 // infrastructures
 // ================================================================
