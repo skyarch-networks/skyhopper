@@ -12,8 +12,6 @@ var alert_and_show_infra = helpers.alert_and_show_infra;
 
 var modal = require('modal');
 
-ZeroClipboard.config({swfPath: '/assets/ZeroClipboard.swf'});
-
 module.exports = Vue.extend({
   template: '#ec2-tabpane-template',
 
@@ -641,22 +639,6 @@ module.exports = Vue.extend({
       }
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
-
-    var client = new ZeroClipboard($(".zeroclipboard-button"));
-    client.on("ready", function (ready_event) {
-      client.on("aftercopy", function (event) {
-        var btn = $(event.target);
-        var target = btn.find('.copied-hint-target');
-        var hint_text = btn.attr('data-copied-hint');
-        var orig_text = target.attr('data-orig-text');
-        if (!orig_text) {
-          orig_text = target.text();
-          target.attr('data-orig-text', orig_text);
-        }
-        target.text(hint_text);
-        setTimeout(function () { target.text(orig_text); }, 1000);
-      });
-    });
 
     $('#snapshots-modal').on('show.bs.modal', function (e) {
       $(e.target).children().attr('style', null);

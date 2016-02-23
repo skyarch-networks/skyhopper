@@ -19,7 +19,6 @@
 //= require jquery.noty.packaged
 //= require vue
 //= require lodash
-//= require ZeroClipboard
 //= require moment-with-locales.min
 //= require bootstrap-datetimepicker
 //= require microplugin
@@ -28,3 +27,4 @@
 //= require fullcalendar
 //= require lang-all
 //= require offline.min
+//= require clipboard
