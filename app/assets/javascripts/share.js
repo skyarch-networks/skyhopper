@@ -218,3 +218,13 @@ $(document).on("drop", ".allow_textfile_drop", function(e){
   };
   fileReader.readAsText(file);
 });
+
+// setup clipboard.js
+new Clipboard('[data-clipboard]').on('success', function (e) {
+  var btn = $(e.trigger);
+  var target = btn.find('.copied-hint-target');
+  var hint_text = btn.attr('data-copied-hint');
+  var orig_text = target.text();
+  target.text(hint_text);
+  setTimeout(function () { target.text(orig_text); }, 1000);
+});
