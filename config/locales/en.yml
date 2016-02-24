@@ -146,6 +146,8 @@ en:
     infrastructure:     'Infrastructure'
     genre:              'Genre'
     stackname:          'Stack Name'
+    physical_id:        'Instance ID'
+    date:               'Date'
     region:             'Region'
     keypair:            'KeyPair Name'
     creation_time:      'Creation Time'
