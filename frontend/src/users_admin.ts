@@ -103,7 +103,6 @@ namespace UsersAdmin {
         remove_mfa_key:            this.remove_mfa_key,
       }, data);
 
-      super();
       this._init({
         template: '#user-edit-template',
         data: d,
