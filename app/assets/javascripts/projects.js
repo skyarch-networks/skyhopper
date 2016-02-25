@@ -76,7 +76,7 @@
              self.data = data.map(function (item) {
                var item_key = '*****'+item.access_key.substring(item.access_key.length-3,item.access_key.length);
                return {
-                 code: item.code,
+                 code: [item.code, item.infrastructures.length],
                  name: item.name,
                  cloud_provider: item.cloud_provider.name,
                  access_key: item_key,

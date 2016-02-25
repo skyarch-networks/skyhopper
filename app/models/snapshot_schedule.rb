@@ -10,7 +10,7 @@ class SnapshotSchedule < Schedule
   before_update :delete_enqueued_jobs
   after_destroy :delete_enqueued_jobs
 
-  JOB_CLASS_NAME = PeriodicSnapshotJob.to_s.freeze
+  JOB_CLASS_NAME = SnapshotJob.to_s.freeze
 
   def delete_enqueued_jobs
     jobs = Sidekiq::ScheduledSet.new.select { |job|

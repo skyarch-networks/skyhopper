@@ -37,4 +37,27 @@ describe Client, type: :model do
       it{is_expected.to be false}
     end
   end
+
+  describe 'with restrict_with_error' do
+    let(:client){create :client}
+
+    context 'when project has some infra' do
+      before do
+        client.projects = create_list :project, 3
+        client.reload
+      end
+
+      it 'cant destroy' do
+        expect{client.destroy}.to raise_error ActiveRecord::DeleteRestrictionError
+        expect(Client).to be_exists client.id
+      end
+    end
+
+    context 'when project does not have any inra' do
+      it 'can destroy' do
+        expect{client.destroy}.not_to raise_error
+        expect(Client).not_to be_exists client.id
+      end
+    end
+  end
 end

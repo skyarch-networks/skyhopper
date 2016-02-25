@@ -85,6 +85,7 @@ namespace UsersAdmin {
     private mfa_qrcode: string;
 
     constructor(data: any) {
+      super();
       this.update_mfa_key = false;
       this.remove_mfa_key = false;
       this.user = { password: "", password_confirmation: "", };
@@ -102,7 +103,6 @@ namespace UsersAdmin {
         remove_mfa_key:            this.remove_mfa_key,
       }, data);
 
-      super();
       this._init({
         template: '#user-edit-template',
         data: d,

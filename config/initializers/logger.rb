@@ -10,7 +10,7 @@ class CoolLogFormater
     'WARN'  => :yellow,
     'INFO'  => :green,
     'DEBUG' => :blue,
-  }
+  }.freeze
 
   @@highline = HighLine.new
 
@@ -39,3 +39,5 @@ AWS.config(logger: Rails.logger, log_formatter: AWS::Core::LogFormatter.colored)
 # for aws-sdk-v2
 Aws.config[:logger]        = Rails.logger
 Aws.config[:log_formatter] = Seahorse::Client::Logging::Formatter.colored
+
+Celluloid.logger = Rails.logger

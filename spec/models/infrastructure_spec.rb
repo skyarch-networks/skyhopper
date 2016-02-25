@@ -171,7 +171,7 @@ describe Infrastructure, type: :model do
       expect(::Aws::EC2::Client).to receive(:new).with(
         access_key_id: subject.access_key,
         secret_access_key: subject.secret_access_key,
-        region: subject.region,
+        region: subject.region
       ).and_return(result)
 
       expect(subject.ec2).to eq result

@@ -1,6 +1,10 @@
 <div class="content">
-<h4 v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
-<h4 v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
+<h4 v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}
+    <button @click="print_pdf()" class="btn btn-sm btn-default"><%= fa 'print' %> Print</button>
+</h4>
+<h4 v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %>
+  <button @click="print_pdf()" class="btn btn-sm btn-default"><%= fa 'print' %> Print</button>
+</h4>
 
   <%= render 'infrastructures/security_groups_table' %>
 

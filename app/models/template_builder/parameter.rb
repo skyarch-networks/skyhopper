@@ -12,11 +12,12 @@ class TemplateBuilder::Parameter
   def initialize(name, property)
     raise InvalidDataType unless property.can_parameterize?
 
-    if property.data_type == String
-      @type = 'String'.freeze
-    else # Array
-      @type = 'CommaDelimitedList'.freeze
-    end
+    @type =
+      if property.data_type == String
+        'String'.freeze
+      else # Array
+        'CommaDelimitedList'.freeze
+      end
 
     @name = name.to_sym
     @property = property
@@ -27,8 +28,8 @@ class TemplateBuilder::Parameter
   def build
     param = {
       @name => {
-        Type: @type
-      }
+        Type: @type,
+      },
     }
 
     case @type

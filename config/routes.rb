@@ -6,7 +6,7 @@ SkyHopper::Application.routes.draw do
   end
 
   devise_for :users, controllers: {
-    sessions: 'users/sessions'
+    sessions: 'users/sessions',
   }
 
   root to: 'root#root'
@@ -25,12 +25,14 @@ SkyHopper::Application.routes.draw do
   resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
     collection do
       post 'schedule'
+      post 'save_retention_policy'
     end
   end
 
   resources :infrastructures do
     member do
       post 'change_rds_scale'
+      post 'rds_submit_groups'
       get  'show_rds'
       get  'show_elb'
       get  'show_s3'

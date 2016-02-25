@@ -43,7 +43,7 @@ class Resource < ActiveRecord::Base
     ResourceStatus.kinds.map{|_, k| ResourceStatus.create(
       resource: self,
       kind: k,
-      value: 'un_executed',
+      value: 'un_executed'
     )}
   end
 

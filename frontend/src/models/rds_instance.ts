@@ -47,9 +47,16 @@ export default class RDSInstance extends ModelBase {
       )
     );
   }
+
+  rds_submit_groups(group_ids: Array<any>): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).rds_submit_groups(_.merge(this.params, {group_ids: group_ids}))
+    );
+  }
 }
 
 RDSInstance.ajax_infra.add_member('show_rds', 'GET');
 RDSInstance.ajax_infra.add_member('change_rds_scale', 'POST');
+RDSInstance.ajax_infra.add_member('rds_submit_groups', 'POST');
 
 RDSInstance.ajax_serverspec.add_collection('create_for_rds', 'PUT');

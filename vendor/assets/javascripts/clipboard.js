@@ -1,0 +1,1 @@
+../../../frontend/node_modules/clipboard/dist/clipboard.js

@@ -97,6 +97,7 @@ ja:
     client: '顧客'
     code:   '顧客コード'
     name:   '顧客名'
+    projects: '案件'
     btn:
       show_projects: '案件一覧'
       add:           '新規顧客'
@@ -115,6 +116,7 @@ ja:
     access_key:        'アクセスキー'
     secret_access_key: 'シークレットキー'
     cloud_provider:    'クラウド提供会社'
+    infras:            'インフラ'
     btn:
       show_infrastructures: 'インフラ一覧'
       add:                  '新規案件'
@@ -145,6 +147,8 @@ ja:
     infrastructure:     'インフラストラクチャ'
     genre:              '種別'
     stackname:          'スタック名'
+    physical_id:        'インスタンス ID'
+    date:               '日付'
     region:             'リージョン'
     keypair:            '鍵ペア名'
     creation_time:      '作成時刻'
@@ -627,11 +631,15 @@ ja:
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'
     list_of_snapshots: 'スナップショットの一覧'
+    retention_policy:  'リテンションポリシー'
+    snapshots_to_keep: '最新から次の数だけ残して削除'
     msg:
       no_snapshots:    'このボリュームのスナップショットはありません'
       create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
       delete_snapshot: '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'
+      snapshot_is_protected: '%{snapshot_id} は保護されているため削除できません'
+      policy_saved:    'リテンションポリシーが保存されました'
 
   datepicker:
     today: '今日'

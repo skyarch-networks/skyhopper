@@ -20,7 +20,7 @@ class TemplateBuilder
       KeyName: {
         Description: 'Name of an existing EC2 KeyPair to enable SSH access to the instance',
         Type: 'String',
-      }
+      },
     },
     Mappings: {},
     Resources: {},
@@ -106,10 +106,10 @@ class TemplateBuilder
     have_pv  = ec2s.any?{|ec2| ec2.virtual_type == :PV}
 
     if have_hvm
-      result[:Mappings].merge!(RegionMapHVM: @@ami_mappings[:HVM])
+      result[:Mappings][:RegionMapHVM] =  @@ami_mappings[:HVM]
     end
     if have_pv
-      result[:Mappings].merge!(RegionMapPV:  @@ami_mappings[:PV])
+      result[:Mappings][:RegionMapPV] = @@ami_mappings[:PV]
     end
 
     # set Description
@@ -135,7 +135,6 @@ class TemplateBuilder
     return result
   end
 
-  # rubocop:disable Rails/Delegate
   def to_json
     build.to_json
   end

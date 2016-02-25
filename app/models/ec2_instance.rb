@@ -77,6 +77,7 @@ class EC2Instance < SimpleDelegator
       platform: platform,
       availability_zone: placement.availability_zone,
       security_groups: security_groups,
+      retention_policies: retention_policies,
     }
   end
 
@@ -117,8 +118,8 @@ class EC2Instance < SimpleDelegator
       filters: [{
         name: "availability-zone",
         values: [availability_zone],
-      }])
-      .volumes
+      }]
+    ) .volumes
       .select { |volume| volume.state == 'available' }
       .map { |volume|
         tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
@@ -131,7 +132,17 @@ class EC2Instance < SimpleDelegator
     client.attach_volume(
       volume_id: volume_id,
       instance_id: @physical_id,
-      device: device_name,
+      device: device_name
     )
+  end
+
+  def retention_policies
+    volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
+    policies = RetentionPolicy.where(resource_id: volume_ids)
+    policies.map { |e|
+      [ e.resource_id,
+        { max_amount: e.max_amount },
+      ]
+    }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
   end
 end

@@ -17,11 +17,13 @@ json.dishes        @dishes
 json.attribute_set @attribute_set
 
 json.number_of_security_updates @number_of_security_updates
-json.yum_schedule  @yum_schedule
+json.yum_schedule @yum_schedule
 json.snapshot_schedules @snapshot_schedules
 
 json.platform @platform
 json.security_groups @security_groups
+
+json.retention_policies @retention_policies
 
 if @info
   json.info do

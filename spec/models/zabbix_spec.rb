@@ -16,7 +16,7 @@ describe Zabbix, type: :model do
     before do
       expect_any_instance_of(SkyZabbix::Client).to receive(:login).with(
         set.zabbix_user,
-        set.zabbix_pass,
+        set.zabbix_pass
       )
     end
 

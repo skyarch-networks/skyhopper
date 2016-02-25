@@ -97,6 +97,7 @@ en:
     client: 'Client'
     code:   'Code'
     name:   'Name'
+    projects: 'Project(s)'
     btn:
       show_projects: 'Show'
       add:           'New Client'
@@ -115,6 +116,7 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     cloud_provider:    'Cloud Provider'
+    infras:            'Infra(s)'
     btn:
       show_infrastructures: 'Show'
       add:                  'New Project'
@@ -144,6 +146,8 @@ en:
     infrastructure:     'Infrastructure'
     genre:              'Genre'
     stackname:          'Stack Name'
+    physical_id:        'Instance ID'
+    date:               'Date'
     region:             'Region'
     keypair:            'KeyPair Name'
     creation_time:      'Creation Time'
@@ -628,11 +632,15 @@ en:
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'
     list_of_snapshots: 'List of Snapshots'
+    retention_policy:  'Retention Policy'
+    snapshots_to_keep: 'Snapshots to keep'
     msg:
       no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
       delete_snapshot: 'Are you sure you want to delete following snapshots?'
       creation_started: 'Snapshot creation has started.'
+      snapshot_is_protected: 'Cannot delete %{snapshot_id} because it is protected.'
+      policy_saved:    'Retantion policy has been saved successfully.'
 
   datepicker:
     today: 'Go to Today'

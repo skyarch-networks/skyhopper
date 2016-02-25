@@ -17,7 +17,7 @@ class CloudWatch
     @cloud_watch = AWS::CloudWatch.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region,
+      region:            region
     ).client
   end
 
@@ -36,7 +36,7 @@ class CloudWatch
         dimensions:  [{name: 'InstanceId', value: physical_id}],
         start_time:  (now - 1.hour).iso8601,
         end_time:    now.iso8601,
-        period:      60,
+        period:      60
       )
     }
 
@@ -46,7 +46,7 @@ class CloudWatch
 
     res = []
     in_data.datapoints.zip(out_data.datapoints).each do |in_, out|
-      time = (in_[:timestamp].localtime).strftime("%H:%M")
+      time = in_[:timestamp].localtime.strftime("%H:%M")
       in_avg  = in_[:average]
       out_avg = out[:average]
       sum = in_avg + out_avg

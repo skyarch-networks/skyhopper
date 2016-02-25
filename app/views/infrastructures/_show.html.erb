@@ -67,9 +67,12 @@
       <div v-show="!loading" v-if="tabpane_active('default')">
         <%# No stack %>
         <div v-if="no_stack">
-          <div id="initTop" class="initialization">
-            <p><%= t 'infrastructures.msg.no_stack_info' %></p>
-            <pre v-text="current_infra.stack.message"></pre>
+          <div id="initTop" class="jumbotron">
+            <div class="container">
+              <h3 class="page-header"><%= t 'infrastructures.msg.no_stack_info' %></h3>
+              <pre v-text="current_infra.stack.message">
+              </pre>
+            </div>
           </div>
         </div>
 
@@ -83,25 +86,25 @@
       </div>
 
       <div v-show="!loading">
-        <add-modify-tabpane      v-if="tabpane_active('add_modify')"       :templates.once="current_infra.templates" :result.sync="current_infra.add_modify"></add-modify-tabpane>
-        <insert-cf-params        v-if="tabpane_active('insert-cf-params')" ></insert-cf-params>
-        <add-ec2-tabpane         v-if="tabpane_active('add-ec2')"          ></add-ec2-tabpane>
-        <cf-history-tabpane      v-if="tabpane_active('cf_history')"       ></cf-history-tabpane>
-        <stack-events-table      v-if="tabpane_active('event_logs')"       :events.once="current_infra.events"></stack-events-table>
-        <security-groups-tabpane v-if="tabpane_active('security_groups')"  :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
-        <monitoring-tabpane      v-if="tabpane_active('monitoring')"       ></monitoring-tabpane>
-        <edit-monitoring-tabpane v-if="tabpane_active('edit-monitoring')"  ></edit-monitoring-tabpane>
-        <infra-logs-tabpane      v-if="tabpane_active('infra_logs')"       ></infra-logs-tabpane>
-        <ec2-tabpane             v-if="tabpane_active('ec2')"              :physical_id.once="tabpaneGroupID"></ec2-tabpane>
-        <rds-tabpane             v-if="tabpane_active('rds')"              :physical_id.once="tabpaneGroupID"></rds-tabpane>
-        <elb-tabpane             v-if="tabpane_active('elb')"              :physical_id.once="tabpaneGroupID"></elb-tabpane>
-        <s3-tabpane              v-if="tabpane_active('s3')"               :physical_id.once="tabpaneGroupID"></s3-tabpane>
-        <edit-runlist-tabpane    v-if="tabpane_active('edit_runlist')"     ></edit-runlist-tabpane>
-        <edit-attr-tabpane       v-if="tabpane_active('edit_attr')"        ></edit-attr-tabpane>
-        <serverspec-tabpane      v-if="tabpane_active('serverspec')"       ></serverspec-tabpane>
-        <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')"   :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
-        <operation-sched-tabpane v-if="tabpane_active('operation-sched')" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
-        <view-rules-tabpane v-if="tabpane_active('view-rules')" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
+        <add-modify-tabpane         v-if="tabpane_active('add_modify')"         :templates.once="current_infra.templates" :result.sync="current_infra.add_modify"></add-modify-tabpane>
+        <insert-cf-params           v-if="tabpane_active('insert-cf-params')"   :infra_id.once="current_infra.id"></insert-cf-params>
+        <add-ec2-tabpane            v-if="tabpane_active('add-ec2')"            :infra_id.once="current_infra.id"></add-ec2-tabpane>
+        <cf-history-tabpane         v-if="tabpane_active('cf_history')"         :infra_id.once="current_infra.id"></cf-history-tabpane>
+        <stack-events-table         v-if="tabpane_active('event_logs')"         :events.once="current_infra.events"></stack-events-table>
+        <security-groups-tabpane    v-if="tabpane_active('security_groups')"    :infra_id.once="current_infra.id" :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
+        <monitoring-tabpane         v-if="tabpane_active('monitoring')"         :infra_id.once="current_infra.id"></monitoring-tabpane>
+        <edit-monitoring-tabpane    v-if="tabpane_active('edit-monitoring')"    :infra_id.once="current_infra.id"></edit-monitoring-tabpane>
+        <infra-logs-tabpane         v-if="tabpane_active('infra_logs')"         :infra_id.once="current_infra.id"></infra-logs-tabpane>
+        <ec2-tabpane                v-if="tabpane_active('ec2')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></ec2-tabpane>
+        <rds-tabpane                v-if="tabpane_active('rds')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></rds-tabpane>
+        <elb-tabpane                v-if="tabpane_active('elb')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></elb-tabpane>
+        <s3-tabpane                 v-if="tabpane_active('s3')"                 :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></s3-tabpane>
+        <edit-runlist-tabpane       v-if="tabpane_active('edit_runlist')"       :infra_id.once="current_infra.id" ></edit-runlist-tabpane>
+        <edit-attr-tabpane          v-if="tabpane_active('edit_attr')"          :infra_id.once="current_infra.id" ></edit-attr-tabpane>
+        <serverspec-tabpane         v-if="tabpane_active('serverspec')"         :infra_id.once="current_infra.id" ></serverspec-tabpane>
+        <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
+        <operation-sched-tabpane    v-if="tabpane_active('operation-sched')"    :infra_id.once="current_infra.id" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
+        <view-rules-tabpane         v-if="tabpane_active('view-rules')"         :infra_id.once="current_infra.id" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
     </div>
   </div>
 </div>

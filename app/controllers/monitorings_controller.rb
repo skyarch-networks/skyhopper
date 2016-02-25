@@ -91,7 +91,6 @@ class MonitoringsController < ApplicationController
 
       @zabbix.templates_update_host(physical_id, new_templates, clear_templates)
       infra_logger_success("#{physical_id} Templates Updated!")
-      render nothing: true and return
     else
       z = @zabbix
       begin
@@ -113,9 +112,9 @@ class MonitoringsController < ApplicationController
 
       @zabbix.templates_link_host(physical_id, new_templates)
       infra_logger_success("#{physical_id} is linked to Zabbix!")
-      render nothing: true and return
     end
-
+    
+      render nothing: true and return
 
   end
 

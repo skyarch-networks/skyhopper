@@ -22,33 +22,26 @@ class RDS < SimpleDelegator
     secret_access_key = infra.secret_access_key
     region            = infra.region
 
-    @rds = ::AWS::RDS.new(
+    @rds = Aws::RDS::Client.new(
       access_key_id:     access_key_id,
       secret_access_key: secret_access_key,
-      region:            region,
+      region:            region
     )
 
-    @db_instance = @rds.db_instances[physical_id]
+    @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)[:db_instances][0] # get only 1 instance
     __setobj__(@db_instance)
   end
 
   # ----------------------------------- method wrapper
 
-
-  def engine_type
-    @db_instance.engine
-  end
-
-  def engine
-    "#{@db_instance.engine} (#{@db_instance.engine_version})"
-  end
-
-  def multi_az
-    if @db_instance.multi_az?
-      return "YES"
-    else
-      return "NO"
+  def security_groups
+    security_groups = []
+    @db_instance[:vpc_security_groups].each do |item|
+      if item.status == "active"
+        security_groups.push(item.vpc_security_group_id)
+      end
     end
+    return security_groups
   end
 
   def change_scale(scale)
@@ -56,16 +49,31 @@ class RDS < SimpleDelegator
       raise ChangeScaleError, "Invalid type name: #{scale}"
     end
 
-    if scale == db_instance_class
+    if scale == @db_instance[:db_instance_class]
       return scale
     end
 
     begin
-      modify(db_instance_class: scale,  apply_immediately: true)
+      @rds.modify_db_instance({
+        db_instance_class: scale,
+        db_instance_identifier: @db_instance.db_instance_identifier,
+        apply_immediately: true})
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end
 
     scale
   end
+
+  def modify_security_groups(group_ids)
+    begin
+      @rds.modify_db_instance({
+        vpc_security_group_ids: group_ids,
+        db_instance_identifier: @db_instance.db_instance_identifier,
+        apply_immediately: true})
+    rescue AWS::RDS::Errors::InvalidParameterValue => ex
+      raise ChangeScaleError, ex.message
+    end
+  end
+
 end

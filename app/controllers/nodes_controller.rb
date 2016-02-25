@@ -67,6 +67,7 @@ class NodesController < ApplicationController
       volume_id = block_device.ebs.volume_id
       @snapshot_schedules[volume_id] = SnapshotSchedule.essentials.find_or_create_by(volume_id: volume_id)
     end
+    @retention_policies = @instance_summary[:retention_policies]
 
     case @instance_summary[:status]
     when :terminated, :stopped
@@ -221,7 +222,7 @@ class NodesController < ApplicationController
 
     if ys.enabled?
       PeriodicYumJob.set(
-        wait_until: ys.next_run,
+        wait_until: ys.next_run
       ).perform_later(physical_id, @infra, current_user.id)
     end
 
@@ -246,12 +247,13 @@ class NodesController < ApplicationController
   def get_rules
     group_ids = params[:group_ids] || []
 
-    if group_ids.length > 0
-      rules_summary = @infra.ec2.describe_security_groups({group_ids: group_ids})
-    else
-      rules_summary = @infra.ec2.describe_security_groups()
+    rules_summary =
+      if group_ids.empty?
+        @infra.ec2.describe_security_groups()
+      else
+        @infra.ec2.describe_security_groups({group_ids: group_ids})
+      end
 
-    end
     vpcs = @infra.ec2.describe_vpcs()
 
 
