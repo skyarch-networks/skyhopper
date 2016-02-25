@@ -6,7 +6,6 @@ var queryString = require('query-string').parse(location.search);
 module.exports = Vue.extend({
   template: '#grid-template',
   replace: true,
-
   props: {
     data: Array,
     columns: Array,
@@ -118,4 +117,3 @@ module.exports = Vue.extend({
     },
   },
 });
-
