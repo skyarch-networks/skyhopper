@@ -298,15 +298,21 @@ export default class EC2Instance extends ModelBase {
   }
 
   start_ec2(): JQueryPromise<any> {
-    return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_ec2).start(this.params)
-    );
+    const dfd = $.Deferred();
+    (<any>EC2Instance.ajax_ec2).start(this.params)
+      .done(this.wait_change_status(dfd))
+      .fail(this.rejectF(dfd));
+
+    return dfd.promise();
   }
 
   stop_ec2(): JQueryPromise<any> {
-    return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_ec2).stop(this.params)
-    );
+    const dfd = $.Deferred();
+    (<any>EC2Instance.ajax_ec2).stop(this.params)
+      .done(this.wait_change_status(dfd))
+      .fail(this.rejectF(dfd));
+
+    return dfd.promise();
   }
 
   detach_ec2(zabbix: boolean, chef: boolean): JQueryPromise<any> {
