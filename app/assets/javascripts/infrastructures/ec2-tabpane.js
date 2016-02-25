@@ -509,6 +509,11 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.page++;
     },
+    check_tag: function (r) {
+      if(r.tags){
+        return (r.tags[0].key === 'Name');
+      }
+    },
   },
 
   computed: {
