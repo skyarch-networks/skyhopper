@@ -11,7 +11,7 @@
       <th v-for="key in columns"
           :class="{active: sortKey === key}"
           @click="sortBy(key)">
-        <text v-html="key | wrap option"></text>
+        <span v-html="key | wrap option"></span>
         <span  v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
       </th>
     </tr>
@@ -23,7 +23,7 @@
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
       <td v-for="key in columns">
-        <text v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+        <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         <span v-if="key === 'id'">
           <button class="btn btn-xs btn-primary"  @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
           <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
@@ -34,7 +34,7 @@
     <td id="empty_results" style="display: none;"></td>
     </tbody>
   </table>
-  <nav v-if="data.length >= 10">
+  <nav v-if="check_length(data)">
     <ul class="pager">
       <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
       <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
