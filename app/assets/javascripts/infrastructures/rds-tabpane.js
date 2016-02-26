@@ -28,6 +28,7 @@ module.exports = Vue.extend({
     security_groups: null,
     lang: queryString.lang,
     address: null,
+    change_scale_type_to: null
   };},
 
   methods: {
