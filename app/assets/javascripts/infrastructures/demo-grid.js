@@ -45,6 +45,52 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.pageNumber++;
     },
+
+    fetch_infras: function(){
+      var self = this;
+      self.loading = true;
+      var id =  queryString.project_id;
+      var monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      $.ajax({
+        cache: false,
+        url:'/infrastructures?&project_id='+id,
+      }).done(function (data) {
+        this.pages = data.length;
+        var nextColumns = [];
+        self.data = data.map(function (item) {
+          var d = new Date(item.created_at);
+          var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
+          if(item.project_id > 3){
+            return {
+              stack_name: item.stack_name,
+              region: item.region,
+              keypairname: item.keypairname,
+              created_at: date,
+              //  ec2_private_key_id: item.ec2_private_key_id,
+              status: item.status,
+              id: [item.id,item.status],
+            };
+          }else{
+            return {
+              stack_name: item.stack_name,
+              region: item.region,
+              keypairname: item.keypairname,
+              //  ec2_private_key_id: item.ec2_private_key_id,
+              id: [item.id,item.status],
+            };
+          }
+          self.loading = false;
+        });
+        self.$emit('data-loaded');
+        $("#loading").hide();
+        var empty = t('infrastructures.msg.empty-list');
+        if(self.data.length === 0){ $('#empty').show().html(empty);}
+        self.filteredLength = data.length;
+      });
+    }
   },
 
   computed: {
@@ -56,49 +102,7 @@ module.exports = Vue.extend({
     },
   },
   created: function (){
-    var self = this;
-    self.loading = true;
-    var id =  queryString.project_id;
-    var monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    $.ajax({
-      cache: false,
-      url:'/infrastructures?&project_id='+id,
-    }).done(function (data) {
-      this.pages = data.length;
-      var nextColumns = [];
-      self.data = data.map(function (item) {
-        var d = new Date(item.created_at);
-        var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
-        if(item.project_id > 3){
-          return {
-            stack_name: item.stack_name,
-            region: item.region,
-            keypairname: item.keypairname,
-            created_at: date,
-            //  ec2_private_key_id: item.ec2_private_key_id,
-            status: item.status,
-            id: [item.id,item.status],
-          };
-        }else{
-          return {
-            stack_name: item.stack_name,
-            region: item.region,
-            keypairname: item.keypairname,
-            //  ec2_private_key_id: item.ec2_private_key_id,
-            id: [item.id,item.status],
-          };
-        }
-        self.loading = false;
-      });
-      self.$emit('data-loaded');
-      $("#loading").hide();
-      var empty = t('infrastructures.msg.empty-list');
-      if(self.data.length === 0){ $('#empty').show().html(empty);}
-      self.filteredLength = data.length;
-    });
+    this.fetch_infras();
   },
 
   filters:{
