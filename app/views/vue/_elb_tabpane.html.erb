@@ -114,7 +114,7 @@
             <td>{{ss.group_id}}</td>
             <td><div class="truncate"> {{ss.group_name}}</div></td>
             <td><div class="truncate">{{ss.description}}</div></td>
-            <td v-if="ss.tags[0].key === 'Name'">{{ss.tags[0].value}}</td>
+            <td v-if="check_tag(ss)">{{ss.tags[0].value}}</td>
             <td v-else></td>
           </tr>
           </tbody>
@@ -374,7 +374,7 @@
             <td>{{r.group_id}}</td>
             <td><div class="truncate"> {{r.group_name}}</div></td>
             <td><div class="truncate">{{r.description}}</div></td>
-            <td v-if="r.tags[0].key === 'Name'">{{r.tags[0].value}}</td>
+            <td v-if="check_tag(r)">{{r.tags[0].value}}</td>
             <td v-else></td>
           </tr>
           </tbody>
