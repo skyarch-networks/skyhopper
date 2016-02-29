@@ -2,7 +2,7 @@
 
 By using [SkyHopper Cookbooks](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper), you can automate your system by installing a package.
 
-If you used cookbook, we will proceed to [SkyHopper Setup](#skyhopper-setup).
+If you used cookbook, we will proceed to [Creating MySQL user](#user-content-creating-mysql-user).
 
 
 ## Prefered OS
