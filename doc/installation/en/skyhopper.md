@@ -255,6 +255,11 @@ $ bundle exec rake db:seed
 $ bundle exec rake db:seed RAILS_ENV=production
 ```
 
+## Change permission of home directory
+
+```sh
+$ chmod 711 ~
+```
 
 
 ## Start

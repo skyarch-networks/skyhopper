@@ -255,6 +255,11 @@ $ bundle exec rake db:seed
 $ bundle exec rake db:seed RAILS_ENV=production
 ```
 
+## ホームディレクトリのパーミッションを変更
+
+```sh
+$ chmod 711 ~
+```
 
 
 ## 起動
