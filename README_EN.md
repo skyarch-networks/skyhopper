@@ -23,6 +23,7 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 1. MySQL Setup
 1. SkyHopper Setup
 1. Database Setup
+1. Setting permissions
 1. Initializing settings for SkyHopper
 1. And establishing the Chef Server keys
 
