@@ -139,12 +139,6 @@ Up to this point it can be executed by Chef.
 
 ---------------------------------
 
-## Specify SkyHopper version
-
-```sh
-$ git checkout v1.9.0
-```
-
 ### Creating MySQL user
 
 ```sh
@@ -176,6 +170,12 @@ mysql> exit
 
 ```sh
 $ cd skyhopper
+```
+
+### Specify SkyHopper version
+
+```sh
+$ git checkout v1.9.0
 ```
 
 ### bundle install

@@ -139,12 +139,6 @@ $ git clone https://github.com/skyarch-networks/skyhopper.git
 
 ---------------------------------
 
-## SkyHopper のバージョン指定
-
-```sh
-$ git checkout v1.9.0
-```
-
 ### MySQL ユーザーの作成
 
 ```sh
@@ -176,6 +170,12 @@ mysql> exit
 
 ```sh
 $ cd skyhopper
+```
+
+### SkyHopper のバージョン指定
+
+```sh
+$ git checkout v1.9.0
 ```
 
 ### bundle install
