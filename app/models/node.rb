@@ -68,7 +68,7 @@ knife bootstrap #{fqdn} \
     end
 
     ssh_dir = File.expand_path('~/.ssh')
-    Dir.mkdir(ssh_dir) unless Dir.exist?(ssh_dir)
+    Dir.mkdir(ssh_dir, 0700) unless Dir.exist?(ssh_dir)
 
     exec_command(cmd, BootstrapError)
 
