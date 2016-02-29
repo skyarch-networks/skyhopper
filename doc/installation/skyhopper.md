@@ -3,7 +3,7 @@
 [SkyHopper 用の Cookbook](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper)
 を使用することで、パッケージのインストールなどを自動化することが出来ます。
 
-Cookbook を使用した場合は、[SkyHopper のセットアップ](#skyhopper-のセットアップ) から実行していきます。
+Cookbook を使用した場合は、[SkyHopper のセットアップ](#skyHopper-のセットアップ) から実行していきます。
 
 
 ## 対象
