@@ -139,12 +139,6 @@ $ git clone https://github.com/skyarch-networks/skyhopper.git
 
 ---------------------------------
 
-## SkyHopper のセットアップ
-
-```sh
-$ cd skyhopper
-```
-
 ## SkyHopper のバージョン指定
 
 ```sh
@@ -177,6 +171,12 @@ mysql> exit
 ```
 
 
+
+## SkyHopper のセットアップ
+
+```sh
+$ cd skyhopper
+```
 
 ### bundle install
 

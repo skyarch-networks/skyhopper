@@ -139,12 +139,6 @@ Up to this point it can be executed by Chef.
 
 ---------------------------------
 
-## SkyHopper Setup
-
-```sh
-$ cd skyhopper
-```
-
 ## Specify SkyHopper version
 
 ```sh
@@ -177,6 +171,12 @@ mysql> exit
 ```
 
 
+
+## SkyHopper Setup
+
+```sh
+$ cd skyhopper
+```
 
 ### bundle install
 
