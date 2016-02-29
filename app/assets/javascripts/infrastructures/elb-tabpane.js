@@ -233,14 +233,18 @@ module.exports = Vue.extend({
       this.$parent.tabpaneID = 'view-rules';
       this.$parent.sec_group = this.security_groups;
       this.$parent.instance_type = 'elb';
-    }
-  },
-
-  computed: {
+    },
     has_selected: function() {
-      return this.security_groups.some(function(c){
-        return c.checked;
-      });
+      if(this.security_groups){
+        return this.security_groups.some(function(c){
+          return c.checked;
+        });
+      }
+    },
+    check_tag: function (r) {
+      if(r.tags){
+        return (r.tags[0].key === 'Name');
+      }
     },
   },
 
@@ -261,5 +265,3 @@ module.exports = Vue.extend({
     }).fail(alert_and_show_infra(infra.id));
   },
 });
-
-

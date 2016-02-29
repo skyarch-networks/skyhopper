@@ -27,6 +27,8 @@ module.exports = Vue.extend({
     serverspec: {},
     security_groups: null,
     lang: queryString.lang,
+    address: null,
+    change_scale_type_to: null
   };},
 
   methods: {
@@ -84,6 +86,19 @@ module.exports = Vue.extend({
     check: function (i) {
       i.checked= !i.checked;
     },
+
+    has_selected: function() {
+      if (this.security_groups){
+        return this.security_groups.some(function(c){
+          return c.checked;
+        });
+      }
+    },
+    check_tag: function (r) {
+      if(r.tags){
+        return (r.tags[0].key === 'Name');
+      }
+    },
   },
 
   computed: {
@@ -91,14 +106,7 @@ module.exports = Vue.extend({
       var s = this.serverspec;
       return !!(s.username && s.password && s.database);
     },
-
     available: function () { return this.rds.db_instance_status === 'available'; },
-
-    has_selected: function() {
-      return this.security_groups.some(function(c){
-        return c.checked;
-      });
-    },
   },
 
   created: function () {
@@ -107,6 +115,7 @@ module.exports = Vue.extend({
     var rds = new RDSInstance(infra, this.physical_id);
     rds.show().done(function (data) {
       self.rds = data.rds;
+      self.address = self.rds.endpoint.address;
       self.security_groups = data.security_groups;
 
       self.$parent.loading = false;

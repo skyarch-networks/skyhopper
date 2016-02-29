@@ -46,6 +46,8 @@ module.exports = Vue.extend({
     attachable_volumes:  [],
     max_sec_group:       null,
     rules_summary:       null,
+    x_chef:              null,
+    x_zabbix:            null,
     editing_policy:      {},
     page: 0,
     dispItemSize: 10,
@@ -507,6 +509,11 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.page++;
     },
+    check_tag: function (r) {
+      if(r.tags){
+        return (r.tags[0].key === 'Name');
+      }
+    },
   },
 
   computed: {
@@ -518,9 +525,11 @@ module.exports = Vue.extend({
     },
 
     has_selected: function() {
-      return this.rules_summary.some( function(c){
-        return c.checked;
-      });
+      if (this.rules_summary){
+        return this.rules_summary.some( function(c){
+          return c.checked;
+        });
+      }
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },
