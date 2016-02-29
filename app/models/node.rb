@@ -66,6 +66,10 @@ knife bootstrap #{fqdn} \
       cmd.chomp!
       cmd.concat(" --bootstrap-version #{chef_client_version}")
     end
+
+    ssh_dir = File.expand_path('~/.ssh')
+    Dir.mkdir(ssh_dir) unless Dir.exist?(ssh_dir)
+
     exec_command(cmd, BootstrapError)
 
     return self.new(node_name)
