@@ -37,6 +37,8 @@ module.exports = Vue.extend({
     dispItemSize: 10,
     filteredLength: null,
     filterKey: '',
+    changing_status: t('infrastructures.msg.modifying'),
+    modifying: false,
   };},
 
   methods: {
@@ -74,6 +76,9 @@ module.exports = Vue.extend({
     },
 
     submit_groups: function(){
+      if (this.modifying) {return;}
+      this.modifying = true;
+
       var self = this;
       var rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
       var group_ids = this.rules_summary.filter(function (t) {
@@ -134,7 +139,7 @@ module.exports = Vue.extend({
       self.rds = data.rds;
       self.address = self.rds.endpoint.address;
       self.rules_summary = data.security_groups;
-
+      self.modifying = (self.rds.db_instance_status == 'modifying') ? true: false;
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
   },

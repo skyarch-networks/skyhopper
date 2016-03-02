@@ -76,4 +76,26 @@ class RDS < SimpleDelegator
     end
   end
 
+  def physical_id
+    self.db_instance_identifier
+  end
+
+
+
+  # status が変化するのを待つ
+  # ==== Args
+  # [status] :running or :stopped
+  def wait_status(status)
+    loop do
+      case s = self.db_instance_status
+      when status
+        break
+      when 'modifying'
+        sleep 5
+      else
+        raise StandardError, "#{s} is not expected status."
+      end
+    end
+  end
+
 end
