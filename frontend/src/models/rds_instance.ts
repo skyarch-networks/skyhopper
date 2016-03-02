@@ -26,21 +26,6 @@ export default class RDSInstance extends ModelBase {
   static ajax_serverspec = new AjaxSet.Resources('serverspecs');
 
 
-  private wait_change_status(dfd: JQueryDeferred<any>): () => void {
-    return () => {
-      const ws = ws_connector('instance_status', this.physical_id);
-      ws.onmessage = function (msg) {
-        const d = JSON.parse(msg.data);
-        if (d.error) {
-          dfd.reject(d.error.message);
-        } else {
-          dfd.resolve(d.msg);
-        }
-        ws.close();
-      };
-    };
-  }
-
   show(): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>RDSInstance.ajax_infra).show_rds(this.params)
@@ -48,11 +33,11 @@ export default class RDSInstance extends ModelBase {
   }
 
   change_scale(type: string): JQueryPromise<any> {
-    const dfd = $.Deferred();
-    (<any>RDSInstance.ajax_infra).change_rds_scale(_.merge(this.params, {instance_type: type}))
-      .done(this.wait_change_status(dfd))
-      .fail(this.rejectF(dfd));
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).change_rds_scale(
+        _.merge(this.params, {instance_type: type})
+      )
+    );
   }
 
   gen_serverspec(parameter: any): JQueryPromise<any> {
@@ -64,11 +49,9 @@ export default class RDSInstance extends ModelBase {
   }
 
   rds_submit_groups(group_ids: Array<any>): JQueryPromise<any> {
-    const dfd = $.Deferred();
-    (<any>RDSInstance.ajax_infra).rds_submit_groups(_.merge(this.params, {group_ids: group_ids}))
-      .done(this.wait_change_status(dfd))
-      .fail(this.rejectF(dfd));
-    return dfd.promise();
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).rds_submit_groups(_.merge(this.params, {group_ids: group_ids}))
+    );
   }
 }
 

@@ -86,13 +86,10 @@ module.exports = Vue.extend({
       }).map(function (t) {
         return t.group_id;
       });
-      var reload = function () {
-        self.$parent.show_rds(self.physical_id);
-      };
 
       rds.rds_submit_groups(group_ids, self.physical_id)
-        .done(alert_success(reload))
-        .fail(alert_danger(reload));
+        .done(alert_success(self.reload))
+        .fail(alert_danger(self.reload));
     },
 
     check: function (i) {
@@ -139,7 +136,12 @@ module.exports = Vue.extend({
       self.rds = data.rds;
       self.address = self.rds.endpoint.address;
       self.rules_summary = data.security_groups;
-      self.modifying = (self.rds.db_instance_status == 'modifying') ? true: false;
+      if(self.rds.db_instance_status == 'modifying'){
+        setTimeout(function () {
+          self.reload();
+        }, 15000);
+        self.modifying = true;
+      }
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
   },

@@ -251,8 +251,6 @@ class InfrastructuresController < ApplicationController
 
     infra_logger_success("#{physical_id} Instance Class has changed to #{changed_type}.")
 
-    notify_status(rds, 'available')
-
     if before_type == changed_type
       render text: "There is not change '#{type}'", status: 200 and return
     end
@@ -272,8 +270,6 @@ class InfrastructuresController < ApplicationController
     rds.modify_security_groups(group_ids)
 
     infra_logger_success("#{physical_id} security groups has been modified.")
-
-    notify_status(rds, 'available')
 
     render text: I18n.t('security_groups.msg.change_success')
   end
@@ -350,20 +346,6 @@ class InfrastructuresController < ApplicationController
 
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
-  end
-
-
-  private
-  def notify_status(instance, status)
-    Thread.new_with_db do
-      ws = WSConnector.new('instance_status', instance.physical_id)
-      begin
-        instance.wait_status(status)
-        ws.push_as_json(error: nil, msg: "#{instance.physical_id} has successfully modified and status is #{status}")
-      rescue => ex
-        ws.push_error(ex)
-      end
-    end
   end
 
   # Use callbacks to share common setup or constraints between actions.
