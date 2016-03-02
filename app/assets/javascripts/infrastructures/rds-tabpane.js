@@ -73,7 +73,7 @@ module.exports = Vue.extend({
       this.$parent.instance_type = 'rds';
     },
 
-    rds_submit_groups: function(){
+    submit_groups: function(){
       var self = this;
       var rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
       var group_ids = this.rules_summary.filter(function (t) {

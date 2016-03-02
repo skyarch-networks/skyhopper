@@ -110,7 +110,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="ss in security_groups" v-show="ss.checked">
+          <tr v-for="ss in rules_summary" v-show="ss.checked">
             <td>{{ss.group_id}}</td>
             <td><div class="truncate"> {{ss.group_name}}</div></td>
             <td><div class="truncate">{{ss.description}}</div></td>
@@ -183,8 +183,6 @@
     </div>
   </div>
 </div>
-
-
 
 
 
