@@ -56,7 +56,7 @@
       </div>
       <div class="modal-footer">
         <div v-if="!loading_s">
-          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
+          <button class="btn btn-default" @click="reload()" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
           <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">
             <%= t 'security_groups.btn.assign' %>
           </button>
