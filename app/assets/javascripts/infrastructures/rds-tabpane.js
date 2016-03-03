@@ -43,15 +43,19 @@ module.exports = Vue.extend({
 
   methods: {
     change_scale: function () {
+      var self = this;
+
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      rds.change_scale(this.change_scale_type_to).done(function (msg) {
-        alert_success(self.reload)(msg);
-        $('#change-scale-modal').modal('hide');
-      }).fail(function (msg) {
-        alert_danger(self.reload)(msg);
-        $('#change-scale-modal').modal('hide');
-      });
+      rds.change_scale(this.change_scale_type_to)
+      .done(alert_success(
+        setTimeout(function () {
+          self.reload();
+        }, 15000)))
+      .fail(alert_danger(self.reload));
+      
+      this.modifying = true;
+      $('#change-scale-modal').modal('hide');
     },
 
     gen_serverspec: function () {

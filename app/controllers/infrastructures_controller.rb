@@ -249,8 +249,6 @@ class InfrastructuresController < ApplicationController
       render text: ex.message, status: 400 and return
     end
 
-    infra_logger_success("#{physical_id} Instance Class has changed to #{changed_type}.")
-
     if before_type == changed_type
       render text: "There is not change '#{type}'", status: 200 and return
     end
@@ -348,6 +346,7 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
+  private
   # Use callbacks to share common setup or constraints between actions.
   def set_infrastructure
     @infrastructure = Infrastructure.find(params.require(:id))
