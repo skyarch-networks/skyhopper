@@ -427,10 +427,10 @@ ja:
       delete: '削除'
       done:   '完了'
       cancel: 'キャンセル'
-      close:  'クローズ'
-      save:   'セーブ'
+      close:  '閉じる'
+      save:   '保存'
       next:   '次'
-      prev:   '以前'
+      prev:   '前'
     msg:
       host_creating:           'インフラストラクチャの登録を行っています。しばらくお待ちください...'
       before_create_host:      'このインフラストラクチャは Zabbix Server に登録されていません'
@@ -559,8 +559,8 @@ ja:
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
-      detach_ec2:            'EC2インスタンスがデタッチされています'
-      terminate_ec2:            'EC2インスタンスが終了しました'
+      detach_ec2:            'EC2 インスタンスはデタッチされました'
+      terminate_ec2:            'EC2 インスタンスが終了しました'
       registered_to_elb:     'ELB に EC2 インスタンスを登録しました'
       deregistered_from_elb: 'ELB から EC2 インスタンスの登録を解除しました'
       volume_attached:       '%{instance_id} に %{volume_id} をアタッチしました。 デバイス名は %{device} です。'
@@ -571,10 +571,10 @@ ja:
       private_key_droppable: '使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください。'
       public_key_certificate_droppable: '使用するパブリックキー証明書を入力するか、パブリックキー証明書ファイルをここにドラッグアンドドロップしてください。'
       certificate_chain_droppable: '（オプション） 使用する証明書チェーンを入力するか、証明書チェーンファイルをここにドラッグアンドドロップしてください。'
-      detach:               'このインスタンスはSkyHopperサービスから削除されます。しかし、インスタンスはまだAWS上で利用できるようになります。
-                            以下のサービスは、また、 EC2インスタンスフロン切り離されます。'
-      terminate:            'このインスタンスはSkyhopperサービスから削除されます。
-                            インスタンスが終了したときにルートEBSボリュームを削除するためにEBS担保インスタンスで、デフォルトのアクションです。
+      detach:               'このインスタンスは SkyHopper サービスから削除されます。しかし、インスタンスはまだ AWS 上で利用できます。
+                            また、以下のサービスが、EC2 インスタンスから切り離されます。'
+      terminate:            'このインスタンスは Skyhopper サービスから削除されます。
+                            EBS-Backed インスタンスのデフォルトでは、インスタンスを終了するとルートボリュームは削除されます。
                             任意のローカルドライブ上のストレージが失われます。'
       security_groups:  'インスタンスに割り当てられるセキュリティグループです。
                         セキュリティグループは、インスタンスのネットワーク通信を制限するファイアウォールルールのコレクションです。
@@ -597,8 +597,8 @@ ja:
       deregister: 'ELB から EC2 インスタンスの登録を解除しますか?'
       delete_listener: 'ELBからリスナーを削除しますか?'
       delete_certificate: '証明書を削除しますか?'
-      detach:     'あなたはskyhopperからリブログEC2インスタンスをデタッチしてもよろしいですか？'
-      terminate:  'あなたはこのEC2インスタンスを終了してもよろしいですか？'
+      detach:     'SkyHopper から EC2 インスタンスをデタッチしてもよろしいですか？'
+      terminate:  '本当にこの EC2 インスタンスを終了してもよろしいですか？'
 
   ec2_private_keys:
     msg:
