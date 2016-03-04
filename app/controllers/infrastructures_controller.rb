@@ -253,8 +253,8 @@ class InfrastructuresController < ApplicationController
       render text: "There is not change '#{type}'", status: 200 and return
     end
 
-    # TODO: status を取得
 
+    # TODO: status を取得
     render text: "change scale to #{type}" and return
   end
 
