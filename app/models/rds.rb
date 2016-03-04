@@ -76,4 +76,8 @@ class RDS < SimpleDelegator
     end
   end
 
+  def physical_id
+    self.db_instance_identifier
+  end
+
 end

@@ -19,7 +19,10 @@
     </tr>
     <tr>
       <td>Status</td>
-      <td colspan="2">{{rds.db_instance_status}}</td>
+      <td colspan="2">
+        <div-loader v-if="modifying" :text="changing_status"></div-loader>
+        <span v-if="!modifying">{{rds.db_instance_status}}</span>
+      </td>
     </tr>
     <tr>
       <td>Allocated Storage (GB)</td>

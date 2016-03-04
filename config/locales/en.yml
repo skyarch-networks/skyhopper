@@ -192,6 +192,7 @@ en:
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
+      modifying:                   'Modifying instance.. updates in 15 seconds.'
 
   security_groups:
     title:        'Security Groups'

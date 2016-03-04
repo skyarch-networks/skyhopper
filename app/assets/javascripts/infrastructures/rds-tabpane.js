@@ -37,19 +37,22 @@ module.exports = Vue.extend({
     dispItemSize: 10,
     filteredLength: null,
     filterKey: '',
+    changing_status: t('infrastructures.msg.modifying'),
+    modifying: false,
   };},
 
   methods: {
     change_scale: function () {
+      var self = this;
+
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      rds.change_scale(this.change_scale_type_to).done(function (msg) {
-        alert_success(self.reload)(msg);
-        $('#change-scale-modal').modal('hide');
-      }).fail(function (msg) {
-        alert_danger(self.reload)(msg);
-        $('#change-scale-modal').modal('hide');
-      });
+      rds.change_scale(this.change_scale_type_to)
+      .done(alert_success(self.reload))
+      .fail(alert_danger(self.reload));
+
+      this.modifying = true;
+      $('#change-scale-modal').modal('hide');
     },
 
     gen_serverspec: function () {
@@ -74,6 +77,9 @@ module.exports = Vue.extend({
     },
 
     submit_groups: function(){
+      if (this.modifying) {return;}
+      this.modifying = true;
+
       var self = this;
       var rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
       var group_ids = this.rules_summary.filter(function (t) {
@@ -81,13 +87,10 @@ module.exports = Vue.extend({
       }).map(function (t) {
         return t.group_id;
       });
-      var reload = function () {
-        self.$parent.show_rds(self.physical_id);
-      };
 
       rds.rds_submit_groups(group_ids, self.physical_id)
-        .done(alert_success(reload))
-        .fail(alert_danger(reload));
+        .done(alert_success(self.reload))
+        .fail(alert_danger(self.reload));
     },
 
     check: function (i) {
@@ -134,7 +137,12 @@ module.exports = Vue.extend({
       self.rds = data.rds;
       self.address = self.rds.endpoint.address;
       self.rules_summary = data.security_groups;
-
+      if(self.rds.db_instance_status == 'modifying'){
+        setTimeout(function () {
+          self.reload();
+        }, 15000);
+        self.modifying = true;
+      }
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
   },
