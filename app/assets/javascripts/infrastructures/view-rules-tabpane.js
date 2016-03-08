@@ -129,6 +129,9 @@ module.exports = Vue.extend({
       createPdf(docDefinition, map, data_mapping).open();
       this.get_rules();
     },
+    check_length: function(args){
+      return args.length > 0;
+    },
   },
   compiled: function() {
     console.log(this);
