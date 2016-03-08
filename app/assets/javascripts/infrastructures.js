@@ -53,7 +53,6 @@
 
 
 
-
   var show = require('infrastructures/show_infra.js');
   var show_infra = show.show_infra;
   var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
