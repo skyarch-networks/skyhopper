@@ -175,7 +175,7 @@ $ cd skyhopper
 ### SkyHopper のバージョン指定
 
 ```sh
-$ git checkout v1.15.1
+$ git checkout v1.15.2
 ```
 
 ### bundle install
