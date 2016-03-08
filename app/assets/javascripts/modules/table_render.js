@@ -179,7 +179,6 @@ function extract_next(inbound, outbound, body){
                 eval_source(outbound[index].ip_ranges, outbound[index].user_id_group_pairs)
               ]);
         }else{
-          console.log(v);
           body.push(['','',
                 v.prefix_list_ids,
                 eval_protocol(v.ip_protocol),
