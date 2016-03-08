@@ -45,6 +45,7 @@
                 <td v-else>{{inbound.from_port}}-{{inbound.to_port}}</td>
                 <!--Source IP-->
                 <td v-for="s in inbound.ip_ranges">{{s.cidr_ip}}</td>
+                <td v-for="s in inbound.user_id_group_pairs">{{s.cidr_ip}}</td>
                 <!--First Outbound-->
                 <template v-for="outbound in rule.ip_permissions_egress" track-by="$index">
                   <td v-if="$index == 0">{{outbound.prefix_list_ids}}</td>
@@ -70,8 +71,8 @@
                     </span>
                   </td>
                   <td v-if="$index == 0">
-                    <span v-if="outbound.ip_ranges[0].cidr_ip">{{outbound.ip_ranges[0].cidr_ip}}</span>
-                    <span v-if="outbound.user_id_group_pairs">{{outbound.user_id_group_pairs}}</span>
+                    <span v-if="check_length(outbound.ip_ranges[0].cidr_ip)">{{outbound.ip_ranges[0].cidr_ip}}</span>
+                    <span v-if="check_length(outbound.user_id_group_pairs)">{{outbound.user_id_group_pairs[0].group_id}}</span>
                   </td>
                 </template>
               </tr>
@@ -119,8 +120,8 @@
                       </span>
                   </td>
                   <td v-cloak="index === 0">
-                    <span v-if="rule.ip_permissions_egress[index].ip_ranges[0].cidr_ip">{{rule.ip_permissions_egress[index].ip_ranges[0].cidr_ip}}</span>
-                    <span v-if="rule.ip_permissions_egress[index].user_id_group_pairs">{{rule.ip_permissions_egress[index].user_id_group_pairs}}</span>
+                    <span v-if="check_length(rule.ip_permissions_egress[index].ip_ranges)">{{rule.ip_permissions_egress[index].ip_ranges[0].cidr_ip}}</span>
+                    <span v-if="check_length(rule.ip_permissions_egress[index].user_id_group_pairs)">{{rule.ip_permissions_egress[index].user_id_group_pairs[0].group_id}}</span>
                   </td>
                 </template>
               </tr>
@@ -152,8 +153,8 @@
                       </span>
                   </td>
                   <td v-if="$index == 0">
-                    <span v-if="inbound.ip_ranges[0].cidr_ip">{{inbound.ip_ranges[0].cidr_ip}}</span>
-                    <span v-if="inbound.user_id_group_pairs">{{inbound.user_id_group_pairs}}</span>
+                    <span v-if="check_length(inbound.ip_ranges[0].cidr_ip)">{{inbound.ip_ranges[0].cidr_ip}}</span>
+                    <span v-if="check_length(inbound.user_id_group_pairs)">{{inbound.user_id_group_pairs[0].group_id}}</span>
                   </td>
                 </template>
                 <template v-if="rule.ip_permissions.length <= 0">
@@ -179,7 +180,7 @@
                 <td v-else>{{outbound.from_port}}-{{outbound.to_port}}</td>
                 <!--Source IP-->
                 <td v-for="s in outbound.ip_ranges">{{s.cidr_ip}}</td>
-                <td v-for="s in outbound.user_id_group_pairs">{{s}}</td>
+                <td v-for="s in outbound.user_id_group_pairs">{{s.group_id}}</td>
               </tr>
             </template>
 
@@ -194,7 +195,10 @@
                         {{rule.ip_permissions[index].from_port}}
                       </span>
                   </td>
-                  <td v-cloak="index === 0">{{rule.ip_permissions[index].ip_ranges[0].cidr_ip}}</td>
+                  <td v-cloak="index === 0">
+                    <span v-if="check_length(rule.ip_permissions[index].ip_ranges)">{{rule.ip_permissions[index].ip_ranges[0].cidr_ip}}</span>
+                    <span v-if="check_length(rule.ip_permissions[index].user_id_group_pairs)">{{rule.ip_permissions[index].user_id_group_pairs[0].group_id}}</span>
+                  </td>
                 </template>
                 <template v-else>
                   <td>-</td><td>-</td><td>-</td><td>-</td>

@@ -48,9 +48,13 @@ function eval_protocol(ip_protocol){
   return ip_protocol === '-1' ? 'All' : ip_protocol;
 }
 
-// function eval_source(){
-//
-// }
+function eval_source(ip, id){
+  if(ip.length >0 ){
+    return ip[0].cidr_ip;
+  }else {
+    return id[0].group_id;
+  }
+}
 
 function buildTableBody(data) {
     var body = [];
@@ -95,11 +99,11 @@ function push_initial(v, inbound, outbound, body){
                inbound[0].prefix_list_ids,
                eval_protocol(inbound[0].ip_protocol),
                eval_port(inbound[0].from_port, inbound[0].to_port),
-               inbound[0].ip_ranges[0].cidr_ip,
+               eval_source(inbound[0].ip_ranges, inbound[0].user_id_group_pairs),
                outbound[0].prefix_list_ids,
                eval_protocol(outbound[0].ip_protocol),
                eval_port(outbound[0].from_port, outbound[0].from_port),
-               outbound[0].ip_ranges[0].cidr_ip
+               eval_source(outbound[0].ip_ranges, outbound[0].user_id_group_pairs)
       ]);
       // Insert (-) if outbound doesn't exists
     }else{
@@ -108,7 +112,7 @@ function push_initial(v, inbound, outbound, body){
                  inbound[0].prefix_list_ids,
                  eval_protocol(inbound[0].ip_protocol),
                  eval_port(inbound[0].from_port, inbound[0].to_port),
-                 inbound[0].ip_ranges[0].cidr_ip,
+                 eval_source(inbound[0].ip_ranges, inbound[0].user_id_group_pairs),
                  '-',  '-',   '-', '-'
         ]);
       }
@@ -121,11 +125,11 @@ function push_initial(v, inbound, outbound, body){
                  inbound[0].prefix_list_ids,
                  eval_protocol(inbound[0].ip_protocol),
                  eval_port(inbound[0].from_port, inbound[0].to_port),
-                 inbound[0].ip_ranges[0].cidr_ip,
+                 eval_source(inbound[0].ip_ranges, inbound[0].user_id_group_pairs),
                  outbound[0].prefix_list_ids,
                  eval_protocol(outbound[0].ip_protocol),
                  eval_port(outbound[0].from_port, outbound[0].from_port),
-                 outbound[0].ip_ranges[0].cidr_ip
+                 eval_source(outbound[0].ip_ranges, outbound[0].user_id_group_pairs)
         ]);
       }else {
         body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
@@ -134,10 +138,22 @@ function push_initial(v, inbound, outbound, body){
                  outbound[0].prefix_list_ids,
                  eval_protocol(outbound[0].ip_protocol),
                  eval_port(outbound[0].from_port, outbound[0].from_port),
-                 outbound[0].ip_ranges[0].cidr_ip
+                 eval_source(outbound[0].ip_ranges, outbound[0].user_id_group_pairs)
         ]);
       }
       //Push blank
+    }else if (inbound.length === outbound.length) {
+      body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
+               {text: v.group_id, style: 'tableHeader', rowSpan: outbound.length},
+               inbound[0].prefix_list_ids,
+               eval_protocol(inbound[0].ip_protocol),
+               eval_port(inbound[0].from_port, inbound[0].to_port),
+               eval_source(inbound[0].ip_ranges, inbound[0].user_id_group_pairs),
+               outbound[0].prefix_list_ids,
+               eval_protocol(outbound[0].ip_protocol),
+               eval_port(outbound[0].from_port, outbound[0].from_port),
+               eval_source(outbound[0].ip_ranges, outbound[0].user_id_group_pairs)
+      ]);
     }else {
       body.push([{text: v.description, style: 'tableHeader', rowSpan: outbound.length},
                {text: v.group_id, style: 'tableHeader', rowSpan: outbound.length},
@@ -156,11 +172,11 @@ function extract_next(inbound, outbound, body){
                 v.prefix_list_ids,
                 eval_protocol(v.ip_protocol),
                 eval_port(v.from_port, v.to_port),
-                v.ip_ranges[0].cidr_ip,
+                eval_source(v.ip_ranges, v.user_id_group_pairs),
                 outbound[index].prefix_list_ids,
                 eval_protocol(outbound[index].ip_protocol),
                 eval_port(outbound[index].from_port, outbound[index].to_port),
-                outbound[index].ip_ranges[0].cidr_ip
+                eval_source(outbound[index].ip_ranges, outbound[index].user_id_group_pairs)
               ]);
         }else{
           console.log(v);
@@ -168,38 +184,50 @@ function extract_next(inbound, outbound, body){
                 v.prefix_list_ids,
                 eval_protocol(v.ip_protocol),
                 eval_port(v.from_port, v.tp_port),
-                v.ip_ranges[0].cidr_ip,
+                eval_source(v.ip_ranges, v.user_id_group_pairs),
                 '-',
                 '-',
                 '-',
                 '-'
               ]);
         }
-
     });
-  }else{
-    outbound.forEach(function(v,index){
-        if(inboound.length > index){
+  }else if (inbound.length === outbound.length) {
+    inbound.forEach(function(v,index){
           body.push(['','',
                 v.prefix_list_ids,
                 eval_protocol(v.ip_protocol),
-                eval_port(v.from_port.toString()),
-                v.ip_ranges[0].cidr_ip,
-                inboound[index].prefix_list_ids,
-                eval_protocol(inboound[index].ip_protocol),
-                eval_port(inboound[index].from_port,inboound[index].to_port),
-                inboound[index].ip_ranges[0].cidr_ip
+                eval_port(v.from_port, v.to_port),
+                eval_source(v.ip_ranges, v.user_id_group_pairs),
+                outbound[index].prefix_list_ids,
+                eval_protocol(outbound[index].ip_protocol),
+                eval_port(outbound[index].from_port, outbound[index].to_port),
+                eval_source(outbound[index].ip_ranges, outbound[index].user_id_group_pairs)
+              ]);
+      });
+  }else{
+    outbound.forEach(function(v,index){
+        if(inbound.length > index){
+          body.push(['','',
+                inbound[index].prefix_list_ids,
+                eval_protocol(inbound[index].ip_protocol),
+                eval_port(inbound[index].from_port,inbound[index].to_port),
+                eval_source(inbound[index].ip_ranges, inbound[index].user_id_group_pairs),
+                v.prefix_list_ids,
+                eval_protocol(v.ip_protocol),
+                eval_port(v.from_port),
+                eval_source(v.ip_ranges, v.user_id_group_pairs),
               ]);
         }else{
           body.push(['','',
+                '-',
+                '-',
+                '-',
+                '-',
                 v.prefix_list_ids,
                 eval_protocol(v.ip_protocol),
                 eval_port(v.from_port,v.to_port),
-                v.ip_ranges[0].cidr_ip,
-                '-',
-                '-',
-                '-',
-                '-'
+                eval_source(v.ip_ranges, v.user_id_group_pairs),
               ]);
         }
 

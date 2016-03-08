@@ -66,7 +66,6 @@ module.exports = Vue.extend({
     },
     print_pdf: function(){
       var data = this.rules_summary;
-      console.log(data);
       var defaultFont = Object.keys(map)[0];
 
       var docDefinition = {
@@ -129,6 +128,9 @@ module.exports = Vue.extend({
 
       createPdf(docDefinition, map, data_mapping).open();
       this.get_rules();
+    },
+    check_length: function(args){
+      return args.length > 0;
     },
   },
   compiled: function() {
