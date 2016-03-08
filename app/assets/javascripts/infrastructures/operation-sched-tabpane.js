@@ -173,40 +173,55 @@ module.exports = Vue.extend({
             dow: dow,
           };
         });
-        $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay,agendaFourDay'
-          },
-          defaultView: 'agendaWeek',
-          events: events,
-          allDayDefault: false,
-          lang: queryString.lang,
-          viewRender: function(currentView){
+        if (data.length > 0){
+          self.render_calendar(data, events);
+        }
+
+      });
+    },
+
+    render_calendar: function (data, events) {
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay,agendaFourDay'
+        },
+        defaultView: 'agendaWeek',
+        events: events,
+        allDayDefault: false,
+        lang: queryString.lang,
+        viewRender: function(currentView){
+
             var minDate = moment(data[0].start_date).utcOffset ("Asia/Tokyo"),
               maxDate = moment(data[0].end_date).utcOffset ("Asia/Tokyo");
 
-            if (minDate >= currentView.start && minDate <= currentView.end) {
-              $(".fc-prev-button").prop('disabled', true);
-              $(".fc-prev-button").addClass('fc-state-disabled');
-            }
-            else {
-              $(".fc-prev-button").removeClass('fc-state-disabled');
-              $(".fc-prev-button").prop('disabled', false);
-            }
-            // Future
-            if (maxDate >= currentView.start && maxDate <= currentView.end) {
-              $(".fc-next-button").prop('disabled', true);
-              $(".fc-next-button").addClass('fc-state-disabled');
-            } else {
-              $(".fc-next-button").removeClass('fc-state-disabled');
-              $(".fc-next-button").prop('disabled', false);
-            }
-          }
-        });
+              if (minDate >= currentView.start && minDate <= currentView.end) {
+                $(".fc-prev-button").prop('disabled', true);
+                $(".fc-prev-button").addClass('fc-state-disabled');
+              }
+              else {
+                $(".fc-prev-button").removeClass('fc-state-disabled');
+                $(".fc-prev-button").prop('disabled', false);
+              }
+              // Future
+              if (maxDate >= currentView.start && maxDate <= currentView.end) {
+                $(".fc-next-button").prop('disabled', true);
+                $(".fc-next-button").addClass('fc-state-disabled');
+              } else {
+                $(".fc-next-button").removeClass('fc-state-disabled');
+                $(".fc-next-button").prop('disabled', false);
+              }
+
+        }
       });
     },
+    check_length: function (argument) {
+      if (argument) {
+        return (argument.length >= 10);
+      }
+    }
+
   },
 
   computed: {

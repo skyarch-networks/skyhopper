@@ -56,6 +56,38 @@ $ sudo yum --enablerepo=epel install redis
 ## リバースプロキシ(nginx)の設定
 
 ```sh
+$ sudo tee /etc/nginx/nginx.conf <<EOF >/dev/null
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+EOF
+```
+
+```sh
 $ sudo tee /etc/nginx/conf.d/skyhopper.conf <<EOF >/dev/null
 server {
         listen 80;
@@ -107,12 +139,6 @@ $ git clone https://github.com/skyarch-networks/skyhopper.git
 
 ---------------------------------
 
-## SkyHopper のバージョン指定
-
-```sh
-$ git checkout v1.9.0
-```
-
 ### MySQL ユーザーの作成
 
 ```sh
@@ -144,6 +170,12 @@ mysql> exit
 
 ```sh
 $ cd skyhopper
+```
+
+### SkyHopper のバージョン指定
+
+```sh
+$ git checkout v1.15.0
 ```
 
 ### bundle install
@@ -223,6 +255,11 @@ $ bundle exec rake db:seed
 $ bundle exec rake db:seed RAILS_ENV=production
 ```
 
+## ホームディレクトリのパーミッションを変更
+
+```sh
+$ chmod 711 ~
+```
 
 
 ## 起動

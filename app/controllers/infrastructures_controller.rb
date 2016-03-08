@@ -253,8 +253,8 @@ class InfrastructuresController < ApplicationController
       render text: "There is not change '#{type}'", status: 200 and return
     end
 
-    # TODO: status を取得
 
+    # TODO: status を取得
     render text: "change scale to #{type}" and return
   end
 
@@ -266,6 +266,8 @@ class InfrastructuresController < ApplicationController
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
     rds.modify_security_groups(group_ids)
+
+    infra_logger_success("#{physical_id} security groups has been modified.")
 
     render text: I18n.t('security_groups.msg.change_success')
   end
@@ -344,9 +346,7 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
-
   private
-
   # Use callbacks to share common setup or constraints between actions.
   def set_infrastructure
     @infrastructure = Infrastructure.find(params.require(:id))

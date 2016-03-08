@@ -171,6 +171,9 @@ module.exports = function (stack, current_infra, current_tab) {
           }
         });
       },
+      is_progress: function () {
+        return (this.current_infra.stack.status.type === 'IN_PROGRESS');
+      }
     },
     filters: {
       toLocaleString: toLocaleString,

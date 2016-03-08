@@ -10,6 +10,10 @@ var alert_success        = helpers.alert_success;
 var alert_danger         = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
 
+var common_methods = require('infrastructures/common-methods');
+var has_selected         = common_methods.has_selected;
+var check_tag            = common_methods.check_tag;
+
 var modal = require('modal');
 
 module.exports = Vue.extend({
@@ -46,6 +50,8 @@ module.exports = Vue.extend({
     attachable_volumes:  [],
     max_sec_group:       null,
     rules_summary:       null,
+    x_chef:              null,
+    x_zabbix:            null,
     editing_policy:      {},
     page: 0,
     dispItemSize: 10,
@@ -482,6 +488,7 @@ module.exports = Vue.extend({
     },
 
     check: function (i) { i.checked= !i.checked; },
+    reload: function(){ this.$parent.show_ec2(this.physical_id); },
 
     submit_groups: function(){
       var self = this;
@@ -507,6 +514,10 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.page++;
     },
+    check_tag: function(r){
+      check_tag(r);
+    },
+    has_selected: has_selected(this.rules_summary),
   },
 
   computed: {
@@ -515,12 +526,6 @@ module.exports = Vue.extend({
         return 'btn-success';
       }
       return 'btn-default';
-    },
-
-    has_selected: function() {
-      return this.rules_summary.some( function(c){
-        return c.checked;
-      });
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },

@@ -19,7 +19,10 @@
     </tr>
     <tr>
       <td>Status</td>
-      <td colspan="2">{{rds.db_instance_status}}</td>
+      <td colspan="2">
+        <div-loader v-if="modifying" :text="changing_status"></div-loader>
+        <span v-if="!modifying">{{rds.db_instance_status}}</span>
+      </td>
     </tr>
     <tr>
       <td>Allocated Storage (GB)</td>
@@ -27,7 +30,7 @@
     </tr>
     <tr>
       <td>Endpoint Address</td>
-      <td colspan="2">{{rds.endpoint.address}}</td>
+      <td colspan="2">{{address}}</td>
     </tr>
     <tr>
       <td>Multi AZ</td>
@@ -120,50 +123,4 @@
 </div>
 
 <%# modal for change security groups %>
-<div id="change-rules-modal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div-loader v-if="loading_groups"></div-loader>
-      <div class="modal-header bg-info">
-        <button class="close" data-dismiss="modal" @click="reload()" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
-        <h4 class="modal-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
-      </div>
-
-      <div class="modal-body">
-
-        <table class="table table-condensed">
-          <thead>
-          <tr>
-            <th width="20"></th>
-            <th width="100"><%= t'security_groups.group_id' %></th>
-            <th><%= t 'security_groups.group_name' %></th>
-            <th><%= t 'security_groups.description' %></th>
-            <th>Name</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="r in security_groups" :class="{info: r.checked}" @click="check(r)">
-            <td><input type="checkbox" v-model="r.checked"></td>
-            <td>{{r.group_id}}</td>
-            <td><div class="truncate"> {{r.group_name}}</div></td>
-            <td><div class="truncate">{{r.description}}</div></td>
-            <td v-if="r.tags[0].key === 'Name'">{{r.tags[0].value}}</td>
-            <td v-else></td>
-          </tr>
-          </tbody>
-        </table>
-
-      </div>
-      <div class="modal-footer">
-        <div v-if="!loading_s">
-          <button class="btn btn-default" @click="reload()" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button class="btn btn-primary" @click="rds_submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">
-            <%= t 'security_groups.btn.assign' %>
-          </button>
-        </div>
-        <div-loader v-if="loading_s"></div-loader>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render 'infrastructures/modal/modal_change_rules' %>

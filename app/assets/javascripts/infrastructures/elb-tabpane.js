@@ -8,6 +8,10 @@ var alert_danger         = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
 var toLocaleString       = helpers.toLocaleString;
 
+var methods = require('infrastructures/common-methods');
+var has_selected         = methods.has_selected;
+var check_tag            = methods.check_tag;
+
 // this.physical_id is a elb_name.
 module.exports = Vue.extend({
   template: '#elb-tabpane-template',
@@ -37,7 +41,11 @@ module.exports = Vue.extend({
     instance_protocol: '',
     instance_port: '',
     ssl_certificate_id: '',
-    security_groups: null,
+    rules_summary: null,
+    page: 0,
+    dispItemSize: 10,
+    filteredLength: null,
+    filterKey: '',
   };},
 
   methods: {
@@ -210,11 +218,11 @@ module.exports = Vue.extend({
     check:       function (i) { i.checked= !i.checked; },
     reload:      function(){ this.$parent.show_elb(this.physical_id); },
 
-    elb_submit_groups: function(){
+    submit_groups: function(){
       var self = this;
       var infra = new Infrastructure(self.infra_id);
       var ec2 = new EC2Instance(infra, '');
-      var group_ids = this.security_groups.filter(function (t) {
+      var group_ids = this.rules_summary.filter(function (t) {
         return t.checked;
       }).map(function (t) {
         return t.group_id;
@@ -228,20 +236,38 @@ module.exports = Vue.extend({
         .fail(alert_danger(reload));
 
     },
-
     view_rules: function () {
       this.$parent.tabpaneID = 'view-rules';
-      this.$parent.sec_group = this.security_groups;
+      this.$parent.sec_group = this.rules_summary;
       this.$parent.instance_type = 'elb';
-    }
+    },
+    has_selected: has_selected(this.rules_summary),
+    check_tag: function(r){
+      check_tag(r);
+    },
+    showPrev: function (){
+      if(this.isStartPage) return;
+      this.page--;
+    },
+    showNext: function (){
+      if(this.isEndPage) return;
+      this.page++;
+    },
+
   },
 
   computed: {
-    has_selected: function() {
-      return this.security_groups.some(function(c){
-        return c.checked;
-      });
+    dispItems: function(){
+      var startPage = this.page * this.dispItemSize;
+      if (this.filterKey === ''){
+        return this.rules_summary.slice(startPage, startPage + this.dispItemSize);
+      }
+      else{
+        return this.rules_summary;
+      }
     },
+    isStartPage: function(){ return (this.page === 0); },
+    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); }
   },
 
   compiled: function () {
@@ -253,13 +279,20 @@ module.exports = Vue.extend({
       self.dns_name = data.dns_name;
       self.listeners = data.listeners;
       self.server_certificates = data.server_certificates;
-      self.security_groups = data.security_groups;
+      self.rules_summary = data.security_groups;
       self.server_certificate_name_items = data.server_certificate_name_items;
 
       self.$parent.loading = false;
       console.log(self);
     }).fail(alert_and_show_infra(infra.id));
   },
+  filters: {
+    roundup: function (val) { return (Math.ceil(val));},
+    count: function (arr) {
+      // record length
+      this.$set('filteredLength', arr.length);
+      // return it intact
+      return arr;
+    },
+  },
 });
-
-

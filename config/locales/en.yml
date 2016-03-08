@@ -192,6 +192,7 @@ en:
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
+      modifying:                   'Modifying instance.. updates in 15 seconds.'
 
   security_groups:
     title:        'Security Groups'
@@ -572,7 +573,7 @@ en:
       public_key_certificate_droppable: 'Please either insert a public key certificate or drag-and-drop the file of public key certificate.'
       certificate_chain_droppable: '(Option) Please either insert a certificate chain or drag-and-drop the file of certificate chain.'
       detach:               'This instance will be removed from SkyHopper service. But the instance will still be available on AWS.
-                             The following services will also be detached fron the EC2 instance.'
+                             The following services will also be detached from the EC2 instance.'
       terminate:            'This instance will be removed from Skyhopper service.
                              On an EBS-backed instance, the default action is for the root EBS volume to be deleted when the instance is terminated.
                              Storage on any local drives will be lost.'

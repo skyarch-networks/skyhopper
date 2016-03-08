@@ -23,6 +23,7 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 1. MySQLのセットアップ
 1. SkyHopperのセットアップ
 1. DBのセットアップ
+1. パーミッションの設定
 1. SkyHopperの初期設定
 1. Chef Serverの鍵を設置
 
