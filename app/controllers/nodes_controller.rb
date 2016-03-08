@@ -313,14 +313,14 @@ class NodesController < ApplicationController
   def check_socket(field)
     field.map do |set|
       if set.from_port == -1 || set.from_port == nil || set.from_port == 0
-        set.user_id_group_pairs = 'All'
+        set.prefix_list_ids = 'All'
       elsif set.from_port == 5439
-        set.user_id_group_pairs = 'Redshift'
+        set.prefix_list_ids = 'Redshift'
       else
         begin
-          set.user_id_group_pairs = Socket.getservbyport(set.from_port, set.ip_protocol)
+          set.prefix_list_ids = Socket.getservbyport(set.from_port, set.ip_protocol)
         rescue
-          set.user_id_group_pairs = 'Unknown'
+          set.prefix_list_ids = 'Unknown'
         end
       end
     end

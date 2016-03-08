@@ -66,6 +66,7 @@ module.exports = Vue.extend({
     },
     print_pdf: function(){
       var data = this.rules_summary;
+      console.log(data);
       var defaultFont = Object.keys(map)[0];
 
       var docDefinition = {
