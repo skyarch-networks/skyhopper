@@ -7,26 +7,28 @@
 //
 
 module.exports = function(value, option){
-  if(option[0] ==='infrastructure') {
-    return render_infrastructures(value);
-  }else if(option[0] === 'project') {
-    return render_projects(value);
-  }else if (option[0] === 'client') {
-    return render_clients(value);
-  }else if (option[0] === 'serverspec') {
-    return render_serverspecs(value);
-  }else if (option[0] === 'dish') {
-    return render_dish(value);
-  }else if (option[0] === 'cf_template') {
-    return render_cf_templates(value);
-  }else if (option[0] === 'user_admin') {
-    return render_user_admin(value);
-  }else if (option[0] === 'serverspec_results') {
-    return render_serverspecs_results(value);
-  }else if(option[0] === 'operation_sched'){
-    return render_ops_sched(value);
-  }else{
-    return value;
+  switch (option[0]) {
+    case 'infrastructure':
+      return render_infrastructures(value);
+    case 'project':
+      return render_projects(value);
+    case 'client':
+      return render_clients(value);
+    case 'serverspec':
+      return render_serverspecs(value);
+    case 'dish':
+      return render_dish(value);
+    case 'cf_template':
+      return render_dish(value);
+    case 'user_admin':
+      return render_user_admin(value);
+    case 'serverspec_results':
+      return render_serverspecs_results(value);
+    case 'operation_sched':
+      return render_ops_sched(value);
+    default:
+      return value;
+
   }
 };
 

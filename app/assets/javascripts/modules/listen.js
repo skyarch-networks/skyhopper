@@ -7,26 +7,45 @@
 //
 
 module.exports = function (value, key, option, lang) {
-  if(option[0] === 'infrastructure'){
-    return render_infrastructures(value, key, lang);
-  }else if(option[0] === 'project'){
-    return render_projects(value, key, lang);
-  }else if (option[0] === 'client') {
-    return render_clients(value, key, lang);
-  }else if (option[0] === 'serverspec') {
-    return render_serverspecs(value, key, lang);
-  }else if (option[0] === 'dish') {
-    return render_dish(value, key, lang);
-  }else if (option[0] === 'cf_template') {
-    return render_cf_templates(value, key, lang);
-  }else if (option[0] === 'user_admin') {
-    return render_user_admin(value, key, lang);
-  }else if (option[0] === 'serverspec_results') {
-    return render_serverspecs_results(value, key);
-  }else{
-    return value;
+  switch (option[0]) {
+    case 'infrastructure':
+      return render_infrastructures(value, key, lang);
+    case 'project':
+      return render_projects(value, key, lang);
+    case 'client':
+      return render_clients(value, key, lang);
+    case 'serverspec':
+      return render_serverspecs(value, key, lang);
+    case 'dish':
+      return render_dish(value, key, lang);
+    case 'cf_template':
+      return render_cf_templates(value, key, lang);
+    case 'user_admin':
+      return render_user_admin(value, key, lang);
+    case 'serverspec_results':
+      return render_serverspecs_results(value, key, lang);
+    default:
+      return value;
   }
 };
+
+// TODO: DRY!
+var delete_button = function(value, href, lang){
+   var _class = $('#delete-'+value+'').attr('class');
+  return "<a data-confirm='Are you sure?'' class='"+_class+"' data-method='delete' href="+href+"?lang="+lang+
+  "'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
+};
+
+var edit_button = function(value, href, lang){
+  var _class = $('#edit-'+value+'').attr('class');
+ return "<a class='btn btn-default btn-xs "+_class+"' href="+href+"?lang="+lang+
+ "'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> ";
+};
+
+var show_button = function(value, href, label, lang){
+  return "<a class='btn btn-xs btn-info' href="+href+"?lang="+lang+"'>"+label+"</a> ";
+};
+
 
 function render_infrastructures(value, key, lang){
   if(key === 'id'){
@@ -91,9 +110,9 @@ function render_infrastructures(value, key, lang){
 
 function render_clients(value, key, lang){
   if(key === 'id'){
-    var edit = ( $('#edit-'+value+'').attr('class') ?  " <a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : "");
-    var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('clients.btn.show_projects')+"</a> ";
-    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='"+$('#delete-'+value+'').attr('class')+"' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
+    var edit = ( $('#edit-'+value+'').attr('class') ?  edit_button(value, '/clients/'+value+'/edit?', lang) : '');
+    var ret = show_button(value, "'/projects?lang="+lang+"&amp;client_id="+value+"'", t('clients.btn.show_projects'), lang);
+    var del = ( $('#delete-'+value+'').attr('class') ? delete_button(value, '/clients/'+value+'', lang) : '');
        return ret+edit+del;
   }else if (key === 'code') {
     return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('clients.projects')+"</span>";
@@ -104,10 +123,9 @@ function render_clients(value, key, lang){
 
 function render_projects(value, key, lang){
   if(key === 'id'){
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='"+isDelete+"' rel='nofollow' data-method='delete' href='/projects/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
-    var edit = ( $('#edit-'+value+'').attr('class') ? " <a class='btn btn-default btn-xs' href='/projects/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> " : "");
-    var ret = "<a class='btn btn-xs btn-info ' href='/infrastructures?lang="+lang+"&amp;project_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('projects.btn.show_infrastructures')+"</a> " +
+    var del = ( $('#delete-'+value+'').attr('class') ? delete_button(value, '/projects/'+value, lang) : '');
+    var edit = ( $('#edit-'+value+'').attr('class') ? edit_button(value, '/projects/'+value+'/edit?', lang) : "");
+    var ret = show_button(value, "'/infrastructures?lang="+lang+"&amp;project_id="+value+"'", t('projects.btn.show_infrastructures'))+
       "<div class='btn-group'>" +
         "<a class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' href='#' aria-expanded='false'>" +
           t ('common.btn.settings')+ " <span class='caret'></span>" +
@@ -130,15 +148,8 @@ function render_projects(value, key, lang){
 
 function render_serverspecs(value, key, lang){
   if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs' href='/serverspecs/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/serverspecs/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
-
+    var edit = $('#edit-'+value+'').attr('class')? edit_button(value, "'/serverspecs/"+value+"/edit?'", lang) : '';
+    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, href='/serverspecs/"+value', lang):'' ;
     var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'><span class='glyphicon glyphicon-info-sign'></span> "+t('helpers.links.show')+"</a> ";
     return ret+edit+del;
   }else{
