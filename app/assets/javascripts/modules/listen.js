@@ -32,14 +32,14 @@ module.exports = function (value, key, option, lang) {
 // TODO: DRY!
 var delete_button = function(value, href, lang){
    var _class = $('#delete-'+value+'').attr('class');
-  return "<a data-confirm='Are you sure?'' class='"+_class+"' data-method='delete' href="+href+"?lang="+lang+
-  "'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
+  return ("<a data-confirm='Are you sure?'' class='"+_class+"' data-method='delete' href="+href+"?lang="+lang+
+          "'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>");
 };
 
 var edit_button = function(value, href, lang){
   var _class = $('#edit-'+value+'').attr('class');
- return "<a class='btn btn-default btn-xs "+_class+"' href="+href+"?lang="+lang+
- "'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> ";
+  return ("<a class='btn btn-default btn-xs "+_class+"' href="+href+"?lang="+lang+
+          "'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> ");
 };
 
 var show_button = function(value, href, label, lang){
@@ -50,7 +50,7 @@ var show_button = function(value, href, label, lang){
 function render_infrastructures(value, key, lang){
   if(key === 'id'){
   var href = $('#edit-'+value[0]+'').attr('href');
-  var retEdit = ($('#edit-'+value[0]+'').attr('class') ? "<a class='"+$('#edit-'+value[0]+'').attr('class')+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " : "");
+  var retEdit = ($('#edit-'+value[0]+'').attr('class') ? edit_button(value[0], href, lang): "");
   var retDetach = ($('#detach-'+value[0]+'').attr('class') ? "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> " : "");
   var retDelete = ($('#delete-'+value[0]+'').attr('class') ? "<div class='btn-group'>"+
       "<a class='"+$('#delete-'+value[0]+'').attr('class')+"' data-toggle='dropdown' href='#'>" +
@@ -149,7 +149,7 @@ function render_projects(value, key, lang){
 function render_serverspecs(value, key, lang){
   if(key === 'id'){
     var edit = $('#edit-'+value+'').attr('class')? edit_button(value, "'/serverspecs/"+value+"/edit?'", lang) : '';
-    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, href='/serverspecs/"+value', lang):'' ;
+    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, href="/serverspecs/"+value+"", lang):'' ;
     var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'><span class='glyphicon glyphicon-info-sign'></span> "+t('helpers.links.show')+"</a> ";
     return ret+edit+del;
   }else{
@@ -159,15 +159,8 @@ function render_serverspecs(value, key, lang){
 
 function render_cf_templates(value, key, lang){
   if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs' href='/cf_templates/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/cf_templates/"+value+"?lang="+lang+"'>Delete</a>";
-
+    var edit = $('#edit-'+value+'').attr('class')? edit_button(value, "'/cf_templates/"+value+"/edit?'", lang) : '';
+    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, '/cf_templates/'+value, lang) : '';
     var ret = "<a class='btn btn-xs btn-info show-template' data-managejson-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
     return ret+edit+del;
   }else{
@@ -177,11 +170,7 @@ function render_cf_templates(value, key, lang){
 
 function render_dish(value, key, lang){
   if(key === 'id'){
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var del = '';
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/dishes/"+value+"?lang="+lang+"'>"+t("helpers.links.destroy")+"</a>";
-
+    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, '/dishes/'+value, lang):'';
     var ret = "<a class='btn btn-xs btn-info show-dish' data-dish-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
     return ret+del;
   }else if (key === 'status') {
@@ -205,14 +194,8 @@ function render_dish(value, key, lang){
 
 function render_user_admin(value, key, lang){
   if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs edit-user'user-id="+value+" href='#'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/users_admin/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("helpers.links.destroy")+"</a>";
+    var edit = $('#edit-'+value+'').attr('class')? "<a class='btn btn-default btn-xs edit-user'user-id="+value+" href='#'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : '';
+    var del = $('#delete-'+value+'').attr('class')? delete_button(value, '/users_admin/'+value[0], lang):'';
     return edit+del;
   }else if (key === 'email') {
     var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
