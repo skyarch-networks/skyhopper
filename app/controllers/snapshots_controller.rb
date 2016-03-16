@@ -45,6 +45,7 @@ class SnapshotsController < ApplicationController
 
     snapshot = Snapshot.new(@infra, snapshot_id)
     snapshot.delete
+    infra_logger_success("Snapshot #{snapshot.snapshot_id} has been deleted.")
 
     render nothing: true, status: 200
   rescue Snapshot::VolumeProtectedError
