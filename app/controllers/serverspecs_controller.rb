@@ -136,8 +136,6 @@ class ServerspecsController < ApplicationController
       serverspec_ids.delete('-1')
     end
 
-    infra_logger_serverspec_start(selected_auto_generated, serverspec_ids)
-
     begin
       resp = ServerspecJob.perform_now(
         physical_id, infra_id, current_user.id,
