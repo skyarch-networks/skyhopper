@@ -33,125 +33,140 @@ module.exports = function(value, option){
 };
 
 function render_infrastructures(value){
-  if (value === 'stack_name'){
-    return t('infrastructures.stackname');
-  }else if(value === 'region'){
-    return t('infrastructures.region');
-  }else if(value === 'created_at'){
-    return t('infrastructures.creation_time');
-  }else if(value === 'id'){
-    return t('common.actions');
-  }else if(value === 'status'){
-    return t('infrastructures.status');
-  }else if(value === 'keypairname'){
-    return t('infrastructures.keypair');
-  }else{
-    return value;
+  switch (value) {
+    case 'stack_name':
+      return t('infrastructures.stackname');
+    case 'region':
+      return t('infrastructures.region');
+    case 'created_at':
+      return t('infrastructures.creation_time');
+    case 'id':
+      return t('common.actions');
+    case 'status':
+      return t('infrastructures.status');
+    case 'keypairname':
+      return t('infrastructures.keypair');
+    default:
+      return value;
   }
 }
 
 function render_projects(value){
-  if (value === 'code'){
-    return t ('projects.code');
-  }else if (value === 'name') {
-    return t ('projects.name');
-  }else if (value === 'cloud_provider') {
-    return t ('projects.cloud_provider');
-  }else if (value === 'access_key') {
-    return t ('projects.access_key');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'code':
+      return t ('projects.code');
+    case 'name':
+      return t ('projects.name');
+    case 'cloud_provider':
+      return t ('projects.cloud_provider');
+    case 'access_key':
+      return t ('projects.access_key');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
   }
+
 }
 
 function render_clients(value){
-  if (value === 'code'){
-    return t ('clients.code');
-  }else if (value === 'name') {
-    return t ('clients.name');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'code':
+      return t ('clients.code');
+    case 'name':
+      return t ('clients.name');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
   }
 }
 
 function render_serverspecs(value){
-  if (value === 'description'){
-    return t ('serverspecs.description');
-  }else if (value === 'name') {
-    return t ('serverspecs.name');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'description':
+      return t ('serverspecs.description');
+    case 'name':
+      return t ('serverspecs.name');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
+
   }
 }
 
 function render_dish(value){
-  if (value === 'name'){
-    return t ('dishes.name');
-  }else if (value === 'detail') {
-    return t ('dishes.detail');
-  }else if (value === 'status') {
-    return t ('dishes.validation_status');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'name':
+      return t ('dishes.name');
+    case 'detail':
+      return t ('dishes.detail');
+    case 'status':
+      return t ('dishes.validation_status');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
+
   }
 }
 
 function render_cf_templates(value){
-  if (value === 'subject'){
-    return t ('cf_templates.subject');
-  }else if (value === 'details') {
-    return t ('cf_templates.details');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'subject':
+      return t ('cf_templates.subject');
+    case 'details':
+      return t ('cf_templates.details');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
   }
 }
 
 function render_user_admin(value){
-  if (value === 'role'){
-    return t('users.role');
-  }else if (value === 'email') {
-    return t('users.email');
-  }else if (value === 'last_sign_in_at') {
-    return t('users.last_signed_in_at');
-  }else if (value === 'id') {
-    return t ('common.actions');
-  }else{
-    return value;
+  switch (value) {
+    case 'role':
+      return t('users.role');
+    case 'email':
+      return t('users.email');
+    case 'last_sign_in_at':
+      return t('users.last_signed_in_at');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
   }
 }
 
 function render_serverspecs_results(value){
-  if (value === 'serverspec'){
-    return t('serverspecs.serverspecs');
-  }else if (value === 'resource') {
-    return t('serverspecs.generator.resources');
-  }else if (value === 'message') {
-    return t('cf_templates.details');
-  }else if (value === 'status') {
-    return t ('infrastructures.status');
-  }else if (value === 'created_at') {
-    return t ('serverspecs.created_at');
-  }else{
-    return value;
+  switch (value) {
+    case 'serverspec':
+      return t('serverspecs.serverspecs');
+    case 'resource':
+      return t('serverspecs.generator.resources');
+    case 'message':
+      return t('cf_templates.details');
+    case 'status':
+      return t ('infrastructures.status');
+    case 'created_at':
+      return t ('serverspecs.created_at');
+    default:
+      return value;
   }
 }
 
 function render_ops_sched(value){
-  if (value === 'physical_id'){
-    return "Physical ID";
-  }else if(value === 'screen_name'){
-    return t('operation_scheduler.screen_name');
-  }else if(value === 'id'){
-    return t ('common.actions');
+  switch (value) {
+    case 'physical_id':
+      return "Physical ID";
+    case 'screen_name':
+      return t('operation_scheduler.screen_name');
+    case 'id':
+      return t ('common.actions');
+    default:
+      return value;
+
   }
 }
