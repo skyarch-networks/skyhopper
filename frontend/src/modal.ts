@@ -68,7 +68,7 @@ const modal = function (
           $("<h4>", {class: "modal-title", text: title})
         )
       ).append(
-        $("<div>", {class: "modal-body", html: message})
+        $("<div>", {class: "modal-body", text: message})
       ).append(
         modal_footer
       )
