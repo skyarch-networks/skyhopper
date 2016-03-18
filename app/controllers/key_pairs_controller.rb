@@ -30,10 +30,10 @@ class KeyPairsController < ApplicationController
     @key_pairs = KeyPair.all(@project.id)
   end
 
-  # DELETE /key_pairs/:fingerprint
+  # DELETE /key_pairs/:name
   def destroy
     region     = params.require(:region)
-    fingerprint   = params.require(:fingerprint)
+    key_name   = params.require(:name)
 
     ec2 = Aws::EC2::Client.new(
       access_key_id:     @project.access_key,
@@ -41,15 +41,14 @@ class KeyPairsController < ApplicationController
       region:            region
     )
     keys = ec2.describe_key_pairs()
-    name = nil
     keys[:key_pairs].each do |item|
-      if item.key_fingerprint.eql? fingerprint
-        name = item.key_name
+      if item.key_fingerprint.eql? key_name
+        key_name = item.key_name
       end
     end
 
-    ec2.delete_key_pair(key_name: name)
-    ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(name)), true)
+    ec2.delete_key_pair(key_name: key_name)
+    ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(key_name)), true)
     render nothing: true, status: 200 and return
   end
 
