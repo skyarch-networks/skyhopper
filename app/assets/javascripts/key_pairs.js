@@ -114,7 +114,7 @@
       showNext: function(){
         if(this.isEndPage) return;
         this.pageNumber++;
-      },
+      }
     },
     computed: {
       isStartPage: function(){
@@ -123,6 +123,11 @@
       isEndPage: function(){
         return ((this.pageNumber + 1) * this.pages >= this.number_of_key_pairs(this.selected));
       },
+      check_length: function(){
+        if(this.selected_key_pairs){
+          return (this.selected_key_pairs.length >= 10);
+        }
+      }
     },
     created: function () {
       this.reload();
