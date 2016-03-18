@@ -21,7 +21,7 @@
     "md5": "^2.0.0",
     "query-string": "^2.4.1",
     "serverspec-generator": "^1.0.0",
-    "vue": "^1.0.17",
+    "vue": "^1.0.18",
     "vue-ace": "0.0.1",
     "pdfmake-browserified": "^0.1.4",
     "aliasify": "^1.9.0",
