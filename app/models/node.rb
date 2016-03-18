@@ -42,25 +42,27 @@ class Node
     uri = URI.parse(ChefAPI.server_url)
     uri.path = '/bootstrap/install.sh'
     install_sh_url = uri.to_s
-
-    cmd = <<-EOS
-knife bootstrap #{fqdn} \
---identity-file #{ec2key.path_temp} \
---ssh-user #{user} \
---node-name #{node_name} \
---sudo \
---bootstrap-url #{install_sh_url} \
---bootstrap-wget-options '--no-check-certificate'
-    EOS
-
-#     cmd = <<-EOS
-# knife bootstrap windows ssh #{fqdn} \
-# --identity-file #{ec2key.path_temp} \
-# --ssh-user #{user} \
-# --node-name #{node_name} \
-# -x Administrator \
-# --bootstrap-proxy #{install_sh_url}
-#     EOS
+    instance = infra.instance(node_name)
+    cmd = if instance.platform.eql? 'windows'
+            <<-EOS
+          knife bootstrap windows winrm #{fqdn} \
+          --winrm-ssl-verify-mode verify_none \
+          --winrm-user Administrator \
+          --winrm-password '#{instance.decrypt_windows_password(ec2key.path_temp)}' \
+          --node-name #{node_name} \
+          --winrm-transport ssl
+          EOS
+          else
+            <<-EOS
+             knife bootstrap #{fqdn} \
+             --identity-file #{ec2key.path_temp} \
+             --ssh-user #{user} \
+             --node-name #{node_name} \
+             --sudo \
+             --bootstrap-url #{install_sh_url} \
+             --bootstrap-wget-options '--no-check-certificate'
+             EOS
+          end
 
     if chef_client_version
       cmd.chomp!
