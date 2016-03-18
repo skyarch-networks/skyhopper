@@ -65,7 +65,7 @@
         modal.Confirm(t('key_pairs.key_pairs'), t('key_pairs.msg.confirm', {name: key_pair.name})).done(function () {
           $.ajax({
             type: 'DELETE',
-            url: '/key_pairs/' + key_pair.name,
+            url: '/key_pairs/' + key_pair.fingerprint,
             data: {
               project_id: self.project_id,
               region: key_pair.region
