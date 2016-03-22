@@ -20,7 +20,7 @@ describe Node, type: :model do
 
     let(:infra){build(:infrastructure)}
 
-    it "returns true if status is success" do
+    xit "returns true if status is success" do
       expect(Node.bootstrap("hoge", "fuga", infra)).to be_a Node
     end
   end

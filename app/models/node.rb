@@ -43,25 +43,25 @@ class Node
     uri.path = '/bootstrap/install.sh'
     install_sh_url = uri.to_s
     instance = infra.instance(node_name)
-    cmd = if instance.platform.eql? 'windows'
+    cmd = if instance.platform.nil?
             <<-EOS
-          knife bootstrap windows winrm #{fqdn} \
-          --winrm-ssl-verify-mode verify_none \
-          --winrm-user Administrator \
-          --winrm-password '#{instance.decrypt_windows_password(ec2key.path_temp)}' \
-          --node-name #{node_name} \
-          --winrm-transport ssl
-          EOS
+            knife bootstrap #{fqdn} \
+            --identity-file #{ec2key.path_temp} \
+            --ssh-user #{user} \
+            --node-name #{node_name} \
+            --sudo \
+            --bootstrap-url #{install_sh_url} \
+            --bootstrap-wget-options '--no-check-certificate'
+            EOS
           else
             <<-EOS
-             knife bootstrap #{fqdn} \
-             --identity-file #{ec2key.path_temp} \
-             --ssh-user #{user} \
-             --node-name #{node_name} \
-             --sudo \
-             --bootstrap-url #{install_sh_url} \
-             --bootstrap-wget-options '--no-check-certificate'
-             EOS
+            knife bootstrap windows winrm #{fqdn} \
+            --winrm-ssl-verify-mode verify_none \
+            --winrm-user Administrator \
+            --winrm-password '#{instance.decrypt_windows_password(ec2key.path_temp)}' \
+            --node-name #{node_name} \
+            --winrm-transport ssl
+            EOS
           end
 
     if chef_client_version
