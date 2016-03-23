@@ -188,7 +188,7 @@
         <template slot="content"><span :class="serverspec_status_class" class="label">{{serverspec_status}}</span></template>
       </bootstrap-tooltip>
     </div>
-    <div class="col-xs-4 col-sm-12">
+    <div class="col-xs-4 col-sm-12" v-if="!ec2.platform">
       <h6><%= t 'nodes.latest_update_status' %></h6>
       <bootstrap-tooltip :title.once="update_time">
         <template slot="content"><span :class="update_status_class" class="label">{{update_status}}</span></template>
@@ -237,7 +237,7 @@
       </div>
       <button @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
       <button @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
-      <div class="dropup" style="display: inline-block">
+      <div class="dropup" style="display: inline-block" v-if="!ec2.platform">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
           <span class="badge">{{ec2.number_of_security_updates | zero_as_null}}</span>

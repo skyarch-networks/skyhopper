@@ -32,6 +32,7 @@
         "RegionMap": <%= fragment(:ami_mappings_windows) %>
     },
     "Resources": {
+        "SecurityGroup" : <%= fragment(:security_group_windows) %>,
         "EC2InstanceWindowsR12": {
             "Type": "AWS::EC2::Instance",
             "Properties": {
@@ -44,6 +45,9 @@
                         "AMI"
                     ]
                 },
+                "SecurityGroupIds" : [
+                  { "Ref" : "SecurityGroup" }
+                ],
                 "AvailabilityZone": {
                     "Fn::Select" : [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ]
                 },

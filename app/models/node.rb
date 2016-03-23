@@ -117,9 +117,15 @@ class Node
   #   # line is chef-clinet log
   # end
   def cook(infra, whyrun, &block)
-    cmd = 'sudo chef-client'
-    cmd << ' -W' if whyrun
-    exec_knife_ssh(cmd, infra, &block)
+    instance = infra.instance(@name)
+    if instance.platform.nil?
+      cmd = 'sudo chef-client'
+      cmd << ' -W' if whyrun
+      exec_knife_ssh(cmd, infra, &block)
+    else
+      cmd = 'chef-client --manual-list'
+      exec_knife_winrm(cmd, infra, &block)
+    end
   end
 
   def wait_search_index
@@ -302,6 +308,7 @@ class Node
     fqdn = infra.instance(@name).fqdn
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
+
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
@@ -313,9 +320,35 @@ class Node
       Rails.logger.warn(stderr.read)
       raise CookError unless w.value.success?
     end
+
     return true
   ensure
     ec2key.close_temp
+  end
+
+  def exec_knife_winrm(command, infra)
+    ec2key = infra.ec2_private_key
+    ec2key.output_temp(prefix: @name)
+    fqdn = infra.instance(@name).fqdn
+    password = infra.instance(@name).decrypt_windows_password(ec2key.path_temp)
+
+    cmd = "knife winrm #{fqdn} --winrm-user Administrator  --winrm-password '#{password}' #{command} --winrm-transport ssl --winrm-ssl-verify-mode verify_none"
+
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
+      while line = stdout.gets
+        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
+        line.chomp!
+
+        yield line
+      end
+
+      Rails.logger.warn(stderr.read)
+      raise CookError unless w.value.success?
+    end
+
+    return true
+  # ensure
+  #   ec2key.close_temp
   end
 
 
