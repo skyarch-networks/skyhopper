@@ -113,6 +113,15 @@ class EC2Instance < SimpleDelegator
            self.private_ip_address
   end
 
+  def platform
+    return @instance.platform
+  end
+
+  def password(ec2key)
+    return @instance.decrypt_windows_password(ec2key.path_temp)
+  end
+
+
   def attachable_volumes(availability_zone)
     client.describe_volumes(
       filters: [{

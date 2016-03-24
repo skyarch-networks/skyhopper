@@ -42,9 +42,9 @@ class Node
     uri = URI.parse(ChefAPI.server_url)
     uri.path = '/bootstrap/install.sh'
     install_sh_url = uri.to_s
-    instance = infra.instance(node_name)
-    cmd = if instance.platform.nil?
-            <<-EOS
+    platform = infra.instance(node_name).platform
+    if platform.nil?
+      cmd = <<-EOS
             knife bootstrap #{fqdn} \
             --identity-file #{ec2key.path_temp} \
             --ssh-user #{user} \
@@ -53,12 +53,13 @@ class Node
             --bootstrap-url #{install_sh_url} \
             --bootstrap-wget-options '--no-check-certificate'
             EOS
-          else
-            <<-EOS
+    else
+      password = infra.instance(node_name).password(ec2key)
+      cmd = <<-EOS
             knife bootstrap windows winrm #{fqdn} \
             --winrm-ssl-verify-mode verify_none \
             --winrm-user Administrator \
-            --winrm-password '#{instance.decrypt_windows_password(ec2key.path_temp)}' \
+            --winrm-password '#{password}' \
             --node-name #{node_name} \
             --winrm-transport ssl
             EOS
@@ -117,8 +118,8 @@ class Node
   #   # line is chef-clinet log
   # end
   def cook(infra, whyrun, &block)
-    instance = infra.instance(@name)
-    if instance.platform.nil?
+    platform = infra.instance(@name).platform
+    if platform.nil?
       cmd = 'sudo chef-client'
       cmd << ' -W' if whyrun
       exec_knife_ssh(cmd, infra, &block)
@@ -330,7 +331,7 @@ class Node
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
     fqdn = infra.instance(@name).fqdn
-    password = infra.instance(@name).decrypt_windows_password(ec2key.path_temp)
+    password = infra.instance(@name).password(ec2key)
 
     cmd = "knife winrm #{fqdn} --winrm-user Administrator  --winrm-password '#{password}' #{command} --winrm-transport ssl --winrm-ssl-verify-mode verify_none"
 
