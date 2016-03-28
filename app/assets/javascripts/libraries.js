@@ -23,7 +23,6 @@
 //= require bootstrap-datetimepicker
 //= require microplugin
 //= require sifter
-//= require selectize
 //= require fullcalendar
 //= require lang-all
 //= require offline.min

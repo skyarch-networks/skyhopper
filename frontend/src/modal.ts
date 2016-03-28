@@ -68,7 +68,7 @@ const modal = function (
           $("<h4>", {class: "modal-title", text: title})
         )
       ).append(
-        $("<div>", {class: "modal-body", text: message})
+        $("<div>", {class: "modal-body", html: message})
       ).append(
         modal_footer
       )
@@ -109,7 +109,6 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
       )
     )
   );
-
   const resolve_func = function (dfd: JQueryDeferred<any>) {
     return function () {
       const text = (<HTMLInputElement>document.getElementById(input_id)).value;
