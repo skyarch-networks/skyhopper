@@ -168,7 +168,7 @@ knife bootstrap #{fqdn} \
     cmd << ruby_cmd << '-S rspec' << "-I #{Rails.root.join('serverspec', 'spec')}"
     cmd << run_spec_list_path.join(' ').to_s
     cmd << local_path if selected_auto_generated
-    cmd << '--format json'
+    cmd << '--format ServerspecDebugFormatter --require ./serverspec/formatters/serverspec_debug_formatter.rb'
     cmd = cmd.flatten.reject(&:blank?).join(" ")
 
     begin
@@ -194,11 +194,14 @@ knife bootstrap #{fqdn} \
         'failed'
       end
 
+
     case result[:status_text]
     when 'pending'
-      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}.join("\n")
+      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
     when 'failed'
-      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
 
     Resource.find_by(physical_id: @name).status.serverspec.update(value: result[:status_text])
