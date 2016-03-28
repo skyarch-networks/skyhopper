@@ -2,112 +2,130 @@
 
 <script id="infra-show-template" type="text/template">
 <div v-cloak v-show="current_infra.stack">
-  <h3><%= t 'infrastructures.stack_info' %>
-    <small>#{{current_infra.stack.name}} :
-      <span class="label" :class="status_label_class">{{current_infra.stack.status.name}}</span>
-    </small>
-  </h3>
+
+  <!-- Back to top Button -->
+  <a href="#" class="back-to-top" style="display: none;">
+    <i class="fa fa fa-angle-double-up"></i>
+  </a> 
+
+    <div class="row well">
+
+      <div class="col-md-10">
+        <h3 class="text-center"><%= t 'infrastructures.stack_info' %>
+          <small>#{{current_infra.stack.name}} :
+            <span class="label" :class="status_label_class">{{current_infra.stack.status.name}}</span>
+          </small>
+        </h3>
+      </div>
+      <div class="col-md-2">
+        <ul class="nav nav-tabs" role="tablist">
+          <!-- Infrastructure Control TAB -->
+          <li class="dropdown pull-right">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <%= t 'common.actions' %>&nbsp;<b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li :class="{disabled : current_infra.token_invalid}">
+                <a href="#" tabindex="-1" @click="show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
+              </li>
+              <li><a href="#" tabindex="-1" @click="show_add_ec2()"><%= t 'infrastructures.add_ec2' %></a></li>
+              <li>
+                <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
+              </li>
+              <li>
+                <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
+              </li>
+              <li :class="{disabled : no_stack}">
+                <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
+              </li>
+              <li class="divider"></li>
+              <li :class="{disabled : no_stack}">
+                <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
+              </li>
+              <li :class="{disabled : no_stack}">
+                <a href="#" tabindex="-1" @click="show_edit_monitoring()"><%= t 'monitoring.config' %></a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="#" tabindex="-1" @click="show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+    </div>
 
 
-  <div class="tabbable">
-    <ul class="nav nav-tabs" role="tablist">
-      <%# Resource TABs %>
-      <%= render 'resource_tabs' %>
 
-      <li class="active">
-        <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
+
+  <div class="container-fluid">
+    <ul class="nav nav-pills nav-stacked col-md-3">
+       <li class="disabled"><a href="#">Resources</a></li>
+       <li class="active">
+        <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_resources' %></a>
         <a v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
         <a v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
       </li>
-
-
-      <!-- Infrastructure Control TAB -->
-      <li class="dropdown pull-right">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-          <%= t 'common.actions' %>&nbsp;<b class="caret"></b>
-        </a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-          <li :class="{disabled : current_infra.token_invalid}">
-            <a href="#" tabindex="-1" @click="show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
-          </li>
-          <li><a href="#" tabindex="-1" @click="show_add_ec2()"><%= t 'infrastructures.add_ec2' %></a></li>
-          <li>
-            <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
-          </li>
-          <li>
-            <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
-          </li>
-          <li :class="{disabled : no_stack}">
-            <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
-          </li>
-          <li class="divider"></li>
-          <li :class="{disabled : no_stack}">
-            <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
-          </li>
-          <li :class="{disabled : no_stack}">
-            <a href="#" tabindex="-1" @click="show_edit_monitoring()"><%= t 'monitoring.config' %></a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a href="#" tabindex="-1" @click="show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
-          </li>
-        </ul>
-      </li>
+      <%= render 'resource_tabs' %>
     </ul>
 
+    <div class="tabbable col-md-9">
+      <%# create tab-panes %>
+      <div class="tab-pane">
 
-    <%# create tab-panes %>
-    <div class="tab-pane">
+        <%# loading tabpane %>
+        <div v-if="loading">
+          <div-loader></div-loader>
+        </div>
 
-      <%# loading tabpane %>
-      <div v-if="loading">
-        <div-loader></div-loader>
-      </div>
-
-      <div v-show="!loading" v-if="tabpane_active('default')">
-        <%# No stack %>
-        <div v-if="no_stack">
-          <div id="initTop" class="jumbotron">
-            <div class="container">
-              <h3 class="page-header"><%= t 'infrastructures.msg.no_stack_info' %></h3>
-              <pre v-text="current_infra.stack.message">
-              </pre>
+        <div v-show="!loading" v-if="tabpane_active('default')">
+          <%# No stack %>
+          <div v-if="no_stack">
+            <div id="initTop" class="jumbotron">
+              <div class="container">
+                <h3 class="page-header"><%= t 'infrastructures.msg.no_stack_info' %></h3>
+                <pre v-text="current_infra.stack.message">
+                </pre>
+              </div>
             </div>
           </div>
+
+          <%# IN PROGRESS %>
+          <div v-if="is_progress()">
+            <span><%= loading_with_message(t('infrastructures.msg.check_intervals')) %></span>
+          </div>
+
+          <%# Stack Event Table %>
+          <stack-events-table :events="current_infra.events"></stack-events-table>
         </div>
 
-        <%# IN PROGRESS %>
-        <div v-if="is_progress()">
-          <span><%= loading_with_message(t('infrastructures.msg.check_intervals')) %></span>
+        <div v-show="!loading">
+          <add-modify-tabpane         v-if="tabpane_active('add_modify')"         :templates.once="current_infra.templates" :result.sync="current_infra.add_modify"></add-modify-tabpane>
+          <insert-cf-params           v-if="tabpane_active('insert-cf-params')"   :infra_id.once="current_infra.id"></insert-cf-params>
+          <add-ec2-tabpane            v-if="tabpane_active('add-ec2')"            :infra_id.once="current_infra.id"></add-ec2-tabpane>
+          <cf-history-tabpane         v-if="tabpane_active('cf_history')"         :infra_id.once="current_infra.id"></cf-history-tabpane>
+          <stack-events-table         v-if="tabpane_active('event_logs')"         :events.once="current_infra.events"></stack-events-table>
+          <security-groups-tabpane    v-if="tabpane_active('security_groups')"    :infra_id.once="current_infra.id" :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
+          <monitoring-tabpane         v-if="tabpane_active('monitoring')"         :infra_id.once="current_infra.id"></monitoring-tabpane>
+          <edit-monitoring-tabpane    v-if="tabpane_active('edit-monitoring')"    :infra_id.once="current_infra.id"></edit-monitoring-tabpane>
+          <infra-logs-tabpane         v-if="tabpane_active('infra_logs')"         :infra_id.once="current_infra.id"></infra-logs-tabpane>
+          <ec2-tabpane                v-if="tabpane_active('ec2')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></ec2-tabpane>
+          <rds-tabpane                v-if="tabpane_active('rds')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></rds-tabpane>
+          <elb-tabpane                v-if="tabpane_active('elb')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></elb-tabpane>
+          <s3-tabpane                 v-if="tabpane_active('s3')"                 :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></s3-tabpane>
+          <edit-runlist-tabpane       v-if="tabpane_active('edit_runlist')"       :infra_id.once="current_infra.id" ></edit-runlist-tabpane>
+          <edit-attr-tabpane          v-if="tabpane_active('edit_attr')"          :infra_id.once="current_infra.id" ></edit-attr-tabpane>
+          <serverspec-tabpane         v-if="tabpane_active('serverspec')"         :infra_id.once="current_infra.id" ></serverspec-tabpane>
+          <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
+          <operation-sched-tabpane    v-if="tabpane_active('operation-sched')"    :infra_id.once="current_infra.id" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
+          <view-rules-tabpane         v-if="tabpane_active('view-rules')"         :infra_id.once="current_infra.id" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
         </div>
-
-        <%# Stack Event Table %>
-        <stack-events-table :events="current_infra.events"></stack-events-table>
       </div>
-
-      <div v-show="!loading">
-        <add-modify-tabpane         v-if="tabpane_active('add_modify')"         :templates.once="current_infra.templates" :result.sync="current_infra.add_modify"></add-modify-tabpane>
-        <insert-cf-params           v-if="tabpane_active('insert-cf-params')"   :infra_id.once="current_infra.id"></insert-cf-params>
-        <add-ec2-tabpane            v-if="tabpane_active('add-ec2')"            :infra_id.once="current_infra.id"></add-ec2-tabpane>
-        <cf-history-tabpane         v-if="tabpane_active('cf_history')"         :infra_id.once="current_infra.id"></cf-history-tabpane>
-        <stack-events-table         v-if="tabpane_active('event_logs')"         :events.once="current_infra.events"></stack-events-table>
-        <security-groups-tabpane    v-if="tabpane_active('security_groups')"    :infra_id.once="current_infra.id" :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
-        <monitoring-tabpane         v-if="tabpane_active('monitoring')"         :infra_id.once="current_infra.id"></monitoring-tabpane>
-        <edit-monitoring-tabpane    v-if="tabpane_active('edit-monitoring')"    :infra_id.once="current_infra.id"></edit-monitoring-tabpane>
-        <infra-logs-tabpane         v-if="tabpane_active('infra_logs')"         :infra_id.once="current_infra.id"></infra-logs-tabpane>
-        <ec2-tabpane                v-if="tabpane_active('ec2')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></ec2-tabpane>
-        <rds-tabpane                v-if="tabpane_active('rds')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></rds-tabpane>
-        <elb-tabpane                v-if="tabpane_active('elb')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></elb-tabpane>
-        <s3-tabpane                 v-if="tabpane_active('s3')"                 :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></s3-tabpane>
-        <edit-runlist-tabpane       v-if="tabpane_active('edit_runlist')"       :infra_id.once="current_infra.id" ></edit-runlist-tabpane>
-        <edit-attr-tabpane          v-if="tabpane_active('edit_attr')"          :infra_id.once="current_infra.id" ></edit-attr-tabpane>
-        <serverspec-tabpane         v-if="tabpane_active('serverspec')"         :infra_id.once="current_infra.id" ></serverspec-tabpane>
-        <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id.once="tabpaneGroupID"   ></serverspec-results-tabpane>
-        <operation-sched-tabpane    v-if="tabpane_active('operation-sched')"    :infra_id.once="current_infra.id" :columns.once="ops_sched_Columns"></operation-sched-tabpane>
-        <view-rules-tabpane         v-if="tabpane_active('view-rules')"         :infra_id.once="current_infra.id" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
     </div>
   </div>
-</div>
+
+
 </script>
 
 <script id="stack-events-table-template"      type="text/template"> <%= render 'vue/stack_events_table' %> </script>

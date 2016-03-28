@@ -168,6 +168,7 @@
     });
     moment.locale(queryString.lang);
 
+
   });
 
   $(document).on('click', '.show-infra', function (e) {
@@ -204,4 +205,7 @@
     e.preventDefault();
     new_ec2_key();
   });
+
+
+
 })();

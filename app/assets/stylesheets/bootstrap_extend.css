@@ -257,3 +257,23 @@ textarea:focus:invalid {
 .form-control[disabled] {
   background-color: #ddd;
 }
+
+
+
+.back-to-top {
+  background: none;
+  margin: auto;
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  width: 55px;
+  height: 70px;
+  z-index: 100;
+  display: none;
+  text-decoration: none;
+  color: #ff9000;
+}
+
+.back-to-top i {
+  font-size: 60px;
+}
