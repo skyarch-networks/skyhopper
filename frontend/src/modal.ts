@@ -46,9 +46,9 @@ const modal = function (
       $('<button>', {class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel'})
     );
     modal_body.append($("<div>", {text: message}));
-  } else if (modal_type === ModalType.prompt){
+  } else if (modal_type === ModalType.prompt) {
     modal_body.append($("<div>", {html: message}));
-  } else{
+  } else {
     modal_body.append($("<div>", {text: message}));
   }
 
