@@ -43,7 +43,7 @@ class KeyPairsController < ApplicationController
     check_fingerprint(fingerprint)
 
     @ec2.delete_key_pair(key_name: @key_name)
-    
+
     ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(@key_name)), true)
     render nothing: true, status: 200 and return
   end
@@ -60,6 +60,7 @@ class KeyPairsController < ApplicationController
     keys[:key_pairs].each do |item|
       if item.key_fingerprint.eql? fingerprint
         @key_name = item.key_name
+        break
       end
     end
   end
