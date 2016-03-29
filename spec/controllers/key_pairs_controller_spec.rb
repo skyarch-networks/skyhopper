@@ -43,11 +43,13 @@ describe KeyPairsController do
 
   describe '#destroy' do
     let(:region){AWS::Regions.sample}
-    let(:key_name){SecureRandom.hex(10)}
+    let(:fingerprint){SecureRandom.hex(10)}
+    let(:key_name){nil}
 
     before do
+      allow_any_instance_of(KeyPairsController).to receive(:check_fingerprint).with(fingerprint).and_return("key_name")
       expect_any_instance_of(Aws::EC2::Client).to receive(:delete_key_pair).with(key_name: key_name)
-      delete :destroy, region: region, name: key_name, project_id: project.id
+      delete :destroy, region: region, fingerprint: fingerprint, project_id: project.id
     end
 
     should_be_success
