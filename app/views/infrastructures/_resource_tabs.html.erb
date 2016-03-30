@@ -2,8 +2,7 @@
 <%# TODO: DRY %>
 <li v-for="ec2 in current_infra.resources.ec2_instances" :class="{active: tabpaneGroupID === ec2.physical_id}" @click="show_ec2(ec2.physical_id)">
   <a href="#">
-    <span class="label label-warning"><%= fa 'cube' %> EC2</span>&nbsp;
-    <small>{{screen_name(ec2)}}</small>
+    <span class="label label-warning"><%= fa 'cube' %> {{screen_name(ec2)}}</span>&nbsp;
     <small v-if="tabpane_active(ec2.physical_id)"><%= glyphicon 'refresh' %></small>
     <!-- workaround http://stackoverflow.com/questions/18730116/twitter-bootstrap-3-0-how-do-i-badge-badge-important-now -->
     <bootstrap-tooltip v-if="!ec2.serverspec_status" :title="serverspec_failed" class="badge progress-bar-danger">
@@ -22,8 +21,7 @@
 
 <li v-for="elb in current_infra.resources.elb_instances" :class="{active: tabpaneGroupID === elb.physical_id}" @click="show_elb(elb.physical_id)">
   <a href="#">
-    <span class="label label-warning"> <%= fa 'balance-scale' %> ELB</span>&nbsp;
-    <small>{{screen_name(elb)}}</small>
+    <span class="label label-warning"> <%= fa 'balance-scale' %> {{screen_name(elb)}}</span>&nbsp;
     <small v-if="tabpane_active(elb.physical_id)"><%= glyphicon 'refresh' %></small>
   </a>
 </li>

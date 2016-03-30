@@ -6,73 +6,113 @@
   <!-- Back to top Button -->
   <a href="#" class="back-to-top" style="display: none;">
     <i class="fa fa fa-angle-double-up"></i>
-  </a> 
+  </a>
 
-    <div class="row well">
+  <section>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <h3 href="#">
+              <%= t 'infrastructures.stack_info' %>
+                <small>#{{current_infra.stack.name}} :
+                  <span class="label" :class="status_label_class">{{current_infra.stack.status.name}}</span>
+                </small>
+          </h3>
+          </div>
 
-      <div class="col-md-10">
-        <h3 class="text-center"><%= t 'infrastructures.stack_info' %>
-          <small>#{{current_infra.stack.name}} :
-            <span class="label" :class="status_label_class">{{current_infra.stack.status.name}}</span>
-          </small>
-        </h3>
-      </div>
-      <div class="col-md-2">
-        <ul class="nav nav-tabs" role="tablist">
-          <!-- Infrastructure Control TAB -->
-          <li class="dropdown pull-right">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-              <%= t 'common.actions' %>&nbsp;<b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-              <li :class="{disabled : current_infra.token_invalid}">
-                <a href="#" tabindex="-1" @click="show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+            <ul class="nav navbar-nav navbar-right">
+              <!-- Infrastructure Control TAB -->
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <%= t 'common.actions' %>&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
+                </a>
+                <ul class="dropdown-menu rightMenu" role="menu" aria-labelledby="dropdownMenu">
+                  <li :class="{disabled : current_infra.token_invalid}">
+                    <a href="#" tabindex="-1" @click="show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
+                  </li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
+                  </li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li><a href="#" tabindex="-1" @click="show_add_ec2()"><%= t 'infrastructures.add_ec2' %></a></li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
+                  </li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" tabindex="-1" @click="show_edit_monitoring()"><%= t 'monitoring.config' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
+                  </li>
+                </ul>
               </li>
-              <li><a href="#" tabindex="-1" @click="show_add_ec2()"><%= t 'infrastructures.add_ec2' %></a></li>
-              <li>
-                <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
+
+
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  Operations&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
+                </a>
+                <ul class="dropdown-menu rightMenu" role="menu" aria-labelledby="dropdownMenu">
+                  <li :class="{disabled : current_infra.token_invalid}">
+                    <a href="#" tabindex="-1" @click="show_add_modify()"><%= t 'infrastructures.btn.apply_template' %></a>
+                  </li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_cf_history()"><%= t 'infrastructures.btn.template_history' %></a>
+                  </li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li><a href="#" tabindex="-1" @click="show_add_ec2()"><%= t 'infrastructures.add_ec2' %></a></li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
+                  </li>
+                  <li :class="{disabled : no_stack}">
+                    <a href="#" tabindex="-1" @click="show_edit_monitoring()"><%= t 'monitoring.config' %></a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#" tabindex="-1" @click="show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
+                  </li>
+                </ul>
               </li>
-              <li>
-                <a href="#" tabindex="-1" @click="show_sec_groups()"><%= t 'security_groups.btn.security_groups' %></a>
-              </li>
-              <li :class="{disabled : no_stack}">
-                <a href="#" tabindex="-1" @click="show_event_logs()"><%= t 'infrastructures.btn.stack_eventlog' %></a>
-              </li>
-              <li class="divider"></li>
-              <li :class="{disabled : no_stack}">
-                <a href="#" id="show-monitoring" tabindex="-1" @click="show_monitoring()"><%= t 'monitoring.title' %></a>
-              </li>
-              <li :class="{disabled : no_stack}">
-                <a href="#" tabindex="-1" @click="show_edit_monitoring()"><%= t 'monitoring.config' %></a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <a href="#" tabindex="-1" @click="show_infra_logs()"><%= t 'infrastructures.btn.infrastructure_log' %></a>
-              </li>
+
             </ul>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </div>
+      </nav>
 
-    </div>
+  <div>
+    <ul class="nav nav-tabs">
 
 
-
-
-  <div class="container-fluid">
-    <ul class="nav nav-pills nav-stacked col-md-3">
-       <li class="disabled"><a href="#">Resources</a></li>
        <li class="active">
         <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_resources' %></a>
         <a v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
         <a v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
       </li>
       <%= render 'resource_tabs' %>
+
+
     </ul>
 
-    <div class="tabbable col-md-9">
+    <div class="tabbable">
       <%# create tab-panes %>
-      <div class="tab-pane">
+      <div class="tab-pane" >
 
         <%# loading tabpane %>
         <div v-if="loading">
@@ -125,6 +165,7 @@
     </div>
   </div>
 
+</section>
 
 </script>
 

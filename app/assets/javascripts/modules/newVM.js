@@ -37,10 +37,18 @@ module.exports = function (stack, current_infra, current_tab) {
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
-          return res.screen_name + ' / ' + res.physical_id;
+          return res.screen_name + ' / ' + this.subsStr(res.physical_id);
         } else {
-          return res.physical_id;
+          return this.subsStr(res.physical_id);
         }
+      },
+      subsStr: function(string) {
+        if(string.length > 10){
+          return string.substring(0, string.length/2)+"...";
+        }else {
+          return string;
+        }
+
       },
       show_ec2: function (physical_id) {
         this.show_tabpane('ec2');
