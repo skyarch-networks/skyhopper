@@ -8,6 +8,7 @@
 
 class KeyPairsController < ApplicationController
   include Concerns::InfraLogger
+  include ERB::Util
   # --------------- Auth
   before_action :authenticate_user!
 
@@ -29,19 +30,21 @@ class KeyPairsController < ApplicationController
     @key_pairs = KeyPair.all(@project.id)
   end
 
-  # DELETE /key_pairs/:name
+  # DELETE /key_pairs/:fingerprint
   def destroy
     region     = params.require(:region)
-    key_name   = params.require(:name)
+    fingerprint   = params.require(:fingerprint)
 
-    ec2 = Aws::EC2::Client.new(
+    @ec2 = Aws::EC2::Client.new(
       access_key_id:     @project.access_key,
       secret_access_key: @project.secret_access_key,
       region:            region
     )
-    ec2.delete_key_pair(key_name: key_name)
+    check_fingerprint(fingerprint)
 
-    ws_send(t('key_pairs.msg.deleted', name: key_name), true)
+    @ec2.delete_key_pair(key_name: @key_name)
+
+    ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(@key_name)), true)
     render nothing: true, status: 200 and return
   end
 
@@ -51,4 +54,16 @@ class KeyPairsController < ApplicationController
   def set_project
     @project = Project.find(params.require(:project_id))
   end
+
+  def check_fingerprint(fingerprint)
+    keys = @ec2.describe_key_pairs()
+    keys[:key_pairs].each do |item|
+      if item.key_fingerprint.eql? fingerprint
+        @key_name = item.key_name
+        break
+      end
+    end
+  end
+
+
 end

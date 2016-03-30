@@ -39,7 +39,7 @@
         _.find(this.regions, function (region) {
           return region.name === region_name;
         }).selected = true;
-        this.pageNumber = 0
+        this.pageNumber = 0;
       },
       key_pairs_by_region: function (region_name) {
         return _.select(this.key_pairs, function (key_pair) {
@@ -65,7 +65,7 @@
         modal.Confirm(t('key_pairs.key_pairs'), t('key_pairs.msg.confirm', {name: key_pair.name})).done(function () {
           $.ajax({
             type: 'DELETE',
-            url: '/key_pairs/' + key_pair.name,
+            url: '/key_pairs/' + key_pair.fingerprint,
             data: {
               project_id: self.project_id,
               region: key_pair.region
@@ -114,7 +114,7 @@
       showNext: function(){
         if(this.isEndPage) return;
         this.pageNumber++;
-      },
+      }
     },
     computed: {
       isStartPage: function(){
@@ -123,6 +123,11 @@
       isEndPage: function(){
         return ((this.pageNumber + 1) * this.pages >= this.number_of_key_pairs(this.selected));
       },
+      check_length: function(){
+        if(this.selected_key_pairs){
+          return (this.selected_key_pairs.length >= 10);
+        }
+      }
     },
     created: function () {
       this.reload();
