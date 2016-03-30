@@ -1,4 +1,3 @@
-# Amazon Linux 2016.03
 {
     "us-east-1": {
         "AMI": "ami-08111162",
