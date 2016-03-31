@@ -11,6 +11,7 @@
 const enum ModalType {
   confirm,
   alert,
+  prompt,
 }
 
 /**
@@ -30,6 +31,7 @@ const modal = function (
   resolve_func?: (_dfd: JQueryDeferred<any>) => (() => void)
 ): JQueryDeferred<any> {
   const modal_footer = $('<div>', {class: 'modal-footer'});
+  const modal_body = $("<div>", {class: "modal-body"});
   const dfd = $.Deferred();
 
   let resolve: () => void;
@@ -43,7 +45,13 @@ const modal = function (
     modal_footer.append(
       $('<button>', {class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel'})
     );
+    modal_body.append($("<div>", {text: message}));
+  } else if (modal_type === ModalType.prompt) {
+    modal_body.append($("<div>", {html: message}));
+  } else {
+    modal_body.append($("<div>", {text: message}));
   }
+
   modal_footer.append(
     $("<button>", {class: "btn btn-primary", "data-dismiss": "modal", text: "OK", click: resolve})
   );
@@ -68,7 +76,7 @@ const modal = function (
           $("<h4>", {class: "modal-title", text: title})
         )
       ).append(
-        $("<div>", {class: "modal-body", text: message})
+        modal_body
       ).append(
         modal_footer
       )
@@ -109,7 +117,6 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
       )
     )
   );
-
   const resolve_func = function (dfd: JQueryDeferred<any>) {
     return function () {
       const text = (<HTMLInputElement>document.getElementById(input_id)).value;
@@ -117,7 +124,7 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
     };
   };
 
-  const dfd = modal(title, input, ModalType.confirm, status, resolve_func);
+  const dfd = modal(title, input, ModalType.prompt, status, resolve_func);
 
   input.on('keypress', function (e) {
     const ENTER = 13;
