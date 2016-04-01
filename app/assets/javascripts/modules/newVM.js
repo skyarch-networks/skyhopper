@@ -37,8 +37,7 @@ module.exports = function (stack, current_infra, current_tab) {
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
-          var esc = res.screen_name + ' / ' + this.subsStr(res.physical_id);
-          return this.subsStr(esc);
+          return res.screen_name + ' / ' + this.subsStr(res.physical_id);
         } else {
           return this.subsStr(res.physical_id);
         }

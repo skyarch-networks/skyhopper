@@ -11,16 +11,21 @@
   <section>
       <nav class="navbar navbar-default">
         <div class="container-fluid">
+
           <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3">
+              <span class="sr-only">Toggle navigation</span>
+              <%= fa 'caret-square-o-down fa-3x' %>
+            </button>
             <h3 href="#">
               <%= t 'infrastructures.stack_info' %>
                 <small>#{{current_infra.stack.name}} :
                   <span class="label" :class="status_label_class">{{current_infra.stack.status.name}}</span>
                 </small>
-          </h3>
+            </h3>
           </div>
 
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-3">
 
             <ul class="nav navbar-nav navbar-right">
               <!-- Infrastructure Control TAB -->
@@ -75,7 +80,9 @@
 
             </ul>
           </div>
+
         </div>
+
       </nav>
 
   <div>
