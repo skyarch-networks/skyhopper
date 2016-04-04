@@ -25,6 +25,12 @@ module ClientsHelper
     return Pundit.policy(current_user, client).destroy? ? true : false
   end
 
+  def edit_url(client)
+    return nil unless Pundit.policy(current_user, client).destroy?
+    return edit_client_path(client)
+  end
+
+
   # def button_delete_client(client)
   #   return nil unless Pundit.policy(current_user, client).destroy?
   #

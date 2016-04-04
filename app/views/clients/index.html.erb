@@ -13,15 +13,27 @@
 
 
 <div id="indexElement" v-el:node>
-  <div class="col-md-9">
-      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>">
-  </div>
+  <form class="navbar-form navbar-left" role="search">
+    <div class="form-group">
+      <input type="text" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>">
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      <a class='btn btn-info btn-xs' href="/projects?lang={{lang}}&amp;client_id={{picked.id}}" v-if="picked" ><%= t 'helpers.links.show' %></a>
+      <a class="btn btn-default btn-xs"
+        v-bind:href="picked.edit_url"
+        v-if="can_edit()">
+        <span class='glyphicon glyphicon-edit'></span>
+        <%= t 'helpers.links.edit' %>
+      </a>
 
-  <div class="col-md-3">
-    <a class='btn btn-info btn-xs' @click="show_entry()" :class="{disabled: !picked}" ><%= t 'helpers.links.show' %></a>
-    <a class="btn btn-default btn-xs" @click="edit_entry()" :class="{disabled: !can_edit()}"><span class='glyphicon glyphicon-edit'></span> <%= t 'helpers.links.edit' %></a>
-    <a class="btn btn-danger btn-xs" @click="edit_entry()" :class="{disabled: !can_delete()}"><span class='glyphicon glyphicon-remove'></span> <%= t 'helpers.links.remove' %></a>
-  </div>
+      <a class="btn btn-danger btn-xs" data-method='delete'
+      href="/clients/{{picked.id}}?lang={{lang}}"
+      :class="{disabled: picked.code[1] > 0}" v-if="can_delete()">
+        <%= t 'common.btn.delete' %>
+      </a>
+    </ul>
+
+  </form>
 
   <demo-grid
   :data="gridData"

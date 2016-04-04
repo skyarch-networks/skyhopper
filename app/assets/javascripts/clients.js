@@ -60,6 +60,7 @@
       select_entry: function(item)  {
         this.$parent.picked = item;
         this.picked = item;
+        console.log(item);
       },
       show_entry: function(item){
         console.log(item);
@@ -92,7 +93,8 @@
                  name: item.name,
                  id: item.id,
                  can_edit: item.can_edit,
-                 can_delete: item.can_delete
+                 can_delete: item.can_delete,
+                 edit_url: item.edit_url
                };
              });
              self.$emit('data-loaded');
@@ -127,6 +129,7 @@
       searchQuery: '',
       gridColumns: ['code','name'],
       gridData: [],
+      lang: queryString.lang,
       picked: null,
     },
     methods: {
@@ -139,7 +142,7 @@
         if (this.picked){
           return this.picked.can_delete ? true : false;
         }
-      }
+      },
     }
   });
 
