@@ -38,6 +38,7 @@
         pages: 10,
         pageNumber: 0,
         filteredLength: null,
+        picked: null,
         };
       },
     methods: {
@@ -56,6 +57,9 @@
           if(this.isEndPage) return;
           this.pageNumber++;
       },
+      select_entry: function(item)  {
+        this.picked = item; 
+      }
     },
     computed: {
       isStartPage: function(){
@@ -115,7 +119,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name','id'],
+      gridColumns: ['code','name'],
       gridData: []
     }
   });

@@ -25,10 +25,10 @@
         | count
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
-        <td v-for="key in columns">
+        <td v-for="key in columns" @click="select_entry(entry)">
+          <input v-if="$index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
           <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         </td>
-
       </tr>
       <tr  v-if="filteredLength === 0 && data.length > 0">
         <td v-if="lang === 'en'"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
