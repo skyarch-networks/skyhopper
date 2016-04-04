@@ -13,27 +13,32 @@
 
 
 <div id="indexElement" v-el:node>
-  <form class="navbar-form navbar-left" role="search">
-    <div class="form-group">
-      <input type="text" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>">
-    </div>
-    <ul class="nav navbar-nav navbar-right">
-      <a class='btn btn-info btn-xs' href="/projects?lang={{lang}}&amp;client_id={{picked.id}}" v-if="picked" ><%= t 'helpers.links.show' %></a>
+
+  <ul class="nav nav-tabs">
+    <li><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></li>
+
+    <li class="dropdown pull-right">
+          <a class="btn btn-danger btn-xs" data-method='delete'
+          href="/clients/{{picked.id}}?lang={{lang}}"
+          :class="{disabled: picked.code[1] > 0}" v-if="can_delete()">
+            <%= fa 'times text-danger' %>
+            <%= t 'common.btn.delete' %>
+          </a>
+    </li>
+
+    <li class="dropdown pull-right">
       <a class="btn btn-default btn-xs"
-        v-bind:href="picked.edit_url"
-        v-if="can_edit()">
-        <span class='glyphicon glyphicon-edit'></span>
-        <%= t 'helpers.links.edit' %>
+          v-bind:href="picked.edit_url"
+          v-if="can_edit()">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
       </a>
+    </li>
 
-      <a class="btn btn-danger btn-xs" data-method='delete'
-      href="/clients/{{picked.id}}?lang={{lang}}"
-      :class="{disabled: picked.code[1] > 0}" v-if="can_delete()">
-        <%= t 'common.btn.delete' %>
-      </a>
-    </ul>
-
-  </form>
+    <li class="dropdown pull-right">
+      <a class='btn btn-info btn-xs' href="/projects?lang={{lang}}&amp;client_id={{picked.id}}" v-if="picked" ><%= t 'helpers.links.show' %></a>
+    </li>
+  </ul>
 
   <demo-grid
   :data="gridData"
