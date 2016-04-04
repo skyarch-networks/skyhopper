@@ -10,11 +10,19 @@
 
 <!-- demo root element -->
 
+
+
 <div id="indexElement" v-el:node>
-  <div class="col-md-4 input-group">
-      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-      <hr>
+  <div class="col-md-9">
+      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>">
   </div>
+
+  <div class="col-md-3">
+    <a class='btn btn-info btn-xs' @click="show_entry()" :class="{disabled: !picked}" ><%= t 'helpers.links.show' %></a>
+    <a class="btn btn-default btn-xs" @click="edit_entry()" :class="{disabled: !can_edit()}"><span class='glyphicon glyphicon-edit'></span> <%= t 'helpers.links.edit' %></a>
+    <a class="btn btn-danger btn-xs" @click="edit_entry()" :class="{disabled: !can_delete()}"><span class='glyphicon glyphicon-remove'></span> <%= t 'helpers.links.remove' %></a>
+  </div>
+
   <demo-grid
   :data="gridData"
   :columns="gridColumns"

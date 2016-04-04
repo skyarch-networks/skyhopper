@@ -38,7 +38,7 @@
         pages: 10,
         pageNumber: 0,
         filteredLength: null,
-        picked: null,
+        picked: null
         };
       },
     methods: {
@@ -58,7 +58,11 @@
           this.pageNumber++;
       },
       select_entry: function(item)  {
-        this.picked = item; 
+        this.$parent.picked = item;
+        this.picked = item;
+      },
+      show_entry: function(item){
+        console.log(item);
       }
     },
     computed: {
@@ -87,6 +91,8 @@
                  code: [item.code,item.projects],
                  name: item.name,
                  id: item.id,
+                 can_edit: item.can_edit,
+                 can_delete: item.can_delete
                };
              });
              self.$emit('data-loaded');
@@ -120,7 +126,20 @@
     data: {
       searchQuery: '',
       gridColumns: ['code','name'],
-      gridData: []
+      gridData: [],
+      picked: null,
+    },
+    methods: {
+      can_edit: function() {
+        if (this.picked){
+          return this.picked.can_edit ? true : false;
+        }
+      },
+      can_delete: function() {
+        if (this.picked){
+          return this.picked.can_delete ? true : false;
+        }
+      }
     }
   });
 
