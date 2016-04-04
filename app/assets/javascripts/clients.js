@@ -75,10 +75,12 @@
            cache: false,
            url:'clients?lang='+self.lang,
            success: function (data) {
+             console.log(data);
+
              this.pages = data.length;
              self.data = data.map(function (item) {
                return {
-                 code: [item.code,item.projects.length],
+                 code: [item.code,item.projects],
                  name: item.name,
                  id: item.id,
                };
@@ -109,7 +111,7 @@
  });
 
 
-  var demo = new Vue({
+  new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
@@ -117,4 +119,5 @@
       gridData: []
     }
   });
+
 })();

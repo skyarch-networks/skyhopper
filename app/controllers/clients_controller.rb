@@ -30,7 +30,7 @@ class ClientsController < ApplicationController
     page = params[:page] || 1
     @clients = Client.page(page)
     respond_to do |format|
-      format.json { render json: @clients.as_json( include: [{projects: {only: [:count]}}])}
+      format.json
       format.html
     end
   end

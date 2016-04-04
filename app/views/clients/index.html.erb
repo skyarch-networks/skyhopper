@@ -5,26 +5,27 @@
   <%= breadcrumbs %>
 </div>
 
- <%= render 'vue/index' %>
+<!-- component template -->
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<table class="table table-hover hidden">
-  <tbody>
-    <% @clients.each do |client| %>
-      <tr>
-        <td>
-          <%= link_to t('clients.btn.show_projects'),
-            projects_path(client_id: client.id),
-            class: 'btn btn-xs btn-info' %>
+<!-- demo root element -->
 
-          <% if current_user.admin? %>
-            <%= button_edit_client(client) %>
-            <%= button_delete_client(client) %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div id="indexElement" v-el:node>
+  <div class="col-md-4 input-group">
+      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+      <hr>
+  </div>
+  <demo-grid
+  :data="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery">
+  </demo-grid>
+</div>
+
+<div  id="empty" style="display: none;"></div>
+<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<hr>
+
 
 <%= link_to(
   t('clients.btn.add'),
