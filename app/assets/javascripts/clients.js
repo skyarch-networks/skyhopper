@@ -12,6 +12,7 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
+  var modal = require('modal');
   var app;
 
 
@@ -60,10 +61,9 @@
       select_entry: function(item)  {
         this.$parent.picked = item;
         this.picked = item;
-        console.log(item);
       },
       show_entry: function(item){
-        console.log(item);
+        window.location.assign("/projects?lang="+this.lang+"&client_id="+item.id+"");
       }
     },
     computed: {
@@ -134,15 +134,27 @@
     },
     methods: {
       can_edit: function() {
-        if (this.picked){
+        if (this.picked)
           return this.picked.can_edit ? true : false;
-        }
       },
       can_delete: function() {
-        if (this.picked){
+        if (this.picked)
           return this.picked.can_delete ? true : false;
-        }
       },
+      delete_entry: function()  {
+        var id = this.picked.id;
+        modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/clients/"+id+"?lang="+this.lang,
+                    dataType: "json",
+                    data: {"_method":"delete"},
+                });
+                event.preventDefault();
+                location.reload();
+        });
+      }
+
     }
   });
 

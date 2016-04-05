@@ -107,6 +107,7 @@ en:
       updated:            'Client was successfully updated.'
       deleted:            'Client was successfully deleted.'
       cant_change_system: 'Unable to change client for this system.'
+      delete_client:      'Are you sure you want to delete this client?'
 
 
   projects:

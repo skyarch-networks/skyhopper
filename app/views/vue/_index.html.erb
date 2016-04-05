@@ -24,9 +24,8 @@
         | filterBy filterKey
         | count
         | orderBy sortKey sortOrders[sortKey]
-        | paginate">
-        <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)" :class="{active: picked == entry}">
-          <input v-if="$index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
+        | paginate" :class="{info: picked == entry}">
+        <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
           <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
         </td>
       </tr>
