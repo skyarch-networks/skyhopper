@@ -27,7 +27,7 @@
              <%= t 'common.btn.settings' %> <span class="caret"></span>
            </a>
            <ul class="dropdown-menu">
-             <li>
+             <li v-if="picked">
                <a :href="picked.project_settings.dishes_path"><%= t ('dishes.dishes') %> </a>
                <a :href="picked.project_settings.key_pairs_path"><%= t('key_pairs.key_pairs') %> </a>
                <a :href="picked.project_settings.project_parameters_path"><%= t('project_parameters.title') %> </a>
@@ -36,9 +36,9 @@
          </div>
     </div>
 
-    <div class="pull-right">
+    <div class="pull-right" v-cloak="picked">
       <a class="btn btn-default btn-sm disabled"
-          v-bind:href="picked.edit_project_url" :class="{disabled: !can_edit()}">
+          :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
           <span class='glyphicon glyphicon-edit'></span>
           <%= t 'helpers.links.edit' %>
       </a>&nbsp

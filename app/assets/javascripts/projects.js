@@ -57,6 +57,9 @@
         this.$parent.picked = item;
         this.picked = item;
       },
+      show_entry: function(item){
+        window.location.assign(item.infrastructures_path);
+      }
     },
     computed: {
       isStartPage: function(){
@@ -91,7 +94,8 @@
                  id: item.id,
                  edit_project_url: item.edit_project_url,
                  delete_project_url: item.delete_project_url,
-                 project_settings: item.project_settings
+                 project_settings: item.project_settings,
+                 infrastructures_path: item.infrastructures_path
                };
              });
              self.$emit('data-loaded');

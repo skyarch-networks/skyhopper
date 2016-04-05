@@ -107,7 +107,7 @@ ja:
       updated:            '顧客が正常に更新されました'
       deleted:            '顧客が正常に削除されました'
       cant_change_system: 'システム用の顧客は変更できません'
-
+      delete_client:     'あなたはこのクライアントを削除してもよろしいですか？'
 
   projects:
     project:           '案件'
@@ -126,6 +126,7 @@ ja:
       deleted:            '案件が正常に削除されました'
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
+      delete_project:     'あなたはこのプロジェクトを削除してもよろしいですか？'
 
   project_parameters:
     title: 'パラメーター'
