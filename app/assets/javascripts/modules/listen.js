@@ -90,12 +90,7 @@ function render_infrastructures(value, key, lang){
 }
 
 function render_clients(value, key, lang){
-  if(key === 'id'){
-    var edit = ( $('#edit-'+value+'').attr('class') ?  "<a class='btn btn-default btn-xs' href='/clients/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : "");
-    var ret = "<a class='btn btn-xs btn-info ' href='/projects?lang="+lang+"&amp;client_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('clients.btn.show_projects')+"</a> ";
-    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='"+$('#delete-'+value+'').attr('class')+"' rel='nofollow' data-method='delete' href='/clients/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
-       return ret+edit+del;
-  }else if (key === 'code') {
+  if (key === 'code') {
     return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('clients.projects')+"</span>";
   }else{
     return value;
@@ -103,25 +98,7 @@ function render_clients(value, key, lang){
 }
 
 function render_projects(value, key, lang){
-  if(key === 'id'){
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var del = ( $('#delete-'+value+'').attr('class') ? "<a data-confirm='Are you sure?'' class='"+isDelete+"' rel='nofollow' data-method='delete' href='/projects/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>" : "");
-    var edit = ( $('#edit-'+value+'').attr('class') ? " <a class='btn btn-default btn-xs' href='/projects/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> " : "");
-    var ret = "<a class='btn btn-xs btn-info ' href='/infrastructures?lang="+lang+"&amp;project_id="+value+"'' ><span class='glyphicon glyphicon-info-sign'></span> "+t('projects.btn.show_infrastructures')+"</a> " +
-      "<div class='btn-group'>" +
-        "<a class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' href='#' aria-expanded='false'>" +
-          t ('common.btn.settings')+ " <span class='caret'></span>" +
-        "</a>" +
-        "<ul class='dropdown-menu'>" +
-          "<li>" +
-            "<a href='/dishes?lang="+lang+"&amp;project_id="+value+"'>"+t('dishes.dishes')+"</a>" +
-            "<a href='/key_pairs?lang="+lang+"&amp;project_id="+value+"'>"+t('key_pairs.key_pairs')+"</a>" +
-            "<a href='/project_parameters?lang="+lang+"&amp;project_id="+value+"'>"+t('project_parameters.title')+"</a>" +
-          "</li>" +
-        "</ul>" +
-      "</div>";
-       return ret+edit+del;
-  }else if (key === 'code') {
+  if (key === 'code') {
     return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('projects.infras')+"</span>";
   }else{
     return value;

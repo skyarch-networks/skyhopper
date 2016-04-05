@@ -9,6 +9,7 @@ json.array!(@projects) do |project|
   json.dishes_path dishes_path(project_id: project.id)
   json.key_pairs_path key_pairs_path(project_id: project.id)
   json.project_parameters_path project_parameters_path(project_id: project.id)
+  json.project_settings  project_settings(project)
 
   if current_user.admin?
     json.delete_project_url delete_project_url(project)

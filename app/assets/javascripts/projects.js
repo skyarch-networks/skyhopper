@@ -90,7 +90,8 @@
                  access_key: item_key,
                  id: item.id,
                  edit_project_url: item.edit_project_url,
-                 delete_project_url: item.delete_project_url
+                 delete_project_url: item.delete_project_url,
+                 project_settings: item.project_settings
                };
              });
              self.$emit('data-loaded');
@@ -134,11 +135,11 @@
       },
       can_delete: function() {
         if (this.picked)
-          return this.picked.delete_project_url ? true : false;
+          return this.picked.code[1] > 0 ? true : false;
       },
       delete_entry: function()  {
         var delete_project_url = this.picked.delete_project_url;
-        modal.Confirm(t('projects.project'), t('clients.msg.delete_client'), 'danger').done(function () {
+        modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
           $.ajax({
             type: "POST",
             url: delete_project_url,
