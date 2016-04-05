@@ -5,48 +5,42 @@
   <%= breadcrumbs(@selected_client) if current_user.master? %>
 </div>
 
-<%= render 'vue/index' %>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<table class="table table-hover hidden">
-  <tbody>
-    <% @projects.each do |project| %>
-      <tr class="projects-row <%= 'info' if project.id == @selected_project_id %>">
-        <td>*****<%= project.access_key[-3..-1] %></td>
-        <td>
-          <%= link_to t('projects.btn.show_infrastructures'),
-            infrastructures_path(project_id: project.id),
-            class: 'btn btn-xs btn-info' %>
+<div id="indexElement" v-el:node>
 
-          <div class="btn-group">
-            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#">
-              <%= t 'common.btn.settings' %> <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <%= link_to t('dishes.dishes'), dishes_path(project_id: project.id) %>
-                <%= link_to t('key_pairs.key_pairs'), key_pairs_path(project_id: project.id) %>
-                <%= link_to t('project_parameters.title'), project_parameters_path(project_id: project.id) %>
-              </li>
-            </ul>
-          </div>
+  <div>
+    <div class="col-md-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
-          <% if current_user.admin? %>
+    <div class="pull-right">
+      <a class="btn btn-danger btn-sm"
+      @click="delete_entry()"
+        :class="{disabled: picked.code[1] > 0}" v-if="can_delete()">
+          <%= fa 'times' %>
+          <%= t 'common.btn.delete' %>
+      </a>&nbsp
+    </div>
 
-            <%= link_to t('.edit', default: t("helpers.links.edit")),
-              edit_project_path(project),
-              class: 'btn btn-default btn-xs',
-              id: 'edit-'+project.id.to_s %>
+    <div class="pull-right">
+      <a class="btn btn-default btn-sm"
+          v-bind:href="picked.edit_project_url"
+          v-if="can_edit()">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
+      </a>&nbsp
+    </div>
+  </div>
 
-            <%= button_delete_project(project) %>
+  <demo-grid
+  :data="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery">
+  </demo-grid>
+</div>
 
-          <% end %>
-
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
+<div  id="empty" style="display: none;"></div>
+<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<hr>
 
 
 <%= button_add_project(@selected_client) %>

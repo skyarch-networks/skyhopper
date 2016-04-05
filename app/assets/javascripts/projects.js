@@ -12,6 +12,7 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
+  var modal = require('modal');
   var app;
 
   Vue.component('demo-grid', {
@@ -35,6 +36,7 @@
         pages: 10,
         pageNumber: 0,
         filteredLength: null,
+        picked: null,
           };
       },
     methods: {
@@ -50,6 +52,10 @@
       showNext: function(){
           if(this.isEndPage) return;
           this.pageNumber++;
+      },
+      select_entry: function(item)  {
+        this.$parent.picked = item;
+        this.picked = item;
       },
     },
     computed: {
@@ -74,13 +80,17 @@
            success: function (data) {
              this.pages = data.length;
              self.data = data.map(function (item) {
+               console.log(item);
+
                var item_key = '*****'+item.access_key.substring(item.access_key.length-3,item.access_key.length);
                return {
-                 code: [item.code, item.infrastructures.length],
+                 code: [item.code, item.infrastructures],
                  name: item.name,
                  cloud_provider: item.cloud_provider.name,
                  access_key: item_key,
                  id: item.id,
+                 edit_project_url: item.edit_project_url,
+                 delete_project_url: item.delete_project_url
                };
              });
              self.$emit('data-loaded');
@@ -113,8 +123,33 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'cloud_provider', 'access_key', 'id'],
-      gridData: []
-    }
+      gridColumns: ['code','name', 'cloud_provider', 'access_key'],
+      gridData: [],
+      picked: null
+    },
+    methods: {
+      can_edit: function() {
+        if (this.picked)
+          return this.picked.edit_project_url ? true : false;
+      },
+      can_delete: function() {
+        if (this.picked)
+          return this.picked.delete_project_url ? true : false;
+      },
+      delete_entry: function()  {
+        var delete_project_url = this.picked.delete_project_url;
+        modal.Confirm(t('projects.project'), t('clients.msg.delete_client'), 'danger').done(function () {
+          $.ajax({
+            type: "POST",
+            url: delete_project_url,
+            dataType: "json",
+            data: {"_method":"delete"},
+          });
+          event.preventDefault();
+          location.reload();
+        });
+      }
+    },
+
   });
 })();
