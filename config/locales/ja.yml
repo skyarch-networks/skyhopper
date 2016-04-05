@@ -518,7 +518,7 @@ ja:
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
 
-  zabbix_server:
+  zabbix_servers:
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'
@@ -531,6 +531,7 @@ ja:
       start:          'Zabbix Server を起動しています...'
       stop:           'Zabbix Server を停止しています...'
       not_running:    'Zabbix Server が起動していません'
+      connrefused:    'Zabbix Server に接続できませんでした。Zabbix Server の設定を確認してください。'
 
   ec2_instances:
     description:       '詳細'
