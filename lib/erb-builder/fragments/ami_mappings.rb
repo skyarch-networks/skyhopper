@@ -1,10 +1,10 @@
-# Amazon Linux 2016.03
+# Amazon Linux AMI 2016.03.0 (https://aws.amazon.com/amazon-linux-ami/)
 {
     "us-east-1": {
         "AMI": "ami-08111162",
     },
     "us-west-1": {
-        "AMI": "ami-c229c0a2",
+        "AMI": "ami-1b0f7d7b",
     },
     "us-west-2": {
         "AMI": "ami-c229c0a2",

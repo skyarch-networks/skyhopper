@@ -16,7 +16,7 @@ SkyHopper::Application.routes.draw do
   resources :projects, except: :show
   resource :project_parameters, only: [:show, :update]
 
-  resources :key_pairs, only: [:index, :destroy], param: :name do
+  resources :key_pairs, only: [:index, :destroy], param: :fingerprint do
     collection do
       get  'retrieve'
     end
