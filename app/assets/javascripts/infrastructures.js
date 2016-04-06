@@ -91,6 +91,10 @@
 
   // for infrastructures#new
   var new_ec2_key = function () {
+    var region_input = $('#infrastructure_region');
+    var region = region_input.val();
+    var project_id = $('#infrastructure_project_id').val();
+    var name_file;
     modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).then(function () {
       return modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name'));
     }).then(function (name) {
@@ -99,10 +103,7 @@
         return;
       }
 
-      var region_input = $('#infrastructure_region');
-      var region = region_input.val();
-      var project_id = $('#infrastructure_project_id').val();
-
+      name_file = name;
       return $.ajax({
         url: '/ec2_private_keys',
         type: 'POST',
@@ -117,13 +118,13 @@
       var textarea = $('#keypair_value');
       var keypair_name = $('#keypair_name');
       textarea.val(value);
+      keypair_name.val(name_file);
       textarea.attr('readonly', true);
-      keypair_name.val(name);
       keypair_name.attr('readonly', true);
       region_input.attr('readonly', true);
 
       // download file.
-      var file = new File([value], name + '.pem');
+      var file = new File([value], name_file + '.pem');
       var url = window.URL.createObjectURL(file);
       var a = document.createElement('a');
       a.href = url;
@@ -188,9 +189,12 @@
       detach_infra: function()  {
         detach(this.picked.id);
       }
-
     }
   });
+
+
+
+
 
   $(document).on('click', '.create_ec2_key', function (e) {
     e.preventDefault();
