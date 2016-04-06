@@ -37,14 +37,14 @@
   <demo-grid
   :data="gridData"
   :columns="gridColumns"
-  :filter-key="searchQuery">
+  :filter-key="searchQuery"
+  :index="index">
   </demo-grid>
 </div>
 
 <div  id="empty" style="display: none;"></div>
 <span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
 <hr>
-
 
 <%= link_to(
   t('clients.btn.add'),

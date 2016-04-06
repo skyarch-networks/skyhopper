@@ -15,13 +15,16 @@
   var modal = require('modal');
   var app;
 
+
+
   Vue.component('demo-grid', {
     template: '#grid-template',
     replace: true,
     props: {
       data: Array,
       columns: Array,
-      filterKey: String
+      filterKey: String,
+      index: String
     },
     data: function () {
       var sortOrders = {};
@@ -74,9 +77,6 @@
         var self = this;
         self.loading = true;
         var id =  queryString.client_id;
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"
-                          ];
        $.ajax({
            cache: false,
            url:'projects?client_id='+id+'&lang='+self.lang,

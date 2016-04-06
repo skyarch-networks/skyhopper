@@ -6,22 +6,22 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function (value, key, option, lang) {
-  if(option[0] === 'infrastructure'){
+module.exports = function (value, key, index, lang) {
+  if(index === 'infrastructure'){
     return render_infrastructures(value, key, lang);
-  }else if(option[0] === 'project'){
+  }else if(index === 'project'){
     return render_projects(value, key, lang);
-  }else if (option[0] === 'client') {
+  }else if (index === 'client') {
     return render_clients(value, key, lang);
-  }else if (option[0] === 'serverspec') {
+  }else if (index === 'serverspec') {
     return render_serverspecs(value, key, lang);
-  }else if (option[0] === 'dish') {
+  }else if (index === 'dish') {
     return render_dish(value, key, lang);
-  }else if (option[0] === 'cf_template') {
+  }else if (index === 'cf_template') {
     return render_cf_templates(value, key, lang);
-  }else if (option[0] === 'user_admin') {
+  }else if (index === 'user_admin') {
     return render_user_admin(value, key, lang);
-  }else if (option[0] === 'serverspec_results') {
+  }else if (index === 'serverspec_results') {
     return render_serverspecs_results(value, key);
   }else{
     return value;
