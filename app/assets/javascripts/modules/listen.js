@@ -9,9 +9,9 @@
 module.exports = function (value, key, index, lang) {
   if(index === 'infrastructure'){
     return render_infrastructures(value, key, lang);
-  }else if(index === 'project'){
+  }else if(index === 'projects'){
     return render_projects(value, key, lang);
-  }else if (index === 'client') {
+  }else if (index === 'clients') {
     return render_clients(value, key, lang);
   }else if (index === 'serverspec') {
     return render_serverspecs(value, key, lang);

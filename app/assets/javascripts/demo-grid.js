@@ -53,7 +53,7 @@ module.exports = Vue.extend({
     show_entry: function(item){
       var self = this;
       switch (self.index) {
-        case 'client':
+        case 'clients':
           window.location.assign(item.projects_path);
           break;
         case 'projects':
@@ -153,7 +153,7 @@ module.exports = Vue.extend({
   created: function (){
     var self = this;
     switch (self.index) {
-      case 'client':
+      case 'clients':
         self.fetch_clients();
         break;
       case 'projects':

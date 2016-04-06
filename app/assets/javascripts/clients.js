@@ -17,9 +17,6 @@
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
-
-Vue.config.debug = true;
-
   new Vue({
     el: '#indexElement',
     data: {
@@ -31,7 +28,7 @@ Vue.config.debug = true;
         edit_client_path: null,
         code: null
       },
-      index: 'client'
+      index: 'clients'
     },
     methods: {
       can_edit: function() {
