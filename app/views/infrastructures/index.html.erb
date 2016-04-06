@@ -17,12 +17,12 @@
 
       <div class="pull-right">
         <div class='btn-group'>
-            <a class='btn btn-sm btn-danger' data-toggle='dropdown' href='#'>
-              <%= fa 'trash' %><%= t('infrastructures.btn.delete_stack') %>&nbsp;<span class='caret'></span>
+            <a class='btn btn-sm btn-danger disabled' data-toggle='dropdown' href='#' :class="{disabled: !can_delete()}">
+              <%= fa 'trash' %> <%= t('infrastructures.btn.delete_stack') %>&nbsp;<span class='caret'></span>
             </a>
            <ul class='dropdown-menu'>
             <li>
-             <a class='delete-stack' href='#'>Execute</a>
+             <a class='delete-stack' href='#' @click="delete_stack()">Execute</a>
           </li>
           </ul>
          </div>
@@ -30,7 +30,7 @@
 
       <div class="pull-right">
         <div class="btn-group">
-          <a class='btn btn-sm btn-warning' href='#'><%= fa 'chain-broken' %> <%= t('helpers.links.detach') %></a>&nbsp
+          <a class='btn btn-sm btn-warning disabled' href='#' @click="detach_infra()" :class="{disabled: !can_detach()}"><%= fa 'chain-broken' %> <%= t('helpers.links.detach') %></a>&nbsp
         </div>
       </div>
 
@@ -42,7 +42,7 @@
              <ul class="dropdown-menu">
                <li v-if="picked">
                  <a href='#'> <%=  t('infrastructures.btn.operation_schedule') %></a>
-                 <a href='/serverspecs?infrastructure_id="+value[0]+"&amp;lang='"+lang+">Serverspecs</a>
+                 <a :href='picked.serverspecs_path'>Serverspecs</a>
                </li>
              </ul>
         </div>
@@ -50,7 +50,7 @@
 
       <div class="pull-right" v-cloak="picked">
         <a class="btn btn-default btn-sm disabled"
-            :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
+            :href="picked.edit_infrastructure_path" :class="{disabled: !can_edit()}">
             <span class='glyphicon glyphicon-edit'></span>
             <%= t 'helpers.links.edit' %>
         </a>&nbsp

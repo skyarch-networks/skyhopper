@@ -59,6 +59,9 @@ module.exports = Vue.extend({
         case 'projects':
           window.location.assign(item.infrastructures_path);
           break;
+        case 'infrastructures':
+          self.$parent.show_infra(item.id);
+          break;
       }
 
     },
@@ -96,11 +99,12 @@ module.exports = Vue.extend({
     fetch_infras: function(){
       var self = this;
       var id =  queryString.project_id;
-      
+
       $.ajax({
         cache: false,
         url:'/infrastructures?&project_id='+id,
         success: function (data) {
+          console.log(data);
           self.data = data;
           this.pages = data.length;
           self.close_loading();

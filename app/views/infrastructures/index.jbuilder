@@ -12,6 +12,12 @@ json.array!(@infrastructures) do |infra|
   json.ec2_private_key_id infra.ec2_private_key_id
   json.keypairname infra.keypairname
 
+  # Button functions logic
+  json.edit_infrastructure_path edit_infra(infra)
+  json.button_detach_stack button_detach_stack(infra)
+  json.button_delete_stack button_delete_stack(infra)
+  json.serverspecs_path serverspecs_path(infrastructure_id: infra.id)
+
 
   json.url infrastructure_url(infra, format: :json)
 end

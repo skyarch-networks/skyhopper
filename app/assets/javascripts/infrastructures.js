@@ -151,7 +151,9 @@
       gridColumns: [],
       gridData: [],
       picked: {
-        code: null
+        button_delete_stack: null,
+        edit_infrastructure_path: null,
+        button_detach_stack: null
       },
       index: 'infrastructures'
     },
@@ -162,15 +164,17 @@
           this.gridColumns = ['stack_name','region', 'keypairname'];
 
       moment.locale(queryString.lang);
+
     },
     methods: {
       can_edit: function() {
-        if (this.picked.edit_client_path)
-          return this.picked.edit_client_path ? true : false;
+        return (this.picked.edit_infrastructure_path);
       },
       can_delete: function() {
-        if (this.picked.code)
-          return (this.picked.code[1] > 0);
+        return (this.picked.button_delete_stack);
+      },
+      can_detach: function() {
+        return (this.picked.button_detach_stack);
       },
       delete_stack: function()  {
         delete_stack(this.picked.id);
