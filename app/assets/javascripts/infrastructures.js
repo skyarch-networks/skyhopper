@@ -153,9 +153,9 @@
     },
     created: function(){
         if (queryString.project_id >3)
-          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status', 'id'];
+          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
         else
-          this.gridColumns = ['stack_name','region', 'keypairname', 'id'];
+          this.gridColumns = ['stack_name','region', 'keypairname'];
     },
   });
 

@@ -63,7 +63,7 @@
         this.picked = item;
       },
       show_entry: function(item){
-        window.location.assign("/projects?lang="+this.lang+"&client_id="+item.id+"");
+        window.location.assign(item.projects_path);
       }
     },
     computed: {
@@ -84,19 +84,8 @@
            cache: false,
            url:'clients?lang='+self.lang,
            success: function (data) {
-             console.log(data);
-
+             self.data = data;
              this.pages = data.length;
-             self.data = data.map(function (item) {
-               return {
-                 code: [item.code,item.projects],
-                 name: item.name,
-                 id: item.id,
-                 can_edit: item.can_edit,
-                 can_delete: item.can_delete,
-                 edit_url: item.edit_url
-               };
-             });
              self.$emit('data-loaded');
              var empty = t('projects.msg.empty-list');
              if(self.data.length === 0){ $('#empty').show().html(empty);}
@@ -121,7 +110,7 @@
       }
     },
  });
-
+Vue.config.debug = true;
 
   new Vue({
     el: '#indexElement',
@@ -130,23 +119,26 @@
       gridColumns: ['code','name'],
       gridData: [],
       lang: queryString.lang,
-      picked: null,
+      picked: {
+        edit_client_path: null,
+        code: null
+      }
     },
     methods: {
       can_edit: function() {
-        if (this.picked)
-          return this.picked.can_edit ? true : false;
+        if (this.picked.edit_client_path)
+          return this.picked.edit_client_path ? true : false;
       },
       can_delete: function() {
-        if (this.picked)
-          return this.picked.can_delete ? true : false;
+        if (this.picked.code)
+          return (this.picked.code[1] > 0);
       },
       delete_entry: function()  {
-        var id = this.picked.id;
+        var delete_path = this.picked.delete_client_path;
         modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
                 $.ajax({
                     type: "POST",
-                    url: "/clients/"+id+"?lang="+this.lang,
+                    url: delete_path,
                     dataType: "json",
                     data: {"_method":"delete"},
                 });

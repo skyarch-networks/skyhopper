@@ -82,22 +82,7 @@
            url:'projects?client_id='+id+'&lang='+self.lang,
            success: function (data) {
              this.pages = data.length;
-             self.data = data.map(function (item) {
-               console.log(item);
-
-               var item_key = '*****'+item.access_key.substring(item.access_key.length-3,item.access_key.length);
-               return {
-                 code: [item.code, item.infrastructures],
-                 name: item.name,
-                 cloud_provider: item.cloud_provider.name,
-                 access_key: item_key,
-                 id: item.id,
-                 edit_project_url: item.edit_project_url,
-                 delete_project_url: item.delete_project_url,
-                 project_settings: item.project_settings,
-                 infrastructures_path: item.infrastructures_path
-               };
-             });
+             self.data = data;
              self.$emit('data-loaded');
              var empty = t('projects.msg.empty-list');
              if(self.data.length === 0){ $('#empty').show().html(empty);}
@@ -130,7 +115,14 @@
       searchQuery: '',
       gridColumns: ['code','name', 'cloud_provider', 'access_key'],
       gridData: [],
-      picked: null
+      picked: {
+        edit_url: null,
+        project_settings: {
+          dishes_path: null,
+          key_pairs_path: null,
+          project_parameters_path: null
+        }
+      }
     },
     methods: {
       can_edit: function() {
@@ -138,8 +130,8 @@
           return this.picked.edit_project_url ? true : false;
       },
       can_delete: function() {
-        if (this.picked)
-          return this.picked.code[1] > 0 ? true : false;
+        if (this.picked.delete_project_url)
+          return (this.picked.code[1] > 0);
       },
       delete_entry: function()  {
         var delete_project_url = this.picked.delete_project_url;

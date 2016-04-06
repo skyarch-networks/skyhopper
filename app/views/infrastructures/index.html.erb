@@ -6,26 +6,55 @@
   <%= link_to t('infrastructures.return_to_projects'), projects_path, {class: "btn btn-small btn-link"} unless current_user.master? %>
 </div>
 
-<%= render 'vue/index' %>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
 <table class="table table-hover hidden">
 
-  <tbody>
-    <% @infrastructures.each do |infra| %>
+  <div id="indexElement" v-el:node>
 
-        <td>
-          <%= button_show_infra(infra) %>
+    <div>
+      <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
-          <%= button_serverspecs(infra.id) %>
+      <div class="pull-right">
+        <a class="btn btn-danger btn-sm disabled"
+        @click="delete_entry()"
+          v-if="picked.delete_project_url !== null"
+          :class="{disabled: can_delete()}">
+            <%= fa 'times' %>
+            <%= t 'common.btn.delete' %>
+        </a>&nbsp
+      </div>
 
-          <%= button_edit_infra(infra) %>
-          <%= button_detach_stack(infra) %>
-          <%= button_delete_stack(infra) %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <div class="pull-right">
+        <div class="btn-group">
+             <a class="btn btn-default btn-sm dropdown-toggle disabled" data-toggle="dropdown" href="#" :class="{disabled: !picked}">
+               <%= t 'common.btn.settings' %> <span class="caret"></span>
+             </a>
+             <ul class="dropdown-menu">
+               <li v-if="picked">
+                 <a :href="picked.project_settings.dishes_path"><%= t ('dishes.dishes') %> </a>
+                 <a :href="picked.project_settings.key_pairs_path"><%= t('key_pairs.key_pairs') %> </a>
+                 <a :href="picked.project_settings.project_parameters_path"><%= t('project_parameters.title') %> </a>
+               </li>
+             </ul>
+           </div>
+      </div>
+
+      <div class="pull-right" v-cloak="picked">
+        <a class="btn btn-default btn-sm disabled"
+            :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
+            <span class='glyphicon glyphicon-edit'></span>
+            <%= t 'helpers.links.edit' %>
+        </a>&nbsp
+      </div>
+    </div>
+
+    <demo-grid
+    :data="gridData"
+    :columns="gridColumns"
+    :filter-key="searchQuery">
+    </demo-grid>
+  </div>
 
 
 <%= button_add_infra(@selected_project) %>
