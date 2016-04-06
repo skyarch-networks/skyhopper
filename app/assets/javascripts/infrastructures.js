@@ -49,7 +49,7 @@
   Vue.component('serverspec-results-tabpane', require('infrastructures/serverspec-results-tabpane.js'));
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
-  Vue.component('demo-grid',                  require('infrastructures/demo-grid.js'));
+  Vue.component('demo-grid',                  require('demo-grid.js'));
 
 
 
@@ -149,56 +149,43 @@
     data: {
       searchQuery: '',
       gridColumns: [],
-      gridData: []
+      gridData: [],
+      picked: {
+        code: null
+      },
+      index: 'infrastructures'
     },
     created: function(){
         if (queryString.project_id >3)
           this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
         else
           this.gridColumns = ['stack_name','region', 'keypairname'];
+
+      moment.locale(queryString.lang);
     },
-  });
+    methods: {
+      can_edit: function() {
+        if (this.picked.edit_client_path)
+          return this.picked.edit_client_path ? true : false;
+      },
+      can_delete: function() {
+        if (this.picked.code)
+          return (this.picked.code[1] > 0);
+      },
+      delete_stack: function()  {
+        delete_stack(this.picked.id);
+      },
+      show_infra: function()  {
+        show_infra(this.picked.id, '');
+      },
+      show_sched: function()  {
+        show_infra(this.picked.id, 'show_sched');
+      },
+      detach_infra: function()  {
+        detach(this.picked.id);
+      }
 
-
-  $(document).ready(function(){
-
-    $('#infrastructure_region').selectize({
-      create: false,
-      sortField: 'text'
-    });
-    moment.locale(queryString.lang);
-
-
-  });
-
-  $(document).on('click', '.show-infra', function (e) {
-    e.preventDefault();
-    $(this).closest('tbody').children('tr').removeClass('info');
-    $(this).closest('tr').addClass('info');
-    var infra_id = $(this).attr('infrastructure-id');
-    show_infra(infra_id, '');
-  });
-
-  $(document).on('click', '.operation-sched', function (e) {
-    e.preventDefault();
-    $(this).closest('tbody').children('tr').removeClass('info');
-    $(this).closest('tr').addClass('info');
-    var infra_id = $(this).attr('infrastructure-id');
-    show_infra(infra_id, 'show_sched');
-  });
-
-  $(document).on('click', '.detach-infra', function (e) {
-    e.preventDefault();
-    var infra_id = $(this).attr('infrastructure-id');
-
-    detach(infra_id);
-  });
-
-  $(document).on('click', '.delete-stack', function (e) {
-    e.preventDefault();
-    var infra_id = $(this).attr('infrastructure-id');
-
-    delete_stack(infra_id);
+    }
   });
 
   $(document).on('click', '.create_ec2_key', function (e) {

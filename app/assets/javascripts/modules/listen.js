@@ -7,7 +7,7 @@
 //
 
 module.exports = function (value, key, index, lang) {
-  if(index === 'infrastructure'){
+  if(index === 'infrastructures'){
     return render_infrastructures(value, key, lang);
   }else if(index === 'projects'){
     return render_projects(value, key, lang);
@@ -29,48 +29,7 @@ module.exports = function (value, key, index, lang) {
 };
 
 function render_infrastructures(value, key, lang){
-  if(key === 'id'){
-  var href = $('#edit-'+value[0]+'').attr('href');
-  var retEdit = ($('#edit-'+value[0]+'').attr('class') ? "<a class='"+$('#edit-'+value[0]+'').attr('class')+"' href='"+href+"'>"+ t("helpers.links.edit")+"</a> " : "");
-  var retDetach = ($('#detach-'+value[0]+'').attr('class') ? "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> " : "");
-  var retDelete = ($('#delete-'+value[0]+'').attr('class') ? "<div class='btn-group'>"+
-      "<a class='"+$('#delete-'+value[0]+'').attr('class')+"' data-toggle='dropdown' href='#'>" +
-      " <span class='glyphicon glyphicon-remove'></span> "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
-      " </a> " +
-     "<ul class='dropdown-menu'>"+
-      "<li> " +
-       "<a class='delete-stack' infrastructure-id="+value[0]+" href='#'>Execute</a> " +
-    "</li>"+
-    "</ul>"+
-   "</div>" : "");
-  var disabled;
-    if(value[1] != "CREATE_COMPLETE" && value[1] != "UPDATE_COMPLETE")
-      disabled = 'disabled';
-
-  var ret =  "<div class='btn-group'>"+
-          "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-info-sign'>" +
-            "</span> "+t('helpers.links.show')+
-          "</a> " +
-          "<button id='ops-"+value[0]+"' type='button' class='btn btn-xs btn-info dropdown-toggle "+disabled+"' " +
-          "data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"+
-            "<span class='caret'></span>"+
-            "<span class='sr-only'>Toggle Dropdown</span>"+
-          "</button>"+
-          "<ul class='dropdown-menu'>"+
-          "<li> " +
-            "<a class='operation-sched' infrastructure-id="+value[0]+" href='#'>" +
-              "<span class='glyphicon glyphicon-calendar'></span> "+t('infrastructures.btn.operation_schedule')+
-            "</a> " +
-          "</li>"+
-          "</ul>"+
-    "</div>"+
-    "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value[0]+"&amp;lang='"+lang+"'>Serverspecs</a> " +
-    retEdit +
-    retDetach+
-    retDelete;
-
-    return ret;
-  }else if (key === 'status') {
+  if (key === 'status') {
     if(value === "CREATE_COMPLETE"){
       return "<span class='text text-success'>"+value+"</span>";
     }else if (value === 'DELETE_IN_PROGRESS') {
@@ -79,10 +38,6 @@ function render_infrastructures(value, key, lang){
       return "<span class='text text-info'>"+value+"</span>";
     }else{
       return value;
-    }
-  }else if(key === 'id_stat'){
-    if(value[0] === "CREATE_COMPLETE"){
-      $('#ops-'+value[1]+'').removeClass('disabled');
     }
   }else{
     return value;

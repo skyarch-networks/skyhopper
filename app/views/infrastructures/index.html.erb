@@ -16,28 +16,36 @@
       <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
       <div class="pull-right">
-        <a class="btn btn-danger btn-sm disabled"
-        @click="delete_entry()"
-          v-if="picked.delete_project_url !== null"
-          :class="{disabled: can_delete()}">
-            <%= fa 'times' %>
-            <%= t 'common.btn.delete' %>
-        </a>&nbsp
+        <div class='btn-group'>
+            <a class='btn btn-sm btn-danger' data-toggle='dropdown' href='#'>
+              <%= fa 'trash' %><%= t('infrastructures.btn.delete_stack') %>&nbsp;<span class='caret'></span>
+            </a>
+           <ul class='dropdown-menu'>
+            <li>
+             <a class='delete-stack' href='#'>Execute</a>
+          </li>
+          </ul>
+         </div>
+      </div>
+
+      <div class="pull-right">
+        <div class="btn-group">
+          <a class='btn btn-sm btn-warning' href='#'><%= fa 'chain-broken' %> <%= t('helpers.links.detach') %></a>&nbsp
+        </div>
       </div>
 
       <div class="pull-right">
         <div class="btn-group">
              <a class="btn btn-default btn-sm dropdown-toggle disabled" data-toggle="dropdown" href="#" :class="{disabled: !picked}">
                <%= t 'common.btn.settings' %> <span class="caret"></span>
-             </a>
+             </a>&nbsp
              <ul class="dropdown-menu">
                <li v-if="picked">
-                 <a :href="picked.project_settings.dishes_path"><%= t ('dishes.dishes') %> </a>
-                 <a :href="picked.project_settings.key_pairs_path"><%= t('key_pairs.key_pairs') %> </a>
-                 <a :href="picked.project_settings.project_parameters_path"><%= t('project_parameters.title') %> </a>
+                 <a href='#'> <%=  t('infrastructures.btn.operation_schedule') %></a>
+                 <a href='/serverspecs?infrastructure_id="+value[0]+"&amp;lang='"+lang+">Serverspecs</a>
                </li>
              </ul>
-           </div>
+        </div>
       </div>
 
       <div class="pull-right" v-cloak="picked">
@@ -52,9 +60,14 @@
     <demo-grid
     :data="gridData"
     :columns="gridColumns"
-    :filter-key="searchQuery">
+    :filter-key="searchQuery"
+    :index="index">
     </demo-grid>
   </div>
+
+  <div  id="empty" style="display: none;"></div>
+  <span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+  <hr>
 
 
 <%= button_add_infra(@selected_project) %>

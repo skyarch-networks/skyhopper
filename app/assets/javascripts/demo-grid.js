@@ -92,46 +92,22 @@ module.exports = Vue.extend({
          }
        });
     },
+
     fetch_infras: function(){
       var self = this;
       var id =  queryString.project_id;
-      var monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-      ];
+      
       $.ajax({
         cache: false,
         url:'/infrastructures?&project_id='+id,
-      }).done(function (data) {
-        this.pages = data.length;
-        var nextColumns = [];
-        self.data = data.map(function (item) {
-          var d = new Date(item.created_at);
-          var date = monthNames[d.getUTCMonth()]+' '+d.getDate()+', '+d.getFullYear()+' at '+d.getHours()+':'+d.getMinutes();
-          if(item.project_id > 3){
-            return {
-              stack_name: item.stack_name,
-              region: item.region,
-              keypairname: item.keypairname,
-              created_at: date,
-              //  ec2_private_key_id: item.ec2_private_key_id,
-              status: item.status,
-              id: [item.id,item.status],
-            };
-          }else{
-            return {
-              stack_name: item.stack_name,
-              region: item.region,
-              keypairname: item.keypairname,
-              //  ec2_private_key_id: item.ec2_private_key_id,
-              id: [item.id,item.status],
-            };
-          }
-        });
-
+        success: function (data) {
+          self.data = data;
+          this.pages = data.length;
+          self.close_loading();
+        }
       });
-
     },
+
     close_loading: function(){
       var self = this;
       self.$emit('data-loaded');

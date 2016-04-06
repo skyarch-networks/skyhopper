@@ -7,7 +7,7 @@
 //
 
 module.exports = function(value, index){
-  if(index ==='infrastructure') {
+  if(index ==='infrastructures') {
     return render_infrastructures(value);
   }else if(index === 'projects') {
     return render_projects(value);
