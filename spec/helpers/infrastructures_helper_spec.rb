@@ -18,8 +18,8 @@ describe InfrastructuresHelper do
     helper.instance_variable_set(:@virtual_path, 'infrastructures')
   end
 
-  describe '#button_edit_infra' do
-    subject{helper.button_edit_infra(infra, user: user)}
+  describe '#edit_infra' do
+    subject{helper.edit_infra(infra, user: user)}
 
     context 'when editable user' do
       it {is_expected.not_to be nil}
@@ -36,6 +36,7 @@ describe InfrastructuresHelper do
     subject{helper.button_detach_stack(infra, user: user)}
 
     context 'when detachable user' do
+      it {is_expected.to be true}
       it {is_expected.not_to be nil}
     end
 
@@ -47,30 +48,31 @@ describe InfrastructuresHelper do
     context 'when infra deleting' do
       let(:infra){build_stubbed(:infrastructure, status: 'DELETE_IN_PROGRESS')}
 
-      it {is_expected.to be_include 'disabled'}
+      it {is_expected.to be nil}
     end
   end
 
   describe '#button_delete_stack' do
     subject{helper.button_delete_stack(infra, user: user)}
 
-    context 'when delitable user' do
+    context 'when deletable user' do
+      it {is_expected.to be true}
       it {is_expected.not_to be nil}
     end
 
-    context 'when not delitable user' do
+    context 'when not deletable user' do
       let(:user){normal_user}
       it {is_expected.to be nil}
     end
 
     context 'when infra deleting' do
       let(:infra){build_stubbed(:infrastructure, status: 'DELETE_IN_PROGRESS')}
-      it {is_expected.to be_include 'disabled'}
+      it {is_expected.to be nil}
     end
 
     context 'when infra status is blank' do
       let(:infra){build_stubbed(:infrastructure, status: nil)}
-      it {is_expected.to be_include 'disabled'}
+      it {is_expected.to be nil}
     end
   end
 

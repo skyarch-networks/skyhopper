@@ -37,7 +37,7 @@ function render_infrastructures(value, key, lang){
     }else if (value === 'CREATE_IN_PROGRESS') {
       return "<span class='text text-info'>"+value+"</span>";
     }else{
-      return value;
+      return "<span class='text text-default'> NO_STACK_INFO </span>";
     }
   }else{
     return value;

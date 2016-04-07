@@ -10,22 +10,26 @@ module InfrastructuresHelper
   def edit_infra(infra, user: current_user)
     return nil unless Pundit.policy(user, infra).edit?
 
-    if infra.status.present?
-      return nil
-    else
-      return edit_infrastructure_path(infra)
-    end
 
+    path =  if infra.status.present?
+              false
+            else
+              edit_infrastructure_path(infra)
+            end
+
+    return path
   end
 
   def button_detach_stack(infra, user: current_user)
-    return false unless Pundit.policy(user, infra).destroy?
-    return deleting?(infra.status) ? false : true
+    return nil unless Pundit.policy(user, infra).destroy?
+    detachable = deleting?(infra.status) ? nil : true
+   return detachable
   end
 
   def button_delete_stack(infra, user: current_user)
-    return false unless Pundit.policy(user, infra).delete_stack?
-    return deleting?(infra.status) || infra.status.blank? ? false : true
+    return nil unless Pundit.policy(user, infra).delete_stack?
+    deletable =  deleting?(infra.status) || infra.status.blank? ? nil : true
+    return deletable
   end
 
   def button_add_infra(project, user: current_user)
