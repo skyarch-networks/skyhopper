@@ -22,6 +22,7 @@ describe InfrastructuresHelper do
     subject{helper.edit_infra(infra, user: user)}
 
     context 'when editable user' do
+      let(:infra){build_stubbed(:infrastructure, status: nil)}
       it {is_expected.not_to be nil}
     end
 
@@ -36,7 +37,7 @@ describe InfrastructuresHelper do
     subject{helper.button_detach_stack(infra, user: user)}
 
     context 'when detachable user' do
-      it {is_expected.to be true}
+      let(:infra){build_stubbed(:infrastructure, status: nil)}
       it {is_expected.not_to be nil}
     end
 
@@ -56,7 +57,6 @@ describe InfrastructuresHelper do
     subject{helper.button_delete_stack(infra, user: user)}
 
     context 'when deletable user' do
-      it {is_expected.to be true}
       it {is_expected.not_to be nil}
     end
 
