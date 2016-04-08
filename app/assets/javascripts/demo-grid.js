@@ -62,62 +62,34 @@ module.exports = Vue.extend({
         case 'infrastructures':
           self.$parent.show_infra(item.id);
           break;
+        case 'dishes':
+          self.$parent.show_dish(item.id);
+          break;
       }
 
     },
-    fetch_clients: function()  {
-      var self = this;
-      self.loading = true;
-      var id =  queryString.client_id;
 
-     $.ajax({
-         cache: false,
-         url:'clients?lang='+self.lang,
-         success: function (data) {
-           self.data = data;
-           this.pages = data.length;
-           self.close_loading();
-         }
-       });
-
-    },
-    fetch_projects: function()  {
+    load_ajax: function (request, empty_msg) {
       var self = this;
-      self.loading = true;
-      var id =  queryString.client_id;
-      $.ajax({
-         cache: false,
-         url:'projects?client_id='+id+'&lang='+self.lang,
-         success: function (data) {
-           self.data = data;
-           this.pages = data.length;
-           self.close_loading();
-         }
-       });
-    },
-
-    fetch_infras: function(){
-      var self = this;
-      var id =  queryString.project_id;
 
       $.ajax({
         cache: false,
-        url:'/infrastructures?&project_id='+id,
+        url: request,
         success: function (data) {
           console.log(data);
           self.data = data;
           this.pages = data.length;
-          self.close_loading();
+          self.close_loading(empty_msg);
         }
       });
+
     },
 
-    close_loading: function(){
+    close_loading: function(empty_msg){
       var self = this;
       self.$emit('data-loaded');
       $("#loading").hide();
-      var empty = t('infrastructures.msg.empty-list');
-      if(self.data.length === 0){ $('#empty').show().html(empty);}
+      if(self.data.length === 0){ $('#empty').show().html(empty_msg);}
       self.filteredLength = self.data.length;
     }
   },
@@ -131,17 +103,25 @@ module.exports = Vue.extend({
     },
   },
   created: function (){
+    var id =  queryString.project_id;
     var self = this;
+
     switch (self.index) {
       case 'clients':
-        self.fetch_clients();
+        self.load_ajax('clients?lang='+self.lang, t('clients.msg.empty-list'));
         break;
       case 'projects':
-        self.fetch_projects();
+        self.load_ajax(self.projects_path ,t('projects.msg.empty-list'));
         break;
       case 'infrastructures':
-        self.fetch_infras();
+        self.load_ajax(self.infrastructures_path, t('infrastructures.msg.empty-list'));
         break;
+      case 'dishes':
+        project_id = id ? '&project_id='+id: '';
+        self.load_ajax('dishes?lang='+self.lang+project_id, t('dishes.msg.empty-list'));
+
+        break;
+
     }
 
   },
