@@ -95,13 +95,4 @@
     }
   });
 
-
-  $(document).on("click", ".show-template", function () {
-    var cf_template_id = $(this).closest("a").attr("data-managejson-id");
-    var tr = $(this).closest('tr');
-    $('tr.info').removeClass('info');
-    tr.addClass('info');
-
-
-  });
 })();
