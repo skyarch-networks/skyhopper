@@ -106,9 +106,9 @@ module.exports = Vue.extend({
     },
   },
   created: function (){
-    var id =  queryString.project_id;
     var self = this;
-    var project_id = id ? '&project_id='+id: '';
+
+
 
     switch (self.index) {
       case 'clients':
@@ -121,9 +121,11 @@ module.exports = Vue.extend({
         self.load_ajax(self.infrastructures_path, t('infrastructures.msg.empty-list'));
         break;
       case 'dishes':
+        var project_id = queryString.project_id ? '&project_id='+queryString.project_id: '';
         self.load_ajax('dishes?lang='+self.lang+project_id, t('dishes.msg.empty-list'));
         break;
       case 'serverspecs':
+        var infrastructure_id = queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '';
         self.load_ajax('serverspecs?lang='+self.lang+project_id, t('serverspecs.msg.empty-list'));
         break;
 
