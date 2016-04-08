@@ -27,17 +27,14 @@
       searchQuery: '',
       gridColumns: ['name','detail', 'status'],
       gridData: [],
-      index: 'dishes'
+      index: 'dishes',
+      picked: {
+        dish_path: null
+      }
     },
     methods: {
-      can_edit: function() {
-        if (this.picked)
-          return this.picked.edit_project_url ? true : false;
-      },
-
       can_delete: function() {
-        if (this.picked.delete_project_url)
-          return (this.picked.code[1] > 0);
+        return (this.picked.dish_path === null);
       },
 
       delete_entry: function()  {

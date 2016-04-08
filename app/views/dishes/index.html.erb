@@ -22,20 +22,12 @@
     <div class="pull-right">
       <a class="btn btn-danger btn-sm disabled"
       @click="delete_entry()"
-        v-if="picked.delete_project_url !== null"
         :class="{disabled: can_delete()}">
           <%= fa 'times' %>
           <%= t 'common.btn.delete' %>
       </a>&nbsp
     </div>
 
-    <div class="pull-right" v-cloak="picked">
-      <a class="btn btn-default btn-sm disabled"
-          :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
-          <span class='glyphicon glyphicon-edit'></span>
-          <%= t 'helpers.links.edit' %>
-      </a>&nbsp
-    </div>
   </div>
 
 
