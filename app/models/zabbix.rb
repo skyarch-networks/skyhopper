@@ -28,8 +28,10 @@ class Zabbix
     begin
       @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
       @sky_zabbix.login(username, password)
-    rescue
+    rescue SkyZabbix::Jsonrpc::Error
       raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
+    rescue Errno::ECONNREFUSED => ex
+      raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
     end
 
   end
