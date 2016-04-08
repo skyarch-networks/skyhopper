@@ -61,51 +61,15 @@ function render_projects(value, key, lang){
 }
 
 function render_serverspecs(value, key, lang){
-  if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs' href='/serverspecs/"+value+"/edit?lang="+lang+"'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/serverspecs/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>";
-
-    var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'><span class='glyphicon glyphicon-info-sign'></span> "+t('helpers.links.show')+"</a> ";
-    return ret+edit+del;
-  }else{
     return value;
-  }
 }
 
 function render_cf_templates(value, key, lang){
-  if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs' href='/cf_templates/"+value+"/edit?lang="+lang+"'>"+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/cf_templates/"+value+"?lang="+lang+"'>Delete</a>";
-
-    var ret = "<a class='btn btn-xs btn-info show-template' data-managejson-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
-    return ret+edit+del;
-  }else{
     return value;
-  }
 }
 
 function render_dish(value, key, lang){
-  if(key === 'id'){
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var del = '';
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/dishes/"+value+"?lang="+lang+"'>"+t("helpers.links.destroy")+"</a>";
-
-    var ret = "<a class='btn btn-xs btn-info show-dish' data-dish-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
-    return ret+del;
-  }else if (key === 'status') {
+  if (key === 'status') {
     var label = null;
     if(value === 'SUCCESS'){
       label = 'label-success';
@@ -125,17 +89,7 @@ function render_dish(value, key, lang){
 }
 
 function render_user_admin(value, key, lang){
-  if(key === 'id'){
-    var isEdit = $('#edit-'+value+'').attr('class');
-    var isDelete = $('#delete-'+value+'').attr('class');
-    var edit = '';
-    var del = '';
-    if(isEdit)
-      edit = " <a class='btn btn-default btn-xs edit-user'user-id="+value+" href='#'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>";
-    if(isDelete)
-      del = " <a data-confirm='Are you sure?'' class='btn btn-xs btn-danger' rel='nofollow' data-method='delete' href='/users_admin/"+value+"?lang="+lang+"'><span class='glyphicon glyphicon-remove'></span> "+t("helpers.links.destroy")+"</a>";
-    return edit+del;
-  }else if (key === 'email') {
+  if (key === 'email') {
     var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
     var email = value[1];
     return image+" "+email;

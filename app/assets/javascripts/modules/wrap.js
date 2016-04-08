@@ -37,8 +37,6 @@ function render_infrastructures(value){
     return t('infrastructures.region');
   }else if(value === 'created_at'){
     return t('infrastructures.creation_time');
-  }else if(value === 'id'){
-    return t('common.actions');
   }else if(value === 'status'){
     return t('infrastructures.status');
   }else if(value === 'keypairname'){
@@ -77,8 +75,6 @@ function render_serverspecs(value){
     return t ('serverspecs.description');
   }else if (value === 'name') {
     return t ('serverspecs.name');
-  }else if (value === 'id') {
-    return t ('common.actions');
   }else{
     return value;
   }
@@ -91,8 +87,6 @@ function render_dish(value){
     return t ('dishes.detail');
   }else if (value === 'status') {
     return t ('dishes.validation_status');
-  }else if (value === 'id') {
-    return t ('common.actions');
   }else{
     return value;
   }
@@ -103,8 +97,6 @@ function render_cf_templates(value){
     return t ('cf_templates.subject');
   }else if (value === 'details') {
     return t ('cf_templates.details');
-  }else if (value === 'id') {
-    return t ('common.actions');
   }else{
     return value;
   }
@@ -117,8 +109,6 @@ function render_user_admin(value){
     return t('users.email');
   }else if (value === 'last_sign_in_at') {
     return t('users.last_signed_in_at');
-  }else if (value === 'id') {
-    return t ('common.actions');
   }else{
     return value;
   }
