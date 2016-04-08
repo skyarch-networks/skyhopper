@@ -10,35 +10,41 @@
   </h1>
 </div>
 
-<%= render 'vue/index' %>
 
-<table class="table table-hover hidden">
-  <tbody>
-    <% @serverspecs.each do |serverspec| %>
-     <tr data-serverspec-id="<%= serverspec.id %>">
-        <td><%= serverspec.name %></td>
-        <td><%= serverspec.description %></td>
-        <td>
-          <%= link_to t('helpers.links.show'),
-            '#',
-            class: 'btn btn-xs btn-info show-value' %>
-          <% if allow_change %>
-            <%= link_to t('.edit', default: t("helpers.links.edit").html_safe),
-              edit_serverspec_path(serverspec),
-              class: 'btn btn-xs btn-default',
-              id: 'edit-'+serverspec.id.to_s %>
-            <%= link_to t('.destroy', default: t("helpers.links.destroy").html_safe),
-              serverspec_path(serverspec),
-              method: :delete,
-              data:   { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')) },
-              class:  'btn btn-xs btn-danger',
-              id: 'delete-'+serverspec.id.to_s %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
+
+<div id="indexElement" v-el:node>
+
+  <div>
+    <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
+
+    <div class="pull-right">
+      <a class="btn btn-danger btn-sm disabled"
+      :class="{disabled: can_delete()}"
+      @click="delete_entry()">
+          <%= fa 'times' %>
+          <%= t 'common.btn.delete' %>
+      </a>&nbsp
+    </div>
+
+    <div class="pull-right" v-cloak="picked">
+      <a class="btn btn-default btn-sm disabled"
+          :href="picked.edit_serverspec_path" :class="{disabled: can_edit()}">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
+      </a>&nbsp
+    </div>
+
+  </div>
+
+
+  <demo-grid
+  :data="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery"
+  :index="index">
+  </demo-grid>
+</div>
 
 
 <% if allow_change %>
