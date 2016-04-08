@@ -17,7 +17,7 @@ module.exports = function (value, key, index, lang) {
     return render_serverspecs(value, key, lang);
   }else if (index === 'dish') {
     return render_dish(value, key, lang);
-  }else if (index === 'cf_template') {
+  }else if (index === 'cf_templates') {
     return render_cf_templates(value, key, lang);
   }else if (index === 'user_admin') {
     return render_user_admin(value, key, lang);

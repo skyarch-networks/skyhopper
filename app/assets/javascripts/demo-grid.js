@@ -68,6 +68,9 @@ module.exports = Vue.extend({
         case  'serverspecs':
           self.$parent.show_serverspec(item.id);
           break;
+        case  'cf_templates':
+          self.$parent.show_template(item.id);
+          break;
       }
 
     },
@@ -114,20 +117,29 @@ module.exports = Vue.extend({
       case 'clients':
         self.load_ajax('clients?lang='+self.lang, t('clients.msg.empty-list'));
         break;
+
       case 'projects':
         self.load_ajax(self.projects_path ,t('projects.msg.empty-list'));
         break;
+
       case 'infrastructures':
         self.load_ajax(self.infrastructures_path, t('infrastructures.msg.empty-list'));
         break;
+
       case 'dishes':
         var project_id = queryString.project_id ? '&project_id='+queryString.project_id: '';
         self.load_ajax('dishes?lang='+self.lang+project_id, t('dishes.msg.empty-list'));
         break;
+
       case 'serverspecs':
         var infrastructure_id = queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '';
         self.load_ajax('serverspecs?lang='+self.lang+project_id, t('serverspecs.msg.empty-list'));
         break;
+
+      case  'cf_templates':
+        self.load_ajax('cf_templates?lang='+self.lang, t('cf_templates.msg.empty-list'));
+        break;
+
 
     }
 
