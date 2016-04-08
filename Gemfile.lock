@@ -447,7 +447,7 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
-    sky_zabbix (2.2.0.1.1)
+    sky_zabbix (2.2.0.1.2)
     slop (3.6.0)
     specinfra (2.56.0)
       net-scp
