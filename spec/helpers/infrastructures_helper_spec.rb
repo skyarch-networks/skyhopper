@@ -57,6 +57,7 @@ describe InfrastructuresHelper do
     subject{helper.button_delete_stack(infra, user: user)}
 
     context 'when deletable user' do
+      let(:infra){build_stubbed(:infrastructure, status: "CREATE_COMPLETE")}
       it {is_expected.not_to be nil}
     end
 

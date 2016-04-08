@@ -15,7 +15,7 @@ module InfrastructuresHelper
                else
                  edit_infrastructure_path(infra)
     end
-    
+
     return editable
 
   end
