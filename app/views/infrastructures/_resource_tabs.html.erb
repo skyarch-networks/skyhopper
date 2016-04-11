@@ -1,7 +1,7 @@
 <!-- resources TABs -->
 <%# TODO: DRY %>
-
-  <a href="#" v-for="ec2 in current_infra.resources.ec2_instances" :class="{active: tabpaneGroupID === ec2.physical_id}" @click="show_ec2(ec2.physical_id)" class="list-group-item">
+<li v-for="ec2 in current_infra.resources.ec2_instances" :class="{active: tabpaneGroupID === ec2.physical_id}" @click="show_ec2(ec2.physical_id)">
+  <a href="#">
     <span class="label label-warning"><%= fa 'cube' %> EC2</span>&nbsp;
     <small>{{screen_name(ec2)}}</small>
     <small v-if="tabpane_active(ec2.physical_id)"><%= glyphicon 'refresh' %></small>
@@ -10,20 +10,28 @@
       <template slot="content"><%= fa 'exclamation' %></template>
     </bootstrap-tooltip>
   </a>
+</li>
 
-  <a href="#" v-for="rds in current_infra.resources.rds_instances" :class="{active: tabpaneGroupID === rds.physical_id}" @click="show_rds(rds.physical_id)" class="list-group-item">
+<li v-for="rds in current_infra.resources.rds_instances" :class="{active: tabpaneGroupID === rds.physical_id}" @click="show_rds(rds.physical_id)">
+  <a href="#">
     <span class="label label-info"><%= fa 'database' %> RDS</span>&nbsp;
     <small>{{screen_name(rds)}}</small>
     <small v-if="tabpane_active(rds.physical_id)"><%= glyphicon 'refresh' %></small>
   </a>
+</li>
 
-  <a href="#" v-for="elb in current_infra.resources.elb_instances" :class="{active: tabpaneGroupID === elb.physical_id}" @click="show_elb(elb.physical_id)" class="list-group-item">
-    <span class="label label-warning"> <%= fa 'balance-scale' %> {{screen_name(elb)}}</span>&nbsp;
+<li v-for="elb in current_infra.resources.elb_instances" :class="{active: tabpaneGroupID === elb.physical_id}" @click="show_elb(elb.physical_id)">
+  <a href="#">
+    <span class="label label-warning"> <%= fa 'balance-scale' %> ELB</span>&nbsp;
+    <small>{{screen_name(elb)}}</small>
     <small v-if="tabpane_active(elb.physical_id)"><%= glyphicon 'refresh' %></small>
   </a>
+</li>
 
-  <a href="#" v-for="s3 in current_infra.resources.s3_buckets" :class="{active: tabpaneGroupID === s3.physical_id}" @click="show_s3(s3.physical_id)" class="list-group-item">
+<li v-for="s3 in current_infra.resources.s3_buckets" :class="{active: tabpaneGroupID === s3.physical_id}" @click="show_s3(s3.physical_id)">
+  <a href="#">
     <span class="label label-danger">S3</span>&nbsp;
     <small>{{screen_name(s3)}}</small>&nbsp;
     <small v-if="tabpane_active(s3.physical_id)"><%= glyphicon 'refresh' %></small>
   </a>
+</li>

@@ -87,20 +87,18 @@
 
   <div>
 
-    <div class="col-md-2">
-      <div class="panel-group">
-        <div class="panel panel-primary">
-          <div class="list-group">
-             <a class="active list-group-item" v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_resources' %></a>
-             <a class="active list-group-item" v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
-             <a class="active list-group-item" v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
-            <%= render 'resource_tabs' %>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ul class="nav nav-tabs" role="tablist">
+       <%# Resource TABs %>
+       <%= render 'resource_tabs' %>
 
-    <div class="tabbable col-md-10">
+       <li class="active">
+         <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
+         <a v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
+         <a v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
+       </li>
+     </ul>
+
+    <div class="tabbable">
       <%# create tab-panes %>
       <div class="tab-pane" >
 
