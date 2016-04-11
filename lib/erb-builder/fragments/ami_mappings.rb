@@ -1,30 +1,33 @@
-# Amazon Linux 2015.03
+# Amazon Linux AMI 2016.03.0 (https://aws.amazon.com/amazon-linux-ami/)
 {
     "us-east-1": {
-        "AMI": "ami-1ecae776",
+        "AMI": "ami-08111162",
     },
     "us-west-1": {
-        "AMI": "ami-d114f295",
+        "AMI": "ami-1b0f7d7b",
     },
     "us-west-2": {
-        "AMI": "ami-e7527ed7",
+        "AMI": "ami-c229c0a2",
     },
     "eu-west-1": {
-        "AMI": "ami-a10897d6",
+        "AMI": "ami-31328842",
     },
     "eu-central-1": {
-        "AMI": "ami-a8221fb5",
-    },
-    "sa-east-1": {
-        "AMI": "ami-b52890a8",
+        "AMI": "ami-e2df388d",
     },
     "ap-southeast-1": {
-        "AMI": "ami-68d8e93a",
+        "AMI": "ami-e90dc68a",
     },
-    "ap-southeast-2": {
-        "AMI": "ami-fd9cecc7",
+    "ap-northeast-2": {
+        "AMI": "ami-6598510b",
     },
     "ap-northeast-1": {
-        "AMI": "ami-cbf90ecb",
+        "AMI": "ami-f80e0596",
+    },
+    "ap-southeast-2": {
+        "AMI": "ami-f2210191",
+    },
+    "sa-east-1": {
+        "AMI": "ami-1e159872",
     },
 }

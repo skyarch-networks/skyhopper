@@ -42,25 +42,28 @@ class Node
     uri = URI.parse(ChefAPI.server_url)
     uri.path = '/bootstrap/install.sh'
     install_sh_url = uri.to_s
-
-    cmd = <<-EOS
-knife bootstrap #{fqdn} \
---identity-file #{ec2key.path_temp} \
---ssh-user #{user} \
---node-name #{node_name} \
---sudo \
---bootstrap-url #{install_sh_url} \
---bootstrap-wget-options '--no-check-certificate'
-    EOS
-
-#     cmd = <<-EOS
-# knife bootstrap windows ssh #{fqdn} \
-# --identity-file #{ec2key.path_temp} \
-# --ssh-user #{user} \
-# --node-name #{node_name} \
-# -x Administrator \
-# --bootstrap-proxy #{install_sh_url}
-#     EOS
+    platform = infra.instance(node_name).platform
+    if platform.nil?
+      cmd = <<-EOS
+            knife bootstrap #{fqdn} \
+            --identity-file #{ec2key.path_temp} \
+            --ssh-user #{user} \
+            --node-name #{node_name} \
+            --sudo \
+            --bootstrap-url #{install_sh_url} \
+            --bootstrap-wget-options '--no-check-certificate'
+            EOS
+    else
+      password = infra.instance(node_name).password(ec2key)
+      cmd = <<-EOS
+            knife bootstrap windows winrm #{fqdn} \
+            --winrm-ssl-verify-mode verify_none \
+            --winrm-user Administrator \
+            --winrm-password '#{password}' \
+            --node-name #{node_name} \
+            --winrm-transport ssl
+            EOS
+          end
 
     if chef_client_version
       cmd.chomp!
@@ -115,9 +118,15 @@ knife bootstrap #{fqdn} \
   #   # line is chef-clinet log
   # end
   def cook(infra, whyrun, &block)
-    cmd = 'sudo chef-client'
-    cmd << ' -W' if whyrun
-    exec_knife_ssh(cmd, infra, &block)
+    platform = infra.instance(@name).platform
+    if platform.nil?
+      cmd = 'sudo chef-client'
+      cmd << ' -W' if whyrun
+      exec_knife_ssh(cmd, infra, &block)
+    else
+      cmd = 'chef-client --manual-list'
+      exec_knife_winrm(cmd, infra, &block)
+    end
   end
 
   def wait_search_index
@@ -168,7 +177,7 @@ knife bootstrap #{fqdn} \
     cmd << ruby_cmd << '-S rspec' << "-I #{Rails.root.join('serverspec', 'spec')}"
     cmd << run_spec_list_path.join(' ').to_s
     cmd << local_path if selected_auto_generated
-    cmd << '--format json'
+    cmd << '--format ServerspecDebugFormatter --require ./serverspec/formatters/serverspec_debug_formatter.rb'
     cmd = cmd.flatten.reject(&:blank?).join(" ")
 
     begin
@@ -194,11 +203,14 @@ knife bootstrap #{fqdn} \
         'failed'
       end
 
+
     case result[:status_text]
     when 'pending'
-      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]}.join("\n")
+      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
     when 'failed'
-      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
 
     Resource.find_by(physical_id: @name).status.serverspec.update(value: result[:status_text])
@@ -297,6 +309,7 @@ knife bootstrap #{fqdn} \
     fqdn = infra.instance(@name).fqdn
 
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
+
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
         line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
@@ -308,9 +321,35 @@ knife bootstrap #{fqdn} \
       Rails.logger.warn(stderr.read)
       raise CookError unless w.value.success?
     end
+
     return true
   ensure
     ec2key.close_temp
+  end
+
+  def exec_knife_winrm(command, infra)
+    ec2key = infra.ec2_private_key
+    ec2key.output_temp(prefix: @name)
+    fqdn = infra.instance(@name).fqdn
+    password = infra.instance(@name).password(ec2key)
+
+    cmd = "knife winrm #{fqdn} --winrm-user Administrator  --winrm-password '#{password}' #{command} --winrm-transport ssl --winrm-ssl-verify-mode verify_none"
+
+    Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
+      while line = stdout.gets
+        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
+        line.chomp!
+
+        yield line
+      end
+
+      Rails.logger.warn(stderr.read)
+      raise CookError unless w.value.success?
+    end
+
+    return true
+  # ensure
+  #   ec2key.close_temp
   end
 
 

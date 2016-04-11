@@ -20,11 +20,9 @@
     "jquery-ujs": "~1.0.3",
     "jquery-ui": "~1.11.4",
     "eonasdan-bootstrap-datetimepicker": "~4.17.37",
-    "selectize": "~0.12.1",
     "microplugin": "~0.0.3",
     "sifter": "~0.4.3",
     "fullcalendar": "~2.4.0",
-    "selectize-bootswatch": "5e9042f617",
     "offline": "~0.7.14"
   }
 }
