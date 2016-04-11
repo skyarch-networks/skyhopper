@@ -89,18 +89,13 @@ function render_dish(value, key, lang){
 }
 
 function render_user_admin(value, key, lang){
-  if (key === 'email') {
-    var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
-    var email = value[1];
-    return image+" "+email;
-  }else if (key === 'role') {
-    var admin = (value[1] ? "<span class='label label-info'>admin</span>" : "");
-    var master = (value[0] ? "<span class='label label-warning'>master</span>" : "");
-
-    return master+"  "+admin;
-  }else{
-    return value;
-  }
+    if(key === 'role'){
+      return value[0]+"&nbsp"+value[1];
+    }else if (key === 'email') {
+      return value[0]+"&nbsp"+value[1]+"&nbsp"+value[2];
+    }else {
+      return value;
+    }
 }
 
 function render_serverspecs_results(value, key){

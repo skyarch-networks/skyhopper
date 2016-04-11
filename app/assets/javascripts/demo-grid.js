@@ -36,7 +36,9 @@ module.exports = Vue.extend({
         this.sortKey = key;
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
-
+    pop: function(){
+       $('#role').popover('toggle');
+    },
     showPrev: function(){
       if(this.pageNumber === 0) return;
       this.pageNumber--;
@@ -71,6 +73,10 @@ module.exports = Vue.extend({
         case  'cf_templates':
           self.$parent.show_template(item.id);
           break;
+        case  'user_admin':
+          break;
+
+
       }
 
     },
@@ -138,6 +144,10 @@ module.exports = Vue.extend({
 
       case  'cf_templates':
         self.load_ajax('cf_templates?lang='+self.lang, t('cf_templates.msg.empty-list'));
+        break;
+
+      case  'user_admin':
+        self.load_ajax('users_admin?lang='+self.lang, t('cf_templates.msg.empty-list'));
         break;
 
 

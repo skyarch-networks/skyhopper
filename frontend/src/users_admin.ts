@@ -16,12 +16,6 @@ namespace UsersAdmin {
   const ajax = new AjaxSet.Resources('users_admin');
   ajax.add_collection('sync_zabbix', 'PUT');
 
-  function highlight_user_row(selected_user: JQuery): void {
-    selected_user.removeClass("info");
-    const tr = selected_user.closest('tr');
-    $('tr.info').removeClass('info');
-    tr.addClass('info');
-  }
 
   function sync_zabbix(btn: JQuery): void {
     const f = function () {
@@ -208,7 +202,6 @@ namespace UsersAdmin {
 
   $(document).on('click', '.edit-user', function (e) {
     e.preventDefault();
-    highlight_user_row($(this));
     const user_id = $(this).attr('user-id');
     show_edit(parseInt(user_id));
   });

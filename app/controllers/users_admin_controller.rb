@@ -22,7 +22,7 @@ class UsersAdminController < ApplicationController
 
     @users = User.all.page(page)
     respond_to do |format|
-      format.json {@users}
+      format.json
       format.html
     end
   end
