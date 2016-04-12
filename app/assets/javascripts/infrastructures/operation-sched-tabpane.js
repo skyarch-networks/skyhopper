@@ -58,7 +58,7 @@ module.exports = Vue.extend({
     is_specific: null,
     sortKey: '',
     sortOrders: sortOrders,
-    option: ['operation_sched'],
+    index: 'operation_sched',
     lang: null,
     pages: 10,
     pageNumber: 0,
