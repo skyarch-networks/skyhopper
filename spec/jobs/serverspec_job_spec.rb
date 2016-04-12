@@ -53,7 +53,7 @@ RSpec.describe ServerspecJob, type: :job do
       end
 
       it 'should create infra log' do
-        expect{job rescue nil}.to change(InfrastructureLog, :count).by(1)
+        expect{job rescue nil}.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be failure' do
@@ -66,7 +66,7 @@ RSpec.describe ServerspecJob, type: :job do
       let(:status_text){'success'}
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(1)
+        expect{job}.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be success' do
@@ -79,7 +79,7 @@ RSpec.describe ServerspecJob, type: :job do
       let(:status_text){'pending'}
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(1)
+        expect{job}.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be success' do
@@ -92,7 +92,7 @@ RSpec.describe ServerspecJob, type: :job do
       let(:status_text){'failed'}
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(1)
+        expect{job}.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be failure' do
