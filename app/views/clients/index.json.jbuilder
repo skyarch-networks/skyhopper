@@ -6,7 +6,7 @@ json.array!(@clients) do |client|
   json.projects_path projects_path(client_id: client.id)
 
   if current_user.admin?
-    json.edit_client_path edit_client_path(client)
+    json.edit_client_path edit_client_path_url(client) 
     json.delete_client_path delete_client_path(client)
   end
 

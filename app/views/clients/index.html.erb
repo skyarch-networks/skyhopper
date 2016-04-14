@@ -17,7 +17,6 @@
     <div class="pull-right">
       <a class="btn btn-danger btn-sm disabled"
       @click="delete_entry()"
-      v-if="picked.delete_client_path !== null"
       :class="{disabled: can_delete()}">
           <%= fa 'times' %>
           <%= t 'common.btn.delete' %>
@@ -35,9 +34,10 @@
   </div>
 
   <demo-grid
-  :data="gridData"
+  :data.sync="gridData"
   :columns="gridColumns"
   :filter-key="searchQuery"
+  :picked.sync="picked"
   :index="index">
   </demo-grid>
 </div>

@@ -40,16 +40,17 @@
           return (this.picked.code[1] > 0);
       },
       delete_entry: function()  {
-        var delete_path = this.picked.delete_client_path;
+        var self = this;
         modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
                 $.ajax({
                     type: "POST",
-                    url: delete_path,
+                    url: self.picked.delete_client_path,
                     dataType: "json",
                     data: {"_method":"delete"},
-                });
-                event.preventDefault();
-                location.reload();
+                    success: function (data) {
+                      self.gridData = data;
+                    },
+                }).fail(modal.AlertForAjaxStdError());
         });
       }
 

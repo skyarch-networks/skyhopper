@@ -9,7 +9,8 @@
 module ClientsHelper
 
   def edit_client_path_url(client)
-    return Pundit.policy(current_user, client).edit? ? true : false
+    return nil unless Pundit.policy(current_user, client).edit?
+    return edit_client_path(client)
   end
 
   def delete_client_path(client)

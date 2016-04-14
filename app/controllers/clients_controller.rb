@@ -7,7 +7,7 @@
 #
 
 class ClientsController < ApplicationController
-
+  include Concerns::InfraLogger
   # ------------ Auth
   before_action :authenticate_user!
 
@@ -74,11 +74,11 @@ class ClientsController < ApplicationController
     begin
       @client.destroy!
     rescue => ex
-      flash[:alert] = ex.message
+      ws_send(t('clients.msg.deleted', message: ex.message), false)
       go.() and return
     end
 
-    flash[:notice] = I18n.t('clients.msg.deleted')
+    ws_send(t('clients.msg.deleted', name: @client.name), true)
     go.() and return
   end
 

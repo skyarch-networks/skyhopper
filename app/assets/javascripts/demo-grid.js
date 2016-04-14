@@ -10,6 +10,7 @@ module.exports = Vue.extend({
     data: Array,
     columns: Array,
     filterKey: String,
+    picked: Object,
     index: String
   },
 
@@ -26,7 +27,6 @@ module.exports = Vue.extend({
       pages: 10,
       pageNumber: 0,
       filteredLength: null,
-      picked: null,
     };
   },
 
@@ -49,7 +49,6 @@ module.exports = Vue.extend({
       this.pageNumber++;
     },
     select_entry: function(item)  {
-      this.$parent.picked = item;
       this.picked = item;
     },
     show_entry: function(item){
