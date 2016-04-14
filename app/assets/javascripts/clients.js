@@ -51,7 +51,7 @@
                       self.gridData = data;
                       self.picked = {};
                     },
-                }).fail(location.reload());
+                }).fail(function() {location.reload();});
         });
       }
 
