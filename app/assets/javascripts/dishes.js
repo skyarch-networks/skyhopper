@@ -39,7 +39,7 @@
 
       delete_entry: function()  {
         var self = this;
-        modal.Confirm(t('dishes.dish'), t('dish.msg.delete_dish'), 'danger').done(function () {
+        modal.Confirm(t('dishes.dish'), t('dishes.msg.delete_dish'), 'danger').done(function () {
           $.ajax({
             url: self.picked.dish_path,
             type: "POST",

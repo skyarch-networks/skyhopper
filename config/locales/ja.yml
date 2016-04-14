@@ -309,6 +309,7 @@ ja:
       deleted:                'ディッシュが正常に削除されました'
       description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
       no_serverspec_selected: 'Serverspec が選択されていません'
+      delete_dish:            'あなたはこの皿を削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
 
 
@@ -341,6 +342,7 @@ ja:
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
+      delete_serverspec: 'あなたはこのServerspecを削除してもよろしいですか？'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
     generator:
@@ -401,6 +403,7 @@ ja:
       deleted:         'テンプレートが正常に削除されました'
       updating:        'スタックの更新を開始しました'
       creating:        'スタックの作成を開始しました'
+      delete_cf_template: 'あなたはこのCf_templateを削除してもよろしいですか？'
 
 
   template_builder:
