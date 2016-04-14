@@ -74,7 +74,7 @@ class ClientsController < ApplicationController
     begin
       @client.destroy!
     rescue => ex
-      ws_send(t('clients.msg.deleted', message: ex.message), false)
+      flash[:alert] = ex.message
       go.() and return
     end
 

@@ -165,9 +165,6 @@ describe ProjectsController, type: :controller do
         expect(response).to redirect_to(projects_path(client_id: project.client_id))
       end
 
-      it 'should flash notice' do
-        expect(request.request.flash[:notice]).to eq I18n.t('projects.msg.deleted')
-      end
     end
 
     context 'whne delete fail' do
