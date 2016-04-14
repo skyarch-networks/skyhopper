@@ -16,6 +16,8 @@ class Zabbix
 
   class ZabbixError < ::StandardError; end
 
+  attr_reader :version
+
   # @param [String] username
   # @param [String] password
   def initialize(username, password)
@@ -27,6 +29,7 @@ class Zabbix
 
     begin
       @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
+      @version    = @sky_zabbix.apiinfo.version
       @sky_zabbix.login(username, password)
     rescue SkyZabbix::Jsonrpc::Error
       raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
