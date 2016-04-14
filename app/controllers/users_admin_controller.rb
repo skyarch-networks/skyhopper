@@ -7,6 +7,8 @@
 #
 
 class UsersAdminController < ApplicationController
+  include Concerns::InfraLogger
+
   before_action :authenticate_user!
   before_action do
     authorize User.new
@@ -166,20 +168,19 @@ class UsersAdminController < ApplicationController
   # DELETE /users_admin/1
   def destroy
     @user = User.find(params.require(:id))
-
     # delete user from zabbix
     z = @zabbix
     begin
       z.delete_user(@user.email)
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-      redirect_to(action: :index) and return
+      raise
     end
 
     #delete user from SkyHopper
     @user.destroy
 
-    flash[:notice] = I18n.t('users.msg.deleted')
+    ws_send(t('users.msg.deleted', name: @user.email), true)
     redirect_to(action: :index)
   end
 

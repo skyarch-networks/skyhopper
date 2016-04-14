@@ -29,7 +29,7 @@
       index: 'user_admin',
       picked: {
         users_admin_path: null,
-        id: null 
+        id: null
       }
     },
     methods:  {
@@ -41,16 +41,18 @@
       },
 
       delete_entry: function()  {
-        var users_admin_path = this.picked.users_admin_path;
-        modal.Confirm(t('users.user'), t('users.msg.delete_user'), 'danger').done(function () {
+        var self = this;
+        modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(function () {
           $.ajax({
             type: "POST",
-            url: users_admin_path,
+            url: self.picked.users_admin_path,
             dataType: "json",
             data: {"_method":"delete"},
-          });
-          event.preventDefault();
-          location.reload();
+            success: function (data) {
+              self.gridData = data;
+              self.picked = {};
+            },
+          }).fail(function() { location.reload(); });
         });
       }
 

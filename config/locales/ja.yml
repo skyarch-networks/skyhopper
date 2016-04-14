@@ -497,7 +497,7 @@ ja:
       role:                  'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
       created:               'ユーザーアカウントが正常に追加されました'
       updated:               'ユーザーアカウントが正常に更新されました'
-      deleted:               'ユーザーアカウントが正常に削除されました'
+      deleted:               '"%{name}" ユーザーアカウントが正常に削除されました'
       synced:                '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
       only_master:           'ユーザー管理は master ユーザーのみが行うことができます'
       confirm_sync_zabbix:   'Zabbix Server とユーザーを同期しますか?'
@@ -506,6 +506,7 @@ ja:
       mfa_used:              'MFA は既に使用されています。'
       mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
+      delete_user:           'あなたはこのユーザーを削除してもよろしいですか？'
 
 
   chef_servers:
