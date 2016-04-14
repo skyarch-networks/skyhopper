@@ -128,10 +128,10 @@ ja:
       empty-list:         'プロジェクトは空です。'
 
   project_parameters:
-    title: 'パラーメター'
+    title: 'パラメーター'
     description_html: 'プロジェクトごとに使用できるパラメーターを設定できます。<br />
                   ここで設定したパラメーターは、CloudFormationやCookの際に使用できます。'
-    usage: '${NAME}のようにして、登録したパラメータを使用可能です'
+    usage: '${NAME}のようにして、登録したパラメーターを使用可能です'
     btn:
       remove:   '削除'
       unremove: '削除取消'
@@ -440,7 +440,7 @@ ja:
       update_templates:          'Zabbix のテンプレートは正常に更新されました'
       failure:                 'Zabbix Server への登録に失敗しました'
       not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
-      invalid_parameters:      'ユーザー名またはパスワードの設定が間違っています。 設定を変更してください'
+      invalid_parameters:      'Zabbix Server のユーザー名またはパスワードの設定が間違っています。 設定を確認してください'
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
@@ -518,7 +518,7 @@ ja:
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
 
-  zabbix_server:
+  zabbix_servers:
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'
@@ -531,6 +531,7 @@ ja:
       start:          'Zabbix Server を起動しています...'
       stop:           'Zabbix Server を停止しています...'
       not_running:    'Zabbix Server が起動していません'
+      connrefused:    'Zabbix Server に接続できませんでした。Zabbix Server の設定を確認してください。'
 
   ec2_instances:
     description:       '詳細'

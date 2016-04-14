@@ -15,6 +15,8 @@ describe Node, type: :model do
       status = double()
       expect(status).to receive(:success?).and_return(true)
       expect(Open3).to receive(:capture3).and_return(['out','err', status])
+      allow_any_instance_of(EC2Instance).to receive(:platform).and_return("platform")
+      allow_any_instance_of(EC2Instance).to receive(:password).and_return("password")
       expect(ChefAPI).to receive(:server_url).and_return('http://example.com/hoge/fuga')
     end
 
@@ -30,6 +32,8 @@ describe Node, type: :model do
 
     before do
       allow(Open3).to receive(:popen3)
+      allow_any_instance_of(EC2Instance).to receive(:platform).and_return("platform")
+      allow_any_instance_of(EC2Instance).to receive(:password).and_return("password")
       allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
     end
 

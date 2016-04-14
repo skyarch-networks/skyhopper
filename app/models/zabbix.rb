@@ -25,8 +25,15 @@ class Zabbix
     opt = {url: url, user: username, password: password}
     opt[:debug] = true if Rails.env.development?
 
-    @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
-    @sky_zabbix.login(username, password)
+    begin
+      @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
+      @sky_zabbix.login(username, password)
+    rescue SkyZabbix::Jsonrpc::Error
+      raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
+    rescue Errno::ECONNREFUSED => ex
+      raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
+    end
+
   end
 
   # ホストが存在するかをbooleanで返す

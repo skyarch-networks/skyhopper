@@ -42,16 +42,5 @@ module.exports = Vue.extend({
     res.available_resources().done(function (data){
       self.physical_ids = data;
     });
-
-    $('#add_ec2_physical_id').selectize({
-      delimiter: ',',
-      persist: false,
-      create: function(input) {
-        return {
-          value: input,
-          text: input
-        };
-      }
-    });
   },
 });
