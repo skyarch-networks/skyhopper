@@ -124,7 +124,7 @@ en:
     msg:
       created:            'Project was successfully created.'
       updated:            'Project was successfully updated.'
-      deleted:            'Project was successfully deleted.'
+      deleted:            'Project "%{name}" was successfully deleted.'
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
       delete_project:     'Are you sure you want to delete this project?'

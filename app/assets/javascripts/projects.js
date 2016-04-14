@@ -53,6 +53,7 @@
                     data: {"_method":"delete"},
                     success: function (data) {
                       self.gridData = data;
+                      self.picked = null;
                     },
                 }).fail(modal.AlertForAjaxStdError());
         });

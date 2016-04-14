@@ -37,7 +37,7 @@
       },
       can_delete: function() {
         if (this.picked.code)
-          return (this.picked.code[1] > 0);
+          return (this.picked.code[1] === 0) ? true : false;
       },
       delete_entry: function()  {
         var self = this;
@@ -49,6 +49,7 @@
                     data: {"_method":"delete"},
                     success: function (data) {
                       self.gridData = data;
+                      self.picked = {};
                     },
                 }).fail(modal.AlertForAjaxStdError());
         });

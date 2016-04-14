@@ -123,7 +123,7 @@ ja:
     msg:
       created:            '案件が正常に追加されました'
       updated:            '案件が正常に更新されました'
-      deleted:            '案件が正常に削除されました'
+      deleted:            '案件 "%{name}" が正常に削除されました'
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
       delete_project:     'あなたはこのプロジェクトを削除してもよろしいですか？'

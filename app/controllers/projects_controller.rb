@@ -125,7 +125,6 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1.json
   def destroy
     go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
-    name = @project.name
     begin
       @project.destroy!
     rescue => ex
@@ -133,7 +132,7 @@ class ProjectsController < ApplicationController
       go.() and return
     end
 
-    ws_send(t('projects.msg.deleted', name: name), true)
+    ws_send(t('projects.msg.deleted', name: @project.name), true)
     go.() and return
   end
 
