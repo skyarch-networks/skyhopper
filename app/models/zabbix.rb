@@ -60,6 +60,19 @@ class Zabbix
     host_id = get_host_id(physical_id)
     template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
 
+    return @sky_zabbix.template.massadd(
+      hosts: [{hostid: host_id}],
+      templates: template_ids.map{|x| {templateid: x}}
+    )
+  end
+
+  # ホストにテンプレートを追加する
+  # @param [String] physical_id
+  # @param [Array<String>] テンプレートの名前の配列
+  def templates_link_host_build(physical_id, template_names)
+    host_id = get_host_id(physical_id)
+    template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
+
     return @sky_zabbix.template.build_massadd(
       hosts: [{hostid: host_id}],
       templates: template_ids.map{|x| {templateid: x}}
@@ -143,6 +156,22 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
+    reqs = infra.resources.ec2.map do |r|
+      item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
+      item_infos.map do |item|
+        updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
+
+        @sky_zabbix.trigger.update(
+          triggerid: item["triggers"].first["triggerid"],
+          expression: updating_expr
+        )
+      end
+    end.flatten
+  end
+
+  # TODO コメント
+  # trigger_exprs => {item_key: expression}
+  def update_trigger_expression_build(infra, trigger_exprs)
     reqs = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
@@ -241,6 +270,28 @@ class Zabbix
   # インフラ下の全てのウェブシナリオをこのホストで管理する為(ELB)
   # @param [Infrastructure] infra
   def create_elb_host(infra)
+    hostgroup_id = get_hostgroup_id(infra.project.code)
+
+    return @sky_zabbix.host.create(
+      host: infra_to_elb_hostname(infra),
+      interfaces: [{
+        type: 1,
+        main: 1,
+        useip: 1,
+        ip: "127.0.0.1",
+        dns: "",
+        port: "10050",
+      }],
+      groups: [
+        groupid: hostgroup_id,
+      ]
+    )
+  end
+
+  # ウェブシナリオ用に新しくホストを作ります。
+  # インフラ下の全てのウェブシナリオをこのホストで管理する為(ELB)
+  # @param [Infrastructure] infra
+  def create_elb_host_build(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
     return @sky_zabbix.host.build_create(
@@ -507,7 +558,7 @@ class Zabbix
   end
 
   # web_scenario [[stepname, url, required_string, status_code, timeout]]
-  def create_web_scenario(infra, web_scenario)
+  def create_web_scenario_batch(infra, web_scenario)
     host_id = get_host_id(infra_to_elb_hostname(infra))
     web_scenario_ids = get_web_scenario_id(host_id)
 
@@ -549,6 +600,48 @@ class Zabbix
     @sky_zabbix.batch(*reqs)
   end
 
+  # web_scenario [[stepname, url, required_string, status_code, timeout]]
+  def create_web_scenario(infra, web_scenario)
+    host_id = get_host_id(infra_to_elb_hostname(infra))
+    web_scenario_ids = get_web_scenario_id(host_id)
+
+    # Web Scenarioを作る前に一度ホスト名に紐付いた全てのシナリオを削除する
+    # Web Scenario名の重複を防ぐため、ステップの重複を防ぐ為
+    delete_all_web_scenario(web_scenario_ids) if web_scenario_ids
+
+    #TODO ウェブシナリオ名が被っている場合の処理
+    if web_scenario.blank?
+      return
+    end
+
+    wh = {}
+    web_scenario.each do |w|
+      scenario_name = w.shift
+      if wh.has_key?(scenario_name)
+        wh[scenario_name] << w
+      else
+        wh[scenario_name] = [w]
+      end
+    end
+
+    # wh = {scenario_name => [[steps], [steps]]}
+    reqs = wh.each do |scenario_name, steps|
+      step_category = [:name, :url, :required, :status_codes, :timeout, :no]
+
+      # [{name: "NAME", url: "http://...", ..., no: 1..n}]
+      s_array = steps.map.with_index(1) do |step, i|
+        step.push(i)
+        step_category.zip(step).to_h
+      end
+
+      @sky_zabbix.httptest.create(
+        name:  scenario_name,
+        hostid: host_id,
+        steps: s_array
+      )
+    end
+  end
+
   # Zabbix上の関係  host has many scenarios. web scenario has many steps
   # ホストに紐づく全てのウェブシナリオを取得し、
   # それに紐づくステップを全て取得し返す
@@ -574,7 +667,7 @@ class Zabbix
     return web_scenario_values
   end
 
-  def get_url_status_monitoring(infra)
+  def get_url_status_monitoring_batch(infra)
     host_id = get_host_id(infra_to_elb_hostname(infra))
     items_req = @sky_zabbix.item.build_get(
       hostids: host_id,
@@ -593,6 +686,67 @@ class Zabbix
       output: ["name"]
     )
     items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
+
+    data_for_table = []
+    webscenario.each do |scenario|
+
+      # アイテム名がシナリオ名にマッチするアイテムを取り出しています
+      # また、取り出したアイテム名にFailとErrorを含むアイテムを取り出し、Hashに格納
+      h = {}
+      items_for_scenario = items.select{|x| x["key_"][/^web\.test\.\w+\[(\w[\w\s]*(?<!\s)),?.*\]$/, 1] == scenario["name"]}
+      ["error", "fail"].each do |key|
+        h[key] = items_for_scenario.find{|x| x["key_"] =~ /^web\.test\.#{key}\[/}
+      end
+
+      status =
+        case h["fail"]["lastvalue"]
+        when "0"
+          "OK"
+        else
+          h["error"]["lastvalue"]
+        end
+
+      # 上で取り出したアイテムにレスポンドコードを含むモノを取り出し、
+      # URLとレスポンドコードとダウンロードスピード (bytes/sec) をstep_valuesに格納
+      step_values = []
+      scenario["steps"].each do |step|
+
+        rspcode_item, download_speed_item, response_time_item = ["rspcode", "in", "time"].map do |c|
+          items_for_scenario.find{|x| x["key_"][/^web\.test\.#{c}\[\w[\w\s]*(?<!\s),?(\w*),?.*\]$/, 1] == step["name"]}
+        end
+
+        # もしデータが存在しない場合は""Unknownに設定する
+        rspcode = rspcode_item.present? ? rspcode_item["lastvalue"] : "Unknown"
+        download_speed = download_speed_item.present? ? download_speed_item["lastvalue"].to_i.round : "Unknown"
+        response_time = response_time_item.present? ? response_time_item["lastvalue"] : "Unknown"
+        step_values.push({url: step["url"], response_code: rspcode, download_speed: download_speed, response_time: response_time})
+      end
+
+      data_for_table.push({name: scenario["name"], status: status, data: step_values})
+    end
+
+    # data_for_table = [{name: "hoge",  status: "OK", data: [{url: hoge.com, response_code: "200", download_speed: fuga, response_time: hoge}]}]
+    return data_for_table
+  end
+
+  def get_url_status_monitoring(infra)
+    host_id = get_host_id(infra_to_elb_hostname(infra))
+    items = @sky_zabbix.item.get(
+      hostids: host_id,
+      output: [
+        "key_",
+        "lastvalue",
+      ],
+      webitems: "true"
+    )
+    webscenario = @sky_zabbix.httptest.get(
+      hostids: host_id,
+      selectSteps: [
+        "name",
+        "url",
+      ],
+      output: ["name"]
+    )
 
     data_for_table = []
     webscenario.each do |scenario|
@@ -657,6 +811,16 @@ class Zabbix
   def create_mysql_login_trigger(item_info, physical_id)
     item_id = item_info["itemids"].first
 
+    @sky_zabbix.trigger.create(
+      description: "Can not login MySQL on {HOST.NAME}",
+      expression: "{#{physical_id}:mysql.login.last(0)}=1",
+      itemid: item_id
+    )
+  end
+
+  def create_mysql_login_trigger_build(item_info, physical_id)
+    item_id = item_info["itemids"].first
+
     @sky_zabbix.trigger.build_create(
       description: "Can not login MySQL on {HOST.NAME}",
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
@@ -685,6 +849,18 @@ class Zabbix
   # ホスト登録時にCPU用の新しいアイテムを作成したので、
   # それに紐づくトリガーを作成する
   def create_cpu_usage_trigger(item_info, hostname)
+    id = item_info["itemids"].first
+
+    @sky_zabbix.trigger.create(
+      description: "Calculated: CPU Usage is too high on {HOST.NAME}",
+      expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
+      itemid: id
+    )
+  end
+
+  # ホスト登録時にCPU用の新しいアイテムを作成したので、
+  # それに紐づくトリガーを作成する
+  def create_cpu_usage_trigger_build(item_info, hostname)
     id = item_info["itemids"].first
 
     @sky_zabbix.trigger.build_create(

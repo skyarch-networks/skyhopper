@@ -94,16 +94,25 @@ class MonitoringsController < ApplicationController
     else
       z = @zabbix
       begin
-        reqs = []
-        z.create_host(@infra, physical_id)
+        if z.version.start_with?('2')
+          reqs = []
+          z.create_host(@infra, physical_id)
 
-        # TODO: Batch request
-        reqs.push z.templates_link_host(physical_id, new_templates)
-        item_info_cpu   = z.create_cpu_usage_item(physical_id)
-        item_info_mysql = z.create_mysql_login_item(physical_id)
-        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   physical_id)
-        reqs.push z.create_mysql_login_trigger(item_info_mysql, physical_id)
-        z.batch(*reqs)
+          # TODO: Batch request
+          reqs.push z.templates_link_host_build(physical_id, new_templates)
+          item_info_cpu   = z.create_cpu_usage_item(physical_id)
+          item_info_mysql = z.create_mysql_login_item(physical_id)
+          reqs.push z.create_cpu_usage_trigger_build(  item_info_cpu,   physical_id)
+          reqs.push z.create_mysql_login_trigger_build(item_info_mysql, physical_id)
+          z.batch(*reqs)
+        else
+          z.create_host(@infra, physical_id)
+          z.templates_link_host(physical_id, new_templates)
+          item_info_cpu   = z.create_cpu_usage_item(physical_id)
+          item_info_mysql = z.create_mysql_login_item(physical_id)
+          z.create_cpu_usage_trigger(  item_info_cpu,   physical_id)
+          z.create_mysql_login_trigger(item_info_mysql, physical_id)
+        end
       rescue => ex
         @infra.detach_zabbix()
 
@@ -113,7 +122,7 @@ class MonitoringsController < ApplicationController
       @zabbix.templates_link_host(physical_id, new_templates)
       infra_logger_success("#{physical_id} is linked to Zabbix!")
     end
-    
+
       render nothing: true and return
 
   end
@@ -161,7 +170,12 @@ class MonitoringsController < ApplicationController
 
   # GET /monitorings/:id/show_url_status
   def show_url_status
-    url_status = @zabbix.get_url_status_monitoring(@infra)
+    url_status =
+      if @zabbix.version.start_with?('2')
+        @zabbix.get_url_status_monitoring_batch(@infra)
+      else
+        @zabbix.get_url_status_monitoring(@infra)
+      end
 
     render json: url_status
   end
@@ -219,7 +233,11 @@ class MonitoringsController < ApplicationController
 
     #TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
-    z.create_web_scenario(@infra, web_scenario)
+    if z.version.start_with?('2')
+      z.create_web_scenario_batch(@infra, web_scenario)
+    else
+      z.create_web_scenario(@infra, web_scenario)
+    end
 
     # zabbix側でmysqlに関するitemとtrigger expressionをアップデートする
     z.update_mysql(@infra, host_mysql["host"])
@@ -243,19 +261,31 @@ class MonitoringsController < ApplicationController
     z = @zabbix
 
     begin
-      reqs = []
-      resources.each do |resource|
-        z.create_host(@infra, resource.physical_id)
+      if z.version.start_with?('2')
+        reqs = []
+        resources.each do |resource|
+          z.create_host(@infra, resource.physical_id)
 
-        # TODO: Batch request
-        reqs.push z.templates_link_host(resource.physical_id, templates)
-        item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
-        item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-        reqs.push z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
-        reqs.push z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
+          # TODO: Batch request
+          reqs.push z.templates_link_host_build(resource.physical_id, templates)
+          item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
+          item_info_mysql = z.create_mysql_login_item(resource.physical_id)
+          reqs.push z.create_cpu_usage_trigger_build(  item_info_cpu,   resource.physical_id)
+          reqs.push z.create_mysql_login_trigger_build(item_info_mysql, resource.physical_id)
+        end
+        reqs.push z.create_elb_host_build(@infra)
+        z.batch(*reqs)
+      else
+        resources.each do |resource|
+          z.create_host(@infra, resource.physical_id)
+          z.templates_link_host(resource.physical_id, templates)
+          item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
+          item_info_mysql = z.create_mysql_login_item(resource.physical_id)
+          z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
+          z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
+        end
+        z.create_elb_host(@infra)
       end
-      reqs.push z.create_elb_host(@infra)
-      z.batch(*reqs)
     rescue => ex
       @infra.detach_zabbix()
 
