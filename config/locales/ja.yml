@@ -105,7 +105,7 @@ ja:
       no_permission:      '顧客管理の権限がありません'
       created:            '顧客が正常に追加されました'
       updated:            '顧客が正常に更新されました'
-      deleted:            '顧客が正常に削除されました'
+      deleted:            '顧客が "%{name}" 正常に削除されました'
       cant_change_system: 'システム用の顧客は変更できません'
       delete_client:     'あなたはこのクライアントを削除してもよろしいですか？'
 
