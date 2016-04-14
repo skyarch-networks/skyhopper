@@ -29,22 +29,23 @@ var serverspecIndex = new Vue({
   },
     methods: {
       can_edit: function() {
-        return this.picked.edit_serverspec_path === null;
+        return this.picked.edit_serverspec_path === null ? true : false;
       },
       can_delete: function() {
-        return (this.picked.serverspec_path === null);
+        return (this.picked.serverspec_path === null) ? true: false;
       },
       delete_entry: function()  {
-        var serverspec_path = this.picked.serverspec_path;
+        var self = this;
         modal.Confirm(t('serverspecs.serverspec'), t('serverspecs.msg.delete_serverspec'), 'danger').done(function () {
           $.ajax({
             type: "POST",
-            url: serverspec_path,
+            url: self.picked.serverspec_path,
             dataType: "json",
             data: {"_method":"delete"},
-          });
-          event.preventDefault();
-          location.reload();
+            success: function (data) {
+                location.reload();
+            },
+        }).fail(modal.AlertForAjaxStdError());
         });
       },
       show_serverspec: function(serverspec_id) {

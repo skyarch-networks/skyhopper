@@ -62,16 +62,16 @@
         return (this.picked.button_destroy_cft === null);
       },
       delete_entry: function()  {
-        var delete_project_url = this.picked.button_destroy_cft;
+        var self = this;
         modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
           $.ajax({
             type: "POST",
-            url: delete_project_url,
+            url: self.picked.button_destroy_cft,
             dataType: "json",
-            data: {"_method":"delete"},
-          });
-          event.preventDefault();
-          location.reload();
+            data: {"_method":"delete"},success: function (data) {
+              location.reload();
+            },
+        }).fail(modal.AlertForAjaxStdError());
         });
       },
       show_template: function(cf_template_id) {

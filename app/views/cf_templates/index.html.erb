@@ -33,9 +33,10 @@
 
 
   <demo-grid
-  :data="gridData"
+  :data.sync="gridData"
   :columns="gridColumns"
   :filter-key="searchQuery"
+  :picked.sync="picked"
   :index="index">
   </demo-grid>
 </div>

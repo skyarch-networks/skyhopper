@@ -38,16 +38,17 @@
       },
 
       delete_entry: function()  {
-        var dish_path = this.picked.dish_path;
+        var self = this;
         modal.Confirm(t('dishes.dish'), t('dish.msg.delete_dish'), 'danger').done(function () {
           $.ajax({
+            url: self.picked.dish_path,
             type: "POST",
-            url: dish_path,
             dataType: "json",
             data: {"_method":"delete"},
-          });
-          event.preventDefault();
-          location.reload();
+            success: function (data) {
+              location.reload();
+            },
+        }).fail(modal.AlertForAjaxStdError());
         });
       },
 
