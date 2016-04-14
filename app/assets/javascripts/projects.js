@@ -45,7 +45,7 @@
       },
       delete_entry: function()  {
         var self = this;
-        modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
+        modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
                 $.ajax({
                     type: "POST",
                     url: self.picked.delete_project_url,

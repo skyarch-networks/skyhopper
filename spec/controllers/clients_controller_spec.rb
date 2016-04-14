@@ -117,11 +117,11 @@ describe ClientsController, type: :controller do
   describe '#destroy' do
     let(:client) { create(:client) }
     let(:request) {delete :destroy, id: client.id}
+    let(:name) {'test'}
 
     stubize_infra
     stubize_zabbix
     run_zabbix_server
-
     context 'when destroy success' do
       before{request}
 
@@ -133,9 +133,6 @@ describe ClientsController, type: :controller do
         expect(response).to redirect_to(clients_path)
       end
 
-      it 'should be notice' do
-        expect(request.request.flash[:notice]).to eq I18n.t('clients.msg.deleted')
-      end
     end
 
     context 'when destroy fail' do
@@ -151,9 +148,6 @@ describe ClientsController, type: :controller do
         expect(response).to redirect_to(clients_path)
       end
 
-      it 'should be alert' do
-        expect(request.request.flash[:alert]).to eq err_msg
-      end
     end
   end
 
