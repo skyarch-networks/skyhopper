@@ -156,34 +156,18 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
-    reqs = infra.resources.ec2.map do |r|
+    triggers = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
         updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-
-        @sky_zabbix.trigger.update(
+        {
           triggerid: item["triggers"].first["triggerid"],
           expression: updating_expr
-        )
+        }
       end
     end.flatten
-  end
 
-  # TODO コメント
-  # trigger_exprs => {item_key: expression}
-  def update_trigger_expression_build(infra, trigger_exprs)
-    reqs = infra.resources.ec2.map do |r|
-      item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
-      item_infos.map do |item|
-        updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-
-        @sky_zabbix.trigger.build_update(
-          triggerid: item["triggers"].first["triggerid"],
-          expression: updating_expr
-        )
-      end
-    end.flatten
-    @sky_zabbix.batch(*reqs)
+    @sky_zabbix.trigger.update(triggers)
   end
 
   def update_expression(trigger_id, expression)
@@ -558,49 +542,6 @@ class Zabbix
   end
 
   # web_scenario [[stepname, url, required_string, status_code, timeout]]
-  def create_web_scenario_batch(infra, web_scenario)
-    host_id = get_host_id(infra_to_elb_hostname(infra))
-    web_scenario_ids = get_web_scenario_id(host_id)
-
-    # Web Scenarioを作る前に一度ホスト名に紐付いた全てのシナリオを削除する
-    # Web Scenario名の重複を防ぐため、ステップの重複を防ぐ為
-    delete_all_web_scenario(web_scenario_ids) if web_scenario_ids
-
-    #TODO ウェブシナリオ名が被っている場合の処理
-    if web_scenario.blank?
-      return
-    end
-
-    wh = {}
-    web_scenario.each do |w|
-      scenario_name = w.shift
-      if wh.has_key?(scenario_name)
-        wh[scenario_name] << w
-      else
-        wh[scenario_name] = [w]
-      end
-    end
-
-    # wh = {scenario_name => [[steps], [steps]]}
-    reqs = wh.map do |scenario_name, steps|
-      step_category = [:name, :url, :required, :status_codes, :timeout, :no]
-
-      # [{name: "NAME", url: "http://...", ..., no: 1..n}]
-      s_array = steps.map.with_index(1) do |step, i|
-        step.push(i)
-        step_category.zip(step).to_h
-      end
-
-      @sky_zabbix.httptest.build_create(
-        name:  scenario_name,
-        hostid: host_id,
-        steps: s_array
-      )
-    end
-    @sky_zabbix.batch(*reqs)
-  end
-
-  # web_scenario [[stepname, url, required_string, status_code, timeout]]
   def create_web_scenario(infra, web_scenario)
     host_id = get_host_id(infra_to_elb_hostname(infra))
     web_scenario_ids = get_web_scenario_id(host_id)
@@ -625,7 +566,7 @@ class Zabbix
     end
 
     # wh = {scenario_name => [[steps], [steps]]}
-    reqs = wh.each do |scenario_name, steps|
+    scenarios = wh.map do |scenario_name, steps|
       step_category = [:name, :url, :required, :status_codes, :timeout, :no]
 
       # [{name: "NAME", url: "http://...", ..., no: 1..n}]
@@ -634,12 +575,13 @@ class Zabbix
         step_category.zip(step).to_h
       end
 
-      @sky_zabbix.httptest.create(
+      {
         name:  scenario_name,
         hostid: host_id,
         steps: s_array
-      )
+      }
     end
+    @sky_zabbix.httptest.create(scenarios)
   end
 
   # Zabbix上の関係  host has many scenarios. web scenario has many steps

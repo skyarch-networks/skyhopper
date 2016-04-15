@@ -233,11 +233,7 @@ class MonitoringsController < ApplicationController
 
     #TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
-    if z.version.start_with?('2')
-      z.create_web_scenario_batch(@infra, web_scenario)
-    else
-      z.create_web_scenario(@infra, web_scenario)
-    end
+    z.create_web_scenario(@infra, web_scenario)
 
     # zabbix側でmysqlに関するitemとtrigger expressionをアップデートする
     z.update_mysql(@infra, host_mysql["host"])
