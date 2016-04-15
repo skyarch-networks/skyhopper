@@ -25,8 +25,9 @@ class ServerspecJob < ActiveJob::Base
       serverspec_ids = resource.all_serverspec_ids
     end
 
-    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
+    @ws = WSConnector.new('notifications', User.find(user_id).ws_key)
 
+    infra_logger_serverspec_start(physical_id, infra_id, user_id, auto_generated, serverspec_ids)
     begin
       resp = node.run_serverspec(infra_id, serverspec_ids, auto_generated)
     rescue => ex
@@ -34,7 +35,7 @@ class ServerspecJob < ActiveJob::Base
         infrastructure_id: infra_id, user_id: user_id, status: false,
         details: "serverspec for #{physical_id} is failed. results: \n#{ex.message}"
       )
-      ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
+      @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
       raise ex
     end
 
@@ -48,8 +49,25 @@ class ServerspecJob < ActiveJob::Base
     end
 
     log = InfrastructureLog.create(infrastructure_id: infra_id, user_id: user_id, details: log_msg, status: resp[:status])
-    ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
+    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
     Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id).serverspec_ids = serverspec_ids
     return resp
   end
+
+  def infra_logger_serverspec_start(physical_id, infra_id, user_id, auto_generated, serverspec_ids)
+    selected_serverspecs = Serverspec.where(id: serverspec_ids)
+
+    serverspec_names = []
+    serverspec_names << 'auto_generated' if auto_generated
+
+    serverspec_names.concat(selected_serverspecs.map{|spec|
+      screen_name = spec.name
+      screen_name << " (#{spec.description})" if spec.description.present?
+      screen_name
+    })
+    log_msg = "serverspec for #{physical_id} is started. serverspecs: \n#{serverspec_names.join(",\n")}"
+    log = InfrastructureLog.create(infrastructure_id: infra_id, user_id: user_id, details: log_msg, status: true)
+    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
+  end
+
 end
