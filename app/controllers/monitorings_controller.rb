@@ -170,12 +170,7 @@ class MonitoringsController < ApplicationController
 
   # GET /monitorings/:id/show_url_status
   def show_url_status
-    url_status =
-      if @zabbix.version.start_with?('2')
-        @zabbix.get_url_status_monitoring_batch(@infra)
-      else
-        @zabbix.get_url_status_monitoring(@infra)
-      end
+    url_status = @zabbix.get_url_status_monitoring(@infra)
 
     render json: url_status
   end

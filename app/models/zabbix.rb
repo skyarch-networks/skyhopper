@@ -609,86 +609,33 @@ class Zabbix
     return web_scenario_values
   end
 
-  def get_url_status_monitoring_batch(infra)
-    host_id = get_host_id(infra_to_elb_hostname(infra))
-    items_req = @sky_zabbix.item.build_get(
-      hostids: host_id,
-      output: [
-        "key_",
-        "lastvalue",
-      ],
-      webitems: "true"
-    )
-    webscenario_req = @sky_zabbix.httptest.build_get(
-      hostids: host_id,
-      selectSteps: [
-        "name",
-        "url",
-      ],
-      output: ["name"]
-    )
-    items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
-
-    data_for_table = []
-    webscenario.each do |scenario|
-
-      # アイテム名がシナリオ名にマッチするアイテムを取り出しています
-      # また、取り出したアイテム名にFailとErrorを含むアイテムを取り出し、Hashに格納
-      h = {}
-      items_for_scenario = items.select{|x| x["key_"][/^web\.test\.\w+\[(\w[\w\s]*(?<!\s)),?.*\]$/, 1] == scenario["name"]}
-      ["error", "fail"].each do |key|
-        h[key] = items_for_scenario.find{|x| x["key_"] =~ /^web\.test\.#{key}\[/}
-      end
-
-      status =
-        case h["fail"]["lastvalue"]
-        when "0"
-          "OK"
-        else
-          h["error"]["lastvalue"]
-        end
-
-      # 上で取り出したアイテムにレスポンドコードを含むモノを取り出し、
-      # URLとレスポンドコードとダウンロードスピード (bytes/sec) をstep_valuesに格納
-      step_values = []
-      scenario["steps"].each do |step|
-
-        rspcode_item, download_speed_item, response_time_item = ["rspcode", "in", "time"].map do |c|
-          items_for_scenario.find{|x| x["key_"][/^web\.test\.#{c}\[\w[\w\s]*(?<!\s),?(\w*),?.*\]$/, 1] == step["name"]}
-        end
-
-        # もしデータが存在しない場合は""Unknownに設定する
-        rspcode = rspcode_item.present? ? rspcode_item["lastvalue"] : "Unknown"
-        download_speed = download_speed_item.present? ? download_speed_item["lastvalue"].to_i.round : "Unknown"
-        response_time = response_time_item.present? ? response_time_item["lastvalue"] : "Unknown"
-        step_values.push({url: step["url"], response_code: rspcode, download_speed: download_speed, response_time: response_time})
-      end
-
-      data_for_table.push({name: scenario["name"], status: status, data: step_values})
-    end
-
-    # data_for_table = [{name: "hoge",  status: "OK", data: [{url: hoge.com, response_code: "200", download_speed: fuga, response_time: hoge}]}]
-    return data_for_table
-  end
-
   def get_url_status_monitoring(infra)
     host_id = get_host_id(infra_to_elb_hostname(infra))
-    items = @sky_zabbix.item.get(
+    item_req_params = {
       hostids: host_id,
       output: [
         "key_",
         "lastvalue",
       ],
       webitems: "true"
-    )
-    webscenario = @sky_zabbix.httptest.get(
+    }
+    webscenario_req_params = {
       hostids: host_id,
       selectSteps: [
         "name",
         "url",
       ],
       output: ["name"]
-    )
+    }
+
+    if @version.start_with?('2')
+      items_req = @sky_zabbix.item.build_get(item_req_params)
+      webscenario_req = @sky_zabbix.httptest.build_get(webscenario_req_params)
+      items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
+    else
+      items = @sky_zabbix.item.get(item_req_params)
+      webscenario = @sky_zabbix.httptest.get(webscenario_req_params)
+    end
 
     data_for_table = []
     webscenario.each do |scenario|
