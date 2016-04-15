@@ -419,7 +419,8 @@ en:
 
   monitoring:
     title:                'Monitoring'
-    config:               'Monitoring Configuration'
+    show:                 'Show'
+    configuration:        'Configuration'
     template:             'Monitoring Template'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
