@@ -105,8 +105,9 @@ en:
       no_permission:      'Permission denied to to utilize the "Clients" feature'
       created:            'Client was successfully created.'
       updated:            'Client was successfully updated.'
-      deleted:            'Client was successfully deleted.'
+      deleted:            'Client "%{name}" was successfully deleted.'
       cant_change_system: 'Unable to change client for this system.'
+      delete_client:      'Are you sure you want to delete this client?'
 
 
   projects:
@@ -123,9 +124,11 @@ en:
     msg:
       created:            'Project was successfully created.'
       updated:            'Project was successfully updated.'
-      deleted:            'Project was successfully deleted.'
+      deleted:            'Project "%{name}" was successfully deleted.'
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
+      delete_project:     'Are you sure you want to delete this project?'
+
 
   project_parameters:
     title: 'Parameter'
@@ -309,6 +312,7 @@ en:
       description:            'Dish is a preset to configure EC2 Instance.'
       no_serverspec_selected: 'No serverspecs selected.'
       empty-list:             'No dishes found.'
+      delete_dish:            'Are you sure you want to delete this Dish?'
 
 
   serverspecs:
@@ -339,6 +343,7 @@ en:
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
       failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
       generated: 'Serverspec is successfully generated.'
+      delete_serverspec: 'Are you sure you want to delete this Serverspec?'
       empty-results: 'No results found.'
       auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
@@ -400,6 +405,7 @@ en:
       deleted:         'Template was successfully deleted.'
       updating:        'Updating stack'
       creating:        'Creating stack'
+      delete_cf_template: 'Are you sure you want to delete this Cf_template?'
 
 
   template_builder:
@@ -413,7 +419,8 @@ en:
 
   monitoring:
     title:                'Monitoring'
-    config:               'Monitoring Configuration'
+    show:                 'Show'
+    configuration:        'Configuration'
     template:             'Monitoring Template'
     select:               'Monitoring Options'
     trigger:              'Setting threshold'
@@ -493,7 +500,7 @@ en:
       role:                  'Master users can see all the infrastructures. Admin users can change assigned infrastructures.'
       created:               'An account was successfully created.'
       updated:               'An account was successfully updated.'
-      deleted:               'An account was successfully deleted.'
+      deleted:               '"%{name}" was successfully deleted.'
       synced:                'All of accounts was successfully synchronized with Zabbix Server.'
       only_master:           'The feature of User Management is only permitted to Master users.'
       confirm_sync_zabbix:   'Do you want to synchronize users with Zabbix Server?'
@@ -502,6 +509,7 @@ en:
       mfa_used:              'MFA is already used.'
       mfa_start_description: 'Enter secret key to MFA device. Or Scan QR code.'
       use_stop_mfa:          'If save changes, use stop MFA.'
+      delete_user:           'Are you sure you want to delete this User?'
 
 
   chef_servers:

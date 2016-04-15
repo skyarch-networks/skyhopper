@@ -7,7 +7,7 @@
 #
 
 class ClientsController < ApplicationController
-
+  include Concerns::InfraLogger
   # ------------ Auth
   before_action :authenticate_user!
 
@@ -30,7 +30,7 @@ class ClientsController < ApplicationController
     page = params[:page] || 1
     @clients = Client.page(page)
     respond_to do |format|
-      format.json { render json: @clients.as_json( include: [{projects: {only: [:count]}}])}
+      format.json
       format.html
     end
   end
@@ -78,7 +78,7 @@ class ClientsController < ApplicationController
       go.() and return
     end
 
-    flash[:notice] = I18n.t('clients.msg.deleted')
+    ws_send(t('clients.msg.deleted', name: @client.name), true)
     go.() and return
   end
 

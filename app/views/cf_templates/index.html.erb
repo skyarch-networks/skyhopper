@@ -5,21 +5,42 @@
   <h1><%= t('cf_templates.cf_template') %></h1>
 </div>
 
-<%= render 'vue/index' %>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<table class="table hidden">
-  <tbody>
-    <% @global_jsons.each do |json| %>
-      <tr>
-        <td>
-          <%= link_to t('helpers.links.show'), '#', class: 'btn btn-xs btn-info show-template' %>
-          <%= button_edit_cft(json) %>
-          <%= button_destroy_cft(json) %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div id="indexElement" v-el:node>
+
+  <div v-cloak>
+    <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
+
+    <div class="pull-right">
+      <a class="btn btn-danger btn-sm disabled"
+      :class="{disabled: can_delete()}"
+      @click="delete_entry()">
+          <%= fa 'times' %>
+          <%= t 'common.btn.delete' %>
+      </a>&nbsp
+    </div>
+
+    <div class="pull-right" v-cloak="picked">
+      <a class="btn btn-default btn-sm disabled"
+          :href="picked.button_edit_cft" :class="{disabled: can_edit()}">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
+      </a>&nbsp
+    </div>
+
+  </div>
+
+
+  <demo-grid
+  :data.sync="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery"
+  :picked.sync="picked"
+  :index="index">
+  </demo-grid>
+</div>
+
 
 <%= button_add_cft %>
 <%= button_template_builder %>

@@ -1,12 +1,11 @@
 <!-- component template -->
-<script type="text/x-template" id="grid-template">
   <table class="table table-hover ssp">
   <thead>
     <tr>
       <th v-for=" key in columns"
           :class="{active: sortKey == key}"
           @click="sortBy(key)">
-        <span v-html="key | wrap option"></span>
+        <span v-html="key | wrap index"></span>
           <span v-if="key !== 'id' && key !== 'role'" class="pull-right glyphicon" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
           <i v-if="key === 'role'"><a href="#" id="role" @click="pop()"
             data-content="<%= t('users.msg.role')%>"
@@ -25,11 +24,10 @@
         | filterBy filterKey
         | count
         | orderBy sortKey sortOrders[sortKey]
-        | paginate">
-        <td v-for="key in columns">
-          <span id="{{key}}" v-html="entry[key] | listen key option lang"></span>
+        | paginate" :class="{info: picked == entry}">
+        <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
+          <span id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         </td>
-
       </tr>
       <tr  v-if="filteredLength === 0 && data.length > 0">
         <td v-if="lang === 'en'"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
@@ -44,22 +42,3 @@
       <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
     </ul>
   </nav>
-</script>
-
-<!-- demo root element -->
-
-<div id="indexElement" v-el:node>
-  <div class="col-md-4 input-group">
-      <input type="text" name="query" maxlength="120"  debounce="500" v-model="searchQuery" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-      <hr>
-  </div>
-  <demo-grid
-  :data="gridData"
-  :columns="gridColumns"
-  :filter-key="searchQuery">
-  </demo-grid>
-</div>
-
-<div  id="empty" style="display: none;"></div>
-<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
-<hr>
