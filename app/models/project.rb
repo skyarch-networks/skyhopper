@@ -9,6 +9,7 @@
 class Project < ActiveRecord::Base
   belongs_to :client
   belongs_to :cloud_provider
+  belongs_to :zabbix_server
 
   has_many :infrastructures,    dependent: :restrict_with_exception
   has_many :dishes,             dependent: :delete_all

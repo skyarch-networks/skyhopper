@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Fqdn:</strong>
+  <%= @zabbix_server.fqdn %>
+</p>
+
+<p>
+  <strong>Username:</strong>
+  <%= @zabbix_server.username %>
+</p>
+
+<p>
+  <strong>Password:</strong>
+  <%= @zabbix_server.password %>
+</p>
+
+<p>
+  <strong>Version:</strong>
+  <%= @zabbix_server.version %>
+</p>
+
+<p>
+  <strong>Details:</strong>
+  <%= @zabbix_server.details %>
+</p>
+
+<%= link_to 'Edit', edit_zabbix_server_path(@zabbix_server) %> |
+<%= link_to 'Back', zabbix_servers_path %>

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Zabbix Servers</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fqdn</th>
+      <th>Username</th>
+      <th>Password</th>
+      <th>Version</th>
+      <th>Details</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @zabbix_servers.each do |zabbix_server| %>
+      <tr>
+        <td><%= zabbix_server.fqdn %></td>
+        <td><%= zabbix_server.username %></td>
+        <td><%= zabbix_server.password %></td>
+        <td><%= zabbix_server.version %></td>
+        <td><%= zabbix_server.details %></td>
+        <td><%= link_to 'Show', zabbix_server %></td>
+        <td><%= link_to 'Edit', edit_zabbix_server_path(zabbix_server) %></td>
+        <td><%= link_to 'Destroy', zabbix_server, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Zabbix server', new_zabbix_server_path %>

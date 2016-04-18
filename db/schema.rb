@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121085745) do
+ActiveRecord::Schema.define(version: 20160418034350) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -270,6 +270,16 @@ ActiveRecord::Schema.define(version: 20160121085745) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+
+  create_table "zabbix_servers", force: :cascade do |t|
+    t.string   "fqdn",       limit: 255
+    t.string   "username",   limit: 255
+    t.string   "password",   limit: 255
+    t.string   "version",    limit: 255
+    t.string   "details",    limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   add_foreign_key "app_settings", "ec2_private_keys", on_delete: :cascade
   add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade

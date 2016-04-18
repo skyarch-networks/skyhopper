@@ -1,4 +1,5 @@
 SkyHopper::Application.routes.draw do
+  resources :zabbix_servers
   resources :users_admin, except: :show do
     collection do
       put 'sync_zabbix'
