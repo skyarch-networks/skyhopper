@@ -15,7 +15,7 @@
   <tbody>
     <% @zabbix_servers.each do |zabbix_server| %>
       <tr>
-        <td><%= zabbix_server.fqdn %></td>
+        <td><%= link_to zabbix_server.fqdn.concat("/zabbix"), "//#{zabbix_server.fqdn}", target: "_blank" %></td>
         <td><%= zabbix_server.version %></td>
         <td><%= zabbix_server.details %></td>
         <td><%= link_to 'Show', zabbix_server %></td>
