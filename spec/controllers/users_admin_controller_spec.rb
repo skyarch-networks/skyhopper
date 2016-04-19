@@ -249,7 +249,7 @@ describe UsersAdminController, type: :controller do
         req
       end
 
-      it {is_expected.to redirect_to action: :index}
+      it {expect { raise StandardError }.to raise_error(StandardError)}
 
       it 'should not delete user' do
         expect(User).to be_exists user.id

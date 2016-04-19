@@ -11,7 +11,7 @@
       <th v-for="key in columns"
           :class="{active: sortKey === key}"
           @click="sortBy(key)">
-        <span v-html="key | wrap option"></span>
+        <span v-html="key | wrap index"></span>
         <span  v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
       </th>
     </tr>
@@ -23,7 +23,7 @@
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
       <td v-for="key in columns">
-        <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key option lang"></span>
+        <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         <span v-if="key === 'id'">
           <button class="btn btn-xs btn-primary"  @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
           <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">

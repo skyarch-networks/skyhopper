@@ -16,94 +16,11 @@
   require('brace/theme/github');
   require('brace/mode/json');
 
+  var modal       = require('modal');
+
   var app;
 
-  Vue.component('demo-grid', {
-    template: '#grid-template',
-    replace: true,
-    props: {
-      data: Array,
-      columns: Array,
-      filterKey: String
-    },
-    data: function () {
-      var sortOrders = {};
-      this.columns.forEach(function (key) {
-        sortOrders[key] = 1;
-      });
-      return {
-        sortKey: '',
-        sortOrders: sortOrders,
-        option: ['cf_template'],
-        lang: queryString.lang,
-        pages: 10,
-        pageNumber: 0,
-        filteredLength: null,
-          };
-      },
-    methods: {
-      sortBy: function (key) {
-          if(key !== 'id')
-            this.sortKey = key;
-            this.sortOrders[key] = this.sortOrders[key] * -1;
-      },
-      showPrev: function(){
-          if(this.pageNumber === 0) return;
-          this.pageNumber--;
-      },
-      showNext: function(){
-          if(this.isEndPage) return;
-          this.pageNumber++;
-      },
-    },
-    computed: {
-      isStartPage: function(){
-          return (this.pageNumber === 0);
-      },
-      isEndPage: function(){
-          return ((this.pageNumber + 1) * this.pages >= this.data.length);
-      },
-    },
-    created: function (){
-        var self = this;
-        self.loading = true;
-
-       $.ajax({
-           cache: false,
-           url:'cf_templates?lang='+self.lang,
-           success: function (data) {
-             this.pages = data.length;
-             self.data = data.map(function (item) {
-               return {
-                 subject: item.name,
-                 details: item.detail,
-                 id: item.id,
-               };
-             });
-             self.$emit('data-loaded');
-             var empty = t('projects.msg.empty-list');
-             if(self.data.length === 0){ $('#empty').show().html(empty);}
-             self.filteredLength = data.length;
-           }
-         });
-         $("#loading").hide();
-    },
-    filters:{
-      wrap: wrap,
-      listen: listen,
-      paginate: function(list) {
-        var index = this.pageNumber * this.pages;
-        return list.slice(index, index + this.pages);
-      },
-      roundup: function (val) { return (Math.ceil(val));},
-      count: function (arr) {
-        // record length
-        this.$set('filteredLength', arr.length);
-        // return it intact
-        return arr;
-      }
-    }
-  });
+  Vue.component('demo-grid', require('demo-grid.js'));
 
   var editor;
   $(document).ready(function(){
@@ -129,33 +46,53 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['subject','details', 'id'],
-      gridData: []
+      gridColumns: ['subject','details'],
+      gridData: [],
+      index: 'cf_templates',
+      picked: {
+        button_destroy_cft: null,
+        button_edit_cft: null
+      }
+    },
+    methods: {
+      can_edit: function() {
+        return (this.picked.button_edit_cft === null);
+      },
+      can_delete: function() {
+        return (this.picked.button_destroy_cft === null);
+      },
+      delete_entry: function()  {
+        var self = this;
+        modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
+          $.ajax({
+            type: "POST",
+            url: self.picked.button_destroy_cft,
+            dataType: "json",
+            data: {"_method":"delete"},success: function (data) {
+              location.reload();
+            },
+        }).fail(modal.AlertForAjaxStdError());
+        });
+      },
+      show_template: function(cf_template_id) {
+        $.ajax({
+          url : "/cf_templates/" + cf_template_id,
+          type : "GET",
+          success : function (data) {
+            $("#template-information").html(data);
+          }
+        }).done(function () {
+          var viewer = ace.edit('cf_value');
+          viewer.setOptions({
+            maxLines: Infinity,
+            minLines: 15,
+            readOnly: true
+          });
+          viewer.setTheme("ace/theme/github");
+          viewer.getSession().setMode("ace/mode/json");
+        });
+      }
     }
   });
 
-
-  $(document).on("click", ".show-template", function () {
-    var cf_template_id = $(this).closest("a").attr("data-managejson-id");
-    var tr = $(this).closest('tr');
-    $('tr.info').removeClass('info');
-    tr.addClass('info');
-
-    $.ajax({
-      url : "/cf_templates/" + cf_template_id,
-      type : "GET",
-      success : function (data) {
-        $("#template-information").html(data);
-      }
-    }).done(function () {
-      var viewer = ace.edit('cf_value');
-      viewer.setOptions({
-        maxLines: Infinity,
-        minLines: 15,
-        readOnly: true
-      });
-      viewer.setTheme("ace/theme/github");
-      viewer.getSession().setMode("ace/mode/json");
-    });
-  });
 })();

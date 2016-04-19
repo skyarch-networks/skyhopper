@@ -10,7 +10,7 @@
     <tr>
       <th v-for="key in columns"
         :class="{active: sortKey === key}" @click="sortBy(key)">
-        <text v-html="key | wrap option"></text>
+        <text v-html="key | wrap index"></text>
           <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
       </th>
       </tr>
@@ -22,7 +22,7 @@
         | orderBy sortKey sortOrders[sortKey]
         | paginate">
         <td v-for="key in columns">
-          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key option lang"></text>
+          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key index lang"></text>
         </td>
       </tr>
       <td id="empty_results" style="display: none;"></td>

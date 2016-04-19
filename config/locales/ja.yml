@@ -105,9 +105,9 @@ ja:
       no_permission:      '顧客管理の権限がありません'
       created:            '顧客が正常に追加されました'
       updated:            '顧客が正常に更新されました'
-      deleted:            '顧客が正常に削除されました'
+      deleted:            '顧客 "%{name}" が正常に削除されました'
       cant_change_system: 'システム用の顧客は変更できません'
-
+      delete_client:     'この顧客を削除してもよろしいですか？'
 
   projects:
     project:           '案件'
@@ -123,9 +123,10 @@ ja:
     msg:
       created:            '案件が正常に追加されました'
       updated:            '案件が正常に更新されました'
-      deleted:            '案件が正常に削除されました'
+      deleted:            '案件 "%{name}" が正常に削除されました'
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
+      delete_project:     'この案件を削除してもよろしいですか？'
 
   project_parameters:
     title: 'パラメーター'
@@ -308,6 +309,7 @@ ja:
       deleted:                'ディッシュが正常に削除されました'
       description:            'ディッシュは EC2 インスタンスの構成を定義するものです。'
       no_serverspec_selected: 'Serverspec が選択されていません'
+      delete_dish:            'このディッシュを削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
 
 
@@ -340,6 +342,7 @@ ja:
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
+      delete_serverspec: 'この Serverspec を削除してもよろしいですか？'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
     generator:
@@ -400,6 +403,7 @@ ja:
       deleted:         'テンプレートが正常に削除されました'
       updating:        'スタックの更新を開始しました'
       creating:        'スタックの作成を開始しました'
+      delete_cf_template: 'このテンプレートを削除してもよろしいですか？'
 
 
   template_builder:
@@ -413,7 +417,8 @@ ja:
 
   monitoring:
     title:                '監視'
-    config:               '監視項目の設定'
+    show:                 '表示'
+    configuration:        '設定'
     select:               '監視項目の選択'
     trigger:              '閾値の設定'
     explanation_triggers: 'トリガーの説明'
@@ -493,7 +498,7 @@ ja:
       role:                  'master はすべてのインフラを見ることができます。admin は割り当てられたインフラを変更する事ができます。'
       created:               'ユーザーアカウントが正常に追加されました'
       updated:               'ユーザーアカウントが正常に更新されました'
-      deleted:               'ユーザーアカウントが正常に削除されました'
+      deleted:               '"%{name}" ユーザーアカウントが正常に削除されました'
       synced:                '全てのユーザーアカウントは正常に Zabbix Server と同期されました。'
       only_master:           'ユーザー管理は master ユーザーのみが行うことができます'
       confirm_sync_zabbix:   'Zabbix Server とユーザーを同期しますか?'
@@ -502,6 +507,7 @@ ja:
       mfa_used:              'MFA は既に使用されています。'
       mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
+      delete_user:           'このユーザーを削除してもよろしいですか？'
 
 
   chef_servers:

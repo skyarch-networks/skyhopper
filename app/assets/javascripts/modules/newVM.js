@@ -37,10 +37,18 @@ module.exports = function (stack, current_infra, current_tab) {
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
-          return res.screen_name + ' / ' + res.physical_id;
+          return res.screen_name + ' / ' + this.subsStr(res.physical_id);
         } else {
-          return res.physical_id;
+          return this.subsStr(res.physical_id);
         }
+      },
+      subsStr: function(string) {
+        if(string.length > 10){
+          return string.substring(0, string.length/2)+"...";
+        }else {
+          return string;
+        }
+
       },
       show_ec2: function (physical_id) {
         this.show_tabpane('ec2');
@@ -173,6 +181,24 @@ module.exports = function (stack, current_infra, current_tab) {
       },
       is_progress: function () {
         return (this.current_infra.stack.status.type === 'IN_PROGRESS');
+      },
+      back_to_top: function(){
+        var offset = 250;
+        var duration = 300;
+
+        $(window).scroll(function() {
+          if ($(this).scrollTop() > offset) {
+            $('.back-to-top').fadeIn(duration);
+          } else {
+            $('.back-to-top').fadeOut(duration);
+          }
+        });
+
+        $('.back-to-top').click(function(event) {
+          event.preventDefault();
+        $('html, body').animate({scrollTop: 0}, duration);
+          return false;
+        });
       }
     },
     filters: {
@@ -199,6 +225,8 @@ module.exports = function (stack, current_infra, current_tab) {
     ready: function () {
       var self = this;
       console.log(self);
+      self.back_to_top();
+
       if (stack.status.type === 'OK') {
         var res = new Resource(current_infra);
         res.index().done(function (resources) {

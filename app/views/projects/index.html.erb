@@ -5,48 +5,60 @@
   <%= breadcrumbs(@selected_client) if current_user.master? %>
 </div>
 
-<%= render 'vue/index' %>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<table class="table table-hover hidden">
-  <tbody>
-    <% @projects.each do |project| %>
-      <tr class="projects-row <%= 'info' if project.id == @selected_project_id %>">
-        <td>*****<%= project.access_key[-3..-1] %></td>
-        <td>
-          <%= link_to t('projects.btn.show_infrastructures'),
-            infrastructures_path(project_id: project.id),
-            class: 'btn btn-xs btn-info' %>
+<div id="indexElement" v-el:node>
 
-          <div class="btn-group">
-            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#">
-              <%= t 'common.btn.settings' %> <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <%= link_to t('dishes.dishes'), dishes_path(project_id: project.id) %>
-                <%= link_to t('key_pairs.key_pairs'), key_pairs_path(project_id: project.id) %>
-                <%= link_to t('project_parameters.title'), project_parameters_path(project_id: project.id) %>
-              </li>
-            </ul>
-          </div>
+  <div v-cloak>
+    <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
-          <% if current_user.admin? %>
+    <div class="pull-right">
+      <a class="btn btn-danger btn-sm disabled"
+      @click="delete_entry()"
+        v-if="picked.delete_project_url !== null"
+        :class="{disabled: can_delete()}">
+          <%= fa 'times' %>
+          <%= t 'common.btn.delete' %>
+      </a>&nbsp
+    </div>
 
-            <%= link_to t('.edit', default: t("helpers.links.edit")),
-              edit_project_path(project),
-              class: 'btn btn-default btn-xs',
-              id: 'edit-'+project.id.to_s %>
+    <div class="pull-right">
+      <div class="btn-group">
+           <a class="btn btn-default btn-sm dropdown-toggle disabled" data-toggle="dropdown" href="#" :class="{disabled: !picked}">
+             <%= t 'common.btn.settings' %> <span class="caret"></span>
+           </a>
+           <ul class="dropdown-menu">
+             <li v-if="picked">
+               <a :href="picked.project_settings.dishes_path"><%= t ('dishes.dishes') %> </a>
+               <a :href="picked.project_settings.key_pairs_path"><%= t('key_pairs.key_pairs') %> </a>
+               <a :href="picked.project_settings.project_parameters_path"><%= t('project_parameters.title') %> </a>
+             </li>
+           </ul>
+         </div>
+    </div>
 
-            <%= button_delete_project(project) %>
+    <div class="pull-right" v-cloak="picked">
+      <a class="btn btn-default btn-sm disabled"
+          :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
+      </a>&nbsp
+    </div>
+  </div>
 
-          <% end %>
 
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <demo-grid
+  :data.sync="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery"
+  :picked.sync="picked"
+  :index="index">
+  </demo-grid>
+</div>
 
+<div  id="empty" style="display: none;"></div>
+<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<hr>
 
 
 <%= button_add_project(@selected_client) %>

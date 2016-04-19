@@ -19,93 +19,51 @@
 
   var app;
 
-  Vue.component('demo-grid', {
-    template: '#grid-template',
-    replace: true,
-    props: {
-      data: Array,
-      columns: Array,
-      filterKey: String
-    },
-    data: function () {
-      var sortOrders = {};
-      this.columns.forEach(function (key) {
-        sortOrders[key] = 1;
-      });
-      return {
-        sortKey: '',
-        sortOrders: sortOrders,
-        option: ['dish'],
-        lang: queryString.lang,
-        pages: 10,
-        pageNumber: 0,
-          };
-      },
-    methods: {
-      sortBy: function (key) {
-          if(key !== 'id')
-            this.sortKey = key;
-            this.sortOrders[key] = this.sortOrders[key] * -1;
-      },
-      showPrev: function(){
-          if(this.pageNumber === 0) return;
-          this.pageNumber--;
-      },
-      showNext: function(){
-          if(this.isEndPage) return;
-          this.pageNumber++;
-      },
-    },
-    computed: {
-      isStartPage: function(){
-          return (this.pageNumber === 0);
-      },
-      isEndPage: function(){
-          return ((this.pageNumber + 1) * this.pages >= this.data.length);
-      },
-    },
-    created: function (){
-        var il = new Loader();
-        var self = this;
-        self.loading = true;
+  Vue.component('demo-grid', require('demo-grid.js'));
 
-       $.ajax({
-           cache: false,
-           url:'dishes?lang='+self.lang,
-           success: function (data) {
-             this.pages = data.length;
-             self.data = data.map(function (item) {
-               return {
-                 name: item.name,
-                 detail: item.detail,
-                 status: item.status,
-                 id: item.id,
-               };
-             });
-             self.$emit('data-loaded');
-             var empty = t('dishes.msg.empty-list');
-             if(self.data.length === 0){ $('#empty').show().html(empty);}
-           }
-         });
-         $("#loading").hide();
-    },
-    filters:{
-      wrap: wrap,
-      listen: listen,
-      paginate: function(list) {
-        var index = this.pageNumber * this.pages;
-        return list.slice(index, index + this.pages);
-      },
-      roundup: function (val) { return (Math.ceil(val));},
-    }
- });
   var dishIndex = new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['name','detail', 'status', 'id'],
-      gridData: []
-    }
+      gridColumns: ['name','detail', 'status'],
+      gridData: [],
+      index: 'dishes',
+      picked: {
+        dish_path: null
+      }
+    },
+    methods: {
+      can_delete: function() {
+        return (this.picked.dish_path === null);
+      },
+
+      delete_entry: function()  {
+        var self = this;
+        modal.Confirm(t('dishes.dish'), t('dishes.msg.delete_dish'), 'danger').done(function () {
+          $.ajax({
+            url: self.picked.dish_path,
+            type: "POST",
+            dataType: "json",
+            data: {"_method":"delete"},
+            success: function (data) {
+              location.reload();
+            },
+        }).fail(modal.AlertForAjaxStdError());
+        });
+      },
+
+      show_dish: function(item) {
+        var self = this;
+        show_dish(item).done(function (data) {
+          //  show dish
+          set_current_dish_id(item);
+
+        }).fail(function (data) {
+          modal.Alert(t('dishes.dish'), data.responseText, 'danger');
+        });
+      },
+
+    },
   });
 
   //    -----------------     functions
@@ -211,24 +169,6 @@
 
 
   //      -----------------    event
-
-  $(document).on('click', '.show-dish', function (e) {
-    var btn     = $(this);
-    var a      = btn.closest('a');
-    var dish_id = a.attr('data-dish-id');
-    var target  = dish_body();
-
-    show_dish(dish_id).done(function (data) {
-      //  show dish
-      set_current_dish_id(dish_id);
-      var tr = a.closest('tr');
-      $('tr.info').removeClass('info');
-      tr.addClass('info');
-
-    }).fail(function (data) {
-      modal.Alert(t('dishes.dish'), data.responseText, 'danger');
-    });
-  });
 
   $(document).on('click', '.edit-dish', function (e) {
     var btn = $(this);
