@@ -151,8 +151,8 @@ class UsersAdminController < ApplicationController
   # PUT /users_admin/sync_zabbix
   # 全てのユーザーをZabbixに登録する。
   def sync_zabbix
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+    s = ZabbixServer.find(1)
+    z = Zabbix.new(s.username, s.password)
 
     users = User.all
     users.each do |user|

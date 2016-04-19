@@ -11,25 +11,25 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <div class="form-group">
     <%= f.label :fqdn %><br>
-    <%= f.text_field :fqdn %>
+    <%= f.text_field :fqdn, class: 'form-control', required: true, pattern: '[^\s]+' %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :username %><br>
-    <%= f.text_field :username %>
+    <%= f.text_field :username, class: 'form-control', required: true, pattern: '[^\s]+' %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :password %><br>
-    <%= f.text_field :password %>
+    <%= f.text_field :password, class: 'form-control', type: 'password', required: true, pattern: '[^\s]+' %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :version %><br>
-    <%= f.text_field :version %>
+    <%= f.text_field :version, class: 'form-control', required: true, pattern: '[^\s]+' %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :details %><br>
-    <%= f.text_field :details %>
+    <%= f.text_field :details, class: 'form-control', required: true, pattern: '[^\s]+' %>
   </div>
   <div class="actions">
     <%= f.submit %>

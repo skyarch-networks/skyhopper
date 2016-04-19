@@ -8,13 +8,15 @@
 #
 
 FactoryGirl.define do
+
   factory :zabbix_server do
-    fqdn "MyString"
+    fqdn {SecureRandom.hex(20)}
     username "MyString"
     password "MyString"
     version "MyString"
     details "MyString"
   end
+  
   factory :recurring_date do
     operation_duration_id "MyString"
     repeats 1

@@ -24,7 +24,13 @@ RSpec.describe ZabbixServersController, type: :controller do
   # ZabbixServer. As you add validations to ZabbixServer, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      fqdn: SecureRandom.hex(20),
+      username: "test",
+      password: "ilsdseeetest",
+      version:  "3.0.1",
+      details: "Default Server",
+    }
   }
 
   let(:invalid_attributes) {
@@ -146,7 +152,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       zabbix_server = ZabbixServer.create! valid_attributes
       expect {
         delete :destroy, {:id => zabbix_server.to_param}, valid_session
-      }.to change(ZabbixServer, :count).by(-1)
+      }.to change(ZabbixServer, :count).by(0)
     end
 
     it "redirects to the zabbix_servers list" do

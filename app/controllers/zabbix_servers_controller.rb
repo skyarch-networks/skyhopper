@@ -54,11 +54,15 @@ class ZabbixServersController < ApplicationController
   # DELETE /zabbix_servers/1
   # DELETE /zabbix_servers/1.json
   def destroy
-    @zabbix_server.destroy
-    respond_to do |format|
-      format.html { redirect_to zabbix_servers_url, notice: 'Zabbix server was successfully destroyed.' }
-      format.json { head :no_content }
+    go = -> () { redirect_to zabbix_servers_url }
+    begin
+      @zabbix_server.destroy!
+    rescue => ex
+      flash[:alert] = ex.message
+      go.() and return
     end
+
+    go.() and return
   end
 
   private
