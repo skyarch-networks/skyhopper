@@ -16,6 +16,8 @@ class Zabbix
 
   class ZabbixError < ::StandardError; end
 
+  attr_reader :version
+
   # @param [String] username
   # @param [String] password
   def initialize(username, password)
@@ -27,6 +29,7 @@ class Zabbix
 
     begin
       @sky_zabbix = SkyZabbix::Client.new(url, logger: Rails.logger)
+      @version    = @sky_zabbix.apiinfo.version
       @sky_zabbix.login(username, password)
     rescue SkyZabbix::Jsonrpc::Error
       raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
@@ -54,6 +57,19 @@ class Zabbix
   # @param [String] physical_id
   # @param [Array<String>] テンプレートの名前の配列
   def templates_link_host(physical_id, template_names)
+    host_id = get_host_id(physical_id)
+    template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
+
+    return @sky_zabbix.template.massadd(
+      hosts: [{hostid: host_id}],
+      templates: template_ids.map{|x| {templateid: x}}
+    )
+  end
+
+  # ホストにテンプレートを追加する
+  # @param [String] physical_id
+  # @param [Array<String>] テンプレートの名前の配列
+  def templates_link_host_build(physical_id, template_names)
     host_id = get_host_id(physical_id)
     template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
 
@@ -140,18 +156,18 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
-    reqs = infra.resources.ec2.map do |r|
+    triggers = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
         updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-
-        @sky_zabbix.trigger.build_update(
+        {
           triggerid: item["triggers"].first["triggerid"],
           expression: updating_expr
-        )
+        }
       end
     end.flatten
-    @sky_zabbix.batch(*reqs)
+
+    @sky_zabbix.trigger.update(triggers)
   end
 
   def update_expression(trigger_id, expression)
@@ -238,6 +254,28 @@ class Zabbix
   # インフラ下の全てのウェブシナリオをこのホストで管理する為(ELB)
   # @param [Infrastructure] infra
   def create_elb_host(infra)
+    hostgroup_id = get_hostgroup_id(infra.project.code)
+
+    return @sky_zabbix.host.create(
+      host: infra_to_elb_hostname(infra),
+      interfaces: [{
+        type: 1,
+        main: 1,
+        useip: 1,
+        ip: "127.0.0.1",
+        dns: "",
+        port: "10050",
+      }],
+      groups: [
+        groupid: hostgroup_id,
+      ]
+    )
+  end
+
+  # ウェブシナリオ用に新しくホストを作ります。
+  # インフラ下の全てのウェブシナリオをこのホストで管理する為(ELB)
+  # @param [Infrastructure] infra
+  def create_elb_host_build(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
     return @sky_zabbix.host.build_create(
@@ -528,7 +566,7 @@ class Zabbix
     end
 
     # wh = {scenario_name => [[steps], [steps]]}
-    reqs = wh.map do |scenario_name, steps|
+    scenarios = wh.map do |scenario_name, steps|
       step_category = [:name, :url, :required, :status_codes, :timeout, :no]
 
       # [{name: "NAME", url: "http://...", ..., no: 1..n}]
@@ -537,13 +575,13 @@ class Zabbix
         step_category.zip(step).to_h
       end
 
-      @sky_zabbix.httptest.build_create(
+      {
         name:  scenario_name,
         hostid: host_id,
         steps: s_array
-      )
+      }
     end
-    @sky_zabbix.batch(*reqs)
+    @sky_zabbix.httptest.create(scenarios)
   end
 
   # Zabbix上の関係  host has many scenarios. web scenario has many steps
@@ -573,23 +611,31 @@ class Zabbix
 
   def get_url_status_monitoring(infra)
     host_id = get_host_id(infra_to_elb_hostname(infra))
-    items_req = @sky_zabbix.item.build_get(
+    item_req_params = {
       hostids: host_id,
       output: [
         "key_",
         "lastvalue",
       ],
       webitems: "true"
-    )
-    webscenario_req = @sky_zabbix.httptest.build_get(
+    }
+    webscenario_req_params = {
       hostids: host_id,
       selectSteps: [
         "name",
         "url",
       ],
       output: ["name"]
-    )
-    items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
+    }
+
+    if @version.start_with?('2')
+      items_req = @sky_zabbix.item.build_get(item_req_params)
+      webscenario_req = @sky_zabbix.httptest.build_get(webscenario_req_params)
+      items, webscenario = @sky_zabbix.batch(items_req, webscenario_req)
+    else
+      items = @sky_zabbix.item.get(item_req_params)
+      webscenario = @sky_zabbix.httptest.get(webscenario_req_params)
+    end
 
     data_for_table = []
     webscenario.each do |scenario|
@@ -654,6 +700,16 @@ class Zabbix
   def create_mysql_login_trigger(item_info, physical_id)
     item_id = item_info["itemids"].first
 
+    @sky_zabbix.trigger.create(
+      description: "Can not login MySQL on {HOST.NAME}",
+      expression: "{#{physical_id}:mysql.login.last(0)}=1",
+      itemid: item_id
+    )
+  end
+
+  def create_mysql_login_trigger_build(item_info, physical_id)
+    item_id = item_info["itemids"].first
+
     @sky_zabbix.trigger.build_create(
       description: "Can not login MySQL on {HOST.NAME}",
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
@@ -682,6 +738,18 @@ class Zabbix
   # ホスト登録時にCPU用の新しいアイテムを作成したので、
   # それに紐づくトリガーを作成する
   def create_cpu_usage_trigger(item_info, hostname)
+    id = item_info["itemids"].first
+
+    @sky_zabbix.trigger.create(
+      description: "Calculated: CPU Usage is too high on {HOST.NAME}",
+      expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
+      itemid: id
+    )
+  end
+
+  # ホスト登録時にCPU用の新しいアイテムを作成したので、
+  # それに紐づくトリガーを作成する
+  def create_cpu_usage_trigger_build(item_info, hostname)
     id = item_info["itemids"].first
 
     @sky_zabbix.trigger.build_create(

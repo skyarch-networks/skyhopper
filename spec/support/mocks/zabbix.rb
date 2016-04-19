@@ -11,6 +11,7 @@ module ZabbixStub
     let(:_zabbix){double('zabbix')}
     let(:_cpu_item){double('CPU item')}
     let(:_mysql_item){double('MySQL item')}
+    let(:version) { '3.0.1' }
 
     before do
       allow(Zabbix).to receive(:new).and_return(_zabbix)
@@ -45,6 +46,11 @@ module ZabbixStub
       allow(_zabbix).to receive(:batch).with(any_args)
       allow(_zabbix).to receive(:available_templates).with(no_args).and_return(['Template OS Linux', 'Template HTTP'])
       allow(_zabbix).to receive(:get_linked_templates).with(String).and_return([])
+      allow(_zabbix).to receive(:templates_link_host_build).with(str, array_including(str))
+      allow(_zabbix).to receive(:create_cpu_usage_trigger_build).with(_cpu_item, str)
+      allow(_zabbix).to receive(:create_mysql_login_trigger_build).with(_mysql_item, str)
+      allow(_zabbix).to receive(:create_elb_host_build).with(kind_of(Infrastructure))
+      allow(_zabbix).to receive(:version).and_return(version)
     end
   end
 end
