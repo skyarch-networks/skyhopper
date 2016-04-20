@@ -1,4 +1,19 @@
 json.array!(@dishes) do |dish|
-  json.extract! dish, :id, :status, :name, :detail, :project_id, :runlist
+
+  allow_change = @project_id ? current_user.admin? : current_user.master? && current_user.admin?
+
+  next unless allow_change or dish.status == Dish::STATUS[:success]
+
+    json.id dish.id
+    json.status label_dish_status(dish)
+    json.name dish.name
+    json.detail dish.detail
+    json.project_id dish.project_id
+    json.runlist dish.runlist
+
+    if allow_change
+      json.dish_path dish_path(dish)
+    end
+
   json.url dish_url(dish, format: :json)
 end

@@ -487,7 +487,7 @@ describe InfrastructuresController, type: :controller do
       end
     end
 
-    context 'when user isnot master' do
+    context 'when user is not master' do
       login_user(master: false)
       before{project.delete; req}
       it {is_expected.to redirect_to projects_path}

@@ -6,19 +6,19 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function(value, option){
-  switch (option[0]) {
-    case 'infrastructure':
+module.exports = function(value, index){
+  switch (index) {
+    case 'infrastructures':
       return render_infrastructures(value);
-    case 'project':
+    case 'projects':
       return render_projects(value);
-    case 'client':
+    case 'clients':
       return render_clients(value);
     case 'serverspec':
       return render_serverspecs(value);
-    case 'dish':
+    case 'dishes':
       return render_dish(value);
-    case 'cf_template':
+    case 'cf_templates':
       return render_dish(value);
     case 'user_admin':
       return render_user_admin(value);
@@ -28,8 +28,7 @@ module.exports = function(value, option){
       return render_ops_sched(value);
     default:
       return value;
-
-  }
+    }
 };
 
 function render_infrastructures(value){
@@ -40,8 +39,6 @@ function render_infrastructures(value){
       return t('infrastructures.region');
     case 'created_at':
       return t('infrastructures.creation_time');
-    case 'id':
-      return t('common.actions');
     case 'status':
       return t('infrastructures.status');
     case 'keypairname':
@@ -61,8 +58,6 @@ function render_projects(value){
       return t ('projects.cloud_provider');
     case 'access_key':
       return t ('projects.access_key');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
   }
@@ -75,8 +70,6 @@ function render_clients(value){
       return t ('clients.code');
     case 'name':
       return t ('clients.name');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
   }
@@ -88,11 +81,8 @@ function render_serverspecs(value){
       return t ('serverspecs.description');
     case 'name':
       return t ('serverspecs.name');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
-
   }
 }
 
@@ -104,11 +94,8 @@ function render_dish(value){
       return t ('dishes.detail');
     case 'status':
       return t ('dishes.validation_status');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
-
   }
 }
 
@@ -118,8 +105,6 @@ function render_cf_templates(value){
       return t ('cf_templates.subject');
     case 'details':
       return t ('cf_templates.details');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
   }
@@ -133,8 +118,6 @@ function render_user_admin(value){
       return t('users.email');
     case 'last_sign_in_at':
       return t('users.last_signed_in_at');
-    case 'id':
-      return t ('common.actions');
     default:
       return value;
   }

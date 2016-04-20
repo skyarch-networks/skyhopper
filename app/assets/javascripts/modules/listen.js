@@ -6,13 +6,13 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function (value, key, option, lang) {
-  switch (option[0]) {
-    case 'infrastructure':
+module.exports = function (value, key, index, lang) {
+  switch (index) {
+    case 'infrastructures':
       return render_infrastructures(value, key, lang);
-    case 'project':
+    case 'projects':
       return render_projects(value, key, lang);
-    case 'client':
+    case 'clients':
       return render_clients(value, key, lang);
     case 'serverspec':
       return render_serverspecs(value, key, lang);
@@ -29,79 +29,18 @@ module.exports = function (value, key, option, lang) {
   }
 };
 
-// TODO: DRY!
-var delete_button = function(value, href, lang){
-   var _class = $('#delete-'+value+'').attr('class');
-  return ("<a data-confirm='Are you sure?'' class='"+_class+"' data-method='delete' href="+href+"?lang="+lang+
-          "'><span class='glyphicon glyphicon-remove'></span> "+t("common.btn.delete")+"</a>");
-};
-
-var edit_button = function(value, href, lang){
-  var _class = $('#edit-'+value+'').attr('class');
-  return ("<a class='btn btn-default btn-xs "+_class+"' href="+href+"?lang="+lang+
-          "'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a> ");
-};
-
-var show_button = function(value, href, label, lang){
-  return "<a class='btn btn-xs btn-info' href="+href+"?lang="+lang+"'>"+label+"</a> ";
-};
-
 
 function render_infrastructures(value, key, lang){
-  if(key === 'id'){
-  var href = $('#edit-'+value[0]+'').attr('href');
-  var retEdit = ($('#edit-'+value[0]+'').attr('class') ? edit_button(value[0], href, lang): "");
-  var retDetach = ($('#detach-'+value[0]+'').attr('class') ? "<a class='btn btn-xs btn-warning detach-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-trash'></span> "+t('helpers.links.detach')+"</a> " : "");
-  var retDelete = ($('#delete-'+value[0]+'').attr('class') ? "<div class='btn-group'>"+
-      "<a class='"+$('#delete-'+value[0]+'').attr('class')+"' data-toggle='dropdown' href='#'>" +
-      " <span class='glyphicon glyphicon-remove'></span> "+t('infrastructures.btn.delete_stack')+"&nbsp;<span class='caret'></span> " +
-      " </a> " +
-     "<ul class='dropdown-menu'>"+
-      "<li> " +
-       "<a class='delete-stack' infrastructure-id="+value[0]+" href='#'>Execute</a> " +
-    "</li>"+
-    "</ul>"+
-   "</div>" : "");
-  var disabled;
-    if(value[1] != "CREATE_COMPLETE" && value[1] != "UPDATE_COMPLETE")
-      disabled = 'disabled';
-
-  var ret =  "<div class='btn-group'>"+
-          "<a class='btn btn-xs btn-info show-infra' infrastructure-id="+value[0]+" href='#'><span class='glyphicon glyphicon-info-sign'>" +
-            "</span> "+t('helpers.links.show')+
-          "</a> " +
-          "<button id='ops-"+value[0]+"' type='button' class='btn btn-xs btn-info dropdown-toggle "+disabled+"' " +
-          "data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>"+
-            "<span class='caret'></span>"+
-            "<span class='sr-only'>Toggle Dropdown</span>"+
-          "</button>"+
-          "<ul class='dropdown-menu'>"+
-          "<li> " +
-            "<a class='operation-sched' infrastructure-id="+value[0]+" href='#'>" +
-              "<span class='glyphicon glyphicon-calendar'></span> "+t('infrastructures.btn.operation_schedule')+
-            "</a> " +
-          "</li>"+
-          "</ul>"+
-    "</div>"+
-    "<a class='btn btn-default btn-xs' href='/serverspecs?infrastructure_id="+value[0]+"&amp;lang='"+lang+"'>Serverspecs</a> " +
-    retEdit +
-    retDetach+
-    retDelete;
-
-    return ret;
-  }else if (key === 'status') {
-    if(value === "CREATE_COMPLETE"){
-      return "<span class='text text-success'>"+value+"</span>";
-    }else if (value === 'DELETE_IN_PROGRESS') {
-      return "<span class='text text-danger'>"+value+"</span>";
-    }else if (value === 'CREATE_IN_PROGRESS') {
-      return "<span class='text text-info'>"+value+"</span>";
-    }else{
-      return value;
-    }
-  }else if(key === 'id_stat'){
-    if(value[0] === "CREATE_COMPLETE"){
-      $('#ops-'+value[1]+'').removeClass('disabled');
+  if (key === 'status') {
+    switch (value) {
+      case 'CREATE_COMPLETE':
+        return "<span class='text text-success'>"+value+"</span>";
+      case 'DELETE_IN_PROGRESS':
+        return "<span class='text text-danger'>"+value+"</span>";
+      case 'CREATE_IN_PROGRESS':
+        return "<span class='text text-info'>"+value+"</span>";
+      default:
+        return "<span class='text text-default'> NO_STACK_INFO </span>";
     }
   }else{
     return value;
@@ -109,12 +48,7 @@ function render_infrastructures(value, key, lang){
 }
 
 function render_clients(value, key, lang){
-  if(key === 'id'){
-    var edit = ( $('#edit-'+value+'').attr('class') ?  edit_button(value, '/clients/'+value+'/edit?', lang) : '');
-    var ret = show_button(value, "'/projects?lang="+lang+"&amp;client_id="+value+"'", t('clients.btn.show_projects'), lang);
-    var del = ( $('#delete-'+value+'').attr('class') ? delete_button(value, '/clients/'+value+'', lang) : '');
-       return ret+edit+del;
-  }else if (key === 'code') {
+  if (key === 'code') {
     return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('clients.projects')+"</span>";
   }else{
     return value;
@@ -122,24 +56,7 @@ function render_clients(value, key, lang){
 }
 
 function render_projects(value, key, lang){
-  if(key === 'id'){
-    var del = ( $('#delete-'+value+'').attr('class') ? delete_button(value, '/projects/'+value, lang) : '');
-    var edit = ( $('#edit-'+value+'').attr('class') ? edit_button(value, '/projects/'+value+'/edit?', lang) : "");
-    var ret = show_button(value, "'/infrastructures?lang="+lang+"&amp;project_id="+value+"'", t('projects.btn.show_infrastructures'))+
-      "<div class='btn-group'>" +
-        "<a class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' href='#' aria-expanded='false'>" +
-          t ('common.btn.settings')+ " <span class='caret'></span>" +
-        "</a>" +
-        "<ul class='dropdown-menu'>" +
-          "<li>" +
-            "<a href='/dishes?lang="+lang+"&amp;project_id="+value+"'>"+t('dishes.dishes')+"</a>" +
-            "<a href='/key_pairs?lang="+lang+"&amp;project_id="+value+"'>"+t('key_pairs.key_pairs')+"</a>" +
-            "<a href='/project_parameters?lang="+lang+"&amp;project_id="+value+"'>"+t('project_parameters.title')+"</a>" +
-          "</li>" +
-        "</ul>" +
-      "</div>";
-       return ret+edit+del;
-  }else if (key === 'code') {
+  if (key === 'code') {
     return value[0]+" <span class='label label-success'>"+value[1] +" "+ t ('projects.infras')+"</span>";
   }else{
     return value;
@@ -147,33 +64,15 @@ function render_projects(value, key, lang){
 }
 
 function render_serverspecs(value, key, lang){
-  if(key === 'id'){
-    var edit = $('#edit-'+value+'').attr('class')? edit_button(value, "'/serverspecs/"+value+"/edit?'", lang) : '';
-    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, href="/serverspecs/"+value+"", lang):'' ;
-    var ret = "<a class='btn btn-xs btn-info show-value' data-serverspec-id='"+value+"' href='#'><span class='glyphicon glyphicon-info-sign'></span> "+t('helpers.links.show')+"</a> ";
-    return ret+edit+del;
-  }else{
     return value;
-  }
 }
 
 function render_cf_templates(value, key, lang){
-  if(key === 'id'){
-    var edit = $('#edit-'+value+'').attr('class')? edit_button(value, "'/cf_templates/"+value+"/edit?'", lang) : '';
-    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, '/cf_templates/'+value, lang) : '';
-    var ret = "<a class='btn btn-xs btn-info show-template' data-managejson-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
-    return ret+edit+del;
-  }else{
     return value;
-  }
 }
 
 function render_dish(value, key, lang){
-  if(key === 'id'){
-    var del = $('#delete-'+value+'').attr('class') ? delete_button(value, '/dishes/'+value, lang):'';
-    var ret = "<a class='btn btn-xs btn-info show-dish' data-dish-id='"+value+"' href='#'>"+t('helpers.links.show')+"</a> ";
-    return ret+del;
-  }else if (key === 'status') {
+  if (key === 'status') {
     var label = null;
     if(value === 'SUCCESS'){
       label = 'label-success';
@@ -185,7 +84,6 @@ function render_dish(value, key, lang){
       label = 'label-warning';
       value = 'NOT YET';
     }
-
     return "<span class='label "+label+"'>"+value+"</span>";
   }else{
     return value;
@@ -193,22 +91,13 @@ function render_dish(value, key, lang){
 }
 
 function render_user_admin(value, key, lang){
-  if(key === 'id'){
-    var edit = $('#edit-'+value+'').attr('class')? "<a class='btn btn-default btn-xs edit-user'user-id="+value+" href='#'><span class='glyphicon glyphicon-edit'></span> "+t("helpers.links.edit")+"</a>" : '';
-    var del = $('#delete-'+value+'').attr('class')? delete_button(value, '/users_admin/'+value[0], lang):'';
-    return edit+del;
-  }else if (key === 'email') {
-    var image = "<img class='img-rounded gravatar-icon' src='https://secure.gravatar.com/avatar/"+value[0]+"' alt='"+value[0]+"' width='24' height='24'>";
-    var email = value[1];
-    return image+" "+email;
-  }else if (key === 'role') {
-    var admin = (value[1] ? "<span class='label label-info'>admin</span>" : "");
-    var master = (value[0] ? "<span class='label label-warning'>master</span>" : "");
-
-    return master+"  "+admin;
-  }else{
-    return value;
-  }
+    if(key === 'role'){
+      return value[0]+"&nbsp"+value[1];
+    }else if (key === 'email') {
+      return value[0]+"&nbsp"+value[1]+"&nbsp"+value[2];
+    }else {
+      return value;
+    }
 }
 
 function render_serverspecs_results(value, key){

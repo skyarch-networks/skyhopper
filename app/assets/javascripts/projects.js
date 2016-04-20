@@ -12,109 +12,53 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var queryString = require('query-string').parse(location.search);
+  var modal = require('modal');
   var app;
 
-  Vue.component('demo-grid', {
-    template: '#grid-template',
-    replace: true,
-    props: {
-      data: Array,
-      columns: Array,
-      filterKey: String
-    },
-    data: function () {
-      var sortOrders = {};
-      this.columns.forEach(function (key) {
-        sortOrders[key] = 1;
-      });
-      return {
-        sortKey: '',
-        sortOrders: sortOrders,
-        option: ['project'],
-        lang: queryString.lang,
-        pages: 10,
-        pageNumber: 0,
-        filteredLength: null,
-          };
-      },
-    methods: {
-      sortBy: function (key) {
-          if(key !== 'id')
-            this.sortKey = key;
-            this.sortOrders[key] = this.sortOrders[key] * -1;
-      },
-      showPrev: function(){
-          if(this.pageNumber === 0) return;
-          this.pageNumber--;
-      },
-      showNext: function(){
-          if(this.isEndPage) return;
-          this.pageNumber++;
-      },
-    },
-    computed: {
-      isStartPage: function(){
-          return (this.pageNumber === 0);
-      },
-      isEndPage: function(){
-          return ((this.pageNumber + 1) * this.pages >= this.data.length);
-      },
-    },
-    created: function (){
-        var il = new Loader();
-        var self = this;
-        self.loading = true;
-        var id =  queryString.client_id;
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-                          "July", "August", "September", "October", "November", "December"
-                          ];
-       $.ajax({
-           cache: false,
-           url:'projects?client_id='+id+'&lang='+self.lang,
-           success: function (data) {
-             this.pages = data.length;
-             self.data = data.map(function (item) {
-               var item_key = '*****'+item.access_key.substring(item.access_key.length-3,item.access_key.length);
-               return {
-                 code: [item.code, item.infrastructures.length],
-                 name: item.name,
-                 cloud_provider: item.cloud_provider.name,
-                 access_key: item_key,
-                 id: item.id,
-               };
-             });
-             self.$emit('data-loaded');
-             var empty = t('projects.msg.empty-list');
-             if(self.data.length === 0){ $('#empty').show().html(empty);}
-             self.filteredLength = data.length;
-           }
-         });
-         $("#loading").hide();
-    },
-    filters:{
-      wrap: wrap,
-      listen: listen,
-      paginate: function(list) {
-        var index = this.pageNumber * this.pages;
-        return list.slice(index, index + this.pages);
-      },
-      roundup: function (val) { return (Math.ceil(val));},
-      count: function (arr) {
-        // record length
-        this.$set('filteredLength', arr.length);
-        // return it intact
-        return arr;
-      },
-    },
- });
+  Vue.component('demo-grid', require('demo-grid.js'));
 
 
   var projectIndex = new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['code','name', 'cloud_provider', 'access_key', 'id'],
-      gridData: []
-    }
+      gridColumns: ['code','name', 'cloud_provider', 'access_key'],
+      gridData: [],
+      picked: {
+        edit_url: null,
+        project_settings: {
+          dishes_path: null,
+          key_pairs_path: null,
+          project_parameters_path: null
+        }
+      },
+      index: 'projects'
+    },
+    methods: {
+      can_edit: function() {
+        if (this.picked)
+          return this.picked.edit_project_url ? true : false;
+      },
+      can_delete: function() {
+        if (this.picked.delete_project_url)
+          return (this.picked.code[1] > 0);
+      },
+      delete_entry: function()  {
+        var self = this;
+        modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
+                $.ajax({
+                    type: "POST",
+                    url: self.picked.delete_project_url,
+                    dataType: "json",
+                    data: {"_method":"delete"},
+                    success: function (data) {
+                      self.gridData = data;
+                      self.picked = null;
+                    },
+                }).fail(function() {location.reload();});
+        });
+      }
+    },
+
   });
 })();
