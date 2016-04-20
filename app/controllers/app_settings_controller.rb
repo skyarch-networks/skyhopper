@@ -21,7 +21,6 @@ class AppSettingsController < ApplicationController
   # POST /app_settings/create
   def create
     settings = JSON.parse(params.require(:settings), symbolize_names: true)
-
     access_key        = settings.delete(:access_key)
     secret_access_key = settings.delete(:secret_access_key)
     keypair_name      = settings.delete(:keypair_name)
@@ -93,7 +92,7 @@ class AppSettingsController < ApplicationController
     region        = set.aws_region
     keypair_name  = set.ec2_private_key.name
     keypair_value = set.ec2_private_key.value
-
+    @locale = I18n.locale
     # おまじない
     # rubocop:disable Lint/Void
     ChefServer
@@ -132,6 +131,7 @@ class AppSettingsController < ApplicationController
   # }
   def build_ws_message(status, msg = nil)
     hash = ChefServer::Deployment::Progress[status].dup
+    I18n.locale = @locale
     hash[:message] = msg || I18n.t("chef_servers.msg.#{status}")
     return JSON.generate(hash)
   end

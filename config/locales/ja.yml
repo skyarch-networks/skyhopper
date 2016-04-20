@@ -50,6 +50,7 @@ ja:
       key_droppable: |
         使用する秘密鍵を入力するか、秘密鍵ファイルをここにドラッグアンドドロップしてください。
         鍵ペアを新しく生成した場合は、自動的に入力されます。
+      not_found:     '<span class="text text-info">%{name}</span> に一致する情報は見つかりませんでした。'
 
 
   views:
