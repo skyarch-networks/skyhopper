@@ -30,8 +30,7 @@
         </td>
       </tr>
       <tr  v-if="filteredLength === 0 && data.length > 0">
-        <td v-if="lang === 'en'"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
-        <td v-if="lang === 'ja'"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
+        <td><h4> <%= raw t 'common.msg.not_found', name: "{{filterKey}}" %></h4></td>
       </tr>
     </tbody>
   </table>

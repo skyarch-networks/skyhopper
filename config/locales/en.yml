@@ -50,6 +50,7 @@ en:
       key_droppable: |
         Please either insert a private key or drag-and-drop the file of private key.
         It will be inserted automatically if you generate a new keypair.
+      not_found:     'No results for  <span class="text text-info"> %{name} </span> was found.'
 
 
   views:
@@ -516,10 +517,10 @@ en:
     msg:
       creating_infra: 'Creating Infrastructure...'
       init_ec2:       'Initializing EC2 Instance...'
-      download_chef:  'Downloading package of Chef Server...'
+      download_chef:  'Downloading Chef Server packages...'
       install_chef:   'Installing Chef Server...'
-      setting_chef:   'Setting Chef Server...'
-      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart the SkyHopper.'
+      setting_chef:   'Setting up Chef Server...'
+      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'
       start:          'Stopping Chef Server...'
