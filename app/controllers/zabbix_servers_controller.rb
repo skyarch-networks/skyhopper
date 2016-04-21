@@ -5,6 +5,11 @@ class ZabbixServersController < ApplicationController
   # GET /zabbix_servers.json
   def index
     @zabbix_servers = ZabbixServer.all
+
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # GET /zabbix_servers/1

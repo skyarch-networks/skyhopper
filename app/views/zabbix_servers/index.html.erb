@@ -1,31 +1,53 @@
 <p id="notice"><%= notice %></p>
-
+<% provide(:title, I18n.t('zabbix')) %>
 <h1>Listing Zabbix Servers</h1>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>Fqdn</th>
-      <th>Version</th>
-      <th>Details</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @zabbix_servers.each do |zabbix_server| %>
-      <tr>
-        <td><%= link_to zabbix_server.fqdn.concat("/zabbix"), "//#{zabbix_server.fqdn}", target: "_blank" %></td>
-        <td><%= zabbix_server.version %></td>
-        <td><%= zabbix_server.details %></td>
-        <td><%= link_to 'Show', zabbix_server %></td>
-        <td><%= link_to 'Edit', edit_zabbix_server_path(zabbix_server) %></td>
-        <td><%= link_to 'Destroy', zabbix_server, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<!-- component template -->
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
+
+<!-- demo root element -->
+<div id="indexElement" v-el:node>
+
+  <div v-cloak>
+    <div class="col-md-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
+
+    <div class="pull-right">
+      <a class="btn btn-danger btn-sm disabled"
+      @click="delete_entry()"
+      :class="{disabled: !can_delete()}">
+          <%= fa 'times' %>
+          <%= t 'common.btn.delete' %>
+      </a>&nbsp
+    </div>
+
+    <div class="pull-right">
+      <a class="btn btn-default btn-sm disabled"
+          v-bind:href="picked.edit_zabbix_server_url"
+          :class="{disabled: !can_edit()}">
+          <span class='glyphicon glyphicon-edit'></span>
+          <%= t 'helpers.links.edit' %>
+      </a>&nbsp
+    </div>
+  </div>
+
+  <demo-grid
+  :data.sync="gridData"
+  :columns="gridColumns"
+  :filter-key="searchQuery"
+  :picked.sync="picked"
+  :index="index">
+  </demo-grid>
+</div>
+
+<div  id="empty" style="display: none;"></div>
+<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+<hr>
 
 <br>
 
-<%= link_to 'New Zabbix server', new_zabbix_server_path %>
+<%= link_to(
+  t('clients.btn.add'),
+  new_zabbix_server_path,
+  class: 'btn btn-primary btn-sm'
+) if current_user.admin? %>

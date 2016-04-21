@@ -148,6 +148,9 @@ module.exports = Vue.extend({
       case  'user_admin':
         self.load_ajax('users_admin?lang='+self.lang, t('cf_templates.msg.empty-list'));
         break;
+      case  'zabbix_servers':
+        self.load_ajax('zabbix_servers?lang='+self.lang, t('cf_templates.msg.empty-list'));
+        break;
 
 
     }
