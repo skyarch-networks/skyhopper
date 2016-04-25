@@ -24,7 +24,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['fqdn', 'version', 'details', 'username'],
+      gridColumns: ['fqdn', 'version', 'details'],
       gridData: [],
       index: 'zabbix_servers',
       picked: {
@@ -34,10 +34,12 @@
     },
     methods:  {
       can_delete: function() {
-        return (this.picked.users_admin_path === null);
+        if (this.picked.delete_zabbix_server_path)
+          return this.picked.delete_zabbix_server_path ? true : false;
       },
       can_edit: function() {
-        return (this.picked.id === null);
+        if (this.picked.edit_zabbix_server_url)
+          return this.picked.edit_zabbix_server_url ? true : false;
       },
 
       delete_entry: function()  {
@@ -45,7 +47,7 @@
         modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(function () {
           $.ajax({
             type: "POST",
-            url: self.picked.users_admin_path,
+            url: self.picked.delete_zabbix_server_path,
             dataType: "json",
             data: {"_method":"delete"},
             success: function (data) {
