@@ -7,37 +7,40 @@
 //
 
 module.exports = function (value, key, index, lang) {
-  if(index === 'infrastructures'){
-    return render_infrastructures(value, key, lang);
-  }else if(index === 'projects'){
-    return render_projects(value, key, lang);
-  }else if (index === 'clients') {
-    return render_clients(value, key, lang);
-  }else if (index === 'serverspec') {
-    return render_serverspecs(value, key, lang);
-  }else if (index === 'dish') {
-    return render_dish(value, key, lang);
-  }else if (index === 'cf_templates') {
-    return render_cf_templates(value, key, lang);
-  }else if (index === 'user_admin') {
-    return render_user_admin(value, key, lang);
-  }else if (index === 'serverspec_results') {
-    return render_serverspecs_results(value, key);
-  }else{
-    return value;
+  switch (index) {
+    case 'infrastructures':
+      return render_infrastructures(value, key, lang);
+    case 'projects':
+      return render_projects(value, key, lang);
+    case 'clients':
+      return render_clients(value, key, lang);
+    case 'serverspec':
+      return render_serverspecs(value, key, lang);
+    case 'dish':
+      return render_dish(value, key, lang);
+    case 'cf_template':
+      return render_cf_templates(value, key, lang);
+    case 'user_admin':
+      return render_user_admin(value, key, lang);
+    case 'serverspec_results':
+      return render_serverspecs_results(value, key, lang);
+    default:
+      return value;
   }
 };
 
+
 function render_infrastructures(value, key, lang){
   if (key === 'status') {
-    if(value === "CREATE_COMPLETE"){
-      return "<span class='text text-success'>"+value+"</span>";
-    }else if (value === 'DELETE_IN_PROGRESS') {
-      return "<span class='text text-danger'>"+value+"</span>";
-    }else if (value === 'CREATE_IN_PROGRESS') {
-      return "<span class='text text-info'>"+value+"</span>";
-    }else{
-      return "<span class='text text-default'> NO_STACK_INFO </span>";
+    switch (value) {
+      case 'CREATE_COMPLETE':
+        return "<span class='text text-success'>"+value+"</span>";
+      case 'DELETE_IN_PROGRESS':
+        return "<span class='text text-danger'>"+value+"</span>";
+      case 'CREATE_IN_PROGRESS':
+        return "<span class='text text-info'>"+value+"</span>";
+      default:
+        return "<span class='text text-default'> NO_STACK_INFO </span>";
     }
   }else{
     return value;
@@ -81,7 +84,6 @@ function render_dish(value, key, lang){
       label = 'label-warning';
       value = 'NOT YET';
     }
-
     return "<span class='label "+label+"'>"+value+"</span>";
   }else{
     return value;
