@@ -635,7 +635,7 @@ ja:
       deleted:    'キーペア "%{name}" が正常に削除されました'
 
   snapshots:
-    snapshot:          'スナップショット'
+    snapshots:          'スナップショット'
     create_snapshot:   'スナップショットの作成'
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'

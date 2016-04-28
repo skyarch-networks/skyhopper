@@ -638,7 +638,7 @@ en:
       deleted:    'KeyPair "%{name}" has been deleted successfully.'
 
   snapshots:
-    snapshot:          'Snapshot'
+    snapshots:          'Snapshots'
     create_snapshot:   'Create Snapshot'
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'

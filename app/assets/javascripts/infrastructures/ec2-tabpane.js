@@ -337,7 +337,7 @@ module.exports = Vue.extend({
         var snapshot = new Snapshot(self.infra_id);
 
         snapshot.create(volume_id, self.physical_id).progress(function (data) {
-          modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
+          modal.Alert(t('snapshots.snapshots'), t('snapshots.msg.creation_started'));
         }).done(self.load_snapshots)
           .fail(alert_danger());
 
