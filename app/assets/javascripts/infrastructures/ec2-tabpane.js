@@ -338,11 +338,8 @@ module.exports = Vue.extend({
 
         snapshot.create(volume_id, self.physical_id).progress(function (data) {
           modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
-        }).done(function (data) {
-          if ($('#snapshots-modal.in').length) {
-            self.load_snapshots();
-          }
-        }).fail(alert_danger());
+        }).done(self.load_snapshots)
+          .fail(alert_danger());
 
         self.load_snapshots();
       });
@@ -644,16 +641,6 @@ module.exports = Vue.extend({
       }
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
-
-    $('#snapshots-modal').on('show.bs.modal', function (e) {
-      $(e.target).children().attr('style', null);
-      self.load_snapshots();
-    });
-    $("#snapshots-modal >").draggable({
-      cursor: "move",
-      containment: ".modal-backdrop",
-      handle: ".modal-header"
-    });
   },
 
   filters: {
