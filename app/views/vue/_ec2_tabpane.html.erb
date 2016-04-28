@@ -59,7 +59,7 @@
             <span v-for="block_device in ec2.block_devices" class="dropdown">
               <bootstrap-tooltip :title="block_device.device_name">
                 <template slot="content">
-                <a @click="volume_selected = block_device.ebs.volume_id" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="btn btn-xs btn-default" data-toggle="collapse" data-target="#ebs_panel">
+                <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="btn btn-xs btn-default">
                   {{block_device.ebs.volume_id}}
                   <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
                   <span class="caret"></span>
@@ -82,11 +82,11 @@
               </ul>
               </template>
             </bootstrap-tooltip>
-            <div class="panel-group collapse" id="ebs_panel" role="tablist" style="margin-bottom: 0px">
+            <div class="panel-group collapse" id="ebs_panel" role="tabpanel" style="margin-bottom: 0px">
               <div class="panel panel-info">
                 <div class="panel-heading">
-                  {{volume_selected}}:
-                  <a @click="create_snapshot(volume_selected)" class="btn btn-xs">
+                  <strong>{{volume_selected}}</strong>:
+                  <a @click="create_snapshot(volume_selected)" class="btn btn-xs btn-primary">
                     <span class="glyphicon glyphicon-plus"></span>
                     <%= t('snapshots.create_snapshot') %>
                   </a>
@@ -104,19 +104,21 @@
                 <div class="panel-heading">
                   <%= t 'snapshots.snapshots' %>
                   <a @click="load_snapshots" class="btn btn-xs"><span class="glyphicon glyphicon-refresh"></span></a>
+                  <a @click="delete_selected_snapshots" :disabled="!selected_any" class="btn btn-sm btn-danger" style="float: right;"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></a>
                 </div>
-                <table v-if="!loading_snapshots" class="table table-condensed table-hover">
+                <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>
+                <table v-if="!loading_snapshots && snapshots.length" class="table table-condensed table-hover">
                   <thead>
                     <th></th>
                     <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
-                    <th class="col-md-2" @click="sort_by('snapshot_id')">ID<span             :class="{'caret': sorting_by('snapshot_id'), 'caret-reversed': sort_asc}"></span></th>
+                    <th class="" @click="sort_by('snapshot_id')">ID<span             :class="{'caret': sorting_by('snapshot_id'), 'caret-reversed': sort_asc}"></span></th>
                     <th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{'caret': sorting_by('state'),       'caret-reversed': sort_asc}"></span></th>
                     <th class=""         @click="sort_by('start_time')" >Date<span           :class="{'caret': sorting_by('start_time'),  'caret-reversed': sort_asc}"></span></th>
                     <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
                     <th></th>
                   </thead>
                   <tbody>
-                    <tr v-for="snapshot in snapshots" @click="select_snapshot(snapshot)" :class="{info: snapshot.selected}" transition="fade">
+                    <tr v-for="snapshot in snapshots" :class="{info: snapshot.selected}" transition="fade">
                       <td><input v-model="snapshot.selected" type="checkbox"></td>
                       <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
                       <td v-text="snapshot.snapshot_id"></td>
@@ -125,11 +127,11 @@
                       <td v-text="snapshot.encrypted"></td>
                       <td><i class="fa fa-lock" v-show="snapshot.tags.<%= Snapshot::PROTECTION_TAG_NAME %>"></i></td>
                     </tr>
-                    <tr v-if="!snapshots.length">
-                      <td colspan="8"><%= t('snapshots.msg.no_snapshots') %></td>
-                    </tr>
                   </tbody>
                 </table>
+                <div v-if="!snapshots.length && !loading_snapshots" class="panel-footer">
+                  <%= t('snapshots.msg.no_snapshots') %>
+                </div>
               </div>
             </div>
           </td>

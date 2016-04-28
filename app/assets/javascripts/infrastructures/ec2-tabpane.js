@@ -40,7 +40,7 @@ module.exports = Vue.extend({
     chef_console_text:   '',
     selected_dish:       null,
     ec2:                 {},
-    volume_selected:     '',
+    volume_selected:     null,
     snapshots:           {},
     sort_key:            '',
     sort_asc:            false,
@@ -398,10 +398,6 @@ module.exports = Vue.extend({
       return snapshot.state;
     },
 
-    select_snapshot: function (snapshot) {
-      snapshot.selected = !snapshot.selected;
-    },
-
     sort_by: function (key) {
       if (this.sort_key === key) {
         this.sort_asc = !this.sort_asc;
@@ -467,6 +463,24 @@ module.exports = Vue.extend({
           $('#retention-policy-modal').modal('hide');
           alert_success()(msg);
         }).fail(alert_danger());
+    },
+
+    on_click_volume: function (volume_id) {
+      var panel_opened = document.getElementById('ebs_panel').classList.contains('in');
+      var same = this.volume_selected == volume_id;
+      this.volume_selected = volume_id;
+      if (panel_opened) {
+        if (same) {
+          $('#ebs_panel').collapse('hide');
+        } else {
+          this.load_snapshots();
+        }
+      } else {
+        if (!same) {
+          this.load_snapshots();
+        }
+        $('#ebs_panel').collapse('show');
+      }
     },
 
     toLocaleString: toLocaleString,
