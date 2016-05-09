@@ -483,6 +483,25 @@ module.exports = Vue.extend({
       }
     },
 
+    latest_snapshot: function (volume_id) {
+      return _(this.ec2.snapshots).chain()
+        .select({
+          volume_id: volume_id,
+          state: 'completed'
+        })
+        .sortBy('start_time')
+        .last()
+        .value();
+    },
+
+    latest_snapshot_date: function (volume_id) {
+      var snapshot = this.latest_snapshot(volume_id);
+      if (snapshot) {
+        var date = new Date(snapshot.start_time);
+        return date.toLocaleString();
+      }
+    },
+
     toLocaleString: toLocaleString,
     capitalize: function (str) {return _.capitalize(_.camelCase(str));},
 

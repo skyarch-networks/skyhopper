@@ -62,6 +62,9 @@
                 <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="btn btn-xs btn-default">
                   {{block_device.ebs.volume_id}}
                   <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
+                  <span class="label label-default">
+                     Latest: {{latest_snapshot_date(block_device.ebs.volume_id)}}
+                  </span>
                   <span class="caret"></span>
                 </a>
                 </template>
