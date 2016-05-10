@@ -40,8 +40,7 @@ module.exports = Vue.extend({
     chef_console_text:   '',
     selected_dish:       null,
     ec2:                 {},
-    volume_selected:     null,
-    snapshots:           {},
+    volume_selected:     false,
     sort_key:            '',
     sort_asc:            false,
     schedule_type:       '',
@@ -362,8 +361,8 @@ module.exports = Vue.extend({
       var self = this;
       var snapshot = new Snapshot(this.infra_id);
       this.loading_snapshots = true;
-      snapshot.index(this.volume_selected).done(function (data) {
-        self.snapshots = _.map(data.snapshots, function (s) {
+      snapshot.index(null).done(function (data) {
+        self.ec2.snapshots = _.map(data.snapshots, function (s) {
           s.selected = false;
           return s;
         });
@@ -375,7 +374,7 @@ module.exports = Vue.extend({
 
     delete_selected_snapshots: function () {
       var self = this;
-      var snapshots    = _.select(this.snapshots, 'selected', true);
+      var snapshots    = _.select(this.ec2.snapshots, 'selected', true);
       var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
       var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
       modal.Confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
@@ -384,7 +383,7 @@ module.exports = Vue.extend({
         _.each(snapshots, function (snapshot) {
           s.destroy(snapshot.snapshot_id)
             .done(function (msg) {
-              self.snapshots.$remove(snapshot);
+              self.ec2.snapshots.$remove(snapshot);
             })
             .fail(alert_danger());
         });
@@ -405,7 +404,7 @@ module.exports = Vue.extend({
         this.sort_asc = false;
         this.sort_key = key;
       }
-      this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
+      this.ec2.snapshots = _.sortByOrder(this.ec2.snapshots, key, this.sort_asc);
     },
 
     sorting_by: function (key) {
@@ -466,19 +465,14 @@ module.exports = Vue.extend({
     },
 
     on_click_volume: function (volume_id) {
+      var self = this;
       var panel_opened = document.getElementById('ebs_panel').classList.contains('in');
       var same = this.volume_selected == volume_id;
-      this.volume_selected = volume_id;
-      if (panel_opened) {
-        if (same) {
-          $('#ebs_panel').collapse('hide');
-        } else {
-          this.load_snapshots();
-        }
+      if (panel_opened && same) {
+        $('#ebs_panel').collapse('hide');
+        self.volume_selected = false;
       } else {
-        if (!same) {
-          this.load_snapshots();
-        }
+        this.volume_selected = volume_id;
         $('#ebs_panel').collapse('show');
       }
     },
@@ -596,7 +590,7 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_any: function () { return _.any(this.snapshots, 'selected', true); },
+    selected_any: function () { return _.any(this.ec2.snapshots, 'selected', true); },
 
     suggest_device_name: function () {
       // TODO: iikanji ni sitai

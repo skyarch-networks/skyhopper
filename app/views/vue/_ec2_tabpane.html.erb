@@ -56,12 +56,12 @@
         <tr>
           <td>EBS</td>
           <td colspan="2">
-            <span v-for="block_device in ec2.block_devices" class="dropdown">
+            <span v-for="block_device in ec2.block_devices">
               <bootstrap-tooltip :title="block_device.device_name">
                 <template slot="content">
-                <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="btn btn-xs btn-default">
+                <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-info': volume_selected === block_device.ebs.volume_id}" class="btn btn-xs btn-default">
                   {{block_device.ebs.volume_id}}
-                  <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
+                  <span v-if="is_root_device(block_device.device_name)" class="label label-primary">Root</span>
                   <span class="label label-default">
                      Latest: {{latest_snapshot_date(block_device.ebs.volume_id)}}
                   </span>
@@ -87,8 +87,8 @@
             </bootstrap-tooltip>
             <div class="panel-group collapse" id="ebs_panel" role="tabpanel" style="margin-bottom: 0px">
               <div class="panel panel-info">
-                <div class="panel-heading">
-                  <strong>{{volume_selected}}</strong>:
+                <div class="panel-heading" transition="fade">
+                  <strong>操作 :</strong>
                   <button @click="create_snapshot(volume_selected)" class="btn btn-xs btn-primary">
                     <span class="glyphicon glyphicon-plus"></span>
                     <%= t('snapshots.create_snapshot') %>
@@ -106,11 +106,13 @@
               <div id="ebs_panel" class="panel">
                 <div class="panel-heading">
                   <%= t 'snapshots.snapshots' %>
-                  <a @click="delete_selected_snapshots" :disabled="!selected_any" class="btn btn-sm btn-danger" style="float: right;"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></a>
                   <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
+                  <span style="float: right;">
+                    <button @click="delete_selected_snapshots" :disabled="!selected_any" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
+                  </span>
                 </div>
                 <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>
-                <table v-if="!loading_snapshots && snapshots.length" class="table table-condensed table-hover">
+                <table v-if="!loading_snapshots" class="table table-condensed table-hover">
                   <thead>
                     <th></th>
                     <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
@@ -121,7 +123,7 @@
                     <th></th>
                   </thead>
                   <tbody>
-                    <tr v-for="snapshot in snapshots" :class="{info: snapshot.selected}" transition="fade">
+                    <tr v-for="snapshot in ec2.snapshots | filterBy volume_selected in 'volume_id' | count" :class="{info: snapshot.selected}">
                       <td><input v-model="snapshot.selected" type="checkbox"></td>
                       <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
                       <td v-text="snapshot.snapshot_id"></td>
@@ -132,7 +134,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <div v-if="!snapshots.length && !loading_snapshots" class="panel-footer">
+                <div v-if="!filteredLength && !loading_snapshots" class="panel-footer">
                   <%= t('snapshots.msg.no_snapshots') %>
                 </div>
               </div>
