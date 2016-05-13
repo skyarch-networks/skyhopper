@@ -32,7 +32,7 @@ module.exports = Vue.extend({
     return {
       sortKey: '',
       sortOrders: sortOrders,
-      option: ['serverspec_results'],
+      index: 'serverspec_results',
       lang: null,
       pages: 10,
       pageNumber: 0,

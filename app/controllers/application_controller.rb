@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
       else
         nil
       end
-      
+
   end
 
   def set_notifications

@@ -189,8 +189,6 @@ input[type="number"] {
   background: rgba(98, 105, 106, 0.13);
 }
 
-
-
 h1, .h1 {
   font-size: 36px;
 }
@@ -256,4 +254,24 @@ textarea:focus:invalid {
 .form-control[readonly],
 .form-control[disabled] {
   background-color: #ddd;
+}
+
+
+
+.back-to-top {
+  background: none;
+  margin: auto;
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  width: 55px;
+  height: 70px;
+  z-index: 100;
+  display: none;
+  text-decoration: none;
+  color: #ff9000;
+}
+
+.back-to-top i {
+  font-size: 60px;
 }

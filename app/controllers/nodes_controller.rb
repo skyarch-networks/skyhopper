@@ -20,6 +20,7 @@ class NodesController < ApplicationController
   before_action except: [:recipes] do
     def @infra.policy_class; NodePolicy;end
     authorize(@infra)
+    @locale = I18n.locale
   end
 
 
@@ -31,6 +32,7 @@ class NodesController < ApplicationController
     Thread.new_with_db do
       physical_id = params.require(:id)
       fqdn        = @infra.instance(physical_id).fqdn
+      I18n.locale = @locale
 
       infra_logger_success("Bootstrapping for #{physical_id} is started.")
 

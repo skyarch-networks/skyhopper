@@ -6,26 +6,67 @@
   <%= link_to t('infrastructures.return_to_projects'), projects_path, {class: "btn btn-small btn-link"} unless current_user.master? %>
 </div>
 
-<%= render 'vue/index' %>
+<script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<table class="table table-hover hidden">
+  <div id="indexElement" v-el:node>
 
-  <tbody>
-    <% @infrastructures.each do |infra| %>
+    <div v-cloak>
+      <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
-        <td>
-          <%= button_show_infra(infra) %>
+      <div class="pull-right">
+        <div class='btn-group'>
+            <a class='btn btn-sm btn-danger disabled' data-toggle='dropdown' href='#' :class="{disabled: !can_delete()}">
+              <%= fa 'trash' %> <%= t('infrastructures.btn.delete_stack') %>&nbsp;<span class='caret'></span>
+            </a>
+           <ul class='dropdown-menu'>
+            <li>
+             <a class='delete-stack' href='#' @click="delete_stack()">Execute</a>
+          </li>
+          </ul>
+         </div>
+      </div>
 
-          <%= button_serverspecs(infra.id) %>
+      <div class="pull-right">
+        <div class="btn-group">
+          <a class='btn btn-sm btn-warning disabled' href='#' @click="detach_infra()" :class="{disabled: !can_detach()}"><%= fa 'chain-broken' %> <%= t('helpers.links.detach') %></a>&nbsp
+        </div>
+      </div>
 
-          <%= button_edit_infra(infra) %>
-          <%= button_detach_stack(infra) %>
-          <%= button_delete_stack(infra) %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+      <div class="pull-right">
+        <div class="btn-group">
+             <a class="btn btn-default btn-sm dropdown-toggle disabled" data-toggle="dropdown" href="#" :class="{disabled: !picked}">
+               <%= t 'common.btn.settings' %> <span class="caret"></span>
+             </a>&nbsp
+             <ul class="dropdown-menu">
+               <li v-if="picked">
+                 <a @click="show_sched()" href='#'> <%=  t('infrastructures.btn.operation_schedule') %></a>
+                 <a :href='picked.serverspecs_path'>Serverspecs</a>
+               </li>
+             </ul>
+        </div>
+      </div>
+
+      <div class="pull-right" v-cloak="picked">
+        <a class="btn btn-default btn-sm disabled"
+            :href="picked.edit_infrastructure_path" :class="{disabled: !can_edit()}">
+            <span class='glyphicon glyphicon-edit'></span>
+            <%= t 'helpers.links.edit' %>
+        </a>&nbsp
+      </div>
+    </div>
+
+    <demo-grid
+    :data.sync="gridData"
+    :columns="gridColumns"
+    :filter-key="searchQuery"
+    :picked.sync="picked"
+    :index="index">
+    </demo-grid>
+  </div>
+
+  <div  id="empty" style="display: none;"></div>
+  <span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+  <hr>
 
 
 <%= button_add_infra(@selected_project) %>

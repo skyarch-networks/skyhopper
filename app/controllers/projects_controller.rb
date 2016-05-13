@@ -7,7 +7,7 @@
 #
 
 class ProjectsController < ApplicationController
-
+  include Concerns::InfraLogger
   # ------------- Auth
   before_action :authenticate_user!
 
@@ -45,7 +45,7 @@ class ProjectsController < ApplicationController
       @projects = current_user.projects
     end
     respond_to do |format|
-      format.json { render json: @projects.as_json(include: [{infrastructures: {only: [:count]} }, {cloud_provider: {only: [:name]}}])}
+      format.json
       format.html
     end
   end
@@ -125,7 +125,6 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1.json
   def destroy
     go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
-
     begin
       @project.destroy!
     rescue => ex
@@ -133,7 +132,7 @@ class ProjectsController < ApplicationController
       go.() and return
     end
 
-    flash[:notice] = I18n.t('projects.msg.deleted')
+    ws_send(t('projects.msg.deleted', name: @project.name), true)
     go.() and return
   end
 

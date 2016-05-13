@@ -132,10 +132,6 @@ describe ClientsController, type: :controller do
       it do
         expect(response).to redirect_to(clients_path)
       end
-
-      it 'should be notice' do
-        expect(request.request.flash[:notice]).to eq I18n.t('clients.msg.deleted')
-      end
     end
 
     context 'when destroy fail' do
