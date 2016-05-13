@@ -141,11 +141,12 @@ GEM
       activesupport (~> 4.0)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
-    devise (4.0.1)
+    devise (3.5.9)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.1)
+      railties (>= 3.2.6, < 5)
       responders
+      thread_safe (~> 0.1)
       warden (~> 1.2.3)
     devise-i18n (1.0.1)
     diff-lcs (1.2.5)
@@ -363,7 +364,7 @@ GEM
     redis-store (1.1.7)
       redis (>= 2.2)
     ref (2.0.0)
-    responders (2.1.2)
+    responders (2.2.0)
       railties (>= 4.2.0, < 5.1)
     retryable (2.0.3)
     ridley (4.2.0)
@@ -538,7 +539,7 @@ DEPENDENCIES
   coveralls
   crono
   database_cleaner
-  devise
+  devise (~> 3.5.3)
   devise-i18n
   factory_girl_rails
   font-awesome-rails
