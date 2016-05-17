@@ -46,6 +46,10 @@
       I18n.locale = "<%= I18n.locale %>";
     </script>
     <%= javascript_include_tag "application" %>
-    <%= javascript_include_tag controller.controller_name %>
+
+    <% controller_name = controller.controller_name %>
+    <% if Rails.application.assets.find_asset(controller_name) %>
+      <%= javascript_include_tag controller_name %>
+    <% end %>
   </body>
 </html>
