@@ -10,8 +10,9 @@
 
 const enum ModalType {
   confirm,
+  confirm_html,
   alert,
-  prompt,
+  alert_html,
 }
 
 /**
@@ -41,15 +42,16 @@ const modal = function (
     resolve = function(){dfd.resolve(); };
   }
 
-  if (modal_type === ModalType.confirm) {
+  if (modal_type === ModalType.confirm || modal_type === ModalType.confirm_html) {
     modal_footer.append(
       $('<button>', {class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel'})
     );
-    modal_body.append($("<div>", {text: message}));
-  } else if (modal_type === ModalType.prompt) {
-    modal_body.append($("<div>", {html: message}));
+  }
+
+  if (message instanceof jQuery || modal_type === ModalType.confirm_html || modal_type === ModalType.alert_html) {
+    modal_body.append($('<div>', { html: message }));
   } else {
-    modal_body.append($("<div>", {text: message}));
+    modal_body.append($('<div>', { text: message }));
   }
 
   modal_footer.append(
@@ -106,6 +108,14 @@ export function Alert(title: string, message: string, status?: string): JQueryPr
   return modal(title, message, ModalType.alert, status);
 };
 
+export function ConfirmHTML(title: string, message: string, status?: string): JQueryPromise<any> {
+  return modal(title, message, ModalType.confirm_html, status);
+};
+
+export function AlertHTML(title: string, message: string, status?: string): JQueryPromise<any> {
+  return modal(title, message, ModalType.alert_html, status);
+};
+
 export function Prompt(title: string, label: string, status?: string): JQueryPromise<any> {
   const input_id = _.uniqueId('bootstrap_prompt_');
   const input = $('<form>', {class: 'form-horizontal'}).append(
@@ -124,7 +134,7 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
     };
   };
 
-  const dfd = modal(title, input, ModalType.prompt, status, resolve_func);
+  const dfd = modal(title, input, ModalType.confirm_html, status, resolve_func);
 
   input.on('keypress', function (e) {
     const ENTER = 13;
