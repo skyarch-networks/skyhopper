@@ -380,8 +380,9 @@ module.exports = Vue.extend({
       var self = this;
       var snapshots    = _.select(this.snapshots, 'selected', true);
       var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
-      var confirm_body = t('snapshots.msg.delete_snapshot') + '<br>- ' + snapshot_ids.join('<br>- ');
-      modal.Confirm(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
+      var confirm_body = t('snapshots.msg.delete_snapshot');
+      confirm_body += '<ul><li>' + snapshot_ids.join('</li><li>') + '</li></ul>';
+      modal.ConfirmHTML(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(function () {
         var s = new Snapshot(self.infra_id);
 
         _.each(snapshots, function (snapshot) {
