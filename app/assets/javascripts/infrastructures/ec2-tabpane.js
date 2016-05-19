@@ -317,6 +317,7 @@ module.exports = Vue.extend({
       self.loading_s = true;
       var s = new Snapshot(this.infra_id);
       s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
+        self.ec2.snapshot_schedules[self.volume_selected] = self.schedule;
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
         alert_success()(msg);
@@ -353,7 +354,7 @@ module.exports = Vue.extend({
     },
     open_snapshot_schedule_modal: function (volume_id) {
       this.schedule_type = "snapshot";
-      this.schedule = this.ec2.snapshot_schedules[volume_id];
+      this.schedule = Object.assign({}, this.ec2.snapshot_schedules[volume_id]);
       this.open_schedule_modal();
     },
 
@@ -438,27 +439,22 @@ module.exports = Vue.extend({
     edit_retention_policy: function () {
       var self = this;
       if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
-        self.editing_policy = self.ec2.retention_policies[self.volume_selected];
-        self.$set('editing_policy.enabled', true);
+        self.editing_policy = Object.assign({}, self.ec2.retention_policies[self.volume_selected]);
       }
       else {
         self.editing_policy = {};
       }
     },
 
-    save_retention_policy: function (volume_id, enabled, max_amount) {
+    save_retention_policy: function (volume_id, policy) {
       var self = this;
       var retention_policies = this.ec2.retention_policies;
       var infra = new Infrastructure(this.infra_id);
       var snapshot = new Snapshot(infra.id);
-      snapshot.save_retention_policy(volume_id, enabled, max_amount)
+      snapshot.save_retention_policy(volume_id, policy.enabled, policy.max_amount)
         .done(function (msg) {
-          if (enabled) {
-            retention_policies[volume_id] = self.editing_policy;
-          }
-          else {
-            delete retention_policies[volume_id];
-          }
+          retention_policies[volume_id] = policy;
+
           $('#retention-policy-modal').modal('hide');
           alert_success()(msg);
         }).fail(alert_danger());
@@ -623,6 +619,9 @@ module.exports = Vue.extend({
 
       return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
     },
+
+    is_retention_policy_set: function () { return this.ec2.retention_policies[this.volume_selected].enabled },
+    is_snapshot_schedule_set: function () { return this.ec2.snapshot_schedules[this.volume_selected].enabled },
 
     dispItems: function(){
       var startPage = this.page * this.dispItemSize;

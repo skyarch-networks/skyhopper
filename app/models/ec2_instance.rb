@@ -147,11 +147,17 @@ class EC2Instance < SimpleDelegator
 
   def retention_policies
     volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
-    policies = RetentionPolicy.where(resource_id: volume_ids)
-    policies.map { |e|
+    policies = RetentionPolicy.where(resource_id: volume_ids).map { |e|
       [ e.resource_id,
-        { max_amount: e.max_amount },
+        {
+          enabled:    true,
+          max_amount: e.max_amount,
+        },
       ]
     }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
+    volume_ids.each do |id|
+      policies[id] = nil unless policies.include?(id)
+    end
+    policies
   end
 end

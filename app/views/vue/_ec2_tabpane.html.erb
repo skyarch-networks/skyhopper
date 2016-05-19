@@ -96,10 +96,18 @@
                   <button @click="edit_retention_policy" href="#retention-policy-modal" data-toggle="modal" class="btn btn-xs btn-warning">
                     <span class="glyphicon glyphicon-repeat"></span>
                     <%= t('snapshots.retention_policy') %>
+                    <span v-if="is_retention_policy_set" class="label label-danger">
+                      Max: {{ec2.retention_policies[volume_selected].max_amount}} item(s)
+                    </span>
                   </button>
                   <button @click="open_snapshot_schedule_modal(volume_selected)" href="#" class="btn btn-xs btn-warning">
                     <span class="glyphicon glyphicon-calendar"></span>
-                    <%= t('schedules.change_schedule') %>
+                    <%= t('schedules.schedule') %>
+                    <span v-if="is_snapshot_schedule_set" class="label label-danger">
+                      {{ec2.snapshot_schedules[volume_selected].time}}
+                      {{ec2.snapshot_schedules[volume_selected].frequency}}
+
+                    </span>
                   </button>
                 </div>
               </div>
