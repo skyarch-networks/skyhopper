@@ -25,7 +25,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['name','detail', 'status'],
+      gridColumns: ['dish_name','detail', 'status'],
       gridData: [],
       index: 'dishes',
       picked: {

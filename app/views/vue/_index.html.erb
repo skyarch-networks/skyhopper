@@ -26,6 +26,11 @@
         | orderBy sortKey sortOrders[sortKey]
         | paginate" :class="{info: picked == entry}">
         <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
+          <input v-if="$index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
+          <span v-show="key === 'stack_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+          <span v-show="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+          <span v-show="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+          <span v-show="key === 'cf_subject'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         </td>
       </tr>

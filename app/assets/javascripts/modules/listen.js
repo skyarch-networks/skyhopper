@@ -14,11 +14,11 @@ module.exports = function (value, key, index, lang) {
       return render_projects(value, key, lang);
     case 'clients':
       return render_clients(value, key, lang);
-    case 'serverspec':
+    case 'serverspecs':
       return render_serverspecs(value, key, lang);
-    case 'dish':
+    case 'dishes':
       return render_dish(value, key, lang);
-    case 'cf_template':
+    case 'cf_templates':
       return render_cf_templates(value, key, lang);
     case 'user_admin':
       return render_user_admin(value, key, lang);
@@ -42,6 +42,8 @@ function render_infrastructures(value, key, lang){
       default:
         return "<span class='text text-default'> NO_STACK_INFO </span>";
     }
+  }else if (key === 'stack_name') {
+    return '';
   }else{
     return value;
   }
@@ -64,11 +66,13 @@ function render_projects(value, key, lang){
 }
 
 function render_serverspecs(value, key, lang){
-    return value;
+    if (key !== 'serverspec_name')
+      return value;
 }
 
 function render_cf_templates(value, key, lang){
-    return value;
+    if(key !== 'cf_subject')
+      return value;
 }
 
 function render_dish(value, key, lang){
@@ -85,6 +89,8 @@ function render_dish(value, key, lang){
       value = 'NOT YET';
     }
     return "<span class='label "+label+"'>"+value+"</span>";
+  }else if (key === 'dish_name') {
+    return '';
   }else{
     return value;
   }

@@ -1,5 +1,5 @@
 json.array!(@global_jsons) do |cf_template|
-  json.subject cf_template.name
+  json.cf_subject cf_template.name
   json.details cf_template.detail
   json.id cf_template.id
   json.value cf_template.value
