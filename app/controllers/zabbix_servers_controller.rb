@@ -33,7 +33,7 @@ class ZabbixServersController < ApplicationController
 
     respond_to do |format|
       if @zabbix_server.save
-        format.html { redirect_to zabbix_servers_url, notice: 'Zabbix server was successfully created.' }
+        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.created') }
         format.json { render :show, status: :created, location: @zabbix_server }
       else
         format.html { render :new }
@@ -47,7 +47,7 @@ class ZabbixServersController < ApplicationController
   def update
     respond_to do |format|
       if @zabbix_server.update(zabbix_server_params)
-        format.html { redirect_to @zabbix_server, notice: 'Zabbix server was successfully updated.' }
+        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.updated') }
         format.json { render :show, status: :ok, location: @zabbix_server }
       else
         format.html { render :edit }

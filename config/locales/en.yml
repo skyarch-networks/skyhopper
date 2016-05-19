@@ -546,6 +546,8 @@ en:
       stop:           'Starting Zabbix Server...'
       not_running:    'Zabbix Server is not running.'
       connrefused:    'Could not connect to Zabbix Server. Please check the configuration.'
+      created:        'Zabbix server was successfully created.'
+      updated:        'Zabbix server was successfully updated.'
 
   ec2_instances:
     description:       'Description'
