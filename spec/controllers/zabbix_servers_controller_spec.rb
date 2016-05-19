@@ -77,30 +77,30 @@ RSpec.describe ZabbixServersController, type: :controller do
     context "with valid params" do
       it "creates a new ZabbixServer" do
         expect {
-          post :create, {:zabbix_server => valid_attributes}, valid_session
+          post :create, {zabbix_server: valid_attributes}, valid_session
         }.to change(ZabbixServer, :count).by(1)
       end
 
       it "assigns a newly created zabbix_server as @zabbix_server" do
-        post :create, {:zabbix_server => valid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to be_a(ZabbixServer)
-        expect(assigns(:zabbix_server)).to be_persisted
+        post :create, {zabbix_server: valid_attributes}, valid_session
+        expect(assigns(zabbix_server:)).to be_a(ZabbixServer)
+        expect(assigns(zabbix_server:)).to be_persisted
       end
 
       it "redirects to the created zabbix_server" do
-        post :create, {:zabbix_server => valid_attributes}, valid_session
+        post :create, {zabbix_server: valid_attributes}, valid_session
         expect(response).to redirect_to(ZabbixServer.last)
       end
     end
 
     context "with invalid params" do
       it "assigns a newly created but unsaved zabbix_server as @zabbix_server" do
-        post :create, {:zabbix_server => invalid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to be_a_new(ZabbixServer)
+        post :create, {zabbix_server: invalid_attributes}, valid_session
+        expect(assigns(zabbix_server:)).to be_a_new(ZabbixServer)
       end
 
       it "re-renders the 'new' template" do
-        post :create, {:zabbix_server => invalid_attributes}, valid_session
+        post :create, {zabbix_server: invalid_attributes}, valid_session
         expect(response).to render_template("new")
       end
     end
@@ -114,20 +114,20 @@ RSpec.describe ZabbixServersController, type: :controller do
 
       it "updates the requested zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {:id => zabbix_server.to_param, :zabbix_server => new_attributes}, valid_session
+        put :update, {id: zabbix_server.to_param, zabbix_server: new_attributes}, valid_session
         zabbix_server.reload
         skip("Add assertions for updated state")
       end
 
       it "assigns the requested zabbix_server as @zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {:id => zabbix_server.to_param, :zabbix_server => valid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to eq(zabbix_server)
+        put :update, {id: zabbix_server.to_param, zabbix_server: valid_attributes}, valid_session
+        expect(assigns(zabbix_server:)).to eq(zabbix_server)
       end
 
       it "redirects to the zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {:id => zabbix_server.to_param, :zabbix_server => valid_attributes}, valid_session
+        put :update, {id: zabbix_server.to_param, zabbix_server: valid_attributes}, valid_session
         expect(response).to redirect_to(zabbix_server)
       end
     end
@@ -135,13 +135,13 @@ RSpec.describe ZabbixServersController, type: :controller do
     context "with invalid params" do
       it "assigns the zabbix_server as @zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {:id => zabbix_server.to_param, :zabbix_server => invalid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to eq(zabbix_server)
+        put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
+        expect(assigns(zabbix_server:)).to eq(zabbix_server)
       end
 
       it "re-renders the 'edit' template" do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {:id => zabbix_server.to_param, :zabbix_server => invalid_attributes}, valid_session
+        put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
         expect(response).to render_template("edit")
       end
     end
@@ -151,13 +151,13 @@ RSpec.describe ZabbixServersController, type: :controller do
     it "destroys the requested zabbix_server" do
       zabbix_server = ZabbixServer.create! valid_attributes
       expect {
-        delete :destroy, {:id => zabbix_server.to_param}, valid_session
+        delete :destroy, {id: zabbix_server.to_param}, valid_session
       }.to change(ZabbixServer, :count).by(0)
     end
 
     it "redirects to the zabbix_servers list" do
       zabbix_server = ZabbixServer.create! valid_attributes
-      delete :destroy, {:id => zabbix_server.to_param}, valid_session
+      delete :destroy, {id: zabbix_server.to_param}, valid_session
       expect(response).to redirect_to(zabbix_servers_url)
     end
   end

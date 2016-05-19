@@ -162,7 +162,7 @@ class Zabbix
         updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
         {
           triggerid: item["triggers"].first["triggerid"],
-          expression: updating_expr
+          expression: updating_expr,
         }
       end
     end.flatten
@@ -578,7 +578,7 @@ class Zabbix
       {
         name:  scenario_name,
         hostid: host_id,
-        steps: s_array
+        steps: s_array,
       }
     end
     @sky_zabbix.httptest.create(scenarios)
@@ -617,7 +617,7 @@ class Zabbix
         "key_",
         "lastvalue",
       ],
-      webitems: "true"
+      webitems: "true",
     }
     webscenario_req_params = {
       hostids: host_id,
@@ -625,7 +625,7 @@ class Zabbix
         "name",
         "url",
       ],
-      output: ["name"]
+      output: ["name"],
     }
 
     if @version.start_with?('2')
