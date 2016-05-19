@@ -14,12 +14,12 @@ module.exports = function(value, index){
       return render_projects(value);
     case 'clients':
       return render_clients(value);
-    case 'serverspec':
+    case 'serverspecs':
       return render_serverspecs(value);
     case 'dishes':
       return render_dish(value);
     case 'cf_templates':
-      return render_dish(value);
+      return render_cf_templates(value);
     case 'user_admin':
       return render_user_admin(value);
     case 'serverspec_results':
@@ -79,7 +79,7 @@ function render_serverspecs(value){
   switch (value) {
     case 'description':
       return t ('serverspecs.description');
-    case 'name':
+    case 'serverspec_name':
       return t ('serverspecs.name');
     default:
       return value;
@@ -88,7 +88,7 @@ function render_serverspecs(value){
 
 function render_dish(value){
   switch (value) {
-    case 'name':
+    case 'dish_name':
       return t ('dishes.name');
     case 'detail':
       return t ('dishes.detail');
@@ -101,7 +101,7 @@ function render_dish(value){
 
 function render_cf_templates(value){
   switch (value) {
-    case 'subject':
+    case 'cf_subject':
       return t ('cf_templates.subject');
     case 'details':
       return t ('cf_templates.details');

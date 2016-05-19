@@ -46,7 +46,7 @@
     el: '#indexElement',
     data: {
       searchQuery: '',
-      gridColumns: ['subject','details'],
+      gridColumns: ['cf_subject','details'],
       gridData: [],
       index: 'cf_templates',
       picked: {
