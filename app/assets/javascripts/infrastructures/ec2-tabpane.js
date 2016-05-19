@@ -630,13 +630,10 @@ module.exports = Vue.extend({
       switch (schedule.frequency) {
         case 'intervals':
           return t('schedules.label.per_n_hours', { n: schedule.time });
-          break;
         case 'daily':
           return t('schedules.label.daily', { n: schedule.time });
-          break;
         case 'weekly':
           return t('schedules.label.weekly', { n: schedule.time, w: t('schedules.day_of_week.' + schedule.day_of_week) });
-          break;
       }
     },
 
