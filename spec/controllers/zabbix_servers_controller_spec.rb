@@ -89,7 +89,7 @@ RSpec.describe ZabbixServersController, type: :controller do
 
       it "redirects to the created zabbix_server" do
         post :create, {zabbix_server: valid_attributes}, valid_session
-        expect(response).to redirect_to(ZabbixServer.last)
+        expect(response).to redirect_to(ZabbixServer)
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       it "redirects to the zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
         put :update, {id: zabbix_server.to_param, zabbix_server: valid_attributes}, valid_session
-        expect(response).to redirect_to(zabbix_server)
+        expect(response).to redirect_to(ZabbixServer)
       end
     end
 
@@ -136,7 +136,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       it "assigns the zabbix_server as @zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
         put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to eq(zabbix_server)
+        expect(assigns(:zabbix_server)).to eq(ZabbixServer)
       end
 
       it "re-renders the 'edit' template" do
@@ -152,7 +152,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       zabbix_server = ZabbixServer.create! valid_attributes
       expect {
         delete :destroy, {id: zabbix_server.to_param}, valid_session
-      }.to change(ZabbixServer, :count).by(0)
+      }.to change(ZabbixServer, :count).by(-1)
     end
 
     it "redirects to the zabbix_servers list" do
