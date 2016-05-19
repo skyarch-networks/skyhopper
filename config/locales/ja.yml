@@ -526,6 +526,11 @@ ja:
       not_running:    'Chef Server が起動していません'
 
   zabbix_servers:
+    zabbix:      'Zabbix Servers'
+    version:     'バージョン'
+    details:     '細部'
+    btn:
+      add:            'Zabbixサーバを追加します。'
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'

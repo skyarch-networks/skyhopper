@@ -528,6 +528,11 @@ en:
       not_running:    'Chef Server is not running.'
 
   zabbix_servers:
+    zabbix:      'Zabbix Servers'
+    version:     'Version'
+    details:     'Details'
+    btn:
+      add:            'Add Zabbix Server'
     msg:
       creating_infra: 'Creating Infrastructure...'
       creating_stack: 'Creating Stack...'

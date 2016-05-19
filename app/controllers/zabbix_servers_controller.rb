@@ -33,7 +33,7 @@ class ZabbixServersController < ApplicationController
 
     respond_to do |format|
       if @zabbix_server.save
-        format.html { redirect_to @zabbix_server, notice: 'Zabbix server was successfully created.' }
+        format.html { redirect_to zabbix_servers_url, notice: 'Zabbix server was successfully created.' }
         format.json { render :show, status: :created, location: @zabbix_server }
       else
         format.html { render :new }
