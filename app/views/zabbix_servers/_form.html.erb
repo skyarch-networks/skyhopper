@@ -1,4 +1,4 @@
-<%= form_for(@zabbix_server) do |f| %>
+<%= form_for @zabbix_server, html: { class: 'form-horizontal', role: 'form' } do |f| %>
   <% if @zabbix_server.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@zabbix_server.errors.count, "error") %> prohibited this zabbix_server from being saved:</h2>
@@ -12,26 +12,39 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :fqdn %><br>
-    <%= f.text_field :fqdn, class: 'form-control', required: true, pattern: '[^\s]+' %>
+    <% if @zabbix_server.id == 1 %>
+      <%= f.label :fqdn, class: 'control-label col-sm-2' %>
+      <div class="col-sm-5">
+        <%= f.text_field :fqdn, class: 'form-control', readonly: true %>
+      </div>
+    <% else %>
+    <%= f.label :fqdn, class: 'control-label col-sm-2' %>
+      <div class="col-sm-5">
+        <%= f.text_field :fqdn, class: 'form-control', readonly: true %>
+      </div>
+    <% end %>
   </div>
   <div class="form-group">
-    <%= f.label :username %><br>
-    <%= f.text_field :username, class: 'form-control', required: true, pattern: '[^\s]+' %>
+    <%= f.label :username, class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :username, class: 'form-control', required: true %>
+    </div>
   </div>
   <div class="form-group">
-    <%= f.label :password %><br>
-    <%= f.text_field :password, class: 'form-control', type: 'password', required: true, pattern: '[^\s]+' %>
+    <%= f.label :password, class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :password, class: 'form-control', type: 'password', required: true %>
+    </div>
   </div>
   <div class="form-group">
-    <%= f.label :version %><br>
-    <%= f.text_field :version, class: 'form-control', required: true, pattern: '[^\s]+' %>
+    <%= f.label :details, class: 'control-label col-sm-2' %>
+    <div class="col-sm-5">
+      <%= f.text_field :details, class: 'form-control', required: true %>
+    </div>
   </div>
-  <div class="form-group">
-    <%= f.label :details %><br>
-    <%= f.text_field :details, class: 'form-control', required: true, pattern: '[^\s]+' %>
+  <div class="form-actions-top">
+    <%= f.submit nil, class: 'btn btn-primary create' %>
+    <%= link_to t('.cancel', default: t("helpers.links.cancel")), zabbix_servers_path, class: 'btn btn-default' %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
 <% end %>
