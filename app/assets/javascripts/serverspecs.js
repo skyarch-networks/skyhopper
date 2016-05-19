@@ -19,7 +19,7 @@ var serverspecIndex = new Vue({
   el: '#indexElement',
   data: {
     searchQuery: '',
-    gridColumns: ['name','description'],
+    gridColumns: ['serverspec_name','description'],
     gridData: [],
     index: 'serverspecs',
     picked: {

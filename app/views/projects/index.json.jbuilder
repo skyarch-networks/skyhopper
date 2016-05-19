@@ -1,6 +1,7 @@
 json.array!(@projects) do |project|
   json.id project.id
-  json.code [project.code,project.infrastructures.count]
+  show_url = link_to project.name, infrastructures_path(project_id: project.id)
+  json.code [show_url,project.infrastructures.count]
   json.name project.name
   json.cloud_provider project.cloud_provider.name
   json.access_key '***' + project.access_key[-3..-1].to_s
