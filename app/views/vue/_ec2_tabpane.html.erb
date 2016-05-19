@@ -62,7 +62,7 @@
                 <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-info': volume_selected === block_device.ebs.volume_id}" class="btn btn-xs btn-default">
                   {{block_device.ebs.volume_id}}
                   <span v-if="is_root_device(block_device.device_name)" class="label label-primary">Root</span>
-                  <span class="label label-default">
+                  <span v-if="latest_snapshot(block_device.ebs.volume_id)" class="label label-default">
                      Latest: {{latest_snapshot_date(block_device.ebs.volume_id)}}
                   </span>
                   <span class="caret"></span>
@@ -99,14 +99,18 @@
                     <span v-if="is_retention_policy_set" class="label label-danger">
                       Max: {{ec2.retention_policies[volume_selected].max_amount}} item(s)
                     </span>
+                    <span v-if="!is_retention_policy_set" class="label label-default">
+                      <%= t('common.not_set') %>
+                    </span>
                   </button>
                   <button @click="open_snapshot_schedule_modal(volume_selected)" href="#" class="btn btn-xs btn-warning">
                     <span class="glyphicon glyphicon-calendar"></span>
                     <%= t('schedules.schedule') %>
                     <span v-if="is_snapshot_schedule_set" class="label label-danger">
-                      {{ec2.snapshot_schedules[volume_selected].time}}
-                      {{ec2.snapshot_schedules[volume_selected].frequency}}
-
+                      {{schedule_indicator_message}}
+                    </span>
+                    <span v-if="!is_snapshot_schedule_set" class="label label-default">
+                      <%= t('common.not_set') %>
                     </span>
                   </button>
                 </div>

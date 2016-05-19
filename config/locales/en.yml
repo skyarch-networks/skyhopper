@@ -30,6 +30,7 @@ en:
     username:      'User Name'
     password:      'Password'
     please_select: 'Select one'
+    not_set:       'Not set'
     btn:
       architecture:    'Architecture'
       settings:        'Settings'
@@ -360,12 +361,16 @@ en:
 
 
   schedules:
-    schedule:         'schedule'
+    schedule:         'Schedule'
     change_schedule:  'Change schedule'
     run_periodically: 'Run periodically'
     o_clock:          "o'clock"
     hours:            'hours'
     next_run:         'Next run time is at {{next_run}}:00'
+    label:
+      per_n_hours:    'per %{n} hour(s)'
+      daily:          'Daily %{n}:00'
+      weekly:         'Every %{w} %{n}:00'
     frequency:
       weekly:     'Weekly'
       daily:      'Daily'

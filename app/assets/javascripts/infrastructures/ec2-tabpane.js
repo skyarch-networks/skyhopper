@@ -623,6 +623,21 @@ module.exports = Vue.extend({
     is_retention_policy_set: function () { return this.ec2.retention_policies[this.volume_selected].enabled },
     is_snapshot_schedule_set: function () { return this.ec2.snapshot_schedules[this.volume_selected].enabled },
 
+    schedule_indicator_message: function () {
+      var schedule = this.ec2.snapshot_schedules[this.volume_selected];
+      switch (schedule.frequency) {
+        case 'intervals':
+          return t('schedules.label.per_n_hours', { n: schedule.time });
+          break;
+        case 'daily':
+          return t('schedules.label.daily', { n: schedule.time });
+          break;
+        case 'weekly':
+          return t('schedules.label.weekly', { n: schedule.time, w: t('schedules.day_of_week.' + schedule.day_of_week) });
+          break;
+      }
+    },
+
     dispItems: function(){
       var startPage = this.page * this.dispItemSize;
       if (this.filterKey === ''){
