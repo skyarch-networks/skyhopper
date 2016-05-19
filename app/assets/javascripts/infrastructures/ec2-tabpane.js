@@ -466,7 +466,9 @@ module.exports = Vue.extend({
       var same = this.volume_selected == volume_id;
       if (panel_opened && same) {
         $('#ebs_panel').collapse('hide');
-        self.volume_selected = false;
+        setTimeout(function () {
+          self.volume_selected = false;
+        }, 300);
       } else {
         this.volume_selected = volume_id;
         $('#ebs_panel').collapse('show');
