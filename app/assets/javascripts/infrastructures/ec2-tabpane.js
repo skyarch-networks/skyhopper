@@ -623,6 +623,7 @@ module.exports = Vue.extend({
       return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
     },
 
+    is_valid_amount: function () { return 3 <= this.editing_policy.max_amount && this.editing_policy.max_amount < 1000; },
     is_retention_policy_set: function () { return this.ec2.retention_policies[this.volume_selected].enabled },
     is_snapshot_schedule_set: function () { return this.ec2.snapshot_schedules[this.volume_selected].enabled },
 
