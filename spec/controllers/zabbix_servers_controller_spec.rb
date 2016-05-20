@@ -53,7 +53,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   describe "GET #show" do
     it "assigns the requested zabbix_server as @zabbix_server" do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :show, {:id => zabbix_server.to_param}, valid_session
+      get :show, {id: zabbix_server.to_param}, valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   describe "GET #edit" do
     it "assigns the requested zabbix_server as @zabbix_server" do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :edit, {:id => zabbix_server.to_param}, valid_session
+      get :edit, {id: zabbix_server.to_param}, valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
