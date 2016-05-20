@@ -157,7 +157,7 @@ class EC2Instance < SimpleDelegator
       ]
     }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
     volume_ids.each do |id|
-      policies[id] = nil unless policies.include?(id)
+      policies[id] = { enabled: false } unless policies.include?(id)
     end
     policies
   end

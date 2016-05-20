@@ -40,7 +40,7 @@ module.exports = Vue.extend({
     chef_console_text:   '',
     selected_dish:       null,
     ec2:                 {},
-    volume_selected:     false,
+    volume_selected:     null,
     sort_key:            '',
     sort_asc:            false,
     schedule_type:       '',
@@ -468,7 +468,7 @@ module.exports = Vue.extend({
       if (panel_opened && same) {
         $('#ebs_panel').collapse('hide');
         setTimeout(function () {
-          self.volume_selected = false;
+          self.volume_selected = null;
         }, 300);
       } else {
         this.volume_selected = volume_id;
@@ -624,8 +624,8 @@ module.exports = Vue.extend({
     },
 
     is_valid_amount: function () { return 3 <= this.editing_policy.max_amount && this.editing_policy.max_amount < 1000; },
-    is_retention_policy_set: function () { return this.ec2.retention_policies[this.volume_selected].enabled },
-    is_snapshot_schedule_set: function () { return this.ec2.snapshot_schedules[this.volume_selected].enabled },
+    is_retention_policy_set: function () { return this.volume_selected && this.ec2.retention_policies[this.volume_selected].enabled },
+    is_snapshot_schedule_set: function () { return this.volume_selected && this.ec2.snapshot_schedules[this.volume_selected].enabled },
 
     schedule_indicator_message: function () {
       var schedule = this.ec2.snapshot_schedules[this.volume_selected];
