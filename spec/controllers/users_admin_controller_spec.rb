@@ -221,12 +221,16 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#sync_zabbix' do
+    let(:id){1}
+
     before do
       create(:user, master: true, admin: true)
       create(:user, master: true, admin: false)
       create(:user, master: false, admin: true)
       create(:user, master: false, admin: false)
+      create(:zabbix_server, id: id)
       put :sync_zabbix
+
     end
 
     should_be_success
