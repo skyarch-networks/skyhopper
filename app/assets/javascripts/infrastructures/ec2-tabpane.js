@@ -40,7 +40,7 @@ module.exports = Vue.extend({
     chef_console_text:   '',
     selected_dish:       null,
     ec2:                 {},
-    volume_selected:     null,
+    volume_selected:     false,
     sort_key:            '',
     sort_asc:            false,
     schedule_type:       '',
@@ -468,7 +468,7 @@ module.exports = Vue.extend({
       if (panel_opened && same) {
         $('#ebs_panel').collapse('hide');
         setTimeout(function () {
-          self.volume_selected = null;
+          self.volume_selected = false;
         }, 300);
       } else {
         this.volume_selected = volume_id;
