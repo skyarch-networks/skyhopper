@@ -1,4 +1,7 @@
 class ZabbixServersController < ApplicationController
+  include Concerns::InfraLogger
+  # ------------- Auth
+  before_action :authenticate_user!
   before_action :set_zabbix_server, only: [:show, :edit, :update, :destroy]
 
   # GET /zabbix_servers
@@ -67,6 +70,7 @@ class ZabbixServersController < ApplicationController
       go.() and return
     end
 
+    ws_send(t('zabbix_servers.msg.deleted', name: @zabbix_server.fqdn), true)
     go.() and return
   end
 

@@ -544,8 +544,9 @@ ja:
       stop:           'Zabbix Server を停止しています...'
       not_running:    'Zabbix Server が起動していません'
       connrefused:    'Zabbix Server に接続できませんでした。Zabbix Server の設定を確認してください。'
-      created:        'Zabbixサーバが正常に作成されました。'
-      updated:        'Zabbixサーバが正常に更新されました'
+      created:        'Zabbix サーバが正常に作成されました。'
+      updated:        'Zabbix サーバが正常に更新されました'
+      deleted:        'Zabbix サーバ"%{name}" が正常に削除されました'
 
   ec2_instances:
     description:       '詳細'

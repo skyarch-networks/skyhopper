@@ -548,6 +548,7 @@ en:
       connrefused:    'Could not connect to Zabbix Server. Please check the configuration.'
       created:        'Zabbix server was successfully created.'
       updated:        'Zabbix server was successfully updated.'
+      deleted:        'Zabbix Server "%{name}" was successfully deleted.'
 
   ec2_instances:
     description:       'Description'
