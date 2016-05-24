@@ -472,7 +472,9 @@ module.exports = Vue.extend({
         }, 300);
       } else {
         this.volume_selected = volume_id;
-        $('#ebs_panel').collapse('show');
+        this.$nextTick(function () {
+          $('#ebs_panel').collapse('show');
+        });
       }
     },
 
