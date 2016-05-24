@@ -3,6 +3,7 @@ class ZabbixServersController < ApplicationController
   # ------------- Auth
   before_action :authenticate_user!
   before_action :set_zabbix_server, only: [:show, :edit, :update, :destroy]
+  before_action :auth_zabbix_server, only: [:create]
 
   # GET /zabbix_servers
   # GET /zabbix_servers.json
@@ -32,7 +33,7 @@ class ZabbixServersController < ApplicationController
   # POST /zabbix_servers
   # POST /zabbix_servers.json
   def create
-    @zabbix_server = ZabbixServer.new(zabbix_server_params)
+    @zabbix_server = ZabbixServer.new(@zabbix_server_params)
 
     respond_to do |format|
       if @zabbix_server.save
@@ -84,4 +85,17 @@ class ZabbixServersController < ApplicationController
     def zabbix_server_params
       params.require(:zabbix_server).permit(:fqdn, :username, :password, :version, :details)
     end
+
+    def auth_zabbix_server
+      params = zabbix_server_params
+      begin
+        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+        params[:version] = z.version
+      rescue => ex
+        raise
+      end
+      @zabbix_server_params = params
+
+    end
+
 end
