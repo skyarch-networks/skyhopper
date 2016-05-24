@@ -62,13 +62,17 @@ module.exports = Vue.extend({
         alert_danger()(msg);
       });
     },
-    all_spec:    function () { return this.globals.concat(this.individuals); },
-    can_run:     function () { return !!_.find(this.all_spec, function(s){return s.checked;}) || this.checked_auto_generated; },
   },
 
   computed: {
     physical_id: function () { return this.$parent.tabpaneGroupID; },
     ec2:         function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
+    can_run:     function () {
+      if(this.globals || this.individuals ) {
+        var all_spec = this.globals.concat(this.individuals);
+        return all_spec.find(function(s){return s.checked;}) || this.checked_auto_generated;
+      }
+    },
 
 
     next_run:    function () { return (new Date().getHours() + parseInt(this.time, 10)) % 24; },
