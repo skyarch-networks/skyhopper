@@ -24,6 +24,7 @@ json.platform @platform
 json.security_groups @security_groups
 
 json.retention_policies @retention_policies
+json.snapshots @snapshots
 
 if @info
   json.info do

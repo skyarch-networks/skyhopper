@@ -40,8 +40,7 @@ module.exports = Vue.extend({
     chef_console_text:   '',
     selected_dish:       null,
     ec2:                 {},
-    volume_selected:     '',
-    snapshots:           {},
+    volume_selected:     false,
     sort_key:            '',
     sort_asc:            false,
     schedule_type:       '',
@@ -318,6 +317,7 @@ module.exports = Vue.extend({
       self.loading_s = true;
       var s = new Snapshot(this.infra_id);
       s.schedule(self.volume_selected, self.physical_id, self.schedule).done(function (msg) {
+        self.ec2.snapshot_schedules[self.volume_selected] = self.schedule;
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
         alert_success()(msg);
@@ -337,12 +337,9 @@ module.exports = Vue.extend({
         var snapshot = new Snapshot(self.infra_id);
 
         snapshot.create(volume_id, self.physical_id).progress(function (data) {
-          modal.Alert(t('snapshots.snapshot'), t('snapshots.msg.creation_started'));
-        }).done(function (data) {
-          if ($('#snapshots-modal.in').length) {
-            self.load_snapshots();
-          }
-        }).fail(alert_danger());
+          modal.Alert(t('snapshots.snapshots'), t('snapshots.msg.creation_started'));
+        }).done(self.load_snapshots)
+          .fail(alert_danger());
 
         self.load_snapshots();
       });
@@ -357,7 +354,7 @@ module.exports = Vue.extend({
     },
     open_snapshot_schedule_modal: function (volume_id) {
       this.schedule_type = "snapshot";
-      this.schedule = this.ec2.snapshot_schedules[volume_id];
+      this.schedule = Object.assign({}, this.ec2.snapshot_schedules[volume_id]);
       this.open_schedule_modal();
     },
 
@@ -365,8 +362,8 @@ module.exports = Vue.extend({
       var self = this;
       var snapshot = new Snapshot(this.infra_id);
       this.loading_snapshots = true;
-      snapshot.index(this.volume_selected).done(function (data) {
-        self.snapshots = _.map(data.snapshots, function (s) {
+      snapshot.index(null).done(function (data) {
+        self.ec2.snapshots = _.map(data.snapshots, function (s) {
           s.selected = false;
           return s;
         });
@@ -378,7 +375,7 @@ module.exports = Vue.extend({
 
     delete_selected_snapshots: function () {
       var self = this;
-      var snapshots    = _.select(this.snapshots, 'selected', true);
+      var snapshots    = _.select(this.ec2.snapshots, 'selected', true);
       var snapshot_ids = _.pluck(snapshots, 'snapshot_id');
       var confirm_body = t('snapshots.msg.delete_snapshot');
       confirm_body += '<ul><li>' + snapshot_ids.join('</li><li>') + '</li></ul>';
@@ -388,7 +385,7 @@ module.exports = Vue.extend({
         _.each(snapshots, function (snapshot) {
           s.destroy(snapshot.snapshot_id)
             .done(function (msg) {
-              self.snapshots.$remove(snapshot);
+              self.ec2.snapshots.$remove(snapshot);
             })
             .fail(alert_danger());
         });
@@ -402,10 +399,6 @@ module.exports = Vue.extend({
       return snapshot.state;
     },
 
-    select_snapshot: function (snapshot) {
-      snapshot.selected = !snapshot.selected;
-    },
-
     sort_by: function (key) {
       if (this.sort_key === key) {
         this.sort_asc = !this.sort_asc;
@@ -413,7 +406,7 @@ module.exports = Vue.extend({
         this.sort_asc = false;
         this.sort_key = key;
       }
-      this.snapshots = _.sortByOrder(this.snapshots, key, this.sort_asc);
+      this.ec2.snapshots = _.sortByOrder(this.ec2.snapshots, key, this.sort_asc);
     },
 
     sorting_by: function (key) {
@@ -439,7 +432,7 @@ module.exports = Vue.extend({
       modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
         ec2.attach_volume(volume_id, device_name).done(function (data) {
           modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
-        });
+        }).fail(alert_danger());
       });
       $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
     },
@@ -447,30 +440,61 @@ module.exports = Vue.extend({
     edit_retention_policy: function () {
       var self = this;
       if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
-        self.editing_policy = self.ec2.retention_policies[self.volume_selected];
-        self.$set('editing_policy.enabled', true);
+        self.editing_policy = Object.assign({}, self.ec2.retention_policies[self.volume_selected]);
       }
       else {
         self.editing_policy = {};
       }
     },
 
-    save_retention_policy: function (volume_id, enabled, max_amount) {
+    save_retention_policy: function (volume_id, policy) {
       var self = this;
       var retention_policies = this.ec2.retention_policies;
       var infra = new Infrastructure(this.infra_id);
       var snapshot = new Snapshot(infra.id);
-      snapshot.save_retention_policy(volume_id, enabled, max_amount)
+      snapshot.save_retention_policy(volume_id, policy.enabled, policy.max_amount)
         .done(function (msg) {
-          if (enabled) {
-            retention_policies[volume_id] = self.editing_policy;
-          }
-          else {
-            delete retention_policies[volume_id];
-          }
+          retention_policies[volume_id] = policy;
+
           $('#retention-policy-modal').modal('hide');
           alert_success()(msg);
         }).fail(alert_danger());
+    },
+
+    on_click_volume: function (volume_id) {
+      var self = this;
+      var panel_opened = document.getElementById('ebs_panel').classList.contains('in');
+      var same = this.volume_selected == volume_id;
+      if (panel_opened && same) {
+        $('#ebs_panel').collapse('hide');
+        setTimeout(function () {
+          self.volume_selected = false;
+        }, 300);
+      } else {
+        this.volume_selected = volume_id;
+        this.$nextTick(function () {
+          $('#ebs_panel').collapse('show');
+        });
+      }
+    },
+
+    latest_snapshot: function (volume_id) {
+      return _(this.ec2.snapshots).chain()
+        .select({
+          volume_id: volume_id,
+          state: 'completed'
+        })
+        .sortBy('start_time')
+        .last()
+        .value();
+    },
+
+    latest_snapshot_date: function (volume_id) {
+      var snapshot = this.latest_snapshot(volume_id);
+      if (snapshot) {
+        var date = new Date(snapshot.start_time);
+        return date.toLocaleString();
+      }
     },
 
     toLocaleString: toLocaleString,
@@ -567,7 +591,7 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_any: function () { return _.any(this.snapshots, 'selected', true); },
+    selected_any: function () { return _.any(this.ec2.snapshots, 'selected', true); },
 
     suggest_device_name: function () {
       // TODO: iikanji ni sitai
@@ -599,6 +623,22 @@ module.exports = Vue.extend({
       }
 
       return '/dev/sd' + String.fromCharCode(suggested_device_letter_code);
+    },
+
+    is_valid_amount: function () { return 3 <= this.editing_policy.max_amount && this.editing_policy.max_amount < 1000; },
+    is_retention_policy_set: function () { return this.volume_selected && this.ec2.retention_policies[this.volume_selected].enabled },
+    is_snapshot_schedule_set: function () { return this.volume_selected && this.ec2.snapshot_schedules[this.volume_selected].enabled },
+
+    schedule_indicator_message: function () {
+      var schedule = this.ec2.snapshot_schedules[this.volume_selected];
+      switch (schedule.frequency) {
+        case 'intervals':
+          return t('schedules.label.per_n_hours', { n: schedule.time });
+        case 'daily':
+          return t('schedules.label.daily', { n: schedule.time });
+        case 'weekly':
+          return t('schedules.label.weekly', { n: schedule.time, w: t('schedules.day_of_week.' + schedule.day_of_week) });
+      }
     },
 
     dispItems: function(){
@@ -645,16 +685,6 @@ module.exports = Vue.extend({
       }
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));
-
-    $('#snapshots-modal').on('show.bs.modal', function (e) {
-      $(e.target).children().attr('style', null);
-      self.load_snapshots();
-    });
-    $("#snapshots-modal >").draggable({
-      cursor: "move",
-      containment: ".modal-backdrop",
-      handle: ".modal-header"
-    });
   },
 
   filters: {
