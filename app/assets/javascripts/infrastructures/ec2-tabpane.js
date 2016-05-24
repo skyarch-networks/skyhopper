@@ -432,7 +432,7 @@ module.exports = Vue.extend({
       modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done(function (device_name) {
         ec2.attach_volume(volume_id, device_name).done(function (data) {
           modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
-        });
+        }).fail(alert_danger());
       });
       $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
     },
