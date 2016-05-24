@@ -64,6 +64,7 @@ class ProjectsController < ApplicationController
     session[:form] = nil
 
     @cloud_providers = CloudProvider.all
+    @zabbix_servers = ZabbixServer.all
   end
 
   # GET /projects/1/edit
@@ -75,6 +76,7 @@ class ProjectsController < ApplicationController
   # POST /projects.json
   def create
     @project = Project.new(project_params)
+    @zabbix = ZabbixServer.find(@project.zabbix_server_id)
 
     on_error = -> () {
       session[:form] = project_params
@@ -87,8 +89,7 @@ class ProjectsController < ApplicationController
     end
 
     begin
-      s = AppSetting.get
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+      z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
       # add new hostgroup on zabbix with project code as its name
       hostgroup_id = z.add_hostgroup(@project.code)
       z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
@@ -145,7 +146,7 @@ class ProjectsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
-    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id)
+    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id, :zabbix_server_id)
   end
 
   # redirect to clients#index if specified client does not exist

@@ -15,7 +15,6 @@ class UsersAdminController < ApplicationController
   end
 
   before_action :with_zabbix, only: [:new, :create, :destroy, :edit, :update, :sync_zabbix]
-  before_action :set_zabbix, only: [:destroy]
 
   # user management
   # GET /users_admin
@@ -34,11 +33,15 @@ class UsersAdminController < ApplicationController
   def new
     @user = User.new(session[:form])
     session[:form] = nil  # remove temporary form data
+
+    @zabbix_servers = ZabbixServer.all
   end
 
   # create new user only by master
   # POST /users_admin
   def create
+    zabbix_servers = params[:user][:zabbix_servers]
+    zabbix_servers.shift
     @user = User.new(
       email:                 params[:user][:email],
       password:              params[:user][:password],
@@ -65,10 +68,12 @@ class UsersAdminController < ApplicationController
 
     begin
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
-      s = AppSetting.get
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      z.create_user(@user)
-    rescue => ex
+        zab = ZabbixServer.find(zabbix_servers)
+        zab.each do |s|
+          z = Zabbix.new(s.fqdn, s.username, s.password)
+          z.create_user(@user)
+        end
+      rescue => ex
       @user.destroy
       e.(ex) and return
     end
@@ -152,7 +157,7 @@ class UsersAdminController < ApplicationController
   # 全てのユーザーをZabbixに登録する。
   def sync_zabbix
     s = ZabbixServer.find(1)
-    z = Zabbix.new(s.username, s.password)
+    z = Zabbix.new(s.fqdn, s.username, s.password)
 
     users = User.all
     users.each do |user|
@@ -186,9 +191,9 @@ class UsersAdminController < ApplicationController
 
   private
 
-  def set_zabbix
+  def set_zabbix(fqdn)
     begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
+      @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
       redirect_to users_admin_index_path
