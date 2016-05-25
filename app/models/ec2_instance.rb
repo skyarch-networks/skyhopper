@@ -150,8 +150,7 @@ class EC2Instance < SimpleDelegator
     policies = RetentionPolicy.where(resource_id: volume_ids)
     policies.map { |e|
       [ e.resource_id,
-        { max_amount: e.max_amount },
-      ]
+        { max_amount: e.max_amount }],
     }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
   end
 end
