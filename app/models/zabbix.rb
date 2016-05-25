@@ -142,7 +142,10 @@ class Zabbix
       item_infos.each do |item|
         # もしアイテムをZabbixに足したなら必ずそれに紐づくトリガーも作成して下さい
         # ここでエラーを吐きます↓
-        selected_triggerids.push(item["triggers"].first["triggerid"])
+        if item["triggers"].any?
+          selected_triggerids.push(item["triggers"].first["triggerid"])
+        end
+
       end
     end
 
@@ -159,15 +162,20 @@ class Zabbix
     triggers = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
-        updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-        {
-          triggerid: item["triggers"].first["triggerid"],
-          expression: updating_expr
-        }
+        if item["triggers"].any?
+          updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
+          {
+            triggerid: item["triggers"].first["triggerid"],
+            expression: updating_expr
+          }
+        end
       end
     end.flatten
 
-    @sky_zabbix.trigger.update(triggers)
+    begin
+      yield @sky_zabbix.trigger.update(triggers)
+    rescue => ex
+    end
   end
 
   def update_expression(trigger_id, expression)
