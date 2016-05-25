@@ -172,9 +172,10 @@ class Zabbix
       end
     end.flatten
 
+    # Verify what caused the errors. @candy
     begin
       yield @sky_zabbix.trigger.update(triggers)
-    rescue => ex
+    rescue
     end
   end
 
