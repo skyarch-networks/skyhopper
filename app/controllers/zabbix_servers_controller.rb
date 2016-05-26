@@ -92,7 +92,7 @@ class ZabbixServersController < ApplicationController
         z = Zabbix.new(params[:fqdn], params[:username], params[:password])
         params[:version] = z.version
       rescue => ex
-        raise
+        raise ex
       end
       @zabbix_server_params = params
 
