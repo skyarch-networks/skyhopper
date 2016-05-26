@@ -159,6 +159,7 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
+
     triggers = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
@@ -174,8 +175,9 @@ class Zabbix
 
     # Verify what caused the errors. @candy
     begin
-      yield @sky_zabbix.trigger.update(triggers)
-    rescue
+      @sky_zabbix.trigger.update(triggers.compact)
+    rescue SkyZabbix::Jsonrpc::Error
+      raise ZabbixError
     end
   end
 
