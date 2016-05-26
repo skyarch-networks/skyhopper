@@ -68,12 +68,12 @@ class UsersAdminController < ApplicationController
 
     begin
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
-        zab = ZabbixServer.find(zabbix_servers)
-        zab.each do |s|
-          z = Zabbix.new(s.fqdn, s.username, s.password)
-          z.create_user(@user)
-        end
-      rescue => ex
+      zab = ZabbixServer.find(zabbix_servers)
+      zab.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        z.create_user(@user)
+      end
+    rescue => ex
       @user.destroy
       e.(ex) and return
     end
