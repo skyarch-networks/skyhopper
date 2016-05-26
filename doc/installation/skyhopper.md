@@ -67,9 +67,9 @@ events {
 }
 
 http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                      '\$status \$body_bytes_sent "\$http_referer" '
+                      '"\$http_user_agent" "\$http_x_forwarded_for"';
 
     access_log  /var/log/nginx/access.log  main;
 
@@ -93,9 +93,11 @@ server {
         listen 80;
         server_name skyhopper.local; #環境に合わせて設定
 
+        ### ここから production で動かす場合のみ ###
         location ~ ^/(assets|fonts) {
           root /home/ec2-user/skyhopper/public; # もしskyhopperをcloneした場所が異なる場合修正
         }
+        ### ここまで production で動かす場合のみ ###
 
         location / {
             proxy_set_header    X-Real-IP   \$remote_addr;
@@ -175,7 +177,7 @@ $ cd skyhopper
 ### SkyHopper のバージョン指定
 
 ```sh
-$ git checkout v1.15.2
+$ git checkout <使いたいSkyHopperのバージョン>
 ```
 
 ### bundle install

@@ -66,9 +66,9 @@ events {
 }
 
 http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
+                      '\$status \$body_bytes_sent "\$http_referer" '
+                      '"\$http_user_agent" "\$http_x_forwarded_for"';
 
     access_log  /var/log/nginx/access.log  main;
 
@@ -92,9 +92,11 @@ server {
         listen 80;
         server_name skyhopper.local; #Setting the environment
 
+        ### production only from here ###
         location ~ ^/(assets|fonts) {
           root /home/ec2-user/skyhopper/public; # your skyhopper installation is located
         }
+        ### production only to here ###
 
         location / {
             proxy_set_header    X-Real-IP   \$remote_addr;
@@ -175,7 +177,7 @@ $ cd skyhopper
 ### Specify SkyHopper version
 
 ```sh
-$ git checkout v1.15.2
+$ git checkout <SKYHOPPER_VERSION_YOU_WANT_TO_USE>
 ```
 
 ### bundle install

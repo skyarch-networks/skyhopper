@@ -56,21 +56,17 @@
         <tr>
           <td>EBS</td>
           <td colspan="2">
-            <span v-for="block_device in ec2.block_devices" class="dropdown">
+            <span v-for="block_device in ec2.block_devices">
               <bootstrap-tooltip :title="block_device.device_name">
                 <template slot="content">
-                <a @click="volume_selected = block_device.ebs.volume_id" :class="{'btn-primary': is_root_device(block_device.device_name)}" class="dropdown-toggle btn btn-xs btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <a @click="on_click_volume(block_device.ebs.volume_id)" :class="{'btn-info': volume_selected === block_device.ebs.volume_id}" class="btn btn-xs btn-default">
                   {{block_device.ebs.volume_id}}
-                  <span v-if="ec2.root_device_name === block_device.device_name" class="badge">Root</span>
+                  <span v-if="is_root_device(block_device.device_name)" class="label label-primary">Root</span>
+                  <span v-if="latest_snapshot(block_device.ebs.volume_id)" class="label label-default">
+                     Latest: {{latest_snapshot_date(block_device.ebs.volume_id)}}
+                  </span>
                   <span class="caret"></span>
                 </a>
-                <ul class="dropdown-menu">
-                  <li class="dropdown-header"><%= t('snapshots.snapshot') %></li>
-                  <li><a @click="create_snapshot(block_device.ebs.volume_id)" href="#"><%= t('snapshots.create_snapshot') %></a></li>
-                  <li><a href="#snapshots-modal" data-toggle="modal"><%= t('snapshots.list_of_snapshots') %></a></li>
-                  <li><a @click="edit_retention_policy" href="#retention-policy-modal" data-toggle="modal"><%= t('snapshots.retention_policy') %></a></li>
-                  <li><a @click="open_snapshot_schedule_modal(block_device.ebs.volume_id)" href="#"><%= t('snapshots.schedule_snapshot') %></a></li>
-                </ul>
                 </template>
               </bootstrap-tooltip>
             </span>
@@ -89,6 +85,72 @@
               </ul>
               </template>
             </bootstrap-tooltip>
+            <div class="panel-group collapse" id="ebs_panel" role="tabpanel" style="margin-bottom: 0px">
+              <div class="panel panel-info">
+                <div class="panel-heading" transition="fade">
+                  <strong>{{volume_selected}} :</strong>
+                  <button @click="create_snapshot(volume_selected)" class="btn btn-xs btn-primary">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <%= t('snapshots.create_snapshot') %>
+                  </button>
+                  <button @click="edit_retention_policy" href="#retention-policy-modal" data-toggle="modal" class="btn btn-xs btn-warning">
+                    <span class="glyphicon glyphicon-repeat"></span>
+                    <%= t('snapshots.retention_policy') %>
+                    <span v-if="is_retention_policy_set" class="label label-danger">
+                      Max: {{ec2.retention_policies[volume_selected].max_amount}} item(s)
+                    </span>
+                    <span v-if="!is_retention_policy_set" class="label label-default">
+                      <%= t('common.not_set') %>
+                    </span>
+                  </button>
+                  <button @click="open_snapshot_schedule_modal(volume_selected)" href="#" class="btn btn-xs btn-warning">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    <%= t('schedules.schedule') %>
+                    <span v-if="is_snapshot_schedule_set" class="label label-danger">
+                      {{schedule_indicator_message}}
+                    </span>
+                    <span v-if="!is_snapshot_schedule_set" class="label label-default">
+                      <%= t('common.not_set') %>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div id="ebs_panel" class="panel">
+                <div class="panel-heading">
+                  <%= t 'snapshots.snapshots' %>
+                  <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
+                  <span style="float: right;">
+                    <button @click="delete_selected_snapshots" :disabled="!selected_any || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
+                  </span>
+                </div>
+                <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>
+                <table v-if="!loading_snapshots" class="table table-condensed table-hover">
+                  <thead>
+                    <th></th>
+                    <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
+                    <th class="" @click="sort_by('snapshot_id')">ID<span             :class="{'caret': sorting_by('snapshot_id'), 'caret-reversed': sort_asc}"></span></th>
+                    <th class="col-md-2" @click="sort_by('state')"      >State<span          :class="{'caret': sorting_by('state'),       'caret-reversed': sort_asc}"></span></th>
+                    <th class=""         @click="sort_by('start_time')" >Date<span           :class="{'caret': sorting_by('start_time'),  'caret-reversed': sort_asc}"></span></th>
+                    <th class=""         @click="sort_by('encrypted')"  >Encrypted<span      :class="{'caret': sorting_by('encrypted'),   'caret-reversed': sort_asc}"></span></th>
+                    <th></th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="snapshot in ec2.snapshots | filterBy volume_selected in 'volume_id' | count" :class="{info: snapshot.selected}">
+                      <td><input v-model="snapshot.selected" type="checkbox"></td>
+                      <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
+                      <td v-text="snapshot.snapshot_id"></td>
+                      <td v-text="snapshot_status(snapshot)"></td>
+                      <td v-text="toLocaleString(snapshot.start_time)"></td>
+                      <td v-text="snapshot.encrypted"></td>
+                      <td><i class="fa fa-lock" v-show="snapshot.tags.<%= Snapshot::PROTECTION_TAG_NAME %>"></i></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div v-if="!filteredLength && !loading_snapshots" class="panel-footer">
+                  <%= t('snapshots.msg.no_snapshots') %>
+                </div>
+              </div>
+            </div>
           </td>
         </tr>
         <tr>
@@ -381,5 +443,4 @@
   </div>
 </div>
 
-<%= render 'infrastructures/modal/modal_snapshots' %>
 <%= render 'infrastructures/modal/modal_snapshot_retention_policy' %>

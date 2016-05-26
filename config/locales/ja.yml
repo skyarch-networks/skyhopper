@@ -30,6 +30,7 @@ ja:
     username:      'ユーザー名'
     password:      'パスワード'
     please_select: '選択してください'
+    not_set:       '設定なし'
     btn:
       architecture:    'インフラ管理'
       settings:        '設定'
@@ -364,6 +365,10 @@ ja:
     o_clock:          '時'
     hours:            '時間毎'
     next_run:         '次は {{next_run}} 時に実行されます'
+    label:
+      per_n_hours:    '%{n} 時間毎'
+      daily:          '毎日 %{n}:00'
+      weekly:         '毎週 %{w} %{n}:00'
     frequency:
       weekly:     '毎週'
       daily:      '毎日'
@@ -643,7 +648,7 @@ ja:
       deleted:    'キーペア "%{name}" が正常に削除されました'
 
   snapshots:
-    snapshot:          'スナップショット'
+    snapshots:          'スナップショット'
     create_snapshot:   'スナップショットの作成'
     delete_snapshot:   'スナップショットの削除'
     schedule_snapshot: '作成スケジュールの変更'
