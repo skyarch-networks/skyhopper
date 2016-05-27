@@ -32,8 +32,8 @@ describe Project, type: :model do
 
   describe 'with restrict_with_error' do
     stubize_zabbix
-
-    let(:project){create :project}
+    let(:zabbix_server){create :zabbix_server}
+    let(:project){create :project, zabbix_server_id: zabbix_server.id }
 
     context 'when project has some infra' do
       before do

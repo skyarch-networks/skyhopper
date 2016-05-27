@@ -76,26 +76,27 @@ class ZabbixServersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_zabbix_server
-      @zabbix_server = ZabbixServer.find(params[:id])
+  # Use callbacks to share common setup or constraints between actions.
+  def set_zabbix_server
+    @zabbix_server = ZabbixServer.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def zabbix_server_params
+    params.require(:zabbix_server).permit(:fqdn, :username, :password, :version, :details)
+  end
+
+  def auth_zabbix_server
+    params = zabbix_server_params
+    begin
+      z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+      params[:version] = z.version
+    rescue => ex
+      raise ex
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def zabbix_server_params
-      params.require(:zabbix_server).permit(:fqdn, :username, :password, :version, :details)
-    end
+    @zabbix_server_params = params
 
-    def auth_zabbix_server
-      params = zabbix_server_params
-      begin
-        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
-        params[:version] = z.version
-      rescue => ex
-        raise ex
-      end
-      @zabbix_server_params = params
-
-    end
+  end
 
 end

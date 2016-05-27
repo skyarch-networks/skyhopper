@@ -12,8 +12,9 @@ describe ProjectsController, type: :controller do
   login_user
 
   let(:client){create(:client)}
-  let(:project){create(:project, client: client)}
-  let(:project_hash){attributes_for(:project, client_id: client.id)}
+  let(:zabbix_server){create(:zabbix_server)}
+  let(:project){create(:project, client: client, zabbix_server_id: zabbix_server.id)}
+  let(:project_hash){attributes_for(:project, client_id: client.id, zabbix_server_id: zabbix_server.id )}
 
   describe '#index' do
     let(:req){get :index, client_id: client.id}
@@ -167,7 +168,7 @@ describe ProjectsController, type: :controller do
 
     end
 
-    context 'whne delete fail' do
+    context 'when delete fail' do
       let(:err_msg){'Error! Error!'}
       before do
         allow_any_instance_of(Project).to receive(:destroy!).and_raise(StandardError, err_msg)
