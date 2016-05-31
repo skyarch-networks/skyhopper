@@ -295,6 +295,8 @@ class MonitoringsController < ApplicationController
   end
 
   def set_zabbix
-    @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
+    s = ZabbixServer.find(@infra.project[:zabbix_server_id])
+
+    @zabbix = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
   end
 end

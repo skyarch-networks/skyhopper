@@ -70,6 +70,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1/edit
   def edit
     @cloud_providers = CloudProvider.all
+    @zabbix_servers = ZabbixServer.all
   end
 
   # POST /projects
