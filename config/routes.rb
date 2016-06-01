@@ -26,6 +26,7 @@ SkyHopper::Application.routes.draw do
     collection do
       post 'schedule'
       post 'save_retention_policy'
+      post 'create_volume'
     end
   end
 

@@ -54,8 +54,7 @@ class Snapshot < SimpleDelegator
     __setobj__(snapshot)
   end
 
-  def create_volume
-    # orig_volume = client.describe_volumes(volume_ids: [volume_id]).volumes.first
+  def create_volume(az)
     client.create_volume(availability_zone: az, snapshot_id: snapshot_id)
   end
 

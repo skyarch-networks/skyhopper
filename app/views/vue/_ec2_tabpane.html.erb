@@ -120,6 +120,8 @@
                   <%= t 'snapshots.snapshots' %>
                   <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
                   <span style="float: right;">
+                    <button class="btn btn-sm btn-success" disabled><span class="fa fa-hdd-o"></span> Create Image</button>
+                    <button @click="create_volume" class="btn btn-sm btn-success"><span class="fa fa-hdd-o"></span> Create Volume</button>
                     <button @click="delete_selected_snapshots" :disabled="!selected_any || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
                   </span>
                 </div>

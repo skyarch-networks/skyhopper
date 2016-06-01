@@ -91,6 +91,17 @@ class SnapshotsController < ApplicationController
     render text: t('snapshots.msg.policy_saved'), status: 200 and return
   end
 
+
+  def create_volume
+    snapshot_id = params.require(:snapshot_id)
+    az          = params.require(:az)
+
+    snapshot = Snapshot.new(@infra, snapshot_id)
+    resp = snapshot.create_volume(az)
+
+    render json: resp
+  end
+
   private
 
   def notify_progress(snapshot)

@@ -497,6 +497,15 @@ module.exports = Vue.extend({
       }
     },
 
+    create_volume: function () {
+      var infra = new Infrastructure(this.infra_id);
+      var snapshot = new Snapshot(infra.id);
+      var snapshot_id = _(this.ec2.snapshots).find('selected', true).snapshot_id;
+      snapshot.create_volume(snapshot_id, this.ec2.availability_zone)
+        .done(alert_success())
+        .fail(alert_danger());
+    },
+
     toLocaleString: toLocaleString,
     capitalize: function (str) {return _.capitalize(_.camelCase(str));},
 
