@@ -572,6 +572,7 @@ en:
     set_device_name:   'Set Device Name'
     none:              'None'
     ec2_instance:      'EC2 Instance'
+    create_volume:     'Create Volume'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
@@ -657,6 +658,7 @@ en:
       creation_started: 'Snapshot creation has started.'
       snapshot_is_protected: 'Cannot delete %{snapshot_id} because it is protected.'
       policy_saved:    'Retantion policy has been saved successfully.'
+      create_volume:   'Are you sure you want to create a volume from a snapshot?'
 
   datepicker:
     today: 'Go to Today'

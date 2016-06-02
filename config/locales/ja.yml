@@ -570,6 +570,7 @@ ja:
     set_device_name:   'デバイス名の設定'
     none:              'なし'
     ec2_instance:      'EC2インスタンス'
+    create_volume:     'ボリュームの作成'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
@@ -641,19 +642,20 @@ ja:
 
   snapshots:
     snapshots:          'スナップショット'
-    create_snapshot:   'スナップショットの作成'
-    delete_snapshot:   'スナップショットの削除'
-    schedule_snapshot: '作成スケジュールの変更'
-    list_of_snapshots: 'スナップショットの一覧'
-    retention_policy:  'リテンションポリシー'
-    snapshots_to_keep: '最新から次の数だけ残して削除'
+    create_snapshot:    'スナップショットの作成'
+    delete_snapshot:    'スナップショットの削除'
+    schedule_snapshot:  '作成スケジュールの変更'
+    list_of_snapshots:  'スナップショットの一覧'
+    retention_policy:   'リテンションポリシー'
+    snapshots_to_keep:  '最新から次の数だけ残して削除'
     msg:
-      no_snapshots:    'このボリュームのスナップショットはありません'
-      create_snapshot: '%{volume_id} のスナップショットを作成しますか?'
-      delete_snapshot: '以下のスナップショットを削除しますか?'
+      no_snapshots:     'このボリュームのスナップショットはありません'
+      create_snapshot:  '%{volume_id} のスナップショットを作成しますか?'
+      delete_snapshot:  '以下のスナップショットを削除しますか?'
       creation_started: 'スナップショットの作成が開始されました'
       snapshot_is_protected: '%{snapshot_id} は保護されているため削除できません'
-      policy_saved:    'リテンションポリシーが保存されました'
+      policy_saved:     'リテンションポリシーが保存されました'
+      create_volume:    'スナップショットからボリュームを作成しますか?'
 
   datepicker:
     today: '今日'
