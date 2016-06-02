@@ -121,8 +121,8 @@
                   <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
                   <span style="float: right;">
                     <button class="btn btn-sm btn-success" disabled><span class="fa fa-hdd-o"></span> Create Image</button>
-                    <button @click="create_volume" class="btn btn-sm btn-success"><span class="fa fa-hdd-o"></span> Create Volume</button>
-                    <button @click="delete_selected_snapshots" :disabled="!selected_any || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
+                    <button @click="create_volume" :disabled="number_of_selected != 1" class="btn btn-sm btn-success"><span class="fa fa-hdd-o"></span> <%= t 'ec2_instances.create_volume' %></button>
+                    <button @click="delete_selected_snapshots" :disabled="number_of_selected < 1 || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
                   </span>
                 </div>
                 <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>

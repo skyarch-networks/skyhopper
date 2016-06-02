@@ -600,7 +600,7 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_any: function () { return _.any(this.ec2.snapshots, 'selected', true); },
+    number_of_selected: function () { return _.filter(this.ec2.snapshots, 'selected', true).length },
 
     suggest_device_name: function () {
       // TODO: iikanji ni sitai
