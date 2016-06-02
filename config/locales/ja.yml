@@ -655,7 +655,7 @@ ja:
       creation_started: 'スナップショットの作成が開始されました'
       snapshot_is_protected: '%{snapshot_id} は保護されているため削除できません'
       policy_saved:     'リテンションポリシーが保存されました'
-      create_volume:    'スナップショットからボリュームを作成しますか?'
+      create_volume:    'スナップショット %{snapshot_id} からボリュームを作成しますか?'
 
   datepicker:
     today: '今日'

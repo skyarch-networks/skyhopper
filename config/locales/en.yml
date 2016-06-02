@@ -658,7 +658,7 @@ en:
       creation_started: 'Snapshot creation has started.'
       snapshot_is_protected: 'Cannot delete %{snapshot_id} because it is protected.'
       policy_saved:    'Retantion policy has been saved successfully.'
-      create_volume:   'Are you sure you want to create a volume from a snapshot?'
+      create_volume:   'Are you sure you want to create a volume from %{snapshot_id}?'
 
   datepicker:
     today: 'Go to Today'

@@ -501,9 +501,12 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(this.infra_id);
       var snapshot = new Snapshot(infra.id);
       var snapshot_id = _(this.ec2.snapshots).find('selected', true).snapshot_id;
-      snapshot.create_volume(snapshot_id, this.ec2.availability_zone)
-        .done(alert_success())
-        .fail(alert_danger());
+      var az = this.ec2.availability_zone;
+      modal.Confirm(t('snapshots.snapshots'), t('snapshots.msg.create_volume', {snapshot_id: snapshot_id}), 'success').done(function () {
+        snapshot.create_volume(snapshot_id, az)
+          .done(alert_success())
+          .fail(alert_danger());
+      });
     },
 
     toLocaleString: toLocaleString,
