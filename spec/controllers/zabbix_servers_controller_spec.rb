@@ -50,18 +50,16 @@ RSpec.describe ZabbixServersController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # ZabbixServersController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  let(:zabbix_server){create(:zabbix_server)}
 
   describe "GET #index" do
     before do
       get :index
     end
 
-
     it "assigns all zabbix_servers as @zabbix_servers" do
-      zabbix_servers = ZabbixServer.create! valid_attributes
       get :index, {}
-      allow_any_instance_of(:zabbix_server).to recieve(ZabbixServer)
-      expect(assigns(:zabbix_server)).to eq([zabbix_servers])
+      expect(assigns(:zabbix_servers)).to be_all{|zabbix_server|zabbix_server.kind_of? ZabbixServer}
     end
   end
 
@@ -89,22 +87,24 @@ RSpec.describe ZabbixServersController, type: :controller do
   end
 
   describe "POST #create" do
+    let(:request) {post :create, zabbix_server: zabbix_server}
+
     context "with valid params" do
       it "creates a new ZabbixServer" do
         expect {
-          post :create, {zabbix_server: valid_attributes}, valid_session
+          request
         }.to change(ZabbixServer, :count).by(1)
       end
 
       it "assigns a newly created zabbix_server as @zabbix_server" do
-        post :create, {zabbix_server: valid_attributes}, valid_session
+        request
         expect(assigns(:zabbix_server)).to be_a(ZabbixServer)
         expect(assigns(:zabbix_server)).to be_persisted
       end
 
-      it "redirects to the created zabbix_server" do
-        post :create, {zabbix_server: valid_attributes}, valid_session
-        expect(response).to redirect_to(ZabbixServer)
+      it "should render index " do
+        request
+        expect(response).to redirect_to(zabbix_servers_path)
       end
     end
 
