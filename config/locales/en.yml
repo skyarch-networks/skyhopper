@@ -573,6 +573,7 @@ en:
     none:              'None'
     ec2_instance:      'EC2 Instance'
     create_volume:     'Create Volume'
+    detach_volume:     'Detach Volume'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
@@ -596,6 +597,7 @@ en:
       security_groups:  'The security groups to which the instance belongs.
                          A security group is a collection of firewall rules that restrict the network traffic for the instance.
                          Click View rules to see the rules for the specific group.'
+      detach_volume:         'Are you sure you want to detach %{volume_id} from %{physical_id}?'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'

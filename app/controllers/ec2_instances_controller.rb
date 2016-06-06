@@ -237,6 +237,17 @@ class Ec2InstancesController < ApplicationController
     render json: resp
   end
 
+  def detach_volume
+    physical_id = params.require(:id)
+    infra_id    = params.require(:infra_id)
+    volume_id   = params.require(:volume_id)
+
+    instance = Infrastructure.find(infra_id).instance(physical_id)
+    resp = instance.detach_volume(volume_id)
+
+    render json: resp
+  end
+
   private
 
   def notify_ec2_status(instance, status)

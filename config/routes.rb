@@ -82,6 +82,7 @@ SkyHopper::Application.routes.draw do
       get  'attachable_volumes'
       get  'available_resources'
       post 'attach_volume'
+      post 'detach_volume'
     end
   end
 

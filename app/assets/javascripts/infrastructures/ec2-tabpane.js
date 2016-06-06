@@ -437,6 +437,21 @@ module.exports = Vue.extend({
       $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
     },
 
+    detach_volume: function () {
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, this.physical_id);
+      modal.Confirm(
+        t('ec2_instances.detach_volume'),
+        t('ec2_instances.msg.detach_volume', { volume_id: this.volume_selected, physical_id: this.physical_id }),
+        'danger'
+      ).done(function () {
+        ec2.detach_volume(self.volume_selected).done(function (data) {
+          modal.Alert(t('ec2_instances.detach_volume'), data).done(self._show_ec2);
+        }).fail(alert_danger());
+      });
+    },
+
     edit_retention_policy: function () {
       var self = this;
       if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {

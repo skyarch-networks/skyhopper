@@ -145,6 +145,10 @@ class EC2Instance < SimpleDelegator
     )
   end
 
+  def detach_volume(volume_id)
+    client.detach_volume(volume_id: volume_id)
+  end
+
   def retention_policies
     volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
     policies = RetentionPolicy.where(resource_id: volume_ids).map { |policy|

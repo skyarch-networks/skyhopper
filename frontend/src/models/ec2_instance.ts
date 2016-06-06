@@ -197,6 +197,14 @@ export default class EC2Instance extends ModelBase {
     );
   }
 
+  detach_volume(volume_id: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).detach_volume(_.merge(this.params, {
+        volume_id: volume_id,
+      }))
+    );
+  }
+
   recipes(cookbook: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>EC2Instance.ajax_node).recipes({ cookbook: cookbook })
@@ -468,6 +476,7 @@ EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
 EC2Instance.ajax_ec2.add_member('elb_submit_groups', 'POST');
 EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
 EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');
+EC2Instance.ajax_ec2.add_member('detach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
 
 EC2Instance.ajax_serverspec.add_collection('select', 'GET');
