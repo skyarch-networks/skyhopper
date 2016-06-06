@@ -40,8 +40,6 @@ class UsersAdminController < ApplicationController
   # create new user only by master
   # POST /users_admin
   def create
-    zabbix_servers = params[:user][:zabbix_servers]
-    zabbix_servers.shift
     @user = User.new(
       email:                 params[:user][:email],
       password:              params[:user][:password],
@@ -68,7 +66,10 @@ class UsersAdminController < ApplicationController
 
     begin
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
-      zab = ZabbixServer.find(zabbix_servers)
+      z_params = params[:user][:zabbix_servers]
+      z_params.shift
+
+      zab = ZabbixServer.find(z_params)
       zab.each do |s|
         z = Zabbix.new(s.fqdn, s.username, s.password)
         z.create_user(@user)

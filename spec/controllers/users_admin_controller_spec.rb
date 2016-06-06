@@ -15,7 +15,7 @@ describe UsersAdminController, type: :controller do
   run_zabbix_server
 
   let(:klass){User}
-  let(:zabbix_servers){create(:zabbix_servers)}
+  let(:zabbix_servers){create(:zabbix_server)}
   let(:user){create(:user)}
   let(:admin_status){false}
   let(:master_status){false}
@@ -49,7 +49,7 @@ describe UsersAdminController, type: :controller do
   describe '#create' do
     let(:master){true}
     let(:admin){true}
-    let(:req){post :create, user: attributes_for(:user, master: master, admin: admin)}
+    let(:req){post :create, user: attributes_for(:user, master: master, admin: admin, zabbix_servers: zabbix_servers)}
 
 
     context 'when User#save! raise error' do
