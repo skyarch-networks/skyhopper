@@ -6,7 +6,7 @@ json.array!(@dishes) do |dish|
 
     json.id dish.id
     json.status label_dish_status(dish)
-    json.name dish.name
+    json.dish_name dish.name
     json.detail dish.detail
     json.project_id dish.project_id
     json.runlist dish.runlist

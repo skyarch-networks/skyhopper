@@ -71,6 +71,8 @@ class NodesController < ApplicationController
     end
     @retention_policies = @instance_summary[:retention_policies]
 
+    @snapshots = Snapshot.describe(@infra, nil)
+
     case @instance_summary[:status]
     when :terminated, :stopped
       return

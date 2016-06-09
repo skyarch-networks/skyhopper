@@ -35,7 +35,7 @@ class Snapshot < SimpleDelegator
       ec2 = infra.ec2
 
       parameters = { owner_ids: ['self'] }
-      parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id
+      parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id && !volume_id.empty?
       resp = ec2.describe_snapshots(parameters)
 
       return resp.snapshots.map { |snapshot|

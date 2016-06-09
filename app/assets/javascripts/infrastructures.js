@@ -180,8 +180,8 @@
       delete_stack: function()  {
         delete_stack(this.picked.id);
       },
-      show_infra: function()  {
-        show_infra(this.picked.id, '');
+      show_infra: function(item_id)  {
+        show_infra(item_id, '');
       },
       show_sched: function()  {
         show_infra(this.picked.id, 'show_sched');

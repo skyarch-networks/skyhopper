@@ -142,7 +142,10 @@ class Zabbix
       item_infos.each do |item|
         # もしアイテムをZabbixに足したなら必ずそれに紐づくトリガーも作成して下さい
         # ここでエラーを吐きます↓
-        selected_triggerids.push(item["triggers"].first["triggerid"])
+        if item["triggers"].any?
+          selected_triggerids.push(item["triggers"].first["triggerid"])
+        end
+
       end
     end
 
@@ -156,18 +159,26 @@ class Zabbix
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
+
     triggers = infra.resources.ec2.map do |r|
       item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
       item_infos.map do |item|
-        updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-        {
-          triggerid: item["triggers"].first["triggerid"],
-          expression: updating_expr
-        }
+        if item["triggers"].any?
+          updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
+          {
+            triggerid: item["triggers"].first["triggerid"],
+            expression: updating_expr,
+          }
+        end
       end
     end.flatten
 
-    @sky_zabbix.trigger.update(triggers)
+    # Verify what caused the errors. @candy
+    begin
+      @sky_zabbix.trigger.update(triggers.compact)
+    rescue SkyZabbix::Jsonrpc::Error
+      raise ZabbixError
+    end
   end
 
   def update_expression(trigger_id, expression)
@@ -578,7 +589,7 @@ class Zabbix
       {
         name:  scenario_name,
         hostid: host_id,
-        steps: s_array
+        steps: s_array,
       }
     end
     @sky_zabbix.httptest.create(scenarios)
@@ -617,7 +628,7 @@ class Zabbix
         "key_",
         "lastvalue",
       ],
-      webitems: "true"
+      webitems: "true",
     }
     webscenario_req_params = {
       hostids: host_id,
@@ -625,7 +636,7 @@ class Zabbix
         "name",
         "url",
       ],
-      output: ["name"]
+      output: ["name"],
     }
 
     if @version.start_with?('2')
