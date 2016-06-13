@@ -15,11 +15,11 @@ describe UsersAdminController, type: :controller do
   run_zabbix_server
 
   let(:klass){User}
-  let(:zabbix_servers){create(:zabbix_server)}
+  let(:zabbix_servers){double(:zabbix_server)}
   let(:user){create(:user)}
   let(:admin_status){false}
   let(:master_status){false}
-  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status) }
+  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status, zabbix_servers: zabbix_servers) }
 
   describe '#index' do
     before do

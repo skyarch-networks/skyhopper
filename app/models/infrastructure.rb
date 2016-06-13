@@ -137,9 +137,9 @@ class Infrastructure < ActiveRecord::Base
   end
 
   def detach_zabbix
-    s = AppSetting.get
+    s = ZabbixServer.find(self.project.zabbix_server_id)
     begin
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+      z = Zabbix.new(s.fqdn, s.username, s.password)
       z.delete_hosts_by_infra(self)
     rescue => ex
       return self if ex.message.include?("No host ID given.") # In many cases, not before register zabbix

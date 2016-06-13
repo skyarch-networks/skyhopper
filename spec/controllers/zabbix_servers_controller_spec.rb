@@ -29,6 +29,9 @@ require 'rails_helper'
 
 RSpec.describe ZabbixServersController, type: :controller do
   login_user
+  stubize_zabbix
+  run_zabbix_server
+
   # This should return the minimal set of attributes required to create a valid
   # ZabbixServer. As you add validations to ZabbixServer, be sure to
   # adjust the attributes here as well.
@@ -90,6 +93,10 @@ RSpec.describe ZabbixServersController, type: :controller do
     let(:request) {post :create, zabbix_server: zabbix_server}
 
     context "with valid params" do
+      before do
+        allow(Zabbix).to receive(:new).and_return(_zabbix)
+      end
+
       it "creates a new ZabbixServer" do
         expect {
           request
@@ -130,6 +137,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       it "updates the requested zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
         put :update, {id: zabbix_server.to_param, zabbix_server: new_attributes}, valid_session
+        expect(zabbix_server.pluck(:id)).to eq ZabbixServer
         zabbix_server.reload
         skip("Add assertions for updated state")
       end
