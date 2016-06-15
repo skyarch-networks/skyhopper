@@ -17,7 +17,7 @@
     <tr v-if="log.long">
       <td colspan="4" class="hidden-row">
         <div class="accordion-body collapse" id="logbody-{{log.id}}">
-          <pre style="margin: 5px" v-text="log.details"></pre>
+          <%= copy_to_clipboard_button('log.details', 'pull-right') %><pre style="margin: 5px" v-text="log.details"></pre>
         </div>
       </td>
     </tr>
