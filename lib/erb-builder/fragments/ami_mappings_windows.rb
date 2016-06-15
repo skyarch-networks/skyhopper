@@ -1,33 +1,33 @@
 # Amazon Linux 2015.03
 {
     "us-east-1": {
-        "AMI": "ami-3d787d57",
+        "AMI": "ami-e0e00f8d",
     },
     "us-west-1": {
-        "AMI": "ami-df4437bf",
+        "AMI": "ami-b8c5bcd8",
     },
     "us-west-2": {
-        "AMI": "ami-1719f677",
+        "AMI": "ami-8db945ed",
     },
     "eu-west-1": {
-        "AMI": "ami-c6972fb5",
+        "AMI": "ami-29eb7e5a",
     },
     "eu-central-1": {
-        "AMI": "ami-1135d17e",
+        "AMI": "ami-827d90ed",
     },
     "sa-east-1": {
-        "AMI": "ami-bdf974d1",
+        "AMI": "ami-588f0734",
     },
     "ap-southeast-1": {
-        "AMI": "ami-f8478f9b",
+        "AMI": "ami-5bf72138",
     },
     "ap-southeast-2": {
-        "AMI": "ami-1af6d779",
+        "AMI": "ami-4c6d422f",
     },
     "ap-northeast-1": {
-        "AMI": "ami-57282639",
+        "AMI": "ami-447a9d25",
     },
     "ap-northeast-2": {
-        "AMI": "ami-397db357",
+        "AMI": "ami-3e75bd50",
     },
 }

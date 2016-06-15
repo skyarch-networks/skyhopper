@@ -174,6 +174,9 @@
       can_delete: function() {
         return (this.picked.button_delete_stack);
       },
+      is_picked: function() {
+        return (this.picked.id);
+      },
       can_detach: function() {
         return (this.picked.button_detach_stack);
       },
