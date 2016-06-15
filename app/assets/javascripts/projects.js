@@ -41,7 +41,7 @@
       },
       can_delete: function() {
         if (this.picked.delete_project_url)
-          return (this.picked.code[1] > 0);
+          return (this.picked.code[1] === 0) ? true : false;
       },
       is_picked: function() {
         return (this.picked.id);

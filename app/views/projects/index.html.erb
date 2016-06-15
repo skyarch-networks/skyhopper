@@ -15,8 +15,7 @@
     <div class="pull-right">
       <a class="btn btn-danger btn-sm disabled"
       @click="delete_entry()"
-        v-if="picked.delete_project_url !== null"
-        :class="{disabled: can_delete()}">
+        :class="{disabled: !can_delete()}">
           <%= fa 'times' %>
           <%= t 'common.btn.delete' %>
       </a>&nbsp
