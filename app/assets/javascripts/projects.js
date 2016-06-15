@@ -43,6 +43,9 @@
         if (this.picked.delete_project_url)
           return (this.picked.code[1] > 0);
       },
+      is_picked: function() {
+        return (this.picked.id);
+      },
       delete_entry: function()  {
         var self = this;
         modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
