@@ -177,6 +177,9 @@
       can_detach: function() {
         return (this.picked.button_detach_stack);
       },
+      is_picked: function() {
+        return (this.picked.id);
+      },
       delete_stack: function()  {
         delete_stack(this.picked.id);
       },
