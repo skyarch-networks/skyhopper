@@ -83,7 +83,7 @@ describe ProjectsController, type: :controller do
 
     context 'when zabbix error' do
       before do
-        allow(_zabbix).to receive(:create_usergroup).and_raise
+        allow(_zabbix).to receive(:get_hostgroup_ids).and_raise
         req
       end
       it {is_expected.to redirect_to new_project_path(client_id: client.id)}
@@ -98,6 +98,8 @@ describe ProjectsController, type: :controller do
   describe 'PATCH #update' do
     let(:new_name){'foobarhogehoge'}
     let(:update_request) {patch :update, id: project.id, project: project_hash.merge(name: new_name)}
+    run_zabbix_server
+    stubize_zabbix
 
     context 'when valid params' do
       before do
