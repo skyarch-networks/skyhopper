@@ -448,6 +448,14 @@ export default class EC2Instance extends ModelBase {
       )
     );
   }
+
+  create_volume(options: any): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>EC2Instance.ajax_ec2).create_volume(
+        _.merge(this.params, options)
+      )
+    );
+  }
 }
 
 
@@ -478,6 +486,7 @@ EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
 EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('detach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
+EC2Instance.ajax_ec2.add_collection('create_volume', 'POST');
 
 EC2Instance.ajax_serverspec.add_collection('select', 'GET');
 EC2Instance.ajax_serverspec.add_collection('results', 'GET');

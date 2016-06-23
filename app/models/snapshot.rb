@@ -54,10 +54,6 @@ class Snapshot < SimpleDelegator
     __setobj__(snapshot)
   end
 
-  def create_volume(az)
-    client.create_volume(availability_zone: az, snapshot_id: snapshot_id)
-  end
-
   def latest_status
     # owner_ids: ['self'] を指定しないと最新の state が降ってこないような気がする
     # パラメータによってレスポンスの state が異なることがある

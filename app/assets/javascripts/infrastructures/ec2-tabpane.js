@@ -52,6 +52,7 @@ module.exports = Vue.extend({
     x_chef:              null,
     x_zabbix:            null,
     editing_policy:      {},
+    volume_options:      {},
     page: 0,
     dispItemSize: 10,
     filteredLength: null,
@@ -514,14 +515,32 @@ module.exports = Vue.extend({
 
     create_volume: function () {
       var infra = new Infrastructure(this.infra_id);
-      var snapshot = new Snapshot(infra.id);
-      var snapshot_id = _(this.ec2.snapshots).find('selected', true).snapshot_id;
-      var az = this.ec2.availability_zone;
-      modal.Confirm(t('snapshots.snapshots'), t('snapshots.msg.create_volume', {snapshot_id: snapshot_id}), 'success').done(function () {
-        snapshot.create_volume(snapshot_id, az)
-          .done(alert_success())
-          .fail(alert_danger());
-      });
+      var instance = new EC2Instance(infra, this.physical_id);
+      var self = this;
+      this.loading_s = true;
+      instance.create_volume(this.volume_options)
+        .done(function (msg) {
+          self.loading_s = false;
+          $('#create_volume_modal').modal('hide');
+          alert_success()(msg, true);
+        })
+        .fail(function (data) {
+          self.loading_s = false;
+          alert_danger()(data);
+        });
+    },
+
+    init_volume_options: function (snapshot) {
+      if (typeof snapshot === 'undefined') {
+        this.volume_options = {};
+      } else {
+        this.volume_options = {
+          snapshot_id: snapshot.snapshot_id,
+          size: snapshot.volume_size,
+          encrypted: snapshot.encrypted,
+          availability_zone: this.ec2.availability_zone,
+        };
+      }
     },
 
     toLocaleString: toLocaleString,
@@ -679,7 +698,13 @@ module.exports = Vue.extend({
     },
 
     isStartPage: function(){ return (this.page === 0); },
-    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); }
+    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
+
+    can_create_volume: function () {
+      return this.volume_options.volume_type
+          && this.volume_options.size
+          && this.volume_options.availability_zone;
+    },
   },
 
   ready: function () {

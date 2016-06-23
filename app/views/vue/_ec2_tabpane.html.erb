@@ -74,8 +74,8 @@
               <template slot="content">
               <a @click="load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
               <ul id="attachVolume" class="dropdown-menu">
-<!--                 <li><a href="#">Create Volume</a></li>
-                <li role="separator" class="divider"></li> -->
+                <li><a @click="init_volume_options" href="#create_volume_modal" data-toggle="modal"><%= t 'ec2_instances.create_volume' %></a></li>
+                <li role="separator" class="divider"></li>
                 <li class="dropdown-header"><%= t 'ec2_instances.attachable_volumes' %></li>
                 <li class="dropdown-header" v-if="loading_volumes"><div-loader></div-loader></li>
                 <li v-for="volume in attachable_volumes" v-show="!loading_volumes">
@@ -449,3 +449,4 @@
 </div>
 
 <%= render 'infrastructures/modal/modal_snapshot_retention_policy' %>
+<%= render 'infrastructures/modal/modal_create_volume' %>

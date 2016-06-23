@@ -245,7 +245,27 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     resp = instance.detach_volume(volume_id)
 
-    render json: resp
+    render text: t('ec2_instances.msg.volume_detached', resp.to_h)
+  end
+
+  def create_volume
+    infra_id          = params.require(:infra_id)
+    physical_id       = params.require(:id)
+
+    options = {
+      availability_zone: params.require(:availability_zone),
+      snapshot_id:       params[:snapshot_id],
+      volume_type:       params[:volume_type],
+      size:              params[:size].to_i,
+      encrypted:         params[:encrypted],
+    }
+    options[:iops] = params[:iops] if options[:volume_type] == 'io1'
+
+    infra    = Infrastructure.find(infra_id)
+    instance = infra.instance(physical_id)
+    resp = instance.create_volume(options)
+
+    render text: t('ec2_instances.msg.creating_volume', resp.to_h)
   end
 
   private

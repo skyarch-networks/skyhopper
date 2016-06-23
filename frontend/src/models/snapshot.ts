@@ -88,17 +88,7 @@ export default class Snapshot extends ModelBase {
     );
   }
 
-  create_volume(snapshot_id: string, az: string): JQueryPromise<any> {
-    return this.WrapAndResolveReject(() =>
-      (<any>Snapshot.ajax).create_volume({
-        infra_id:    this.infra_id,
-        snapshot_id: snapshot_id,
-        az:          az,
-      })
-    );
-  }
 }
 
 Snapshot.ajax.add_collection('schedule', 'POST');
 Snapshot.ajax.add_collection('save_retention_policy', 'POST');
-Snapshot.ajax.add_collection('create_volume', 'POST');

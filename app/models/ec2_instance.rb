@@ -165,4 +165,20 @@ class EC2Instance < SimpleDelegator
     end
     policies
   end
+
+  def create_volume(availability_zone:,
+                    snapshot_id: nil,
+                    volume_type: nil,
+                    size: nil,
+                    iops: nil,
+                    encrypted: nil)
+    client.create_volume(
+      availability_zone: availability_zone,
+      snapshot_id:       snapshot_id,
+      volume_type:       volume_type,
+      size:              size,
+      iops:              iops,
+      encrypted:         encrypted,
+    )
+  end
 end

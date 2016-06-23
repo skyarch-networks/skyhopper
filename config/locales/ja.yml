@@ -46,6 +46,7 @@ ja:
       update:          '更新'
     msg:
       loading:       ' 読み込み中...'
+      creating:      ' 作成中...'
       empty:         '%{name}がありません'
       no_permission: '権限がありません'
       key_droppable: |
@@ -572,6 +573,8 @@ ja:
     ec2_instance:      'EC2インスタンス'
     create_volume:     'ボリュームの作成'
     detach_volume:     'ボリュームのデタッチ'
+    volume_type:       'ボリュームタイプ'
+    encryption:        '暗号化'
     msg:
       start_ec2:             'EC2 インスタンスの起動が開始されました'
       stop_ec2:              'EC2 インスタンスの停止が開始されました'
@@ -596,6 +599,8 @@ ja:
                         セキュリティグループは、インスタンスのネットワーク通信を制限するファイアウォールルールのコレクションです。
                         特定のグループのルールを参照するには、[ルールの表示] をクリックします。'
       detach_volume:         '%{physical_id} から %{volume_id} をデタッチします。本当によろしいですか?'
+      volume_detached:       '%{volume_id} をデタッチ中です...'
+      creating_volume:       'ボリューム <code>%{volume_id}</code> の作成が開始されました'
     btn:
       register:   'インスタンスを登録'
       deregister: 'インスタンスの登録を解除'
@@ -616,6 +621,12 @@ ja:
       delete_certificate: '証明書を削除しますか?'
       detach:     'SkyHopper から EC2 インスタンスをデタッチしてもよろしいですか？'
       terminate:  '本当にこの EC2 インスタンスを終了してもよろしいですか？'
+    ebs_volume_types:
+      gp2:      '汎用 SSD'
+      io1:      'Provisioned IOPS SSD'
+      st1:      'スループット最適化 HDD'
+      sc1:      'Cold HDD'
+      standard: 'EBS マグネティック'
 
   ec2_private_keys:
     msg:
@@ -650,6 +661,7 @@ ja:
     list_of_snapshots:  'スナップショットの一覧'
     retention_policy:   'リテンションポリシー'
     snapshots_to_keep:  '最新から次の数だけ残して削除'
+    snapshot_id:        'スナップショット ID'
     msg:
       no_snapshots:     'このボリュームのスナップショットはありません'
       create_snapshot:  '%{volume_id} のスナップショットを作成しますか?'
