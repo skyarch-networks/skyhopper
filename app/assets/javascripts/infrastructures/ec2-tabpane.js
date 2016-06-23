@@ -701,9 +701,9 @@ module.exports = Vue.extend({
     isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
 
     can_create_volume: function () {
-      return this.volume_options.volume_type
-          && this.volume_options.size
-          && this.volume_options.availability_zone;
+      return this.volume_options.volume_type &&
+             this.volume_options.size &&
+             this.volume_options.availability_zone;
     },
   },
 
