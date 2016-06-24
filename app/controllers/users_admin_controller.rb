@@ -157,14 +157,10 @@ class UsersAdminController < ApplicationController
   # PUT /users_admin/sync_zabbix
   # 全てのユーザーをZabbixに登録する。
   def sync_zabbix
-    s = ZabbixServer.find(1)
-    z = Zabbix.new(s.fqdn, s.username, s.password)
-
-    users = User.all
-    users.each do |user|
-      next if z.user_exists?(user.email)
-
-      z.create_user(user)
+    servers = ZabbixServer.all
+    servers.each do |s|
+      z = Zabbix.new(s.fqdn, s.username, s.password)
+      add_create_user(z)
     end
 
     render text: I18n.t('users.msg.synced'); return
@@ -198,6 +194,15 @@ class UsersAdminController < ApplicationController
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
       redirect_to users_admin_index_path
+    end
+  end
+
+  def add_create_user(zabbix)
+    users = User.all
+    users.each do |user|
+      next if zabbix.user_exists?(user.email)
+
+      zabbix.create_user(user)
     end
   end
 end
