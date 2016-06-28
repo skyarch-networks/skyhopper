@@ -123,7 +123,6 @@
                   <%= t 'snapshots.snapshots' %>
                   <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
                   <span style="float: right;">
-                    <button class="btn btn-sm btn-success" disabled><span class="fa fa-hdd-o"></span> Create Image</button>
                     <button @click="init_volume_options(selected_snapshots[0])" :disabled="selected_snapshots.length != 1" class="btn btn-sm btn-success" data-toggle="modal" href="#create_volume_modal"><span class="fa fa-hdd-o"></span> <%= t 'ec2_instances.create_volume' %></button>
                     <button @click="delete_selected_snapshots" :disabled="selected_snapshots.length < 1 || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
                   </span>
