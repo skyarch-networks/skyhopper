@@ -169,4 +169,13 @@ class EC2Instance < SimpleDelegator
   def create_volume(options)
     client.create_volume(options)
   end
+
+  # 現在のリージョンの Availability Zones を取得します。値は一定期間キャッシュされます。
+  # @return [Hash{String => Array<Aws::EC2::Types::AvailabilityZone>}] Stateでグループ化したHash
+  def availability_zones
+    Rails.cache.fetch("az-#{client.config.region}", expires_in: 2.hour) do
+      resp = client.describe_availability_zones
+      resp.availability_zones.group_by(&:state)
+    end
+  end
 end
