@@ -64,6 +64,24 @@ class AppSettingsController < ApplicationController
     render text: I18n.t('app_settings.msg.created') and return
   end
 
+  # POST /app_settings/generate
+  def generate_key
+    access_key            = params.require(:access_key)
+    secret_access_key     = params.require(:secret_access_key)
+    region                = params.require(:region)
+    name                  = params.require(:name)
+
+
+    begin
+      ec2 = AppSetting.ec2_client(access_key, secret_access_key, region)
+      key = ec2.create_key_pair(key_name: name)
+    rescue => ex
+      render text: ex.message, status: 500 and return
+    end
+
+    render json: key
+  end
+
   # GET /app_settings/edit_zabbix
   def edit_zabbix
     @app_setting = AppSetting.get

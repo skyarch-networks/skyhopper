@@ -11,7 +11,86 @@
   var modal = require('modal');
 
   //  ----------------------------- variables
+  var queryString = require('query-string').parse(location.search);
 
+  new Vue({
+    el: '#indexElement',
+    data: {
+      params: {
+        log_directory: null,
+        app_directory: null,
+        access_key: null,
+        secret_access_key: null,
+        aws_region: null,
+        key_select: null,
+        keypair_name: null,
+        keypair_value: null
+      },
+    },
+    methods: {
+      can_edit: function() {
+        if (this.picked.edit_client_path)
+          return this.picked.edit_client_path ? true : false;
+      },
+      create_key: function() {
+        event.preventDefault();
+        var params = this.params;
+        var name_file;
+        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).then(function () {
+          return modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name'));
+        }).then(function (name) {
+          if(!name){
+            modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+            return;
+          }
+          console.log(name);
+          name_file = name;
+          return $.ajax({
+            url: '/app_settings/generate_key',
+            type: 'POST',
+            data: {
+              name:       name,
+              region:     params.aws_region,
+              access_key: params.access_key,
+              secret_access_key: params.secret_access_key,
+            },
+          });
+
+        }).done(function (key) {
+          params.keypair_name = name_file;
+          params.keypair_value = key.key_material;
+
+          // download file.
+          var file = new File([key.key_material], name_file + '.pem');
+          var url = window.URL.createObjectURL(file);
+          var a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', file.name);
+          document.body.appendChild(a);
+          a.click();
+        }).fail(function (xhr) {
+          modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+        });
+      },
+
+      delete_entry: function()  {
+        var self = this;
+        modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
+                $.ajax({
+                    type: "POST",
+                    url: self.picked.delete_client_path,
+                    dataType: "json",
+                    data: {"_method":"delete"},
+                    success: function (data) {
+                      self.gridData = data;
+                      self.picked = {};
+                    },
+                }).fail(function() {location.reload();});
+        });
+      }
+
+    }
+  });
 
 
   var endpoint_base = '/app_settings';
