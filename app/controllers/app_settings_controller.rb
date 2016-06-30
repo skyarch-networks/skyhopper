@@ -13,6 +13,8 @@ class AppSettingsController < ApplicationController
     end
   end
 
+  class AppSettingError < ::StandardError; end
+
   # GET /app_settings
   def show
   end
@@ -66,10 +68,10 @@ class AppSettingsController < ApplicationController
 
   # POST /app_settings/generate
   def generate_key
-    access_key            = params.require(:access_key)
-    secret_access_key     = params.require(:secret_access_key)
-    region                = params.require(:region)
-    name                  = params.require(:name)
+    access_key         = params.require(:access_key)
+    secret_access_key  = params.require(:secret_access_key)
+    region             = params.require(:region)
+    name               = params.require(:name)
 
 
     begin
@@ -126,6 +128,23 @@ class AppSettingsController < ApplicationController
           Rails.logger.debug("ChefServer creating > #{data} #{msg}")
           ws.push(build_ws_message(data, msg))
         end
+
+          cmd = []
+          cmd << "cp -r #{Rails.root.join('tmp', 'chef')} ~/.chef \n"
+          cmd << "git clone https://github.com/skyarch-networks/skyhopper_cookbooks.git #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
+          cmd << "knife cookbook upload -ao #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
+          cmd << "knife role from file  #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
+          cmd = cmd.flatten.reject(&:blank?).join(" ")
+
+          begin
+            out, err, status = Node.exec_command(cmd, AppSettingError)
+
+            Rails.logger.debug("SkyHopper setup > #{status} #{out}")
+            ws.push(build_ws_message(:setting_up))
+          rescue AppSettingError => ex
+            out = ex.to_s
+          end
+
 
         Rails.logger.debug("ChefServer creating > complete")
         ws.push(build_ws_message(:complete))

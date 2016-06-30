@@ -4,7 +4,7 @@
   <div class="form-group">
     <label class="col-sm-3 control-label"><%= t 'app_settings.chef_server' %></label>
     <div class="col-sm-7">
-      <button class="btn btn-primary" id="btn-create-chefserver" disabled="disabled"><%= t 'app_settings.btn.create_chefserver' %></button>
+      <button class="btn btn-primary" :disabled="!required_filed" @click="create()"><%= t 'app_settings.btn.create_chefserver' %></button>
 
       <%# Progress bar %>
       <div class="progress progress-striped active create-chefserver" id="progress-create-chefserver" style="display: none;">

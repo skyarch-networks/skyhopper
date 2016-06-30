@@ -16,13 +16,12 @@
   new Vue({
     el: '#indexElement',
     data: {
+      key_select: null,
       params: {
         log_directory: null,
-        app_directory: null,
         access_key: null,
         secret_access_key: null,
         aws_region: null,
-        key_select: null,
         keypair_name: null,
         keypair_value: null
       },
@@ -59,6 +58,7 @@
         }).done(function (key) {
           params.keypair_name = name_file;
           params.keypair_value = key.key_material;
+          this.key_select = 2;
 
           // download file.
           var file = new File([key.key_material], name_file + '.pem');
@@ -72,22 +72,35 @@
           modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
         });
       },
+      create: function()  {
+        event.preventDefault();
 
-      delete_entry: function()  {
         var self = this;
-        modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
-                $.ajax({
-                    type: "POST",
-                    url: self.picked.delete_client_path,
-                    dataType: "json",
-                    data: {"_method":"delete"},
-                    success: function (data) {
-                      self.gridData = data;
-                      self.picked = {};
-                    },
-                }).fail(function() {location.reload();});
+        create(self.params).done(function (data) {
+          chef_create().done(function (data) {
+            update_creating_chefserver_progress(data);
+            watch_chef_create_progress();
+          });
         });
+
+
       }
+    },
+    computed: {
+      keysExists: function () {
+        var self = this;
+        return (self.params.access_key && self.params.secret_access_key && self.params.aws_region);
+      },
+      required_filed: function () {
+        var self = this;
+        return (self.params.access_key
+          && self.params.secret_access_key
+          && self.params.aws_region
+          && self.params.keypair_name
+          && self.params.keypair_value
+        );
+      }
+
 
     }
   });
@@ -98,8 +111,7 @@
 
 
   //  -------------------------------- ajax methods
-  var create = function () {
-    var settings = get_settings();
+  var create = function (settings) {
 
     return $.ajax({
       url: endpoint_base,
@@ -215,6 +227,8 @@
         watch_chef_create_progress();
       });
     });
+
+
   });
 
 

@@ -12,7 +12,7 @@
       </div>
       <label for="app_directory" class="col-sm-3 control-label"><%= t 'app_settings.app_directory' %></label>
       <div class="col-sm-7">
-        <input type="text" class="form-control" v-model="params.app_directory" value='/app/skyhopper' pattern="^[~/].+" readonly="true">
+        <input type="text" class="form-control" value='/app/skyhopper' pattern="^[~/].+" readonly="true">
         <p class="help-block"><%= I18n.t('app_settings.msg.log_directory') %></p>
       </div>
     </div>
@@ -52,24 +52,23 @@
     <div class="form-group">
       <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
       <div class="col-sm-7">
-        <select class="form-control" v-model="params.key_select">
+        <select class="form-control" v-model="key_select">
           <%= please_select_option %>
           <option value="0"> Create a new KeyPair </option>
-          <option value="2"> Drop Existing KeyPair </option>
+          <option value="2"> Existing KeyPair </option>
         </select>
       </div>
-      <label v-if="params.key_select == 0" class="col-sm-3 control-label"></label>
-      <div class="col-sm-7" v-if="params.key_select == 0">
-        <label for="keypair_name" class="control-label" v-if="key_pair_name">{{key_pair_name}}</label>
-        <button class="btn btn-sm btn-default" v-if="params.key_select" @click="create_key">Create & Download</button>
+      <label v-if="key_select == 0" class="col-sm-3 control-label"></label>
+      <div class="col-sm-7" v-if="key_select == 0">
+        <label for="keypair_name" class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
+        <button class="btn btn-sm btn-default" v-if="key_select"  :disabled="!keysExists" @click="create_key">Create & Download</button>
       </div>
-      <label v-if="params.key_select == 2" class="col-sm-3 control-label"></label>
-      <div class="col-sm-7" v-if="params.key_select == 2">
+      <label v-if="key_select == 2" class="col-sm-3 control-label"></label>
+      <div class="col-sm-7" v-if="key_select == 2">
         <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
         <input v-model="params.keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
-
         <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-        <textarea v-model="params.keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="3"></textarea>
+        <textarea v-model="params.keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="5"></textarea>
         <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
     </div>
