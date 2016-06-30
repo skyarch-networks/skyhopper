@@ -25,7 +25,7 @@
     <div class="form-group">
       <label for="access_key" class="col-sm-3 control-label"><%= t 'app_settings.access_key' %></label>
       <div class="col-sm-7">
-        <input type="text" class="form-control" v-model="params.access_key" pattern="[^\s]+" required>
+        <input type="text" :disabled="creating" class="form-control" v-model="params.access_key" pattern="[^\s]+" required>
         <p class="help-block"><%= t('app_settings.msg.access_key') %></p>
       </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="form-group">
       <label for="secret_access_key" class="col-sm-3 control-label"><%= t 'app_settings.secret_access_key' %></label>
       <div class="col-sm-7">
-        <input type="text" class="form-control form-control-masked" v-model="params.secret_access_key" pattern="[^\s]+" required>
+        <input type="text" :disabled="creating" class="form-control form-control-masked" v-model="params.secret_access_key" pattern="[^\s]+" required>
         <p class="help-block"><%= t('app_settings.msg.secret_access_key') %></p>
       </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="form-group">
       <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
       <div class="col-sm-7">
-        <select class="form-control" v-model="params.aws_region" name="aws_region">
+        <select :disabled="creating" class="form-control" v-model="params.aws_region" name="aws_region">
           <%= please_select_option %>
           <%= options_for_select(AWS::Regions) %>
         </select>
@@ -52,7 +52,7 @@
     <div class="form-group">
       <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
       <div class="col-sm-7">
-        <select class="form-control" v-model="key_select">
+        <select :disabled="creating" class="form-control" v-model="key_select">
           <%= please_select_option %>
           <option value="0"> Create a new KeyPair </option>
           <option value="2"> Existing KeyPair </option>
@@ -61,14 +61,14 @@
       <label v-if="key_select == 0" class="col-sm-3 control-label"></label>
       <div class="col-sm-7" v-if="key_select == 0">
         <label for="keypair_name" class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
-        <button class="btn btn-sm btn-default" v-if="key_select"  :disabled="!keysExists" @click="create_key">Create & Download</button>
+        <button class="btn btn-sm btn-default" v-if="!creating"  :disabled="!keysExists" @click="create_key">Create & Download</button>
       </div>
       <label v-if="key_select == 2" class="col-sm-3 control-label"></label>
       <div class="col-sm-7" v-if="key_select == 2">
         <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
-        <input v-model="params.keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
+        <input v-model="params.keypair_name" :disabled="creating" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
         <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-        <textarea v-model="params.keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="5"></textarea>
+        <textarea :disabled="creating" v-model="params.keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="5"></textarea>
         <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
     </div>

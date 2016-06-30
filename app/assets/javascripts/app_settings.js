@@ -17,6 +17,7 @@
     el: '#indexElement',
     data: {
       key_select: null,
+      creating: false,
       params: {
         log_directory: null,
         access_key: null,
@@ -74,8 +75,9 @@
       },
       create: function()  {
         event.preventDefault();
-
         var self = this;
+        self.creating = true;
+
         create(self.params).done(function (data) {
           chef_create().done(function (data) {
             update_creating_chefserver_progress(data);

@@ -25,6 +25,7 @@ class ChefServer::Deployment
     download_chef:  {percentage:  40, status: :in_progress},
     install_chef:   {percentage:  60, status: :in_progress},
     setting_chef:   {percentage:  80, status: :in_progress},
+    setting_up:     {percentage:  90, status: :in_progress},
     complete:       {percentage: 100, status: :complete},
     error:          {percentage: nil, status: :error},
   }.freeze
