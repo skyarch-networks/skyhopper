@@ -50,12 +50,16 @@ describe NodesController, type: :controller do
       status: instance_status,
       block_devices: [],
     }}
+    let(:availability_zones) {{
+      available: []
+    }}
     let(:cook_status){resource.status.cook}
     let(:serverspec_status){resource.status.serverspec}
     let(:yum_status){resource.status.yum}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
       allow(instance).to receive(:summary).and_return(instance_summary)
+      allow(instance).to receive(:availability_zones).and_return(availability_zones)
     end
 
     let(:chef_server){double('chef-server')}
