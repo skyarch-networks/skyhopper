@@ -51,7 +51,7 @@ describe NodesController, type: :controller do
       block_devices: [],
     }}
     let(:availability_zones) {{
-      available: []
+      available: [],
     }}
     let(:cook_status){resource.status.cook}
     let(:serverspec_status){resource.status.serverspec}
