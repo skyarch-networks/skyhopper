@@ -748,5 +748,8 @@ module.exports = Vue.extend({
       // return it intact
       return arr;
     },
+    suffix_current_az: function (zone_name) {
+      return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
+    },
   },
 });
