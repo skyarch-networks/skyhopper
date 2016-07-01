@@ -3,7 +3,10 @@
 <form class="form-horizontal" id="app-settings-form" role="form">
 
   <fieldset>
-    <legend><%= t('app_settings.title.system') %></legend>
+    <legend>
+      <%= t('app_settings.title.system') %>
+      <a href="#" role="button" class="pull-right" id="notifications" data-toggle="modal" data-target="#notification-center"><%= fa_icon 'universal-access' %> How to?</a>
+    </legend>
     <div class="form-group">
       <label for="log_directory" class="col-sm-3 control-label"><%= t 'app_settings.log_directory' %></label>
       <div class="col-sm-7">
@@ -49,29 +52,46 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" v-if="!params.keypair_name">
       <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
       <div class="col-sm-7">
         <select :disabled="creating" class="form-control" v-model="key_select">
           <%= please_select_option %>
-          <option value="0"> Create a new KeyPair </option>
+          <option value="1"> Create a new KeyPair </option>
           <option value="2"> Existing KeyPair </option>
         </select>
       </div>
-      <label v-if="key_select == 0" class="col-sm-3 control-label"></label>
-      <div class="col-sm-7" v-if="key_select == 0">
+      <label v-if="key_select == 1" class="col-sm-3 control-label"></label>
+      <div class="col-sm-7" v-if="key_select == 1">
         <label for="keypair_name" class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
-        <button class="btn btn-sm btn-default" v-if="!creating"  :disabled="!keysExists" @click="create_key">Create & Download</button>
+        <p v-if="!keysExists" class="text-warning">Please enter aws keys first and select a region. </p>
+        <button class="btn btn-sm btn-default" :disabled="!keysExists" @click="create_key">Create & Download</button>
       </div>
+
       <label v-if="key_select == 2" class="col-sm-3 control-label"></label>
       <div class="col-sm-7" v-if="key_select == 2">
-        <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
-        <input v-model="params.keypair_name" :disabled="creating" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
-        <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-        <textarea :disabled="creating" v-model="params.keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="5"></textarea>
-        <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
+          <div v-if="!params.keypair_name">
+              <div class="dropzone-area" drag-over="handleDragOver">
+                  <div class="dropzone-text">
+                      <span class="dropzone-title">Drop file here or click to select</span></br>
+                      <span class="dropzone-info">Must be a .pem file created from AWS</span>
+                  </div>
+                  <input type="file" @change="onFileChange">
+              </div>
+          </div>
       </div>
     </div>
+
+
+    <div class="form-group">
+      <label class="col-sm-3 control-label" v-if="params.keypair_name"><%= t 'app_settings.aws_keypair_file' %></label>
+      <div class="col-sm-7">
+          <label  class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
+          <a class="text text-link text-danger" :disabled="creating" @click="removeFile" v-if="params.keypair_name && !creating"><%= fa_icon "times" %></a>
+      </div>
+    </div>
+
+
   </fieldset>
 
 </form>

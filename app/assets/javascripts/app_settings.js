@@ -28,9 +28,35 @@
       },
     },
     methods: {
-      can_edit: function() {
-        if (this.picked.edit_client_path)
-          return this.picked.edit_client_path ? true : false;
+      onFileChange(e) {
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length) return;
+          this.createFile(files[0]);
+      },
+      createFile(file) {
+          var reader = new FileReader();
+          var vm = this.params;
+
+          reader.onload = (e) => {
+              vm.keypair_value = e.target.result;
+          };
+          reader.readAsText(file);
+          var split = file.name.split(".");
+          if(split[1] != "pem"){
+            modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+            return;
+          }
+          vm.keypair_name = file.name.replace(/\.\w+$/, '');
+          console.log(vm);
+      },
+      removeFile: function (e) {
+          e.preventDefault();
+          var vm = this.params;
+          modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
+            vm.keypair_name = null;
+            vm.keypair_value = null;
+          });
+
       },
       create_key: function() {
         event.preventDefault();
@@ -43,7 +69,6 @@
             modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
             return;
           }
-          console.log(name);
           name_file = name;
           return $.ajax({
             url: '/app_settings/generate_key',
@@ -84,9 +109,8 @@
             watch_chef_create_progress();
           });
         });
-
-
       }
+
     },
     computed: {
       keysExists: function () {
@@ -106,6 +130,8 @@
 
     }
   });
+
+
 
 
   var endpoint_base = '/app_settings';

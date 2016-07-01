@@ -102,61 +102,54 @@ class AppSettingsController < ApplicationController
   end
 
 
-  # POST /app_settings/chef_create
-  def chef_create
-    # とりあえず決め打ちでいい気がする
-    # stack_name = params.require(:stack_name)
-    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
+    # POST /app_settings/chef_create
+    def chef_create
+      # とりあえず決め打ちでいい気がする
+      # stack_name = params.require(:stack_name)
+      stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
-    set = AppSetting.first
-    region        = set.aws_region
-    keypair_name  = set.ec2_private_key.name
-    keypair_value = set.ec2_private_key.value
-    @locale = I18n.locale
-    # おまじない
-    # rubocop:disable Lint/Void
-    ChefServer
-    ChefServer::Deployment
-    CfTemplate
-    # rubocop:enable Lint/Void
+      set = AppSetting.first
+      region        = set.aws_region
+      keypair_name  = set.ec2_private_key.name
+      keypair_value = set.ec2_private_key.value
+      @locale = I18n.locale
+      # おまじない
+      # rubocop:disable Lint/Void
+      ChefServer
+      ChefServer::Deployment
+      CfTemplate
+      # rubocop:enable Lint/Void
 
-    Thread.new_with_db do
-      ws = WSConnector.new('chef_server_deployment', 'status')
+      Thread.new_with_db do
+        ws = WSConnector.new('chef_server_deployment', 'status')
 
-      begin
-        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
-          Rails.logger.debug("ChefServer creating > #{data} #{msg}")
-          ws.push(build_ws_message(data, msg))
-        end
+        begin
+          ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
+            Rails.logger.debug("ChefServer creating > #{data} #{msg}")
+            ws.push(build_ws_message(data, msg))
+          end
 
           cmd = []
           cmd << "cp -r #{Rails.root.join('tmp', 'chef')} ~/.chef \n"
           cmd << "git clone https://github.com/skyarch-networks/skyhopper_cookbooks.git #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
-          cmd << "knife cookbook upload -ao #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
-          cmd << "knife role from file  #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
+          cmd << "knife cookbook upload -ao #{Rails.root.join('../', 'skyhopper_cookbooks')}/cookbooks/ \n"
+          cmd << "knife role from file  #{Rails.root.join('../', 'skyhopper_cookbooks')}/roles/*rb \n"
           cmd = cmd.flatten.reject(&:blank?).join(" ")
 
-          begin
-            out, err, status = Node.exec_command(cmd, AppSettingError)
+          Node.exec_command(cmd)
+          Rails.logger.debug("SkyHopper setup > Running necessary Scripts")
 
-            Rails.logger.debug("SkyHopper setup > #{status} #{out}")
-            ws.push(build_ws_message(:setting_up))
-          rescue AppSettingError => ex
-            out = ex.to_s
-          end
-
-
-        Rails.logger.debug("ChefServer creating > complete")
-        ws.push(build_ws_message(:complete))
-      rescue => ex
-        Rails.logger.error(ex.message)
-        Rails.logger.error(ex.backtrace)
-        ws.push(build_ws_message(:error, ex.message))
+          Rails.logger.debug("ChefServer creating > complete")
+          ws.push(build_ws_message(:complete))
+        rescue => ex
+          Rails.logger.error(ex.message)
+          Rails.logger.error(ex.backtrace)
+          ws.push(build_ws_message(:error, ex.message))
+        end
       end
-    end
 
-    render text: build_ws_message(:creating_infra)
-  end
+      render text: build_ws_message(:creating_infra)
+    end
 
   private
 
