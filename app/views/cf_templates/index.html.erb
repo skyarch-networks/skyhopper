@@ -29,6 +29,21 @@
       </a>&nbsp
     </div>
 
+    <div class="pull-right">
+      <div class="btn-group" role="group">
+        <a class="btn btn-success btn-sm"
+        :class="{disabled: can_export()}"
+        @click="export_template()">
+          <span class='glyphicon glyphicon-save'></span>
+          <%= t 'common.btn.export' %>
+        </a>
+        <a class="btn btn-success btn-sm"
+        @click="export_all_templates()">
+          All
+        </a>&nbsp
+      </div>
+    </div>
+
   </div>
 
 

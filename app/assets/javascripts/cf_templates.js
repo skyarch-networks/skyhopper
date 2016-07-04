@@ -16,6 +16,8 @@
   require('brace/theme/github');
   require('brace/mode/json');
 
+  var JSZip = require('jszip');
+
   var modal       = require('modal');
 
   var app;
@@ -61,6 +63,9 @@
       can_delete: function() {
         return (this.picked.button_destroy_cft === null);
       },
+      can_export: function () {
+        return (this.picked.id == null);
+      },
       delete_entry: function()  {
         var self = this;
         modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
@@ -91,7 +96,30 @@
           viewer.setTheme("ace/theme/github");
           viewer.getSession().setMode("ace/mode/json");
         });
-      }
+      },
+      export_template: function () {
+        var filename = this.picked.cf_subject + '.json';
+        this.download_blob(filename, this.picked.value);
+      },
+      export_all_templates: function () {
+        var self = this;
+        var zip = new JSZip();
+        _.each(this.gridData, function (obj) {
+          zip.folder('cf_templates').file(obj.cf_subject + '.json', obj.value);
+        });
+        zip.generateAsync({type: 'blob'}).then(function (content) {
+          self.download_blob('cf_templates.zip', content);
+        });
+      },
+      download_blob: function (filename, value) {
+        var file = new File([value], filename);
+        var event = new MouseEvent("click");
+        var url = window.URL.createObjectURL(file);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.dispatchEvent(event);
+      },
     }
   });
 
