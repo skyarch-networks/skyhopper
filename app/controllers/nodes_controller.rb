@@ -73,6 +73,8 @@ class NodesController < ApplicationController
 
     @snapshots = Snapshot.describe(@infra, nil)
 
+    @availability_zones = instance.availability_zones
+
     case @instance_summary[:status]
     when :terminated, :stopped
       return

@@ -20,8 +20,9 @@ var toLocaleString = function (datetext) {
 
 // Utilities
 var alert_success = function (callback) {
-  return function (msg) {
-    var dfd = modal.Alert(t('infrastructures.infrastructure'), msg);
+  return function (msg, is_html) {
+    var func = (is_html) ? modal.AlertHTML : modal.Alert;
+    var dfd = func(t('infrastructures.infrastructure'), msg);
     if (callback) {
       dfd.done(callback);
     }
@@ -29,11 +30,12 @@ var alert_success = function (callback) {
 };
 
 var alert_danger = function (callback) {
-  return function (msg) {
+  return function (msg, is_html) {
     if (!jsonParseErr(msg) && JSON.parse(msg).error) {
       modal.AlertForAjaxStdError(callback)(msg);
     } else {
-      var dfd = modal.Alert(t('infrastructures.infrastructure'), msg, 'danger');
+      var func = (is_html) ? modal.AlertHTML : modal.Alert;
+      var dfd = func(t('infrastructures.infrastructure'), msg, 'danger');
       if (callback) { dfd.done(callback); }
     }
   };

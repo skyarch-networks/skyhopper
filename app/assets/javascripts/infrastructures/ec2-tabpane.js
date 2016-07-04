@@ -52,6 +52,7 @@ module.exports = Vue.extend({
     x_chef:              null,
     x_zabbix:            null,
     editing_policy:      {},
+    volume_options:      {},
     page: 0,
     dispItemSize: 10,
     filteredLength: null,
@@ -437,6 +438,21 @@ module.exports = Vue.extend({
       $("[id^=bootstrap_prompt_]").val(this.suggest_device_name);
     },
 
+    detach_volume: function () {
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, this.physical_id);
+      modal.Confirm(
+        t('ec2_instances.detach_volume'),
+        t('ec2_instances.msg.detach_volume', { volume_id: this.volume_selected, physical_id: this.physical_id }),
+        'danger'
+      ).done(function () {
+        ec2.detach_volume(self.volume_selected).done(function (data) {
+          modal.Alert(t('ec2_instances.detach_volume'), data).done(self._show_ec2);
+        }).fail(alert_danger());
+      });
+    },
+
     edit_retention_policy: function () {
       var self = this;
       if (Object.keys(self.ec2.retention_policies).includes(self.volume_selected)) {
@@ -494,6 +510,36 @@ module.exports = Vue.extend({
       if (snapshot) {
         var date = new Date(snapshot.start_time);
         return date.toLocaleString();
+      }
+    },
+
+    create_volume: function () {
+      var infra = new Infrastructure(this.infra_id);
+      var instance = new EC2Instance(infra, this.physical_id);
+      var self = this;
+      this.loading_s = true;
+      instance.create_volume(this.volume_options)
+        .done(function (msg) {
+          self.loading_s = false;
+          $('#create_volume_modal').modal('hide');
+          alert_success()(msg, true);
+        })
+        .fail(function (data) {
+          self.loading_s = false;
+          alert_danger()(data);
+        });
+    },
+
+    init_volume_options: function (snapshot) {
+      if (typeof snapshot === 'undefined') {
+        this.volume_options = {};
+      } else {
+        this.volume_options = {
+          snapshot_id: snapshot.snapshot_id,
+          size: snapshot.volume_size,
+          encrypted: snapshot.encrypted,
+          availability_zone: this.ec2.availability_zone,
+        };
       }
     },
 
@@ -591,7 +637,7 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_any: function () { return _.any(this.ec2.snapshots, 'selected', true); },
+    selected_snapshots: function () { return _.filter(this.ec2.snapshots, 'selected', true) },
 
     suggest_device_name: function () {
       // TODO: iikanji ni sitai
@@ -652,7 +698,13 @@ module.exports = Vue.extend({
     },
 
     isStartPage: function(){ return (this.page === 0); },
-    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); }
+    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
+
+    can_create_volume: function () {
+      return this.volume_options.volume_type &&
+             this.volume_options.size &&
+             this.volume_options.availability_zone;
+    },
   },
 
   ready: function () {
@@ -695,6 +747,9 @@ module.exports = Vue.extend({
       this.$set('filteredLength', arr.length);
       // return it intact
       return arr;
+    },
+    suffix_current_az: function (zone_name) {
+      return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
     },
   },
 });
