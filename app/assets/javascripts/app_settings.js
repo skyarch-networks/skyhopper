@@ -137,7 +137,6 @@
               $(".left").css("float", "left");
               $("input").removeClass("error");
               $(".right").hide();
-
               switch($(targetElement).attr("data-step")) {
                 case "2":
                   $(".flexi_form").hide();

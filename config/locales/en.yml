@@ -78,15 +78,15 @@ en:
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
       app_directory:     'The installation path of SkyHopper. That is already configured.'
-      aws_description:  |
-        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
-        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
+      aws_description:  |
+        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
+        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -96,6 +96,19 @@ en:
     btn:
       create_chefserver: 'Create Chef Server'
       done:              'Done'
+    intro:
+      aws_keys:   |
+        AWS access and secret key is required to construct Chef & Zabbix Server and to enable SkyHopper to manage your infrastructures.
+        If you have no AWS Securty credentials yet, please follow this link:
+        <a href="http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html" target="_blank"> Managing Access Keys for your AWS Account </a>.
+      aws_region: |
+        After setting the security credentails please select the aws region for SkyHopper instances to be deployed.
+        The purpose for this is to reduce data latency in the application.
+      aws_keypair: |
+        To allow SkyHopper to access your instance, you must create a key pair, specify the name of the key pair when you launch the instance.
+        In this case, if you have already a KeyPair you can select 'Use Existing KeyPair' and select or drag the file into the drop box.
+        However, you can also create a new KeyPair Using the entered AWS Security Credentials you entered and by selecting 'Create a New KeyPair' option.
+      chef_button: 'After the above process, you can now press Create Chef Server button to start the installation.'
 
   clients:
     client: 'Client'
