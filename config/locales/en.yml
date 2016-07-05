@@ -64,6 +64,7 @@ en:
 
   app_settings:
     log_directory:     'Log directory'
+    app_directory:     'Application directory'
     aws_region:        'Region'
     aws_keypair:       'KeyPair'
     keypair_name:      'Name of KeyPair'
@@ -76,6 +77,7 @@ en:
       created:           'SkyHopper was successfully setup'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
+      app_directory:     'The installation path of SkyHopper. That is already configured.'
       aws_description:  |
         SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
         The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.

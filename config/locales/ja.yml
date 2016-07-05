@@ -63,6 +63,7 @@ ja:
       truncate: '...'
 
   app_settings:
+    app_directory:     'アプリケーションディレクトリ'
     log_directory:     'ログ保存先のパス'
     aws_region:        '使用するリージョン'
     aws_keypair:       '使用する鍵ペア'
@@ -76,6 +77,7 @@ ja:
       created:           'アプリケーションは正常に設定されました'
       show:              'SkyHopper へようこそ!'
       log_directory:     'データベースに出力できなかったログを保存するディレクトリ'
+      app_directory:     'SkyHopperのインストールパス。それはすでに設定されています。'
       aws_description:   |
         SkyHopper では、Chef Server や Zabbix Server などを AWS 上に構築します。
         ここで設定された秘密鍵などは SkyHopper システムのみが使用し、ユーザーが作成するインフラには使用されません。

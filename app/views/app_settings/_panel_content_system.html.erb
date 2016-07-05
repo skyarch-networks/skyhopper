@@ -2,12 +2,14 @@
 
 <form class="form-horizontal" id="app-settings-form" role="form">
 
-  <fieldset>
+  <fieldset id="directory-hint">
     <legend>
       <%= t('app_settings.title.system') %>
-      <a href="#" role="button" class="pull-right" id="notifications" data-toggle="modal" data-target="#notification-center"><%= fa_icon 'universal-access' %> How to?</a>
+      <% if !AppSetting.set? %>
+        <a href="#" role="button" class="pull-right" id="flexi_form_start" href="javascript:void(0);"><span class="text-info"><%= fa_icon 'universal-access' %> Help</span></a>
+      <% end %>
     </legend>
-    <div class="form-group">
+    <div class="form-group" data-step="1" data-intro="This is flexible forms tour">
       <label for="log_directory" class="col-sm-3 control-label"><%= t 'app_settings.log_directory' %></label>
       <div class="col-sm-7">
         <input type="text" class="form-control" v-model="params.log_directory" value='/app/skyhopper/logs'  pattern="^[~/].+" readonly="true">
@@ -16,7 +18,7 @@
       <label for="app_directory" class="col-sm-3 control-label"><%= t 'app_settings.app_directory' %></label>
       <div class="col-sm-7">
         <input type="text" class="form-control" value='/app/skyhopper' pattern="^[~/].+" readonly="true">
-        <p class="help-block"><%= I18n.t('app_settings.msg.log_directory') %></p>
+        <p class="help-block"><%= I18n.t('app_settings.msg.app_directory') %></p>
       </div>
     </div>
   </fieldset>
@@ -25,7 +27,7 @@
   <fieldset>
     <legend><%= t('app_settings.title.aws') %>&nbsp;<button type="button" class="btn btn-link" data-toggle="popover" title="AWS" data-content="<%= t('app_settings.msg.aws_description') %>"><%= glyphicon 'question-sign' %></button></legend>
 
-    <div class="form-group">
+    <div class="form-group" data-step="2" data-intro="Flexible form default layout with multiple field types">
       <label for="access_key" class="col-sm-3 control-label"><%= t 'app_settings.access_key' %></label>
       <div class="col-sm-7">
         <input type="text" :disabled="creating" class="form-control" v-model="params.access_key" pattern="[^\s]+" required>
@@ -33,7 +35,7 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-step="3" data-position="left" data-intro="Inline form validation">
       <label for="secret_access_key" class="col-sm-3 control-label"><%= t 'app_settings.secret_access_key' %></label>
       <div class="col-sm-7">
         <input type="text" :disabled="creating" class="form-control form-control-masked" v-model="params.secret_access_key" pattern="[^\s]+" required>
@@ -41,7 +43,7 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-step="4" data-intro="Customizable Form Layouts">
       <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
       <div class="col-sm-7">
         <select :disabled="creating" class="form-control" v-model="params.aws_region" name="aws_region">
@@ -52,7 +54,7 @@
       </div>
     </div>
 
-    <div class="form-group" v-if="!params.keypair_name">
+    <div class="form-group" v-if="!params.keypair_name" data-step="5" data-intro="Guidence for filling forms">
       <label class="col-sm-3 control-label"><%= t 'app_settings.aws_keypair' %></label>
       <div class="col-sm-7">
         <select :disabled="creating" class="form-control" v-model="key_select">
@@ -60,12 +62,14 @@
           <option value="1"> Create a new KeyPair </option>
           <option value="2"> Existing KeyPair </option>
         </select>
+        <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
       <label v-if="key_select == 1" class="col-sm-3 control-label"></label>
       <div class="col-sm-7" v-if="key_select == 1">
         <label for="keypair_name" class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
         <p v-if="!keysExists" class="text-warning">Please enter aws keys first and select a region. </p>
-        <button class="btn btn-sm btn-default" :disabled="!keysExists" @click="create_key">Create & Download</button>
+        <button v-if="keysExists" class="btn btn-sm btn-default" :disabled="!keysExists" @click="create_key">Create & Download</button>
+
       </div>
 
       <label v-if="key_select == 2" class="col-sm-3 control-label"></label>

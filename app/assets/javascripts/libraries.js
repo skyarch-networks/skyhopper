@@ -27,3 +27,4 @@
 //= require lang-all
 //= require offline.min
 //= require clipboard
+ //= require introjs

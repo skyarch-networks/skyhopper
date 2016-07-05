@@ -13,6 +13,7 @@
   //  ----------------------------- variables
   var queryString = require('query-string').parse(location.search);
 
+
   new Vue({
     el: '#indexElement',
     data: {
@@ -41,8 +42,8 @@
               vm.keypair_value = e.target.result;
           };
           reader.readAsText(file);
-          var split = file.name.split(".");
-          if(split[1] != "pem"){
+
+          if(!file.type.match('application/x-x509-ca-cert')){
             modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
             return;
           }
@@ -126,7 +127,37 @@
           && self.params.keypair_value
         );
       }
+    },
+    ready: function () {
+      introJs();
+        // The rest of the code
+        $("#flexi_form_start").click(function() {
+            introJs().start().onbeforechange(function(targetElement) {
+              $(".steps").hide();
+              $(".left").css("float", "left");
+              $("input").removeClass("error");
+              $(".right").hide();
 
+              switch($(targetElement).attr("data-step")) {
+                case "2":
+                  $(".flexi_form").hide();
+                  $(targetElement).show();
+                  break;
+                case "3":
+                  $("input").addClass("error");
+                  $(targetElement).show();
+                  break;
+                case "4":
+                  $(".left").css("float", "none");
+                  $(targetElement).show();
+                  break;
+                case "5":
+                  $(".right").show();
+                  $(targetElement).show();
+                  break;
+              }
+            });
+          });
 
     }
   });

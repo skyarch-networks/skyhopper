@@ -57,7 +57,7 @@ gem 'sidekiq', "~> 3.4.2" # for Active Job
 gem 'crono' # for Active Job
 gem 'foreman', require: false
 
-gem "bootstrap-table-rails"
+gem "introjs-rails"
 
 group :development, :test do
   # debug
@@ -102,7 +102,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3' 
+gem 'devise', '~> 3.5.3'
 gem 'pundit'
 
 # pagination
