@@ -54,7 +54,14 @@
       picked: {
         button_destroy_cft: null,
         button_edit_cft: null
-      }
+      },
+      multiSelect: false,
+      selections: [],
+    },
+    computed: {
+      can_export: function () {
+        return (!this.multiSelect && this.picked.id != null || this.multiSelect && this.selections.length !== 0);
+      },
     },
     methods: {
       can_edit: function() {
@@ -62,9 +69,6 @@
       },
       can_delete: function() {
         return (this.picked.button_destroy_cft === null);
-      },
-      can_export: function () {
-        return (this.picked.id == null);
       },
       delete_entry: function()  {
         var self = this;
@@ -97,19 +101,25 @@
           viewer.getSession().setMode("ace/mode/json");
         });
       },
-      export_template: function () {
-        var filename = this.picked.cf_subject + '.json';
-        this.download_blob(filename, this.picked.value);
-      },
-      export_all_templates: function () {
+      export_templates: function (templates) {
         var self = this;
         var zip = new JSZip();
-        _.each(this.gridData, function (obj) {
-          zip.folder('cf_templates').file(obj.cf_subject + '.json', obj.value);
+        _.each(templates, function (obj) {
+          zip.file(obj.cf_subject + '.json', obj.value);
         });
         zip.generateAsync({type: 'blob'}).then(function (content) {
           self.download_blob('cf_templates.zip', content);
         });
+      },
+      export_selected: function () {
+        if (this.multiSelect) {
+          this.export_templates(this.selections);
+        } else {
+          this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
+        }
+      },
+      export_all: function () {
+        this.export_templates(this.gridData);
       },
       download_blob: function (filename, value) {
         var file = new File([value], filename);
@@ -120,7 +130,14 @@
         a.download = file.name;
         a.dispatchEvent(event);
       },
-    }
+    },
+
+    watch: {
+      'multiSelect': function () {
+        this.selections = [];
+      },
+    },
+
   });
 
 })();

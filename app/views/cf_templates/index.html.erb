@@ -32,18 +32,27 @@
     <div class="pull-right">
       <div class="btn-group" role="group">
         <a class="btn btn-success btn-sm"
-        :class="{disabled: can_export()}"
-        @click="export_template()">
-          <span class='glyphicon glyphicon-save'></span>
+        :class="{disabled: !can_export}"
+        @click="export_selected">
+          <span class='glyphicon glyphicon-export'></span>
           <%= t 'common.btn.export' %>
         </a>
         <a class="btn btn-success btn-sm"
-        @click="export_all_templates()">
+        @click="export_all">
           All
         </a>&nbsp
       </div>
     </div>
 
+    <div class="pull-right">
+      <span v-if="multiSelect">
+        [{{selections.length}} / {{gridData.length}}] selected
+      </span>
+      <label>
+        <input v-model="multiSelect" type="checkbox">Multiple Select
+        &nbsp
+      </label>
+    </div>
   </div>
 
 
@@ -52,7 +61,9 @@
   :columns="gridColumns"
   :filter-key="searchQuery"
   :picked.sync="picked"
-  :index="index">
+  :index="index"
+  :multi-select="multiSelect"
+  :selections.sync="selections">
   </demo-grid>
 </div>
 

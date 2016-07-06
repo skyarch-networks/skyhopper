@@ -44,6 +44,8 @@ en:
       next:            'Next'
       delete:          'Delete'
       update:          'Update'
+      import:          'Import'
+      export:          'Export'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'
