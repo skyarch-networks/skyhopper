@@ -29,16 +29,16 @@
       },
     },
     methods: {
-      onFileChange(e) {
+      onFileChange: function (e) {
           var files = e.target.files || e.dataTransfer.files;
           if (!files.length) return;
           this.createFile(files[0]);
       },
-      createFile(file) {
+      createFile: function(file) {
           var reader = new FileReader();
           var vm = this.params;
 
-          reader.onload = (e) => {
+          reader.onload = function (e) {
               vm.keypair_value = e.target.result;
           };
           reader.readAsText(file);
@@ -120,11 +120,11 @@
       },
       required_filed: function () {
         var self = this;
-        return (self.params.access_key
-          && self.params.secret_access_key
-          && self.params.aws_region
-          && self.params.keypair_name
-          && self.params.keypair_value
+        return (self.params.access_key &&
+          self.params.secret_access_key &&
+          self.params.aws_region &&
+          self.params.keypair_name &&
+          self.params.keypair_value
         );
       }
     },
