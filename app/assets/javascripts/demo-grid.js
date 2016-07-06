@@ -11,7 +11,9 @@ module.exports = Vue.extend({
     columns: Array,
     filterKey: String,
     picked: Object,
-    index: String
+    index: String,
+    multiSelect: Boolean,
+    selections: Array,
   },
 
   data: function () {
@@ -50,6 +52,13 @@ module.exports = Vue.extend({
     },
     select_entry: function(item)  {
       this.picked = item;
+      if (this.multiSelect) {
+        if (this.selections.includes(item)) {
+          this.selections.$remove(item);
+        } else {
+          this.selections.push(item);
+        }
+      }
     },
     show_entry: function(item){
       var self = this;
