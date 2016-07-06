@@ -14,7 +14,7 @@
 
     <div class="pull-right">
       <a class="btn btn-danger btn-sm disabled"
-      :class="{disabled: can_delete()}"
+      :class="{disabled: !can_delete()}"
       @click="delete_entry()">
           <%= fa 'times' %>
           <%= t 'common.btn.delete' %>
@@ -23,7 +23,7 @@
 
     <div class="pull-right" v-cloak="picked">
       <a class="btn btn-default btn-sm disabled"
-          :href="picked.button_edit_cft" :class="{disabled: can_edit()}">
+          :href="picked.button_edit_cft" :class="{disabled: !can_edit()}">
           <span class='glyphicon glyphicon-edit'></span>
           <%= t 'helpers.links.edit' %>
       </a>&nbsp

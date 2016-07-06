@@ -65,10 +65,10 @@
     },
     methods: {
       can_edit: function() {
-        return (this.picked.button_edit_cft === null);
+        return (!this.multiSelect && this.picked.button_edit_cft !== null);
       },
       can_delete: function() {
-        return (this.picked.button_destroy_cft === null);
+        return (!this.multiSelect && this.picked.button_destroy_cft !== null);
       },
       delete_entry: function()  {
         var self = this;
