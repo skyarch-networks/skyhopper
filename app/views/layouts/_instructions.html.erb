@@ -1,0 +1,55 @@
+<div class="modal fade modal-large" id="instructions-here">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h3 class="modal-title"><%= t('instructions.deploy_head') %></h3>
+        <div class="page-body">
+          <p> <%= t('instructions.deploy_body') %> </p>
+        </div>
+       </div>
+      <div class="modal-body" id="notification">
+        <div class="page-header">
+          <h4><%= t('instructions.signup_head') %> </h4>
+        </div>
+        <div class="page-body">
+          <p> <%= t('instructions.signup_body') %></p>
+        </div>
+        <div class="page-header">
+          <h4> <%= t('instructions.select_zabbix_head') %> </h4>
+        </div>
+        <div class="page-body">
+          <p>
+            <%= t('instructions.select_zabbix_body') %>
+            <ol>
+              <%=raw t('instructions.select_zabbix_list') %>
+            </ol>
+          </p>
+        </div>
+        <div class="page-header">
+          <h4> <%= t('instructions.sign_chef_head') %> </h4>
+        </div>
+        <div class="page-body">
+          <p> <%= t('instructions.sign_chef_body') %> </p>
+        </div>
+        <div class="page-header">
+          <h4> <%= t('instructions.runlist_head') %> </h4>
+        </div>
+        <div class="page-body">
+          <p> <%= t('instructions.runlist_body') %> </p>
+        </div>
+        <div class="page-header">
+          <h4> <%= t('instructions.cook_head') %> </h4>
+        </div>
+        <div class="page-body">
+          <p> <%= t('instructions.cook_body') %>
+          </p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="close-notification-center">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

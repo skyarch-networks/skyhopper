@@ -687,3 +687,33 @@ ja:
     incrementHour: '1時間後'
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
+  instructions:
+    deploy_head: 'Zabbix Server のデプロイ方法'
+    deploy_body: |
+      SkyHopper は Zabbix と連携してインフラストラクチャの監視を行っています。 そのため、SkyHopper をデプロイしたら、最初に Zabbix Server をデプロイする必要があります。
+    signup_head: '1 サインアップ'
+    signup_body: |
+      デプロイ直後でユーザーが存在しないため、まずは SkyHopper にサインアップします。
+      デプロイした SkyHopper にアクセスし、Sign up へと進み、ユーザー名とメールアドレスを入力、Admin と Master にチェックを入れてユーザーを作成してください。
+    select_zabbix_head: '2 Zabbix Server インフラストラクチャを選択'
+    select_zabbix_body: |
+      Zabbix Server は、SkyHopper 上でインフラストラクチャとして管理されています。 そのため、まずはそのインフラストラクチャを選択しましょう。
+    select_zabbix_list: |
+      <li> 顧客 SkyHopper の案件一覧をクリック </li>
+      <li> 案件 ZabbixServer のインフラ一覧をクリック </li>
+      <li> 存在するインフラの詳細をクリック </li>
+    sign_chef_head: '3 Chef Server に登録'
+    sign_chef_body: |
+      Chef を使用して Zabbix をインストールするため、まずは EC2 インスタンスを Chef Server に登録します。
+      Chef Server に登録 ボタンを押してください。
+    runlist_head: '4 RunList を選択'
+    runlist_body: |
+      Runlistの編集 ボタンを押してください。 Runlistの編集画面が現れます。
+      この画面で、どのレシピを使ってChefを実行するかを選択します。
+      Zabbix Server をインストールするので、Role の中にある zabbix_server ロールをダブルクリックして Runlist に追加してください。
+      変更の保存 ボタンを押すと変更が保存されます。
+    cook_head: '5 Cook'
+    cook_body: |
+      Chef を実行します。 Cook を実行している状況がリアルタイムに表示されます。
+      Cookが終了したら Zabbix Server のデプロイは終了です。 最後に、SkyHopper に Zabbix Server のユーザー情報を設定します。
+      以上で Zabbix Server の設定は完了です。

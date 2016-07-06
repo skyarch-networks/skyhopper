@@ -694,3 +694,34 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
+
+  instructions:
+    deploy_head: 'How to deploy the ZABBIX Server'
+    deploy_body: |
+      SkyHopper with Zabbix for monitoring infrastructures. Therefore, After you deploy SkyHopper, you must first deploy the Zabbix Server.
+    signup_head: '1 Sign up'
+    signup_body: |
+      Since the user has not yet exists after deployment, It will require you to sign up to SkyHopper.
+      Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
+    select_zabbix_head: '2 Select a Zabbix Server Infrastructure'
+    select_zabbix_body: |
+      Zabbix Server is managed as an infrastructure on SkyHopper. First of all, select the infrastructure.
+    select_zabbix_list: |
+      <li> Click the SkyHopper client </li>
+      <li> Click Zabbix Server Project </li>
+      <li> Click show button for more details </li>
+    sign_chef_head: '3 Sign up to Chef Server'
+    sign_chef_body: |
+      In order to install Zabbix using Chef, Please register first the EC2 instance to Chef Server
+      Click bootstrap with chef server botton.
+    runlist_head: '4 Select Runlist'
+    runlist_body: |
+      Press the Edit Runlist button. So that Runlist editing screen will appear.
+      In this screen, you can choose whether to perform a Chef by selecting any of the recipes.
+      Since we only need to install the Zabbix Server, please double click zabbix_server to add to the runlist.
+      To save changes, press the save changes button.
+    cook_head: '5 Cook'
+    cook_body: |
+      Run chef by click cook button. Cook status is displayed in real time.
+      When the cook status has been successfully done, Zabbix Server Deployment is also done. Finally, SkyHopper will populate the user information for Zabbix Server.
+      Congratulations! Zabbix Server configuration is complete.
