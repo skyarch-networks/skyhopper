@@ -56,16 +56,16 @@
       <div class="col-sm-7">
         <select :disabled="creating" class="form-control" v-model="key_select">
           <%= please_select_option %>
-          <option value="1"> Create a new KeyPair </option>
-          <option value="2"> Existing KeyPair </option>
+          <option value="1"> <%= t('app_settings.title.new_keypair') %> </option>
+          <option value="2"> <%= t('app_settings.title.exist_keypair') %> </option>
         </select>
         <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
       <label v-if="key_select == 1" class="col-sm-3 control-label"></label>
       <div class="col-sm-7" v-if="key_select == 1">
         <label for="keypair_name" class="control-label" v-if="params.keypair_name">{{params.keypair_name}}.pem</label>
-        <p v-if="!keysExists" class="text-warning">Please enter aws keys first and select a region. </p>
-        <button v-if="keysExists" class="btn btn-sm btn-default" :disabled="!keysExists" @click="create_key">Create & Download</button>
+        <p v-if="!keysExists" class="text-warning"><%= t('app_settings.msg.insert_key') %></p>
+        <button v-if="keysExists" class="btn btn-sm btn-default" :disabled="!keysExists" @click="create_key"><%= t('app_settings.btn.create_download') %></button>
 
       </div>
 
@@ -74,8 +74,8 @@
           <div v-if="!params.keypair_name">
               <div class="dropzone-area" drag-over="handleDragOver">
                   <div class="dropzone-text">
-                      <span class="dropzone-title">Drop file here or click to select</span></br>
-                      <span class="dropzone-info">Must be a .pem file created from AWS</span>
+                      <span class="dropzone-title"><%= t('app_settings.title.drop_file') %></span></br>
+                      <span class="dropzone-info"><%= t('app_settings.title.pem_file') %></span>
                   </div>
                   <input type="file" @change="onFileChange">
               </div>

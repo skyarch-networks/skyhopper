@@ -74,7 +74,7 @@ en:
     chef_server:       'Chef Server'
 
     msg:
-      created:           'SkyHopper was successfully setup'
+      created:           'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
       app_directory:     'The installation path of SkyHopper. That is already configured.'
@@ -84,6 +84,10 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
+      insert_key:        'Please enter aws keys first and select a region.'
+      incorrect_file:    'Please select a correct AWS keypair .pem file'
+      delete_file:       'Are you sure you want to remove %{name}.pem  file?'
+      create_keypair:    ''
       aws_description:  |
         SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
         The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
@@ -93,9 +97,14 @@ en:
       system: 'System Settings'
       chef:   'Chef Server Settings'
       aws:    'AWS Settings'
+      new_keypair:   'Create a new KeyPair'
+      exist_keypair: 'Use existing KeyPair'
+      drop_file:     'Drop file here or click to select'
+      pem_file:      'Must be a .pem file created from AWS'
     btn:
       create_chefserver: 'Create Chef Server'
       done:              'Done'
+      create_download:   'Create & Download'
     intro:
       aws_keys:   |
         AWS access and secret key is required to construct Chef & Zabbix Server and to enable SkyHopper to manage your infrastructures.

@@ -44,7 +44,7 @@
           reader.readAsText(file);
 
           if(!file.type.match('application/x-x509-ca-cert')){
-            modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+            modal.Alert(t('app_settings.title.setup'), t('app_settings.msg.incorrect_file'), 'danger');
             return;
           }
           vm.keypair_name = file.name.replace(/\.\w+$/, '');
@@ -53,7 +53,7 @@
       removeFile: function (e) {
           e.preventDefault();
           var vm = this.params;
-          modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.delete_stack_confirm'), 'danger').done(function () {
+          modal.Confirm(t('app_settings.title.setup'), t('app_settings.msg.delete_file', {name: vm.keypair_name}), 'danger').done(function () {
             vm.keypair_name = null;
             vm.keypair_value = null;
           });
@@ -63,11 +63,11 @@
         event.preventDefault();
         var params = this.params;
         var name_file;
-        modal.Confirm(t('infrastructures.infrastructure'), t('ec2_private_keys.confirm.create')).then(function () {
-          return modal.Prompt(t('infrastructures.infrastructure'), t('app_settings.keypair_name'));
+        modal.Confirm(t('app_settings.title.setup'), t('ec2_private_keys.confirm.create')).then(function () {
+          return modal.Prompt(t('app_settings.title.setup'), t('key_pairs.name'));
         }).then(function (name) {
           if(!name){
-            modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
+            modal.Alert(t('app_settings.title.setup'), t('ec2_private_keys.msg.please_name'), 'danger');
             return;
           }
           name_file = name;
@@ -96,7 +96,7 @@
           document.body.appendChild(a);
           a.click();
         }).fail(function (xhr) {
-          modal.Alert(t('infrastructures.infrastructure'), xhr.responseText, 'danger');
+          modal.Alert(t('app_settings.title.setup'), xhr.responseText, 'danger');
         });
       },
       create: function()  {
