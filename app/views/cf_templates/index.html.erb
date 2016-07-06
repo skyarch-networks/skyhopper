@@ -39,17 +39,17 @@
         </a>
         <a class="btn btn-success btn-sm"
         @click="export_all">
-          All
+          <%= t 'common.btn.all' %>
         </a>&nbsp
       </div>
     </div>
 
     <div class="pull-right">
       <span v-if="multiSelect">
-        [{{selections.length}} / {{gridData.length}}] selected
+        [{{selections.length}} / {{gridData.length}}] <%= t 'common.selected' %>
       </span>
       <label>
-        <input v-model="multiSelect" type="checkbox">Multiple Select
+        <input v-model="multiSelect" type="checkbox"><%= t 'common.btn.multiple_select' %>
         &nbsp
       </label>
     </div>

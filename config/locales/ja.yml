@@ -31,6 +31,7 @@ ja:
     password:      'パスワード'
     please_select: '選択してください'
     not_set:       '設定なし'
+    selected:      '選択されています'
     btn:
       architecture:    'インフラ管理'
       settings:        '設定'
@@ -46,6 +47,8 @@ ja:
       update:          '更新'
       import:          'インポート'
       export:          'エクスポート'
+      all:             '全部'
+      multiple_select: '複数選択'
     msg:
       loading:       ' 読み込み中...'
       creating:      ' 作成中...'
