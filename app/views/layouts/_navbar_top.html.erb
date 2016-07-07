@@ -44,7 +44,7 @@
       <ul class="nav navbar-nav navbar-right">
         <% if AppSetting.set? %>
         <li class="dropdown">
-          <a href="#" role="button" class="pull-right" id="instructions" data-toggle="modal" data-target="#instructions-here"><span class="text-info"><%= fa_icon 'universal-access' %> Help</span></a>
+          <a href="#menu-toggle" role="button" class="pull-right" id="menu-toggle"><span class="text-info"><%= fa_icon 'universal-access' %> Guide</span></a>
         </li>
         <% end %>
         <% if user_signed_in? %>

@@ -18,18 +18,74 @@
 
   <body>
 
-    <%= render partial: 'layouts/navbar_top' %>
-
-    <div class="container">
-        <div class="col-md-12 col-sm-12">
-          <%= bootstrap_flash %>
-          <%= yield %>
-        </div>
 
 
+    <div id="wrapper" class="toggled">
 
+       <!-- Sidebar -->
+       <div id="sidebar-wrapper">
+           <ul class="sidebar-nav navbar-collapse"　role="navigation">
+             <li class="sidebar-brand">
+               <a type="button" class="pull-right" href="#menu-toggle" id="menu-close"><%= fa_icon 'times' %>&nbsp&nbsp</a>
+             </li>
+               <li class="sidebar-brand">
+                   <a href="#">
+                     Guide
+                   </a>
+               </li>
+               <li data-toggle="collapse" data-target="#deploy" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.deploy_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="deploy">
+                 <blockquote><small class="instructions"><%= t('instructions.deploy_body') %></small></blockquote>
+               </ul>
+               <li data-toggle="collapse" data-target="#signup" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.signup_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="signup">
+                  <blockquote><small class="instructions"><%= t('instructions.signup_body') %></small></blockquote>
+               </ul class="sub-menu collapse" id="zabbix">
+               <li data-toggle="collapse" data-target="#zabbix" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.select_zabbix_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="zabbix">
+                  <blockquote><small class="instructions"><%= t('instructions.select_zabbix_body') %></small></blockquote>
+               </ul>
+               <li data-toggle="collapse" data-target="#chef_server" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.sign_chef_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="chef_server">
+                  <blockquote><small class="instructions"><%= t('instructions.sign_chef_body') %></small></blockquote>
+               </ul>
+               <li data-toggle="collapse" data-target="#runlist" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.runlist_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="runlist">
+                  <blockquote><small class="instructions"><%= t('instructions.runlist_body') %></small></blockquote>
+               </ul>
+               <li data-toggle="collapse" data-target="#cook" class="collapsed active" onclick="toggleChange(this)">
+                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.cook_head') %></a>
+               </li>
+               <ul class="sub-menu collapse" id="cook">
+                  <blockquote><small class="instructions"><%= t('instructions.cook_body') %></small></blockquote>
+               </ul>
+           </ul>
 
-    </div> <!-- /container -->
+       </div>
+       <!-- /#sidebar-wrapper -->
+
+       <!-- Page Content -->
+       <div id="page-content-wrapper">
+         <%= render partial: 'layouts/navbar_top' %>
+
+         <div class="container">
+             <div class="col-md-12 col-sm-12">
+               <%= bootstrap_flash %>
+               <%= yield %>
+             </div>
+
+         </div> <!-- /container -->
+   </div>
 
     <%= render partial: 'layouts/navbar_bottom' %>
 
