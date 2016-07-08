@@ -544,7 +544,7 @@ ja:
       download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
-      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
+      complete:       'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成して次のステップにリダイレクトするために行わボタンを押してください。'
       confirm_start:  'Chef Server を起動しますか?'
       confirm_stop:   'Chef Server を停止しますか?'
       start:          'Chef Server を起動しています...'

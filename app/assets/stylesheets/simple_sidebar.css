@@ -26,7 +26,7 @@
     z-index: 1000;
     position: fixed;
     left: 250px;
-    width: 350px;
+    width: 0;
     height: 90%;
     margin-left: -250px;
     overflow-y: auto;
@@ -57,7 +57,7 @@
 .sidebar-nav {
     position: absolute;
     top: 0;
-    width: 350px;
+    width: 250px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -71,10 +71,12 @@
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
+    color: #0099cc;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
+    color: #444444;
     background: rgba(3,3,3,0.05);
 }
 
@@ -94,11 +96,8 @@
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-    color: #444444;;
+    color: #444444;
     background: none;
-}
-.instructions{
-    color: #444444;;
 }
 
 @media(min-width:768px) {
@@ -111,7 +110,7 @@
     }
 
     #sidebar-wrapper {
-        width: 350px;
+        width: 250px;
     }
 
     #wrapper.toggled #sidebar-wrapper {

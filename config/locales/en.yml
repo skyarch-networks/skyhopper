@@ -549,7 +549,7 @@ en:
       download_chef:  'Downloading Chef Server packages...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting up Chef Server...'
-      complete:       'Chef Server was successfully constructed.'
+      complete:       'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
       setting_up:     'Setting up other necessary commands.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'

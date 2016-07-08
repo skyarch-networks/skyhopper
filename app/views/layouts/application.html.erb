@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
     <title><%= full_title(yield(:title)) %></title>
     <%= csrf_meta_tags %>
 
@@ -34,37 +34,37 @@
                    </a>
                </li>
                <li data-toggle="collapse" data-target="#deploy" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.deploy_head') %></a>
+                   <a href="#"><%= t('instructions.deploy_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="deploy">
                  <blockquote><small class="instructions"><%= t('instructions.deploy_body') %></small></blockquote>
                </ul>
                <li data-toggle="collapse" data-target="#signup" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.signup_head') %></a>
+                   <a href="#"><%= t('instructions.signup_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="signup">
                   <blockquote><small class="instructions"><%= t('instructions.signup_body') %></small></blockquote>
                </ul class="sub-menu collapse" id="zabbix">
                <li data-toggle="collapse" data-target="#zabbix" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.select_zabbix_head') %></a>
+                   <a href="#"><%= t('instructions.select_zabbix_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="zabbix">
                   <blockquote><small class="instructions"><%= t('instructions.select_zabbix_body') %></small></blockquote>
                </ul>
                <li data-toggle="collapse" data-target="#chef_server" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.sign_chef_head') %></a>
+                   <a href="#"><%= t('instructions.sign_chef_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="chef_server">
                   <blockquote><small class="instructions"><%= t('instructions.sign_chef_body') %></small></blockquote>
                </ul>
                <li data-toggle="collapse" data-target="#runlist" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.runlist_head') %></a>
+                   <a href="#"><%= t('instructions.runlist_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="runlist">
                   <blockquote><small class="instructions"><%= t('instructions.runlist_body') %></small></blockquote>
                </ul>
                <li data-toggle="collapse" data-target="#cook" class="collapsed active" onclick="toggleChange(this)">
-                   <a href="#"><%= fa 'chevron-right'%>&nbsp<%= t('instructions.cook_head') %></a>
+                   <a href="#"><%= t('instructions.cook_head') %></a>
                </li>
                <ul class="sub-menu collapse" id="cook">
                   <blockquote><small class="instructions"><%= t('instructions.cook_body') %></small></blockquote>

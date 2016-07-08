@@ -263,6 +263,9 @@
       progress_alert.removeClass("alert-info").addClass("alert-success");
 
       $("#done-appsetting").removeClass("disabled").removeAttr("disabled");
+      $("#wrapper").removeClass('toggled');
+      $("#deploy").addClass('in');
+      $("#signup").addClass('in');
     }
     else if (data.status === "error") {
       progress.removeClass("progress-bar-striped active");
