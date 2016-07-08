@@ -138,6 +138,16 @@ class AppSettingsController < ApplicationController
 
           Node.exec_command(cmd)
           Rails.logger.debug("SkyHopper setup > Running necessary Scripts")
+          zabbix = Infrastructure.first
+          physical_id = zabbix.resources.first.physical_id
+          fqdn = zabbix.instance(physical_id).fqdn
+          # BOOTSTRAP node
+          Node.bootstrap(fqdn, physical_id, zabbix)
+          node = Node.new(physical_id)
+          node.update_runlist(["role[zabbix_server]"])
+          node.cook(zabbix, '') do |line|
+            Rails.logger.debug "cooking #{physical_id} > #{line}"
+          end
 
           Rails.logger.debug("ChefServer creating > complete")
           ws.push(build_ws_message(:complete))
