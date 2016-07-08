@@ -101,6 +101,23 @@
           viewer.getSession().setMode("ace/mode/json");
         });
       },
+      confirm_export: function () {
+        var self = this;
+        var html = $('<div>', {class: 'panel panel-info', style: 'margin-bottom: 0px'});
+        html.append(
+          $('<div>', {class: 'panel-heading', text: t('cf_templates.msg.confirm_export')}).prepend(
+            $('<span>', {class: 'glyphicon glyphicon-info-sign'})
+          ),
+          $('<ul>').append(
+            _.map(this.selections, function (obj) {
+              return $('<li>', {text: obj.cf_subject});
+            })
+          )
+        );
+        modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(function () {
+          self.export_templates(self.selections);
+        });
+      },
       export_templates: function (templates) {
         var self = this;
         var zip = new JSZip();
@@ -113,7 +130,7 @@
       },
       export_selected: function () {
         if (this.multiSelect) {
-          this.export_templates(this.selections);
+          this.confirm_export();
         } else {
           this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
         }

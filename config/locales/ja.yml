@@ -416,6 +416,7 @@ ja:
       updating:        'スタックの更新を開始しました'
       creating:        'スタックの作成を開始しました'
       delete_cf_template: 'このテンプレートを削除してもよろしいですか？'
+      confirm_export:  ' 以下の CloudFormation テンプレートをエクスポートします'
 
 
   template_builder:
