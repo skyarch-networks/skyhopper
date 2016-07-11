@@ -136,8 +136,9 @@ class AppSettingsController < ApplicationController
           cmd << "knife role from file  #{Rails.root.join('../', 'skyhopper_cookbooks')}/roles/*rb \n"
           cmd = cmd.flatten.reject(&:blank?).join(" ")
 
+          # Execute given command on Copying chef keys and uploading cookbooks
           Node.exec_command(cmd)
-          Rails.logger.debug("SkyHopper setup > Running necessary Scripts")
+          Rails.logger.info("SkyHopper setup > Running necessary Scripts")
           zabbix = Infrastructure.first
           physical_id = zabbix.resources.first.physical_id
           fqdn = zabbix.instance(physical_id).fqdn
@@ -145,19 +146,28 @@ class AppSettingsController < ApplicationController
           Node.bootstrap(fqdn, physical_id, zabbix)
           node = Node.new(physical_id)
           node.wait_search_index
+
+          # Update runlist into Role[zabbix_server]
           node.update_runlist(["role[zabbix_server]"])
+
+          #Start cooking
           begin
             tries ||= 3
             node.cook(zabbix, false) do |line|
-              Rails.logger.debug "cooking #{physical_id} > #{line}"
+              Rails.logger.info "cooking #{physical_id} > #{line}"
             end
           rescue Node::CookError
             retry unless (tries -= 1).zero?
           end
 
-
+          # Save status to success after cooking
           zabbix.resources.first.status.cook.success!
 
+          # Restart Rails Server
+          rails_cmd = "nohup ./scripts/skyhopper_daemon.sh stop && ./scripts/skyhopper_daemon.sh start"
+          outs = Node.exec_command(rails_cmd)
+          Rails.logger.debug(outs)
+          
           Rails.logger.debug("ChefServer creating > complete")
           ws.push(build_ws_message(:complete))
         rescue => ex
