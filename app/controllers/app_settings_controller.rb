@@ -144,10 +144,19 @@ class AppSettingsController < ApplicationController
           # BOOTSTRAP node
           Node.bootstrap(fqdn, physical_id, zabbix)
           node = Node.new(physical_id)
+          node.wait_search_index
           node.update_runlist(["role[zabbix_server]"])
-          node.cook(zabbix, '') do |line|
-            Rails.logger.debug "cooking #{physical_id} > #{line}"
+          begin
+            tries ||= 3
+            node.cook(zabbix, false) do |line|
+              Rails.logger.debug "cooking #{physical_id} > #{line}"
+            end
+          rescue Node::CookError
+            retry unless (tries -= 1).zero?
           end
+
+
+          zabbix.resources.first.status.cook.success!
 
           Rails.logger.debug("ChefServer creating > complete")
           ws.push(build_ws_message(:complete))
