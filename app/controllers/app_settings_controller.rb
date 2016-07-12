@@ -164,10 +164,12 @@ class AppSettingsController < ApplicationController
           zabbix.resources.first.status.cook.success!
 
           # Restart Rails Server
-          rails_cmd = "nohup ./scripts/skyhopper_daemon.sh stop && ./scripts/skyhopper_daemon.sh start"
-          outs = Node.exec_command(rails_cmd)
-          Rails.logger.debug(outs)
-          
+          if Rails.env.production?
+            rails_cmd = "nohup ./scripts/skyhopper_daemon.sh start"
+            outs = Node.exec_command(rails_cmd)
+            Rails.logger.info(outs)
+          end
+
           Rails.logger.debug("ChefServer creating > complete")
           ws.push(build_ws_message(:complete))
         rescue => ex
