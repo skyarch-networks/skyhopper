@@ -122,7 +122,8 @@
         var self = this;
         var zip = new JSZip();
         _.each(templates, function (obj) {
-          zip.file(obj.cf_subject + '.json', obj.value);
+          var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
+          zip.file(filename, obj.value);
         });
         zip.generateAsync({type: 'blob'}).then(function (content) {
           self.download_blob('cf_templates.zip', content);
@@ -146,6 +147,9 @@
         a.href = url;
         a.download = file.name;
         a.dispatchEvent(event);
+      },
+      escape_invalid_character: function (str) {
+        return str.replace(/[\\/:*?<>"|]/g, '-');
       },
     },
 
