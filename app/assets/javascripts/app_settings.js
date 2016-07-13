@@ -43,7 +43,7 @@
           };
           reader.readAsText(file);
 
-          
+
           vm.keypair_name = file.name.replace(/\.\w+$/, '');
           console.log(vm);
       },
@@ -106,6 +106,8 @@
             update_creating_chefserver_progress(data);
             watch_chef_create_progress();
           });
+        }).fail(function () {
+          self.creating = false;
         });
       }
 
