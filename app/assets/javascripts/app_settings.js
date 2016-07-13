@@ -99,10 +99,11 @@
       create: function()  {
         event.preventDefault();
         var self = this;
-        self.creating = true;
+
 
         create(self.params).done(function (data) {
           chef_create().done(function (data) {
+            self.creating = true;
             update_creating_chefserver_progress(data);
             watch_chef_create_progress();
           });
