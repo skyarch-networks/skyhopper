@@ -29,12 +29,7 @@ class ApplicationController < ActionController::Base
     lang = params[:lang]
 
     unless lang
-      I18n.locale =
-        if I18n::available_locales.include?(extract_locale_from_accept_language_header.to_sym)
-          extract_locale_from_accept_language_header
-        else
-          nil
-        end
+      I18n.locale = nil
       return
     end
 
