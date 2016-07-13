@@ -35,7 +35,7 @@
       </div>
       <label for="secret_access_key" class="col-sm-3 control-label"><%= t 'app_settings.secret_access_key' %></label>
       <div class="col-sm-7">
-        <input type="text" :disabled="creating" class="form-control form-control-masked" v-model="params.secret_access_key" pattern="[^\s]+" required>
+        <input type="text" id="secret_access_key" :disabled="creating" class="form-control form-control-masked" v-model="params.secret_access_key" pattern="[^\s]+" required>
         <p class="help-block"><%= t('app_settings.msg.secret_access_key') %></p>
       </div>
     </div>
