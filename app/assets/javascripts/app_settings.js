@@ -196,18 +196,6 @@
 
 
   //  --------------------------------  utility methods
-  var get_settings = function () {
-    var settings = {};
-    $(inputs_selector).each(function () {
-      var input = $(this);
-      var key = input.attr('name');
-      var val = input.val();
-      settings[key] = val;
-    });
-    return settings;
-  };
-
-
   var is_fill_input = function() {
     var set = get_settings();
     for (var i in set) {
@@ -273,30 +261,6 @@
       progress_alert.removeClass("alert-info").addClass("alert-danger");
     }
   };
-
-
-
-  //  ----------------------------- event binding
-
-
-  $(document).on('click', '#btn-create-chefserver', function (e) {
-    e.preventDefault();
-
-    create().done(function (data) {
-      chef_create().done(function (data) {
-        update_creating_chefserver_progress(data);
-        watch_chef_create_progress();
-      });
-    });
-
-
-  });
-
-
-  $(document).on('change keyup', inputs_selector, function () {
-    var btn = $('#btn-create-chefserver');
-    switch_btn_enable(btn);
-  });
 
 
 

@@ -166,12 +166,12 @@ class AppSettingsController < ApplicationController
           # Restart Rails Server
           Rails.logger.info "Restarting Skyhopper after cook"
           if Rails.env.production?
-            rails_cmd = "nohup ./scripts/skyhopper_daemon.sh start"
+            rails_cmd = "nohup #{Rails.root.join('scripts')}/skyhopper_daemon.sh start"
             outs = Node.exec_command(rails_cmd)
             Rails.logger.info "executing: #{outs}"
           end
 
-          Rails.logger.info("ChefServer creating > complete")
+          Rails.logger.debug("ChefServer creating > complete")
           ws.push(build_ws_message(:complete))
         rescue => ex
           Rails.logger.error(ex.message)

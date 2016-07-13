@@ -29,7 +29,12 @@ class ApplicationController < ActionController::Base
     lang = params[:lang]
 
     unless lang
-      I18n.locale = nil
+      I18n.locale =
+        if I18n::available_locales.include?(extract_locale_from_accept_language_header.to_sym)
+          extract_locale_from_accept_language_header
+        else
+          nil
+        end
       return
     end
 
@@ -59,5 +64,9 @@ class ApplicationController < ActionController::Base
 
   def appsetting_controller
     controller_name == 'app_settings'
+  end
+
+  def extract_locale_from_accept_language_header
+    request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
   end
 end
