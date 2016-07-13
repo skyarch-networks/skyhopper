@@ -43,10 +43,7 @@
           };
           reader.readAsText(file);
 
-          if(!file.type.match('application/x-x509-ca-cert')){
-            modal.Alert(t('app_settings.title.setup'), t('app_settings.msg.incorrect_file'), 'danger');
-            return;
-          }
+          
           vm.keypair_name = file.name.replace(/\.\w+$/, '');
           console.log(vm);
       },
