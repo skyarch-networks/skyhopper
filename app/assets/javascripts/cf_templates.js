@@ -109,7 +109,7 @@
             $('<span>', {class: 'glyphicon glyphicon-info-sign'})
           ),
           $('<ul>').append(
-            _.map(this.selections, function (obj) {
+            this.selections.map(function (obj) {
               return $('<li>', {text: obj.cf_subject});
             })
           )
@@ -121,7 +121,7 @@
       export_templates: function (templates) {
         var self = this;
         var zip = new JSZip();
-        _.each(templates, function (obj) {
+        templates.forEach(function (obj) {
           var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
           zip.file(filename, obj.value);
         });
