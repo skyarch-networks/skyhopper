@@ -42,6 +42,14 @@ class AppSetting < ActiveRecord::Base
     def clear_cache
       Rails.cache.clear('app_setting')
     end
+
+    def ec2_client(access_key, secret_access_key, region)
+      ::Aws::EC2::Client.new(
+        access_key_id:     access_key,
+        secret_access_key: secret_access_key,
+        region:            region
+      )
+    end
   end
 
   # ダミー設定かどうかを返す

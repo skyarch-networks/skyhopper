@@ -158,6 +158,7 @@ SkyHopper::Application.routes.draw do
 
       get  :edit_zabbix
       post :update_zabbix
+      post :generate_key
     end
   end
 

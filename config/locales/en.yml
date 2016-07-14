@@ -64,6 +64,7 @@ en:
 
   app_settings:
     log_directory:     'Log directory'
+    app_directory:     'Application directory'
     aws_region:        'Region'
     aws_keypair:       'KeyPair'
     keypair_name:      'Name of KeyPair'
@@ -73,27 +74,50 @@ en:
     chef_server:       'Chef Server'
 
     msg:
-      created:           'SkyHopper was successfully setup'
+      created:           'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
-      aws_description:  |
-        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
-        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
+      app_directory:     'The installation path of SkyHopper. That is already configured.'
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
+      insert_key:        'Please enter aws keys first and select a region.'
+      incorrect_file:    'Please select a correct AWS keypair .pem file'
+      delete_file:       'Are you sure you want to remove %{name}.pem  file?'
+      create_keypair:    ''
+      aws_description:  |
+        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
+        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
       system: 'System Settings'
       chef:   'Chef Server Settings'
       aws:    'AWS Settings'
+      new_keypair:   'Create a new KeyPair'
+      exist_keypair: 'Use existing KeyPair'
+      drop_file:     'Drop file here or click to select'
+      pem_file:      'Must be a .pem file created from AWS'
     btn:
       create_chefserver: 'Create Chef Server'
       done:              'Done'
+      create_download:   'Create & Download'
+    intro:
+      aws_keys:   |
+        AWS access and secret key is required to construct Chef & Zabbix Server and to enable SkyHopper to manage your infrastructures.
+        If you have no AWS Securty credentials yet, please follow this link:
+        <a href="http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html" target="_blank"> Managing Access Keys for your AWS Account </a>.
+      aws_region: |
+        After setting the security credentails please select the aws region for SkyHopper instances to be deployed.
+        The purpose for this is to reduce data latency in the application.
+      aws_keypair: |
+        To allow SkyHopper to access your instance, you must create a key pair, specify the name of the key pair when you launch the instance.
+        In this case, if you have already a KeyPair you can select 'Use Existing KeyPair' and select or drag the file into the drop box.
+        However, you can also create a new KeyPair Using the entered AWS Security Credentials you entered and by selecting 'Create a New KeyPair' option.
+      chef_button: 'After the above process, you can now press Create Chef Server button to start the installation.'
 
   clients:
     client: 'Client'
@@ -525,7 +549,8 @@ en:
       download_chef:  'Downloading Chef Server packages...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting up Chef Server...'
-      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
+      complete:       'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
+      setting_up:     'Setting up other necessary commands.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'
       start:          'Stopping Chef Server...'
@@ -669,3 +694,34 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
+
+  instructions:
+    deploy_head: 'How to deploy the ZABBIX Server'
+    deploy_body: |
+      SkyHopper with Zabbix for monitoring infrastructures. Therefore, After you deploy SkyHopper, you must first deploy the Zabbix Server.
+    signup_head: '1 Sign up'
+    signup_body: |
+      Since the user has not yet exists after deployment, It will require you to sign up to SkyHopper.
+      Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
+    select_zabbix_head: '2 Select a Zabbix Server Infrastructure'
+    select_zabbix_body: |
+      Zabbix Server is managed as an infrastructure on SkyHopper. First of all, select the infrastructure.
+    select_zabbix_list: |
+      <li> Click the SkyHopper client </li>
+      <li> Click Zabbix Server Project </li>
+      <li> Click show button for more details </li>
+    sign_chef_head: '3 Sign up to Chef Server'
+    sign_chef_body: |
+      In order to install Zabbix using Chef, Please register first the EC2 instance to Chef Server
+      Click bootstrap with chef server botton.
+    runlist_head: '4 Select Runlist'
+    runlist_body: |
+      Press the Edit Runlist button. So that Runlist editing screen will appear.
+      In this screen, you can choose whether to perform a Chef by selecting any of the recipes.
+      Since we only need to install the Zabbix Server, please double click zabbix_server to add to the runlist.
+      To save changes, press the save changes button.
+    cook_head: '5 Cook'
+    cook_body: |
+      Run chef by click cook button. Cook status is displayed in real time.
+      When the cook status has been successfully done, Zabbix Server Deployment is also done. Finally, SkyHopper will populate the user information for Zabbix Server.
+      Congratulations! Zabbix Server configuration is complete.

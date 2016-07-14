@@ -11,6 +11,156 @@
   var modal = require('modal');
 
   //  ----------------------------- variables
+  var queryString = require('query-string').parse(location.search);
+
+
+  new Vue({
+    el: '#indexElement',
+    data: {
+      key_select: null,
+      creating: false,
+      params: {
+        log_directory: null,
+        access_key: null,
+        secret_access_key: null,
+        aws_region: null,
+        keypair_name: null,
+        keypair_value: null
+      },
+    },
+    methods: {
+      onFileChange: function (e) {
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length) return;
+          this.createFile(files[0]);
+      },
+      createFile: function(file) {
+          var reader = new FileReader();
+          var vm = this.params;
+
+          reader.onload = function (e) {
+              vm.keypair_value = e.target.result;
+          };
+          reader.readAsText(file);
+
+
+          vm.keypair_name = file.name.replace(/\.\w+$/, '');
+          console.log(vm);
+      },
+      removeFile: function (e) {
+          e.preventDefault();
+          var vm = this.params;
+          modal.Confirm(t('app_settings.title.setup'), t('app_settings.msg.delete_file', {name: vm.keypair_name}), 'danger').done(function () {
+            vm.keypair_name = null;
+            vm.keypair_value = null;
+          });
+
+      },
+      create_key: function() {
+        event.preventDefault();
+        var params = this.params;
+        var name_file;
+        modal.Confirm(t('app_settings.title.setup'), t('ec2_private_keys.confirm.create')).then(function () {
+          return modal.Prompt(t('app_settings.title.setup'), t('key_pairs.name'));
+        }).then(function (name) {
+          if(!name){
+            modal.Alert(t('app_settings.title.setup'), t('ec2_private_keys.msg.please_name'), 'danger');
+            return;
+          }
+          name_file = name;
+          return $.ajax({
+            url: '/app_settings/generate_key',
+            type: 'POST',
+            data: {
+              name:       name,
+              region:     params.aws_region,
+              access_key: params.access_key,
+              secret_access_key: params.secret_access_key,
+            },
+          });
+
+        }).done(function (key) {
+          params.keypair_name = name_file;
+          params.keypair_value = key.key_material;
+          this.key_select = 2;
+
+          // download file.
+          var file = new File([key.key_material], name_file + '.pem');
+          var url = window.URL.createObjectURL(file);
+          var a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', file.name);
+          document.body.appendChild(a);
+          a.click();
+        }).fail(function (xhr) {
+          modal.Alert(t('app_settings.title.setup'), xhr.responseText, 'danger');
+        });
+      },
+      create: function()  {
+        event.preventDefault();
+        var self = this;
+
+
+        create(self.params).done(function (data) {
+          chef_create().done(function (data) {
+            self.creating = true;
+            update_creating_chefserver_progress(data);
+            watch_chef_create_progress();
+          });
+        }).fail(function () {
+          self.creating = false;
+        });
+      }
+
+    },
+    computed: {
+      keysExists: function () {
+        var self = this;
+        return (self.params.access_key && self.params.secret_access_key && self.params.aws_region);
+      },
+      required_filed: function () {
+        var self = this;
+        return (self.params.access_key &&
+          self.params.secret_access_key &&
+          self.params.aws_region &&
+          self.params.keypair_name &&
+          self.params.keypair_value
+        );
+      }
+    },
+    ready: function () {
+      introJs();
+        // The rest of the code
+        $("#flexi_form_start").click(function() {
+            introJs().start().onbeforechange(function(targetElement) {
+              $(".steps").hide();
+              $(".left").css("float", "left");
+              $("input").removeClass("error");
+              $(".right").hide();
+              switch($(targetElement).attr("data-step")) {
+                case "2":
+                  $(".flexi_form").hide();
+                  $(targetElement).show();
+                  break;
+                case "3":
+                  $("input").addClass("error");
+                  $(targetElement).show();
+                  break;
+                case "4":
+                  $(".left").css("float", "none");
+                  $(targetElement).show();
+                  break;
+                case "5":
+                  $(".right").show();
+                  $(targetElement).show();
+                  break;
+              }
+            });
+          });
+
+    }
+  });
+
 
 
 
@@ -19,8 +169,7 @@
 
 
   //  -------------------------------- ajax methods
-  var create = function () {
-    var settings = get_settings();
+  var create = function (settings) {
 
     return $.ajax({
       url: endpoint_base,
@@ -47,18 +196,6 @@
 
 
   //  --------------------------------  utility methods
-  var get_settings = function () {
-    var settings = {};
-    $(inputs_selector).each(function () {
-      var input = $(this);
-      var key = input.attr('name');
-      var val = input.val();
-      settings[key] = val;
-    });
-    return settings;
-  };
-
-
   var is_fill_input = function() {
     var set = get_settings();
     for (var i in set) {
@@ -114,6 +251,9 @@
       progress_alert.removeClass("alert-info").addClass("alert-success");
 
       $("#done-appsetting").removeClass("disabled").removeAttr("disabled");
+      $("#wrapper").removeClass('toggled');
+      $("#deploy").addClass('in');
+      $("#signup").addClass('in');
     }
     else if (data.status === "error") {
       progress.removeClass("progress-bar-striped active");
@@ -121,28 +261,6 @@
       progress_alert.removeClass("alert-info").addClass("alert-danger");
     }
   };
-
-
-
-  //  ----------------------------- event binding
-
-
-  $(document).on('click', '#btn-create-chefserver', function (e) {
-    e.preventDefault();
-
-    create().done(function (data) {
-      chef_create().done(function (data) {
-        update_creating_chefserver_progress(data);
-        watch_chef_create_progress();
-      });
-    });
-  });
-
-
-  $(document).on('change keyup', inputs_selector, function () {
-    var btn = $('#btn-create-chefserver');
-    switch_btn_enable(btn);
-  });
 
 
 
