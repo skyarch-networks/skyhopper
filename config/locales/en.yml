@@ -31,6 +31,7 @@ en:
     password:      'Password'
     please_select: 'Select one'
     not_set:       'Not set'
+    selected:      'Selected'
     btn:
       architecture:    'Architecture'
       settings:        'Settings'
@@ -44,6 +45,10 @@ en:
       next:            'Next'
       delete:          'Delete'
       update:          'Update'
+      import:          'Import'
+      export:          'Export'
+      all:             'All'
+      multiple_select: 'Multiple Select'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'
@@ -413,6 +418,7 @@ en:
       updating:        'Updating stack'
       creating:        'Creating stack'
       delete_cf_template: 'Are you sure you want to delete this Cf_template?'
+      confirm_export:  ' Are you sure you want to export the following templates?'
 
 
   template_builder:
