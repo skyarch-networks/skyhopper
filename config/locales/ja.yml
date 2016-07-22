@@ -102,7 +102,7 @@ ja:
       aws:    'AWS の設定'
       new_keypair: '新しい鍵ペアを作成'
       exist_keypair: '既存の鍵ペアを使用します'
-      drop_file:     'ファイルをここにドロップするか、選択する]をクリックします'
+      drop_file:     'ファイルをここにドロップするか、クリックして選択します'
       pem_file:      'AWSから作成された.pemファイルでなければなりません'
     btn:
       create_chefserver: 'Chef Server の構築'
@@ -110,17 +110,17 @@ ja:
       create_download:   '作成＆ダウンロード'
     intro:
       aws_keys:   |
-        AWSのアクセスと秘密鍵は、シェフ＆のZabbixサーバを構築するために、あなたのインフラストラクチャを管理するためにSkyHopperを有効にする必要があります。
-        あなたはまだAWS Securtyの資格を持っていない場合は、このリンクに従ってください。
-        <a href="http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html" target="_blank"> あなたのAWSアカウントのアクセスキーを管理します </a>.
+        SkyHopper がインフラを管理できるようにするために、また Chef & Zabbix Server を構築するためには AWS のアクセスキーが必要です。
+        まだ AWS セキュリティの認証情報を持っていない場合は、このリンクを参照してください。
+        <a href="http://docs.aws.amazon.com/ja_jp/general/latest/gr/managing-aws-access-keys.html" target="_blank"> AWS アカウントのアクセスキー管理 </a>.
       aws_region: |
-        SkyHopperインスタンスをデプロイするためのセキュリティcredentailsを設定した後、AWSリージョンを選択してください。
-        このための目的は、アプリケーション内のデータ遅延を低減することです。
+        認証情報の入力後、Chef & Zabbix Server インスタンスをデプロイするリージョンを選択してください。
+        これは、アプリケーション内のデータ遅延を低減するためです。
       aws_keypair: |
-        SkyHopperがあなたのインスタンスへのアクセスを許可するには、鍵のペアを作成するには、インスタンスを起動したときに鍵ペアの名前を指定する必要があります。
-        この場合、あなたはすでに鍵ペアを持っている場合は、 「使用既存のキーペア」を選択し、選択またはドロップボックスにファイルをドラッグすることができます。
-        しかし、あなたはまた、あなたが入力した入力したAWSのセキュリティ資格情報を使用して、新しい鍵ペアを作成することができますし、選択してオプション「新しいキーペア作成」を。
-      chef_button: '上記の処理の後、あなたは今インストールを開始するためにシェフのサーバーの作成]ボタンを押すことができます。'
+        SkyHopper にあなたのインスタンスへのアクセスを許可するために、鍵ペアを作成し、インスタンスを立ち上げる時に鍵ペアの名前を指定する必要があります。
+        もし、あなたがすでに鍵ペアを持っている場合、 「既存のキーペアを使用」を選択し、ファイルを選択またはドラッグ&ドロップすることができます。
+        また、あなたが入力した AWS の認証情報を使用して、[新しい鍵ペアを作成] から新しい鍵ペアを作成することができます。
+      chef_button: '上記の手順の後、[Chef Server の構築] ボタンを押してインストールを開始することができます。'
 
   clients:
     client: '顧客'
@@ -710,32 +710,22 @@ ja:
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
   instructions:
-    deploy_head: 'Zabbix Server のデプロイ方法'
-    deploy_body: |
-      SkyHopper は Zabbix と連携してインフラストラクチャの監視を行っています。 そのため、SkyHopper をデプロイしたら、最初に Zabbix Server をデプロイする必要があります。
     signup_head: '1 サインアップ'
     signup_body: |
-      デプロイ直後でユーザーが存在しないため、まずは SkyHopper にサインアップします。
+      デプロイ直後はユーザーが存在しないため、まずは SkyHopper にサインアップします。
       デプロイした SkyHopper にアクセスし、Sign up へと進み、ユーザー名とメールアドレスを入力、Admin と Master にチェックを入れてユーザーを作成してください。
-    select_zabbix_head: '2 Zabbix Server インフラストラクチャを選択'
-    select_zabbix_body: |
-      Zabbix Server は、SkyHopper 上でインフラストラクチャとして管理されています。 そのため、まずはそのインフラストラクチャを選択しましょう。
-    select_zabbix_list: |
-      <li> 顧客 SkyHopper の案件一覧をクリック </li>
-      <li> 案件 ZabbixServer のインフラ一覧をクリック </li>
-      <li> 存在するインフラの詳細をクリック </li>
-    sign_chef_head: '3 Chef Server に登録'
-    sign_chef_body: |
-      Chef を使用して Zabbix をインストールするため、まずは EC2 インスタンスを Chef Server に登録します。
-      Chef Server に登録 ボタンを押してください。
-    runlist_head: '4 RunList を選択'
-    runlist_body: |
-      Runlistの編集 ボタンを押してください。 Runlistの編集画面が現れます。
-      この画面で、どのレシピを使ってChefを実行するかを選択します。
-      Zabbix Server をインストールするので、Role の中にある zabbix_server ロールをダブルクリックして Runlist に追加してください。
-      変更の保存 ボタンを押すと変更が保存されます。
-    cook_head: '5 Cook'
-    cook_body: |
-      Chef を実行します。 Cook を実行している状況がリアルタイムに表示されます。
-      Cookが終了したら Zabbix Server のデプロイは終了です。 最後に、SkyHopper に Zabbix Server のユーザー情報を設定します。
-      以上で Zabbix Server の設定は完了です。
+    client_head: '顧客を作成'
+    client_body: |
+      [新規顧客] ボタンをクリックし、名前とコードを入力して、顧客を作成してください。コードは一意の文字列である必要があります。
+    project_head: '案件を作成'
+    project_body: |
+      顧客作成後、顧客を選択し、[新規案件] ボタンをクリックしてコード、名前、クラウド提供会社、AWS のアクセスキーを入力し、案件を作成してください。
+    infrastructure_head: 'インフラストラクチャを作成'
+    infrastructure_body: |
+      プロジェクト内部で管理されるインフラストラクチャを作成します。
+      案件作成後、案件を選択し、[新規インフラ] ボタンをクリックして、スタック名、リージョン、鍵ペア名と秘密鍵を入力してください。もし鍵ペアを持っていないなら、鍵ペア生成機能を使用して新しい鍵ペアを生成できます。
+    cf_template_head: 'CloudFormation テンプレートを適用'
+    cf_template_body: |
+      CloudFormation テンプレートを適用するには、<b>インフラを選択</b>して詳細を表示し <b>[Operations] メニュー</b> から <b>CloudFormation テンプレートの適用</b> を選択してください。
+      その後、CloudFormation テンプレートの一覧が画面に表示されます。お好みのテンプレートを選択後、[パラメータの入力]をクリックしてフォームを埋めた後、[送信] ボタンを押すと、新規スタックの作成が開始されます。
+      既に AWS に EC2 を作成しているならば、それを追加することもできます。詳細については<a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>を参照してください。
