@@ -688,32 +688,23 @@ ja:
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
   instructions:
-    deploy_head: 'Zabbix Server のデプロイ方法'
-    deploy_body: |
-      SkyHopper は Zabbix と連携してインフラストラクチャの監視を行っています。 そのため、SkyHopper をデプロイしたら、最初に Zabbix Server をデプロイする必要があります。
     signup_head: '1 サインアップ'
     signup_body: |
       デプロイ直後でユーザーが存在しないため、まずは SkyHopper にサインアップします。
       デプロイした SkyHopper にアクセスし、Sign up へと進み、ユーザー名とメールアドレスを入力、Admin と Master にチェックを入れてユーザーを作成してください。
-    select_zabbix_head: '2 Zabbix Server インフラストラクチャを選択'
-    select_zabbix_body: |
-      Zabbix Server は、SkyHopper 上でインフラストラクチャとして管理されています。 そのため、まずはそのインフラストラクチャを選択しましょう。
-    select_zabbix_list: |
-      <li> 顧客 SkyHopper の案件一覧をクリック </li>
-      <li> 案件 ZabbixServer のインフラ一覧をクリック </li>
-      <li> 存在するインフラの詳細をクリック </li>
-    sign_chef_head: '3 Chef Server に登録'
-    sign_chef_body: |
-      Chef を使用して Zabbix をインストールするため、まずは EC2 インスタンスを Chef Server に登録します。
-      Chef Server に登録 ボタンを押してください。
-    runlist_head: '4 RunList を選択'
-    runlist_body: |
-      Runlistの編集 ボタンを押してください。 Runlistの編集画面が現れます。
-      この画面で、どのレシピを使ってChefを実行するかを選択します。
-      Zabbix Server をインストールするので、Role の中にある zabbix_server ロールをダブルクリックして Runlist に追加してください。
-      変更の保存 ボタンを押すと変更が保存されます。
-    cook_head: '5 Cook'
-    cook_body: |
-      Chef を実行します。 Cook を実行している状況がリアルタイムに表示されます。
-      Cookが終了したら Zabbix Server のデプロイは終了です。 最後に、SkyHopper に Zabbix Server のユーザー情報を設定します。
-      以上で Zabbix Server の設定は完了です。
+    client_head: 'クライアントを作成します。'
+    client_body: |
+      新しい cient のボタンをクリックして、名とクライアントの一意の文字列にする必要がありますコードを入力してください。
+    project_head: 'プロジェクトを作成します。'
+    project_body: |
+      プロジェクトを作成すると、クライアントを選択し、[新しいプロジェクト] ボタンとコード、名前、クラウド プロバイダーとフォームに記入
+      アクセスキーと秘密アクセスキー AWS から作成されました。
+    infrastructure_head: 'インフラストラクチャを作成します。'
+    infrastructure_body: |
+      作成し、クライアントでプロジェクトを選択した後ステップ、プロジェクト内を管理するためのインフラストラクチャを作成します。キーのペアを必要とします。
+      stackname、および地域。あなたはまだ鍵がない、生成するキーペア関数を使用して新しいキーのペアを作成できます。
+    cf_template_head: 'CloudFormation テンプレートを適用します。'
+    cf_template_body: |
+      雲形成テンプレートを適用するために詳細を表示して <b>[操作] メニュー</b> をクリックし、<b>cloudformation タブ</b> を適用 <b>するインフラストラクチャを選択</b> する必要。
+      その後、雲生成テンプレートの一覧が画面に表示されます。Fillout しパラメーターを設定する必要な fileds を押して終わりあなたの新しいスタックを作成を開始するには、テンプレートを選択してください。
+      AWS を既に作成した場合も、EC2 を追加できます。詳細についてを参照してください。 <a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>.

@@ -713,6 +713,6 @@ en:
       stackname, and region. If you have no keypair yet, you can create a new keypair using the generate keypair function.
     cf_template_head: 'Apply CloudFormation Template'
     cf_template_body: |
-      In order to apply a cloud formation template, you have to <i> select an infrastructure </i> to show details and click the <i> operations menu</i> and apply <i> cloudformation tab </i>.
+      In order to apply a cloud formation template, you have to <b> select an infrastructure </b> to show details and click the <b> operations menu</b> and apply <b> cloudformation tab </b>.
       Then, the list of cloud formation templates will appear in the screen. Please select the template as you like and fillout the required fileds to set the parameters then press end to start creating your new stack.
       You can also add an EC2 if you have created it already on AWS. For more instructions, please visit <a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>.
