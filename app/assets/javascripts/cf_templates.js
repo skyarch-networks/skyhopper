@@ -16,6 +16,8 @@
   require('brace/theme/github');
   require('brace/mode/json');
 
+  var JSZip = require('jszip');
+
   var modal       = require('modal');
 
   var app;
@@ -52,14 +54,21 @@
       picked: {
         button_destroy_cft: null,
         button_edit_cft: null
-      }
+      },
+      multiSelect: false,
+      selections: [],
+    },
+    computed: {
+      can_export: function () {
+        return (!this.multiSelect && this.picked.id != null || this.multiSelect && this.selections.length !== 0);
+      },
     },
     methods: {
       can_edit: function() {
-        return (this.picked.button_edit_cft === null);
+        return (!this.multiSelect && this.picked.button_edit_cft !== null);
       },
       can_delete: function() {
-        return (this.picked.button_destroy_cft === null);
+        return (!this.multiSelect && this.picked.button_destroy_cft !== null);
       },
       delete_entry: function()  {
         var self = this;
@@ -91,8 +100,65 @@
           viewer.setTheme("ace/theme/github");
           viewer.getSession().setMode("ace/mode/json");
         });
-      }
-    }
+      },
+      confirm_export: function () {
+        var self = this;
+        var html = $('<div>', {class: 'panel panel-info', style: 'margin-bottom: 0px'});
+        html.append(
+          $('<div>', {class: 'panel-heading', text: t('cf_templates.msg.confirm_export')}).prepend(
+            $('<span>', {class: 'glyphicon glyphicon-info-sign'})
+          ),
+          $('<ul>').append(
+            this.selections.map(function (obj) {
+              return $('<li>', {text: obj.cf_subject});
+            })
+          )
+        );
+        modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(function () {
+          self.export_templates(self.selections);
+        });
+      },
+      export_templates: function (templates) {
+        var self = this;
+        var zip = new JSZip();
+        templates.forEach(function (obj) {
+          var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
+          zip.file(filename, obj.value);
+        });
+        zip.generateAsync({type: 'blob'}).then(function (content) {
+          self.download_blob('cf_templates.zip', content);
+        });
+      },
+      export_selected: function () {
+        if (this.multiSelect) {
+          this.confirm_export();
+        } else {
+          this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
+        }
+      },
+      export_all: function () {
+        this.export_templates(this.gridData);
+      },
+      download_blob: function (filename, value) {
+        var file = new File([value], filename);
+        var event = new MouseEvent("click");
+        var url = window.URL.createObjectURL(file);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.dispatchEvent(event);
+      },
+      escape_invalid_character: function (str) {
+        return str.replace(/[\\/:*?<>"|]/g, '-');
+      },
+    },
+
+    watch: {
+      'multiSelect': function () {
+        this.selections = [];
+      },
+    },
+
   });
 
 })();

@@ -145,6 +145,10 @@ class EC2Instance < SimpleDelegator
     )
   end
 
+  def detach_volume(volume_id)
+    client.detach_volume(volume_id: volume_id)
+  end
+
   def retention_policies
     volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
     policies = RetentionPolicy.where(resource_id: volume_ids).map { |policy|
@@ -160,5 +164,18 @@ class EC2Instance < SimpleDelegator
       policies[id] = { enabled: false } unless policies.include?(id)
     end
     policies
+  end
+
+  def create_volume(options)
+    client.create_volume(options)
+  end
+
+  # 現在のリージョンの Availability Zones を取得します。値は一定期間キャッシュされます。
+  # @return [Hash{String => Array<Aws::EC2::Types::AvailabilityZone>}] Stateでグループ化したHash
+  def availability_zones
+    Rails.cache.fetch("az-#{client.config.region}", expires_in: 2.hour) do
+      resp = client.describe_availability_zones
+      resp.availability_zones.group_by(&:state)
+    end
   end
 end

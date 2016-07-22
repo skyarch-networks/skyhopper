@@ -91,6 +91,7 @@ class SnapshotsController < ApplicationController
     render text: t('snapshots.msg.policy_saved'), status: 200 and return
   end
 
+
   private
 
   def notify_progress(snapshot)

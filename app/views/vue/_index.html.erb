@@ -24,9 +24,10 @@
         | filterBy filterKey
         | count
         | orderBy sortKey sortOrders[sortKey]
-        | paginate" :class="{info: picked == entry}">
+        | paginate" :class="{info: !multiSelect && picked == entry || multiSelect && selections.includes(entry)}">
         <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
-          <input v-if="$index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
+          <input v-if="multiSelect && $index == 0" type="checkbox" v-model="selections" :value="entry"/>
+          <input v-if="!multiSelect && $index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
           <span v-show="key === 'stack_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
