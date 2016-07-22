@@ -74,8 +74,8 @@
               <template slot="content">
               <a @click="load_volumes()" class="btn btn-xs btn-link" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span></a>
               <ul id="attachVolume" class="dropdown-menu">
-<!--                 <li><a href="#">Create Volume</a></li>
-                <li role="separator" class="divider"></li> -->
+                <li><a @click="init_volume_options" href="#create_volume_modal" data-toggle="modal"><%= t 'ec2_instances.create_volume' %></a></li>
+                <li role="separator" class="divider"></li>
                 <li class="dropdown-header"><%= t 'ec2_instances.attachable_volumes' %></li>
                 <li class="dropdown-header" v-if="loading_volumes"><div-loader></div-loader></li>
                 <li v-for="volume in attachable_volumes" v-show="!loading_volumes">
@@ -90,7 +90,7 @@
                 <div class="panel-heading" transition="fade">
                   <strong>{{volume_selected}} :</strong>
                   <button @click="create_snapshot(volume_selected)" class="btn btn-xs btn-primary">
-                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="glyphicon glyphicon-camera"></span>
                     <%= t('snapshots.create_snapshot') %>
                   </button>
                   <button @click="edit_retention_policy" href="#retention-policy-modal" data-toggle="modal" class="btn btn-xs btn-warning">
@@ -113,6 +113,9 @@
                       <%= t('common.not_set') %>
                     </span>
                   </button>
+                  <span style="float: right;">
+                    <button @click="detach_volume" class="btn btn-xs btn-default"><span class="fa fa-eject"></span></button>
+                  </span>
                 </div>
               </div>
               <div id="ebs_panel" class="panel">
@@ -120,7 +123,8 @@
                   <%= t 'snapshots.snapshots' %>
                   <button @click="load_snapshots" :disabled="loading_snapshots" class="btn btn-xs btn-default"><span class="fa fa-refresh" :class="{'fa-spin': loading_snapshots}"></span></button>
                   <span style="float: right;">
-                    <button @click="delete_selected_snapshots" :disabled="!selected_any || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
+                    <button @click="init_volume_options(selected_snapshots[0])" :disabled="selected_snapshots.length != 1" class="btn btn-sm btn-success" data-toggle="modal" href="#create_volume_modal"><span class="fa fa-hdd-o"></span> <%= t 'ec2_instances.create_volume' %></button>
+                    <button @click="delete_selected_snapshots" :disabled="selected_snapshots.length < 1 || loading_snapshots" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <%= t('helpers.links.destroy') %></button>
                   </span>
                 </div>
                 <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>
@@ -444,3 +448,4 @@
 </div>
 
 <%= render 'infrastructures/modal/modal_snapshot_retention_policy' %>
+<%= render 'infrastructures/modal/modal_create_volume' %>

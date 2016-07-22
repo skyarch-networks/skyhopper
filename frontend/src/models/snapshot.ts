@@ -87,6 +87,7 @@ export default class Snapshot extends ModelBase {
       })
     );
   }
+
 }
 
 Snapshot.ajax.add_collection('schedule', 'POST');

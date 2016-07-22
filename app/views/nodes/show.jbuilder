@@ -26,6 +26,8 @@ json.security_groups @security_groups
 json.retention_policies @retention_policies
 json.snapshots @snapshots
 
+json.availability_zones @availability_zones
+
 if @info
   json.info do
     json.cook_status       @info[:cook_status]

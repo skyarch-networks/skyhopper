@@ -1,0 +1,70 @@
+<%# modal for create volume %>
+<div id="create_volume_modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= t 'ec2_instances.create_volume' %></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-md-4" for="input-volume-type"><%= t 'ec2_instances.volume_type' %></label>
+            <div class="col-md-6">
+              <select id="input-volume-type" class="form-control" v-model="volume_options.volume_type" required>
+                <option value="gp2"><%= t 'ec2_instances.ebs_volume_types.gp2' %> (gp2)</option>
+                <option value="io1"><%= t 'ec2_instances.ebs_volume_types.io1' %> (io1)</option>
+                <option value="st1"><%= t 'ec2_instances.ebs_volume_types.st1' %> (st1)</option>
+                <option value="sc1"><%= t 'ec2_instances.ebs_volume_types.sc1' %> (sc1)</option>
+                <option value="standard"><%= t 'ec2_instances.ebs_volume_types.standard' %> (standard)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-4" for="input-size">Size [GiB]</label>
+            <div class="col-md-6">
+              <input id="input-size" class="form-control" type="number" min="1" v-model="volume_options.size" required>
+            </div>
+          </div>
+          <div class="form-group" v-if="volume_options.volume_type === 'io1'">
+            <label class="control-label col-md-4" for="input-iops">IOPS</label>
+            <div class="col-md-6">
+              <input id="input-iops" class="form-control" type="number" min="100" v-model="volume_options.iops" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-4" for="input-availability-zone">Availability Zone</label>
+            <div class="col-md-6">
+              <select id="input-availability-zone" class="form-control" v-model="volume_options.availability_zone" required>
+                <option v-for="az in ec2.availability_zones.available" v-text="az.zone_name | suffix_current_az" :value="az.zone_name"></option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-4" for="input-snapshot-id"><%= t 'snapshots.snapshot_id' %></label>
+            <div class="col-md-6">
+              <input id="input-snapshot-id" class="form-control" type="text" v-model="volume_options.snapshot_id">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-md-4" for="input-encryption"><%= t 'ec2_instances.encryption' %></label>
+            <div class="checkbox col-md-6">
+              <label>
+                <input id="input-encryption" class="form-control" type="checkbox" v-model="volume_options.encrypted">
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div v-if="!loading_s">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
+          <button class="btn btn-primary" @click="create_volume()" :disabled="!can_create_volume">
+            <%= t('helpers.links.create') %>
+          </button>
+        </div>
+        <div-loader v-if="loading_s" text="<%= t 'common.msg.creating' %>"></div-loader>
+      </div>
+    </div>
+  </div>
+</div>
