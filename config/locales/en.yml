@@ -696,32 +696,23 @@ en:
     pickHour: 'Pick Hour'
 
   instructions:
-    deploy_head: 'How to deploy the ZABBIX Server'
-    deploy_body: |
-      SkyHopper with Zabbix for monitoring infrastructures. Therefore, After you deploy SkyHopper, you must first deploy the Zabbix Server.
-    signup_head: '1 Sign up'
+    signup_head: 'Sign up'
     signup_body: |
       Since the user has not yet exists after deployment, It will require you to sign up to SkyHopper.
       Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
-    select_zabbix_head: '2 Select a Zabbix Server Infrastructure'
-    select_zabbix_body: |
-      Zabbix Server is managed as an infrastructure on SkyHopper. First of all, select the infrastructure.
-    select_zabbix_list: |
-      <li> Click the SkyHopper client </li>
-      <li> Click Zabbix Server Project </li>
-      <li> Click show button for more details </li>
-    sign_chef_head: '3 Sign up to Chef Server'
-    sign_chef_body: |
-      In order to install Zabbix using Chef, Please register first the EC2 instance to Chef Server
-      Click bootstrap with chef server botton.
-    runlist_head: '4 Select Runlist'
-    runlist_body: |
-      Press the Edit Runlist button. So that Runlist editing screen will appear.
-      In this screen, you can choose whether to perform a Chef by selecting any of the recipes.
-      Since we only need to install the Zabbix Server, please double click zabbix_server to add to the runlist.
-      To save changes, press the save changes button.
-    cook_head: '5 Cook'
-    cook_body: |
-      Run chef by click cook button. Cook status is displayed in real time.
-      When the cook status has been successfully done, Zabbix Server Deployment is also done. Finally, SkyHopper will populate the user information for Zabbix Server.
-      Congratulations! Zabbix Server configuration is complete.
+    client_head: 'Create client.'
+    client_body: |
+      Please click new cient button and enter name and code which must be a unique string of the client.
+    project_head: 'Create Project'
+    project_body: |
+      When creating a project, select a client and click new project button and fill out the form with the code, name, cloud providers,
+      access key and secret access key created from AWS.
+    infrastructure_head: 'Create Infrastructure'
+    infrastructure_body: |
+      After creating and selecting project in a client, the step is to create an infrastructure to be managed inside your project. Which requires a keypair,
+      stackname, and region. If you have no keypair yet, you can create a new keypair using the generate keypair function.
+    cf_template_head: 'Apply CloudFormation Template'
+    cf_template_body: |
+      In order to apply a cloud formation template, you have to <i> select an infrastructure </i> to show details and click the <i> operations menu</i> and apply <i> cloudformation tab </i>.
+      Then, the list of cloud formation templates will appear in the screen. Please select the template as you like and fillout the required fileds to set the parameters then press end to start creating your new stack.
+      You can also add an EC2 if you have created it already on AWS. For more instructions, please visit <a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>.
