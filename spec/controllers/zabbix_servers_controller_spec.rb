@@ -54,6 +54,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   # ZabbixServersController. Be sure to keep this updated too.
   let(:valid_session) { {} }
   let(:zabbix_server){create(:zabbix_server)}
+  let(:zabbix_server_hash){attributes_for(:zabbix_server)}
 
   describe "GET #index" do
     before do
@@ -90,7 +91,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:request) {post :create, zabbix_server: zabbix_server}
+    let(:request){post :create, zabbix_server: zabbix_server_hash}
 
     context "with valid params" do
       before do
