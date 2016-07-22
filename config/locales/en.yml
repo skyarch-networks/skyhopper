@@ -702,7 +702,7 @@ en:
       Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
     client_head: 'Create client.'
     client_body: |
-      Please click new cient button and enter name and code which must be a unique string of the client.
+      Please click new client button and enter name and code which must be a unique string of the client.
     project_head: 'Create Project'
     project_body: |
       When creating a project, select a client and click new project button and fill out the form with the code, name, cloud providers,
@@ -714,5 +714,5 @@ en:
     cf_template_head: 'Apply CloudFormation Template'
     cf_template_body: |
       In order to apply a cloud formation template, you have to <b> select an infrastructure </b> to show details and click the <b> operations menu</b> and apply <b> cloudformation tab </b>.
-      Then, the list of cloud formation templates will appear in the screen. Please select the template as you like and fillout the required fileds to set the parameters then press end to start creating your new stack.
+      Then, the list of cloud formation templates will appear in the screen. Please select the template as you like and fillout the required fields to set the parameters then press send to start creating your new stack.
       You can also add an EC2 if you have created it already on AWS. For more instructions, please visit <a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>.
