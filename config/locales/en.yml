@@ -31,6 +31,7 @@ en:
     password:      'Password'
     please_select: 'Select one'
     not_set:       'Not set'
+    selected:      'Selected'
     btn:
       architecture:    'Architecture'
       settings:        'Settings'
@@ -44,8 +45,13 @@ en:
       next:            'Next'
       delete:          'Delete'
       update:          'Update'
+      import:          'Import'
+      export:          'Export'
+      all:             'All'
+      multiple_select: 'Multiple Select'
     msg:
       loading:       ' Loading...'
+      creating:      ' Creating...'
       empty:         '%{name} is empty'
       no_permission: 'Permission denied'
       key_droppable: |
@@ -412,6 +418,7 @@ en:
       updating:        'Updating stack'
       creating:        'Creating stack'
       delete_cf_template: 'Are you sure you want to delete this Cf_template?'
+      confirm_export:  ' Are you sure you want to export the following templates?'
 
 
   template_builder:
@@ -572,6 +579,10 @@ en:
     set_device_name:   'Set Device Name'
     none:              'None'
     ec2_instance:      'EC2 Instance'
+    create_volume:     'Create Volume'
+    detach_volume:     'Detach Volume'
+    volume_type:       'Volume Type'
+    encryption:        'Encryption'
     msg:
       start_ec2:             'Start to turn on the power EC2 instance.'
       stop_ec2:              'Start to turn off the power EC2 instance.'
@@ -595,6 +606,9 @@ en:
       security_groups:  'The security groups to which the instance belongs.
                          A security group is a collection of firewall rules that restrict the network traffic for the instance.
                          Click View rules to see the rules for the specific group.'
+      detach_volume:         'Are you sure you want to detach %{volume_id} from %{physical_id}?'
+      volume_detached:       '%{volume_id} has detached.'
+      creating_volume:       'Creating volume <code>%{volume_id}</code> has started.'
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
@@ -615,7 +629,12 @@ en:
       delete_certificate: 'Do you want to delete of certificate?'
       detach:   'Are you sure you want to detach this EC2 instance from SkyHopper?'
       terminate:   'Are you sure you want to terminate this EC2 instance?'
-
+    ebs_volume_types:
+      gp2:      'General Purpose SSD'
+      io1:      'Provisioned IOPS SSD'
+      st1:      'Throughput Optimized HDD'
+      sc1:      'Cold HDD'
+      standard: 'EBS Magnetic'
 
   ec2_private_keys:
     msg:
@@ -643,13 +662,14 @@ en:
       deleted:    'KeyPair "%{name}" has been deleted successfully.'
 
   snapshots:
-    snapshots:          'Snapshots'
+    snapshots:         'Snapshots'
     create_snapshot:   'Create Snapshot'
     delete_snapshot:   'Delete Snapshot'
     schedule_snapshot: 'Schedule Snapshot Creation'
     list_of_snapshots: 'List of Snapshots'
     retention_policy:  'Retention Policy'
     snapshots_to_keep: 'Snapshots to keep'
+    snapshot_id:       'Snapshot ID'
     msg:
       no_snapshots:    'You do not have any snapshots for this volume'
       create_snapshot: 'Are you sure you want to create snapshot of %{volume_id} ?'
@@ -657,6 +677,7 @@ en:
       creation_started: 'Snapshot creation has started.'
       snapshot_is_protected: 'Cannot delete %{snapshot_id} because it is protected.'
       policy_saved:    'Retantion policy has been saved successfully.'
+      create_volume:   'Are you sure you want to create a volume from %{snapshot_id}?'
 
   datepicker:
     today: 'Go to Today'
