@@ -15,7 +15,7 @@ describe UsersAdminController, type: :controller do
   run_zabbix_server
 
   let(:klass){User}
-  let(:zabbix_servers){double(:zabbix_server)}
+  let(:zabbix_servers){['', create(:zabbix_server)]}
   let(:user){create(:user)}
   let(:admin_status){false}
   let(:master_status){false}
