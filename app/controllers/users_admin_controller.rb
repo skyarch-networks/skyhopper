@@ -171,9 +171,12 @@ class UsersAdminController < ApplicationController
   def destroy
     @user = User.find(params.require(:id))
     # delete user from zabbix
-    z = @zabbix
+    servers = ZabbixServer.all
     begin
-      z.delete_user(@user.email)
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
+        z.delete_user(@user.email)
+      end
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
       raise
