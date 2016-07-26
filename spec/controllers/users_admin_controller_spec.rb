@@ -15,11 +15,11 @@ describe UsersAdminController, type: :controller do
   run_zabbix_server
 
   let(:klass){User}
-  let(:zabbix_servers){['', create(:zabbix_server)]}
+  let(:zabbix_servers){[create(:zabbix_server)]}
   let(:user){create(:user)}
   let(:admin_status){false}
   let(:master_status){false}
-  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status, zabbix_servers: zabbix_servers) }
+  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status, zabbix_servers: zabbix_servers.unshift('')) }
 
   describe '#index' do
     before do
@@ -49,7 +49,7 @@ describe UsersAdminController, type: :controller do
   describe '#create' do
     let(:master){true}
     let(:admin){true}
-    let(:req){post :create, user: attributes_for(:user, master: master, admin: admin, zabbix_servers: zabbix_servers)}
+    let(:req){post :create, user: user_hash}
 
 
     context 'when User#save! raise error' do
@@ -250,6 +250,7 @@ describe UsersAdminController, type: :controller do
 
     context 'when delete failure' do
       before do
+        allow(ZabbixServer).to receive(:all).and_return(zabbix_servers)
         allow(_zabbix).to receive(:delete_user).and_raise
         req
       end
