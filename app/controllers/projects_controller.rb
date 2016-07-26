@@ -175,7 +175,7 @@ class ProjectsController < ApplicationController
   def register_hosts
     z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
     # add new hostgroup on zabbix with project code as its name
-    unless z.get_hostgroup_ids(@project.code) 
+    if z.get_hostgroup_ids(@project.code).empty? 
       hostgroup_id = z.add_hostgroup(@project.code)
       z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
       z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
