@@ -561,6 +561,7 @@ en:
       created:        'Zabbix server was successfully created.'
       updated:        'Zabbix server was successfully updated.'
       deleted:        'Zabbix Server "%{name}" was successfully deleted.'
+      delete_server:  'Are you sure you want to delete this zabbix server?'
 
   ec2_instances:
     description:       'Description'

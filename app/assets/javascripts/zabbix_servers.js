@@ -44,7 +44,7 @@
 
       delete_entry: function()  {
         var self = this;
-        modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(function () {
+        modal.Confirm(t('zabbix_servers.zabbix'), t('zabbix_servers.msg.delete_server'), 'danger').done(function () {
           $.ajax({
             type: "POST",
             url: self.picked.delete_zabbix_server_path,
