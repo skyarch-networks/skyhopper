@@ -10,19 +10,19 @@ require_relative '../spec_helper'
 
 describe Zabbix, type: :model do
   describe '.new' do
-    let(:set){AppSetting.get}
+    let(:set){create :zabbix_server}
     let(:zabbix){double('method result')}
     let(:version) { "3.0.1" }
 
     before do
       expect_any_instance_of(SkyZabbix::Client).to receive(:login).with(
-        set.zabbix_user,
-        set.zabbix_pass
+        set.username,
+        set.password
       )
       expect_any_instance_of(SkyZabbix::Client).to receive_message_chain(:apiinfo, :version).and_return(version)
     end
 
-    subject{Zabbix.new(set.zabbix_user, set.zabbix_pass)}
+    subject{Zabbix.new(set.fqdn, set.username, set.password)}
     it {is_expected.to be_a Zabbix}
 
 

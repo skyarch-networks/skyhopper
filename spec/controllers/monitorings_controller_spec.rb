@@ -14,11 +14,15 @@ RSpec.describe MonitoringsController, type: :controller do
   run_zabbix_server
 
   let(:infra){create(:infrastructure)}
+  let(:zabbix_server){create(:zabbix_server)}
   let(:physical_id){"i-#{SecureRandom.base64(10)}"}
 
   describe '#show' do
     let(:req){get :show, id: infra.id}
+
+
     before do
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
       create(:ec2_resource, infrastructure: infra)
     end
 
@@ -85,6 +89,7 @@ RSpec.describe MonitoringsController, type: :controller do
     let(:history){['foo', 'bar', 'hoge']}
     before do
       create(:resource, infrastructure: infra, physical_id: physical_id)
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
       allow(_zabbix).to receive(:get_history).and_return(history)
       req
     end
@@ -100,6 +105,7 @@ RSpec.describe MonitoringsController, type: :controller do
     let(:req){get :show_problems, id: infra.id}
     let(:problems){['foo', 'bar', 'nya']}
     before do
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
       allow(_zabbix).to receive(:show_recent_problems).and_return(problems).with(kind_of(Infrastructure))
       req
     end
@@ -115,6 +121,7 @@ RSpec.describe MonitoringsController, type: :controller do
     let(:req){get :show_url_status, id: infra.id}
     let(:url_status){{'foo '=> 'bar', 'piyo' => 'poyo'}}
     before do
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
       allow(_zabbix).to receive(:get_url_status_monitoring).and_return(url_status).with(kind_of(Infrastructure))
       req
     end
@@ -130,6 +137,7 @@ RSpec.describe MonitoringsController, type: :controller do
     let(:req){get :edit, id: infra.id}
     before do
       create(:ec2_resource, infrastructure: infra)
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
     end
 
     context 'before register' do
@@ -174,6 +182,7 @@ RSpec.describe MonitoringsController, type: :controller do
   describe '#create_host' do
     before do
       create(:ec2_resource, infrastructure: infra)
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
     end
     let(:req){post :create_host, id: infra.id, templates: ['Template OS Linux']}
 

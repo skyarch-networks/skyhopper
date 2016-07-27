@@ -109,6 +109,15 @@ class ChefServer::Deployment
       set.zabbix_user = 'admin'
       set.zabbix_pass = 'ilikerandompasswords'
       set.save!
+
+      ZabbixServer.create(
+        fqdn: set.zabbix_fqdn,
+        username: 'admin',
+        password: 'ilikerandompasswords',
+        version: '2.2.9',
+        details: 'Default Zabbix Server for Skyhopper System'
+      )
+      
       AppSetting.clear_cache
     rescue => ex
       Rails.logger.error(ex)
