@@ -540,6 +540,11 @@ en:
       not_running:    'Chef Server is not running.'
 
   zabbix_servers:
+    zabbix:      'Zabbix Servers'
+    version:     'Version'
+    details:     'Details'
+    btn:
+      add:            'Add Zabbix Server'
     msg:
       creating_infra: 'Creating Infrastructure...'
       creating_stack: 'Creating Stack...'
@@ -553,6 +558,10 @@ en:
       stop:           'Starting Zabbix Server...'
       not_running:    'Zabbix Server is not running.'
       connrefused:    'Could not connect to Zabbix Server. Please check the configuration.'
+      created:        'Zabbix server was successfully created.'
+      updated:        'Zabbix server was successfully updated.'
+      deleted:        'Zabbix Server "%{name}" was successfully deleted.'
+      delete_server:  'Are you sure you want to delete this zabbix server?'
 
   ec2_instances:
     description:       'Description'

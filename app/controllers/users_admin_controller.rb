@@ -15,7 +15,6 @@ class UsersAdminController < ApplicationController
   end
 
   before_action :with_zabbix, only: [:new, :create, :destroy, :edit, :update, :sync_zabbix]
-  before_action :set_zabbix, only: [:destroy]
 
   # user management
   # GET /users_admin
@@ -34,6 +33,8 @@ class UsersAdminController < ApplicationController
   def new
     @user = User.new(session[:form])
     session[:form] = nil  # remove temporary form data
+
+    @zabbix_servers = ZabbixServer.all
   end
 
   # create new user only by master
@@ -65,9 +66,14 @@ class UsersAdminController < ApplicationController
 
     begin
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
-      s = AppSetting.get
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      z.create_user(@user)
+      z_params = params[:user][:zabbix_servers]
+      z_params.shift
+
+      zab = ZabbixServer.find(z_params)
+      zab.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        z.create_user(@user)
+      end
     rescue => ex
       @user.destroy
       e.(ex) and return
@@ -151,14 +157,10 @@ class UsersAdminController < ApplicationController
   # PUT /users_admin/sync_zabbix
   # 全てのユーザーをZabbixに登録する。
   def sync_zabbix
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-
-    users = User.all
-    users.each do |user|
-      next if z.user_exists?(user.email)
-
-      z.create_user(user)
+    servers = ZabbixServer.all
+    servers.each do |s|
+      z = Zabbix.new(s.fqdn, s.username, s.password)
+      add_create_user(z)
     end
 
     render text: I18n.t('users.msg.synced'); return
@@ -169,9 +171,12 @@ class UsersAdminController < ApplicationController
   def destroy
     @user = User.find(params.require(:id))
     # delete user from zabbix
-    z = @zabbix
+    servers = ZabbixServer.all
     begin
-      z.delete_user(@user.email)
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
+        z.delete_user(@user.email)
+      end
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
       raise
@@ -186,12 +191,21 @@ class UsersAdminController < ApplicationController
 
   private
 
-  def set_zabbix
+  def set_zabbix(fqdn)
     begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
+      @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
     rescue => ex
       flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
       redirect_to users_admin_index_path
+    end
+  end
+
+  def add_create_user(zabbix)
+    users = User.all
+    users.each do |user|
+      next if zabbix.user_exists?(user.email)
+
+      zabbix.create_user(user)
     end
   end
 end

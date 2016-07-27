@@ -20,7 +20,7 @@
           <a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= fa 'cogs' %> <%= t('common.btn.settings') %> <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
   <% if current_user.admin? && current_user.master? %>
-            <li role="presentation"><%= link_to 'Zabbix Server', edit_zabbix_app_settings_path %></li>
+            <li role="presentation"><%= link_to 'Zabbix Servers', zabbix_servers_path %></li>
             <li class="divider"></li>
   <% end %>
             <li role="presentation"><%= link_to t('dishes.dishes'), dishes_path %></li>

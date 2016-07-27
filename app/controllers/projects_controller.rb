@@ -29,7 +29,6 @@ class ProjectsController < ApplicationController
 
   before_action :with_zabbix, only: [:destroy, :create, :new]
 
-
   # GET /projects
   # GET /projects.json
   def index
@@ -64,17 +63,20 @@ class ProjectsController < ApplicationController
     session[:form] = nil
 
     @cloud_providers = CloudProvider.all
+    @zabbix_servers = ZabbixServer.all
   end
 
   # GET /projects/1/edit
   def edit
     @cloud_providers = CloudProvider.all
+    @zabbix_servers = ZabbixServer.all
   end
 
   # POST /projects
   # POST /projects.json
   def create
     @project = Project.new(project_params)
+    @zabbix = ZabbixServer.find(@project.zabbix_server_id)
 
     on_error = -> () {
       session[:form] = project_params
@@ -87,16 +89,7 @@ class ProjectsController < ApplicationController
     end
 
     begin
-      s = AppSetting.get
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      # add new hostgroup on zabbix with project code as its name
-      hostgroup_id = z.add_hostgroup(@project.code)
-      z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
-      z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
-
-      hostgroup_names = Project.pluck(:code)
-      hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
-      z.change_mastergroup_rights(hostgroup_ids)
+      register_hosts
 
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.created') and return
@@ -112,7 +105,9 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
+    @zabbix = ZabbixServer.find(project_params[:zabbix_server_id])
     if @project.update(project_params)
+      register_hosts
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.updated')
     else
@@ -129,7 +124,8 @@ class ProjectsController < ApplicationController
       @project.destroy!
     rescue => ex
       flash[:alert] = ex.message
-      go.() and return
+      ws_send(t('projects.msg.deleted', name: ex.message), false)
+      return 404
     end
 
     ws_send(t('projects.msg.deleted', name: @project.name), true)
@@ -145,7 +141,7 @@ class ProjectsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
-    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id)
+    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id, :zabbix_server_id)
   end
 
   # redirect to clients#index if specified client does not exist
@@ -175,4 +171,20 @@ class ProjectsController < ApplicationController
       redirect_to clients_path, alert: msg
     end
   end
+
+  def register_hosts
+    z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
+    # add new hostgroup on zabbix with project code as its name
+    if z.get_hostgroup_ids(@project.code).empty? 
+      hostgroup_id = z.add_hostgroup(@project.code)
+      z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
+      z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
+
+      hostgroup_names = Project.pluck(:code)
+      hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
+      z.change_mastergroup_rights(hostgroup_ids)
+    end
+
+  end
+
 end
