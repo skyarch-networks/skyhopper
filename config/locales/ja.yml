@@ -43,7 +43,7 @@ ja:
       lang:            '言語'
       previous:        '前へ'
       next:            '次へ'
-      delete:          '削除します'
+      delete:          '削除'
       update:          '更新'
       import:          'インポート'
       export:          'エクスポート'
@@ -540,9 +540,9 @@ ja:
   zabbix_servers:
     zabbix:      'Zabbix Servers'
     version:     'バージョン'
-    details:     '細部'
+    details:     '詳細'
     btn:
-      add:            'Zabbixサーバを追加します。'
+      add:            'Zabbix Server を追加'
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'
@@ -556,10 +556,10 @@ ja:
       stop:           'Zabbix Server を停止しています...'
       not_running:    'Zabbix Server が起動していません'
       connrefused:    'Zabbix Server に接続できませんでした。Zabbix Server の設定を確認してください。'
-      created:        'Zabbix サーバが正常に作成されました。'
-      updated:        'Zabbix サーバが正常に更新されました'
-      deleted:        'Zabbix サーバ"%{name}" が正常に削除されました'
-      delete_server:  'あなたはこのZABBIXサーバを削除してもよろしいですか？'
+      created:        'Zabbix Server が正常に作成されました。'
+      updated:        'Zabbix Server が正常に更新されました'
+      deleted:        'Zabbix Server "%{name}" が正常に削除されました'
+      delete_server:  'この Zabbix Server を削除してもよろしいですか？'
 
   ec2_instances:
     description:       '詳細'
