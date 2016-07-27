@@ -44,6 +44,7 @@ gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
+gem 'awspec'
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
@@ -102,7 +103,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3' 
+gem 'devise', '~> 3.5.3'
 gem 'pundit'
 
 # pagination

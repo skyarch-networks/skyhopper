@@ -55,6 +55,18 @@ GEM
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
+    aws_config (0.0.4)
+    awsecrets (1.2.0)
+      aws-sdk (~> 2.1)
+      aws_config
+    awspec (0.37.7)
+      activesupport
+      aws-sdk (~> 2.2)
+      awsecrets (~> 1)
+      rspec (~> 3.0)
+      rspec-its
+      term-ansicolor
+      thor
     bcrypt (3.1.11)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -530,6 +542,7 @@ DEPENDENCIES
   awesome_print
   aws-sdk (~> 2)
   aws-sdk-v1
+  awspec
   better_errors
   binding_of_caller
   bootstrap-table-rails
@@ -601,4 +614,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.11.2
+   1.12.5
