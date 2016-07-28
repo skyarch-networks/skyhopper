@@ -21,7 +21,6 @@ class ClientsController < ApplicationController
   end
 
   before_action :with_zabbix, only: :destroy
-  after_action :sync_zabbix, only: :index
 
 
 
@@ -102,11 +101,4 @@ class ClientsController < ApplicationController
     end
   end
 
-  def sync_zabbix
-    z = ZabbixServer.all.first
-    zabbix = Zabbix.new(z.fqdn, z.username, z.password)
-    if zabbix.user_exists?(current_user.email)
-      zabbix.create_user(current_user)
-    end
-  end
 end
