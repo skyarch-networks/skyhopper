@@ -56,7 +56,7 @@
           });
 
       },
-      create_key: function() {
+      create_key: function(event) {
         event.preventDefault();
         var params = this.params;
         var name_file;
