@@ -96,8 +96,7 @@
           modal.Alert(t('app_settings.title.setup'), xhr.responseText, 'danger');
         });
       },
-      create: function()  {
-        event.preventDefault();
+      create_skyhopper: function(event)  {
         var self = this;
 
 

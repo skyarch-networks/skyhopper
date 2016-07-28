@@ -4,7 +4,7 @@
   <div class="form-group" data-position="top" data-step="5" data-intro="<%= t('app_settings.intro.chef_button') %>">
     <label class="col-sm-3 control-label"><%= t 'app_settings.chef_server' %></label>
     <div class="col-sm-7">
-      <button class="btn btn-primary" v-if="!creating" :disabled="!required_filed" @click="create()"><%= t 'app_settings.btn.create_chefserver' %></button>
+      <button class="btn btn-primary" v-if="!creating" :disabled="!required_filed" v-on:click.stop.prevent="create_skyhopper()"><%= t 'app_settings.btn.create_chefserver' %></button>
 
       <%# Progress bar %>
       <div class="progress progress-striped active create-chefserver" id="progress-create-chefserver" style="display: none;">
