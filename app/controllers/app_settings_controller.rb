@@ -139,7 +139,7 @@ class AppSettingsController < ApplicationController
           # Execute given command on Copying chef keys and uploading cookbooks
           Node.exec_command(cmd)
           Rails.logger.info("SkyHopper setup > Running necessary Scripts")
-          zabbix = Infrastructure.first
+          zabbix = Project.for_zabbix_server.infrastructures.first
           physical_id = zabbix.resources.first.physical_id
           fqdn = zabbix.instance(physical_id).fqdn
           # BOOTSTRAP node
@@ -156,6 +156,7 @@ class AppSettingsController < ApplicationController
             node.cook(zabbix, false) do |line|
               Rails.logger.info "cooking #{physical_id} > #{line}"
             end
+
           rescue Node::CookError
             retry unless (tries -= 1).zero?
           end
