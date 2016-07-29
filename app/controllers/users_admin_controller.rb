@@ -131,26 +131,12 @@ class UsersAdminController < ApplicationController
 
     user.save!
 
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-    zabbix_user_id = z.get_user_id(user.email)
-
-    z.create_user(user) unless z.user_exists?(user.email)
-
-    if set_password
-      z.update_user(zabbix_user_id, password: user.encrypted_password)
+    # Zabbix update create user.
+    servers = ZabbixServer.all
+    servers.each do |s|
+      update_user_zabbix(s, user, set_password)
     end
 
-    usergroup_ids = [z.get_group_id_by_user(user)]
-    if user.master
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
-    else
-      hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
-      if hostgroup_names.present?
-        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
-      end
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
-    end
     render text: I18n.t('users.msg.updated')
   end
 
@@ -208,4 +194,27 @@ class UsersAdminController < ApplicationController
       zabbix.create_user(user)
     end
   end
+
+  def update_user_zabbix(zabbix, user, set_password)
+    z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
+    zabbix_user_id = z.get_user_id(user.email)
+
+    z.create_user(user) unless z.user_exists?(user.email)
+
+    if set_password
+      z.update_user(zabbix_user_id, password: user.encrypted_password)
+    end
+
+    usergroup_ids = [z.get_group_id_by_user(user)]
+    if user.master
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
+    else
+      hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
+      if hostgroup_names.present?
+        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
+      end
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
+    end
+  end
+
 end
