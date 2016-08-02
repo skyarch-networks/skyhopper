@@ -16,6 +16,9 @@ class User < ActiveRecord::Base
   has_many :operation_durations
   has_many :projects, through: :user_projects
 
+  has_many :user_zabbix_servers
+  has_many :zabbix_servers, through: :user_zabbix_servers
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,

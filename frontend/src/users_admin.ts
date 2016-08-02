@@ -42,7 +42,7 @@ namespace UsersAdmin {
   interface ProjectResp {
     id:   number;
     name: string;
-    code: string;
+    code_name: string;
     url:  string;
   }
 
@@ -53,6 +53,7 @@ namespace UsersAdmin {
 
   interface UpdateRequestBody {
     allowed_projects: number[];
+    zabbix_list: number[];
     master: boolean;
     admin:  boolean;
     mfa_secret_key: string;
@@ -72,6 +73,9 @@ namespace UsersAdmin {
 
     private selected_allowed_projects: number[];
     private allowed_projects: VueOption[];
+
+    private selected_zabbix: number[];
+    private zabbix_list: VueOption[];
 
     private update_mfa_key: boolean;
     private remove_mfa_key: boolean;
@@ -126,7 +130,7 @@ namespace UsersAdmin {
 
           return {
             value: project.id,
-            text: `${client_name}/${project.name}[${project.code}]`,
+            text: `${client_name}/${project.name}[${project.code_name}]`,
           };
         });
       }).fail(AlertForAjaxStdError());
