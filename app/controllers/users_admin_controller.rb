@@ -93,7 +93,7 @@ class UsersAdminController < ApplicationController
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
     @allowed_zabbix = user.zabbix_servers.map do |zabbix|
-      {value: zabbix.id, text: "#{zabbix.fqdn}/[#{zabbix.details}]"}
+      {value: zabbix.id, text: "#{zabbix.fqdn}"}
     end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key

@@ -48,7 +48,7 @@ namespace UsersAdmin {
 
   interface ZabbixResp {
     id: number;
-    fqdn: string;
+    address: string;
     details: string;
   }
 
@@ -59,7 +59,7 @@ namespace UsersAdmin {
 
   interface UpdateRequestBody {
     allowed_projects: number[];
-    zabbix_servers: number[];
+    allowed_zabbix: number[];
     master: boolean;
     admin:  boolean;
     mfa_secret_key: string;
@@ -113,7 +113,8 @@ namespace UsersAdmin {
         update_mfa_key:            this.update_mfa_key,
         remove_mfa_key:            this.remove_mfa_key,
         zabbix_servers:            this.zabbix_servers,
-        selected_zabbix:           this.selected_zabbix
+        selected_zabbix:           this.selected_zabbix,
+        selected_allowed_zabbix:   this.selected_allowed_zabbix
       }, data);
 
       this._init({
@@ -124,6 +125,8 @@ namespace UsersAdmin {
           get_zabbix:   this.get_zabbix,
           add:          this.add,
           del:          this.del,
+          add_zabbix:   this.add_zabbix,
+          del_zabbix:   this.del_zabbix,
           update_mfa:   this.update_mfa,
           remove_mfa:   this.remove_mfa,
           submit:       this.submit,
@@ -162,9 +165,10 @@ namespace UsersAdmin {
         dataType: 'json',
       }).done((zabbix_servers: ZabbixResp[]) => {
         this.zabbix_servers = _.map(zabbix_servers, (zabbix_server) => {
+          const fqdn = zabbix_server.address.split("/zabbix");
           return{
             value: zabbix_server.id,
-            text: `${zabbix_server.fqdn}/[${zabbix_server.details}]`,
+            text: `${fqdn[0]}`,
           };
         });
       }).fail(AlertForAjaxStdError());
@@ -186,12 +190,29 @@ namespace UsersAdmin {
       });
     }
 
+    add_zabbix(): void  {
+      _.forEach(this.selected_zabbix, (zabbix_server_id) => {
+        const zabbix_server = _.find(this.zabbix_servers, p => p.value === zabbix_server_id);
+        this.allowed_zabbix.push(zabbix_server);
+        this.allowed_zabbix = _.uniq(this.allowed_zabbix, p => p.value);
+      });
+    }
+
+    del_zabbix(): void  {
+      _.forEach(this.selected_allowed_zabbix, (zabbix_server_id) => {
+        this.allowed_zabbix = _.reject(this.allowed_projects, (p) => {
+          return p.value === zabbix_server_id;
+        });
+      });
+    }
+
     update_mfa(): void {this.update_mfa_key = true; }
     remove_mfa(): void {this.remove_mfa_key = true; }
 
     submit(): void {
       const body = <UpdateRequestBody>{};
       body.allowed_projects = _.map(this.allowed_projects, p =>  p.value);
+      body.allowed_zabbix   = _.map(this.allowed_zabbix, p => p.value);
       body.master = this.user.master;
       body.admin = this.user.admin;
       if (this.update_mfa_key) {
