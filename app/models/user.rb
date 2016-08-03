@@ -31,9 +31,6 @@ class User < ActiveRecord::Base
   extend Concerns::Cryptize
   cryptize :mfa_secret_key
 
-  attr_accessor :zabbix_servers
-  serialize :zabbix_servers, JSON
-
   def self.can_sign_up?
     self.where(admin: true, master: true).empty?
   end

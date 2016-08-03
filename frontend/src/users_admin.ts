@@ -46,6 +46,12 @@ namespace UsersAdmin {
     url:  string;
   }
 
+  interface ZabbixResp {
+    id: number;
+    fqdn: string;
+    details: string;
+  }
+
   interface VueOption {
     value: number;
     text:  string;
@@ -53,7 +59,7 @@ namespace UsersAdmin {
 
   interface UpdateRequestBody {
     allowed_projects: number[];
-    zabbix_list: number[];
+    zabbix_servers: number[];
     master: boolean;
     admin:  boolean;
     mfa_secret_key: string;
@@ -74,8 +80,11 @@ namespace UsersAdmin {
     private selected_allowed_projects: number[];
     private allowed_projects: VueOption[];
 
+    private selected_allowed_zabbix: number[];
+    private allowed_zabbix: VueOption[];
+
+    private zabbix_servers: VueOption[];
     private selected_zabbix: number[];
-    private zabbix_list: VueOption[];
 
     private update_mfa_key: boolean;
     private remove_mfa_key: boolean;
@@ -91,6 +100,10 @@ namespace UsersAdmin {
       this.selected_projects = [];
       this.projects = [];
 
+      this.selected_allowed_zabbix = [];
+      this.selected_zabbix = [];
+      this.zabbix_servers = [];
+
       const d = _.merge({
         user:                      this.user,
         selected_allowed_projects: this.selected_allowed_projects,
@@ -99,6 +112,8 @@ namespace UsersAdmin {
         projects:                  this.projects,
         update_mfa_key:            this.update_mfa_key,
         remove_mfa_key:            this.remove_mfa_key,
+        zabbix_servers:            this.zabbix_servers,
+        selected_zabbix:           this.selected_zabbix
       }, data);
 
       this._init({
@@ -106,13 +121,17 @@ namespace UsersAdmin {
         data: d,
         methods: {
           get_projects: this.get_projects,
+          get_zabbix:   this.get_zabbix,
           add:          this.add,
           del:          this.del,
           update_mfa:   this.update_mfa,
           remove_mfa:   this.remove_mfa,
           submit:       this.submit,
         },
-        ready: () => {console.log(this); },
+        ready: () => {
+          console.log(this);
+          this.get_zabbix();
+        },
       });
     }
 
@@ -131,6 +150,21 @@ namespace UsersAdmin {
           return {
             value: project.id,
             text: `${client_name}/${project.name}[${project.code_name}]`,
+          };
+        });
+      }).fail(AlertForAjaxStdError());
+    }
+
+    get_zabbix(): void{
+      this.zabbix_servers = [];
+      $.ajax({
+        url: '/zabbix_servers.json',
+        dataType: 'json',
+      }).done((zabbix_servers: ZabbixResp[]) => {
+        this.zabbix_servers = _.map(zabbix_servers, (zabbix_server) => {
+          return{
+            value: zabbix_server.id,
+            text: `${zabbix_server.fqdn}/[${zabbix_server.details}]`,
           };
         });
       }).fail(AlertForAjaxStdError());

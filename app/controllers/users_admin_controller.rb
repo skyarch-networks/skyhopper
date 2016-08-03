@@ -68,7 +68,7 @@ class UsersAdminController < ApplicationController
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
       z_params = params[:user][:zabbix_servers]
       z_params.shift
-
+      @user.zabbix_server_ids = z_params
       zab = ZabbixServer.find(z_params)
       zab.each do |s|
         z = Zabbix.new(s.fqdn, s.username, s.password)
@@ -88,13 +88,13 @@ class UsersAdminController < ApplicationController
     user = User.find(params.require(:id))
     @user = user.trim_password
     @clients = Client.all.map{|c|{value: c.id, text: c.name}}
-    allowed_projects = user.projects.includes(:client)
-    @allowed_projects = allowed_projects.map do |project|
+    @allowed_projects = user.projects.includes(:client).map do |project|
       client_name = project.client.name
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
-
-    @zabbix_list = ZabbixServer.all.map{|z|{value: z.id, text: z.fqdn}}
+    @allowed_zabbix = user.zabbix_servers.map do |zabbix|
+      {value: zabbix.id, text: "#{zabbix.fqdn}/[#{zabbix.details}]"}
+    end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key
   end
