@@ -102,7 +102,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3' 
+gem 'devise', '~> 3.5.3'
 gem 'pundit'
 
 # pagination
@@ -127,3 +127,5 @@ gem 'sky_zabbix', '~> 2.2.0'
 gem 'nokogiri', '>= 1.6.8'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
+
+gem 'rubyzip'

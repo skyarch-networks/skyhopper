@@ -538,6 +538,8 @@ en:
       start:          'Stopping Chef Server...'
       stop:           'Starting Chef Server...'
       not_running:    'Chef Server is not running.'
+    btn:
+      download_keys:  'Download keys'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'

@@ -536,6 +536,8 @@ ja:
       start:          'Chef Server を起動しています...'
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
+    btn:
+      download_keys:  '鍵ファイルのダウンロード'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
