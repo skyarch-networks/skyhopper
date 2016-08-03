@@ -2,10 +2,13 @@
 <h1 class="page-header">Chef Server</h1>
 
 <dl class="dl-horizontal">
-  <dt><%= t('chef_servers.btn.download_keys') %></dt>
+  <dt>
+    <%= t('chef_servers.btn.download_keys') %>
+  </dt>
   <dd>
     <%= link_to chef_keys_app_settings_path, {class: 'btn btn-sm btn-primary'} do %>
       <span class="glyphicon glyphicon-download-alt"></span>
     <% end %>
+    <span class="help-block"><%= t('chef_servers.msg.chef_instruction') %></span>
   </dd>
 </dl>

@@ -536,6 +536,7 @@ ja:
       start:          'Chef Server を起動しています...'
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
+      chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
     btn:
       download_keys:  '鍵ファイルのダウンロード'
 

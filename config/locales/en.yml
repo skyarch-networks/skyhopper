@@ -538,6 +538,7 @@ en:
       start:          'Stopping Chef Server...'
       stop:           'Starting Chef Server...'
       not_running:    'Chef Server is not running.'
+      chef_instruction: 'In the environment which installed Knife, by deploying the downloaded file ~/.chef/ in, you can access the Chef Server using the knife command.'
     btn:
       download_keys:  'Download keys'
 
