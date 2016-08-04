@@ -110,6 +110,7 @@ class UsersAdminController < ApplicationController
     remove_mfa_key   = body[:remove_mfa_key]
     password         = body[:password]
     password_confirm = body[:password_confirmation]
+    allowed_zabbix   = body[:allowed_zabbix]
 
     user = User.find(user_id)
     if master
@@ -127,7 +128,7 @@ class UsersAdminController < ApplicationController
       set_password = true
     end
 
-
+    user.zabbix_server_ids = allowed_zabbix
     user.mfa_secret_key = mfa_secret_key if mfa_secret_key
     user.mfa_secret_key = nil            if remove_mfa_key
 
@@ -135,8 +136,18 @@ class UsersAdminController < ApplicationController
 
     # Zabbix update create user.
     servers = ZabbixServer.all
-    servers.each do |s|
-      update_user_zabbix(s, user, set_password)
+    begin
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        if allowed_zabbix.include? s.id
+          update_user_zabbix(z, user, set_password)
+        else
+          z.delete_user(user.email)
+        end
+      end
+    rescue => ex
+      flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
+      raise
     end
 
     render text: I18n.t('users.msg.updated')
@@ -197,8 +208,8 @@ class UsersAdminController < ApplicationController
     end
   end
 
-  def update_user_zabbix(zabbix, user, set_password)
-    z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
+  def update_user_zabbix(z, user, set_password)
+
     zabbix_user_id = z.get_user_id(user.email)
 
     z.create_user(user) unless z.user_exists?(user.email)
