@@ -7,7 +7,7 @@
 #
 
 class AppSettingsController < ApplicationController
-  before_action except: [:edit_zabbix, :update_zabbix] do
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
     if AppSetting.set?
       redirect_to root_path
     end
@@ -184,6 +184,13 @@ class AppSettingsController < ApplicationController
       render text: build_ws_message(:creating_infra)
     end
 
+  # GET /app_settings/chef_keys
+  def chef_keys
+    prepare_chef_key_zip
+    send_file(@zipfile.path, filename: 'chef_keys.zip')
+    @zipfile.close
+  end
+
   private
 
   # statusに対応するメッセージをJSONとして返す
@@ -213,5 +220,11 @@ class AppSettingsController < ApplicationController
     if limit - n < 2
       raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
     end
+  end
+
+  def prepare_chef_key_zip
+    @zipfile = Tempfile.open('chef')
+    zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
+    zf.write
   end
 end

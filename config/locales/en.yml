@@ -49,6 +49,7 @@ en:
       export:          'Export'
       all:             'All'
       multiple_select: 'Multiple Select'
+      download:        'Download'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'
@@ -563,6 +564,9 @@ en:
       start:          'Stopping Chef Server...'
       stop:           'Starting Chef Server...'
       not_running:    'Chef Server is not running.'
+      chef_instruction:   'The Knife file can be installed in your environment by deploying the downloaded file in `~/.chef/` path. When executing the knife command, this file is neccessary to access the Chef Server.'
+    btn:
+      download_keys:  'Download keys'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
