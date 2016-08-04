@@ -49,6 +49,7 @@ en:
       export:          'Export'
       all:             'All'
       multiple_select: 'Multiple Select'
+      help:            'How-To'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'

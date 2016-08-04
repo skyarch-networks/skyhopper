@@ -98,7 +98,8 @@
       },
       create_skyhopper: function(event)  {
         var self = this;
-
+        $("#application-logo").addClass('disabled');
+        $("#drop3").addClass('disabled');
 
         create(self.params).done(function (data) {
           chef_create().done(function (data) {
@@ -108,6 +109,8 @@
           });
         }).fail(function () {
           self.creating = false;
+          $("#application-logo").removeClass('disabled');
+          $("#drop3").removeClass('disabled');
         });
       }
 
@@ -250,9 +253,10 @@
       progress_alert.removeClass("alert-info").addClass("alert-success");
 
       $("#done-appsetting").removeClass("disabled").removeAttr("disabled");
-      $("#wrapper").removeClass('toggled');
-      $("#deploy").addClass('in');
+      $("#wrapper").addClass('toggled');
       $("#signup").addClass('in');
+      $("#application-logo").removeClass('disabled');
+      $("#drop3").removeClass('disabled');
     }
     else if (data.status === "error") {
       progress.removeClass("progress-bar-striped active");
