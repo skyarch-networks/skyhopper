@@ -33,7 +33,7 @@ class ZipFileGenerator
     entries.each do |e|
       zip_file_path = path == '' ? e : File.join(path, e)
       disk_file_path = File.join(@input_dir, zip_file_path)
-      puts "Deflating #{disk_file_path}"
+      Rails.logger.debug "Deflating #{disk_file_path}"
 
       if File.directory? disk_file_path
         recursively_deflate_directory(disk_file_path, io, zip_file_path)
