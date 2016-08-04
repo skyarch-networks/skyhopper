@@ -6,7 +6,7 @@
     <legend>
       <%= t('app_settings.title.system') %>
       <% if !AppSetting.set? %>
-        <a href="#" role="button" class="pull-right" id="flexi_form_start" href="javascript:void(0);"><span class="text-info"><%= fa_icon 'universal-access' %> Help</span></a>
+        <a href="#" role="button" class="pull-right" id="flexi_form_start" href="javascript:void(0);"><span class="text-info"><%= fa 'question-circle-o' %> <%= t('common.btn.help') %></span></a>
       <% end %>
     </legend>
     <div class="form-group">

@@ -50,6 +50,7 @@ en:
       all:             'All'
       multiple_select: 'Multiple Select'
       download:        'Download'
+      help:            'How-To'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'
