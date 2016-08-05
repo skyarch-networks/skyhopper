@@ -80,6 +80,7 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     chef_server:       'Chef Server'
+    warning:           'Warning!'
 
     msg:
       created:           'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
@@ -99,6 +100,7 @@ en:
       aws_description:  |
         SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
         The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
+      warning_msg:  'We recommend to use only <b> Google Chrome </b> or <b> Firefox </b> web browsers. As SkyHopper only works best on these browsers.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'

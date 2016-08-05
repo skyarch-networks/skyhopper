@@ -80,6 +80,7 @@ ja:
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
     chef_server:       'Chef Server'
+    warning:           '警告！'
 
     msg:
       created:           'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成して次のステップにリダイレクトするために行わボタンを押してください。'
@@ -96,6 +97,7 @@ ja:
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       insert_key:        '最初のAWSキーを入力し、地域を選択してください。'
+      warning_msg:  '私たちは、 <b> Google Chromeの </b> または <b> Firefoxの </b> のWebブラウザを使用することをお勧めします。 SkyHopperは、これらのブラウザで最適に動作しますように。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
