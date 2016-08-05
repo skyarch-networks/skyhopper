@@ -49,6 +49,7 @@ ja:
       export:          'エクスポート'
       all:             '全部'
       multiple_select: '複数選択'
+      download:        'ダウンロード'
     msg:
       loading:       ' 読み込み中...'
       creating:      ' 作成中...'
@@ -536,6 +537,9 @@ ja:
       start:          'Chef Server を起動しています...'
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
+      chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
+    btn:
+      download_keys:  '鍵ファイルのダウンロード'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
