@@ -97,7 +97,7 @@ ja:
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       insert_key:        '最初のAWSキーを入力し、地域を選択してください。'
-      warning_msg:  '私たちは、 <b> Google Chromeの </b> または <b> Firefoxの </b> のWebブラウザを使用することをお勧めします。 SkyHopperは、これらのブラウザで最適に動作しますように。'
+      warning_msg:  'SkyHopper が最適に動作するために、<b> Google Chrome </b> または <b> Firefox </b> Webブラウザの使用をお勧めしています。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
