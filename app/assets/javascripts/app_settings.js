@@ -128,7 +128,20 @@
           self.params.keypair_name &&
           self.params.keypair_value
         );
-      }
+      },
+      isAllowedBrowser: function()  {
+        var allowed;
+
+        if(!!window.chrome && !!window.chrome.webstore){
+          allowed = true;
+        }else if (typeof InstallTrigger !== 'undefined') {
+          allowed = true;
+        }else {
+          allowed = false;
+        }
+
+        return allowed;
+      },
     },
     ready: function () {
       introJs();
