@@ -11,6 +11,6 @@ FactoryGirl.define do
     name {SecureRandom.base64(10)}
     item {SecureRandom.base64(10)}
     trigger_expression {SecureRandom.base64(10)}
-    is_common {rand(10)%2==0} # true or false
+    is_common {rand(10)%2.zero?} # true or false
   end
 end
