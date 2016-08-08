@@ -93,7 +93,7 @@ class UsersAdminController < ApplicationController
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
     end
     @allowed_zabbix = user.zabbix_servers.map do |zabbix|
-      {value: zabbix.id, text: "#{zabbix.fqdn}"}
+      {value: zabbix.id, text: zabbix.fqdn}
     end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key
@@ -194,7 +194,7 @@ class UsersAdminController < ApplicationController
     begin
       @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
     rescue => ex
-      flash[:alert] = I18n.t('users.msg.error', msg: ex.message) 
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       redirect_to users_admin_index_path
     end
   end

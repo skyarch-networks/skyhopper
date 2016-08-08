@@ -158,7 +158,7 @@ namespace UsersAdmin {
       }).fail(AlertForAjaxStdError());
     }
 
-    get_zabbix(): void{
+    get_zabbix(): void  {
       this.zabbix_servers = [];
       $.ajax({
         url: '/zabbix_servers.json',

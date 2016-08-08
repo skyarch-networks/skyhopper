@@ -37,6 +37,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     {
+      id:  SecureRandom.random_number(20),
       fqdn: SecureRandom.hex(20),
       username: "test",
       password: "ilsdseeetest",
@@ -46,7 +47,14 @@ RSpec.describe ZabbixServersController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      id: 1,
+      fqdn: 'master',
+      username: "test",
+      password: "ilsdseeetest",
+      version:  "3.0.1",
+      details: "Default Server",
+    }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -130,29 +138,25 @@ RSpec.describe ZabbixServersController, type: :controller do
   end
 
   describe "PUT #update" do
+    let(:new_name){'Joepergwapotalagatotoo'}
+    let(:update_request) {patch :update, id: zabbix_server.id, zabbix_server: zabbix_server_hash.merge(username: new_name)}
+
     context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested zabbix_server" do
-        zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {id: zabbix_server.to_param, zabbix_server: new_attributes}, valid_session
-        expect(zabbix_server.pluck(:id)).to eq ZabbixServer
-        zabbix_server.reload
-        skip("Add assertions for updated state")
+      before do
+        update_request
       end
 
-      it "assigns the requested zabbix_server as @zabbix_server" do
-        zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {id: zabbix_server.to_param, zabbix_server: valid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to eq(zabbix_server)
+      it 'should assign @zabbix_server' do
+        expect(assigns[:zabbix_server]).to be_a ZabbixServer
       end
 
-      it "redirects to the zabbix_server" do
-        zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {id: zabbix_server.to_param, zabbix_server: valid_attributes}, valid_session
-        expect(response).to redirect_to(ZabbixServer)
+      it 'should update finely' do
+        p = ZabbixServer.find(zabbix_server.id)
+        expect(p.username).to eq(new_name)
+      end
+
+      it 'should redirect to zabbix_servers path' do
+        expect(response).to redirect_to zabbix_servers_path
       end
     end
 
@@ -160,7 +164,7 @@ RSpec.describe ZabbixServersController, type: :controller do
       it "assigns the zabbix_server as @zabbix_server" do
         zabbix_server = ZabbixServer.create! valid_attributes
         put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
-        expect(assigns(:zabbix_server)).to eq(ZabbixServer)
+        expect(assigns(:zabbix_server)).not_to eq(ZabbixServer)
       end
 
       it "re-renders the 'edit' template" do
