@@ -142,11 +142,11 @@ class UsersAdminController < ApplicationController
         if allowed_zabbix.include? s.id
           update_user_zabbix(z, user, set_password)
         else
-          z.delete_user(user.email)
+          z.delete_user(user.email) unless z.user_exists?(user.email)
         end
       end
     rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       raise
     end
 
@@ -177,7 +177,7 @@ class UsersAdminController < ApplicationController
         z.delete_user(@user.email)
       end
     rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       raise
     end
 
@@ -194,7 +194,7 @@ class UsersAdminController < ApplicationController
     begin
       @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
     rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message) 
       redirect_to users_admin_index_path
     end
   end
@@ -209,10 +209,8 @@ class UsersAdminController < ApplicationController
   end
 
   def update_user_zabbix(z, user, set_password)
-
-    zabbix_user_id = z.get_user_id(user.email)
-
     z.create_user(user) unless z.user_exists?(user.email)
+    zabbix_user_id = z.get_user_id(user.email)
 
     if set_password
       z.update_user(zabbix_user_id, password: user.encrypted_password)
