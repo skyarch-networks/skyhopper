@@ -141,8 +141,8 @@ class UsersAdminController < ApplicationController
         z = Zabbix.new(s.fqdn, s.username, s.password)
         if allowed_zabbix.include? s.id
           update_user_zabbix(z, user, set_password)
-        else
-          z.delete_user(user.email) unless z.user_exists?(user.email)
+        elsif z.user_exists?(user.email)
+          z.delete_user(user.email)
         end
       end
     rescue => ex
