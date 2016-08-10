@@ -245,7 +245,9 @@ class NodesController < ApplicationController
 
     node = Node.new(physical_id)
 
-    @attrs = node.enabled_attributes.dup
+    @attrs = node.enabled_attributes.dup.select do |_key, value|
+      value[:default] = @infra.project.zabbix_server.fqdn
+    end
     @current_attributes = node.get_attributes
   end
 
