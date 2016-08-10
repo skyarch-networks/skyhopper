@@ -68,7 +68,7 @@ class UsersAdminController < ApplicationController
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
       z_params = params[:user][:zabbix_servers]
       z_params.shift
-
+      @user.zabbix_server_ids = z_params
       zab = ZabbixServer.find(z_params)
       zab.each do |s|
         z = Zabbix.new(s.fqdn, s.username, s.password)
@@ -88,10 +88,12 @@ class UsersAdminController < ApplicationController
     user = User.find(params.require(:id))
     @user = user.trim_password
     @clients = Client.all.map{|c|{value: c.id, text: c.name}}
-    allowed_projects = user.projects.includes(:client)
-    @allowed_projects = allowed_projects.map do |project|
+    @allowed_projects = user.projects.includes(:client).map do |project|
       client_name = project.client.name
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
+    end
+    @allowed_zabbix = user.zabbix_servers.map do |zabbix|
+      {value: zabbix.id, text: zabbix.fqdn}
     end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key
@@ -108,6 +110,7 @@ class UsersAdminController < ApplicationController
     remove_mfa_key   = body[:remove_mfa_key]
     password         = body[:password]
     password_confirm = body[:password_confirmation]
+    allowed_zabbix   = body[:allowed_zabbix]
 
     user = User.find(user_id)
     if master
@@ -125,32 +128,28 @@ class UsersAdminController < ApplicationController
       set_password = true
     end
 
-
+    user.zabbix_server_ids = allowed_zabbix
     user.mfa_secret_key = mfa_secret_key if mfa_secret_key
     user.mfa_secret_key = nil            if remove_mfa_key
 
     user.save!
 
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-    zabbix_user_id = z.get_user_id(user.email)
-
-    z.create_user(user) unless z.user_exists?(user.email)
-
-    if set_password
-      z.update_user(zabbix_user_id, password: user.encrypted_password)
-    end
-
-    usergroup_ids = [z.get_group_id_by_user(user)]
-    if user.master
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
-    else
-      hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
-      if hostgroup_names.present?
-        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
+    # Zabbix update create user.
+    servers = ZabbixServer.all
+    begin
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        if allowed_zabbix.include? s.id
+          update_user_zabbix(z, user, set_password)
+        elsif z.user_exists?(user.email)
+          z.delete_user(user.email)
+        end
       end
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
+    rescue => ex
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
+      raise
     end
+
     render text: I18n.t('users.msg.updated')
   end
 
@@ -178,7 +177,7 @@ class UsersAdminController < ApplicationController
         z.delete_user(@user.email)
       end
     rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       raise
     end
 
@@ -195,7 +194,7 @@ class UsersAdminController < ApplicationController
     begin
       @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
     rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       redirect_to users_admin_index_path
     end
   end
@@ -208,4 +207,25 @@ class UsersAdminController < ApplicationController
       zabbix.create_user(user)
     end
   end
+
+  def update_user_zabbix(z, user, set_password)
+    z.create_user(user) unless z.user_exists?(user.email)
+    zabbix_user_id = z.get_user_id(user.email)
+
+    if set_password
+      z.update_user(zabbix_user_id, password: user.encrypted_password)
+    end
+
+    usergroup_ids = [z.get_group_id_by_user(user)]
+    if user.master
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
+    else
+      hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
+      if hostgroup_names.present?
+        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
+      end
+      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
+    end
+  end
+
 end

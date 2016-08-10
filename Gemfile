@@ -62,6 +62,9 @@ gem "introjs-rails"
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
 gem "ruby_dep", "~> 1.3.1"
 
+# Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
+gem "ruby_dep", "~> 1.3.1"
+
 group :development, :test do
   # debug
   gem "tapp"

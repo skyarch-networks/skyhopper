@@ -546,6 +546,7 @@ ja:
       mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
       delete_user:           'このユーザーを削除してもよろしいですか？'
+      error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
 
 
   chef_servers:

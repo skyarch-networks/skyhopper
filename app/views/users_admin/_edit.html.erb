@@ -104,6 +104,44 @@
   </div>
 </div>
 
+<div class="col-md-6 col-sm-6">
+  <div class="col-md-12 col-sm-12 form-group">
+    <h5 class="page-header">Zabbix Servers List</h5>
+    <select multiple="multiple" size="2" v-model="selected_zabbix" number class="form-control admin-selectbox-height" @dblclick="add_zabbix()">
+      <option v-for="z in zabbix_servers" :value="z.value">{{z.text}}</option>
+    </select>
+  </div>
+  <div class="col-md-12 col-sm-12">
+    <div class="form-group">
+      <button class="btn btn-default pull-right" @click="add_zabbix()">
+        <span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-6 col-sm-6">
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header">Selected Zabbix Servers</h5>
+
+    <div class="col-sm-12 col-md-12">
+      <div class="form-group">
+        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_zabbix" number @dblclick="del_zabbix()">
+          <option v-for="z in allowed_zabbix" :value="z.value">{{z.text}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12">
+      <div class="form-group">
+        <button class="btn btn-default" @click="del_zabbix()">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="col-md-12 col-sm-12">
   <div class="form-actions-top">
     <button class="btn btn-primary btn-sm" @click="submit()">

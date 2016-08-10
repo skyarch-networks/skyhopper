@@ -16,6 +16,9 @@ class User < ActiveRecord::Base
   has_many :operation_durations
   has_many :projects, through: :user_projects
 
+  has_many :user_zabbix_servers
+  has_many :zabbix_servers, through: :user_zabbix_servers
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,
@@ -27,9 +30,6 @@ class User < ActiveRecord::Base
 
   extend Concerns::Cryptize
   cryptize :mfa_secret_key
-
-  attr_accessor :zabbix_servers
-  serialize :zabbix_servers, JSON
 
   def self.can_sign_up?
     self.where(admin: true, master: true).empty?
