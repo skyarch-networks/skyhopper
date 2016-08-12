@@ -6,6 +6,8 @@ json.array!(@projects) do |project|
   json.cloud_provider project.cloud_provider.name
   json.access_key '***' + project.access_key[-3..-1].to_s
 
+  json.code_name project.code
+
   json.infrastructures_path infrastructures_path(project_id: project.id)
 
   json.dishes_path dishes_path(project_id: project.id)

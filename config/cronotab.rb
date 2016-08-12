@@ -17,5 +17,5 @@ require 'rake'
 # Be sure to change AppName to your application name!
 SkyHopper::Application.load_tasks
 
-Crono.perform(Operation_worker).every 30.seconds
+Crono.perform(Operation_worker).every 5.minutes
 Crono.perform(ServerStateWorker).every 5.minutes

@@ -15,7 +15,6 @@ class UsersAdminController < ApplicationController
   end
 
   before_action :with_zabbix, only: [:new, :create, :destroy, :edit, :update, :sync_zabbix]
-  before_action :set_zabbix, only: [:destroy]
 
   # user management
   # GET /users_admin
@@ -34,6 +33,8 @@ class UsersAdminController < ApplicationController
   def new
     @user = User.new(session[:form])
     session[:form] = nil  # remove temporary form data
+
+    @zabbix_servers = ZabbixServer.all
   end
 
   # create new user only by master
@@ -65,9 +66,14 @@ class UsersAdminController < ApplicationController
 
     begin
       #TODO カレントユーザーでZabbixとコネクションを張れるようにする
-      s = AppSetting.get
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-      z.create_user(@user)
+      z_params = params[:user][:zabbix_servers]
+      z_params.shift
+      @user.zabbix_server_ids = z_params
+      zab = ZabbixServer.find(z_params)
+      zab.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        z.create_user(@user)
+      end
     rescue => ex
       @user.destroy
       e.(ex) and return
@@ -82,10 +88,12 @@ class UsersAdminController < ApplicationController
     user = User.find(params.require(:id))
     @user = user.trim_password
     @clients = Client.all.map{|c|{value: c.id, text: c.name}}
-    allowed_projects = user.projects.includes(:client)
-    @allowed_projects = allowed_projects.map do |project|
+    @allowed_projects = user.projects.includes(:client).map do |project|
       client_name = project.client.name
       {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
+    end
+    @allowed_zabbix = user.zabbix_servers.map do |zabbix|
+      {value: zabbix.id, text: zabbix.fqdn}
     end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key
@@ -102,6 +110,7 @@ class UsersAdminController < ApplicationController
     remove_mfa_key   = body[:remove_mfa_key]
     password         = body[:password]
     password_confirm = body[:password_confirmation]
+    allowed_zabbix   = body[:allowed_zabbix]
 
     user = User.find(user_id)
     if master
@@ -119,17 +128,89 @@ class UsersAdminController < ApplicationController
       set_password = true
     end
 
-
+    user.zabbix_server_ids = allowed_zabbix
     user.mfa_secret_key = mfa_secret_key if mfa_secret_key
     user.mfa_secret_key = nil            if remove_mfa_key
 
     user.save!
 
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-    zabbix_user_id = z.get_user_id(user.email)
+    # Zabbix update create user.
+    servers = ZabbixServer.all
+    begin
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, s.username, s.password)
+        if allowed_zabbix.include? s.id
+          update_user_zabbix(z, user, set_password)
+        elsif z.user_exists?(user.email)
+          z.delete_user(user.email)
+        end
+      end
+    rescue => ex
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
+      raise
+    end
 
+    render text: I18n.t('users.msg.updated')
+  end
+
+  # PUT /users_admin/sync_zabbix
+  # 全てのユーザーをZabbixに登録する。
+  def sync_zabbix
+    servers = ZabbixServer.all
+    servers.each do |s|
+      z = Zabbix.new(s.fqdn, s.username, s.password)
+      add_create_user(z)
+    end
+
+    render text: I18n.t('users.msg.synced'); return
+  end
+
+  # delete acount
+  # DELETE /users_admin/1
+  def destroy
+    @user = User.find(params.require(:id))
+    # delete user from zabbix
+    servers = ZabbixServer.all
+    begin
+      servers.each do |s|
+        z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
+        z.delete_user(@user.email)
+      end
+    rescue => ex
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
+      raise
+    end
+
+    #delete user from SkyHopper
+    @user.destroy
+
+    ws_send(t('users.msg.deleted', name: @user.email), true)
+    redirect_to(action: :index)
+  end
+
+  private
+
+  def set_zabbix(fqdn)
+    begin
+      @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
+    rescue => ex
+      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
+      redirect_to users_admin_index_path
+    end
+  end
+
+  def add_create_user(zabbix)
+    users = User.all
+    users.each do |user|
+      next if zabbix.user_exists?(user.email)
+
+      zabbix.create_user(user)
+    end
+  end
+
+  def update_user_zabbix(z, user, set_password)
     z.create_user(user) unless z.user_exists?(user.email)
+    zabbix_user_id = z.get_user_id(user.email)
 
     if set_password
       z.update_user(zabbix_user_id, password: user.encrypted_password)
@@ -145,53 +226,6 @@ class UsersAdminController < ApplicationController
       end
       z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
     end
-    render text: I18n.t('users.msg.updated')
   end
 
-  # PUT /users_admin/sync_zabbix
-  # 全てのユーザーをZabbixに登録する。
-  def sync_zabbix
-    s = AppSetting.get
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
-
-    users = User.all
-    users.each do |user|
-      next if z.user_exists?(user.email)
-
-      z.create_user(user)
-    end
-
-    render text: I18n.t('users.msg.synced'); return
-  end
-
-  # delete acount
-  # DELETE /users_admin/1
-  def destroy
-    @user = User.find(params.require(:id))
-    # delete user from zabbix
-    z = @zabbix
-    begin
-      z.delete_user(@user.email)
-    rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました #{ex.message}"
-      raise
-    end
-
-    #delete user from SkyHopper
-    @user.destroy
-
-    ws_send(t('users.msg.deleted', name: @user.email), true)
-    redirect_to(action: :index)
-  end
-
-  private
-
-  def set_zabbix
-    begin
-      @zabbix = Zabbix.new(current_user.email, current_user.encrypted_password)
-    rescue => ex
-      flash[:alert] = "Zabbix 処理中にエラーが発生しました。 #{ex.message}"
-      redirect_to users_admin_index_path
-    end
-  end
 end

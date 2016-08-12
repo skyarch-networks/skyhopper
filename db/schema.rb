@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121085745) do
+ActiveRecord::Schema.define(version: 20160802055903) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -156,9 +156,11 @@ ActiveRecord::Schema.define(version: 20160121085745) do
     t.string   "access_key",        limit: 255
     t.string   "secret_access_key", limit: 255
     t.integer  "cloud_provider_id", limit: 4,   null: false
+    t.integer  "zabbix_server_id",  limit: 4
   end
 
   add_index "projects", ["client_id"], name: "projects_client_id_fk", using: :btree
+  add_index "projects", ["zabbix_server_id"], name: "index_projects_on_zabbix_server_id", using: :btree
 
   create_table "recurring_dates", force: :cascade do |t|
     t.string   "operation_duration_id", limit: 255
@@ -250,6 +252,14 @@ ActiveRecord::Schema.define(version: 20160121085745) do
   add_index "user_projects", ["project_id"], name: "user_projects_project_id_fk", using: :btree
   add_index "user_projects", ["user_id", "project_id"], name: "index_user_projects_on_user_id_and_project_id", unique: true, using: :btree
 
+  create_table "user_zabbix_servers", id: false, force: :cascade do |t|
+    t.integer "user_id",          limit: 4, null: false
+    t.integer "zabbix_server_id", limit: 4, null: false
+  end
+
+  add_index "user_zabbix_servers", ["user_id"], name: "user_zabbix_servers_zabbix_server_id_fk", using: :btree
+  add_index "user_zabbix_servers", ["zabbix_server_id", "user_id"], name: "index_user_zabbix_servers_on_user_id_and_zabbix_server_id", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
     t.string   "encrypted_password",     limit: 255, default: "", null: false
@@ -271,12 +281,25 @@ ActiveRecord::Schema.define(version: 20160121085745) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "zabbix_servers", force: :cascade do |t|
+    t.string   "fqdn",       limit: 255
+    t.string   "username",   limit: 255
+    t.string   "password",   limit: 255
+    t.string   "version",    limit: 255
+    t.string   "details",    limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
   add_foreign_key "app_settings", "ec2_private_keys", on_delete: :cascade
   add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade
   add_foreign_key "infrastructures", "ec2_private_keys", on_delete: :cascade
   add_foreign_key "infrastructures", "projects", on_delete: :cascade
   add_foreign_key "project_parameters", "projects"
   add_foreign_key "projects", "clients", on_delete: :cascade
+  add_foreign_key "projects", "zabbix_servers"
   add_foreign_key "user_projects", "projects", on_delete: :cascade
   add_foreign_key "user_projects", "users", on_delete: :cascade
+  add_foreign_key "user_zabbix_servers", "users", on_delete: :cascade
+  add_foreign_key "user_zabbix_servers", "zabbix_servers", on_delete: :cascade
 end

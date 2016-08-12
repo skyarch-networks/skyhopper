@@ -16,6 +16,7 @@ describe InfrastructuresController, type: :controller do
   let(:infra_stknm){'stackname'}
   let(:infra_region){'region'}
   let(:infra_hash){ attributes_for(:infrastructure, project_id: project.id, stack_name: infra_stknm, keypair_name: infra_key_name, keypair_value: infra_key_value, region: infra_region) }
+  let(:zabbix_server){create(:zabbix_server)}
 
   let(:regions) {AWS::Regions}
 
@@ -273,7 +274,10 @@ describe InfrastructuresController, type: :controller do
     request_as_ajax
 
     context 'when delete successfully' do
-      before{req}
+      before do
+        allow(ZabbixServer).to receive(:find) {zabbix_server}
+        req
+      end
       should_be_success
 
       it do
@@ -283,6 +287,7 @@ describe InfrastructuresController, type: :controller do
 
     context 'when delete failures' do
       before do
+        allow(ZabbixServer).to receive(:find) {zabbix_server}
         allow_any_instance_of(Infrastructure).to receive(:destroy!).and_raise
         req
       end
@@ -307,6 +312,7 @@ describe InfrastructuresController, type: :controller do
       stubize_stack
 
       before do
+        allow(ZabbixServer).to receive(:find) {zabbix_server}
         delete_stack_request
       end
 

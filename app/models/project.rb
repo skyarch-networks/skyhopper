@@ -9,6 +9,7 @@
 class Project < ActiveRecord::Base
   belongs_to :client
   belongs_to :cloud_provider
+  belongs_to :zabbix_server
 
   has_many :infrastructures,    dependent: :restrict_with_exception
   has_many :dishes,             dependent: :delete_all
@@ -47,9 +48,9 @@ class Project < ActiveRecord::Base
   end
 
   def detach_zabbix
-    s = AppSetting.get
+    s = ZabbixServer.find(self.zabbix_server_id)
     # delete associated host and user group from Zabbix
-    z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+    z = Zabbix.new(s.fqdn, s.username, s.password)
     z.delete_hostgroup(self.code)
     z.delete_usergroup(self.code + '-read')
     z.delete_usergroup(self.code + '-read-write')

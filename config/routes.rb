@@ -1,4 +1,5 @@
 SkyHopper::Application.routes.draw do
+  resources :zabbix_servers
   resources :users_admin, except: :show do
     collection do
       put 'sync_zabbix'
@@ -159,6 +160,8 @@ SkyHopper::Application.routes.draw do
 
       get  :chef_new
       post :chef_create
+      get  :chef_server
+      get  :chef_keys
 
       get  :edit_zabbix
       post :update_zabbix
