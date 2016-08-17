@@ -7,7 +7,7 @@
 #
 
 class AppSettingsController < ApplicationController
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys, :db, :export_db] do
     if AppSetting.set?
       redirect_to root_path
     end
@@ -126,6 +126,14 @@ class AppSettingsController < ApplicationController
     prepare_chef_key_zip
     send_file(@zipfile.path, filename: 'chef_keys.zip')
     @zipfile.close
+  end
+
+  # GET /app_settings/export_db
+  def export_db
+    dbname = ActiveRecord::Base.configurations[Rails.env]['database']
+    path = Rails.root.join("db/#{dbname}.sql")
+    system('rake db:data:dump')
+    send_file(path)
   end
 
   private

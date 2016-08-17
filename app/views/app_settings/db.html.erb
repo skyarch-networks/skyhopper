@@ -1,0 +1,16 @@
+<% provide(:title, t('infrastructures.database')) %>
+<h1 class="page-header"><%= t('infrastructures.database') %></h1>
+
+<div class="row">
+  <div class="col-md-6">
+    <form class="form-horizontal well">
+      <fieldset>
+        <legend><%= t('common.btn.export') %></legend>
+        <a href="<%= export_db_app_settings_path %>" class="btn btn-primary btn-lg" style="width: 100%">
+          <span class="glyphicon glyphicon-export"></span>
+          <%= t('common.btn.export') %>
+        </a>
+      </fieldset>
+    </form>
+  </div>
+</div>
