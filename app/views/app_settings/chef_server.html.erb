@@ -1,0 +1,14 @@
+<% provide(:title, "Chef Server") %>
+<h1 class="page-header">Chef Server</h1>
+
+<div class="jumbotron">
+  <h2><%= t('chef_servers.btn.download_keys') %></h2>
+  <p><%= t('chef_servers.msg.chef_instruction') %></p>
+  <p>
+    <%= link_to chef_keys_app_settings_path, {class: 'btn btn-lg btn-primary'} do %>
+      <span class="glyphicon glyphicon-download-alt">
+        <%= t('common.btn.download') %>
+      </span>
+    <% end %>
+  </p>
+</div>

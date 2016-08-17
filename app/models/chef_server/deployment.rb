@@ -107,6 +107,15 @@ class ChefServer::Deployment
       set = AppSetting.first
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
       set.save!
+
+      ZabbixServer.create(
+        fqdn: set.zabbix_fqdn,
+        username: 'admin',
+        password: 'ilikerandompasswords',
+        version: '2.2.9',
+        details: 'Default Zabbix Server for Skyhopper System'
+      )
+      
       AppSetting.clear_cache
     rescue => ex
       Rails.logger.error(ex)

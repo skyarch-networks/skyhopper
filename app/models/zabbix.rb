@@ -20,9 +20,8 @@ class Zabbix
 
   # @param [String] username
   # @param [String] password
-  def initialize(username, password)
-    s = AppSetting.get
-    url = "http://#{s.zabbix_fqdn}/zabbix/api_jsonrpc.php"
+  def initialize(fqdn, username, password)
+    url = "http://#{fqdn}/zabbix/api_jsonrpc.php"
 
     opt = {url: url, user: username, password: password}
     opt[:debug] = true if Rails.env.development?

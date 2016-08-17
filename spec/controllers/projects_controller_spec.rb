@@ -12,8 +12,9 @@ describe ProjectsController, type: :controller do
   login_user
 
   let(:client){create(:client)}
-  let(:project){create(:project, client: client)}
-  let(:project_hash){attributes_for(:project, client_id: client.id)}
+  let(:zabbix_server){create(:zabbix_server)}
+  let(:project){create(:project, client: client, zabbix_server_id: zabbix_server.id)}
+  let(:project_hash){attributes_for(:project, client_id: client.id, zabbix_server_id: zabbix_server.id )}
 
   describe '#index' do
     let(:req){get :index, client_id: client.id}
@@ -82,7 +83,7 @@ describe ProjectsController, type: :controller do
 
     context 'when zabbix error' do
       before do
-        allow(_zabbix).to receive(:create_usergroup).and_raise
+        allow(_zabbix).to receive(:get_hostgroup_ids).and_raise
         req
       end
       it {is_expected.to redirect_to new_project_path(client_id: client.id)}
@@ -97,6 +98,8 @@ describe ProjectsController, type: :controller do
   describe 'PATCH #update' do
     let(:new_name){'foobarhogehoge'}
     let(:update_request) {patch :update, id: project.id, project: project_hash.merge(name: new_name)}
+    run_zabbix_server
+    stubize_zabbix
 
     context 'when valid params' do
       before do
@@ -167,10 +170,10 @@ describe ProjectsController, type: :controller do
 
     end
 
-    context 'whne delete fail' do
+    context 'when delete fail' do
       let(:err_msg){'Error! Error!'}
       before do
-        allow_any_instance_of(Project).to receive(:destroy!).and_raise(StandardError, err_msg)
+        allow_any_instance_of(Project).to receive(:destroy!).and_return(StandardError, err_msg)
         request
       end
 
@@ -182,9 +185,6 @@ describe ProjectsController, type: :controller do
         expect(response).to redirect_to(projects_path(client_id: project.client_id))
       end
 
-      it 'should flash alert' do
-        expect(request.request.flash[:alert]).to eq err_msg
-      end
     end
   end
 

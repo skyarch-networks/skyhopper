@@ -15,10 +15,11 @@ describe UsersAdminController, type: :controller do
   run_zabbix_server
 
   let(:klass){User}
+  let(:zabbix_servers){[create(:zabbix_server)]}
   let(:user){create(:user)}
   let(:admin_status){false}
   let(:master_status){false}
-  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status) }
+  let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status, zabbix_servers: zabbix_servers.unshift('')) }
 
   describe '#index' do
     before do
@@ -48,7 +49,7 @@ describe UsersAdminController, type: :controller do
   describe '#create' do
     let(:master){true}
     let(:admin){true}
-    let(:req){post :create, user: attributes_for(:user, master: master, admin: admin)}
+    let(:req){post :create, user: user_hash}
 
 
     context 'when User#save! raise error' do
@@ -154,13 +155,20 @@ describe UsersAdminController, type: :controller do
     let(:master){true}
     let(:admin){true}
     let(:allowed_projects){nil}
+    let(:allowed_zabbix){nil}
     let(:password){nil}
     let(:password_confirm){password}
     let(:mfa_secret_key){nil}
     let(:req){
       put :update,
         id: user.id,
-        body: {master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm, mfa_secret_key: mfa_secret_key}.to_json
+        body: {master: master,
+          admin: admin,
+          allowed_projects: allowed_projects,
+          allowed_zabbix: allowed_zabbix,
+          password: password,
+          password_confirmation: password_confirm,
+          mfa_secret_key: mfa_secret_key}.to_json
     }
 
     context 'when set password' do
@@ -186,6 +194,16 @@ describe UsersAdminController, type: :controller do
       it 'should update mfa secret key' do
         user.reload
         expect(user.mfa_secret_key).to eq mfa_secret_key
+      end
+    end
+
+    context 'when update zabbix servers' do
+      let(:allowed_zabbix){create_list(:zabbix_server, 3).map{|zb| zb.id}}
+      before {req}
+      should_be_success
+
+      it 'should update UserZabbixServer' do
+        expect(user.zabbix_servers.pluck(:id)).to eq allowed_zabbix
       end
     end
 
@@ -221,12 +239,16 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#sync_zabbix' do
+    let(:id){1}
+
     before do
       create(:user, master: true, admin: true)
       create(:user, master: true, admin: false)
       create(:user, master: false, admin: true)
       create(:user, master: false, admin: false)
+      create(:zabbix_server, id: id)
       put :sync_zabbix
+
     end
 
     should_be_success
@@ -245,6 +267,7 @@ describe UsersAdminController, type: :controller do
 
     context 'when delete failure' do
       before do
+        allow(ZabbixServer).to receive(:all).and_return(zabbix_servers)
         allow(_zabbix).to receive(:delete_user).and_raise
         req
       end

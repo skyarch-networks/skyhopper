@@ -43,12 +43,13 @@ ja:
       lang:            '言語'
       previous:        '前へ'
       next:            '次へ'
-      delete:          '削除します'
+      delete:          '削除'
       update:          '更新'
       import:          'インポート'
       export:          'エクスポート'
       all:             '全部'
       multiple_select: '複数選択'
+      download:        'ダウンロード'
     msg:
       loading:       ' 読み込み中...'
       creating:      ' 作成中...'
@@ -521,6 +522,7 @@ ja:
       mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
       delete_user:           'このユーザーを削除してもよろしいですか？'
+      error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
 
 
   chef_servers:
@@ -536,8 +538,16 @@ ja:
       start:          'Chef Server を起動しています...'
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
+      chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
+    btn:
+      download_keys:  '鍵ファイルのダウンロード'
 
   zabbix_servers:
+    zabbix:      'Zabbix Servers'
+    version:     'バージョン'
+    details:     '詳細'
+    btn:
+      add:            'Zabbix Server を追加'
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'
@@ -551,6 +561,10 @@ ja:
       stop:           'Zabbix Server を停止しています...'
       not_running:    'Zabbix Server が起動していません'
       connrefused:    'Zabbix Server に接続できませんでした。Zabbix Server の設定を確認してください。'
+      created:        'Zabbix Server が正常に作成されました。'
+      updated:        'Zabbix Server が正常に更新されました'
+      deleted:        'Zabbix Server "%{name}" が正常に削除されました'
+      delete_server:  'この Zabbix Server を削除してもよろしいですか？'
 
   ec2_instances:
     description:       '詳細'

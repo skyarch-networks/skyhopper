@@ -13,7 +13,7 @@ describe Project, type: :model do
     describe 'column code' do
       let(:prj){build(:project)}
 
-      it 'should not be "master"'do
+      it 'should not be "master"' do
         prj.code = 'master'
         expect(prj.save).to be false
       end
@@ -23,7 +23,7 @@ describe Project, type: :model do
         expect(prj.save).to be false
       end
 
-      it 'should not end "-read-wirte"' do
+      it 'should not end "-read-write"' do
         prj.code = 'fuga-read-write'
         expect(prj.save).to be false
       end
@@ -32,8 +32,8 @@ describe Project, type: :model do
 
   describe 'with restrict_with_error' do
     stubize_zabbix
-
-    let(:project){create :project}
+    let(:zabbix_server){create :zabbix_server}
+    let(:project){create :project, zabbix_server_id: zabbix_server.id }
 
     context 'when project has some infra' do
       before do

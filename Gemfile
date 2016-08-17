@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.5.2'
+gem 'rails', '~> 4.2.7.1'
 
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.3.20'
@@ -59,6 +59,9 @@ gem 'foreman', require: false
 
 gem "bootstrap-table-rails"
 
+# Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
+gem "ruby_dep", "~> 1.3.1"
+
 group :development, :test do
   # debug
   gem "tapp"
@@ -72,7 +75,6 @@ group :development, :test do
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
-  gem 'xray-rails'
 
   gem 'quiet_assets'
 
@@ -102,7 +104,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3' 
+gem 'devise', '~> 3.5.3'
 gem 'pundit'
 
 # pagination
@@ -127,3 +129,5 @@ gem 'sky_zabbix', '~> 2.2.0'
 gem 'nokogiri', '>= 1.6.8'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
+
+gem 'rubyzip'
