@@ -522,9 +522,6 @@ GEM
       nori (~> 2.0)
       rubyntlm (~> 0.6.0)
     wmi-lite (1.0.0)
-    xray-rails (0.1.21)
-      coffee-rails
-      rails (>= 3.1.0)
     yard (0.9.5)
 
 PLATFORMS
@@ -605,7 +602,6 @@ DEPENDENCIES
   therubyracer
   uglifier
   unicorn-rails
-  xray-rails
   yard
 
 BUNDLED WITH

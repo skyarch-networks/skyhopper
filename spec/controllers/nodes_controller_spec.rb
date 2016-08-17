@@ -342,8 +342,10 @@ describe NodesController, type: :controller do
     let(:req){get :edit_attributes, id: physical_id, infra_id: infra.id}
     let(:attrs){{foo: {bar: 'hoge'}}}
     let(:current_attr){{foo: 'piyopiyo'}}
+    let(:fqdn){'ec2-ip-.zabbix.com-example'}
     let(:node){double(:node, enabled_attributes: attrs, get_attributes: current_attr)}
     before do
+      expect_any_instance_of(Infrastructure).to receive_message_chain(:project, :zabbix_server, :fqdn).and_return(fqdn)
       allow(Node).to receive(:new).with(physical_id).and_return(node)
       req
     end
