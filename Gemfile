@@ -54,7 +54,7 @@ gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
 gem 'sidekiq', "~> 3.4.2" # for Active Job
-gem 'sidekiq-scheduler' # for Scheduled Job
+gem 'sidetiq' # for Scheduled Job
 gem 'foreman', require: false
 
 gem "bootstrap-table-rails"
@@ -75,8 +75,7 @@ group :development, :test do
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
-  gem 'xray-rails'
-
+  gem 'sinatra', require: false
   gem 'quiet_assets'
 
   # test

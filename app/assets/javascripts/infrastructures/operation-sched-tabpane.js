@@ -268,6 +268,7 @@ module.exports = Vue.extend({
           id: item,
         };
       });
+      console.log(self.data);
 
       self.$parent.loading = false;
       $("#loading_results").hide();

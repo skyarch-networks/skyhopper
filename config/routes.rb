@@ -1,4 +1,8 @@
 SkyHopper::Application.routes.draw do
+  require 'sidekiq/web'
+  require 'sidetiq/web'
+  mount Sidekiq::Web => '/sidekiq'
+
   resources :zabbix_servers
   resources :users_admin, except: :show do
     collection do

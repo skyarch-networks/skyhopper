@@ -7,6 +7,12 @@
 #
 
 class ServerStateWorker < ActiveJob::Base
+  include Sidetiq::Schedulable
+
+  recurrence backfill: true do
+    minutely(5)
+  end
+
   def perform(*params)
     kinds =
       if params.empty?

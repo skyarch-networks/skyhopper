@@ -6,7 +6,13 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Operation_worker
+class OperationWorker
+  include Sidekiq::Worker
+  include Sidetiq::Schedulable
+
+  recurrence backfill: true do
+    minutely(3)
+  end
 
   def perform
 
