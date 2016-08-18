@@ -57,17 +57,6 @@ ActiveRecord::Schema.define(version: 20160802055903) do
     t.datetime "updated_at"
   end
 
-  create_table "crono_jobs", force: :cascade do |t|
-    t.string   "job_id",            limit: 255,   null: false
-    t.text     "log",               limit: 65535
-    t.datetime "last_performed_at"
-    t.boolean  "healthy"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
-  end
-
-  add_index "crono_jobs", ["job_id"], name: "index_crono_jobs_on_job_id", unique: true, using: :btree
-
   create_table "dish_serverspecs", force: :cascade do |t|
     t.integer  "dish_id",       limit: 4, null: false
     t.integer  "serverspec_id", limit: 4, null: false
