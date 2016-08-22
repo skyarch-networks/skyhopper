@@ -300,8 +300,6 @@ GEM
       slop (~> 3.0)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
-    quiet_assets (1.1.0)
-      railties (>= 3.1, < 5.0)
     rack (1.6.4)
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
@@ -573,7 +571,6 @@ DEPENDENCIES
   pry-rails
   pry-remote
   pundit
-  quiet_assets
   rack-contrib
   railroady
   rails (~> 4.2.7.1)

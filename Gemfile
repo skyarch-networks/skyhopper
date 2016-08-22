@@ -76,7 +76,6 @@ group :development, :test do
   gem 'rack-contrib'
   gem 'ruby-prof'
   gem 'sinatra', require: false
-  gem 'quiet_assets'
 
   # test
   gem "rspec-rails"
