@@ -100,8 +100,8 @@ module TemplateBuildersHelper
       )
     end
 
-    case
-    when property.data_type == :Boolean
+    case property.data_type
+    when :Boolean
       return <<-EOS
       <div class="radio">
         <label class="radio"><input type="radio" name="#{property.name}" class="property-value" value="enable" #{common_attr}>#{t('template_builder.enable')}</label>
@@ -111,11 +111,11 @@ module TemplateBuildersHelper
       </div>
       EOS
 
-    when property.data_type == Array
+    when Array
       return property_array(property)
-    when property.data_type == Hash
+    when Hash
       #TODO
-    when property.data_type == String
+    when String
       return parts_input(
         klass:       "form-control input-sm property-value",
         attributes:  common_attr,
