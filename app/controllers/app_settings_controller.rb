@@ -130,10 +130,9 @@ class AppSettingsController < ApplicationController
 
   # GET /app_settings/export_db
   def export_db
-    dbname = ActiveRecord::Base.configurations[Rails.env]['database']
-    path = Rails.root.join("db/#{dbname}.sql")
-    system('rake db:data:dump')
-    send_file(path)
+    prepare_db_zip
+    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}.zip")
+    @zipfile.close
   end
 
   private
@@ -171,5 +170,23 @@ class AppSettingsController < ApplicationController
     @zipfile = Tempfile.open('chef')
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
+  end
+
+  def prepare_db_zip
+    dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
+    filename = "#{dbname}.sql"
+    path     = Rails.root.join("db/#{filename}")
+
+    system('rake db:data:dump')
+
+    @zipfile = Tempfile.open("skyhopper")
+    ::Zip::File.open(@zipfile.path, ::Zip::File::CREATE) do |zip|
+      zip.add(filename, path)
+
+      SkyHopper::Application.secrets.each do |key, value|
+        next if value.nil?
+        zip.get_output_stream(key) { |io| io.write(value) }
+      end
+    end
   end
 end
