@@ -26,8 +26,7 @@ describe Ec2InstancesController, type: :controller do
       stop:                nil,
       status:              :stopped,
       instance_type:       type,
-      start:               nil
-    )}
+      start:               nil)}
     before do
       allow(Aws::EC2::Instance).to receive(:new).and_return(instance)
       allow(instance).to receive(:wait_until).and_return(nil)

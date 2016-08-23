@@ -22,6 +22,7 @@ module.exports = Vue.extend({
       type: Number,
       required: true,
     },
+    resources: {},
   },
 
   data: function () {
@@ -148,7 +149,7 @@ module.exports = Vue.extend({
 
     get_sched: function (ec2){
       var self = this;
-      self.$parent.show_operation_sched();
+      self.$parent.show_operation_sched(self.resources);
       var infra = new Infrastructure(this.infra_id);
       infra.get_schedule(ec2.physical_id).done(function  (data){
         var events = [];
@@ -254,14 +255,11 @@ module.exports = Vue.extend({
     roundup: function (val) { return (Math.ceil(val));},
   },
 
-  created: function(){
+  ready: function(){
     var self = this;
-    var infra = new Infrastructure(this.infra_id);
-    var res = new Resource(infra);
-    var events = [];
+    console.log(self.resources);
     //TODO: get all assigned dates and print to calendar. :D
-    res.index().done(function (resources) {
-      self.data = resources.ec2_instances.map(function (item) {
+      self.data = self.resources.ec2_instances.map(function (item) {
         return {
           physical_id: item.physical_id,
           screen_name: item.screen_name,
@@ -273,10 +271,5 @@ module.exports = Vue.extend({
       $("#loading_results").hide();
       var empty = t('serverspecs.msg.empty-results');
       if(self.data.length === 0){ $('#empty_results').show().html(empty);}
-    });
   },
-
-  ready: function () {
-    this.$parent.loading = false;
-  }
 });

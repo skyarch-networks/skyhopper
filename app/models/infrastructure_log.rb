@@ -66,7 +66,7 @@ class InfrastructureLog < ActiveRecord::Base
         0
       else
         num = log.details[/(\d+|No) package\(?s\)? needed for security/, 1]
-        (num == 'No') ? 0 : num.to_i
+        num == 'No' ? 0 : num.to_i
       end
     end
   end

@@ -50,7 +50,7 @@ class Operation_worker
 
   def evaluate_weekdays(start_time, end_time, now, resource, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
-    if now.wday != 0 && now.wday != 6
+    if now.wday.nonzero? && now.wday != 6
       if start_time <= now_time && end_time >= now_time
         start(resource, user_id)
       else
@@ -63,7 +63,7 @@ class Operation_worker
 
   def evaluate_weekends(start_time, end_time, now, resource, user_id)
     now_time = now.strftime( "%H%M%S%N" ).to_i
-    if now.wday == 0 || now.wday == 6
+    if now.wday.nonzero? || now.wday == 6
       if start_time <= now_time && end_time >= now_time
         start(resource, user_id)
       else
