@@ -17,7 +17,7 @@ class DeleteOutdatedSnapshotsJob < ActiveJob::Base
   def delete_outdated_snapshots(infra, volume_id, policy)
     snapshots = Snapshot.describe(infra, volume_id)
     snapshots.delete_if { |snapshot|
-      snapshot.tags.has_key?(Snapshot::PROTECTION_TAG_NAME) &&
+      snapshot.tags.key?(Snapshot::PROTECTION_TAG_NAME) &&
         snapshot.tags[Snapshot::PROTECTION_TAG_NAME] != 'false'
     }
     snapshots.sort_by! { |snapshot| snapshot.start_time }.reverse!

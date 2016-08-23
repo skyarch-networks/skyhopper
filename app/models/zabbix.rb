@@ -568,7 +568,7 @@ class Zabbix
     wh = {}
     web_scenario.each do |w|
       scenario_name = w.shift
-      if wh.has_key?(scenario_name)
+      if wh.key?(scenario_name)
         wh[scenario_name] << w
       else
         wh[scenario_name] = [w]
