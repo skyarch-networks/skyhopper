@@ -92,7 +92,7 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
-      db_export:         'When exporting SkyHopper Database, it includes these files: '
+      db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
