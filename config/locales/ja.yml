@@ -92,7 +92,10 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
-      db_export:         'SkyHopper のデータベースをエクスポートします。これには、SkyHopper%{env}.sql, secret_key_base, db_crypt_key が含まれます。'
+      db_export:         'SkyHopperデータベースをエクスポートする場合、それは、これらのファイルが含まれています。'
+      env:  'SkyHopper%{env}.sql'
+      secret: 'secret_key_base'
+      db_key:  'db_crypt_key'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'

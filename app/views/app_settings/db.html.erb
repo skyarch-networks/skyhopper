@@ -6,7 +6,13 @@
     <form class="form-horizontal well">
       <fieldset>
         <legend><%= t('common.btn.export') %></legend>
-        <p><%= t('app_settings.msg.db_export', {env: Rails.env.capitalize}) %></p>
+        <p><%= t('app_settings.msg.db_export')%></p>
+        <ul>
+          <li> <%= t('app_settings.msg.env', {env: Rails.env.capitalize}) %> </li>
+          <li><%= t('app_settings.msg.secret')%></li>
+          <li><%= t('app_settings.msg.db_key')%></li>
+        </ul>
+
         <a href="<%= export_db_app_settings_path %>" class="btn btn-primary btn-lg" style="width: 100%">
           <span class="glyphicon glyphicon-export"></span>
           <%= t('common.btn.export') %>
