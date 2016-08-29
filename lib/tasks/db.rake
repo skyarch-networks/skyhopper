@@ -4,7 +4,7 @@ namespace :db do
   namespace :data do
     error_msg = 'Please specify the path. (e.g. rake db:data:load[./db/hoge.sql]'
 
-    desc "Dump the database to db/dbname.sql (path is optional)"
+    desc "Dump the database to tmp/dbname.sql (path is optional)"
     task :dump, [:path] => [:environment, :load_config] do |_, args|
       set_config
 
@@ -12,7 +12,7 @@ namespace :db do
         if args[:path]
           args[:path]
         else
-          "db/#{@config['database']}.sql"
+          "tmp/#{@config['database']}.sql"
         end
 
       cmd = "mysqldump -u#{@config['username']} -p#{@config['password']} #{@config['database']} --compatible=ansi > '#{path}'"

@@ -175,7 +175,7 @@ class AppSettingsController < ApplicationController
   def prepare_db_zip
     dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
     filename = "#{dbname}.sql"
-    path     = Rails.root.join("db/#{filename}")
+    path     = Rails.root.join("tmp/#{filename}")
 
     system('rake db:data:dump')
 
@@ -188,5 +188,7 @@ class AppSettingsController < ApplicationController
         zip.get_output_stream(key) { |io| io.write(value) }
       end
     end
+
+    FileUtils.rm(path)
   end
 end
