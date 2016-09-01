@@ -15,8 +15,7 @@ module ProjectsHelper
   def project_settings(project)
     return {dishes_path:  dishes_path(project_id: project.id),
       key_pairs_path: key_pairs_path(project_id: project.id),
-      project_parameters_path: project_parameters_path(project_id: project.id),
-      }
+      project_parameters_path: project_parameters_path(project_id: project.id)}
   end
 
   def button_add_project(client)

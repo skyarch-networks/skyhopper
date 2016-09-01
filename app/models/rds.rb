@@ -16,7 +16,7 @@ class RDS < SimpleDelegator
     db.m2.xlarge db.m2.2xlarge db.m2.4.xlarge
     db.m4.large db.m4.xlarge db.m4.2xlarge db.m4.4xlarge db.m4.10xlarge
     db.r3.large db.r3.xlarge db.r3.2xlarge db.r3.4xlarge db.r3.8xlarge
-    db.t2.micro db.t2.small db.t2.medium db.t2.large 
+    db.t2.micro db.t2.small db.t2.medium db.t2.large
     db.cr1.8xl
   ].recursive_freeze
 
@@ -60,7 +60,8 @@ class RDS < SimpleDelegator
       @rds.modify_db_instance({
         db_instance_class: scale,
         db_instance_identifier: @db_instance.db_instance_identifier,
-        apply_immediately: true})
+        apply_immediately: true,
+      })
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end
@@ -73,7 +74,8 @@ class RDS < SimpleDelegator
       @rds.modify_db_instance({
         vpc_security_group_ids: group_ids,
         db_instance_identifier: @db_instance.db_instance_identifier,
-        apply_immediately: true})
+        apply_immediately: true,
+      })
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end

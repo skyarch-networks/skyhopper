@@ -22,10 +22,11 @@ describe Stack, type: :model do
 
     it "call @cloud_formation#create_stack" do
       expect(cf).to receive(:create_stack).with(
-        stack_name: stack_name,
-        template_body: template,
-        parameters: params,
-        capabilities: %w[CAPABILITY_IAM])
+          stack_name: stack_name,
+          template_body: template,
+          parameters: params,
+          capabilities: %w[CAPABILITY_IAM]
+      )
       subject.create(template, params)
     end
   end
