@@ -9,9 +9,7 @@
 class ServerStateWorker < ActiveJob::Base
   include Sidetiq::Schedulable
 
-  recurrence backfill: true do
-    minutely(5)
-  end
+  recurrence { minutely(9) }
 
   def perform(*params)
     kinds =
