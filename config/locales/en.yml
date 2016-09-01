@@ -101,6 +101,10 @@ en:
         SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
         The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
       warning_msg:  'We recommend to use only <b> Google Chrome </b> or <b> Firefox </b> web browsers. As SkyHopper only works best on these browsers.'
+      db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
+      env:  'SkyHopper%{env}.sql'
+      secret: 'secret_key_base'
+      db_key:  'db_crypt_key'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'

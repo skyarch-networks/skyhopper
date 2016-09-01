@@ -28,7 +28,7 @@ class AppSetting < ActiveRecord::Base
 
     # @return [Boolean] セッティング済みかどうかを返す
     def set?
-      self.count != 0 and not self.get.dummy?
+      self.count.nonzero? and not self.get.dummy?
     end
 
     # 全てのダミーセッティングを削除する

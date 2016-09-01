@@ -320,7 +320,7 @@ class NodesController < ApplicationController
 
   def check_socket(field)
     field.map do |set|
-      if set.from_port == -1 || set.from_port == nil || set.from_port == 0
+      if set.from_port == -1 || set.from_port == nil || set.from_port.zero?
         set.prefix_list_ids = 'All'
       elsif set.from_port == 5439
         set.prefix_list_ids = 'Redshift'
