@@ -155,13 +155,20 @@ describe UsersAdminController, type: :controller do
     let(:master){true}
     let(:admin){true}
     let(:allowed_projects){nil}
+    let(:allowed_zabbix){nil}
     let(:password){nil}
     let(:password_confirm){password}
     let(:mfa_secret_key){nil}
     let(:req){
       put :update,
         id: user.id,
-        body: {master: master, admin: admin, allowed_projects: allowed_projects, password: password, password_confirmation: password_confirm, mfa_secret_key: mfa_secret_key}.to_json
+        body: {master: master,
+          admin: admin,
+          allowed_projects: allowed_projects,
+          allowed_zabbix: allowed_zabbix,
+          password: password,
+          password_confirmation: password_confirm,
+          mfa_secret_key: mfa_secret_key}.to_json
     }
 
     context 'when set password' do
@@ -187,6 +194,16 @@ describe UsersAdminController, type: :controller do
       it 'should update mfa secret key' do
         user.reload
         expect(user.mfa_secret_key).to eq mfa_secret_key
+      end
+    end
+
+    context 'when update zabbix servers' do
+      let(:allowed_zabbix){create_list(:zabbix_server, 3).map{|zb| zb.id}}
+      before {req}
+      should_be_success
+
+      it 'should update UserZabbixServer' do
+        expect(user.zabbix_servers.pluck(:id)).to eq allowed_zabbix
       end
     end
 

@@ -34,8 +34,7 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
       TemplateBuilder::Property.new(:EC2_Tag, Hash, data_validator: {
         Key:   TemplateBuilder::Property.new(:Key,   String, required: true),
         Value: TemplateBuilder::Property.new(:Value, String, required: true),
-      })
-    ),
+      })),
   ].freeze
 
   # @name => @@resource_base

@@ -92,6 +92,10 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
+      db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
+      env:  'SkyHopper%{env}.sql'
+      secret: 'secret_key_base'
+      db_key:  'db_crypt_key'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -524,6 +528,7 @@ en:
       mfa_start_description: 'Enter secret key to MFA device. Or Scan QR code.'
       use_stop_mfa:          'If save changes, use stop MFA.'
       delete_user:           'Are you sure you want to delete this User?'
+      error:                 'An error occured while processing Zabbix: "%{msg}"'
 
 
   chef_servers:

@@ -92,6 +92,10 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
+      db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
+      env:  'SkyHopper%{env}.sql'
+      secret: 'secret_key_base'
+      db_key:  'db_crypt_key'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -522,6 +526,7 @@ ja:
       mfa_start_description: 'MFA デバイスに秘密鍵を入力するか、QRコードを読み取ってください。'
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
       delete_user:           'このユーザーを削除してもよろしいですか？'
+      error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
 
 
   chef_servers:
