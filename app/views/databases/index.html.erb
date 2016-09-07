@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="col-md-6">
-    <form class="form-horizontal well">
+    <form action="<%= export_databases_path %>" method="POST" class="form-horizontal well">
       <fieldset>
         <legend><%= t('common.btn.export') %></legend>
         <p><%= t('app_settings.msg.db_export')%></p>
@@ -12,11 +12,11 @@
           <li><%= t('app_settings.msg.secret')%></li>
           <li><%= t('app_settings.msg.db_key')%></li>
         </ul>
-
-        <a href="<%= export_db_app_settings_path %>" class="btn btn-primary btn-lg" style="width: 100%">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%">
           <span class="glyphicon glyphicon-export"></span>
           <%= t('common.btn.export') %>
-        </a>
+        </button>
       </fieldset>
     </form>
   </div>
