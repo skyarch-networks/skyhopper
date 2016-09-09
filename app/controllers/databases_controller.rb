@@ -14,7 +14,8 @@ class DatabasesController < ApplicationController
   # POST /databases/export
   def export
     prepare_db_zip
-    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}.zip")
+    time = Time.now.strftime('%Y%m%d%H%M%S')
+    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}-#{time}.zip")
     @zipfile.close
   end
 
