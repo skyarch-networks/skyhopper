@@ -18,9 +18,9 @@ Ruby 2.2系をインストール(Ruby 2.3 系では動きません)
 
 ```sh
 $ sudo yum remove ruby ruby20
-$ sudo yum install ruby22
+$ sudo yum install ruby23
 $ ruby -v
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
+ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-linux]
 ```
 
 ## Bundler のインストール

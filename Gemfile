@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '~> 4.2.7.1'
 
 # Use mysql as the database for Active Record
-gem 'mysql2', '~> 0.3.20'
+gem 'mysql2'
 gem 'activerecord-import'
 
 # Use SCSS as CSS compressor
@@ -44,7 +44,7 @@ gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
-gem 'ridley', '~> 4.2.0'
+gem 'ridley'
 gem "net-ssh"
 gem "net-scp"
 
