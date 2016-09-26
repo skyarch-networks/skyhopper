@@ -8,11 +8,11 @@
 
 class ServerRunner
   include Sidekiq::Worker
-  include Sidetiq::Schedulable
-
-  recurrence { minutely(5) }
 
   def perform
-    ServerStateWorker.perform_now
+    if AppSetting.set?
+      ServerStateWorker.perform_now
+    end
   end
+
 end

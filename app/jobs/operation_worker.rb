@@ -8,9 +8,7 @@
 
 class OperationWorker
   include Sidekiq::Worker
-  include Sidetiq::Schedulable
 
-  recurrence { minutely(3) }
 
   def perform
 
@@ -114,6 +112,10 @@ class OperationWorker
       ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
     end
   end
+
+  Sidekiq::Cron::Job.create(name: 'OperationWorker worker - every 3min', cron: '*/3 * * * *', class: 'OperationWorker')
+  Sidekiq::Cron::Job.create(name: 'ServerRunner for ServerStateWorker - every 3min', cron: '*/3 * * * *', class: 'ServerStateWorker')
+
 
 
 end

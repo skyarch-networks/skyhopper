@@ -1,7 +1,7 @@
 SkyHopper::Application.routes.draw do
   if Rails.env.development?
     require 'sidekiq/web'
-    require 'sidetiq/web'
+    require 'sidekiq/cron/web'
     mount Sidekiq::Web => '/sidekiq'
   end
 
