@@ -7,6 +7,8 @@
 #
 
 class AppSettingsController < ApplicationController
+  before_action :authenticate_user!, except: [:show, :create, :chef_create]
+
   before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys, :db, :export_db] do
     if AppSetting.set?
       redirect_to root_path
