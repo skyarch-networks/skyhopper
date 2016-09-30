@@ -32,6 +32,10 @@ gem 'jbuilder'
 # Modularize javascript code in application
 gem 'browserify-rails'
 
+# Fix the version for Amazon Linux
+# http://stackoverflow.com/questions/22950020/multijson-adaptererror-rails-4-ruby-2-passenger
+gem 'multi_json', '1.7.8'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
