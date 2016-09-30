@@ -113,8 +113,6 @@ class OperationWorker
     end
   end
 
-  Sidekiq::Cron::Job.create(name: 'OperationWorker worker - every 3min', cron: '*/3 * * * *', class: 'OperationWorker')
-  Sidekiq::Cron::Job.create(name: 'ServerRunner for ServerStateWorker - every 3min', cron: '*/3 * * * *', class: 'ServerStateWorker')
 
 
 
