@@ -108,13 +108,16 @@ class ChefServer::Deployment
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
       set.save!
 
-      ZabbixServer.create(
+      zb = ZabbixServer.create(
         fqdn: set.zabbix_fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
         details: 'Default Zabbix Server for Skyhopper System'
       )
+
+      prj.project.zabbix_server_id = zb.id
+      prj.project.save!
 
       AppSetting.clear_cache
     rescue => ex
