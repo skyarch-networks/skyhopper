@@ -97,7 +97,7 @@ class TemplateBuilder::Resource
 
   def build
     self.class.required_properties.each do |prop|
-      raise BuildError, "#{prop.name} is required." unless @properties.has_key?(prop.name)
+      raise BuildError, "#{prop.name} is required." unless @properties.key?(prop.name)
     end
 
     result = {

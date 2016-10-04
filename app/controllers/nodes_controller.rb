@@ -242,10 +242,12 @@ class NodesController < ApplicationController
   # [infra_id] 認証に必要
   def edit_attributes
     physical_id = params.require(:id)
-
+    fqdn = @infra.project.zabbix_server.fqdn
     node = Node.new(physical_id)
 
-    @attrs = node.enabled_attributes.dup
+    @attrs = node.enabled_attributes.dup.select do |_key, value|
+      value[:default] = fqdn
+    end
     @current_attributes = node.get_attributes
   end
 
@@ -318,7 +320,7 @@ class NodesController < ApplicationController
 
   def check_socket(field)
     field.map do |set|
-      if set.from_port == -1 || set.from_port == nil || set.from_port == 0
+      if set.from_port == -1 || set.from_port == nil || set.from_port.zero?
         set.prefix_list_ids = 'All'
       elsif set.from_port == 5439
         set.prefix_list_ids = 'Redshift'
