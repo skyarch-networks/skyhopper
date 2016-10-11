@@ -201,6 +201,7 @@ class NodesController < ApplicationController
     attr  = JSON.parse(params.require(:attributes))
     attr.each do |key, val|
       next unless val
+      val = val.first if val.is_a?(Array)
       attr[key] = ProjectParameter.exec(val, project_id: @infra.project_id)
     end
 

@@ -586,9 +586,8 @@ module.exports = Vue.extend({
       this.page++;
     },
     check_tag: function(r){
-      check_tag(r);
+      return check_tag(r);
     },
-    has_selected: has_selected(this.rules_summary),
   },
 
   computed: {
@@ -597,6 +596,9 @@ module.exports = Vue.extend({
         return 'btn-success';
       }
       return 'btn-default';
+    },
+    has_rules: function()  {
+      return has_selected(this.rules_summary);
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },
@@ -672,8 +674,8 @@ module.exports = Vue.extend({
     },
 
     is_valid_amount: function () { return 3 <= this.editing_policy.max_amount && this.editing_policy.max_amount < 1000; },
-    is_retention_policy_set: function () { return this.volume_selected && this.ec2.retention_policies[this.volume_selected].enabled },
-    is_snapshot_schedule_set: function () { return this.volume_selected && this.ec2.snapshot_schedules[this.volume_selected].enabled },
+    is_retention_policy_set: function () { return this.volume_selected && this.ec2.retention_policies[this.volume_selected].enabled; },
+    is_snapshot_schedule_set: function () { return this.volume_selected && this.ec2.snapshot_schedules[this.volume_selected].enabled; },
 
     schedule_indicator_message: function () {
       var schedule = this.ec2.snapshot_schedules[this.volume_selected];
