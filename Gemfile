@@ -47,6 +47,7 @@ gem 'aws-sdk', '~> 2'
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
+gem "net-http-persistent", '~> 2.9.4'
 
 gem "knife-windows"
 gem "chef", "~> 12", require: false

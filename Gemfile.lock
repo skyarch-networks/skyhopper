@@ -248,8 +248,7 @@ GEM
     named_let (0.2.0)
       rspec-core
     nenv (0.3.0)
-    net-http-persistent (3.0.0)
-      connection_pool (~> 2.2)
+    net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -572,6 +571,7 @@ DEPENDENCIES
   libv8
   mysql2 (~> 0.3.20)
   named_let
+  net-http-persistent (~> 2.9.4)
   net-scp
   net-ssh
   nokogiri (>= 1.6.8)
