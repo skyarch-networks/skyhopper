@@ -62,7 +62,6 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-table-rails (1.11.0)
     browserify-rails (3.2.0)
       addressable (>= 2.4.0)
       railties (>= 4.0.0, < 5.1)
@@ -249,8 +248,7 @@ GEM
     named_let (0.2.0)
       rspec-core
     nenv (0.3.0)
-    net-http-persistent (3.0.0)
-      connection_pool (~> 2.2)
+    net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -550,7 +548,6 @@ DEPENDENCIES
   aws-sdk-v1
   better_errors
   binding_of_caller
-  bootstrap-table-rails
   browserify-rails
   bullet
   chef (~> 12)
@@ -574,6 +571,7 @@ DEPENDENCIES
   libv8
   mysql2 (~> 0.3.20)
   named_let
+  net-http-persistent (~> 2.9.4)
   net-scp
   net-ssh
   nokogiri (>= 1.6.8)
@@ -620,4 +618,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.13.1
+   1.13.3

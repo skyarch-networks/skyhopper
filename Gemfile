@@ -47,6 +47,7 @@ gem 'aws-sdk', '~> 2'
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
+gem "net-http-persistent", '~> 2.9.4'
 
 gem "knife-windows"
 gem "chef", "~> 12", require: false
@@ -57,7 +58,6 @@ gem 'sidekiq' # for Active Job
 gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
 
-gem "bootstrap-table-rails"
 
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
 gem "ruby_dep", "~> 1.3.1"
