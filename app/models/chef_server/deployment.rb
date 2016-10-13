@@ -106,6 +106,8 @@ class ChefServer::Deployment
       server.wait_init_ec2
       set = AppSetting.first
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
+      set.zabbix_user = 'admin'
+      set.zabbix_pass = 'ilikerandompasswords'
       set.save!
 
       ZabbixServer.create(
