@@ -57,7 +57,6 @@ gem 'sidekiq' # for Active Job
 gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
 
-gem "bootstrap-table-rails"
 
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
 gem "ruby_dep", "~> 1.3.1"

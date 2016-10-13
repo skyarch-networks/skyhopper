@@ -62,7 +62,6 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-table-rails (1.11.0)
     browserify-rails (3.2.0)
       addressable (>= 2.4.0)
       railties (>= 4.0.0, < 5.1)
@@ -550,7 +549,6 @@ DEPENDENCIES
   aws-sdk-v1
   better_errors
   binding_of_caller
-  bootstrap-table-rails
   browserify-rails
   bullet
   chef (~> 12)
@@ -620,4 +618,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.13.1
+   1.13.3
