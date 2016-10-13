@@ -61,10 +61,6 @@ SkyHopper::Application.configure do
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 
-  # for controllers js
-  config.assets.precompile += Dir.glob(Rails.root.join('app','controllers', "*.rb")).map{|x| File.basename(x)[/^(.+)_controller\.rb/, 1]+".js"}
-  config.assets.precompile += %w[edit_runlist.js libraries.js]
-  config.assets.initialize_on_precompile = true
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
