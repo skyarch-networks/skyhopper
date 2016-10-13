@@ -201,9 +201,6 @@ GEM
     i18n-js (2.1.2)
       i18n
     iniparse (1.4.2)
-    introjs-rails (1.0.0)
-      sass-rails (>= 3.2)
-      thor (~> 0.14)
     ipaddress (0.8.3)
     jbuilder (2.6.0)
       activesupport (>= 3.0.0, < 5.1)
@@ -568,7 +565,6 @@ DEPENDENCIES
   hiredis
   i18n (= 0.7.0)
   i18n-js
-  introjs-rails
   jbuilder
   kaminari
   knife-windows
