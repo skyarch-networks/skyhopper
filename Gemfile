@@ -11,7 +11,7 @@ gem 'sass-rails'
 
 # https://github.com/skyarch-networks/skyhopper/pull/165
 # sprockets-rails has some problems. we fix version until it's stable.
-gem 'sprockets-rails', '~> 2'
+gem 'sprockets-rails'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'#, '>= 1.3.0'
@@ -51,14 +51,15 @@ gem 'aws-sdk', '~> 2'
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
+gem "net-http-persistent", '~> 2.9.4'
 
 gem "knife-windows"
 gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
-gem 'sidekiq', "~> 3.4.2" # for Active Job
-gem 'crono' # for Active Job
+gem 'sidekiq' # for Active Job
+gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
 
 gem "introjs-rails"
@@ -79,8 +80,7 @@ group :development, :test do
   gem "awesome_print"
   gem 'rack-contrib'
   gem 'ruby-prof'
-
-  gem 'quiet_assets'
+  gem 'sinatra', require: false
 
   # test
   gem "rspec-rails"
