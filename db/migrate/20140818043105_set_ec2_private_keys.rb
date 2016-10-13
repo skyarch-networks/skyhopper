@@ -1,6 +1,6 @@
 class SetEc2PrivateKeys < ActiveRecord::Migration
   def change
-    return nil if AppSetting.count == 0
+    return nil if AppSetting.count.zero?
 
     key_dir = AppSetting.first.sshkey_directory
     infras = Infrastructure.all

@@ -6,7 +6,9 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Operation_worker
+class OperationWorker
+  include Sidekiq::Worker
+
 
   def perform
 
@@ -19,15 +21,22 @@ class Operation_worker
         if now >= item.start_date && now <= item.end_date
           start_time = item.recurring_date.start_time.strftime( "%H%M%S%N" ).to_i
           end_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
+          params = { start_time: start_time,
+                     end_time: end_time,
+                     resource: resource,
+                     now: now,
+                     user: item.user_id,
+                     recurring_date: item.recurring_date.dates,
+                     repeats: item.recurring_date.repeats}
           case item.recurring_date.repeats
             when "everyday"
-              evaluate_evr(start_time, end_time, now, resource, item.user_id)
+              evaluate_evr(params)
             when "weekdays"
-              evaluate_weekdays(start_time, end_time, now, resource, item.user_id)
+              evaluate_weekdays(params)
             when "weekends"
-              evaluate_weekends(start_time, end_time, now, resource, item.user_id)
+              evaluate_weekends(params)
             when "other"
-              evaluate_other(start_time, end_time, now, resource, item.recurring_date.dates, item.user_id)
+              evaluate_other(params)
           end
         else
           stop(resource)
@@ -39,43 +48,32 @@ class Operation_worker
     end
   end
 
-  def evaluate_evr(start_time, end_time, now, resource, user_id)
-    now_time = now.strftime( "%H%M%S%N" ).to_i
-    if start_time <= now_time && end_time >= now_time
-      start(resource, user_id)
+  def evaluate_evr(params)
+    now_time = params[:now].strftime( "%H%M%S%N" ).to_i
+    if params[:start_time] <= now_time && params[:end_time] >= now_time
+      start(params)
     else
-      stop(resource, user_id)
+      stop(params)
     end
   end
 
-  def evaluate_weekdays(start_time, end_time, now, resource, user_id)
-    now_time = now.strftime( "%H%M%S%N" ).to_i
-    if now.wday != 0 && now.wday != 6
-      if start_time <= now_time && end_time >= now_time
-        start(resource, user_id)
-      else
-        stop(resource, user_id)
-      end
+  def evaluate_weekdays(params)
+    if params[:now].wday.nonzero? && params[:now].wday != 6
+      evaluate_evr(params)
     else
-      stop(resource, user_id)
+      stop(params)
     end
   end
 
-  def evaluate_weekends(start_time, end_time, now, resource, user_id)
-    now_time = now.strftime( "%H%M%S%N" ).to_i
-    if now.wday == 0 || now.wday == 6
-      if start_time <= now_time && end_time >= now_time
-        start(resource, user_id)
-      else
-        stop(resource, user_id)
-      end
+  def evaluate_weekends(params)
+    if params[:now].wday.zero? || params[:now].wday == 6
+      evaluate_evr(params)
     else
-      stop(resource, user_id)
+      stop(params)
     end
   end
 
-  def evaluate_other(start_time, end_time, now, resource, dates, user_id)
-    now_time = now.strftime( "%H%M%S%N" ).to_i
+  def evaluate_other(params)
     dow =  Array.new
     dates.each do |item|
       if item[1]["checked"] == "true"
@@ -83,42 +81,39 @@ class Operation_worker
       end
     end
 
-    if dow.include? now.wday
-      if start_time <= now_time && end_time >= now_time
-        start(resource, user_id)
-      else
-        stop(resource, user_id)
-      end
+    if dow.include? params[:now].wday
+      evaluate_evr(params)
     else
-      stop(resource, user_id)
+      stop(params)
     end
-
   end
 
-  def start(resource, user_id)
-    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
+  def start(params)
+    ws = WSConnector.new('notifications', User.find(params[:user]).ws_key)
 
-    instance = resource.infrastructure.instance(resource.physical_id)
+    instance = params[:resource].infrastructure.instance(params[:resource].physical_id)
     if instance.status == :stopped
       instance.start
-      log_msg = "Started: #{instance.physical_id}. As Scheduled."
-      log = InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, user_id: user_id, details: log_msg, status: true)
+      log_msg = "Started: #{instance.physical_id}. As Scheduled. on #{params[:repeats]}"
+      log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
       ws.push_as_json({message: log.details, status: true, timestamp: Time.zone.now.to_s})
     end
 
   end
 
-  def stop(resource, user_id)
-    ws = WSConnector.new('notifications', User.find(user_id).ws_key)
-    instance = resource.infrastructure.instance(resource.physical_id)
+  def stop(params)
+    ws = WSConnector.new('notifications', User.find(params[:user]).ws_key)
+    instance = params[:resource].infrastructure.instance(params[:resource].physical_id)
     if instance.status == :running
       instance.stop
-      log_msg = "Stopped: #{instance.physical_id}. As Scheduled."
+      log_msg = "Stopped: #{instance.physical_id}. As Scheduled on #{params[:repeats]}"
 
-      log = InfrastructureLog.create(infrastructure_id: resource.infrastructure_id, user_id: user_id, details: log_msg, status: true)
+      log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
       ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
     end
   end
+
+
 
 
 end

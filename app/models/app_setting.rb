@@ -28,7 +28,7 @@ class AppSetting < ActiveRecord::Base
 
     # @return [Boolean] セッティング済みかどうかを返す
     def set?
-      self.count != 0 and not self.get.dummy?
+      self.count.nonzero? and not self.get.dummy?
     end
 
     # 全てのダミーセッティングを削除する
@@ -41,6 +41,14 @@ class AppSetting < ActiveRecord::Base
     # 設定を更新した場合などにする必要がある
     def clear_cache
       Rails.cache.clear('app_setting')
+    end
+
+    def ec2_client(access_key, secret_access_key, region)
+      ::Aws::EC2::Client.new(
+        access_key_id:     access_key,
+        secret_access_key: secret_access_key,
+        region:            region
+      )
     end
   end
 

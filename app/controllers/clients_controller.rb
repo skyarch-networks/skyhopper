@@ -100,4 +100,5 @@ class ClientsController < ApplicationController
       redirect_to clients_path, alert: "Client \##{params[:id]} does not exist."
     end
   end
+
 end

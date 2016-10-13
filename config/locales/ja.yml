@@ -50,6 +50,7 @@ ja:
       all:             '全部'
       multiple_select: '複数選択'
       download:        'ダウンロード'
+      help:            '利用方法'
     msg:
       loading:       ' 読み込み中...'
       creating:      ' 作成中...'
@@ -70,6 +71,7 @@ ja:
       truncate: '...'
 
   app_settings:
+    app_directory:     'アプリケーションディレクトリ'
     log_directory:     'ログ保存先のパス'
     aws_region:        '使用するリージョン'
     aws_keypair:       '使用する鍵ペア'
@@ -78,29 +80,55 @@ ja:
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
     chef_server:       'Chef Server'
+    warning:           '警告！'
 
     msg:
-      created:           'アプリケーションは正常に設定されました'
+      created:           'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成する次のステップに進むために[完了]ボタンを押してください。'
       show:              'SkyHopper へようこそ!'
       log_directory:     'データベースに出力できなかったログを保存するディレクトリ'
+      app_directory:     'SkyHopper のインストールパスです。それはすでに設定されています。'
       aws_description:   |
-        SkyHopper では、Chef Server や Zabbix Server などを AWS 上に構築します。
-        ここで設定された秘密鍵などは SkyHopper システムのみが使用し、ユーザーが作成するインフラには使用されません。
+        SkyHopper は AWS 上の Chef Server と Zabbix Server を構築します。
+        あなたが入力した AWS の以下の設定は、Chef Server と Zabbix Server を構築するために使用されます。
       access_key:        'SkyHopper のシステムが使用する AWS の Access Key ID（個別のインフラの管理には使用されません）'
       secret_access_key: 'SkyHopper のシステムが使用する AWS の Secret Access Key（個別のインフラの管理には使用されません）'
       aws_region:        'SkyHopper のシステムが使用する AWS のリージョン'
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
+      insert_key:        '最初に AWS のキーを入力し、リージョンを選択してください。'
+      warning_msg:  'SkyHopper が最適に動作するために、<b> Google Chrome </b> または <b> Firefox </b> Webブラウザの使用をお勧めしています。'
+      db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
+      env:  'SkyHopper%{env}.sql'
+      secret: 'secret_key_base'
+      db_key:  'db_crypt_key'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
       system: 'システムの設定'
       chef:   'Chef Server の設定'
       aws:    'AWS の設定'
+      new_keypair: '新しい鍵ペアを作成'
+      exist_keypair: '既存の鍵ペアを使用します'
+      drop_file:     'ファイルをここにドロップするか、クリックして選択します'
+      pem_file:      'AWSから作成された.pemファイルでなければなりません'
     btn:
       create_chefserver: 'Chef Server の構築'
       done:              '完了'
+      create_download:   '作成＆ダウンロード'
+    intro:
+      aws_keys:   |
+        SkyHopper がインフラを管理できるようにするために、また Chef & Zabbix Server を構築するためには AWS のアクセスキーが必要です。
+        まだ AWS セキュリティの認証情報を持っていない場合は、このリンクを参照してください。
+        <a href="http://docs.aws.amazon.com/ja_jp/general/latest/gr/managing-aws-access-keys.html" target="_blank"> AWS アカウントのアクセスキー管理 </a>.
+      aws_region: |
+        認証情報の入力後、Chef & Zabbix Server インスタンスをデプロイするリージョンを選択してください。
+        これは、アプリケーション内のデータ遅延を低減するためです。
+      aws_keypair: |
+        SkyHopper にあなたのインスタンスへのアクセスを許可するために、鍵ペアを作成し、インスタンスを立ち上げる時に鍵ペアの名前を指定する必要があります。
+        もし、あなたがすでに鍵ペアを持っている場合、 「既存のキーペアを使用」を選択し、ファイルを選択またはドラッグ&ドロップすることができます。
+        また、あなたが入力した AWS の認証情報を使用して、[新しい鍵ペアを作成] から新しい鍵ペアを作成することができます。
+      chef_button: '上記の手順の後、[Chef Server の構築] ボタンを押してインストールを開始することができます。'
 
   clients:
     client: '顧客'
@@ -532,7 +560,7 @@ ja:
       download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
-      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
+      complete:       'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成して次のステップにリダイレクトするために行わボタンを押してください。'
       confirm_start:  'Chef Server を起動しますか?'
       confirm_stop:   'Chef Server を停止しますか?'
       start:          'Chef Server を起動しています...'
@@ -702,3 +730,23 @@ ja:
     incrementHour: '1時間後'
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
+  instructions:
+    signup_head: '1 サインアップ'
+    signup_body: |
+      デプロイ直後はユーザーが存在しないため、まずは SkyHopper にサインアップします。
+      デプロイした SkyHopper にアクセスし、Sign up へと進み、ユーザー名とメールアドレスを入力、Admin と Master にチェックを入れてユーザーを作成してください。
+    client_head: '顧客を作成'
+    client_body: |
+      [新規顧客] ボタンをクリックし、名前とコードを入力して、顧客を作成してください。コードは一意の文字列である必要があります。
+    project_head: '案件を作成'
+    project_body: |
+      顧客作成後、顧客を選択し、[新規案件] ボタンをクリックしてコード、名前、クラウド提供会社、AWS のアクセスキーを入力し、案件を作成してください。
+    infrastructure_head: 'インフラストラクチャを作成'
+    infrastructure_body: |
+      プロジェクト内部で管理されるインフラストラクチャを作成します。
+      案件作成後、案件を選択し、[新規インフラ] ボタンをクリックして、スタック名、リージョン、鍵ペア名と秘密鍵を入力してください。もし鍵ペアを持っていないなら、鍵ペア生成機能を使用して新しい鍵ペアを生成できます。
+    cf_template_head: 'CloudFormation テンプレートを適用'
+    cf_template_body: |
+      CloudFormation テンプレートを適用するには、<b>インフラを選択</b>して詳細を表示し <b>[Operations] メニュー</b> から <b>CloudFormation テンプレートの適用</b> を選択してください。
+      その後、CloudFormation テンプレートの一覧が画面に表示されます。お好みのテンプレートを選択後、[パラメータの入力]をクリックしてフォームを埋めた後、[送信] ボタンを押すと、新規スタックの作成が開始されます。
+      既に AWS に EC2 を作成しているならば、それを追加することもできます。詳細については<a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>を参照してください。

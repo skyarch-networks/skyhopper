@@ -1,4 +1,11 @@
 SkyHopper::Application.routes.draw do
+  if Rails.env.development?
+    require 'sidekiq/web'
+    require 'sidekiq/cron/web'
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
+
   resources :zabbix_servers
   resources :users_admin, except: :show do
     collection do
@@ -163,8 +170,12 @@ SkyHopper::Application.routes.draw do
       get  :chef_server
       get  :chef_keys
 
+      get  :db
+      get  :export_db
+
       get  :edit_zabbix
       post :update_zabbix
+      post :generate_key
     end
   end
 

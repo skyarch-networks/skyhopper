@@ -7,11 +7,15 @@
 #
 
 class AppSettingsController < ApplicationController
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
+  before_action :authenticate_user!, except: [:show, :create, :chef_create]
+
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys, :db, :export_db] do
     if AppSetting.set?
       redirect_to root_path
     end
   end
+
+  class AppSettingError < ::StandardError; end
 
   # GET /app_settings
   def show
@@ -64,6 +68,24 @@ class AppSettingsController < ApplicationController
     render text: I18n.t('app_settings.msg.created') and return
   end
 
+  # POST /app_settings/generate
+  def generate_key
+    access_key         = params.require(:access_key)
+    secret_access_key  = params.require(:secret_access_key)
+    region             = params.require(:region)
+    name               = params.require(:name)
+
+
+    begin
+      ec2 = AppSetting.ec2_client(access_key, secret_access_key, region)
+      key = ec2.create_key_pair(key_name: name)
+    rescue => ex
+      render text: ex.message, status: 500 and return
+    end
+
+    render json: key
+  end
+
   # GET /app_settings/edit_zabbix
   def edit_zabbix
     @app_setting = AppSetting.get
@@ -82,49 +104,99 @@ class AppSettingsController < ApplicationController
   end
 
 
-  # POST /app_settings/chef_create
-  def chef_create
-    # とりあえず決め打ちでいい気がする
-    # stack_name = params.require(:stack_name)
-    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
+    # POST /app_settings/chef_create
+    def chef_create
+      # とりあえず決め打ちでいい気がする
+      # stack_name = params.require(:stack_name)
+      stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
-    set = AppSetting.first
-    region        = set.aws_region
-    keypair_name  = set.ec2_private_key.name
-    keypair_value = set.ec2_private_key.value
-    @locale = I18n.locale
-    # おまじない
-    # rubocop:disable Lint/Void
-    ChefServer
-    ChefServer::Deployment
-    CfTemplate
-    # rubocop:enable Lint/Void
+      set = AppSetting.first
+      region        = set.aws_region
+      keypair_name  = set.ec2_private_key.name
+      keypair_value = set.ec2_private_key.value
+      @locale = I18n.locale
+      # おまじない
+      # rubocop:disable Lint/Void
+      ChefServer
+      ChefServer::Deployment
+      CfTemplate
+      # rubocop:enable Lint/Void
 
-    Thread.new_with_db do
-      ws = WSConnector.new('chef_server_deployment', 'status')
+      Thread.new_with_db do
+        ws = WSConnector.new('chef_server_deployment', 'status')
 
-      begin
-        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
-          Rails.logger.debug("ChefServer creating > #{data} #{msg}")
-          ws.push(build_ws_message(data, msg))
+        begin
+          ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
+            Rails.logger.debug("ChefServer creating > #{data} #{msg}")
+            ws.push(build_ws_message(data, msg))
+          end
+
+          cmd = []
+          cmd << "cp -r #{Rails.root.join('tmp', 'chef')} ~/.chef \n"
+          cmd << "git clone https://github.com/skyarch-networks/skyhopper_cookbooks.git #{Rails.root.join('../', 'skyhopper_cookbooks')} \n"
+          cmd << "knife cookbook upload -ao #{Rails.root.join('../', 'skyhopper_cookbooks')}/cookbooks/ \n"
+          cmd << "knife role from file  #{Rails.root.join('../', 'skyhopper_cookbooks')}/roles/*rb \n"
+          cmd = cmd.flatten.reject(&:blank?).join(" ")
+
+          # Execute given command on Copying chef keys and uploading cookbooks
+          Node.exec_command(cmd)
+          Rails.logger.info("SkyHopper setup > Running necessary Scripts")
+          zabbix = Project.for_zabbix_server.infrastructures.first
+          physical_id = zabbix.resources.first.physical_id
+          fqdn = zabbix.instance(physical_id).fqdn
+          # BOOTSTRAP node
+          Node.bootstrap(fqdn, physical_id, zabbix)
+          node = Node.new(physical_id)
+          node.wait_search_index
+
+          # Update runlist into Role[zabbix_server]
+          node.update_runlist(["role[zabbix_server]"])
+
+          #Start cooking
+          begin
+            tries ||= 3
+            node.cook(zabbix, false) do |line|
+              Rails.logger.info "cooking #{physical_id} > #{line}"
+            end
+
+          rescue Node::CookError
+            retry unless (tries -= 1).zero?
+          end
+
+          # Save status to success after cooking
+          zabbix.resources.first.status.cook.success!
+
+          # Restart Rails Server
+          Rails.logger.info "Restarting Skyhopper after cook"
+          if Rails.env.production?
+            rails_cmd = "nohup #{Rails.root.join('scripts')}/skyhopper_daemon.sh start"
+            outs = Node.exec_command(rails_cmd)
+            Rails.logger.info "executing: #{outs}"
+          end
+
+          Rails.logger.debug("ChefServer creating > complete")
+          ws.push(build_ws_message(:complete))
+        rescue => ex
+          Rails.logger.error(ex.message)
+          Rails.logger.error(ex.backtrace)
+          ws.push(build_ws_message(:error, ex.message))
         end
-
-        Rails.logger.debug("ChefServer creating > complete")
-        ws.push(build_ws_message(:complete))
-      rescue => ex
-        Rails.logger.error(ex.message)
-        Rails.logger.error(ex.backtrace)
-        ws.push(build_ws_message(:error, ex.message))
       end
-    end
 
-    render text: build_ws_message(:creating_infra)
-  end
+      render text: build_ws_message(:creating_infra)
+    end
 
   # GET /app_settings/chef_keys
   def chef_keys
     prepare_chef_key_zip
     send_file(@zipfile.path, filename: 'chef_keys.zip')
+    @zipfile.close
+  end
+
+  # GET /app_settings/export_db
+  def export_db
+    prepare_db_zip
+    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}.zip")
     @zipfile.close
   end
 
@@ -163,5 +235,25 @@ class AppSettingsController < ApplicationController
     @zipfile = Tempfile.open('chef')
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
+  end
+
+  def prepare_db_zip
+    dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
+    filename = "#{dbname}.sql"
+    path     = Rails.root.join("tmp/#{filename}")
+
+    system('rake db:data:dump')
+
+    @zipfile = Tempfile.open("skyhopper")
+    ::Zip::File.open(@zipfile.path, ::Zip::File::CREATE) do |zip|
+      zip.add(filename, path)
+
+      SkyHopper::Application.secrets.each do |key, value|
+        next if value.nil?
+        zip.get_output_stream(key) { |io| io.write(value) }
+      end
+    end
+
+    FileUtils.rm(path)
   end
 end

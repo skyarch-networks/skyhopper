@@ -1,0 +1,9 @@
+operation_worder_job:
+  name: "OperationWorker worker - every 3min"
+  cron: "*/3 * * * *"
+  class: "OperationWorker"
+
+server_state_job:
+  name: "ServerStateWorker worker - every 3min"
+  cron: "*/3 * * * *"
+  class: "ServerStateWorker"

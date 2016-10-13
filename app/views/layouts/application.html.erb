@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
     <title><%= full_title(yield(:title)) %></title>
     <%= csrf_meta_tags %>
 
@@ -18,22 +18,31 @@
 
   <body>
 
-    <%= render partial: 'layouts/navbar_top' %>
-
-    <div class="container">
-        <div class="col-md-12 col-sm-12">
-          <%= bootstrap_flash %>
-          <%= yield %>
-        </div>
 
 
+    <div id="wrapper">
 
+       <!-- Sidebar -->
+       <%= render partial: 'layouts/sidebar' %>
+       <!-- /#sidebar-wrapper -->
 
-    </div> <!-- /container -->
+       <!-- Page Content -->
+       <div id="page-content-wrapper">
+         <%= render partial: 'layouts/navbar_top' %>
+
+         <div class="container">
+             <div class="col-md-12 col-sm-12">
+               <%= bootstrap_flash %>
+               <%= yield %>
+             </div>
+
+         </div> <!-- /container -->
+   </div>
 
     <%= render partial: 'layouts/navbar_bottom' %>
 
     <%= render partial: 'layouts/notification_center' %>
+    <%= render partial: 'layouts/instructions' %>
 
 
     <!-- Javascripts ================================================== -->
