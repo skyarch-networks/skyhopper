@@ -48,7 +48,8 @@ $ sudo npm install bower --global
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
 $ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
-$ sudo yum --enablerepo=epel install redis
+$ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+$ sudo yum --enablerepo=remi,remi-test install redis
 ```
 
 
