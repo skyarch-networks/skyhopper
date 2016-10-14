@@ -404,7 +404,7 @@ class Zabbix
     user_info = @sky_zabbix.user.get(
       filter: { alias: username }
     )
-    unless user_info.first['userid'].nil?
+    unless user_info.first.nil?
       return user_info.first['userid']
     else
       return nil
