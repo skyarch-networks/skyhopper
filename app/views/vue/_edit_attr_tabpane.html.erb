@@ -15,8 +15,8 @@
   </div>
 
   <div v-if="!loading" class="form-actions-top">
+    <button @click="update()"   class="btn btn-sm btn-primary" :disabled="empty"><%= t 'common.btn.save_changes' %></button>
     <%# XXX: button タグだとChromeにおいて謎のRelaodが走ってしまうため、aタグにしている(submitが走ってる気がする)。NC-457 %>
-    <a @click="update()"   class="btn btn-sm btn-primary" :disabled="empty"><%= t 'common.btn.save_changes' %></a>
     <a @click="show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></a>
   </div>
   <div v-if="loading" class="form-actions-top">

@@ -50,7 +50,6 @@ en:
       all:             'All'
       multiple_select: 'Multiple Select'
       download:        'Download'
-      help:            'How-To'
     msg:
       loading:       ' Loading...'
       creating:      ' Creating...'
@@ -72,7 +71,6 @@ en:
 
   app_settings:
     log_directory:     'Log directory'
-    app_directory:     'Application directory'
     aws_region:        'Region'
     aws_keypair:       'KeyPair'
     keypair_name:      'Name of KeyPair'
@@ -80,27 +78,20 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     chef_server:       'Chef Server'
-    warning:           'Warning!'
 
     msg:
-      created:           'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
+      created:           'SkyHopper was successfully setup'
       show:              'Welcome to SkyHopper!'
       log_directory:     'Logs could not be displayed in database. Instead, it will be stored in this directory'
-      app_directory:     'The installation path of SkyHopper. That is already configured.'
+      aws_description:  |
+        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
+        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
       access_key:        'AWS Access Key ID for SkyHopper System'
       secret_access_key: 'AWS Secret Access Key for SkyHopper System'
       aws_region:        'Regions of AWS available for SkyHopper System'
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
-      insert_key:        'Please enter aws keys first and select a region.'
-      incorrect_file:    'Please select a correct AWS keypair .pem file'
-      delete_file:       'Are you sure you want to remove %{name}.pem  file?'
-      create_keypair:    ''
-      aws_description:  |
-        SkyHopper constructs the Chef Server and the Zabbix Server on the AWS.
-        The following settings of the AWS you entered are only used to construct the Chef Server and the Zabbix Server.
-      warning_msg:  'We recommend to use only <b> Google Chrome </b> or <b> Firefox </b> web browsers. As SkyHopper only works best on these browsers.'
       db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
@@ -111,27 +102,9 @@ en:
       system: 'System Settings'
       chef:   'Chef Server Settings'
       aws:    'AWS Settings'
-      new_keypair:   'Create a new KeyPair'
-      exist_keypair: 'Use existing KeyPair'
-      drop_file:     'Drop file here or click to select'
-      pem_file:      'Must be a .pem file created from AWS'
     btn:
       create_chefserver: 'Create Chef Server'
       done:              'Done'
-      create_download:   'Create & Download'
-    intro:
-      aws_keys:   |
-        AWS access and secret key is required to construct Chef & Zabbix Server and to enable SkyHopper to manage your infrastructures.
-        If you have no AWS Securty credentials yet, please follow this link:
-        <a href="http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html" target="_blank"> Managing Access Keys for your AWS Account </a>.
-      aws_region: |
-        After setting the security credentials please select the aws region for SkyHopper instances to be deployed.
-        The purpose for this is to reduce data latency in the application.
-      aws_keypair: |
-        To allow SkyHopper to access your instance, you must create a key pair, specify the name of the key pair when you launch the instance.
-        In this case, if you have already a KeyPair you can select 'Use Existing KeyPair' and select or drag the file into the drop box.
-        However, you can also create a new KeyPair Using the entered AWS Security Credentials you entered and by selecting 'Create a New KeyPair' option.
-      chef_button: 'After the above process, you can now press Create Chef Server button to start the installation.'
 
   clients:
     client: 'Client'
@@ -565,8 +538,7 @@ en:
       download_chef:  'Downloading Chef Server packages...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting up Chef Server...'
-      complete:       'SkyHopper setup completed. Please press the done button to redirect to next step which is creating a user account to login into the system.'
-      setting_up:     'Setting up other necessary commands.'
+      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'
       start:          'Stopping Chef Server...'
@@ -736,25 +708,3 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
-
-  instructions:
-    signup_head: 'Sign up'
-    signup_body: |
-      Since the user has not yet exists after deployment, It will require you to sign up to SkyHopper.
-      Access skyhopper and go to sign up page after deployment. Then enter user name and email, make sure you select the Admin and Master checkbox before pressing create.
-    client_head: 'Create client.'
-    client_body: |
-      Please click new client button and enter name and code which must be a unique string of the client.
-    project_head: 'Create Project'
-    project_body: |
-      When creating a project, select a client and click new project button and fill out the form with the code, name, cloud providers,
-      access key and secret access key created from AWS.
-    infrastructure_head: 'Create Infrastructure'
-    infrastructure_body: |
-      After creating and selecting project in a client, the step is to create an infrastructure to be managed inside your project. Which requires a keypair,
-      stackname, and region. If you have no keypair yet, you can create a new keypair using the generate keypair function.
-    cf_template_head: 'Apply CloudFormation Template'
-    cf_template_body: |
-      In order to apply a cloud formation template, you have to <b> select an infrastructure </b> to show details and click the <b> operations menu</b> and apply <b> cloudformation tab </b>.
-      Then, the list of cloud formation templates will appear in the screen. Please select the template as you like and fillout the required fields to set the parameters then press send to start creating your new stack.
-      You can also add an EC2 if you have created it already on AWS. For more instructions, please visit <a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>.
