@@ -232,3 +232,18 @@ new Clipboard('[data-clipboard]').on('success', function (e) {
     btn.attr('disabled', null);
   }, 1000);
 });
+
+
+$("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+  });
+
+$("#menu-close").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+});
+
+function toggleChange(e){
+  $(e).find('span').toggleClass('fa-chevron-right fa-chevron-down');
+}
