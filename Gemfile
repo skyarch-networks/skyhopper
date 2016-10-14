@@ -32,10 +32,6 @@ gem 'jbuilder'
 # Modularize javascript code in application
 gem 'browserify-rails'
 
-# Fix the version for Amazon Linux
-# http://stackoverflow.com/questions/22950020/multijson-adaptererror-rails-4-ruby-2-passenger
-gem 'multi_json', '1.7.8'
-
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
@@ -61,6 +57,7 @@ gem 'highline'
 gem 'sidekiq' # for Active Job
 gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
+
 
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
 gem "ruby_dep", "~> 1.3.1"
