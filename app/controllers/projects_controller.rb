@@ -175,7 +175,7 @@ class ProjectsController < ApplicationController
   def register_hosts
     z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
     # add new hostgroup on zabbix with project code as its name
-    if z.get_hostgroup_ids(@project.code).empty?
+    if z.get_hostgroup_ids(@project.code).empty? 
       hostgroup_id = z.add_hostgroup(@project.code)
       z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
       z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
@@ -183,10 +183,6 @@ class ProjectsController < ApplicationController
       hostgroup_names = Project.pluck(:code)
       hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
       z.change_mastergroup_rights(hostgroup_ids)
-    end
-
-    unless z.user_exists?(current_user.email)
-      z.create_user(current_user)
     end
 
   end
