@@ -48,7 +48,7 @@ gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
-gem 'awspec'
+gem 'awspec', require: false
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
