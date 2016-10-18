@@ -33,30 +33,36 @@ exports.install = function(Vue, lang){
         },
       });
       dp.on("dp.change", function (e) {
+        var startDate =  moment(e.date._d).format('YYYY/MM/D H:mm');
+        var startDateUnix = moment(e.date._d).unix();
 
-
-        var current = new Date();
         if(e.target.id !== "op-sched-start" && e.target.id !== "op-sched-end"){
-          dp.data("DateTimePicker").maxDate(current);
-          vm.$set(key, moment(e.date._d).unix());
+          dp.data("DateTimePicker").maxDate('now');
+          vm.$set(key, startDateUnix);
         }else{
-          vm.$set(key, moment(e.date._d).format('YYYY/MM/D H:mm'));
+          vm.$set(key, startDate);
         }
 
+        // Sets the start vallue into a hidden type form to be able to let end picker to acces it
         if(e.target.placeholder === "Start" || e.target.id === "op-sched-start")
-          $("input[type='hidden']").val(e.date._d);
+          $("input[type='hidden']").val(startDate);
 
       });
 
+      // Gets the start value and set the Minimum Date
       dp.on("dp.show", function (e) {
-        if(e.target.placeholder === "End" || e.target.id === "op-sched-end")
-          dp.data("DateTimePicker").minDate(new Date($("input[type='hidden']").val()));
+        if(e.target.placeholder === "End" || e.target.id === "op-sched-end"){
+          var minDate = $("input[type='hidden']").val();
+          dp.data("DateTimePicker").minDate(minDate);
+        }
       });
 
 
     },
     update: function (val) {
-      $(this.el).datetimepicker('setDate', val);
+      var tag_id = "#"+String(this.el.id);
+
+      $(tag_id+' .datetimepicker3').datetimepicker('setDate', val);
       var vm = this.vm;
       var key = this.expression;
       vm.$set(key, val);
