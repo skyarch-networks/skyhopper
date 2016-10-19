@@ -93,6 +93,7 @@ ja:
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
+      db_import:         'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'

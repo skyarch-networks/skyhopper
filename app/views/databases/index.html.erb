@@ -1,7 +1,7 @@
 <% provide(:title, t('infrastructures.database')) %>
 <h1 class="page-header"><%= t('infrastructures.database') %></h1>
 
-<div class="row">
+<div id="db-manage" class="row">
   <div class="col-md-6">
     <form action="<%= export_databases_path %>" method="POST" class="form-horizontal well">
       <fieldset>
@@ -13,9 +13,34 @@
           <li><%= t('app_settings.msg.db_key')%></li>
         </ul>
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
-        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%">
-          <span class="glyphicon glyphicon-export"></span>
-          <%= t('common.btn.export') %>
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%" :disabled="loading">
+          <div-loader v-if="loading_export"></div-loader>
+          <span v-if="!loading_export">
+            <span class="glyphicon glyphicon-export"></span>
+            <%= t('common.btn.export') %>
+          </span>
+        </button>
+      </fieldset>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <form action="<%= import_databases_path %>" method="POST" enctype="multipart/form-data" class="form-horizontal well">
+      <fieldset>
+        <legend><%= t('common.btn.import') %></legend>
+        <p><%= t('app_settings.msg.db_import')%></p>
+        <ul>
+          <li> <%= t('app_settings.msg.env', {env: Rails.env.capitalize}) %> </li>
+          <li><%= t('app_settings.msg.secret')%></li>
+          <li><%= t('app_settings.msg.db_key')%></li>
+        </ul>
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+        <input type="file" name="file" class="form-control" required>
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%" :disabled="loading">
+          <div-loader v-if="loading_import"></div-loader>
+          <span v-if="!loading_import">
+            <span class="glyphicon glyphicon-import"></span>
+            <%= t('common.btn.import') %>
+          </span>
         </button>
       </fieldset>
     </form>
