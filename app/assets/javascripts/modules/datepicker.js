@@ -61,8 +61,10 @@ exports.install = function(Vue, lang){
     },
     update: function (val) {
       var tag_id = "#"+String(this.el.id);
+      var ops = ['op-sched-end', 'op-sched-start'];
+      var picker = ops.includes(String(this.el.id)) ? $(tag_id+' .datetimepicker3') : $(tag_id);
 
-      $(tag_id+' .datetimepicker3').datetimepicker('setDate', val);
+      picker.datetimepicker('setDate', val);
       var vm = this.vm;
       var key = this.expression;
       vm.$set(key, val);
