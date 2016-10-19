@@ -31,7 +31,7 @@
         </span>
       </td>
     </tr>
-    <td id="empty_results" style="display: none;"></td>
+    <td v-if="!data" style="display: none;"></td>
     </tbody>
   </table>
   <nav v-if="check_length(data)">
