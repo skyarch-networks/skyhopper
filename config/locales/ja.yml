@@ -462,6 +462,7 @@ ja:
       updated:                 '監視設定が正常に更新されました'
       update_templates:          'Zabbix のテンプレートは正常に更新されました'
       failure:                 'Zabbix Server への登録に失敗しました'
+      no_user:                 '`%{user}` ユーザーが選択した Zabbix サーバにまだ登録されていません。このユーザーを登録するプレス同期 Zabbix をしてください。'
       not_selected:            '監視項目が設定されていません。操作メニューから項目の設定をして下さい'
       invalid_parameters:      'Zabbix Server のユーザー名またはパスワードの設定が間違っています。 設定を確認してください'
       not_running:             ' Zabbix Server が起動していません'

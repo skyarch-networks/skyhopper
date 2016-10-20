@@ -431,7 +431,7 @@ class Zabbix
 
   def delete_user(username)
     if get_user_id(username).nil?
-      raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
+      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
     else
       @sky_zabbix.user.delete([get_user_id(username)])
     end
