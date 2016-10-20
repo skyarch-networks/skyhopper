@@ -72,7 +72,7 @@ class UsersAdminController < ApplicationController
       zab = ZabbixServer.find(z_params)
       zab.each do |s|
         z = Zabbix.new(s.fqdn, s.username, s.password)
-        z.create_user(@user)
+        # z.create_user(@user)
       end
     rescue => ex
       @user.destroy

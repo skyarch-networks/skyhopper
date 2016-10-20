@@ -430,7 +430,11 @@ class Zabbix
   end
 
   def delete_user(username)
-    @sky_zabbix.user.delete([get_user_id(username)])
+    if get_user_id(username).nil?
+      raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
+    else
+      @sky_zabbix.user.delete([get_user_id(username)])
+    end
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。
