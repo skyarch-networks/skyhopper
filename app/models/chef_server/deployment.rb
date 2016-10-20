@@ -116,8 +116,9 @@ class ChefServer::Deployment
         details: 'Default Zabbix Server for Skyhopper System'
       )
 
-      prj.project.zabbix_server_id = zb.id
-      prj.project.save!
+      # Save newly created zabbix server id to zabbix infra.
+      prj.zabbix_server_id = zb.id
+      prj.save!
 
       AppSetting.clear_cache
     rescue => ex
