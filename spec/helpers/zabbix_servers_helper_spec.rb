@@ -36,18 +36,16 @@ describe ZabbixServersHelper do
 
     context 'when editable user' do
       let(:zabbix){build_stubbed(:zabbix_server)}
+
       it {is_expected.not_to be nil}
+      it 'zabbix id should not be equal to 1' do
+        expect(zabbix.id).not_to eq(1)
+      end
     end
 
     context 'when not editable user' do
       let(:user){normal_user}
-
       it {is_expected.to be nil}
-    end
-
-    context 'it should not be equal to 1' do
-      let(:zabbix){build_stubbed(:zabbix_server)}
-      it {is_expected.not_to be 1}
     end
   end
 end
