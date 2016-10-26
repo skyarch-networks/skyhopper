@@ -38,5 +38,38 @@ class DatabaseManager
       zipfile
     end
 
+    def import(sqlpath, secrets)
+      env = SUFFIX[Rails.env]
+      secrets.each do |key, value|
+        path = Rails.root.join('secrets', "#{key}-#{env}")
+        File.write(path, value)
+      end
+
+      ReloadSecretsJob.perform_now   # runs in Rails process
+      ReloadSecretsJob.perform_later # runs in Sidekiq process
+
+      system("rake db:data:load[#{sqlpath}]")
+    end
+
+
+    def import_from_zip(path)
+      zip = ::Zip::File.open(path)
+      validate_zip!(zip)
+
+      FileUtils.rm(SQLPATH) if File.exist?(SQLPATH)
+      zip.glob('*.sql').first.extract(SQLPATH)
+      secrets = SECRETS.map { |name| [name, zip.read(name)] }.to_h
+      zip.close
+
+      import(SQLPATH, secrets)
+    end
+
+    private
+    def validate_zip!(zip)
+      SECRETS.each do |filename|
+        raise "#{filename} is not found in zip." unless zip.find_entry(filename)
+      end
+      raise 'SQL file is not found in zip.' if zip.glob('*.sql').empty?
+    end
   end
 end

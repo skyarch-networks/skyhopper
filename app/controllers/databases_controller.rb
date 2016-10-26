@@ -21,7 +21,12 @@ class DatabasesController < ApplicationController
 
   # POST /databases/import
   def import
-    head :not_implemented and return
+    # TODO: インポート中は他の操作ができないようにする
+    file = params.require(:file)
+    DatabaseManager.import_from_zip(file.path)
+    file.close
+
+    redirect_to databases_path
   end
 
 end
