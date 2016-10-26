@@ -7,13 +7,13 @@
 #
 
 class DatabaseManager
-  SQLPATH = 'tmp/import.sql'
-  SECRETS = [:secret_key_base, :db_crypt_key]
+  SQLPATH = 'tmp/import.sql'.freeze
+  SECRETS = [:secret_key_base, :db_crypt_key].freeze
   SUFFIX = {
     'development' => 'dev',
     'test'        => 'test',
     'production'  => 'prod',
-  }
+  }.freeze
 
   class << self
     def export_as_zip
