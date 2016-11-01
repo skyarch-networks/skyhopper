@@ -93,6 +93,7 @@ en:
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
       db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
+      db_import:         'When importing SkyHopper Database, select a zip file which includes these files: '
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
