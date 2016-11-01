@@ -21,10 +21,15 @@ class DatabasesController < ApplicationController
 
   # POST /databases/import
   def import
-    # TODO: インポート中は他の操作ができないようにする
     file = params.require(:file)
-    DatabaseManager.import_from_zip(file.path)
-    file.close
+
+    MaintenanceMode.activate
+
+    Thread.new do
+      DatabaseManager.import_from_zip(file.path)
+      file.close
+      MaintenanceMode.deactivate
+    end
 
     redirect_to databases_path
   end
