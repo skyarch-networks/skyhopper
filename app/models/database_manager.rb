@@ -49,6 +49,7 @@ class DatabaseManager
       ReloadSecretsJob.perform_later # runs in Sidekiq process
 
       system("rake db:data:load[#{sqlpath}]")
+      Rails.cache.clear
     end
 
 
