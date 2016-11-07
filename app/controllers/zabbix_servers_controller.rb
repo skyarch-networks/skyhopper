@@ -33,15 +33,14 @@ class ZabbixServersController < ApplicationController
   # POST /zabbix_servers.json
   def create
     params = zabbix_server_params
-    Thread.new do
-      ws = WSConnector.new('notifications', User.find(current_user).ws_key)
-      begin
-        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
-        params[:version] = z.version
-        ws.push_as_json({message: I18n.t('zabbix_servers.msg.created'), status: true})
-      rescue => ex
-        ws.push_as_json({message: ex.message, status: false})
-      end
+    ws = WSConnector.new('notifications', User.find(current_user).ws_key)
+    begin
+      z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+      params[:version] = z.version
+      ws.push_as_json({message: I18n.t('zabbix_servers.msg.created'), status: true})
+    rescue => ex
+      ws.push_as_json({message: ex.message, status: false})
+      raise ex
     end
 
     @zabbix_server = ZabbixServer.new(params)

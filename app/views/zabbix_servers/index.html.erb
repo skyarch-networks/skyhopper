@@ -47,7 +47,7 @@
   :url="url">
   </demo-grid>
 
-  <div v-if="is_empty">
+  <div v-if="is_empty" v-cloak>
     <%= t 'zabbix_servers.msg.empty-list' %>
   </div>
   <div v-if="loading">

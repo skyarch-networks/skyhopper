@@ -33,6 +33,11 @@
       picked: {
         users_admin_path: null,
         id: null
+      },
+      params: {
+        fqdn: null,
+        username: null,
+        password: null
       }
     },
     methods:  {
@@ -65,7 +70,9 @@
         this.$children[0].load_ajax(self.url);
         this.picked = {};
       },
-      register: function () {
+      register: function (event) {
+        event.preventDefault();
+
         var self = this;
         self.loading = true;
         var infra = new Infrastructure(this.infra_id);
@@ -76,5 +83,14 @@
           .fail(alert_danger(self._show_ec2));
       },
     },
+    computed: {
+      required_filed: function () {
+        var params = this.params;
+        return (params.fqdn &&
+          params.username &&
+          params.password
+        );
+      },
+    }
   });
 })();
