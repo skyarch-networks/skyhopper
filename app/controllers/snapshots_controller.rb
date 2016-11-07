@@ -9,7 +9,7 @@
 class SnapshotsController < ApplicationController
   include Concerns::InfraLogger
 
-    before_action :authenticate_user!
+  before_action :authenticate_user!
 
   before_action do
     set_infra
