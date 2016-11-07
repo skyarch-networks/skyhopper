@@ -91,6 +91,8 @@ EOF
 ```sh
 $ sudo tee /etc/nginx/conf.d/skyhopper.conf <<EOF >/dev/null
 server {
+        client_max_body_size 1g;
+
         listen 80;
         server_name skyhopper.local; #環境に合わせて設定
 
