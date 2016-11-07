@@ -11,6 +11,12 @@ class DatabasesController < ApplicationController
     authenticate_user! if AppSetting.set?
   end
 
+  before_action do
+    man = DatabaseManager.new
+    def man.policy_class; DatabasePolicy end
+    authorize man
+  end
+
   # POST /databases/export
   def export
     time = Time.now.strftime('%Y%m%d%H%M%S')
