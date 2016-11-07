@@ -1,48 +1,109 @@
 <% provide(:title, t('infrastructures.database')) %>
 <h1 class="page-header"><%= t('infrastructures.database') %></h1>
 
-<div id="db-manage" class="row">
-  <div class="col-md-6">
-    <form action="<%= export_databases_path %>" method="POST" class="form-horizontal well">
-      <fieldset>
-        <legend><%= t('common.btn.export') %></legend>
-        <p><%= t('app_settings.msg.db_export')%></p>
-        <ul>
-          <li> <%= t('app_settings.msg.env', {env: Rails.env.capitalize}) %> </li>
-          <li><%= t('app_settings.msg.secret')%></li>
-          <li><%= t('app_settings.msg.db_key')%></li>
-        </ul>
-        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
-        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%" :disabled="loading">
-          <div-loader v-if="loading_export"></div-loader>
-          <span v-if="!loading_export">
-            <span class="glyphicon glyphicon-export"></span>
-            <%= t('common.btn.export') %>
-          </span>
-        </button>
-      </fieldset>
-    </form>
+
+<div id="db-manage">
+  <div class="jumbotron">
+    <h2><%= t('databases.db_management') %></h2>
+    <p></p>
+    <p>
+      <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#exportModal">
+        <span class="glyphicon glyphicon-export"></span>
+        <%= t('common.btn.export') %>
+      </button>
+      <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#importModal">
+        <span class="glyphicon glyphicon-import"></span>
+        <%= t('common.btn.import') %>
+      </button>
+    </p>
   </div>
-  <div class="col-md-6">
-    <form action="<%= import_databases_path %>" method="POST" enctype="multipart/form-data" class="form-horizontal well">
-      <fieldset>
-        <legend><%= t('common.btn.import') %></legend>
-        <p><%= t('app_settings.msg.db_import')%></p>
-        <ul>
-          <li> <%= t('app_settings.msg.env', {env: Rails.env.capitalize}) %> </li>
-          <li><%= t('app_settings.msg.secret')%></li>
-          <li><%= t('app_settings.msg.db_key')%></li>
-        </ul>
-        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
-        <input type="file" name="file" class="form-control" required>
-        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%" :disabled="loading">
-          <div-loader v-if="loading_import"></div-loader>
-          <span v-if="!loading_import">
-            <span class="glyphicon glyphicon-import"></span>
-            <%= t('common.btn.import') %>
-          </span>
-        </button>
-      </fieldset>
-    </form>
+
+
+  <!-- export modal -->
+  <div class="modal fade" id="exportModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel"><%= t('infrastructures.database') %></h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h5 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span> Info</h5>
+            </div>
+            <div class="panel-body">
+              <p><%= t('databases.msg.db_export')%></p>
+              <ul>
+                <li> <%= t('databases.msg.env', {env: Rails.env.capitalize}) %> </li>
+                <li><%= t('databases.msg.secret')%></li>
+                <li><%= t('databases.msg.db_key')%></li>
+              </ul>
+            </div>
+          </div>
+          <form action="<%= export_databases_path %>" method="POST">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+            <button type="submit" class="btn btn-primary btn-lg btn-block" :disabled="loading" @click="">
+              <div-loader v-if="loading"></div-loader>
+              <span v-if="!loading">
+                <span class="glyphicon glyphicon-export"></span>
+                <%= t('common.btn.export') %>
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- import modal -->
+  <div class="modal fade" id="importModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel"><%= t('infrastructures.database') %></h4>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <h4><span class="glyphicon glyphicon-alert"></span> Warning</h4>
+            <p><%= t('databases.msg.db_import_warning') %></p>
+          </div>
+
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h5 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span> Info</h5>
+            </div>
+            <div class="panel-body">
+              <p><%= t('databases.msg.db_import')%></p>
+              <ul>
+                <li> <%= t('databases.msg.env', {env: Rails.env.capitalize}) %> </li>
+                <li><%= t('databases.msg.secret')%></li>
+                <li><%= t('databases.msg.db_key')%></li>
+              </ul>
+            </div>
+          </div>
+          <form action="<%= import_databases_path %>" method="POST" enctype="multipart/form-data" class="form-horizontal">
+            <fieldset :disabled="loading">
+              <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+              <div class="form-group">
+                <label for="file" class="col-sm-2 control-label">ZIP File</label>
+                <div class="col-sm-10">
+                  <input type="file" accept="application/zip" name="file" class="form-control" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg btn-block">
+                <div-loader v-if="loading"></div-loader>
+                <span v-if="!loading">
+                  <span class="glyphicon glyphicon-export"></span>
+                  <%= t('common.btn.import') %>
+                </span>
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
