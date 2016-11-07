@@ -28,20 +28,31 @@
       </a>&nbsp
     </div>
 
-  </div>
+    <div class="pull-right">
+      <a class="btn btn-default btn-sm" @click="reload()">
+          <span class='glyphicon glyphicon-refresh'></span>
+      </a>&nbsp
+    </div>
 
+  </div>
 
   <demo-grid
   :data.sync="gridData"
   :columns="gridColumns"
   :filter-key="searchQuery"
   :picked.sync="picked"
-  :index="index">
+  :index="index"
+  :url="url">
   </demo-grid>
-</div>
+  <div v-if="is_empty" v-cloak>
+    <%= t 'dishes.msg.empty-list' %>
+  </div>
+  <div v-if="loading">
+    <span class="loader"></span>
+    <%= t 'common.msg.loading' %>
+  </div>
 
-<div  id="empty" style="display: none;"></div>
-<span id="loading"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+</div>
 <hr>
 
 <% if allow_change %>

@@ -26,6 +26,10 @@ var serverspecIndex = new Vue({
         serverspec_path: null,
         edit_serverspec_path: null
     },
+    infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
+    url: 'serverspecs?lang='+this.lang+this.infra_id,
+    is_empty: false,
+    loading: true,
   },
     methods: {
       can_edit: function() {
@@ -47,6 +51,11 @@ var serverspecIndex = new Vue({
             },
         }).fail(modal.AlertForAjaxStdError());
         });
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
+        this.picked = {};
       },
       show_serverspec: function(serverspec_id) {
         $.ajax({

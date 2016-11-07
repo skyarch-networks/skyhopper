@@ -24,6 +24,9 @@
       gridColumns: ['code','name'],
       gridData: [],
       lang: queryString.lang,
+      url: 'clients?lang='+self.lang,
+      is_empty: false,
+      loading: true,
       picked: {
         edit_client_path: null,
         code: null
@@ -53,7 +56,12 @@
                     },
                 }).fail(function() {location.reload();});
         });
-      }
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
+        this.picked = {};
+      },
 
     }
   });

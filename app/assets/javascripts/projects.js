@@ -23,7 +23,10 @@
     data: {
       searchQuery: '',
       gridColumns: ['code','name', 'cloud_provider', 'access_key'],
+      url: this.projects_path,
       gridData: [],
+      is_empty: false,
+      loading: true,
       picked: {
         edit_url: null,
         project_settings: {
@@ -60,6 +63,10 @@
                     },
                 }).fail(function() {location.reload();});
         });
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
       }
     },
 

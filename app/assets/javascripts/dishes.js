@@ -28,6 +28,10 @@
       gridColumns: ['dish_name','detail', 'status'],
       gridData: [],
       index: 'dishes',
+      project_id: queryString.project_id ? '&project_id='+queryString.project_id: '',
+      url: 'dishes?lang='+this.lang+this.project_id,
+      is_empty: false,
+      loading: true,
       picked: {
         dish_path: null
       }
@@ -61,6 +65,11 @@
         }).fail(function (data) {
           modal.Alert(t('dishes.dish'), data.responseText, 'danger');
         });
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
+        this.picked = {};
       },
 
     },

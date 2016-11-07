@@ -151,6 +151,8 @@
       searchQuery: '',
       gridColumns: [],
       gridData: [],
+      loading: true,
+      is_empty: false,
       picked: {
         button_delete_stack: null,
         edit_infrastructure_path: null,
@@ -182,16 +184,23 @@
       },
       delete_stack: function()  {
         delete_stack(this.picked.id);
+        this.reload();
       },
       show_infra: function(item_id)  {
         show_infra(item_id, '');
       },
       show_sched: function()  {
         show_infra(this.picked.id, 'show_sched');
+        this.reload();
       },
       detach_infra: function()  {
         detach(this.picked.id);
-      }
+        this.reload();
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
+      },
     }
   });
 

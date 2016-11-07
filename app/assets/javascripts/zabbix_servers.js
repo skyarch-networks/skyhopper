@@ -27,6 +27,9 @@
       gridColumns: ['fqdn', 'version', 'details'],
       gridData: [],
       index: 'zabbix_servers',
+      url: 'zabbix_servers?lang='+self.lang,
+      is_empty: false,
+      loading: true,
       picked: {
         users_admin_path: null,
         id: null
@@ -56,8 +59,22 @@
             },
           }).fail(function() { location.reload(); });
         });
-      }
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(self.url);
+        this.picked = {};
+      },
+      register: function () {
+        var self = this;
+        self.loading = true;
+        var infra = new Infrastructure(this.infra_id);
+        var ec2 = new EC2Instance(infra, self.physical_id);
 
-    }
+        ec2.bootstrap()
+          .done(alert_success(self._show_ec2))
+          .fail(alert_danger(self._show_ec2));
+      },
+    },
   });
 })();

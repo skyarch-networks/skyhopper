@@ -28,6 +28,11 @@
           <%= t 'helpers.links.edit' %>
       </a>&nbsp
     </div>
+    <div class="pull-right">
+      <a class="btn btn-default btn-sm" @click="reload()">
+          <span class='glyphicon glyphicon-refresh'></span>
+      </a>&nbsp
+    </div>
 
     <div class="pull-right">
       <div class="btn-group" role="group">
@@ -53,6 +58,8 @@
         &nbsp
       </label>
     </div>
+
+
   </div>
 
 
@@ -63,10 +70,17 @@
   :picked.sync="picked"
   :index="index"
   :multi-select="multiSelect"
-  :selections.sync="selections">
+  :selections.sync="selections"
+  :url="url">
   </demo-grid>
+  <div v-if="is_empty" v-cloak>
+    <%= t 'cf_templates.msg.empty-list' %>
+  </div>
+  <div v-if="loading">
+    <span class="loader"></span>
+    <%= t 'common.msg.loading' %>
+  </div>
 </div>
-
 
 <%= button_add_cft %>
 <%= button_template_builder %>

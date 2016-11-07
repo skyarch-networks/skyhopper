@@ -33,24 +33,20 @@ class ZabbixServersController < ApplicationController
   # POST /zabbix_servers.json
   def create
     params = zabbix_server_params
-    begin
-      z = Zabbix.new(params[:fqdn], params[:username], params[:password])
-      params[:version] = z.version
-    rescue => ex
-      raise ex
+    Thread.new do
+      ws = WSConnector.new('notifications', User.find(current_user).ws_key)
+      begin
+        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+        params[:version] = z.version
+        ws.push_as_json({message: I18n.t('zabbix_servers.msg.created'), status: true})
+      rescue => ex
+        ws.push_as_json({message: ex.message, status: false})
+      end
     end
 
     @zabbix_server = ZabbixServer.new(params)
 
-    respond_to do |format|
-      if @zabbix_server.save
-        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.created') }
-        format.json { render :show, status: :created, location: @zabbix_server }
-      else
-        format.html { render :new }
-        format.json { render json: @zabbix_server.errors, status: :unprocessable_entity }
-      end
-    end
+    render nothing: true, status: 200 and return
   end
 
   # PATCH/PUT /zabbix_servers/1
