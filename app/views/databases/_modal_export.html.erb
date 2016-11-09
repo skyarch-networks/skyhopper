@@ -1,0 +1,36 @@
+<!-- export modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><%= t('infrastructures.database') %></h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h5 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span> Info</h5>
+          </div>
+          <div class="panel-body">
+            <p><%= t('databases.msg.db_export')%></p>
+            <ul>
+              <li> <%= t('databases.msg.env', {env: Rails.env.capitalize}) %> </li>
+              <li><%= t('databases.msg.secret')%></li>
+              <li><%= t('databases.msg.db_key')%></li>
+            </ul>
+          </div>
+        </div>
+        <form action="<%= export_databases_path %>" method="POST">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+          <button type="submit" class="btn btn-primary btn-lg btn-block" :disabled="loading" @click="">
+            <div-loader v-if="loading"></div-loader>
+            <span v-if="!loading">
+              <span class="glyphicon glyphicon-export"></span>
+              <%= t('common.btn.export') %>
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
