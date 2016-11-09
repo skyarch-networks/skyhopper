@@ -65,6 +65,11 @@ class DatabaseManager
       import(SQLPATH, secrets)
     end
 
+    def validate_zip_file!(path)
+      zip = ::Zip::File.open(path)
+      validate_zip!(zip)
+    end
+
     private
     def validate_zip!(zip)
       SECRETS.each do |filename|

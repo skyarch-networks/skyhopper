@@ -33,8 +33,9 @@ class DatabasesController < ApplicationController
   def import
     file = params.require(:file)
 
-    MaintenanceMode.activate
+    DatabaseManager.validate_zip_file!(file.path)
 
+    MaintenanceMode.activate
     Thread.new do
       DatabaseManager.import_from_zip(file.path)
       file.close
