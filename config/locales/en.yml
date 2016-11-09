@@ -707,6 +707,7 @@ en:
 
   databases:
     db_management: 'Database Management'
+    import_db:     'Import DB'
     msg:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
@@ -714,6 +715,7 @@ en:
       db_export: 'When exporting SkyHopper Database into a zip file, it includes these files: '
       db_import: 'When importing SkyHopper Database, select a zip file which includes these files: '
       db_import_finish: 'Database import has finished.'
+      db_import_intro:  'You can not perform any operations until the import is complete.'
       db_import_warning: |
         Database of SkyHopper will be replaced completely by the import operation.
         Please be careful when using this.

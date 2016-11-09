@@ -9,7 +9,13 @@
       <div class="modal-body">
         <div class="alert alert-warning">
           <h4><span class="glyphicon glyphicon-alert"></span> Warning</h4>
-          <p><%= t('databases.msg.db_import_warning') %></p>
+          <p>
+            <% if AppSetting.set? %>
+              <%= t('databases.msg.db_import_warning') %>
+            <% else %>
+              <%= t('databases.msg.db_import_intro') %>
+            <% end %>
+          </p>
         </div>
 
         <div class="panel panel-info">

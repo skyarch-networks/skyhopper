@@ -7,18 +7,22 @@
 #
 
 class DatabasesController < ApplicationController
-  before_action do
-    authenticate_user! if AppSetting.set?
-  end
+  skip_before_action :appsetting_set?
 
-  before_action do
+  before_action if: :app_setting_is_set do
+    authenticate_user!
+
     man = DatabaseManager.new
     def man.policy_class; DatabasePolicy end
     authorize man
   end
 
+  helper_method :app_setting_is_set
+
   # POST /databases/export
   def export
+    authenticate_user!
+
     time = Time.now.strftime('%Y%m%d%H%M%S')
     zipfile = DatabaseManager.export_as_zip
     send_file(zipfile.path, filename: "SkyHopper-db-#{Rails.env}-#{time}.zip")
@@ -37,7 +41,11 @@ class DatabasesController < ApplicationController
       MaintenanceMode.deactivate
     end
 
-    redirect_to databases_path
+    redirect_to root_path
   end
 
+  private
+  def app_setting_is_set
+    @app_setting_is_set ||= AppSetting.set?
+  end
 end

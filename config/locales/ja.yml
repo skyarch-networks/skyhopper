@@ -705,6 +705,7 @@ ja:
 
   databases:
     db_management: 'データベースの管理'
+    import_db:     'DB をインポート'
     msg:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
@@ -712,6 +713,7 @@ ja:
       db_export: 'エクスポートしたZIPファイルには下記のファイルが含まれています。'
       db_import: 'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
       db_import_finish: 'データベースのインポートが完了しました'
+      db_import_intro:  'インポートが完了するまでは一切の操作ができなくなります。'
       db_import_warning: |
         この操作によって SkyHopper のデータベースは完全に置き換えられます。
         データがバックアップされていることを確認した上で、細心の注意を払って使用してください。
