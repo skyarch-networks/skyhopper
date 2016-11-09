@@ -12,8 +12,6 @@ class ReloadSecretsJob < ActiveJob::Base
   # Ref: https://github.com/rails/rails/blob/634741d9721eb938c8bce38c109023178268e43d/railties/lib/rails/application.rb#L385
   def perform
     Rails.application.remove_instance_variable(:@secrets)
-  rescue NameError # rubocop:disable Lint/HandleExceptions
-    # nop
   ensure
     Rails.application.secrets
   end
