@@ -9,5 +9,7 @@
 require_relative '../spec_helper'
 
 RSpec.describe ServerspecResult, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "is valid with valid attributes" do
+    expect(ServerspecResult.new).to be_valid
+  end
 end

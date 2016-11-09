@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require_relative '../rails_helper'
+require_relative '../spec_helper'
 
 describe YumSchedule, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
