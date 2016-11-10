@@ -14,6 +14,10 @@
   var md5 = require('md5');
   var queryString = require('query-string').parse(location.search);
   var modal = require('modal');
+  var ZabbixServer  = require('models/zabbix_server').default;
+  var helpers = require('infrastructures/helper.js');
+  var alert_success        = helpers.alert_success;
+  var alert_danger         = helpers.alert_danger;
 
   var app;
 
@@ -27,9 +31,10 @@
       gridColumns: ['fqdn', 'version', 'details'],
       gridData: [],
       index: 'zabbix_servers',
-      url: 'zabbix_servers?lang='+self.lang,
+      url: 'zabbix_servers?lang='+queryString.lang,
       is_empty: false,
       loading: true,
+      new_loader: false,
       picked: {
         users_admin_path: null,
         id: null
@@ -37,8 +42,10 @@
       params: {
         fqdn: null,
         username: null,
-        password: null
-      }
+        password: null,
+        details: null,
+        lang: queryString.lang
+      },
     },
     methods:  {
       can_delete: function() {
@@ -49,7 +56,6 @@
         if (this.picked.edit_zabbix_server_url)
           return this.picked.edit_zabbix_server_url ? true : false;
       },
-
       delete_entry: function()  {
         var self = this;
         modal.Confirm(t('zabbix_servers.zabbix'), t('zabbix_servers.msg.delete_server'), 'danger').done(function () {
@@ -72,15 +78,27 @@
       },
       register: function (event) {
         event.preventDefault();
-
         var self = this;
-        self.loading = true;
-        var infra = new Infrastructure(this.infra_id);
-        var ec2 = new EC2Instance(infra, self.physical_id);
+        self.new_loader = true;
 
-        ec2.bootstrap()
-          .done(alert_success(self._show_ec2))
-          .fail(alert_danger(self._show_ec2));
+        var zabbix = new ZabbixServer(session_id);
+
+        zabbix.create(self.params.fqdn,
+          self.params.username,
+          self.params.password,
+          self.params.details,
+          self.params.lang
+        ).done(function (data) {
+            self.new_loader = false;
+            modal.Alert(t('zabbix_servers.zabbix'), data.message, 'success').done(function(){
+              location.assign(data.url);
+            });
+          }
+        ).fail(function (msg)  {
+          modal.Alert(t('zabbix_servers.zabbix'), msg, 'danger');
+            self.new_loader = false;
+        });
+
       },
     },
     computed: {
@@ -91,6 +109,9 @@
           params.password
         );
       },
-    }
+    },
+    ready: function() {
+      this.new_loader = false;
+    },
   });
 })();

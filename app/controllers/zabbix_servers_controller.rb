@@ -32,20 +32,25 @@ class ZabbixServersController < ApplicationController
   # POST /zabbix_servers
   # POST /zabbix_servers.json
   def create
+    lang = params[:lang]
     params = zabbix_server_params
-    ws = WSConnector.new('notifications', User.find(current_user).ws_key)
-    begin
-      z = Zabbix.new(params[:fqdn], params[:username], params[:password])
-      params[:version] = z.version
-      ws.push_as_json({message: I18n.t('zabbix_servers.msg.created'), status: true})
-    rescue => ex
-      ws.push_as_json({message: ex.message, status: false})
-      raise ex
+    ws = WSConnector.new('notifications', current_user.ws_key)
+    Thread.new_with_db do
+      if lang
+        I18n.locale = lang
+      end
+      begin
+        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+        params[:version] = z.version
+        @zabbix_server = ZabbixServer.new(params)
+        @zabbix_server.save!
+        ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), url: zabbix_servers_url})
+      rescue => ex
+        ws.push_as_json({status: false, message: ex.message})
+      end
     end
 
-    @zabbix_server = ZabbixServer.new(params)
-
-    render nothing: true, status: 200 and return
+      render nothing: true, status: 200 and return
   end
 
   # PATCH/PUT /zabbix_servers/1
@@ -85,7 +90,7 @@ class ZabbixServersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def zabbix_server_params
-    params.require(:zabbix_server).permit(:fqdn, :username, :password, :version, :details)
+    params.require(:zabbix_server).permit(:fqdn, :username, :password, :details)
   end
 
 end

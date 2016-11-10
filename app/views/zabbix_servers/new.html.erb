@@ -4,5 +4,9 @@
   <h1><%=t '.title', :default => [:'helpers.titles.new', 'New %{model}'], :model => model_class.model_name.human.titleize %></h1>
 </div>
 <div id="indexElement" v-el:node>
+  <div v-if="new_loader" v-cloak>
+    <span class="loader"></span>
+    Registering Zabbix Server ...
+  </div>
 <%= render :partial => 'form' %>
 </div>

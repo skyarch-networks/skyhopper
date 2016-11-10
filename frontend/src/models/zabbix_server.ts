@@ -11,37 +11,41 @@
 import ModelBase from './base';
 
 export default class ZabbixServer extends ModelBase {
-  constructor(public id: string) {super(); }
+  constructor(public session_id: string) {super(); }
 
   static ajax = new AjaxSet.Resources('zabbix_servers');
 
+  create(fqdn: string, username: string, password: string, details: string, lang: string): JQueryPromise<any> {
+    const dfd = $.Deferred();
+    (<any>ZabbixServer.ajax).create({
+      zabbix_server: {
+        fqdn:             fqdn,
+        username:         username,
+        password:         password,
+        details:          details
+      },
+      lang: lang,
+      commit: "Create Zabbix Server",
+    })
+      .done(this.wait_change_status(dfd))
+      .fail(this.rejectF(dfd));
 
-  /**
-   * @method \create zabbix
-   * @param {Object} data
-   * @return {$.Promise}
-   */
-  create(data: {
-    fqdn:   string;
-    username: string;
-    password:  string;
-    params: Array<any>; // XXX: Array だっけ?
-  }): JQueryPromise<any> {
-    return this.WrapAndResolveReject((dfd) => {
-      if (data.name === "") {
-        dfd.reject(t('infrastructures.msg.empty_subject'));
-      }
+    return dfd.promise();
+  }
 
-      const req = {cf_template: {
-        name:              data.name,
-        detail:            data.detail,
-        value:             data.value,
-        params:            data.params,
-        infrastructure_id: this.infra.id,
-      }};
-
-      return (<any>ZabbixServer.ajax).create(req);
-    });
+  // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
+  private wait_change_status(dfd: JQueryDeferred<any>): () => void {
+    return () => {
+      const ws = ws_connector('notifications', this.session_id);
+      ws.onmessage = function (msg) {
+        const d = JSON.parse(msg.data);
+        if (!d.status) {
+          dfd.reject(d.message);
+        } else {
+          dfd.resolve(d);
+        }
+        ws.close();
+      };
+    };
   }
 }
-ZabbixServer.ajax.add_collection('create', 'POST');
