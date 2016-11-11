@@ -719,3 +719,6 @@ en:
       db_import_warning: |
         Database of SkyHopper will be replaced completely by the import operation.
         Please be careful when using this.
+      under_maintenance: |
+        Temporarily unavailable because database importing is in progress.
+        Please wait for a while and try again.

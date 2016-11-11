@@ -35,7 +35,11 @@ class DatabasesController < ApplicationController
 
     DatabaseManager.validate_zip_file!(file.path)
 
-    MaintenanceMode.activate
+    reason = I18n.available_locales.map { |locale|
+      I18n.t('databases.msg.under_maintenance', locale: locale)
+    }.join
+    MaintenanceMode.activate(reason: reason)
+
     Thread.new do
       DatabaseManager.import_from_zip(file.path)
       file.close
