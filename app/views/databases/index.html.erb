@@ -20,6 +20,6 @@
     </p>
   </div>
 
-  <%= render partial: 'modal_export' if app_setting_is_set %>
-  <%= render partial: 'modal_import' %>
+  <%= render 'modal_export' if app_setting_is_set %>
+  <%= render 'modal_import' %>
 </div>
