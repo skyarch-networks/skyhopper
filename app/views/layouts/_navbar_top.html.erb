@@ -22,7 +22,7 @@
   <% if current_user.admin? && current_user.master? %>
             <li role="presentation"><%= link_to 'Zabbix Servers', zabbix_servers_path %></li>
             <li role="presentation"><%= link_to 'Chef Server', chef_server_app_settings_path %></li>
-            <li role="presentation"><%= link_to t('infrastructures.database'), databases_path %></li>
+            <li role="presentation"><%= link_to t('infrastructures.database'), database_path %></li>
             <li class="divider"></li>
   <% end %>
             <li role="presentation"><%= link_to t('dishes.dishes'), dishes_path %></li>

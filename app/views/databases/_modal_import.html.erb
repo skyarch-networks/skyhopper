@@ -31,7 +31,7 @@
             </ul>
           </div>
         </div>
-        <form action="<%= import_databases_path %>" method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <form action="<%= import_database_path %>" method="POST" enctype="multipart/form-data" class="form-horizontal">
           <fieldset :disabled="loading">
             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
             <div class="form-group">

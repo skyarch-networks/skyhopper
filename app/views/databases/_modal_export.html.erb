@@ -20,7 +20,7 @@
             </ul>
           </div>
         </div>
-        <form action="<%= export_databases_path %>" method="POST">
+        <form action="<%= export_database_path %>" method="POST">
           <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
           <button type="submit" class="btn btn-primary btn-lg btn-block" :disabled="loading" @click="">
             <div-loader v-if="loading"></div-loader>

@@ -183,7 +183,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :databases, only: [:index] do
+  resource :database, only: [:show] do
     collection do
       post :export
       post :import
