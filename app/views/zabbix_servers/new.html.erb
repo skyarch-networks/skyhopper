@@ -8,5 +8,13 @@
     <span class="loader"></span>
     Registering Zabbix Server ...
   </div>
+  <input type="hidden" v-model="control_type" value="new">
 <%= render :partial => 'form' %>
+
+<div class="form-actions-top">
+  <button v-if="!new_loader" class="btn btn-primary" :disabled="!required_filed && !new_loader" @click="create">Register</button>
+  <span v-if="new_loader" v-cloak><%= link_to t('.cancel', default: t("zabbix_servers.btn.background")), zabbix_servers_path, class: 'btn btn-primary' %></span>
+  <span v-if="!new_loader"><%= link_to t('.cancel', default: t("helpers.links.cancel")), zabbix_servers_path, class: 'btn btn-default' %></span>
+</div>
+
 </div>

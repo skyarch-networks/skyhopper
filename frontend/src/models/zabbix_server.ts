@@ -15,22 +15,23 @@ export default class ZabbixServer extends ModelBase {
 
   static ajax = new AjaxSet.Resources('zabbix_servers');
 
-  create(fqdn: string, username: string, password: string, details: string, lang: string): JQueryPromise<any> {
+  create(zabbix_server: any): JQueryPromise<any> {
     const dfd = $.Deferred();
     (<any>ZabbixServer.ajax).create({
-      zabbix_server: {
-        fqdn:             fqdn,
-        username:         username,
-        password:         password,
-        details:          details
-      },
-      lang: lang,
+      zabbix_server,
+      lang: zabbix_server.lang,
       commit: "Create Zabbix Server",
     })
       .done(this.wait_change_status(dfd))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
+  }
+
+  update(zabbix_server: any): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      ZabbixServer.ajax.update({zabbix_server, id: zabbix_server.id})
+    );
   }
 
   // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す

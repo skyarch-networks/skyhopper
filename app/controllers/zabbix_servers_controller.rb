@@ -56,15 +56,16 @@ class ZabbixServersController < ApplicationController
   # PATCH/PUT /zabbix_servers/1
   # PATCH/PUT /zabbix_servers/1.json
   def update
-    respond_to do |format|
-      if @zabbix_server.update(zabbix_server_params)
-        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.updated') }
-        format.json { render :show, status: :ok, location: @zabbix_server }
-      else
-        format.html { render :edit }
-        format.json { render json: @zabbix_server.errors, status: :unprocessable_entity }
-      end
+    params = zabbix_server_params
+    begin
+      Zabbix.new(params[:fqdn], params[:username], params[:password])
+      @zabbix_server.update(params)
+    rescue => ex
+      render text: ex.message, status: 500 and return
     end
+
+    render text: I18n.t('zabbix_servers.msg.updated') and return
+
   end
 
   # DELETE /zabbix_servers/1

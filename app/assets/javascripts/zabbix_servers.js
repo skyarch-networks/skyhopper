@@ -46,6 +46,7 @@
         details: null,
         lang: queryString.lang
       },
+      control_type: null
     },
     methods:  {
       can_delete: function() {
@@ -76,19 +77,13 @@
         this.$children[0].load_ajax(self.url);
         this.picked = {};
       },
-      register: function (event) {
+      create: function (event) {
         event.preventDefault();
         var self = this;
         self.new_loader = true;
 
         var zabbix = new ZabbixServer(session_id);
-
-        zabbix.create(self.params.fqdn,
-          self.params.username,
-          self.params.password,
-          self.params.details,
-          self.params.lang
-        ).done(function (data) {
+        zabbix.create(self.params).done(function (data) {
             self.new_loader = false;
             modal.Alert(t('zabbix_servers.zabbix'), data.message, 'success').done(function(){
               location.assign(data.url);
@@ -98,7 +93,24 @@
           modal.Alert(t('zabbix_servers.zabbix'), msg, 'danger');
             self.new_loader = false;
         });
+      },
+      update: function(event){
+        event.preventDefault();
+        var self = this;
+        self.new_loader = true;
 
+        var zabbix = new ZabbixServer(session_id);
+        zabbix.update(self.params).done(function (msg) {
+            modal.Alert(t('zabbix_servers.zabbix'), msg, 'success').done(
+              function () {
+                location.assign(self.url);
+              }
+            );
+          }
+        ).fail(function (msg)  {
+          modal.Alert(t('zabbix_servers.zabbix'), msg, 'danger');
+        });
+        self.new_loader = false;
       },
     },
     computed: {
