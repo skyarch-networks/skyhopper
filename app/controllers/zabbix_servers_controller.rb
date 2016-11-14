@@ -47,6 +47,7 @@ class ZabbixServersController < ApplicationController
         ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), url: zabbix_servers_url})
       rescue => ex
         ws.push_as_json({status: false, message: ex.message})
+        render status: 404 and return
       end
     end
 
