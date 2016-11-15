@@ -404,8 +404,12 @@ class Zabbix
     user_info = @sky_zabbix.user.get(
       filter: { alias: username }
     )
+    unless user_info.first.nil?
+      return user_info.first['userid']
+    else
+      return nil
+    end
 
-    return user_info.first['userid']
   end
 
   UserTypeDefault    = 1
@@ -426,7 +430,11 @@ class Zabbix
   end
 
   def delete_user(username)
-    @sky_zabbix.user.delete([get_user_id(username)])
+    if get_user_id(username).nil?
+      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
+    else
+      @sky_zabbix.user.delete([get_user_id(username)])
+    end
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。

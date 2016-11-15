@@ -460,6 +460,7 @@ en:
       updated:                 'Monitoring configuration updated.'
       update_templates:          'Zabbix templates updated!.'
       failure:                 'Failed to register with Zabbix Server.'
+      no_user:                 'User `%{user}` is not yet registered to selected Zabbix Server. Please Press Synchronize Zabbix to register this user.'
       not_selected:            'Monitoring options not selected yet.'
       invalid_parameters:      'Username or password of Zabbix Server are incorrect.'
       not_running:             'Zabbix Server is not running.'

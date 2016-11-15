@@ -38,11 +38,12 @@ class ProjectsController < ApplicationController
       client_id = params.require(:client_id)
       session[:client_id] = client_id
 
-      @selected_client = Client.find_by(id: client_id)
+      @selected_client = Client.find(client_id)
       @projects        = @selected_client.projects
     else
       @projects = current_user.projects
     end
+
     respond_to do |format|
       format.json
       format.html
@@ -175,7 +176,7 @@ class ProjectsController < ApplicationController
   def register_hosts
     z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
     # add new hostgroup on zabbix with project code as its name
-    if z.get_hostgroup_ids(@project.code).empty? 
+    if z.get_hostgroup_ids(@project.code).empty?
       hostgroup_id = z.add_hostgroup(@project.code)
       z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
       z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
