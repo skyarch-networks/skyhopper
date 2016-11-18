@@ -560,7 +560,7 @@ ja:
       download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
-      complete:       'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成して次のステップにリダイレクトするために行わボタンを押してください。'
+      complete:       'SkyHopperのセットアップが完了しました。[完了] ボタンを押して次のステップへ進み、システムにログインするユーザーアカウントを作成してください。'
       confirm_start:  'Chef Server を起動しますか?'
       confirm_stop:   'Chef Server を停止しますか?'
       start:          'Chef Server を起動しています...'
