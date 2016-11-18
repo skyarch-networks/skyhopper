@@ -167,8 +167,6 @@ SkyHopper::Application.routes.draw do
 
       get  :chef_new
       post :chef_create
-      get  :chef_server
-      get  :chef_keys
 
       get  :db
       get  :export_db
@@ -183,6 +181,12 @@ SkyHopper::Application.routes.draw do
       post :start
       post :stop
       post :status
+    end
+  end
+
+  resources :chef_servers do
+    collection do
+      get :export_config
     end
   end
 end

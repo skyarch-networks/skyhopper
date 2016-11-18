@@ -5,7 +5,7 @@
   <h2><%= t('chef_servers.btn.download_keys') %></h2>
   <p><%= t('chef_servers.msg.chef_instruction') %></p>
   <p>
-    <%= link_to chef_keys_app_settings_path, {class: 'btn btn-lg btn-primary'} do %>
+    <%= link_to export_config_chef_servers_path, {class: 'btn btn-lg btn-primary'} do %>
       <span class="glyphicon glyphicon-download-alt">
         <%= t('common.btn.download') %>
       </span>
