@@ -52,12 +52,15 @@
   :index="index"
   :url="url">
   </demo-grid>
+
   <div v-if="is_empty" v-cloak>
-    <%= t 'cf_templates.msg.empty-list' %>
+    <%= t 'serverspecs.msg.empty-results' %>
+  <hr>
   </div>
   <div v-if="loading">
     <span class="loader"></span>
     <%= t 'common.msg.loading' %>
+    <hr>
   </div>
 </div>
 

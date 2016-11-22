@@ -48,10 +48,12 @@
   </demo-grid>
   <div v-if="is_empty" v-cloak>
     <%= t 'clients.msg.empty-list' %>
+    <hr>
   </div>
   <div v-if="loading">
     <span class="loader"></span>
     <%= t 'common.msg.loading' %>
+    <hr>
   </div>
 </div>
 <hr>

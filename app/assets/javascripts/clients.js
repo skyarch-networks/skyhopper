@@ -24,7 +24,7 @@
       gridColumns: ['code','name'],
       gridData: [],
       lang: queryString.lang,
-      url: 'clients?lang='+self.lang,
+      url: 'clients?lang='+queryString.lang,
       is_empty: false,
       loading: true,
       picked: {

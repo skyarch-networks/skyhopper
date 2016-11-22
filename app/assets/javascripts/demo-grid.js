@@ -93,7 +93,7 @@ module.exports = Vue.extend({
 
     load_ajax: function (request) {
       var self = this;
-
+      console.log(request);
       $.ajax({
         cache: false,
         url: request,
@@ -126,8 +126,7 @@ module.exports = Vue.extend({
   },
   created: function (){
     var self = this;
-    console.log(self.url);
-    self.load_ajax(self.url);
+      self.load_ajax(self.url);
   },
 
   filters:{
