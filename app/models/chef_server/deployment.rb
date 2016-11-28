@@ -168,13 +168,18 @@ class ChefServer::Deployment
     "https://#{fqdn}/organizations/#{Org}"
   end
 
-  def init_knife_rb
+  #
+  # Initialize knife configuration from CloudFormation outputs
+  #
+  # @param [Pathname] path The path to output configuration
+  #
+  def init_knife_rb(path = nil)
     stack = Stack.new(@infra)
     output = JSON.parse(stack.outputs.first.output_value)
 
     # TODO: 直接~/.chef/下に鍵を作る path = Pathname.new(File.expand_path('~/.chef/'))
     #       開発環境で上書きされないようにするのはどうする?
-    path = Rails.root.join('tmp', 'chef')
+    path ||= Rails.root.join('tmp', 'chef')
     FileUtils.mkdir_p(path) unless Dir.exist?(path)
 
     user_pem = path.join("#{User}.pem")
