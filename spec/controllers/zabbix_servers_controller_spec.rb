@@ -156,7 +156,7 @@ RSpec.describe ZabbixServersController, type: :controller do
 
     context "with invalid params" do
       it "assigns the zabbix_server as @zabbix_server" do
-        zabbix_server = ZabbixServer.create! valid_attributes
+        zabbix_server = ZabbixServer.create!
         put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
         expect(assigns(:zabbix_server)).not_to eq(ZabbixServer)
       end
