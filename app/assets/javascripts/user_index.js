@@ -29,7 +29,7 @@
       index: 'user_admin',
       loading: true,
       is_empty: false,
-      url: 'users_admin?lang='+self.lang,
+      url: 'users_admin?lang='+queryString.lang,
       picked: {
         users_admin_path: null,
         id: null
@@ -60,7 +60,7 @@
       },
       reload: function () {
         this.loading = true;
-        this.$children[0].load_ajax(self.url);
+        this.$children[0].load_ajax(this.url);
         this.picked = {};
       },
 

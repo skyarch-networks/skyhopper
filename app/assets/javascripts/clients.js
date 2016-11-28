@@ -59,7 +59,7 @@
       },
       reload: function () {
         this.loading = true;
-        this.$children[0].load_ajax(self.url);
+        this.$children[0].load_ajax(this.url);
         this.picked = {};
       },
 

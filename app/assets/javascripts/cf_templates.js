@@ -57,7 +57,7 @@
       },
       multiSelect: false,
       selections: [],
-      url: 'cf_templates?lang='+this.lang,
+      url: 'cf_templates?lang='+queryString.lang,
       is_empty: false,
       loading: true,
     },
@@ -156,7 +156,7 @@
       },
       reload: function () {
         this.loading = true;
-        this.$children[0].load_ajax(self.url, self.empty);
+        this.$children[0].load_ajax(this.url, this.empty);
         this.selections = [];
         this.picked = {};
       },

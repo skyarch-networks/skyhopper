@@ -124,8 +124,9 @@ module.exports = Vue.extend({
       return ((this.pageNumber + 1) * this.pages >= this.data.length);
     },
   },
-  created: function (){
+  ready: function (){
     var self = this;
+    console.log(self.url);
       self.load_ajax(self.url);
   },
 

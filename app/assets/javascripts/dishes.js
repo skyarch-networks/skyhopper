@@ -1,4 +1,4 @@
-//
+  //
 // Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 //
 // This software is released under the MIT License.
@@ -16,7 +16,7 @@
   var listen      = require('./modules/listen');
   var modal       = require('modal');
   var queryString = require('query-string').parse(location.search);
-
+  var dish_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
   var app;
 
   Vue.component('demo-grid', require('demo-grid.js'));
@@ -29,7 +29,7 @@
       gridData: [],
       index: 'dishes',
       project_id: queryString.project_id ? '&project_id='+queryString.project_id: '',
-      url: 'dishes?lang='+this.lang+this.project_id,
+      url: 'dishes?lang='+queryString.lang+dish_url,
       is_empty: false,
       loading: true,
       picked: {
@@ -68,7 +68,7 @@
       },
       reload: function () {
         this.loading = true;
-        this.$children[0].load_ajax(self.url);
+        this.$children[0].load_ajax(this.url);
         this.picked = {};
       },
 
