@@ -12,3 +12,19 @@
     <% end %>
   </p>
 </div>
+
+<div class="jumbotron">
+  <h2><%= t('chef_servers.msg.locate_config') %></h2>
+  <p><%= t('chef_servers.msg.locate_config_instruction') %></p>
+  <p>
+    <form method="POST" action="<%= locate_config_chef_servers_path %>">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+      <button type="submit" class="btn btn-lg btn-primary">
+        <span class="glyphicon glyphicon-saved">
+          <%= t('chef_servers.btn.locate_config') %>
+        </span>
+      </button>
+    </form>
+  </p>
+</div>
+

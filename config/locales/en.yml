@@ -546,8 +546,13 @@ en:
       stop:           'Starting Chef Server...'
       not_running:    'Chef Server is not running.'
       chef_instruction:   'The Knife file can be installed in your environment by deploying the downloaded file in `~/.chef/` path. When executing the knife command, this file is neccessary to access the Chef Server.'
+      locate_config:  'Locate knife configuration'
+      locate_config_instruction: |
+        Chef Server 構築時の情報をもとに、SkyHopper が knife コマンドを使用できるように、設定ファイルの設置操作を行います。
+      locate_config_done: 'knife の設定ファイルの設置が完了しました。'
     btn:
       download_keys:  'Download keys'
+      locate_config:  'Locate'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
