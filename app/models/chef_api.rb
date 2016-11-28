@@ -25,6 +25,11 @@ module ChefAPI
   end
   setup
 
+  def reload_config
+    remove_class_variable(:@@ridley) if class_variable_defined?(:@@ridley)
+    setup
+  end
+
   # == Arguments
   # [kind]
   # Resource の種類。 cookbook, node, client など
