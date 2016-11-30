@@ -16,7 +16,7 @@ class ChefServersController < ApplicationController
     @zipfile.close
   end
 
-  def locate_config
+  def set_config
     infra = Project.for_chef_server.infrastructures.first
     stack = Stack.new(infra)
     physical_id = stack.instances.first.physical_resource_id
@@ -27,7 +27,7 @@ class ChefServersController < ApplicationController
 
     ChefAPI.reload_config
 
-    flash[:success] = t('chef_servers.msg.locate_config_done')
+    flash[:success] = t('chef_servers.msg.set_config_done')
     redirect_to chef_servers_path
   end
 
