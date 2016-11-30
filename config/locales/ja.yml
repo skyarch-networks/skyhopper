@@ -544,13 +544,13 @@ ja:
       stop:           'Chef Server を停止しています...'
       not_running:    'Chef Server が起動していません'
       chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
-      set_config:     'knife 設定ファイルの設置'
-      set_config_instruction: |
+      set_knife:      'knife 設定ファイルの設置'
+      set_knife_instruction: |
         Chef Server 構築時の情報をもとに、SkyHopper が knife コマンドを使用できるように、設定ファイルの設置操作を行います。
-      set_config_done: 'knife の設定ファイルの設置が完了しました。'
+      set_knife_done: 'knife の設定ファイルの設置が完了しました。'
     btn:
       download_keys:  '鍵ファイルのダウンロード'
-      set_config:     '設置'
+      set_knife:      '設置'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'

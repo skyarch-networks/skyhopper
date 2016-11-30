@@ -16,7 +16,7 @@ class ChefServersController < ApplicationController
     @zipfile.close
   end
 
-  def set_config
+  def set_knife
     infra = Project.for_chef_server.infrastructures.first
     stack = Stack.new(infra)
     physical_id = stack.instances.first.physical_resource_id

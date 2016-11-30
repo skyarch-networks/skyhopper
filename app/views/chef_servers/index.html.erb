@@ -14,14 +14,14 @@
 </div>
 
 <div class="jumbotron">
-  <h2><%= t('chef_servers.msg.set_config') %></h2>
-  <p><%= t('chef_servers.msg.set_config_instruction') %></p>
+  <h2><%= t('chef_servers.msg.set_knife') %></h2>
+  <p><%= t('chef_servers.msg.set_knife_instruction') %></p>
   <p>
-    <form method="POST" action="<%= set_config_chef_servers_path %>">
+    <form name="set_knife" method="POST" action="<%= set_knife_chef_servers_path %>">
       <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
       <button type="submit" class="btn btn-lg btn-primary">
         <span class="glyphicon glyphicon-saved">
-          <%= t('chef_servers.btn.set_config') %>
+          <%= t('chef_servers.btn.set_knife') %>
         </span>
       </button>
     </form>

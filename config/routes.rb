@@ -187,7 +187,7 @@ SkyHopper::Application.routes.draw do
   resources :chef_servers do
     collection do
       get  :export_config
-      post :set_config
+      post :set_knife
     end
   end
 end
