@@ -27,7 +27,7 @@ class ChefServersController < ApplicationController
 
     ChefAPI.reload_config
 
-    flash[:success] = t('chef_servers.msg.set_config_done')
+    flash[:success] = t('chef_servers.msg.set_knife_done')
     redirect_to chef_servers_path
   end
 
