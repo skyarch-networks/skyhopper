@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160901025916) do
+ActiveRecord::Schema.define(version: 20161206020140) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -57,9 +57,9 @@ ActiveRecord::Schema.define(version: 20160901025916) do
     t.datetime "updated_at"
   end
 
-  create_table "dish_serverspecs", force: :cascade do |t|
+  create_table "dish_servertests", force: :cascade do |t|
     t.integer  "dish_id",       limit: 4, null: false
-    t.integer  "serverspec_id", limit: 4, null: false
+    t.integer  "servertest_id", limit: 4, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -161,9 +161,9 @@ ActiveRecord::Schema.define(version: 20160901025916) do
     t.text     "dates",                 limit: 65535
   end
 
-  create_table "resource_serverspecs", force: :cascade do |t|
+  create_table "resource_servertests", force: :cascade do |t|
     t.integer  "resource_id",   limit: 4, null: false
-    t.integer  "serverspec_id", limit: 4, null: false
+    t.integer  "servertest_id", limit: 4, null: false
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
@@ -209,14 +209,14 @@ ActiveRecord::Schema.define(version: 20160901025916) do
     t.string   "volume_id",   limit: 255
   end
 
-  create_table "serverspec_result_details", force: :cascade do |t|
-    t.integer  "serverspec_id",        limit: 4
+  create_table "servertest_result_details", force: :cascade do |t|
+    t.integer  "servertest_id",        limit: 4
     t.integer  "serverspec_result_id", limit: 4
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
   end
 
-  create_table "serverspec_results", force: :cascade do |t|
+  create_table "servertest_results", force: :cascade do |t|
     t.integer  "resource_id", limit: 4
     t.integer  "status",      limit: 4
     t.datetime "created_at",                null: false
@@ -224,13 +224,14 @@ ActiveRecord::Schema.define(version: 20160901025916) do
     t.text     "message",     limit: 65535
   end
 
-  create_table "serverspecs", force: :cascade do |t|
+  create_table "servertests", force: :cascade do |t|
     t.integer  "infrastructure_id", limit: 4
     t.string   "name",              limit: 255,   null: false
     t.text     "value",             limit: 65535, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description",       limit: 65535
+    t.integer  "category",          limit: 4,     null: false
   end
 
   create_table "user_projects", id: false, force: :cascade do |t|

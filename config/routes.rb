@@ -82,7 +82,7 @@ SkyHopper::Application.routes.draw do
       post 'reboot'
       post 'detach'
       post 'terminate'
-      get  'serverspec_status'
+      get  'servertest_status'
       post 'register_to_elb'
       post 'deregister_from_elb'
       post 'elb_submit_groups'
@@ -106,7 +106,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :serverspecs do
+  resources :servertests do
     collection do
       get  'select'
       get  'results'
