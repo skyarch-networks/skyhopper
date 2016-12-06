@@ -548,6 +548,7 @@ ja:
       set_knife_instruction: |
         Chef Server 構築時の情報をもとに、SkyHopper が knife コマンドを使用できるように、設定ファイルの設置操作を行います。
       set_knife_done: 'knife の設定ファイルの設置が完了しました。'
+      knife_not_set:  'knife が正しく設定されていない可能性があります。[設定]→[Chef Server]→[knife 設定ファイルの設置]を試してみてください。'
     btn:
       download_keys:  '鍵ファイルのダウンロード'
       set_knife:      '設置'

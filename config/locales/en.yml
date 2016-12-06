@@ -550,6 +550,7 @@ en:
       set_knife_instruction: |
         Setup the knife configuration so that SkyHopper can use the knife command.
       set_knife_done: 'Setting up the knife configuration has done.'
+      knife_not_set:  'Maybe knife is not set correctly. Please try [Settings]→[Chef Server]→[Setup knife configuration]'
     btn:
       download_keys:  'Download keys'
       set_knife:      'Setup'

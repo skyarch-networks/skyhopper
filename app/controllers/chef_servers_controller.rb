@@ -17,6 +17,7 @@ class ChefServersController < ApplicationController
   end
 
   def set_knife
+    # TODO: サービスクラスに切り出す
     infra = Project.for_chef_server.infrastructures.first
     stack = Stack.new(infra)
     physical_id = stack.instances.first.physical_resource_id

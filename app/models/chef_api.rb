@@ -26,8 +26,10 @@ module ChefAPI
   setup
 
   def reload_config
-    remove_class_variable(:@@ridley) if class_variable_defined?(:@@ridley)
-    setup
+    @@ridley = ::Ridley.from_chef_config(File.expand_path("~/.chef/knife.rb"))
+  rescue Ridley::Errors::RidleyError => ex
+    msg = ex.message + ?\n + I18n.t('chef_servers.msg.knife_not_set')
+    raise ex, msg
   end
 
   # == Arguments
@@ -37,7 +39,7 @@ module ChefAPI
   # Resource を識別するための記号。cookbookの名前など
 
   def client(kind)
-    return @@ridley.__send__(kind)
+    return ridley.__send__(kind)
   end
 
   def index(kind)
@@ -54,7 +56,7 @@ module ChefAPI
   # ==== Exceptions
   # [CookbookNotFound] Cookbook が存在しない場合に投げる。
   def recipes(cookbook_name)
-    cookbook = @@ridley.cookbook.find(cookbook_name, '_latest')
+    cookbook = ridley.cookbook.find(cookbook_name, '_latest')
     raise Error::CookbookNotFound, "#{cookbook_name} doesn't exists." unless cookbook
 
     recipes = cookbook.recipes
@@ -77,7 +79,7 @@ module ChefAPI
   end
 
   def search_node(name)
-    @@ridley.search(:node, "name:#{name}")
+    ridley.search(:node, "name:#{name}")
   end
 
   # @return [String] URL of Chef Server
@@ -85,5 +87,11 @@ module ChefAPI
     path = File.expand_path("~/.chef/knife.rb")
     conf = Ridley::Chef::Config.new(path).to_hash
     return conf[:chef_server_url]
+  end
+
+  def ridley
+    @@ridley
+  rescue NameError
+    reload_config
   end
 end
