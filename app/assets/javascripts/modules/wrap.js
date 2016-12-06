@@ -14,8 +14,8 @@ module.exports = function(value, index){
       return render_projects(value);
     case 'clients':
       return render_clients(value);
-    case 'serverspecs':
-      return render_serverspecs(value);
+    case 'servertests':
+      return render_servertests(value);
     case 'dishes':
       return render_dish(value);
     case 'cf_templates':
@@ -75,11 +75,11 @@ function render_clients(value){
   }
 }
 
-function render_serverspecs(value){
+function render_servertests(value){
   switch (value) {
     case 'description':
       return t ('serverspecs.description');
-    case 'serverspec_name':
+    case 'servertest_name':
       return t ('serverspecs.name');
     default:
       return value;

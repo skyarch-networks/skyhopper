@@ -145,9 +145,9 @@ module.exports = Vue.extend({
         self.load_ajax('dishes?lang='+self.lang+project_id, t('dishes.msg.empty-list'));
         break;
 
-      case 'serverspecs':
+      case 'servertests':
         var infrastructure_id = queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '';
-        self.load_ajax('serverspecs?lang='+self.lang+project_id, t('serverspecs.msg.empty-list'));
+        self.load_ajax('servertests?lang='+self.lang+project_id, t('serverspecs.msg.empty-list'));
         break;
 
       case  'cf_templates':

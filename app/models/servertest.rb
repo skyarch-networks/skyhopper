@@ -16,8 +16,7 @@ class Servertest < ActiveRecord::Base
   has_many :resource_servertests
   has_many :resources, through: :resource_servertests
   has_many :servertest_results, through: :servertest_result_details
-
-  enum     category: [:awspec, :serverspec]
+  enum      category: [:awspec, :serverspec]
 
   validates :value, ruby: true
 
