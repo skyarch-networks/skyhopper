@@ -32,39 +32,41 @@ class ZabbixServersController < ApplicationController
   # POST /zabbix_servers
   # POST /zabbix_servers.json
   def create
+    lang = params[:lang]
     params = zabbix_server_params
-    begin
-      z = Zabbix.new(params[:fqdn], params[:username], params[:password])
-      params[:version] = z.version
-    rescue => ex
-      raise ex
-    end
-
-    @zabbix_server = ZabbixServer.new(params)
-
-    respond_to do |format|
-      if @zabbix_server.save
-        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.created') }
-        format.json { render :show, status: :created, location: @zabbix_server }
-      else
-        format.html { render :new }
-        format.json { render json: @zabbix_server.errors, status: :unprocessable_entity }
+    ws = WSConnector.new('notifications', current_user.ws_key)
+    Thread.new_with_db do
+      if lang
+        I18n.locale = lang
+      end
+      begin
+        z = Zabbix.new(params[:fqdn], params[:username], params[:password])
+        params[:version] = z.version
+        @zabbix_server = ZabbixServer.new(params)
+        @zabbix_server.save!
+        ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), url: zabbix_servers_url})
+      rescue => ex
+        ws.push_as_json({status: false, message: ex.message})
+        render status: 404 and return
       end
     end
+
+      render nothing: true, status: 200 and return
   end
 
   # PATCH/PUT /zabbix_servers/1
   # PATCH/PUT /zabbix_servers/1.json
   def update
-    respond_to do |format|
-      if @zabbix_server.update(zabbix_server_params)
-        format.html { redirect_to zabbix_servers_url, notice: I18n.t('zabbix_servers.msg.updated') }
-        format.json { render :show, status: :ok, location: @zabbix_server }
-      else
-        format.html { render :edit }
-        format.json { render json: @zabbix_server.errors, status: :unprocessable_entity }
-      end
+    params = zabbix_server_params
+    begin
+      Zabbix.new(params[:fqdn], params[:username], params[:password])
+      @zabbix_server.update(params)
+    rescue => ex
+      render text: ex.message, status: 500 and return
     end
+
+    render text: I18n.t('zabbix_servers.msg.updated') and return
+
   end
 
   # DELETE /zabbix_servers/1
@@ -90,7 +92,7 @@ class ZabbixServersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def zabbix_server_params
-    params.require(:zabbix_server).permit(:fqdn, :username, :password, :version, :details)
+    params.require(:zabbix_server).permit(:fqdn, :username, :password, :details)
   end
 
 end

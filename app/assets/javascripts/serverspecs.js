@@ -14,6 +14,7 @@ var modal = require('modal');
 var app;
 
 Vue.component('demo-grid', require('demo-grid.js'));
+var serverspec_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
 
 var serverspecIndex = new Vue({
   el: '#indexElement',
@@ -26,6 +27,10 @@ var serverspecIndex = new Vue({
         serverspec_path: null,
         edit_serverspec_path: null
     },
+    infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
+    url: 'serverspecs?'+serverspec_url,
+    is_empty: false,
+    loading: true,
   },
     methods: {
       can_edit: function() {
@@ -47,6 +52,11 @@ var serverspecIndex = new Vue({
             },
         }).fail(modal.AlertForAjaxStdError());
         });
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(this.url);
+        this.picked = {};
       },
       show_serverspec: function(serverspec_id) {
         $.ajax({
