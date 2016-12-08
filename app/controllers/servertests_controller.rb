@@ -94,7 +94,7 @@ class ServertestsController < ApplicationController
     redirect_to servertests_path(infrastructure_id: infra_id), notice: I18n.t('serverspecs.msg.deleted')
   end
 
-  # GET /serverspecs/select
+  # GET /servertests/select
   def select
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
@@ -102,12 +102,12 @@ class ServertestsController < ApplicationController
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
     @selected_serverspec_ids = resource.all_serverspec_ids
 
-    serverspecs = Servertest.for_infra(infra_id)
+    serverspecs = Servertest.for_infra_serverspec(infra_id)
     @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
     node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
 
-    @serverspec_schedule = ServerspecSchedule.find_or_create_by(physical_id: physical_id)
+    @serverspec_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
   end
 
   # GET /serverspecs/results

@@ -105,7 +105,7 @@ class NodesController < ApplicationController
     @info = {}
     status = resource.status
     @info[:cook_status]       = status.cook
-    @info[:serverspec_status] = status.serverspec
+    @info[:serverspec_status] = status.servertest
     @info[:update_status]     = status.yum
 
     @dishes = Dish.valid_dishes(@infra.project_id)
@@ -371,7 +371,7 @@ class NodesController < ApplicationController
 
     # change cookstatus to unexected
     r.status.cook.un_executed!
-    r.status.serverspec.un_executed!
+    r.status.servertest.un_executed!
 
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
@@ -385,7 +385,7 @@ class NodesController < ApplicationController
 
     r = infrastructure.resource(physical_id)
     r.status.cook.inprogress!
-    r.status.serverspec.un_executed!
+    r.status.servertest.un_executed!
     node = Node.new(physical_id)
     node.wait_search_index
     log = []
@@ -430,7 +430,7 @@ class NodesController < ApplicationController
 
       r = this_infra.resource(physical_id)
       r.status.yum.inprogress!
-      r.status.serverspec.un_executed! if exec
+      r.status.servertest.un_executed! if exec
 
       node = Node.new(physical_id)
 

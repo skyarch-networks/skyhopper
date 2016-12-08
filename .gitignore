@@ -49,6 +49,8 @@ vendor/bower_components
 /frontend/node_modules/
 /frontend/typings/
 
+# MAC system files
+.DS_Store
 
 
 #emacs backup exclude during commit (clean files)

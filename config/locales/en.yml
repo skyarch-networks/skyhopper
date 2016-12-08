@@ -343,10 +343,10 @@ en:
     run:               'Run Serverspecs'
     results:           'Serverspec Results'
     btn:
-      add:       'Add Serverspec'
+      add:       'Add Servertest'
       create:    'Create Serverspec'
       run:       'Run Serverspecs'
-      generator: 'Generator'
+      generator: 'Serverspec Generator'
     msg:
       created:   'Serverspec was successfully created.'
       updated:   'Serverspec was successfully updated.'

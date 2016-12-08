@@ -10,13 +10,13 @@ class Resource < ActiveRecord::Base
 
   belongs_to :infrastructure
   belongs_to :dish
-  has_many :resource_serverspecs
-  has_many :serverspecs, through: :resource_serverspecs
+  has_many :resource_servertests
+  has_many :servertests, through: :resource_servertests
   has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
   has_many :serverspec_results
   has_many :operation_durations
 
-  has_one :serverspec_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
+  has_one :servertest_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   validates :physical_id, uniqueness: true
 
@@ -31,7 +31,7 @@ class Resource < ActiveRecord::Base
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
   # @return [Array<Serverspec>]
   def all_serverspecs
-    self.serverspecs | (self.dish.try(:serverspecs) || [])
+    self.servertests | (self.dish.try(:servertests) || [])
   end
 
   # XXX: パフォーマンスがきになる. all_serverspecs のほうが relation を返せば pluck が使える

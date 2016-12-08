@@ -20,7 +20,7 @@ export default class EC2Instance extends ModelBase {
 
   static ajax_node       = new AjaxSet.Resources('nodes');
   static ajax_ec2        = new AjaxSet.Resources('ec2_instances');
-  static ajax_serverspec = new AjaxSet.Resources('serverspecs');
+  static ajax_servertest = new AjaxSet.Resources('servertests');
   static ajax_elb        = new AjaxSet.Resources('elb');
 
 
@@ -214,7 +214,7 @@ export default class EC2Instance extends ModelBase {
   select_serverspec(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    (<any>EC2Instance.ajax_serverspec).select({
+    (<any>EC2Instance.ajax_servertest).select({
       physical_id: this.physical_id,
       infra_id:    this.infra.id,
     }).done((data: any) => {
@@ -233,7 +233,7 @@ export default class EC2Instance extends ModelBase {
   results_serverspec(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    (<any>EC2Instance.ajax_serverspec).results({
+    (<any>EC2Instance.ajax_servertest).results({
       physical_id: this.physical_id,
       infra_id:    this.infra.id,
     }).done((data: any) => {
@@ -255,7 +255,7 @@ export default class EC2Instance extends ModelBase {
     }
 
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_serverspec).run({
+      (<any>EC2Instance.ajax_servertest).run({
         physical_id:    this.physical_id,
         infra_id:       this.infra.id,
         serverspec_ids: ids,
@@ -265,7 +265,7 @@ export default class EC2Instance extends ModelBase {
 
   schedule_serverspec(schedule: any): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_serverspec).schedule({
+      (<any>EC2Instance.ajax_servertest).schedule({
         physical_id: this.physical_id,
         infra_id:    this.infra.id,
         schedule:    schedule,
@@ -488,10 +488,10 @@ EC2Instance.ajax_ec2.add_member('detach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
 EC2Instance.ajax_ec2.add_collection('create_volume', 'POST');
 
-EC2Instance.ajax_serverspec.add_collection('select', 'GET');
-EC2Instance.ajax_serverspec.add_collection('results', 'GET');
-EC2Instance.ajax_serverspec.add_collection("run", "POST");
-EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');
+EC2Instance.ajax_servertest.add_collection('select', 'GET');
+EC2Instance.ajax_servertest.add_collection('results', 'GET');
+EC2Instance.ajax_servertest.add_collection("run", "POST");
+EC2Instance.ajax_servertest.add_collection('schedule', 'POST');
 
 EC2Instance.ajax_elb.add_collection('create_listener', 'POST');
 EC2Instance.ajax_elb.add_collection('delete_listener', 'POST');

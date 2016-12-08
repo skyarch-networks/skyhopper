@@ -32,6 +32,10 @@ class Servertest < ActiveRecord::Base
       where(infrastructure_id: [nil, infrastructure_id]).to_a
     end
 
+    def for_infra_serverspec(infrastructure_id)
+      where(infrastructure_id: [nil, infrastructure_id], category: :serverspec).to_a
+    end
+
     def global
       where(infrastructure_id: nil)
     end
