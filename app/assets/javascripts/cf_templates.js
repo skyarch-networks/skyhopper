@@ -57,10 +57,13 @@
       },
       multiSelect: false,
       selections: [],
+      url: 'cf_templates?lang='+queryString.lang,
+      is_empty: false,
+      loading: true,
     },
     computed: {
       can_export: function () {
-        return (!this.multiSelect && this.picked.id != null || this.multiSelect && this.selections.length !== 0);
+        return (!this.multiSelect && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
       },
     },
     methods: {
@@ -150,6 +153,12 @@
       },
       escape_invalid_character: function (str) {
         return str.replace(/[\\/:*?<>"|]/g, '-');
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(this.url, this.empty);
+        this.selections = [];
+        this.picked = {};
       },
     },
 

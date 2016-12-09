@@ -38,11 +38,12 @@ class ProjectsController < ApplicationController
       client_id = params.require(:client_id)
       session[:client_id] = client_id
 
-      @selected_client = Client.find_by(id: client_id)
+      @selected_client = Client.find(client_id)
       @projects        = @selected_client.projects
     else
       @projects = current_user.projects
     end
+
     respond_to do |format|
       format.json
       format.html
@@ -183,10 +184,6 @@ class ProjectsController < ApplicationController
       hostgroup_names = Project.pluck(:code)
       hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
       z.change_mastergroup_rights(hostgroup_ids)
-    end
-
-    unless z.user_exists?(current_user.email)
-      z.create_user(current_user)
     end
 
   end

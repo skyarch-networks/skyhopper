@@ -14,6 +14,8 @@ module.exports = Vue.extend({
     index: String,
     multiSelect: Boolean,
     selections: Array,
+    url:  String,
+    empty: String,
   },
 
   data: function () {
@@ -89,27 +91,27 @@ module.exports = Vue.extend({
 
     },
 
-    load_ajax: function (request, empty_msg) {
+    load_ajax: function (request) {
       var self = this;
-
+      console.log(request);
       $.ajax({
         cache: false,
         url: request,
         success: function (data) {
-          console.log(data);
           self.data = data;
           this.pages = data.length;
-          self.close_loading(empty_msg);
+          self.close_loading();
         }
       });
 
     },
 
-    close_loading: function(empty_msg){
+    close_loading: function(){
       var self = this;
-      self.$emit('data-loaded');
-      $("#loading").hide();
-      if(self.data.length === 0){ $('#empty').show().html(empty_msg);}
+      self.$parent.loading = false;
+      if(self.data.length === 0){
+        self.$parent.is_empty = true;
+      }
       self.filteredLength = self.data.length;
     }
   },
@@ -122,48 +124,10 @@ module.exports = Vue.extend({
       return ((this.pageNumber + 1) * this.pages >= this.data.length);
     },
   },
-  created: function (){
+  ready: function (){
     var self = this;
-
-
-
-    switch (self.index) {
-      case 'clients':
-        self.load_ajax('clients?lang='+self.lang, t('clients.msg.empty-list'));
-        break;
-
-      case 'projects':
-        self.load_ajax(self.projects_path ,t('projects.msg.empty-list'));
-        break;
-
-      case 'infrastructures':
-        self.load_ajax(self.infrastructures_path, t('infrastructures.msg.empty-list'));
-        break;
-
-      case 'dishes':
-        var project_id = queryString.project_id ? '&project_id='+queryString.project_id: '';
-        self.load_ajax('dishes?lang='+self.lang+project_id, t('dishes.msg.empty-list'));
-        break;
-
-      case 'serverspecs':
-        var infrastructure_id = queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '';
-        self.load_ajax('serverspecs?lang='+self.lang+project_id, t('serverspecs.msg.empty-list'));
-        break;
-
-      case  'cf_templates':
-        self.load_ajax('cf_templates?lang='+self.lang, t('cf_templates.msg.empty-list'));
-        break;
-
-      case  'user_admin':
-        self.load_ajax('users_admin?lang='+self.lang, t('cf_templates.msg.empty-list'));
-        break;
-      case  'zabbix_servers':
-        self.load_ajax('zabbix_servers?lang='+self.lang, t('cf_templates.msg.empty-list'));
-        break;
-
-
-    }
-
+    console.log(self.url);
+      self.load_ajax(self.url);
   },
 
   filters:{
