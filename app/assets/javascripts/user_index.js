@@ -27,6 +27,9 @@
       gridColumns: ['role', 'email', 'last_sign_in_at'],
       gridData: [],
       index: 'user_admin',
+      loading: true,
+      is_empty: false,
+      url: 'users_admin?lang='+queryString.lang,
       picked: {
         users_admin_path: null,
         id: null
@@ -54,7 +57,12 @@
             },
           }).fail(function() { location.reload(); });
         });
-      }
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(this.url);
+        this.picked = {};
+      },
 
     }
   });

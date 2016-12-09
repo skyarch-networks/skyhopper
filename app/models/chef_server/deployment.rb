@@ -106,17 +106,19 @@ class ChefServer::Deployment
       server.wait_init_ec2
       set = AppSetting.first
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
-      set.zabbix_user = 'admin'
-      set.zabbix_pass = 'ilikerandompasswords'
       set.save!
 
-      ZabbixServer.create(
+      zb = ZabbixServer.create(
         fqdn: set.zabbix_fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
         details: 'Default Zabbix Server for Skyhopper System'
       )
+
+      # Save newly created zabbix server id to zabbix infra.
+      prj.zabbix_server_id = zb.id
+      prj.save!
 
       AppSetting.clear_cache
     rescue => ex
