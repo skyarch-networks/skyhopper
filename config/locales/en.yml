@@ -555,6 +555,7 @@ en:
     details:     'Details'
     btn:
       add:            'Add Zabbix Server'
+      background:     'Run in Background'
     msg:
       creating_infra: 'Creating Infrastructure...'
       creating_stack: 'Creating Stack...'

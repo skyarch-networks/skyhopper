@@ -145,12 +145,17 @@
 // ================================================================
 // event bindings
 // ================================================================
+
+  var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
   var index = new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
       gridColumns: [],
       gridData: [],
+      loading: true,
+      is_empty: false,
+      url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
       picked: {
         button_delete_stack: null,
         edit_infrastructure_path: null,
@@ -182,16 +187,23 @@
       },
       delete_stack: function()  {
         delete_stack(this.picked.id);
+        this.reload();
       },
       show_infra: function(item_id)  {
         show_infra(item_id, '');
       },
       show_sched: function()  {
         show_infra(this.picked.id, 'show_sched');
+        this.reload();
       },
       detach_infra: function()  {
         detach(this.picked.id);
-      }
+        this.reload();
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(this.url);
+      },
     }
   });
 

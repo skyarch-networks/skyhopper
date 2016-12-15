@@ -553,6 +553,7 @@ ja:
     details:     '詳細'
     btn:
       add:            'Zabbix Server を追加'
+      background:     'バックグラウンドで動作します'
     msg:
       creating_infra: 'Zabbix Server 用のインフラを作成しています...'
       creating_stack: 'Zabbix Server 用のスタックを作成しています...'
