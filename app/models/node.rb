@@ -150,13 +150,13 @@ class Node
   end
 
   # serverspec_ids => ServerspecのidのArray
-  def run_serverspec(infra_id, serverspec_ids, selected_auto_generated)
+  def run_serverspec(infra_id, servertest_ids, selected_auto_generated)
     # get params
     infra = Infrastructure.find(infra_id)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
-    raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
+    raise ServerspecError, 'specs is empty' if servertest_ids.empty? and ! selected_auto_generated
 
     fqdn = infra.instance(@name).fqdn
 
@@ -164,8 +164,8 @@ class Node
       local_path = scp_specs(ec2key.path_temp, fqdn)
     end
 
-    run_spec_list_path = serverspec_ids.map do |spec|
-      ::Serverspec.to_file(spec)
+    run_spec_list_path = servertest_ids.map do |spec|
+      ::Servertest.to_file(spec)
     end
 
     ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
@@ -213,10 +213,10 @@ class Node
       result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
 
-    Resource.find_by(physical_id: @name).status.serverspec.update(value: result[:status_text])
+    Resource.find_by(physical_id: @name).status.servertest.update(value: result[:status_text])
     return result
   rescue => ex
-    Resource.find_by(physical_id: @name).status.serverspec.failed!
+    Resource.find_by(physical_id: @name).status.servertest.failed!
     raise ex
   ensure
     ec2key.close_temp

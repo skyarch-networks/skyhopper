@@ -255,10 +255,10 @@ export default class EC2Instance extends ModelBase {
     }
 
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_servertest).run({
+      (<any>EC2Instance.ajax_servertest).run_serverspec({
         physical_id:    this.physical_id,
         infra_id:       this.infra.id,
-        serverspec_ids: ids,
+        servertest_ids: ids,
       })
     );
   }
@@ -490,7 +490,7 @@ EC2Instance.ajax_ec2.add_collection('create_volume', 'POST');
 
 EC2Instance.ajax_servertest.add_collection('select', 'GET');
 EC2Instance.ajax_servertest.add_collection('results', 'GET');
-EC2Instance.ajax_servertest.add_collection("run", "POST");
+EC2Instance.ajax_servertest.add_collection("run_serverspec", "POST");
 EC2Instance.ajax_servertest.add_collection('schedule', 'POST');
 
 EC2Instance.ajax_elb.add_collection('create_listener', 'POST');

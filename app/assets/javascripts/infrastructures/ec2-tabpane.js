@@ -237,7 +237,7 @@ module.exports = Vue.extend({
       this.$parent.tabpaneID = 'edit_attr';
       this._loading();
     },
-    select_serverspec: function () {
+    select_servertest: function () {
       this.$parent.tabpaneID = 'serverspec';
       this._loading();
     },

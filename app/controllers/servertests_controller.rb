@@ -126,20 +126,20 @@ class ServertestsController < ApplicationController
 
 
   # TODO: refactor
-  # POST /serverspecs/run
-  def run
+  # POST /serverspecs/run_serverspec
+  def run_serverspec
     physical_id    = params.require(:physical_id)
     infra_id       = params.require(:infra_id)
-    serverspec_ids = params.require(:serverspec_ids)
+    servertest_ids = params.require(:servertest_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    if selected_auto_generated = serverspec_ids.include?('-1')
-      serverspec_ids.delete('-1')
+    if selected_auto_generated = servertest_ids.include?('-1')
+      servertest_ids.delete('-1')
     end
 
     begin
-      resp = ServerspecJob.perform_now(
+      resp = ServertestJob.perform_now(
         physical_id, infra_id, current_user.id,
-        serverspec_ids: serverspec_ids, auto_generated: selected_auto_generated
+        servertest_ids: servertest_ids, auto_generated: selected_auto_generated
       )
     rescue => ex
       # serverspec が正常に実行されなかったとき
@@ -159,7 +159,7 @@ class ServertestsController < ApplicationController
       resource_id:    resource.id,
       status:         resp[:status_text],
       message:        resp[:message],
-      serverspec_ids: serverspec_ids
+      servertest_ids: servertest_ids
     )
     render text: render_msg, status: 200 and return
   end

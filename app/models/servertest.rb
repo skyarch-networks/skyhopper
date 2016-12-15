@@ -33,7 +33,7 @@ class Servertest < ActiveRecord::Base
     end
 
     def for_infra_serverspec(infrastructure_id)
-      where(infrastructure_id: [nil, infrastructure_id], category: :serverspec).to_a
+      where(infrastructure_id: [nil, infrastructure_id], category: 1).to_a
     end
 
     def global
