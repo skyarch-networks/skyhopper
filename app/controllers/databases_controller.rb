@@ -41,9 +41,7 @@ class DatabasesController < ApplicationController
     MaintenanceMode.activate(reason: reason)
 
     Thread.new do
-      DatabaseManager.import_from_zip(file.path)
-      file.close
-      MaintenanceMode.deactivate
+      import_zip(file)
     end
 
     redirect_to root_path
@@ -52,5 +50,12 @@ class DatabasesController < ApplicationController
   private
   def app_setting_is_set
     @app_setting_is_set ||= AppSetting.set?
+  end
+
+  def import_zip(file)
+    DatabaseManager.import_from_zip(file.path)
+  ensure
+    file.close
+    MaintenanceMode.deactivate
   end
 end
