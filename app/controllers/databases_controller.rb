@@ -54,6 +54,8 @@ class DatabasesController < ApplicationController
 
   def import_zip(file)
     DatabaseManager.import_from_zip(file.path)
+  rescue => ex
+    flash[:danger] = "#{ex.inspect}\n#{ex.backtrace.join}"
   ensure
     file.close
     MaintenanceMode.deactivate
