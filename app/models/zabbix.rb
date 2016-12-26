@@ -34,6 +34,8 @@ class Zabbix
       raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
     rescue Errno::ECONNREFUSED => ex
       raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
+    rescue Errno::ETIMEDOUT => ex
+      raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
     end
 
   end

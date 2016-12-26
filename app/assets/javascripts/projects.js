@@ -17,13 +17,17 @@
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
+  var project_url = queryString.client_id ? '&client_id='+queryString.client_id: '';
 
   var projectIndex = new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
       gridColumns: ['code','name', 'cloud_provider', 'access_key'],
+      url: 'projects?lang='+queryString.lang+project_url,
       gridData: [],
+      is_empty: false,
+      loading: true,
       picked: {
         edit_url: null,
         project_settings: {
@@ -60,6 +64,10 @@
                     },
                 }).fail(function() {location.reload();});
         });
+      },
+      reload: function () {
+        this.loading = true;
+        this.$children[0].load_ajax(this.url);
       }
     },
 

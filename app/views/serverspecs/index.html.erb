@@ -35,6 +35,12 @@
       </a>&nbsp
     </div>
 
+    <div class="pull-right" v-cloak>
+      <a class="btn btn-default btn-sm" @click="reload()">
+          <span class='glyphicon glyphicon-refresh'></span>
+      </a>&nbsp
+    </div>
+
   </div>
 
 
@@ -43,8 +49,19 @@
   :columns="gridColumns"
   :filter-key="searchQuery"
   :picked.sync="picked"
-  :index="index">
+  :index="index"
+  :url="url">
   </demo-grid>
+
+  <div v-if="is_empty" v-cloak>
+    <%= t 'serverspecs.msg.empty-results' %>
+  <hr>
+  </div>
+  <div v-if="loading">
+    <span class="loader"></span>
+    <%= t 'common.msg.loading' %>
+    <hr>
+  </div>
 </div>
 
 

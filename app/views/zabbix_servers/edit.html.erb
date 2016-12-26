@@ -3,4 +3,16 @@
 <div class="page-header">
   <h1><%=t '.title', default: [:'helpers.titles.edit', 'Edit %{model}'], model: model_class.model_name.human.titleize %></h1>
 </div>
-<%= render partial: 'form' %>
+<div id="indexElement" v-el:node>
+  <div v-if="new_loader" v-cloak>
+    <span class="loader"></span>
+    Registering Zabbix Server ...
+  </div>
+  <input type="hidden" v-model="control_type" value="edit">
+  <input type="hidden" v-model="url" value="<%= zabbix_servers_path %>">
+<%= render :partial => 'form' %>
+<div class="form-actions-top">
+  <button class="btn btn-primary" :disabled="!required_filed && !new_loader" @click="update">Register</button>
+  <span v-if="!new_loader"><%= link_to t('.cancel', default: t("helpers.links.cancel")), zabbix_servers_path, class: 'btn btn-default' %></span>
+</div>
+</div>

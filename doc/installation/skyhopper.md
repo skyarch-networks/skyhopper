@@ -91,6 +91,9 @@ EOF
 ```sh
 $ sudo tee /etc/nginx/conf.d/skyhopper.conf <<EOF >/dev/null
 server {
+        # もしskyhopperをcloneした場所が異なる場合修正
+        set \$skyhopper_root "/home/ec2-user/skyhopper";
+
         client_max_body_size 1g;
 
         listen 80;
@@ -98,7 +101,7 @@ server {
 
         ### ここから production で動かす場合のみ ###
         location ~ ^/(assets|fonts) {
-          root /home/ec2-user/skyhopper/public; # もしskyhopperをcloneした場所が異なる場合修正
+          root \$skyhopper_root/public;
         }
         ### ここまで production で動かす場合のみ ###
 
@@ -115,6 +118,12 @@ server {
             proxy_set_header    Host    \$http_host;
             proxy_pass http://127.0.0.1:3210;
         }
+
+        location /502.html {
+            root \$skyhopper_root/public;
+            try_files \$uri 502.html;
+        }
+        error_page 502 /502.html;
 }
 EOF
 ```
