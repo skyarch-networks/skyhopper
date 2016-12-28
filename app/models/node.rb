@@ -273,8 +273,8 @@ class Node
         d['default']['serverspec-handler']['output_dir']
       end
 
-    Dir::mkdir(Serverspec::TmpDir) unless Dir::exist?(Serverspec::TmpDir)
-    local_path = Dir::mktmpdir(nil, Serverspec::TmpDir)
+    Dir::mkdir(Servertest::TmpDir) unless Dir::exist?(Servertest::TmpDir)
+    local_path = Dir::mktmpdir(nil, Servertest::TmpDir)
 
     Net::SCP.start(fqdn, @user, keys: sshkey_path) do |scp|
       scp.download!(remote_path, local_path, recursive: true)

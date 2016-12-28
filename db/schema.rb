@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(version: 20161206020140) do
 
   create_table "servertest_result_details", force: :cascade do |t|
     t.integer  "servertest_id",        limit: 4
-    t.integer  "serverspec_result_id", limit: 4
+    t.integer  "servertest_result_id", limit: 4
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
   end

@@ -116,11 +116,11 @@ class ServertestsController < ApplicationController
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @serverspec_results = resource.serverspec_results.order("created_at desc")
+    @serverspec_results = resource.servertest_results.order("created_at desc")
 
     respond_to do |format|
-      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at],
-        include: [{serverspec_result_details: {only: [:id]}},{serverspecs: {only:[:name]}}, {resource: {only: [:physical_id]}} ]) }
+      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at, :category],
+        include: [{servertest_result_details: {only: [:id]}},{servertests: {only: [:name, :category]}}, {resource: {only: [:physical_id]}} ]) }
     end
   end
 
@@ -155,7 +155,7 @@ class ServertestsController < ApplicationController
       render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:short_msg])
     end
 
-    ServerspecResult.create(
+    ServertestResult.create(
       resource_id:    resource.id,
       status:         resp[:status_text],
       message:        resp[:message],

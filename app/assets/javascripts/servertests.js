@@ -14,7 +14,7 @@ var modal = require('modal');
 var app;
 
 Vue.component('demo-grid', require('demo-grid.js'));
-var serverspec_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
+var servertest_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
 
 var servertestIndex = new Vue({
   el: '#indexElement',
@@ -28,7 +28,7 @@ var servertestIndex = new Vue({
         edit_servertest_path: null
     },
     infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
-    url: 'serverspecs?'+serverspec_url,
+    url: 'servertests?'+servertest_url,
     is_empty: false,
     loading: true,
   },

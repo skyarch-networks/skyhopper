@@ -32,7 +32,7 @@ module.exports = Vue.extend({
     return {
       sortKey: '',
       sortOrders: sortOrders,
-      index: 'serverspec_results',
+      index: 'servertest_results',
       lang: null,
       pages: 10,
       pageNumber: 0,
@@ -81,21 +81,23 @@ module.exports = Vue.extend({
   created: function ()  {
     self = this;
     var self = this;
-    self.columns = ['serverspec', 'resource', 'message', 'status', 'created_at'];
+    self.columns = ['servertest', 'resource', 'message', 'status', 'created_at', 'category'];
     var temp_id = null;
     var serverspecs = [];
     self.ec2.results_serverspec().done(function (data) {
       self.data = data.map(function (item) {
+        console.log(item)
         var last_log = (item.created_at ? new Date(item.created_at) : '');
           return {
-            serverspec: item.serverspecs,
+            servertest: item.servertests,
             resource: item.resource.physical_id,
             message: [item.id,
                       item.resource.physical_id,
                       item.message,
-                      item.serverspec_result_details],
+                      item.servertest_result_details],
             status: item.status,
-            created_at: last_log.toLocaleString()
+            created_at: last_log.toLocaleString(),
+            category: item.servertests,
           };
       });
       self.$parent.loading = false;

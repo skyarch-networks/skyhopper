@@ -22,8 +22,8 @@ module.exports = function(value, index){
       return render_cf_templates(value);
     case 'user_admin':
       return render_user_admin(value);
-    case 'serverspec_results':
-      return render_serverspecs_results(value);
+    case 'servertest_results':
+      return render_servertests_results(value);
     case 'operation_sched':
       return render_ops_sched(value);
     default:
@@ -123,7 +123,7 @@ function render_user_admin(value){
   }
 }
 
-function render_serverspecs_results(value){
+function render_servertests_results(value){
   switch (value) {
     case 'serverspec':
       return t('serverspecs.serverspecs');
