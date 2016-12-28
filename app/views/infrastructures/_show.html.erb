@@ -145,7 +145,7 @@
           <edit-runlist-tabpane       v-if="tabpane_active('edit_runlist')"       :infra_id.once="current_infra.id" ></edit-runlist-tabpane>
           <edit-attr-tabpane          v-if="tabpane_active('edit_attr')"          :infra_id.once="current_infra.id" ></edit-attr-tabpane>
           <serverspec-tabpane         v-if="tabpane_active('serverspec')"         :infra_id.once="current_infra.id" ></serverspec-tabpane>
-          <serverspec-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id="tabpaneGroupID"   ></serverspec-results-tabpane>
+          <servertest-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id="tabpaneGroupID"   ></servertest-results-tabpane>
           <operation-sched-tabpane    v-if="tabpane_active('operation-sched')"    :infra_id.once="current_infra.id" :columns.once="ops_sched_Columns" :resources="resources"></operation-sched-tabpane>
           <view-rules-tabpane         v-if="tabpane_active('view-rules')"         :infra_id.once="current_infra.id" :security_groups.once="sec_group" :physical_id.once="tabpaneGroupID" :instance_type.once="instance_type"></view-rules-tabpane>
         </div>
@@ -176,7 +176,7 @@
 <script id="edit-runlist-tabpane-template"    type="text/template"> <%= render 'vue/edit_runlist_tabpane' %> </script>
 <script id="edit-attr-tabpane-template"       type="text/template"> <%= render 'vue/edit_attr_tabpane' %> </script>
 <script id="serverspec-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_tabpane' %> </script>
-<script id="serverspec-results-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_results_tabpane' %> </script>
+<script id="servertest-results-tabpane-template"      type="text/template"> <%= render 'vue/servertest_results_tabpane' %> </script>
 
 <script id="operation-sched-tabpane-template" type="text/template"> <%=	render 'vue/operation_sched_tabpane' %> </script>
 <script id="view-rules-tabpane-template" type="text/template"> <%=	render 'vue/view_rules_tabpane' %> </script>

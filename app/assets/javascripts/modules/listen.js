@@ -108,7 +108,6 @@
   }
 
   function render_servertests_results(value, key){
-    console.log(key, value);
     switch (key) {
       case 'status':
         if(value == 'success') {
@@ -134,7 +133,7 @@
         if(value[3].length <= 0){
           return "<span class='text text-success'> serverspec for "+value[1]+" is successfully finished. </span>";
         }else{
-          var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle btn btn-xs btn-link popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
+          var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
           var body = '';
           if(value[2]){
               body = "<div class='col-sm-12'>" +

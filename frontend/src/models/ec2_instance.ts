@@ -230,7 +230,7 @@ export default class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  results_serverspec(): JQueryPromise<any> {
+  results_servertest(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
     (<any>EC2Instance.ajax_servertest).results({
