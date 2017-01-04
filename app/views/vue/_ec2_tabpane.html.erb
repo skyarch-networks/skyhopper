@@ -320,12 +320,12 @@
       </div>
       <div class="dropup" style="display: inline-block">
         <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-          <%= t('serverspecs.serverspec') %>
+          <%= t('servertests.servertest') %>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="select_servertest()"><%= t('serverspecs.run') %></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="serverspec_results()"><%= t('serverspecs.results') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="select_servertest()"><%= t('servertests.run') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="serverspec_results()"><%= t('servertests.results') %></a></li>
         </ul>
       </div>
       <div class="pull-right">

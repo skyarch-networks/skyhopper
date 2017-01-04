@@ -326,8 +326,8 @@ ja:
       empty-list:             'ディッシュのリストが空です'
 
 
-  serverspecs:
-    name:              'Serverspec 名'
+  servertests:
+    name:              'Servertest 名'
     serverspecs:       'Serverspecs'
     serverspec:        'Serverspec'
     description:       '詳細'
@@ -340,6 +340,7 @@ ja:
     created_at:        'at'
     run:               'Serverspec の実行'
     results:           'Serverspec の結果'
+    category:          'カテゴリー'
     btn:
       add:       'Servertest の追加'
       create:    'Serverspec の作成'
