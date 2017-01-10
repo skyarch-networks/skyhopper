@@ -8,5 +8,5 @@
 
 class DishServertest < ActiveRecord::Base
   belongs_to :dish,       dependent: :destroy
-  belongs_to :serverstest, dependent: :destroy
+  belongs_to :servertest, dependent: :destroy
 end

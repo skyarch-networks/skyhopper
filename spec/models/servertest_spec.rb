@@ -10,24 +10,24 @@ require_relative '../spec_helper'
 
 # TODO: refactor
 describe Servertest, type: :model do
-  let(:klass){Serverspec}
+  let(:klass){Servertest}
 
   describe 'with validation' do
     describe 'column value' do
-      let(:serverspec){build(:serverspec)}
+      let(:servertest){build(:servertest)}
       it 'should be ruby code' do
-        serverspec.value = 'invalid as ruby code{{{'
-        expect(serverspec.save).to be false
-        serverspec.value = 'valid as ruby code'
-        expect(serverspec.save).to be true
+        servertest.value = 'invalid as ruby code{{{'
+        expect(servertest.save).to be false
+        servertest.value = 'valid as ruby code'
+        expect(servertest.save).to be true
       end
     end
   end
 
   before(:each) do
-    klass.create(infrastructure_id: nil, name: 'recipe_apache2', value: 'code hoge', category: 1)
-    klass.create(infrastructure_id: 1, name: 'for_infra1', value: 'code fuga', category: 2)
-    klass.create(infrastructure_id: 2, name: 'for_infra2', value: 'code piyo', category: 1)
+    klass.create(infrastructure_id: nil, name: 'recipe_apache2', value: 'code hoge', category: :serverspec)
+    klass.create(infrastructure_id: 1, name: 'for_infra1', value: 'code fuga', category: :awspec)
+    klass.create(infrastructure_id: 2, name: 'for_infra2', value: 'code piyo', category: :awspec)
   end
 
   it {is_expected.to respond_to(:name)}
@@ -62,7 +62,7 @@ describe Servertest, type: :model do
     pass = 'passwd'
     infrastructure_id = 1
 
-    it 'new Serverspec instance' do
+    it 'new Servertest instance' do
       expect(klass.create_rds(rds, user, pass, infrastructure_id)).to be_kind_of klass
     end
   end

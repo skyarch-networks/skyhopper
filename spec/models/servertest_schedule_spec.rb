@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 RSpec.describe ServertestSchedule, type: :model do
-  let(:schedule) { build_stubbed(:serverspec_schedule) }
+  let(:schedule) { build_stubbed(:servertest_schedule) }
 
   describe "#next_run" do
     it 'should return future time' do

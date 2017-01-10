@@ -12,8 +12,8 @@ RSpec.describe ServertestJob, type: :job do
   describe '#perform' do
     let(:infra){create(:infrastructure)}
     let(:physical_id){SecureRandom.base64(10)}
-    let(:serverspecs){create_list(:serverspec, 3)}
-    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra, serverspecs: serverspecs)}
+    let(:servertests){create_list(:servertest, 3)}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra, servertests: servertests)}
     let(:user){create(:user)}
     let(:status_text){'success'}
     let(:resp){{
@@ -21,10 +21,10 @@ RSpec.describe ServertestJob, type: :job do
       message: 'Success!',
       status: status_text != 'failed',
     }}
-    let(:job){ServerspecJob.perform_now(physical_id, infra.id, user.id)}
+    let(:job){ServertestJob.perform_now(physical_id, infra.id, user.id)}
 
     before do
-      allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, serverspecs.map(&:id), false).and_return(resp)
+      allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, servertests.map(&:id), false).and_return(resp)
       resource
     end
 
@@ -32,14 +32,14 @@ RSpec.describe ServertestJob, type: :job do
       expect(job).to eq resp
     end
 
-    context 'when received serverspec_ids' do
-      let(:altr_serverspecs){create_list(:serverspec, 4)}
-      it 'serverspec_ids of resource should be update' do
+    context 'when received servertest_ids' do
+      let(:altr_serverspecs){create_list(:servertest, 4)}
+      it 'servertest_ids of resource should be update' do
         ids = altr_serverspecs.map(&:id)
         allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, ids, false).and_return(resp)
-        ServerspecJob.perform_now(physical_id, infra.id, user.id, serverspec_ids: ids)
+        ServertestJob.perform_now(physical_id, infra.id, user.id, servertest_ids: ids)
         resource.reload
-        expect(resource.serverspecs).to eq altr_serverspecs
+        expect(resource.servertests).to eq altr_serverspecs
       end
     end
 

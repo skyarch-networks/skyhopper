@@ -105,7 +105,7 @@ class NodesController < ApplicationController
     @info = {}
     status = resource.status
     @info[:cook_status]       = status.cook
-    @info[:serverspec_status] = status.servertest
+    @info[:servertest_status] = status.servertest
     @info[:update_status]     = status.yum
 
     @dishes = Dish.valid_dishes(@infra.project_id)
@@ -415,7 +415,7 @@ class NodesController < ApplicationController
     ws.push_as_json({v: true})
 
     if r.dish_id # if resource has dish
-      ServerspecJob.perform_now(physical_id, @infra.id, current_user.id)
+      ServertestJob.perform_now(physical_id, @infra.id, current_user.id)
     end
   end
 

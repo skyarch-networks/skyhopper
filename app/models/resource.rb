@@ -30,13 +30,13 @@ class Resource < ActiveRecord::Base
   # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
   # @return [Array<Serverspec>]
-  def all_serverspecs
+  def all_servertests
     self.servertests | (self.dish.try(:servertests) || [])
   end
 
   # XXX: パフォーマンスがきになる. all_serverspecs のほうが relation を返せば pluck が使える
-  def all_serverspec_ids
-    all_serverspecs.map{|x|x.id}
+  def all_servertest_ids
+    all_servertests.map{|x|x.id}
   end
 
   def initialize_statuses

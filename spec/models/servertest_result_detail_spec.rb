@@ -10,6 +10,6 @@ require_relative '../spec_helper'
 
 RSpec.describe ServertestResultDetail, type: :model do
   it "is valid with valid attributes" do
-    expect(ServerspecResultDetail.new).to be_valid
+    expect(ServertestResultDetail.new).to be_valid
   end
 end

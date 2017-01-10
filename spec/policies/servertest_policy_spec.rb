@@ -16,22 +16,22 @@ describe ServertestPolicy do
   let(:admin){       build_stubbed(:user, master: false, admin: true)}
   let(:normal){      build_stubbed(:user, master: false, admin: false)}
 
-  let(:serverspec_with_infra){   build_stubbed(:serverspec)}
-  let(:serverspec_without_infra){build_stubbed(:serverspec, infrastructure: nil)}
+  let(:servertest_with_infra){   build_stubbed(:servertest)}
+  let(:serverspec_without_infra){build_stubbed(:servertest, infrastructure: nil)}
 
 
   %i[index? show?].each do |action|
     permissions action do
-      context 'serverspec has infra' do
+      context 'servertest has infra' do
         it 'should grant allowed user' do
-          is_expected.not_to permit(normal, serverspec_with_infra)
+          is_expected.not_to permit(normal, servertest_with_infra)
 
-          normal.projects = [serverspec_with_infra.infrastructure.project]
-          is_expected.to permit(normal, serverspec_with_infra)
+          normal.projects = [servertest_with_infra.infrastructure.project]
+          is_expected.to permit(normal, servertest_with_infra)
         end
       end
 
-      context "serverspec doesn't have infra" do
+      context "servertest doesn't have infra" do
         it 'should grant all user' do
           is_expected.to permit(master_admin, serverspec_without_infra)
           is_expected.to permit(master,       serverspec_without_infra)
@@ -42,25 +42,25 @@ describe ServertestPolicy do
     end
   end
 
-  %i[new? update? create? edit? destroy? select? run? create_for_rds? schedule?].each do |action|
+  %i[new? update? create? edit? destroy? select? run_serverspec? create_for_rds? schedule?].each do |action|
     permissions action do
-      context 'serverspec has infra' do
+      context 'servertest has infra' do
         it 'should grant allowed user' do
-          is_expected.not_to permit(admin, serverspec_with_infra)
+          is_expected.not_to permit(admin, servertest_with_infra)
 
-          admin.projects = [serverspec_with_infra.infrastructure.project]
-          is_expected.to permit(admin, serverspec_with_infra)
+          admin.projects = [servertest_with_infra.infrastructure.project]
+          is_expected.to permit(admin, servertest_with_infra)
         end
 
         it 'should deny not admin user' do
-          normal.projects = [serverspec_with_infra.infrastructure.project]
-          is_expected.not_to permit(normal, serverspec_with_infra)
-          master.projects = [serverspec_with_infra.infrastructure.project]
-          is_expected.not_to permit(master, serverspec_with_infra)
+          normal.projects = [servertest_with_infra.infrastructure.project]
+          is_expected.not_to permit(normal, servertest_with_infra)
+          master.projects = [servertest_with_infra.infrastructure.project]
+          is_expected.not_to permit(master, servertest_with_infra)
         end
       end
 
-      context "serverspec doesn't have infra" do
+      context "servertest doesn't have infra" do
         it 'should grant only master and admin user' do
           is_expected.to     permit(master_admin, serverspec_without_infra)
           is_expected.not_to permit(master,       serverspec_without_infra)

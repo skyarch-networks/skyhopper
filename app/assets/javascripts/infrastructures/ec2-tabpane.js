@@ -602,15 +602,15 @@ module.exports = Vue.extend({
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },
-    serverspec_status_class: function () { return this._label_class(this.serverspec_status); },
+    serverspec_status_class: function () { return this._label_class(this.servertest_status); },
     update_status_class:     function () { return this._label_class(this.update_status); },
 
     cook_status:       function () { return this.capitalize(this.ec2.info.cook_status.value); },
-    serverspec_status: function () { return this.capitalize(this.ec2.info.serverspec_status.value); },
+    servertest_status: function () { return this.capitalize(this.ec2.info.servertest_status.value); },
     update_status:     function () { return this.capitalize(this.ec2.info.update_status.value); },
 
     cook_time:       function () { return this.cook_status       === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.cook_status.updated_at);},
-    serverspec_time: function () { return this.serverspec_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.serverspec_status.updated_at);},
+    serverspec_time: function () { return this.servertest_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.servertest_status.updated_at);},
     update_time:     function () { return this.update_status     === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at);},
 
     runlist_empty: function () { return _.isEmpty(this.ec2.runlist); },

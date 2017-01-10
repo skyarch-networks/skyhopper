@@ -22,7 +22,7 @@ class ServertestJob < ActiveJob::Base
     unless servertest_ids
       infra = Infrastructure.find(infra_id)
       resource = infra.resource(physical_id)
-      servertest_ids = resource.all_serverspec_ids
+      servertest_ids = resource.all_servertest_ids
     end
 
     @ws = WSConnector.new('notifications', User.find(user_id).ws_key)

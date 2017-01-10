@@ -42,22 +42,22 @@ class ServertestsController < ApplicationController
 
   # GET /serverspecs/1
   def show
-    render text: @serverspec.value
+    render text: @servertest.value
   end
 
   # POST /serverspecs/1
   def update
-    if @servertest.update(global_serverspec_params)
+    if @servertest.update(global_servertest_params)
       redirect_to servertests_path, notice: I18n.t('serverspecs.msg.updated')
     else
-      flash.now[:alert] = @servertest.errors[:value] if @serverspec.errors[:value]
+      flash.now[:alert] = @servertest.errors[:value] if @servertest.errors[:value]
       render action: 'edit'
     end
   end
 
-  # POST /serverspecs
+  # POST /servertests
   def create
-    @servertest = Servertest.new(global_serverspec_params)
+    @servertest = Servertest.new(global_servertest_params)
 
     infra_id = @servertest.infrastructure_id
 
@@ -100,26 +100,26 @@ class ServertestsController < ApplicationController
     infra_id    = params.require(:infra_id)
 
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    @selected_serverspec_ids = resource.all_serverspec_ids
+    @selected_servertest_ids = resource.all_servertest_ids
 
     serverspecs = Servertest.for_infra_serverspec(infra_id)
-    @individual_serverspecs, @global_serverspecs = serverspecs.partition{|spec| spec.infrastructure_id }
+    @individual_servertests, @global_servertests = serverspecs.partition{|spec| spec.infrastructure_id }
     node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
 
-    @serverspec_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
+    @servertest_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
   end
 
-  # GET /serverspecs/results
+  # GET /servertests/results
   def results
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @serverspec_results = resource.servertest_results.order("created_at desc")
+    @servertest_results = resource.servertest_results.order("created_at desc")
 
     respond_to do |format|
-      format.json { render json: @serverspec_results.as_json(only: [:id, :status, :message, :created_at, :category],
+      format.json { render json: @servertest_results.as_json(only: [:id, :status, :message, :created_at, :category],
         include: [{servertest_result_details: {only: [:id]}},{servertests: {only: [:name, :category]}}, {resource: {only: [:physical_id]}} ]) }
     end
   end
@@ -189,7 +189,7 @@ class ServertestsController < ApplicationController
     infra_id    = params.require(:infra_id)
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
 
-    ss = ServerspecSchedule.find_by(physical_id: physical_id)
+    ss = ServertestSchedule.find_by(physical_id: physical_id)
     ss.update_attributes!(schedule)
 
     if ss.enabled?
@@ -208,8 +208,8 @@ class ServertestsController < ApplicationController
     @servertest = Servertest.find(params.require(:id))
   end
 
-  def global_serverspec_params
-    params.require(:servertest).permit(:name, :description, :value, :category, :infrastructure_id)
+  def global_servertest_params
+    params.require(:servertest).permit(:name, :description, :value, :infrastructure_id, :category)
   end
 
   def have_infra?

@@ -251,7 +251,7 @@
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
       <bootstrap-tooltip :title.once="serverspec_time">
-        <template slot="content"><span :class="serverspec_status_class" class="label">{{serverspec_status}}</span></template>
+        <template slot="content"><span :class="serverspec_status_class" class="label">{{servertest_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12" v-if="!ec2.platform">
