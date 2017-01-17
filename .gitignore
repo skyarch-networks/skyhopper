@@ -51,6 +51,7 @@ vendor/bower_components
 
 # MAC system files
 .DS_Store
+.idea/
 
 
 #emacs backup exclude during commit (clean files)
