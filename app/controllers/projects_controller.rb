@@ -106,7 +106,13 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
-    @zabbix = ZabbixServer.find(project_params[:zabbix_server_id])
+    zid = project_params[:zabbix_server_id]
+    if zid.empty?
+      flash[:alert] = t('projects.msg.zabbix_not_set')
+      redirect_to edit_project_path and return
+    end
+
+    @zabbix = ZabbixServer.find(zid)
     if @project.update(project_params)
       register_hosts
       redirect_to projects_path(client_id: @project.client_id),
