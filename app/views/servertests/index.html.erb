@@ -54,7 +54,7 @@
   </demo-grid>
 
   <div v-if="is_empty" v-cloak>
-    <%= t 'serverspecs.msg.empty-results' %>
+    <%= t 'servertests.msg.empty-results' %>
   <hr>
   </div>
   <div v-if="loading">
@@ -66,13 +66,13 @@
 
 
 <% if allow_change %>
-  <%= link_to t('.new', default: t('serverspecs.btn.add')),
+  <%= link_to t('.new', default: t('servertests.btn.add')),
     new_servertest_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-primary btn-small' %>
-  <%= link_to t('serverspecs.btn.serverspec_generator'),
+  <%= link_to t('servertests.btn.serverspec_generator'),
     generator_servertests_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-default btn-small' %>
-  <%= link_to t('serverspecs.btn.awspec_generator'),
+  <%= link_to t('servertests.btn.awspec_generator'),
     awspec_generator_servertests_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-default btn-small' %>
 <% end %>

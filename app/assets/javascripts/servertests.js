@@ -97,12 +97,12 @@ var servertestIndex = new Vue({
 
         var svt = new Servertest(self.sel_infra_id);
         svt.create(params.fname, params.value, 'awspec').done(function (data) {
-            modal.Alert(t('servertest.servertest'), data, 'success').done(function(){
+            modal.Alert(t('servertests.servertest'), data, 'success').done(function(){
               location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${location.search}`;
             });
           }
         ).fail(function (msg)  {
-          modal.Alert(t('servertest.servertest'), msg, 'danger');
+          modal.Alert(t('servertests.servertest'), msg, 'danger');
             self.generating = false;
         });
       }
@@ -113,6 +113,10 @@ var servertestIndex = new Vue({
         return (awspec.value && awspec.fname);
       },
     },
+    ready: function() {
+      var self  = this;
+      self.loading = false;
+    }
 });
 
 

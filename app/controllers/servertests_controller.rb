@@ -19,7 +19,7 @@ class ServertestsController < ApplicationController
     authorize(@serverspec || Servertest.new(infrastructure_id: have_infra?))
   end
 
-  # GET /serverspecs
+  # GET /servertests
   def index
     @infrastructure_id = params[:infrastructure_id]
     page               = params[:page]
@@ -33,7 +33,7 @@ class ServertestsController < ApplicationController
     end
   end
 
-  # GET /serverspecs/new
+  # GET /servertests/new
   def new
     infra_id = params[:infrastructure_id]
 
@@ -41,15 +41,15 @@ class ServertestsController < ApplicationController
     @servertest.value = %!require '<choice_category>spec_helper'\n\n!
   end
 
-  # GET /serverspecs/1
+  # GET /servertests/1
   def show
     render text: @servertest.value
   end
 
-  # POST /serverspecs/1
+  # POST /servertests/1
   def update
     if @servertest.update(global_servertest_params)
-      redirect_to servertests_path, notice: I18n.t('serverspecs.msg.updated')
+      redirect_to servertests_path, notice: I18n.t('servertests.msg.updated')
     else
       flash.now[:alert] = @servertest.errors[:value] if @servertest.errors[:value]
       render action: 'edit'
@@ -71,23 +71,23 @@ class ServertestsController < ApplicationController
     end
 
     if ajax?
-      render text: I18n.t('serverspecs.msg.created') and return
+      render text: I18n.t('servertests.msg.created') and return
     else
       redirect_to servertests_path(infrastructure_id: infra_id),
-        notice: I18n.t('serverspecs.msg.created')
+        notice: I18n.t('servertests.msg.created')
     end
   end
 
-  # GET /serverspecs/1/edit
+  # GET /servertests/1/edit
   def edit
   end
 
-  # GET /serverspecs/generator
+  # GET /servertests/generator
   def generator
     @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
   end
 
-  # GET /serverspecs/awspec_generator
+  # GET /servertests/awspec_generator
   def awspec_generator
     @infras = Infrastructure.all
   end
@@ -121,12 +121,12 @@ class ServertestsController < ApplicationController
     render nothing: true, status: 200 and return
   end
 
-  # DELETE /serverspecs/1
+  # DELETE /servertests/1
   def destroy
     infra_id = @servertest.infrastructure_id
     @servertest.destroy
 
-    redirect_to servertests_path(infrastructure_id: infra_id), notice: I18n.t('serverspecs.msg.deleted')
+    redirect_to servertests_path(infrastructure_id: infra_id), notice: I18n.t('servertests.msg.deleted')
   end
 
   # GET /servertests/select
@@ -137,8 +137,8 @@ class ServertestsController < ApplicationController
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
     @selected_servertest_ids = resource.all_servertest_ids
 
-    serverspecs = Servertest.for_infra_serverspec(infra_id)
-    @individual_servertests, @global_servertests = serverspecs.partition{|spec| spec.infrastructure_id }
+    servertests = Servertest.for_infra_serverspec(infra_id)
+    @individual_servertests, @global_servertests = servertests.partition{|spec| spec.infrastructure_id }
     node = Node.new(physical_id)
     @is_available_auto_generated = node.have_auto_generated
 
@@ -161,7 +161,7 @@ class ServertestsController < ApplicationController
 
 
   # TODO: refactor
-  # POST /serverspecs/run_serverspec
+  # POST /servertests/run_serverspec
   def run_serverspec
     physical_id    = params.require(:physical_id)
     infra_id       = params.require(:infra_id)
@@ -183,11 +183,11 @@ class ServertestsController < ApplicationController
 
     case resp[:status_text]
     when 'success'
-      render_msg = I18n.t('serverspecs.msg.success', physical_id: physical_id)
+      render_msg = I18n.t('servertests.msg.success', physical_id: physical_id)
     when 'pending'
-      render_msg = I18n.t('serverspecs.msg.pending', physical_id: physical_id, pending_specs: resp[:short_msg])
+      render_msg = I18n.t('servertests.msg.pending', physical_id: physical_id, pending_specs: resp[:short_msg])
     when 'failed'
-      render_msg = I18n.t('serverspecs.msg.failure', physical_id: physical_id, failure_specs: resp[:short_msg])
+      render_msg = I18n.t('servertests.msg.failure', physical_id: physical_id, failure_specs: resp[:short_msg])
     end
 
     ServertestResult.create(
@@ -201,7 +201,7 @@ class ServertestsController < ApplicationController
 
 
   # Generate serverspec to connect to RDS instance
-  # PUT /serverspecs/create_for_rds
+  # PUT /servertests/create_for_rds
   def create_for_rds
     infra_id    = params.require(:infra_id)
     physical_id = params.require(:physical_id)
@@ -215,10 +215,10 @@ class ServertestsController < ApplicationController
 
     Servertest.create_rds(rds, username, password, infra_id, database)
 
-    render text: I18n.t('serverspecs.msg.generated'), status: 201 and return
+    render text: I18n.t('servertests.msg.generated'), status: 201 and return
   end
 
-  # POST /serverspecs/schedule
+  # POST /servertests/schedule
   def schedule
     physical_id = params.require(:physical_id)
     infra_id    = params.require(:infra_id)
