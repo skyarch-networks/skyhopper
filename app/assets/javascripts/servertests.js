@@ -24,22 +24,25 @@ var servertest_url = queryString.infrastructure_id ? 'infrastructure_id='+queryS
 var servertestIndex = new Vue({
   el: '#indexElement',
   data: {
-    searchQuery: '',
-    gridColumns: ['servertest_name','description', 'category'],
-    gridData: [],
-    index: 'servertests',
-    picked: {
-        servertest_path: null,
-        edit_servertest_path: null
+      searchQuery: '',
+      gridColumns: ['servertest_name','description', 'category'],
+      gridData: [],
+      index: 'servertests',
+      picked: {
+          servertest_path: null,
+          edit_servertest_path: null
+      },
+      infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
+      sel_infra_id: null,
+      url: 'servertests?'+servertest_url,
+      is_empty: false,
+      loading: true,
+      generating: false,
+      awspec:{
+        value: null,
+        fname: null
+      }
     },
-    infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
-    sel_infra_id: null,
-    url: 'servertests?'+servertest_url,
-    generated: null,
-    is_empty: false,
-    loading: true,
-    generating: false,
-  },
     methods: {
       can_edit: function() {
         return this.picked.edit_servertest_path === null ? true : false;
@@ -83,10 +86,32 @@ var servertestIndex = new Vue({
 
         var svt = new Servertest(self.sel_infra_id);
         svt.generate_awspec().done(function (data) {
-          self.generated = data.generated;
+          self.awspec.value = data.generated;
           self.generating = false;
         }).fail(modal.AlertForAjaxStdError());
+      },
+      create_awspec: function ()  {
+        var self = this;
+        var params = self.awspec;
+        self.generating = true;
+
+        var svt = new Servertest(self.sel_infra_id);
+        svt.create(params.fname, params.value, 'awspec').done(function (data) {
+            modal.Alert(t('servertest.servertest'), data, 'success').done(function(){
+              location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${location.search}`;
+            });
+          }
+        ).fail(function (msg)  {
+          modal.Alert(t('servertest.servertest'), msg, 'danger');
+            self.generating = false;
+        });
       }
+    },
+    computed: {
+      required_filed: function () {
+        var awspec = this.awspec;
+        return (awspec.value && awspec.fname);
+      },
     },
 });
 
