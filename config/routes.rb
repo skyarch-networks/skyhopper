@@ -114,6 +114,8 @@ SkyHopper::Application.routes.draw do
       put  'create_for_rds'
       post 'schedule'
       get  'generator'
+      get  'awspec_generator'
+      get  'generate_awspec'
     end
   end
 

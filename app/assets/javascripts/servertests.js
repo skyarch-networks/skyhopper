@@ -11,7 +11,12 @@ var wrap = require('./modules/wrap');
 var listen = require('./modules/listen');
 var queryString = require('query-string').parse(location.search);
 var modal = require('modal');
-var app;
+
+var Servertest   = require('models/servertest').default;
+var vace = require('vue-ace');
+require('brace/mode/ruby');
+require('brace/theme/github');
+Vue.use(vace, false, 'ruby', '25');
 
 Vue.component('demo-grid', require('demo-grid.js'));
 var servertest_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
@@ -28,9 +33,12 @@ var servertestIndex = new Vue({
         edit_servertest_path: null
     },
     infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
+    sel_infra_id: null,
     url: 'servertests?'+servertest_url,
+    generated: null,
     is_empty: false,
     loading: true,
+    generating: false,
   },
     methods: {
       can_edit: function() {
@@ -68,6 +76,16 @@ var servertestIndex = new Vue({
           }
         });
         document.getElementById('value').style.display='';
+      },
+      generate: function () {
+        var self = this;
+        self.generating = true;
+
+        var svt = new Servertest(self.sel_infra_id);
+        svt.generate_awspec().done(function (data) {
+          self.generated = data.generated;
+          self.generating = false;
+        }).fail(modal.AlertForAjaxStdError());
       }
     },
 });

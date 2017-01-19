@@ -8,6 +8,7 @@
 
 class ServertestsController < ApplicationController
   include Concerns::InfraLogger
+  class ServertestError < ::StandardError; end
 
   before_action :set_servertest, only: [:update, :show, :edit, :destroy]
 
@@ -84,6 +85,40 @@ class ServertestsController < ApplicationController
   # GET /serverspecs/generator
   def generator
     @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
+  end
+
+  # GET /serverspecs/awspec_generator
+  def awspec_generator
+    @infras = Infrastructure.all
+  end
+
+  # GET /servertests/generate_awspec
+  def generate_awspec
+    @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
+
+    ws = WSConnector.new('awspec-generate', @infra.id)
+    ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+
+    cmd = []
+    cmd << "AWS_ACCESS_KEY_ID=#{@infra.access_key}"
+    cmd << "AWS_REGION=#{@infra.region}"
+    cmd << "AWS_SECRET_ACCESS_KEY=#{@infra.secret_access_key}"
+    cmd << ruby_cmd << "-S awspec generate ec2 #{@infra.ec2.describe_vpcs[:vpcs][0].vpc_id}"
+    cmd = cmd.flatten.reject(&:blank?).join(" ")
+    generated = %!require 'awspec_helper'\n\n!
+    Thread.new_with_db do
+      begin
+        gen, = Node.exec_command(cmd, ServertestError)
+        generated += gen
+        ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), generated: generated})
+      rescue => ex
+        generated = ex.to_s
+        ws.push_as_json({status: false, message: ex.message})
+        render status: 404 and return
+      end
+    end
+
+    render nothing: true, status: 200 and return
   end
 
   # DELETE /serverspecs/1

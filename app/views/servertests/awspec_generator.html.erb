@@ -1,0 +1,45 @@
+<% provide(:title, I18n.t('serverspecs.generator.title')) %>
+<div class="page-header">
+  <h2>
+    <%=t('servertests.generator.awspec_generator')%>
+    <% if @infra %>
+        <small><%= ('for ' + link_to(@infra.stack_name, infrastructures_path(project_id: @infra.project_id, infrastructure_id: @infra.id))).html_safe %></small>
+    <% end %>
+  </h2>
+</div>
+
+    <div class="form-horizontal" role="form" id="indexElement">
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="infras"><%=t('infrastructure.infrastructure')%></label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <select v-model="sel_infra_id" class="form-control" id="infras">
+              <option value="" disabled selected>-- Select infrastructure --</option>
+              <% @infras.each do |infra| %>
+                  <option value="<%= infra.id %>"><%=infra.stack_name %></option>
+              <% end %>
+            </select>
+            <span class="input-group-btn">
+              <button :disable="generating" class="btn btn-default" @click="generate()"><%=t('helpers.titles.generate')%></button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div v-if="generating">
+        <span class="loader"></span>
+        <%= t 'common.msg.loading' %>
+      <hr>
+      </div>
+      <div class="form-group" v-if="generated">
+          <label class="control-label col-sm-2" for="infras"><%=t('servertest.msg.generated')%></label>
+          <div class="col-sm-8">
+            <textarea  v-ace="generated"></textarea>
+          </div>
+      </div>
+
+      <div class="form-actions-top">
+        <button :disabled="!generated" class="btn btn-primary save-serverspec-btn"><%=t('helpers.titles.save')%></button>
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+          servertests_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
+      </div>
+    </div>

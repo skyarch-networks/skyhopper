@@ -17,7 +17,7 @@ class ServertestPolicy < ApplicationPolicy
     end
   end
 
-  %i[new? update? create? edit? destroy? select? results? run_serverspec? create_for_rds? schedule? generator?].each do |action|
+  %i[new? update? create? edit? generate_awspec? destroy? select? results? run_serverspec? create_for_rds? schedule? generator? awspec_generator?].each do |action|
     define_method(action) do
       if record.infrastructure
         user.allow?(record.infrastructure) && user.admin?

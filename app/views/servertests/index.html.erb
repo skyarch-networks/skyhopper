@@ -69,8 +69,11 @@
   <%= link_to t('.new', default: t('serverspecs.btn.add')),
     new_servertest_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-primary btn-small' %>
-  <%= link_to t('serverspecs.btn.generator'),
+  <%= link_to t('serverspecs.btn.serverspec_generator'),
     generator_servertests_path(infrastructure_id: @infrastructure_id),
+    class: 'btn btn-default btn-small' %>
+  <%= link_to t('serverspecs.btn.awspec_generator'),
+    awspec_generator_servertests_path(infrastructure_id: @infrastructure_id),
     class: 'btn btn-default btn-small' %>
 <% end %>
 

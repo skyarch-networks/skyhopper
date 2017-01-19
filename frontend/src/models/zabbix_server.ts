@@ -22,7 +22,11 @@ export default class ZabbixServer extends ModelBase {
       lang: zabbix_server.lang,
       commit: "Create Zabbix Server",
     })
-      .done(this.wait_change_status(dfd))
+      .done(this.wait_change_status(
+          this.session_id,
+          dfd,
+          'notifications'
+        ))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
@@ -34,19 +38,5 @@ export default class ZabbixServer extends ModelBase {
     );
   }
 
-  // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
-  private wait_change_status(dfd: JQueryDeferred<any>): () => void {
-    return () => {
-      const ws = ws_connector('notifications', this.session_id);
-      ws.onmessage = function (msg) {
-        const d = JSON.parse(msg.data);
-        if (!d.status) {
-          dfd.reject(d.message);
-        } else {
-          dfd.resolve(d);
-        }
-        ws.close();
-      };
-    };
-  }
+
 }

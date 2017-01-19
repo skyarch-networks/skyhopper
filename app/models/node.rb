@@ -187,33 +187,9 @@ class Node
     end
 
     # create result
-    result = JSON::parse(out, symbolize_names: true)
-    result[:examples].each do |e|
-      e[:exception].delete(:backtrace) if e[:exception]
-    end
-    result[:status] = result[:summary][:failure_count].zero?
-    result[:status_text] =
-      if result[:status]
-        if result[:summary][:pending_count].zero?
-          'success'
-        else
-          'pending'
-        end
-      else
-        'failed'
-      end
-
-
-    case result[:status_text]
-    when 'pending'
-      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
-      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
-    when 'failed'
-      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
-      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
-    end
-
+    result =  generate_result(out)
     Resource.find_by(physical_id: @name).status.servertest.update(value: result[:status_text])
+
     return result
   rescue => ex
     Resource.find_by(physical_id: @name).status.servertest.failed!
@@ -350,6 +326,36 @@ class Node
     return true
   # ensure
   #   ec2key.close_temp
+  end
+
+  def generate_result(out)
+    result = JSON::parse(out, symbolize_names: true)
+    result[:examples].each do |e|
+      e[:exception].delete(:backtrace) if e[:exception]
+    end
+    result[:status] = result[:summary][:failure_count].zero?
+    result[:status_text] =
+      if result[:status]
+        if result[:summary][:pending_count].zero?
+          'success'
+        else
+          'pending'
+        end
+      else
+        'failed'
+      end
+
+
+    case result[:status_text]
+      when 'pending'
+        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
+      when 'failed'
+        result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+    end
+
+    return result
   end
 
 

@@ -282,7 +282,7 @@ export default class EC2Instance extends ModelBase {
   }
 
   // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
-  private wait_change_status(dfd: JQueryDeferred<any>): () => void {
+  private wait_change_status_ec2(dfd: JQueryDeferred<any>): () => void {
     return () => {
       const ws = ws_connector('ec2_status', this.physical_id);
       ws.onmessage = function (msg) {
@@ -308,7 +308,7 @@ export default class EC2Instance extends ModelBase {
   start_ec2(): JQueryPromise<any> {
     const dfd = $.Deferred();
     (<any>EC2Instance.ajax_ec2).start(this.params)
-      .done(this.wait_change_status(dfd))
+      .done(this.wait_change_status_ec2(dfd))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
@@ -317,7 +317,7 @@ export default class EC2Instance extends ModelBase {
   stop_ec2(): JQueryPromise<any> {
     const dfd = $.Deferred();
     (<any>EC2Instance.ajax_ec2).stop(this.params)
-      .done(this.wait_change_status(dfd))
+      .done(this.wait_change_status_ec2(dfd))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
