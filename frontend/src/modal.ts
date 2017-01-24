@@ -51,7 +51,7 @@ const modal = function (
   if (message instanceof jQuery || modal_type === ModalType.confirm_html || modal_type === ModalType.alert_html) {
     modal_body.append($('<div>', { html: message }));
   } else {
-    modal_body.append($('<div>', { text: message }));
+    modal_body.append($('<div>', { html: escape_html_except_br(message) }));
   }
 
   modal_footer.append(

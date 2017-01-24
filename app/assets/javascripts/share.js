@@ -161,6 +161,14 @@ var ws_connector = function (kind, id) {
   return new WebSocket('ws://' + location.hostname + '/ws/' + kind + '/' + id );
 };
 
+// for modal, notification_center and more...
+var escape_html_except_br = function (str) {
+  str = str.toString().replace(/<br\s?\/?>/, '\n');
+  str = _.escape(str);
+  str = str.replace('\n', '<br>');
+  return str;
+};
+
 
 /* form-validation */
 $(document).ready(function () {
