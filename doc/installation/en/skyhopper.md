@@ -199,7 +199,7 @@ $ bower install
 $ sudo npm i -g gulp
 $ cd frontend/
 $ npm i
-$ gulp tsd
+$ gulp type  // TSD to typings
 $ gulp ts
 $ cd ..
 ```
