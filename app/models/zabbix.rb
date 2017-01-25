@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -33,6 +33,8 @@ class Zabbix
     rescue SkyZabbix::Jsonrpc::Error
       raise ZabbixError, I18n.t('monitoring.msg.invalid_parameters')
     rescue Errno::ECONNREFUSED => ex
+      raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
+    rescue Errno::ETIMEDOUT => ex
       raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
     end
 
@@ -404,8 +406,12 @@ class Zabbix
     user_info = @sky_zabbix.user.get(
       filter: { alias: username }
     )
+    unless user_info.first.nil?
+      return user_info.first['userid']
+    else
+      return nil
+    end
 
-    return user_info.first['userid']
   end
 
   UserTypeDefault    = 1
@@ -426,7 +432,11 @@ class Zabbix
   end
 
   def delete_user(username)
-    @sky_zabbix.user.delete([get_user_id(username)])
+    if get_user_id(username).nil?
+      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
+    else
+      @sky_zabbix.user.delete([get_user_id(username)])
+    end
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -9,5 +9,7 @@
 require 'rails_helper'
 
 RSpec.describe Monitoring, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "is valid with valid attributes" do
+    expect(Monitoring.new).to be_valid
+  end
 end

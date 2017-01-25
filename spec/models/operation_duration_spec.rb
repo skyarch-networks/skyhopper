@@ -1,13 +1,15 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'rails_helper'
+require_relative '../spec_helper'
 
 RSpec.describe OperationDuration, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "is valid with valid attributes" do
+    expect(OperationDuration.new).to be_valid
+  end
 end

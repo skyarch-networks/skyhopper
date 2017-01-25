@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -229,7 +229,6 @@ describe CfTemplatesController, type: :controller do
         end
 
         context 'format json' do
-          skip
           let(:format){'json'}
         end
       end
@@ -319,7 +318,6 @@ describe CfTemplatesController, type: :controller do
       end
 
       context 'when format json' do
-        skip
         let(:format){'json'}
       end
     end
@@ -337,7 +335,6 @@ describe CfTemplatesController, type: :controller do
       end
 
       context 'when format json' do
-        skip
         let(:format){'json'}
       end
     end

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -108,13 +108,17 @@ class ChefServer::Deployment
       set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
       set.save!
 
-      ZabbixServer.create(
+      zb = ZabbixServer.create(
         fqdn: set.zabbix_fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
         details: 'Default Zabbix Server for Skyhopper System'
       )
+
+      # Save newly created zabbix server id to zabbix infra.
+      prj.zabbix_server_id = zb.id
+      prj.save!
 
       AppSetting.clear_cache
     rescue => ex
