@@ -3,6 +3,8 @@ var Infrastructure = require('models/infrastructure').default;
 var helpers = require('infrastructures/helper.js');
 var toLocaleString = helpers.toLocaleString;
 var alert_and_show_infra = helpers.alert_and_show_infra;
+var ansi_up = require('ansi_up');
+
 
 module.exports = Vue.extend({
   template: '#infra-logs-tabpane-template',
@@ -27,6 +29,7 @@ module.exports = Vue.extend({
     status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
     status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
     toLocaleString: toLocaleString,
+    ansi_up: function(log)  { return ansi_up.ansi_to_html(log); }
   },
 
   created: function () {

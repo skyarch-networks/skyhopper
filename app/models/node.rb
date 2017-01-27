@@ -312,7 +312,6 @@ class Node
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
-        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!
 
         yield line
@@ -337,7 +336,6 @@ class Node
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
       while line = stdout.gets
-        line.gsub!(/\x1b[^m]*m/, '')  # remove ANSI escape
         line.chomp!
 
         yield line
