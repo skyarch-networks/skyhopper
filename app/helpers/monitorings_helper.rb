@@ -8,7 +8,7 @@
 
 module MonitoringsHelper
   @@url_settings = [
-    {name: "Scenario Name",   example: "zabbix webcheck",       sym: :scenario_name}, 
+    {name: "Scenario Name",   example: "zabbix webcheck",       sym: :scenario_name},
     {name: "Step Name",       example: "Home, Home/About",      sym: :step_name},
     {name: "URL",             example: "http://www.zabbix.com", sym: :url},
     {name: "Required String", example: "welcome",               sym: :required_string},

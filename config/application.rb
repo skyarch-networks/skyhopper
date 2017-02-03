@@ -21,7 +21,7 @@ module SkyHopper
     # config.active_record.default_timezone = :local
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    config.i18n.default_locale = :en
+    config.i18n.default_locale = :ja
     config.i18n.available_locales = [:en, :ja]
     I18n.enforce_available_locales = false
 
@@ -50,7 +50,7 @@ module SkyHopper
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Version Marketplace 2016.10'
+    config.my_version = 'Version Marketplace 2016.12'
 
     config.browserify_rails.paths << /frontend\//
   end

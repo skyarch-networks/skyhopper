@@ -229,7 +229,6 @@ describe CfTemplatesController, type: :controller do
         end
 
         context 'format json' do
-          skip
           let(:format){'json'}
         end
       end
@@ -319,7 +318,6 @@ describe CfTemplatesController, type: :controller do
       end
 
       context 'when format json' do
-        skip
         let(:format){'json'}
       end
     end
@@ -337,7 +335,6 @@ describe CfTemplatesController, type: :controller do
       end
 
       context 'when format json' do
-        skip
         let(:format){'json'}
       end
     end
