@@ -27,7 +27,7 @@
     "src/project_parameters.ts",
     "src/server_status.ts",
     "src/serverspec-gen.ts",
-    "src/users_admin.ts"
+    "src/users_admin.ts",
     "src/models/zabbix_server.ts"
   ]
 }
