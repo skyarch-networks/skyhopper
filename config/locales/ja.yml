@@ -140,6 +140,7 @@ ja:
       cant_delete_system: 'システム用のプロジェクトは削除できません'
       empty-list:         'プロジェクトは空です。'
       delete_project:     'この案件を削除してもよろしいですか？'
+      zabbix_not_set:     'この案件で使用する Zabbix Server が選択されていません'
 
   project_parameters:
     title: 'パラメーター'
