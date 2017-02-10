@@ -60,6 +60,7 @@ FactoryGirl.define do
     secret_access_key "1234567890"
     client
     cloud_provider_id{CloudProvider.aws.id}
+    zabbix_server
   end
 
   sequence(:status) do |n|
