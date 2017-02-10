@@ -141,7 +141,7 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
       delete_project:     'Are you sure you want to delete this project?'
-      zabbix_not_set:     'Zabbix Server used on this project is not selected`.'
+      zabbix_not_set:     'Please Select Zabbix Server for this Project.'
 
 
   project_parameters:
