@@ -41,7 +41,7 @@
         case 'DELETE_IN_PROGRESS':
           return "<span class='text text-danger'>"+value+"</span>";
         case 'CREATE_IN_PROGRESS':
-          return "<span class='tetestext-info'>"+value+"</span>";
+          return "<span class='text text-info'>"+value+"</span>";
         default:
           return "<span class='text text-default'> NO_STACK_INFO </span>";
       }
