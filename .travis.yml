@@ -23,3 +23,6 @@ before_script:
 
 script:
   - bundle exec rspec
+
+notifications:
+  slack: skyarch:RrGXgQVUmTe0r565gbHYMnmQ
