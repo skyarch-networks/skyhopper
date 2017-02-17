@@ -31,7 +31,7 @@ json.availability_zones @availability_zones
 if @info
   json.info do
     json.cook_status       @info[:cook_status]
-    json.serverspec_status @info[:servertest_status] # TODO: Refactor all serverspec status
+    json.servertest_status @info[:servertest_status] # TODO: Refactor all serverspec status
     json.update_status     @info[:update_status]
   end
 else

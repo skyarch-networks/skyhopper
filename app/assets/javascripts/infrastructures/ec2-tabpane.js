@@ -602,7 +602,7 @@ module.exports = Vue.extend({
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },
-    serverspec_status_class: function () { return this._label_class(this.servertest_status); },
+    servertest_status_class: function () { return this._label_class(this.servertest_status); },
     update_status_class:     function () { return this._label_class(this.update_status); },
 
     cook_status:       function () { return this.capitalize(this.ec2.info.cook_status.value); },
