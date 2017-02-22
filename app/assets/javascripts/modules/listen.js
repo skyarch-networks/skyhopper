@@ -117,7 +117,7 @@
         }else if (value == 'pending') {
           return "<span class='label label-warning'>"+value+"</span>";
         }else{ return value; }
-
+        break;
       case 'servertest':
         return  (value.length > 0) ? value.map(function(val){ return val.name; }) : 'auto generated';
       case 'category':

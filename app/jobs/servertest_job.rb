@@ -30,7 +30,7 @@ class ServertestJob < ActiveJob::Base
     infra_logger_serverspec_start(physical_id, infra_id, user_id, auto_generated, servertest_ids)
     begin
       resp = if category.nil?
-        node.run_serverspec(infra_id, servertest_ids, auto_generated)
+               node.run_serverspec(infra_id, servertest_ids, auto_generated)
       else
         node.run_awsspec(infra_id, servertest_ids, auto_generated)
       end

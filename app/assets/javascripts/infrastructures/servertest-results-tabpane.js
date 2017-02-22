@@ -101,7 +101,7 @@ module.exports = Vue.extend({
           };
       });
       self.$parent.loading = false;
-      if(self.data.length === 0){ self.is_empty == true; }
+      if(self.data.length === 0){ self.is_empty = true; }
     }).fail(alert_danger(self.show_ec2));
   },
 });
