@@ -1,9 +1,13 @@
+var modal = require('modal');
+var FileSaver = require('file-saver');
+
 var Infrastructure = require('models/infrastructure').default;
 var Resource       = require('models/resource').default;
 
 var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
 var alert_and_show_infra = helpers.alert_and_show_infra;
+
 
 var wrap = require('modules/wrap');
 var listen = require('modules/listen');
@@ -221,8 +225,25 @@ module.exports = Vue.extend({
       if (argument) {
         return (argument.length >= 10);
       }
-    }
+    },
+    icalendar: function (resource_id, physical_id){
+      const self = this;
+      const infra = new Infrastructure(self.infra_id);
+      self.loading = true;
+      const filename = physical_id.concat(".ics");
+      infra.icalendar(resource_id).done(function (data) {
+        self.loading = false;
+        var contents = "<pre>"+data+"</pre>";
 
+        modal.ConfirmHTML(t('infrastructures.msg.save_file'), contents, 'info').done(function () {
+          var file = new File([data], filename, {type: "text/icalendar;charset=utf-8"});
+          FileSaver.saveAs(file);
+        });
+
+
+
+      }).fail(alert_and_show_infra(infra.id));
+    },
   },
 
   computed: {
@@ -263,6 +284,7 @@ module.exports = Vue.extend({
         return {
           physical_id: item.physical_id,
           screen_name: item.screen_name,
+          icalendar: {id: item.id, physical_id: item.physical_id},
           id: item,
         };
       });

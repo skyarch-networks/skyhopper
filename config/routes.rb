@@ -48,6 +48,7 @@ SkyHopper::Application.routes.draw do
       get  'get_schedule'
       post 'delete_stack'
       post 'save_schedule'
+      get  'icalendar'
     end
   end
 

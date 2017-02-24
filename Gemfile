@@ -23,6 +23,8 @@ gem 'coffee-rails'
 gem 'therubyracer', platforms: :ruby
 gem 'libv8'
 
+# iCalendar file formatting for operation scheduler
+gem 'icalendar'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 

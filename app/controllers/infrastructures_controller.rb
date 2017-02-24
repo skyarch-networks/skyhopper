@@ -301,6 +301,22 @@ class InfrastructuresController < ApplicationController
     end
   end
 
+
+  # GET /infreastructures/:id
+  # @param [Integer] resource_id
+  # @param [String]  physical_id
+  def icalendar
+    resource_id = params.require(:resource_id)
+    schedule = OperationDuration.find_by(resource_id: resource_id)
+    calendar = Icalendar::Calendar.new
+    calendar.add_event(schedule.to_ics)
+    calendar.publish
+
+    headers['Content-Type'] = "text/calendar; charset=UTF-8"
+    render :text => calendar.to_ical
+
+  end
+
   # POST /infrastructures/save_schedule
   # @param [Integer] infra_id
   # @param [String] physical_id

@@ -79,6 +79,15 @@ export default class Infrastructure extends ModelBase {
         })
     );
   }
+
+  icalendar(resource_id: number): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>Infrastructure.ajax_infra).icalendar({
+        id:           this.id,
+        resource_id:  resource_id
+      })
+    );
+  }
 }
 
 Infrastructure.ajax_infra.add_member('delete_stack', 'POST');
@@ -86,3 +95,4 @@ Infrastructure.ajax_infra.add_member('save_schedule', 'POST');
 Infrastructure.ajax_infra.add_member('stack_events', 'GET');
 Infrastructure.ajax_infra.add_member('get_schedule', 'GET');
 Infrastructure.ajax_infra.add_member('show_elb', 'GET');
+Infrastructure.ajax_infra.add_member('icalendar', 'GET');

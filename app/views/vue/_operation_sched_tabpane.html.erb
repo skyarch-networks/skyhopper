@@ -28,6 +28,7 @@
           <button class="btn btn-xs btn-primary"  @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
           <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
           <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched')%></button>
+          <button class="btn btn-xs btn-default"  @click="icalendar(entry[key].id, entry[key].physical_id)"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.icalendar')%></button>
         </span>
       </td>
     </tr>

@@ -203,6 +203,7 @@ GEM
     i18n (0.7.0)
     i18n-js (2.1.2)
       i18n
+    icalendar (2.4.1)
     iniparse (1.4.2)
     ipaddress (0.8.3)
     jbuilder (2.6.1)
@@ -570,6 +571,7 @@ DEPENDENCIES
   hiredis
   i18n (= 0.7.0)
   i18n-js
+  icalendar
   jbuilder
   kaminari
   knife-windows
@@ -624,4 +626,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.13.4
+   1.13.6
