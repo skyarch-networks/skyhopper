@@ -227,10 +227,10 @@ module.exports = Vue.extend({
       }
     },
     icalendar: function (resource_id, physical_id){
-      const self = this;
-      const infra = new Infrastructure(self.infra_id);
+      var self = this;
+      var infra = new Infrastructure(self.infra_id);
       self.loading = true;
-      const filename = physical_id.concat(".ics");
+      var filename = physical_id.concat(".ics");
       infra.icalendar(resource_id).done(function (data) {
         self.loading = false;
         var contents = "<pre>"+data+"</pre>";
