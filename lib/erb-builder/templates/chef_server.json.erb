@@ -57,7 +57,7 @@
 
   "Conditions": {
     "HasVpcId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
-    "HasSubnetId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SubnetId"}]}]},
+    "HasSubnetId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SubnetId"}]}]}
   },
 
   "Resources" : {
