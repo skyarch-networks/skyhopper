@@ -6,6 +6,7 @@ var Resource       = require('models/resource').default;
 
 var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
+var alert_danger        = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
 
 
@@ -182,7 +183,7 @@ module.exports = Vue.extend({
           self.render_calendar(data, events);
         }
 
-      });
+      }).fail(alert_danger());
     },
 
     render_calendar: function (data, events) {
@@ -239,10 +240,7 @@ module.exports = Vue.extend({
           var file = new File([data], filename, {type: "text/icalendar;charset=utf-8"});
           FileSaver.saveAs(file);
         });
-
-
-
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alert_danger());
     },
   },
 

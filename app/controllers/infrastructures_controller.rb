@@ -293,6 +293,10 @@ class InfrastructuresController < ApplicationController
 
     @operation_schedule = resource.operation_durations.order("created_at desc")
 
+    if @operation_schedule.blank?
+      render text: I18n.t('operation_scheduler.msg.empty'), status: 500 and return
+    end
+
     respond_to do |format|
       format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
         include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
@@ -308,6 +312,11 @@ class InfrastructuresController < ApplicationController
   def icalendar
     resource_id = params.require(:resource_id)
     schedule = OperationDuration.find_by(resource_id: resource_id)
+
+    if schedule.blank?
+      render text: I18n.t('operation_scheduler.msg.empty'), status: 500 and return
+    end
+
     calendar = Icalendar::Calendar.new
     calendar.add_event(schedule.to_ics)
     calendar.publish
