@@ -16,6 +16,7 @@
 
   var endpoint_base = '/app_settings';
   var inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea';
+  var required_inputs = '#app-settings-form input[required],select[required],textarea[required]';
 
 
   //  -------------------------------- ajax methods
@@ -59,10 +60,10 @@
   };
 
 
-  var is_fill_input = function() {
-    var set = get_settings();
-    for (var i in set) {
-      if (set[i] === '') {
+  var is_fill_required_input = function () {
+    var elements = document.querySelectorAll(required_inputs);
+    for (var el of elements.values()) {
+      if (el.value === '') {
         return false;
       }
     }
@@ -73,7 +74,7 @@
   //  inputが全部埋まっていれば btn をenableにする。
   //  全部埋まっていなければdisableにする
   var switch_btn_enable = function (btn) {
-    if (is_fill_input()) {
+    if (is_fill_required_input()) {
       btn.removeAttr('disabled');
     } else {
       btn.attr('disabled', 'disabled');
@@ -139,7 +140,7 @@
   });
 
 
-  $(document).on('change keyup', inputs_selector, function () {
+  $(document).on('change keyup', required_inputs, function () {
     var btn = $('#btn-create-chefserver');
     switch_btn_enable(btn);
   });

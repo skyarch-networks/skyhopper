@@ -36,7 +36,7 @@
     <div class="form-group">
       <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
       <div class="col-sm-7">
-        <select class="form-control" id="aws_region" name="aws_region">
+        <select class="form-control" id="aws_region" name="aws_region" required>
           <%= please_select_option %>
           <%= options_for_select(AWS::Regions) %>
         </select>
@@ -51,7 +51,7 @@
         <input id="keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
 
         <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-        <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
+        <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7" required></textarea>
         <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
     </div>
