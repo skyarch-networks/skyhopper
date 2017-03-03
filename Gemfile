@@ -136,4 +136,4 @@ gem 'nokogiri', '>= 1.6.8'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
 
-gem 'rubyzip'
+gem 'rubyzip', '>= 1.2.1'
