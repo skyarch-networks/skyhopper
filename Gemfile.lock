@@ -430,7 +430,7 @@ GEM
     ruby-progressbar (1.8.1)
     ruby_dep (1.3.1)
     rubyntlm (0.6.1)
-    rubyzip (1.2.0)
+    rubyzip (1.2.1)
     rufus-scheduler (3.3.1)
       tzinfo
     sass (3.4.23)
@@ -609,7 +609,7 @@ DEPENDENCIES
   rubocop
   ruby-prof
   ruby_dep (~> 1.3.1)
-  rubyzip
+  rubyzip (>= 1.2.1)
   sass-rails
   sdoc
   serverspec
