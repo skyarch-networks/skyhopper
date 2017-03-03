@@ -83,7 +83,10 @@ group :development, :test do
 
   # test
   gem "rspec-rails"
-  gem "factory_girl_rails"
+
+  # Test seems to be failing because of this issue:
+  # https://github.com/thoughtbot/factory_girl/issues/981
+  gem "factory_girl_rails", "~> 4.7.0"
   gem "database_cleaner"
   gem 'guard-rspec'
   gem 'coveralls', require: false
