@@ -141,6 +141,7 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
       delete_project:     'Are you sure you want to delete this project?'
+      zabbix_not_set:     'Please Select Zabbix Server for this Project.'
 
 
   project_parameters:
@@ -209,6 +210,7 @@ en:
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
       modifying:                   'Modifying instance.. updates in 15 seconds.'
+      change_scale_warning:        'The instance will be stopped temporarily if the scale changes.'
 
   security_groups:
     title:        'Security Groups'
