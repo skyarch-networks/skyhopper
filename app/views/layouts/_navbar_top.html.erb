@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="<%= root_path %>" style="padding: 5px"><%= image_tag('skyhopper.png',  style: "display: inline;", alt: "brand") %></a>
+      <a class="navbar-brand" id="application-logo" href="<%= root_path %>" style="padding: 5px"><%= image_tag('skyhopper.png',  style: "display: inline;", alt: "brand") %></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -42,9 +42,14 @@
             <li role="presentation"><%= link_to '日本語' , add_option_path(base_path, {lang: 'ja'}.merge(options)) %></li>
           </ul>
         </li>
+        <% if AppSetting.set? %>
+        <li class="dropdown">
+          <a href="#menu-toggle" role="button" class="pull-right" id="menu-toggle"><span class="text-info"><%= fa 'question-circle-o' %> <%= t 'common.btn.help'%></span></a>
+        </li>
+        <% end %>
       </ul>
-<% if user_signed_in? %>
       <ul class="nav navbar-nav navbar-right">
+        <% if user_signed_in? %>
         <li>
           <a href="#" role="button" id="notifications" data-toggle="modal" data-target="#notification-center"><%= glyphicon 'comment' %></a>
         </li>
@@ -63,8 +68,8 @@
             <li role="presentation"><%= link_to t('common.btn.logout'), destroy_user_session_path, method: :delete %></li>
           </ul>
         </li>
+        <% end %>
       </ul>
-<% end %>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 

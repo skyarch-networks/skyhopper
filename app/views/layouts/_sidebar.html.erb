@@ -1,0 +1,49 @@
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav navbar-collapse"　role="navigation">
+      <li class="sidebar-brand">
+        <a type="button" class="pull-right" href="#menu-toggle" id="menu-close"><%= fa_icon 'times' %>&nbsp&nbsp</a>
+      </li>
+        <li class="sidebar-brand">
+            <a href="#">
+        <% if !user_signed_in? %>
+            Guide
+        <% else %>
+            Getting Started
+        <% end %>
+            </a>
+        </li>
+        <% if !user_signed_in? %>
+        <li data-toggle="collapse" data-target="#signup" class="collapsed active" onclick="toggleChange(this)">
+            <a href="#"><%= t('instructions.signup_head') %></a>
+        </li>
+        <ul class="sub-menu collapse" id="signup">
+           <blockquote><small class="instructions"><%= t('instructions.signup_body') %></small></blockquote>
+        </ul>
+        <% end %>
+        <li data-toggle="collapse" data-target="#client" class="collapsed active" onclick="toggleChange(this)">
+            <a href="#"><%= t('instructions.client_head') %></a>
+        </li>
+        <ul class="sub-menu collapse" id="client">
+           <blockquote><small class="instructions"><%= t('instructions.client_body') %></small></blockquote>
+        </ul>
+        <li data-toggle="collapse" data-target="#project_head" class="collapsed active" onclick="toggleChange(this)">
+            <a href="#"><%= t('instructions.project_head') %></a>
+        </li>
+        <ul class="sub-menu collapse" id="project_head">
+           <blockquote><small class="instructions"><%= t('instructions.project_body') %></small></blockquote>
+        </ul>
+        <li data-toggle="collapse" data-target="#infrastructure" class="collapsed active" onclick="toggleChange(this)">
+            <a href="#"><%= t('instructions.infrastructure_head') %></a>
+        </li>
+        <ul class="sub-menu collapse" id="infrastructure">
+           <blockquote><small class="instructions"><%= t('instructions.infrastructure_body') %></small></blockquote>
+        </ul>
+        <li data-toggle="collapse" data-target="#cf_template" class="collapsed active" onclick="toggleChange(this)">
+            <a href="#"><%= t('instructions.cf_template_head') %></a>
+        </li>
+        <ul class="sub-menu collapse" id="cf_template">
+           <blockquote><small class="instructions"><%=raw t('instructions.cf_template_body') %></small></blockquote>
+        </ul>
+    </ul>
+
+</div>

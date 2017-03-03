@@ -60,4 +60,8 @@ class ApplicationController < ActionController::Base
   def appsetting_controller
     controller_name == 'app_settings'
   end
+
+  def extract_locale_from_accept_language_header
+    request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+  end
 end
