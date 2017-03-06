@@ -295,7 +295,8 @@ class MonitoringsController < ApplicationController
   end
 
   def set_zabbix
-    @zabbix_server = ZabbixServer.find(@infra.project[:zabbix_server_id])
+    @zabbix_server = @infra.project.zabbix_server
+    raise t('projects.msg.zabbix_not_set') unless @zabbix_server
     @zabbix = Zabbix.new(@zabbix_server.fqdn, current_user.email, current_user.encrypted_password)
   end
 end

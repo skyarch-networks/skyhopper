@@ -92,10 +92,6 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
-      db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
-      env:  'SkyHopper%{env}.sql'
-      secret: 'secret_key_base'
-      db_key:  'db_crypt_key'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -141,6 +137,7 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
       delete_project:     'Are you sure you want to delete this project?'
+      zabbix_not_set:     'Please Select Zabbix Server for this Project.'
 
 
   project_parameters:
@@ -209,6 +206,7 @@ en:
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
       modifying:                   'Modifying instance.. updates in 15 seconds.'
+      change_scale_warning:        'The instance will be stopped temporarily if the scale changes.'
 
   security_groups:
     title:        'Security Groups'
@@ -716,3 +714,21 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
+
+  databases:
+    db_management: 'Database Management'
+    import_db:     'Import DB'
+    msg:
+      env:       'SkyHopper%{env}.sql'
+      secret:    'secret_key_base'
+      db_key:    'db_crypt_key'
+      db_export: 'When exporting SkyHopper Database into a zip file, the following files are included: '
+      db_import: 'When importing SkyHopper Database, select a zip file that contains these files: '
+      db_import_finish: 'Database import has finished.'
+      db_import_intro:  'You can not perform any operations until the import is complete.'
+      db_import_warning: |
+        Database of SkyHopper will be replaced completely by the import operation.
+        Please be careful when using this.
+      under_maintenance: |
+        Temporarily unavailable due to database import process.
+        Please wait for at least a minute and try to refresh the browser again.

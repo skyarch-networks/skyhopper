@@ -76,14 +76,19 @@ class ProjectsController < ApplicationController
   # POST /projects
   # POST /projects.json
   def create
-    @project = Project.new(project_params)
-    @zabbix = ZabbixServer.find(@project.zabbix_server_id)
-
     on_error = -> () {
       session[:form] = project_params
       redirect_to new_project_path(client_id: params[:project][:client_id])
     }
 
+    zid = project_params[:zabbix_server_id]
+    if zid.empty?
+      flash[:alert] = t('projects.msg.zabbix_not_set')
+      on_error.() and return
+    end
+    @zabbix = ZabbixServer.find(zid)
+
+    @project = Project.new(project_params)
     unless @project.save
       flash[:alert] = @project.errors
       on_error.() and return
@@ -106,7 +111,13 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
-    @zabbix = ZabbixServer.find(project_params[:zabbix_server_id])
+    zid = project_params[:zabbix_server_id]
+    if zid.empty?
+      flash[:alert] = t('projects.msg.zabbix_not_set')
+      redirect_to edit_project_path and return
+    end
+
+    @zabbix = ZabbixServer.find(zid)
     if @project.update(project_params)
       register_hosts
       redirect_to projects_path(client_id: @project.client_id),
