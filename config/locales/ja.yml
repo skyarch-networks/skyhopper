@@ -175,6 +175,9 @@ ja:
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
     search:             'キーワードで検索...'
+    operations:         'オペレーション'
+    monitoring:         'モニタリング'
+    logs:               'ログ'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -582,7 +585,7 @@ ja:
     instance_port:     'インスタンス側ポート'
     expiration_date:   'SSL証明書の有効期限'
     certificate_name:  '証明書名'
-    private_key:   'プライベートキー'
+    private_key:       'プライベートキー'
     public_key_certificate: 'パブリックキー証明書'
     certificate_chain:   '証明書チェーン'
     certificate:       '証明書'
