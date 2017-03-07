@@ -176,6 +176,9 @@ en:
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
     search:             'Search by Keyword ...'
+    operations:         'Operations'
+    monitoring:         'Monitoring'
+    logs:               'Logs'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
