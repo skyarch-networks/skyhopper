@@ -159,20 +159,24 @@ module.exports = Vue.extend({
       self.postgresql_rds_host     = null;
 
       self.$parent.loading = false;
+
+      // Call Show only if monitoring edit call is successfull
+      self.monitoring.show().done(function (data) {
+        self.before_register = data.before_register;
+        self.linked_resources = data.linked_resources;
+        self.$parent.loading = false;
+        self.temp_loading = false;
+      }).fail(alert_and_show_infra(this.infra_id));
+
+
     }).fail(function (xhr) {
       if (xhr.status === 400) { // before register zabbix
         self.$parent.show_monitoring();
       } else {
-        alert_and_show_infra(this.infra_id)(xhr.responseText);
+        alert_and_show_infra(self.infra_id)(xhr.responseText);
       }
     });
 
-    this.monitoring.show().done(function (data) {
-      self.before_register = data.before_register;
-      self.linked_resources = data.linked_resources;
-      self.$parent.loading = false;
-      self.temp_loading = false;
-    }).fail(alert_and_show_infra(this.infra_id));
   },
 
   filters: {
