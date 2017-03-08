@@ -15,6 +15,8 @@ class AppSettingsController < ApplicationController
     end
   end
 
+  CF_PARAMS_KEY = 'cf_params'.freeze
+
   # GET /app_settings
   def show
   end
@@ -27,6 +29,15 @@ class AppSettingsController < ApplicationController
     secret_access_key = settings.delete(:secret_access_key)
     keypair_name      = settings.delete(:keypair_name)
     keypair_value     = settings.delete(:keypair_value)
+
+    vpc_id    = settings.delete(:vpc_id)    || ''
+    subnet_id = settings.delete(:subnet_id) || ''
+
+    cf_params = {
+      VpcId:    vpc_id,
+      SubnetId: subnet_id
+    }
+    Rails.cache.write(CF_PARAMS_KEY, cf_params)
 
     check_eip_limit!(settings[:aws_region], access_key, secret_access_key)
 
@@ -60,7 +71,7 @@ class AppSettingsController < ApplicationController
       set = AppSetting.get
       stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
-      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value)
+      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value, cf_params)
     end
 
     render text: I18n.t('app_settings.msg.created') and return
@@ -102,11 +113,14 @@ class AppSettingsController < ApplicationController
     CfTemplate
     # rubocop:enable Lint/Void
 
+    cf_params = Rails.cache.fetch(CF_PARAMS_KEY) || {}
+    Rails.cache.delete(CF_PARAMS_KEY)
+
     Thread.new_with_db do
       ws = WSConnector.new('chef_server_deployment', 'status')
 
       begin
-        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
+        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value, cf_params) do |data, msg|
           Rails.logger.debug("ChefServer creating > #{data} #{msg}")
           ws.push(build_ws_message(data, msg))
         end
