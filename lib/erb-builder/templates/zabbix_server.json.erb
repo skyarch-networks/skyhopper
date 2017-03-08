@@ -31,11 +31,13 @@
     },
     "VpcId": {
       "Description" : "For VPC security groups without a default VPC (optional)",
-      "Type" : "String"
+      "Type" : "String",
+      "Default": ""
     },
     "SubnetId": {
       "Description" : "The ID of the subnet that you want to launch the instance into (optional)",
-      "Type" : "String"
+      "Type" : "String",
+      "Default": ""
     }
 
   },
@@ -45,7 +47,7 @@
   },
 
   "Conditions": {
-    "HasVpcId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
+    "HasVpcId":    {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
     "HasSubnetId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SubnetId"}]}]}
   },
 

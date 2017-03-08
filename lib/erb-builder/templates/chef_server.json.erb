@@ -31,11 +31,13 @@
     },
     "VpcId": {
       "Description" : "For VPC security groups without a default VPC (optional)",
-      "Type" : "String"
+      "Type" : "String",
+      "Default": ""
     },
     "SubnetId": {
       "Description" : "The ID of the subnet that you want to launch the instance into (optional)",
-      "Type" : "String"
+      "Type" : "String",
+      "Default": ""
     },
 
     "ChefPackageURL": { "Type" : "String", "Default": "https://packages.chef.io/stable/el/6/chef-server-core-12.6.0-1.el6.x86_64.rpm" },
@@ -56,7 +58,7 @@
   },
 
   "Conditions": {
-    "HasVpcId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
+    "HasVpcId":    {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
     "HasSubnetId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SubnetId"}]}]}
   },
 
