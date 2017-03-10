@@ -78,6 +78,8 @@ ja:
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
     chef_server:       'Chef Server'
+    vpc_id:            'VPC ID'
+    subnet_id:         'サブネット ID'
 
     msg:
       created:           'アプリケーションは正常に設定されました'

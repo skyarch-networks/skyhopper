@@ -78,6 +78,8 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     chef_server:       'Chef Server'
+    vpc_id:            'VPC ID'
+    subnet_id:         'Subnet ID'
 
     msg:
       created:           'SkyHopper was successfully setup'
