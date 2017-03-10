@@ -62,8 +62,8 @@
 
   var is_fill_required_input = function () {
     var elements = document.querySelectorAll(required_inputs);
-    for (var el of elements.values()) {
-      if (el.value === '') {
+    for (var i = 0; i < elements.length; ++i) {
+      if (elements[i].value === '') {
         return false;
       }
     }
