@@ -35,7 +35,7 @@ class AppSettingsController < ApplicationController
 
     cf_params = {
       VpcId:    vpc_id,
-      SubnetId: subnet_id
+      SubnetId: subnet_id,
     }
     Rails.cache.write(CF_PARAMS_KEY, cf_params)
 
