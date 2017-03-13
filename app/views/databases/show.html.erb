@@ -1,0 +1,25 @@
+<% provide(:title, t('infrastructures.database')) %>
+<h1 class="page-header"><%= t('infrastructures.database') %></h1>
+
+
+<div id="db-manage">
+  <div class="jumbotron">
+    <h2><%= t('databases.db_management') %></h2>
+    <p></p>
+    <p>
+      <% if app_setting_is_set %>
+        <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#exportModal">
+          <span class="glyphicon glyphicon-export"></span>
+          <%= t('common.btn.export') %>
+        </button>
+      <% end %>
+      <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#importModal">
+        <span class="glyphicon glyphicon-import"></span>
+        <%= t('common.btn.import') %>
+      </button>
+    </p>
+  </div>
+
+  <%= render 'modal_export' if app_setting_is_set %>
+  <%= render 'modal_import' %>
+</div>

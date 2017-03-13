@@ -94,6 +94,8 @@ server {
         # もしskyhopperをcloneした場所が異なる場合修正
         set \$skyhopper_root "/home/ec2-user/skyhopper";
 
+        client_max_body_size 1g;
+
         listen 80;
         server_name skyhopper.local; #環境に合わせて設定
 

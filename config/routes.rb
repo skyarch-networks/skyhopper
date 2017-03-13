@@ -171,9 +171,6 @@ SkyHopper::Application.routes.draw do
       get  :chef_server
       get  :chef_keys
 
-      get  :db
-      get  :export_db
-
       get  :edit_zabbix
       post :update_zabbix
     end
@@ -184,6 +181,13 @@ SkyHopper::Application.routes.draw do
       post :start
       post :stop
       post :status
+    end
+  end
+
+  resource :database, only: [:show] do
+    collection do
+      post :export
+      post :import
     end
   end
 end
