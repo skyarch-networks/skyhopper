@@ -98,7 +98,7 @@ var servertestIndex = new Vue({
         var svt = new Servertest(self.sel_infra_id);
         svt.create(params.fname, params.value, 'awspec').done(function (data) {
             modal.Alert(t('servertests.servertest'), data, 'success').done(function(){
-              location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${location.search}`;
+              location.href = "/servertests?infrastructure_id="+self.sel_infra_id+location.search;
             });
           }
         ).fail(function (msg)  {
