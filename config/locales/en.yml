@@ -271,7 +271,7 @@ en:
       sunday: 'Sunday'
     msg:
       saved: 'Operation Schedule successfully saved.'
-      empty: 'Schedule is not yet set. Please assign schedule fist before rendering iCalendar.'
+      empty: 'Schedule is not yet set. Please assign schedule first before getting schedule.'
 
   nodes:
     bootstrap:   'Bootstrap'
