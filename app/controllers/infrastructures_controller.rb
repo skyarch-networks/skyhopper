@@ -371,6 +371,17 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
+  # POST /infrastructures/upload_calendar
+  # @param [Integer] infra_id
+  # @param [String] physical_id
+  # @param [String] value
+  def upload_calendar
+    value = params.require(:value)
+    cals = Icalendar::Calendar.parse(value)
+    puts cals
+
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_infrastructure

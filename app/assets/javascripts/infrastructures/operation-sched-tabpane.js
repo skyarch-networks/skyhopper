@@ -37,6 +37,12 @@ module.exports = Vue.extend({
     });
     return {
     event_loading:   false,
+    tabManual: true,
+    tabiCalendar: false,
+    iCalendarValue: {
+        filename: null,
+        value:    null
+    },
     instances: null,
     dates: [{day: t('operation_scheduler.dates.monday'),   checked: false, value : 1},
             {day: t('operation_scheduler.dates.tuesday'),  checked: false, value : 2},
@@ -73,6 +79,16 @@ module.exports = Vue.extend({
   methods: {
     show_ec2: function () {
       this.$parent.show_ec2(this.physical_id);
+    },
+
+    change_tab: function (tab){
+        if(tab === 'manual'){
+            this.tabManual = true;
+            this.tabiCalendar = false;
+        }else{
+            this.tabiCalendar = true;
+            this.tabManual = false;
+        }
     },
 
     sortBy: function (key) {
@@ -242,6 +258,39 @@ module.exports = Vue.extend({
         });
       }).fail(alert_danger());
     },
+    onFileChange: function (e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.createFile(files[0]);
+    },
+    createFile: function(file) {
+      var reader = new FileReader();
+      var vm = this.iCalendarValue;
+
+      reader.onload = function (e) {
+          vm.value = e.target.result;
+      };
+      reader.readAsText(file);
+
+
+      vm.filename = file.name.replace(/\.\w+$/, '');
+      console.log(vm);
+    },
+    upload_calendar: function () {
+      var self = this;
+        self.loading = true;
+      var value = self.iCalendarValue.value;
+      var infra = new Infrastructure(self.infra_id);
+      infra.upload_calendar(self.sel_instance.physical_id, value).done(function () {
+          self.loading = false;
+          alert_success(function () {
+          })(t('operation_scheduler.msg.saved'));
+          self.get_sched(self.sel_instance);
+      }).fail(alert_and_show_infra(infra.id));
+
+    }
+
+
   },
 
   computed: {
@@ -256,8 +305,15 @@ module.exports = Vue.extend({
     },
 
     save_sched_err: function () {
-      var self = this.sel_instance;
-      return (self.start_date && self.end_date && self.repeat_freq);
+      var self = this;
+      if(self.tabiCalendar){
+          var calendar = self.iCalendarValue;
+          return (calendar.filename && calendar.value);
+      }else{
+          var instance = self.sel_instance;
+          return (instance.start_date && instance.end_date && instance.repeat_freq);
+      }
+
     },
 
     isStartPage: function(){ return (this.pageNumber === 0); },

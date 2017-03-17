@@ -25,10 +25,20 @@
       <td v-for="key in columns">
         <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         <span v-if="key === 'id'">
-          <button class="btn btn-xs btn-primary"  @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
+          <div class="btn-group dropup">
+            <button class="btn btn-xs btn-default" @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
+            <button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <!-- Dropdown menu links -->
+              <li @click="icalendar(entry[key].id, entry[key].physical_id)"><a><%= I18n.t('operation_scheduler.btn.icalendar')%></a></li>
+            </ul>
+          </div>
           <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
           <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched')%></button>
-          <button class="btn btn-xs btn-default"  @click="icalendar(entry[key].id, entry[key].physical_id)"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.icalendar')%></button>
+
         </span>
       </td>
     </tr>

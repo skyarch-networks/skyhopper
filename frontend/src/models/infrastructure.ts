@@ -88,10 +88,21 @@ export default class Infrastructure extends ModelBase {
       })
     );
   }
+
+  upload_calendar(physical_id: string, value: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>Infrastructure.ajax_infra).upload_calendar({
+        physical_id: physical_id,
+        value:  value
+      })
+    );
+  }
+
 }
 
 Infrastructure.ajax_infra.add_member('delete_stack', 'POST');
 Infrastructure.ajax_infra.add_member('save_schedule', 'POST');
+Infrastructure.ajax_infra.add_member('upload_calendar', 'POST');
 Infrastructure.ajax_infra.add_member('stack_events', 'GET');
 Infrastructure.ajax_infra.add_member('get_schedule', 'GET');
 Infrastructure.ajax_infra.add_member('show_elb', 'GET');
