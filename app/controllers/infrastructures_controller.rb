@@ -336,37 +336,7 @@ class InfrastructuresController < ApplicationController
     start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone
     end_date = Time.at(selected_instance[:end_date].to_i).in_time_zone
 
-    if ops_exists
-      ops_exists.start_date = start_date
-      ops_exists.end_date =  end_date
-      ops_exists.save
-
-      recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
-      recur_exits.repeats = selected_instance[:repeat_freq].to_i
-      recur_exits.start_time = start_date.strftime("%H:%M")
-      recur_exits.end_time = end_date.strftime("%H:%M")
-      recur_exits.dates = selected_instance[:dates]
-      recur_exits.save
-    else
-      begin
-        ops = OperationDuration.create!(
-          resource_id:  selected_instance[:id],
-          start_date:   start_date,
-          end_date:     end_date,
-          user_id: current_user.id
-        )
-        RecurringDate.create!(
-          operation_duration_id: ops.id,
-          repeats: selected_instance[:repeat_freq].to_i,
-          start_time:  start_date.strftime("%H:%M"),
-          end_time: end_date.strftime("%H:%M"),
-          dates: selected_instance[:dates]
-        )
-      rescue => ex
-        render text: ex.message, status: 500 and return
-      end
-    end
-
+    schedule_query(ops_exists, start_date, end_date, selected_instance)
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
@@ -376,10 +346,15 @@ class InfrastructuresController < ApplicationController
   # @param [String] physical_id
   # @param [String] value
   def upload_calendar
+    instance =  params.require(:instance)
+    ops_exists = OperationDuration.find_by(resource_id: instance[:id])
     value = params.require(:value)
     cals = Icalendar::Calendar.parse(value)
-    puts cals
+    start_date = cals.first.events.first.dtstart
+    end_date = cals.first.events.first.dtend
+    schedule_query(ops_exists, start_date, end_date, instance)
 
+    render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
   private
@@ -451,6 +426,41 @@ class InfrastructuresController < ApplicationController
       end
 
     redirect_to path, alert: msg
+  end
+
+  def schedule_query(ops_exists, start_date, end_date, instance)
+
+    if ops_exists
+      ops_exists.start_date = start_date
+      ops_exists.end_date =  end_date
+      ops_exists.save
+
+      recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
+      recur_exits.repeats = instance[:repeat_freq].to_i
+      recur_exits.start_time = start_date.strftime("%H:%M")
+      recur_exits.end_time = end_date.strftime("%H:%M")
+      recur_exits.dates = instance[:dates]
+      recur_exits.save
+    else
+      begin
+        ops = OperationDuration.create!(
+          resource_id:  instance[:id],
+          start_date:   start_date,
+          end_date:     end_date,
+          user_id: current_user.id
+        )
+        RecurringDate.create!(
+          operation_duration_id: ops.id,
+          repeats: instance[:repeat_freq].to_i,
+          start_time:  start_date.strftime("%H:%M"),
+          end_time: end_date.strftime("%H:%M"),
+          dates: instance[:dates]
+        )
+      rescue => ex
+        render text: ex.message, status: 500 and return
+      end
+
+    end
   end
 
 end

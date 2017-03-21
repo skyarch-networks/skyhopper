@@ -22,4 +22,6 @@ class OperationDuration < ActiveRecord::Base
     end
   end
 
+
+
 end

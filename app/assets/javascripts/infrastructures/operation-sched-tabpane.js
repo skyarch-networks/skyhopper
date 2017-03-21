@@ -173,6 +173,7 @@ module.exports = Vue.extend({
       self.$parent.show_operation_sched(self.resources);
       var infra = new Infrastructure(this.infra_id);
       infra.get_schedule(ec2.physical_id).done(function  (data){
+
         var events = [];
         events = data.map(function (item) {
           var dow = [];
@@ -190,8 +191,8 @@ module.exports = Vue.extend({
           }
           return {
             title: item.resource.physical_id,
-            start: moment(item.recurring_date.start_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
-            end: moment(item.recurring_date.end_time).utcOffset ("Asia/Tokyo").format('HH:mm'),
+            start: item.recurring_date.start_time,
+            end: item.recurring_date.end_time,
             dow: dow,
           };
         });
@@ -281,11 +282,10 @@ module.exports = Vue.extend({
         self.loading = true;
       var value = self.iCalendarValue.value;
       var infra = new Infrastructure(self.infra_id);
-      infra.upload_calendar(self.sel_instance.physical_id, value).done(function () {
+      infra.upload_calendar(self.sel_instance, value).done(function () {
           self.loading = false;
           alert_success(function () {
           })(t('operation_scheduler.msg.saved'));
-          self.get_sched(self.sel_instance);
       }).fail(alert_and_show_infra(infra.id));
 
     }

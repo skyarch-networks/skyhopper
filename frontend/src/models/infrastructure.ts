@@ -89,10 +89,10 @@ export default class Infrastructure extends ModelBase {
     );
   }
 
-  upload_calendar(physical_id: string, value: string): JQueryPromise<any> {
+  upload_calendar(instance: any[] = [], value: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>Infrastructure.ajax_infra).upload_calendar({
-        physical_id: physical_id,
+        instance: instance,
         value:  value
       })
     );

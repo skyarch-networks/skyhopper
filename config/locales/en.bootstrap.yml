@@ -20,5 +20,6 @@ en:
     titles:
       edit: "Edit"
       save: "Save"
+      upload: "Upload"
       new: "New"
       delete: "Delete"
