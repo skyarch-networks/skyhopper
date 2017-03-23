@@ -19,7 +19,27 @@ class OperationDuration < ActiveRecord::Base
       e.created       = self.created_at
       e.last_modified = self.updated_at
       e.ip_class      = "PRIVATE"
+      e.summary       = "#{self.recurring_date.repeats}//#{self.recurring_date.dates}"
+      e.rrule         = "FREQ=WEEKLY,#{self.reccurence}"
     end
+
+  end
+
+  def reccurence
+    case self.recurring_date.repeats
+    when "everyday"
+      return "BYDAY=MO,TU,WE,TH,FR"
+    when "weekends"
+      return "BYDAY=SA,SU"
+    else
+      return nil
+    end
+  end
+
+  def dates_selected
+    self.recurring_date.dates.each { |t|
+      t.puts
+    }
   end
 
 

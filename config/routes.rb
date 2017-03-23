@@ -1,4 +1,20 @@
 SkyHopper::Application.routes.draw do
+  get 'operation_durations/show'
+
+  get 'operation_durations/create'
+
+  get 'operation_durations/show_icalendar'
+
+  get 'operation_durations/upload_icalendar'
+
+  get 'operation_durations/show'
+
+  get 'operation_durations/create'
+
+  get 'operation_durations/show_icalendar'
+
+  get 'operation_durations/upload_icalendar'
+
   if Rails.env.development?
     require 'sidekiq/web'
     require 'sidekiq/cron/web'
