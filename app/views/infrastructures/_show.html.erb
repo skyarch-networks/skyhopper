@@ -31,7 +31,7 @@
               <!-- Infrastructure Control TAB -->
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  Operations&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
+                  <%= t 'infrastructures.operations' %>&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
                 </a>
                 <ul class="dropdown-menu rightMenu" role="menu" aria-labelledby="dropdownMenu">
                   <li :class="{disabled : current_infra.token_invalid}">
@@ -51,7 +51,7 @@
 
               <li class="dropdown" :class="{disabled : no_stack}">
                 <a  class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  Monitoring&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
+                  <%= t 'infrastructures.monitoring' %>&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
                 </a>
                 <ul class="dropdown-menu rightMenu" role="menu" aria-labelledby="dropdownMenu">
                   <li :class="{disabled : no_stack}">
@@ -65,7 +65,7 @@
 
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  Logs&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
+                  <%= t 'infrastructures.logs' %>&nbsp; <b class="pull-right"><%= fa 'caret-down' %></b>
                 </a>
                 <ul class="dropdown-menu rightMenu" role="menu" aria-labelledby="dropdownMenu">
                   <li :class="{disabled : no_stack}">
