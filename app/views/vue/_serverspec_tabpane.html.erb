@@ -1,14 +1,14 @@
-<h3 class="page-header"><%= t 'serverspecs.select_serverspec' %></h3>
+<h3 class="page-header"><%= t 'servertests.select_serverspec' %></h3>
 
 <div class="col-md-6 col-sm-6">
-  <h4 class="page-header"><%= t 'serverspecs.global' %></h4>
+  <h4 class="page-header"><%= t 'servertests.global' %></h4>
   <div class="checkbox">
     <label class="checkbox">
       <input type="checkbox" v-model="checked_auto_generated" :disabled="!available_auto_generated">
-      <%= t 'serverspecs.auto_generated' %>
+      <%= t 'servertests.auto_generated' %>
     </label>
   </div>
-  <p class="muted"><%= t 'serverspecs.msg.auto_generated_disabled_html' %></p>
+  <p class="muted"><%= t 'servertests.msg.auto_generated_disabled_html' %></p>
 
   <div v-for="s in globals" class="checkbox">
     <label class="checkbox">
@@ -20,7 +20,7 @@
 </div>
 
 <div class="col-md-6 col-sm-6">
-  <h4 class="page-header"><%= t 'serverspecs.individual' %></h4>
+  <h4 class="page-header"><%= t 'servertests.individual' %></h4>
   <div v-for="s in individuals" class="checkbox">
     <label class="checkbox">
       <input type="checkbox" v-model="s.checked">
@@ -32,7 +32,7 @@
 
 <div class="col-md-12 col-sm-12">
   <div v-if="!loading" class="form-actions-top">
-    <button @click="run()"      class="btn btn-sm btn-primary" :disabled="!can_run"><%= t 'serverspecs.btn.run' %></button>
+    <button @click="run()"      class="btn btn-sm btn-primary" :disabled="!can_run"><%= t 'servertests.btn.run' %></button>
     <button class="btn btn-sm btn-warning" href="#change-schedule-modal" data-toggle="modal"><%= t 'schedules.change_schedule' %></button>
     <button @click="show_ec2()" class="btn btn-sm btn-default"><%= t 'helpers.links.cancel' %></button>
   </div>
