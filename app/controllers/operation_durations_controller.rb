@@ -24,14 +24,13 @@ class OperationDurationsController < ApplicationController
   # @param [Integer] infra_id
   # @param [String]  physical_id
   def show
-    infra_id = params.require(:infra_id)
     physical_id = params.require(:physical_id)
-    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+    resource = Resource.where(infrastructure_id: @infra.id).find_by(physical_id: physical_id)
 
     @operation_schedule = resource.operation_durations.order("created_at desc")
 
     if @operation_schedule.blank?
-      render text: I18n.t('operation_scheduler.msg.empty'), status: 500 and return
+      render text: I18n.t('operation_scheduler.msg.empty'), status: 404 and return
     end
 
     respond_to do |format|
@@ -45,16 +44,17 @@ class OperationDurationsController < ApplicationController
   # POST /infrastructures/save_schedule
   # @param [Integer] infra_id
   # @param [String] physical_id
-  # @param [Object] selected_instance
+  # @param [Object] instance
   def create
-    selected_instance =  params.require(:selected_instance)
-    ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
-    start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone
-    end_date = Time.at(selected_instance[:end_date].to_i).in_time_zone
+    instance =  params.require(:instance)
+    ops_exists = OperationDuration.find_by(resource_id: instance[:resource_id])
+
+    start_date = Time.at(instance[:start_date].to_i).in_time_zone
+    end_date = Time.at(instance[:end_date].to_i).in_time_zone
     if ops_exists
-      update_schedule(ops_exists, start_date, end_date, selected_instance)
+      update_schedule(ops_exists, start_date, end_date, instance)
     else
-      create_schedule(start_date, end_date, selected_instance)
+      create_schedule(start_date, end_date, instance)
     end
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
@@ -99,26 +99,46 @@ class OperationDurationsController < ApplicationController
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
+
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def create_schedule(start_date, end_date, instance)
+    begin
+      ops = OperationDuration.create!(
+        resource_id:  instance[:resource_id],
+        start_date:   start_date,
+        end_date:     end_date,
+        user_id: current_user.id
+      )
+      RecurringDate.create!(
+        operation_duration_id: ops.id,
+        repeats: instance[:repeat_freq].to_i,
+        start_time:  start_date.strftime("%H:%M"),
+        end_time: end_date.strftime("%H:%M"),
+        dates: instance[:dates]
+      )
+    rescue => ex
+      render text: ex.message, status: 500 and return
+    end
+  end
+
+  def update_schedule(ops_exists, start_date, end_date, instance)
+    ops_exists.start_date = start_date
+    ops_exists.end_date =  end_date
+    ops_exists.save
+
+    recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
+    recur_exits.repeats = instance[:repeat_freq].to_i
+    recur_exits.start_time = start_date.strftime("%H:%M")
+    recur_exits.end_time = end_date.strftime("%H:%M")
+    recur_exits.dates = instance[:dates]
+    recur_exits.save
+  end
+
+  def set_infra
+    @infra = Infrastructure.find(params.require(:id))
+  end
+
 end
 
-private
-# Use callbacks to share common setup or constraints between actions.
-def create_schedule(start_date, end_date, instance)
-  begin
-    ops = OperationDuration.create!(
-      resource_id:  instance[:id],
-      start_date:   start_date,
-      end_date:     end_date,
-      user_id: current_user.id
-    )
-    RecurringDate.create!(
-      operation_duration_id: ops.id,
-      repeats: instance[:repeat_freq].to_i,
-      start_time:  start_date.strftime("%H:%M"),
-      end_time: end_date.strftime("%H:%M"),
-      dates: instance[:dates]
-    )
-  rescue => ex
-    render text: ex.message, status: 500 and return
-  end
-end
+

@@ -28,6 +28,7 @@
     "src/models/s3_bucket.ts",
     "src/models/serverspec.ts",
     "src/models/snapshot.ts",
-    "src/models/zabbix_server.ts"
+    "src/models/zabbix_server.ts",
+    "src/models/operation_duration.ts"
   ]
 }

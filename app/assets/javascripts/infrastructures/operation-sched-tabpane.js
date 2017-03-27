@@ -2,7 +2,7 @@ var modal = require('modal');
 var FileSaver = require('file-saver');
 
 var Infrastructure = require('models/infrastructure').default;
-var Resource       = require('models/resource').default;
+var OperationDuration       = require('models/operation_duration').default;
 
 var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
@@ -14,6 +14,7 @@ var wrap = require('modules/wrap');
 var listen = require('modules/listen');
 
 var queryString = require('query-string').parse(location.search);
+
 
 module.exports = Vue.extend({
   template: '#operation-sched-tabpane-template',
@@ -60,6 +61,7 @@ module.exports = Vue.extend({
       {desc: t('operation_scheduler.desc.weekends'), value: 3},
       {desc: t('operation_scheduler.desc.specific_dates'), value: 4},],
     sel_instance: {
+      physical_id: null,
       start_date: null,
       end_date: null,
       start_time: null,
@@ -74,6 +76,7 @@ module.exports = Vue.extend({
     lang: null,
     pages: 10,
     pageNumber: 0,
+    days_selector: false
   };},
 
   methods: {
@@ -106,28 +109,27 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.pageNumber++;
     },
+    repeat_selector: function(newValue) {
+      //  TODO: Get rid of jQuery DOM manipulation
 
-    repeat_selector: function() {
+      this.sel_instance.repeat_freq = newValue.target._value;
+      this.days_selector = false;
       if(parseInt(this.sel_instance.repeat_freq) === 1){
-        $("#days-selector").hide();
         _.forEach(this.dates, function(item){
           item.checked = true;
         });
       }else if(parseInt(this.sel_instance.repeat_freq) === 2){
-        $("#days-selector").hide();
         _.forEach(this.dates, function(item){
           item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0);
         });
       }else if(parseInt(this.sel_instance.repeat_freq) === 3){
-        $("#days-selector").hide();
         _.forEach(this.dates, function(item){
           item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0);
         });
       }else{
+          this.days_selector = true;
         _.forEach(this.dates, function(item){
           item.checked = false;
-          $("#days-selector input").attr('disabled', false);
-          $("#days-selector").show();
         });
       }
     },
@@ -142,15 +144,23 @@ module.exports = Vue.extend({
 
     manage_sched: function (instance) {
       var self = this;
-      self.sel_instance = instance;
-      var infra = new Infrastructure(this.infra_id);
-      infra.get_schedule(instance.physical_id).done(function  (data){
-        self.sel_instance.physical_id = instance.physical_id;
+      var op = new OperationDuration(this.infra_id, instance.physical_id);
+      self.sel_instance.resource_id = instance.id;
+
+      op.show().done(function  (data){
+
+        self.sel_instance.id = instance.id.id;
+
         _.forEach(data, function(item){
+          var rep = item.recurring_date.repeats;
+          self.sel_instance.repeat_freq = rep;
           self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D H:mm');
           self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D H:mm');
+          self.dates = item.recurring_date.dates;
+          self.days_selector = (rep === 4);
         });
       });
+
     },
 
     save_sched: function () {
@@ -159,32 +169,34 @@ module.exports = Vue.extend({
       self.sel_instance.dates = self.dates;
       self.sel_instance.start_date = moment(self.sel_instance.start_date).unix();
       self.sel_instance.end_date = moment(self.sel_instance.end_date).unix();
-      var infra = new Infrastructure(this.infra_id);
-      infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
+
+      var op = new OperationDuration(this.infra_id, self.sel_instance.physical_id);
+      op.create(self.sel_instance).done(function () {
         self.loading = false;
         alert_success(function () {
         })(t('operation_scheduler.msg.saved'));
-        self.get_sched(self.sel_instance);
-      }).fail(alert_and_show_infra(infra.id));
+        self.sel_instance.dates = {};
+      }).fail(alert_and_show_infra(this.infra_id));
+
+      self.$parent.loading = false;
     },
 
     get_sched: function (ec2){
       var self = this;
       self.$parent.show_operation_sched(self.resources);
-      var infra = new Infrastructure(this.infra_id);
-      infra.get_schedule(ec2.physical_id).done(function  (data){
-
+      var op = new OperationDuration(this.infra_id, ec2.physical_id);
+      op.show().done(function  (data){
         var events = [];
         events = data.map(function (item) {
           var dow = [];
-          if(item.recurring_date.repeats === "other"){
+          if(item.recurring_date.repeats === 4){
             _.forEach(item.recurring_date.dates, function(date){
               if(date.checked === "true")
                 dow.push(parseInt(date.value));
             });
-          }else if(item.recurring_date.repeats === "everyday"){
+          }else if(item.recurring_date.repeats === 1){
             dow = [1,2,3,4,5,6,0];
-          }else if(item.recurring_date.repeats === "weekdays"){
+          }else if(item.recurring_date.repeats === 2){
             dow = [1,2,3,4,5];
           }else{
             dow = [0,6];
@@ -246,10 +258,11 @@ module.exports = Vue.extend({
     },
     icalendar: function (resource_id, physical_id){
       var self = this;
-      var infra = new Infrastructure(self.infra_id);
+      var op = new OperationDuration(self.infra_id, resource_id);
+
       self.loading = true;
       var filename = physical_id.concat(".ics");
-      infra.icalendar(resource_id).done(function (data) {
+      op.show_icalendar().done(function (data) {
         self.loading = false;
         var contents = "<pre>"+data+"</pre>";
 
@@ -288,8 +301,14 @@ module.exports = Vue.extend({
           })(t('operation_scheduler.msg.saved'));
       }).fail(alert_and_show_infra(infra.id));
 
-    }
-
+    },
+    is_checked: function(day){
+       if (day.checked === 'true') {
+           return true;
+       }else if(day.checked === 'false') {
+           return false;
+       }
+    },
 
   },
 
@@ -299,23 +318,20 @@ module.exports = Vue.extend({
         return c.checked;
       });
     },
-
     is_specific: function(){
       return (parseInt(this.sel_instance.repeat_freq) === 4);
     },
 
     save_sched_err: function () {
       var self = this;
+        var instance = self.sel_instance;
       if(self.tabiCalendar){
           var calendar = self.iCalendarValue;
           return (calendar.filename && calendar.value);
       }else{
-          var instance = self.sel_instance;
-          return (instance.start_date && instance.end_date && instance.repeat_freq);
+          return (instance.start_date && instance.end_date && instance.repeat_freq && self.has_selected);
       }
-
     },
-
     isStartPage: function(){ return (this.pageNumber === 0); },
     isEndPage: function(){ return ((this.pageNumber + 1) * this.pages >= this.data.length); },
   },

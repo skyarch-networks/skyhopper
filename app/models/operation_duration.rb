@@ -11,6 +11,8 @@ class OperationDuration < ActiveRecord::Base
   belongs_to :user
   has_one :recurring_date
 
+  validates :resource_id, presence: true
+
   def to_ics
     cal = Icalendar::Calendar.new
     cal.event do |e|

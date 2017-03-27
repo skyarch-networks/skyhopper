@@ -353,18 +353,4 @@ class InfrastructuresController < ApplicationController
     redirect_to path, alert: msg
   end
 
-  def update_schedule(ops_exists, start_date, end_date, instance)
-    ops_exists
-    ops_exists.start_date = start_date
-    ops_exists.end_date =  end_date
-    ops_exists.save
-
-    recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
-    recur_exits.repeats = instance[:repeat_freq].to_i
-    recur_exits.start_time = start_date.strftime("%H:%M")
-    recur_exits.end_time = end_date.strftime("%H:%M")
-    recur_exits.dates = instance[:dates]
-    recur_exits.save
-  end
-
 end

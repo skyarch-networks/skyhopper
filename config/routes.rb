@@ -1,20 +1,4 @@
 SkyHopper::Application.routes.draw do
-  get 'operation_durations/show'
-
-  get 'operation_durations/create'
-
-  get 'operation_durations/show_icalendar'
-
-  get 'operation_durations/upload_icalendar'
-
-  get 'operation_durations/show'
-
-  get 'operation_durations/create'
-
-  get 'operation_durations/show_icalendar'
-
-  get 'operation_durations/upload_icalendar'
-
   if Rails.env.development?
     require 'sidekiq/web'
     require 'sidekiq/cron/web'
@@ -148,6 +132,13 @@ SkyHopper::Application.routes.draw do
 
     collection do
       get 'show_zabbix_graph'
+    end
+  end
+
+  resources :operation_durations, only: [:create, :show] do
+    member do
+      post 'upload_calendar'
+      get  'show_icalendar'
     end
   end
 

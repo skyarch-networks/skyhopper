@@ -21,13 +21,16 @@
   var Infrastructure = require('models/infrastructure').default;
   var modal          = require('modal');
 
-  Vue.use(require('./modules/datepicker'), queryString.lang);
-  Vue.use(require('./modules/timepicker'), queryString.lang);
+  Vue.use(require('./vue_components/datepicker'), queryString.lang);
+  Vue.use(require('./vue_components/timepicker'), queryString.lang);
+  Vue.use(require('./vue_components/radio_button'));
 
   var vace = require('vue-ace');
   require('brace/mode/json');
   require('brace/theme/github');
   Vue.use(vace, false, 'json', '25');
+
+
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
@@ -50,6 +53,7 @@
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
   Vue.component('demo-grid',                  require('demo-grid.js'));
+
 
 
 
