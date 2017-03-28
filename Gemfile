@@ -62,6 +62,7 @@ gem 'sidekiq' # for Active Job
 gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
 
+gem 'turnout' # for maintenance mode
 
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
 gem "ruby_dep", "~> 1.3.1"
@@ -83,7 +84,10 @@ group :development, :test do
 
   # test
   gem "rspec-rails"
-  gem "factory_girl_rails"
+
+  # Test seems to be failing because of this issue:
+  # https://github.com/thoughtbot/factory_girl/issues/981
+  gem "factory_girl_rails", "~> 4.7.0"
   gem "database_cleaner"
   gem 'guard-rspec'
   gem 'coveralls', require: false
@@ -129,8 +133,8 @@ gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
 
-gem 'nokogiri', '>= 1.6.8'
+gem 'nokogiri', '>= 1.7.1'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
 
-gem 'rubyzip'
+gem 'rubyzip', '>= 1.2.1'

@@ -92,10 +92,6 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
-      db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
-      env:  'SkyHopper%{env}.sql'
-      secret: 'secret_key_base'
-      db_key:  'db_crypt_key'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -179,6 +175,9 @@ ja:
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
     search:             'キーワードで検索...'
+    operations:         'オペレーション'
+    monitoring:         'モニタリング'
+    logs:               'ログ'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -586,7 +585,7 @@ ja:
     instance_port:     'インスタンス側ポート'
     expiration_date:   'SSL証明書の有効期限'
     certificate_name:  '証明書名'
-    private_key:   'プライベートキー'
+    private_key:       'プライベートキー'
     public_key_certificate: 'パブリックキー証明書'
     certificate_chain:   '証明書チェーン'
     certificate:       '証明書'
@@ -710,3 +709,21 @@ ja:
     incrementHour: '1時間後'
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
+
+  databases:
+    db_management: 'データベースの管理'
+    import_db:     'DB をインポート'
+    msg:
+      env:       'SkyHopper%{env}.sql'
+      secret:    'secret_key_base'
+      db_key:    'db_crypt_key'
+      db_export: 'エクスポートしたZIPファイルには下記のファイルが含まれています。'
+      db_import: 'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
+      db_import_finish: 'データベースのインポートが完了しました'
+      db_import_intro:  'インポートが完了するまでは一切の操作ができなくなります。'
+      db_import_warning: |
+        この操作によって SkyHopper のデータベースは完全に置き換えられます。
+        データがバックアップされていることを確認した上で、細心の注意を払って使用してください。
+      under_maintenance: |
+        データベースのインポート処理中のため、一時的に利用できなくなっています。
+        少し待ってから再度お試しください。
