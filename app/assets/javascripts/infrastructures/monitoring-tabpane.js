@@ -5,6 +5,8 @@ var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
 var alert_and_show_infra = helpers.alert_and_show_infra;
 
+var has_selected         = require('infrastructures/common-methods').has_selected;
+
 google.load('visualization',   '1.0',   {'packages':['corechart']});
 
 // TODO: .active をつける
@@ -218,9 +220,7 @@ module.exports = Vue.extend({
     before_setting: function() { return this.commons.length === 0 && this.uncommons.length === 0; },
 
     has_selected: function() {
-      return _.some(this.templates, function(c){
-        return c.checked;
-      });
+      return has_selected(this.templates);
     },
 
     dispItems: function(){

@@ -26,8 +26,7 @@
           </thead>
           <tbody>
           <tr v-for="r in dispItems
-          | filterBy filterKey
-          | count" :class="{info: r.checked}" @click="check(r)">
+          | filterBy filterKey" :class="{info: r.checked}" @click="check(r)">
             <td><input type="checkbox" v-model="r.checked"></td>
             <td>{{r.group_id}}</td>
             <td><div class="truncate"> {{r.group_name}}</div></td>

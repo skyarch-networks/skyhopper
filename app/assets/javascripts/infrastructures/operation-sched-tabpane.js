@@ -8,6 +8,8 @@ var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
 var alert_danger        = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
+var common_methods = require('infrastructures/common-methods');
+var has_selected         = common_methods.has_selected;
 
 
 var wrap = require('modules/wrap');
@@ -146,17 +148,22 @@ module.exports = Vue.extend({
       var self = this;
       var op = new OperationDuration(this.infra_id, instance.physical_id);
       self.sel_instance.resource_id = instance.id;
-
       op.show().done(function  (data){
 
         self.sel_instance.id = instance.id.id;
 
         _.forEach(data, function(item){
           var rep = item.recurring_date.repeats;
+          var dates = item.recurring_date.dates;
           self.sel_instance.repeat_freq = rep;
           self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D H:mm');
           self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D H:mm');
-          self.dates = item.recurring_date.dates;
+          self.dates = Object.keys(dates).map(function (key) {
+              // parse string to boolean
+              dates[key].checked = (dates[key].checked === 'true');
+              return dates[key];
+          });
+          console.log(self.dates);
           self.days_selector = (rep === 4);
         });
       });
@@ -302,22 +309,13 @@ module.exports = Vue.extend({
       }).fail(alert_and_show_infra(infra.id));
 
     },
-    is_checked: function(day){
-       if (day.checked === 'true') {
-           return true;
-       }else if(day.checked === 'false') {
-           return false;
-       }
-    },
-
   },
 
   computed: {
-    has_selected: function() {
-      return _.some(this.dates, function(c){
-        return c.checked;
-      });
+    has_dates: function()  {
+      return has_selected(this.dates);
     },
+
     is_specific: function(){
       return (parseInt(this.sel_instance.repeat_freq) === 4);
     },
@@ -329,7 +327,7 @@ module.exports = Vue.extend({
           var calendar = self.iCalendarValue;
           return (calendar.filename && calendar.value);
       }else{
-          return (instance.start_date && instance.end_date && instance.repeat_freq && self.has_selected);
+          return (instance.start_date && instance.end_date && instance.repeat_freq && self.has_dates);
       }
     },
     isStartPage: function(){ return (this.pageNumber === 0); },
