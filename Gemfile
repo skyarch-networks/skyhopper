@@ -133,7 +133,7 @@ gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
 
-gem 'nokogiri', '>= 1.6.8'
+gem 'nokogiri', '>= 1.7.1'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
 
