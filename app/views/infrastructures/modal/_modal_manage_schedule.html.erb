@@ -66,13 +66,13 @@
                 </label>
               </div>
           <div v-if="days_selector" class="col-xs-12">
-            <div v-if="!has_dates" class="alert alert-dismissible alert-danger">
-              <h4><%= t 'security_groups.msg.error' %></h4>
-              <p><%= t 'security_groups.msg.error_msg' %></p>
+            <div v-if="!has_dates" class="alert alert-dismissible alert-warning">
+              <b><%= t 'operation_scheduler.msg.warn' %></b>
+              <p><%= t 'operation_scheduler.msg.select_day' %></p>
             </div>
             <div class="checkbox" v-for="d in dates">
-              <label class="checkbox">
-                <input type="checkbox" :checked="d.checked" v-model="d.checked"> {{d.day}}
+              <label>
+                <input type="checkbox" :checked="d.checked" v-model="d.checked"> {{date_name(d.value)}}
               </label>
             </div>
           </div>

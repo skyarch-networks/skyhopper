@@ -272,6 +272,8 @@ en:
     msg:
       saved: 'Operation Schedule successfully saved.'
       empty: 'Schedule is not yet set. Please assign schedule first before getting schedule.'
+      warn:  'Note'
+      select_day: 'Please select day from the checkbox list below. Before continuing'
 
   nodes:
     bootstrap:   'Bootstrap'

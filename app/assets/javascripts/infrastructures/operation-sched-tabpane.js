@@ -47,13 +47,13 @@ module.exports = Vue.extend({
         value:    null
     },
     instances: null,
-    dates: [{day: t('operation_scheduler.dates.monday'),   checked: false, value : 1},
-            {day: t('operation_scheduler.dates.tuesday'),  checked: false, value : 2},
-            {day: t('operation_scheduler.dates.wednesday'),checked: false, value : 3},
-            {day: t('operation_scheduler.dates.thursday'), checked: false, value : 4},
-            {day: t('operation_scheduler.dates.friday'),   checked: false, value : 5},
-            {day: t('operation_scheduler.dates.saturday'), checked: false, value : 6},
-            {day: t('operation_scheduler.dates.sunday'),   checked: false, value : 0}],
+    dates: [{checked: false, value : 1},
+            {checked: false, value : 2},
+            {checked: false, value : 3},
+            {checked: false, value : 4},
+            {checked: false, value : 5},
+            {checked: false, value : 6},
+            {checked: false, value : 0}],
     default_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('YYYY/MM/D H:mm'),
     default_end: moment().utcOffset ("Asia/Tokyo").startOf('day').add(1, 'years').hour(19).minute(0).format('YYYY/MM/D H:mm'),
     time_start: moment().utcOffset ("Asia/Tokyo").startOf('day').hour(7).minute(0).format('H:mm'),
@@ -161,6 +161,7 @@ module.exports = Vue.extend({
           self.dates = Object.keys(dates).map(function (key) {
               // parse string to boolean
               dates[key].checked = (dates[key].checked === 'true');
+
               return dates[key];
           });
           console.log(self.dates);
@@ -309,6 +310,24 @@ module.exports = Vue.extend({
       }).fail(alert_and_show_infra(infra.id));
 
     },
+    date_name: function (date) {
+      switch(parseInt(date)) {
+          case 1:
+              return t('operation_scheduler.dates.monday');
+          case 2:
+              return t('operation_scheduler.dates.tuesday');
+          case 3:
+              return t('operation_scheduler.dates.wednesday');
+          case 4:
+              return t('operation_scheduler.dates.thursday');
+          case 5:
+              return t('operation_scheduler.dates.friday');
+          case 6:
+              return t('operation_scheduler.dates.saturday');
+          case 0:
+              return t('operation_scheduler.dates.sunday');
+      }
+      }
   },
 
   computed: {
