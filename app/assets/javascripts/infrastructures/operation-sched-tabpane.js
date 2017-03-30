@@ -178,7 +178,7 @@ module.exports = Vue.extend({
       self.sel_instance.start_date = moment(self.sel_instance.start_date).unix();
       self.sel_instance.end_date = moment(self.sel_instance.end_date).unix();
 
-      var op = new OperationDuration(this.infra_id, self.sel_instance.physical_id);
+      var op = new OperationDuration(self.infra_id, self.sel_instance.physical_id);
       op.create(self.sel_instance).done(function () {
         self.loading = false;
         alert_success(function () {
@@ -217,6 +217,7 @@ module.exports = Vue.extend({
           };
         });
         if (data.length > 0){
+            console.log(events);
           self.render_calendar(data, events);
         }
 
@@ -264,9 +265,9 @@ module.exports = Vue.extend({
         return (argument.length >= 10);
       }
     },
-    icalendar: function (resource_id, physical_id){
+    icalendar: function (physical_id){
       var self = this;
-      var op = new OperationDuration(self.infra_id, resource_id);
+      var op = new OperationDuration(self.infra_id, physical_id);
 
       self.loading = true;
       var filename = physical_id.concat(".ics");
@@ -300,14 +301,17 @@ module.exports = Vue.extend({
     },
     upload_calendar: function () {
       var self = this;
-        self.loading = true;
+      self.loading = true;
+      self.sel_instance.dates = self.dates;
+
       var value = self.iCalendarValue.value;
-      var infra = new Infrastructure(self.infra_id);
-      infra.upload_calendar(self.sel_instance, value).done(function () {
+      var op = new OperationDuration(self.infra_id, self.sel_instance.physical_id);
+
+      op.upload_icalendar(self.sel_instance, value).done(function () {
           self.loading = false;
           alert_success(function () {
           })(t('operation_scheduler.msg.saved'));
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alert_and_show_infra(self.infra_id));
 
     },
     date_name: function (date) {

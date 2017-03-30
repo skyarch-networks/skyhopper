@@ -47,7 +47,17 @@ export default class OperationDuration extends ModelBase {
   show_icalendar(): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>OperationDuration.ajax).show_icalendar({
-        resource_id: this.physical_id,
+        physical_id: this.physical_id,
+        id: this.infra_id
+      })
+    );
+  }
+
+  upload_icalendar(instance: instance[],value: string): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>OperationDuration.ajax).upload_icalendar({
+        instance: instance,
+        value: value,
         id: this.infra_id
       })
     );

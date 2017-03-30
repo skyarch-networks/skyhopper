@@ -33,7 +33,7 @@
             </button>
             <ul class="dropdown-menu">
               <!-- Dropdown menu links -->
-              <li @click="icalendar(entry[key].id, entry[key].physical_id)"><a><%= I18n.t('operation_scheduler.btn.icalendar')%></a></li>
+              <li @click="icalendar(entry[key].physical_id)"><a><%= I18n.t('operation_scheduler.btn.icalendar')%></a></li>
             </ul>
           </div>
           <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">

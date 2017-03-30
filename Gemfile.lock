@@ -204,7 +204,6 @@ GEM
     i18n-js (2.1.2)
       i18n
     icalendar (2.4.1)
-    ice_cube (0.13.3)
     iniparse (1.4.2)
     ipaddress (0.8.3)
     jbuilder (2.6.3)
@@ -589,7 +588,6 @@ DEPENDENCIES
   i18n (= 0.7.0)
   i18n-js
   icalendar
-  ice_cube
   jbuilder
   kaminari
   knife-windows

@@ -12,6 +12,7 @@ class OperationDuration < ActiveRecord::Base
   has_one :recurring_date
 
   validates :resource_id, presence: true
+  validates_uniqueness_of :resource_id
 
   def to_ics
     cal = Icalendar::Calendar.new
@@ -21,29 +22,34 @@ class OperationDuration < ActiveRecord::Base
       e.created       = self.created_at
       e.last_modified = self.updated_at
       e.ip_class      = "PRIVATE"
-      e.summary       = "#{self.recurring_date.repeats}//#{self.recurring_date.dates}"
-      e.rrule         = "FREQ=WEEKLY,#{self.reccurence}"
+      e.rrule         = "FREQ=WEEKLY,BYDAY=#{self.rrule}"
     end
 
   end
 
-  def reccurence
+  def rrule
+    w  = "FREQ=WEEKLY,"
     case self.recurring_date.repeats
-    when "everyday"
-      return "BYDAY=MO,TU,WE,TH,FR"
-    when "weekends"
-      return "BYDAY=SA,SU"
+    when 1
+      return "FREQ=DAILY"
+    when 2
+      return "#{w}BYDAY=MO,TU,WE,TH,FR"
+    when 3
+      return "#{w}BYDAY=SA,SU"
     else
-      return nil
+      return "#{w}BYDAY=#{self.dates_selected}"
     end
   end
 
   def dates_selected
+    dates = []
+    date_names = ["","MO","TU","WE","TH","FR", "ST", "SU"]
     self.recurring_date.dates.each { |t|
-      t.puts
+      dates.push(date_names[t[1]["value"].to_i]) if t[1]["checked"].to_s.eql?("true")
     }
-  end
+    return dates.reject(&:blank?).join(",")
 
+  end
 
 
 end

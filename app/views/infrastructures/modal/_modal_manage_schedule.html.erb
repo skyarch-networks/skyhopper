@@ -15,6 +15,11 @@
 
         <!--Upload iCalendar input tab-->
         <div class="col-md-12" v-if="tabiCalendar">
+          <div class="alert alert-dismissible alert-warning">
+            <h4><%= t 'operation_scheduler.msg.warn' %></h4>
+            <span><%= raw t 'operation_scheduler.msg.instruction' %></span>
+          </div>
+
             <div class="form-group">
               <label class="control-label" for="focusedInput">Select iCalendar File:</label>
               <input id="focusedInput" class="form-control" type="file" @change="onFileChange"  accept=".ics ">

@@ -20,6 +20,8 @@ class OperationDurationsController < ApplicationController
     authorize(@infra)
   end
 
+  class UploadCalendarError < ::StandardError; end
+
   # GET /infreastructures/get_schedule
   # @param [Integer] infra_id
   # @param [String]  physical_id
@@ -64,8 +66,9 @@ class OperationDurationsController < ApplicationController
   # @param [Integer] resource_id
   # @param [String]  physical_id
   def show_icalendar
-    resource_id = params.require(:resource_id)
-    schedule = OperationDuration.find_by(resource_id: resource_id)
+    physical_id = params.require(:physical_id)
+    resource = Resource.where(infrastructure_id: @infra.id).find_by(physical_id: physical_id)
+    schedule = OperationDuration.find_by(resource_id: resource.id)
 
     if schedule.blank?
       render text: I18n.t('operation_scheduler.msg.empty'), status: 500 and return
@@ -84,12 +87,25 @@ class OperationDurationsController < ApplicationController
   # @param [String] physical_id
   # @param [String] value
   def upload_icalendar
-    instance =  params.require(:instance)
-    ops_exists = OperationDuration.find_by(resource_id: instance[:id])
-    value = params.require(:value)
-    cals = Icalendar::Calendar.parse(value)
-    start_date = cals.first.events.first.dtstart
-    end_date = cals.first.events.first.dtend
+    instance    =  params.require(:instance)
+    ops_exists  = OperationDuration.find_by(resource_id: instance[:resource_id])
+    value       = params.require(:value)
+    events        = Icalendar::Calendar.parse(value).first.events.first
+
+    unless defined? events.dtstart
+      raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_dtstart')
+    end
+    unless defined? events.dtend
+      raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_dtend')
+    end
+
+    start_date  = events.dtstart
+    end_date    = events.dtend
+    rrules      = events.rrule.first
+
+    instance = parse_rules(rrules, instance)
+
+
     if ops_exists
       update_schedule(ops_exists, start_date, end_date, instance)
     else
@@ -103,7 +119,6 @@ class OperationDurationsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def create_schedule(start_date, end_date, instance)
-    begin
       ops = OperationDuration.create!(
         resource_id:  instance[:resource_id],
         start_date:   start_date,
@@ -117,9 +132,6 @@ class OperationDurationsController < ApplicationController
         end_time: end_date.strftime("%H:%M"),
         dates: instance[:dates]
       )
-    rescue => ex
-      render text: ex.message, status: 500 and return
-    end
   end
 
   def update_schedule(ops_exists, start_date, end_date, instance)
@@ -133,6 +145,33 @@ class OperationDurationsController < ApplicationController
     recur_exits.end_time = end_date.strftime("%H:%M")
     recur_exits.dates = instance[:dates]
     recur_exits.save
+  end
+
+  def parse_rules(rrules, instance)
+    date_names = ["SU","MO","TU","WE","TH","FR", "ST"]
+    allowed_frequencies = ["DAILY", "WEEKLY"]
+
+    if !defined? rrules.frequency
+      raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_frequency')
+    elsif !allowed_frequencies.include?(rrules.frequency)
+      raise UploadCalendarError, I18n.t('operation_scheduler.msg.invalid_frequency')
+    end
+
+
+    if rrules.frequency == "DAILY"
+      instance[:repeat_freq] = 1
+    else
+      if !defined? rrules.by_day
+        raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_by_day')
+      end
+
+      instance[:repeat_freq] = 4
+      instance[:dates].map do |day|
+          day.second["checked"] = date_names.include?(rrules.by_day[day.second["value"].to_i]).to_s
+      end
+    end
+
+    return instance
   end
 
   def set_infra

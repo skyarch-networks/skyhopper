@@ -251,7 +251,6 @@ en:
     end_date: 'End Date'
     start_time: 'Time:'
     end_time: 'Time:'
-
     btn:
       view_sched: 'View Schedule'
       manage_sched: 'Manage Schedule'
@@ -274,6 +273,23 @@ en:
       empty: 'Schedule is not yet set. Please assign schedule first before getting schedule.'
       warn:  'Note'
       select_day: 'Please select day from the checkbox list below. Before continuing'
+      no_dtstart: 'Please include start date as "dtstart" in the icalendar file and it must not be greater than end date'
+      no_dtend:   'Please include end date as "dtend" in the icalendar file and it must not be lesser than start date'
+      no_frequency: 'No frequency found in rrule (recurrence rule).'
+      no_by_day:    'No by_day found in rrule (recurrence rule).'
+      invalid_frequency: 'Invalid frequency please choose between DAILY and WEEKLY.'
+      instruction: |
+        Please consider these parameters in your iCalendar before uploading.
+        <ol>
+          <li> It includes dtstart(start date) and dtend (end date). </li>
+          <li> It has rrule (recurrence rule) that inculdes the ff:
+              <ul>
+                <li>Valid frequency between DAILY and WEEKLY.</li>
+                <li>Valid by_day (Specific day that the EC2 instance will start).</li>
+              </ul>
+          </li>
+        </ol>
+
 
   nodes:
     bootstrap:   'Bootstrap'
