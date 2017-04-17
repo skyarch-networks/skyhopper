@@ -52,9 +52,10 @@ class Resource < ActiveRecord::Base
   end
 
   def detach_zabbix
-    s = AppSetting.get
+    z = ZabbixServer.find(self.infrastructure.project.zabbix_server_id)
+
     begin
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+      z = Zabbix.new(z.fqdn, z.username, z.password)
       z.delete_hosts_by_resource(self.physical_id)
     rescue => ex
       return self if ex.message.include("physical id not found.")
