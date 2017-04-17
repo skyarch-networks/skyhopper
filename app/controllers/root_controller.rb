@@ -20,7 +20,7 @@ class RootController < ApplicationController
           :projects
         end
 
-      redirect_to params.to_hash and return
+      redirect_to params.to_hash.merge(only_path: true) and return
     else
       redirect_to app_settings_path and return
     end
