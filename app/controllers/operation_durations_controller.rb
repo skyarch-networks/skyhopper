@@ -22,7 +22,7 @@ class OperationDurationsController < ApplicationController
 
   class UploadCalendarError < ::StandardError; end
 
-  # GET /infreastructures/get_schedule
+  # GET /OperationDurations/show
   # @param [Integer] infra_id
   # @param [String]  physical_id
   def show
@@ -43,7 +43,7 @@ class OperationDurationsController < ApplicationController
     end
   end
 
-  # POST /infrastructures/save_schedule
+  # POST /OperationDurations/save_schedule
   # @param [Integer] infra_id
   # @param [String] physical_id
   # @param [Object] instance
@@ -62,7 +62,7 @@ class OperationDurationsController < ApplicationController
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
-  # GET /infreastructures/:id
+  # GET /OperationDurations/:id
   # @param [Integer] resource_id
   # @param [String]  physical_id
   def show_icalendar
@@ -82,7 +82,7 @@ class OperationDurationsController < ApplicationController
     render text: calendar.to_ical
   end
 
-  # POST /infrastructures/upload_calendar
+  # POST /OperationDurations/upload_calendar
   # @param [Integer] infra_id
   # @param [String] physical_id
   # @param [String] value
