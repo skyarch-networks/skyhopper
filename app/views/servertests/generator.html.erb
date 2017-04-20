@@ -1,0 +1,17 @@
+<% provide(:title, I18n.t('serverspecs.generator.title')) %>
+<div class="container">
+  <h2 class="page-header">
+    <%=t('serverspecs.generator.title')%>
+    <% if @infra %>
+      <small><%= ('for ' + link_to(@infra.stack_name, infrastructures_path(project_id: @infra.project_id, infrastructure_id: @infra.id))).html_safe %></small>
+    <% end %>
+  </h2>
+
+  <div id="vue-serverspec-gen"></div>
+
+  <div class="row form-actions-top">
+    <button class="btn btn-primary save-serverspec-btn"><%=t('helpers.titles.save')%></button>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+      servertests_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
+  </div>
+</div>

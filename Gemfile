@@ -51,6 +51,7 @@ gem "font-awesome-rails"
 
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
+gem 'awspec', require: false
 gem 'ridley', '~> 4.2.0'
 gem "net-ssh"
 gem "net-scp"
@@ -136,7 +137,7 @@ gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
 
-gem 'nokogiri', '>= 1.6.8'
+gem 'nokogiri', '>= 1.7.1'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
 
