@@ -39,4 +39,9 @@ module.exports = Vue.extend({
   computed: {
     jsonParseErr: function () { return jsonParseErr(this.result.value); },
   },
+  filters:{
+    created_at: function (date) {
+        return moment(date).format('YYYY/MM/D H:mm');
+    },
+  },
 });

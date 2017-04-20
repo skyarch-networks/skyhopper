@@ -96,12 +96,15 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
+<<<<<<< HEAD
       insert_key:        '最初に AWS のキーを入力し、リージョンを選択してください。'
       warning_msg:  'SkyHopper が最適に動作するために、<b> Google Chrome </b> または <b> Firefox </b> Webブラウザの使用をお勧めしています。'
       db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
+=======
+>>>>>>> origin/develop
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -203,6 +206,9 @@ ja:
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
     search:             'キーワードで検索...'
+    operations:         'オペレーション'
+    monitoring:         'モニタリング'
+    logs:               'ログ'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -352,10 +358,10 @@ ja:
       empty-list:             'ディッシュのリストが空です'
 
 
-  serverspecs:
-    name:              'Serverspec 名'
-    serverspecs:       'Serverspecs'
-    serverspec:        'Serverspec'
+  servertests:
+    name:              'Servertest 名'
+    servertests:       'Servertests'
+    servertest:        'Servertest'
     description:       '詳細'
     value:             '内容'
     auto_generated:    '自動生成された Serverspec'
@@ -366,24 +372,30 @@ ja:
     created_at:        'at'
     run:               'Serverspec の実行'
     results:           'Serverspec の結果'
+    category:          'カテゴリー'
     btn:
-      add:       'Serverspec の追加'
+      add:       'Servertest の追加'
       create:    'Serverspec の作成'
       run:       'Serverspec の実行'
-      generator: 'ジェネレータ'
+      serverspec_generator: 'Serverspec ジェネレータ'
+      awspec_generator:      'AWSpec ジェネレータ'
+      generate:    'ジェネレータ'
     msg:
-      created:   'Serverspec が正常に追加されました'
-      updated:   'Serverspec が正常に更新されました'
-      deleted:   'Serverspec が正常に削除されました'
+      created:   'Servertest が正常に追加されました'
+      updated:   'Servertest が正常に更新されました'
+      deleted:   'Servertest が正常に削除されました'
       parseerr:  '入力された Serverspec に間違いがあります'
       success:   '%{physical_id} の Serverspec が正常に終了しました'
       pending:   '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
-      delete_serverspec: 'この Serverspec を削除してもよろしいですか？'
+      delete_servertest: 'この Servertest を削除してもよろしいですか？'
       auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
       auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
+      generated:  '生成されたファイル'
+      generating:  'ファイル仕様の生成 ...'
+      select_infra: 'インフラストラクチャの選択'
     generator:
       title:         'Serverspec ジェネレータ'
       name:          '名前'
@@ -608,7 +620,7 @@ ja:
     instance_port:     'インスタンス側ポート'
     expiration_date:   'SSL証明書の有効期限'
     certificate_name:  '証明書名'
-    private_key:   'プライベートキー'
+    private_key:       'プライベートキー'
     public_key_certificate: 'パブリックキー証明書'
     certificate_chain:   '証明書チェーン'
     certificate:       '証明書'
@@ -732,6 +744,7 @@ ja:
     incrementHour: '1時間後'
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
+<<<<<<< HEAD
   instructions:
     signup_head: '1 サインアップ'
     signup_body: |
@@ -752,3 +765,23 @@ ja:
       CloudFormation テンプレートを適用するには、<b>インフラを選択</b>して詳細を表示し <b>[Operations] メニュー</b> から <b>CloudFormation テンプレートの適用</b> を選択してください。
       その後、CloudFormation テンプレートの一覧が画面に表示されます。お好みのテンプレートを選択後、[パラメータの入力]をクリックしてフォームを埋めた後、[送信] ボタンを押すと、新規スタックの作成が開始されます。
       既に AWS に EC2 を作成しているならば、それを追加することもできます。詳細については<a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>を参照してください。
+=======
+
+  databases:
+    db_management: 'データベースの管理'
+    import_db:     'DB をインポート'
+    msg:
+      env:       'SkyHopper%{env}.sql'
+      secret:    'secret_key_base'
+      db_key:    'db_crypt_key'
+      db_export: 'エクスポートしたZIPファイルには下記のファイルが含まれています。'
+      db_import: 'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
+      db_import_finish: 'データベースのインポートが完了しました'
+      db_import_intro:  'インポートが完了するまでは一切の操作ができなくなります。'
+      db_import_warning: |
+        この操作によって SkyHopper のデータベースは完全に置き換えられます。
+        データがバックアップされていることを確認した上で、細心の注意を払って使用してください。
+      under_maintenance: |
+        データベースのインポート処理中のため、一時的に利用できなくなっています。
+        少し待ってから再度お試しください。
+>>>>>>> origin/develop

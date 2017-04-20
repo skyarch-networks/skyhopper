@@ -12,14 +12,9 @@
   var wrap = require('./modules/wrap');
   var listen = require('./modules/listen');
   var md5 = require('md5');
-  var queryString = require('query-string').parse(location.search);
+  var qs = require('query-string').parse(location.search);
   var modal = require('modal');
   var ZabbixServer  = require('models/zabbix_server').default;
-  var helpers = require('infrastructures/helper.js');
-  var alert_success        = helpers.alert_success;
-  var alert_danger         = helpers.alert_danger;
-
-  var app;
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
@@ -31,7 +26,7 @@
       gridColumns: ['fqdn', 'version', 'details'],
       gridData: [],
       index: 'zabbix_servers',
-      url: 'zabbix_servers?lang='+queryString.lang,
+      url: 'zabbix_servers?lang='+qs.lang,
       is_empty: false,
       loading: true,
       new_loader: false,
@@ -44,7 +39,7 @@
         username: null,
         password: null,
         details: null,
-        lang: queryString.lang
+        lang: qs.lang
       },
       control_type: null
     },

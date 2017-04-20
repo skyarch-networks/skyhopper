@@ -93,6 +93,8 @@ server {
         # your skyhopper installation is located
         set \$skyhopper_root "/home/ec2-user/skyhopper";
 
+        client_max_body_size 1g;
+
         listen 80;
         server_name skyhopper.local; #Setting the environment
 
@@ -208,7 +210,7 @@ $ bower install
 $ sudo npm i -g gulp
 $ cd frontend/
 $ npm i
-$ gulp tsd
+$ gulp type  // TSD to typings
 $ gulp ts
 $ cd ..
 ```

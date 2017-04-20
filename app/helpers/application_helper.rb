@@ -29,6 +29,10 @@ module ApplicationHelper
 
   def bootstrap_flash(options = {})
     flash_messages = []
+    if Rails.cache.exist?(:err)
+      flash[:danger] = Rails.cache.read(:err)
+      Rails.cache.delete(:err)
+    end
     flash.each do |type, message|
       # Skip empty messages, e.g. for devise messages set to nothing in a locale file.
       next if message.blank?

@@ -10,13 +10,13 @@ class Resource < ActiveRecord::Base
 
   belongs_to :infrastructure
   belongs_to :dish
-  has_many :resource_serverspecs
-  has_many :serverspecs, through: :resource_serverspecs
+  has_many :resource_servertests
+  has_many :servertests, through: :resource_servertests
   has_many :status, dependent: :delete_all, class_name: 'ResourceStatus'
-  has_many :serverspec_results
+  has_many :servertest_results
   has_many :operation_durations
 
-  has_one :serverspec_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
+  has_one :servertest_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   validates :physical_id, uniqueness: true
 
@@ -30,13 +30,13 @@ class Resource < ActiveRecord::Base
   # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
   # @return [Array<Serverspec>]
-  def all_serverspecs
-    self.serverspecs | (self.dish.try(:serverspecs) || [])
+  def all_servertests
+    self.servertests | (self.dish.try(:servertests) || [])
   end
 
   # XXX: パフォーマンスがきになる. all_serverspecs のほうが relation を返せば pluck が使える
-  def all_serverspec_ids
-    all_serverspecs.map{|x|x.id}
+  def all_servertest_ids
+    all_servertests.map{|x|x.id}
   end
 
   def initialize_statuses
@@ -52,9 +52,10 @@ class Resource < ActiveRecord::Base
   end
 
   def detach_zabbix
-    s = AppSetting.get
+    z = ZabbixServer.find(self.infrastructure.project.zabbix_server_id)
+
     begin
-      z = Zabbix.new(s.zabbix_user, s.zabbix_pass)
+      z = Zabbix.new(z.fqdn, z.username, z.password)
       z.delete_hosts_by_resource(self.physical_id)
     rescue => ex
       return self if ex.message.include("physical id not found.")

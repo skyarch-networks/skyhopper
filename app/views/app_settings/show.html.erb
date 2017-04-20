@@ -10,7 +10,10 @@
   </div>
   <div class="panel-heading">
     <%= I18n.t("app_settings.title.setup") %>
-
+    <button type="button" class="btn btn-sm btn-success" style="float: right" data-toggle="modal" data-target="#importModal">
+      <span class="glyphicon glyphicon-import"></span>
+      <%= t('databases.import_db') %>
+    </button>
   </div>
   <div class="panel-body">
     <%= render partial: 'panel_content_system' %>
@@ -23,3 +26,5 @@
     </div>
   </div>
 </div>
+
+<%= render partial: 'databases/modal_import' %>
