@@ -11,22 +11,38 @@ require_relative '../spec_helper'
 describe OperationDurationsController, type: :controller do
   login_user
   let(:infra){create(:infrastructure)}
-  let(:physical_id){'i-SD2sc-sdWW-Test'}
+  let(:resource){create(:resource)}
 
   describe "GET #show" do
-    let(:request_show){get :show, id: physical_id, format: 'json'}
-    let(:body){JSON.parse(response.body, symbolize_names: true)}
+    let(:request_show){get :show, id: infra.id, physical_id: resource.physical_id}
     before do
-      expect(Client).not_to be_exists(id: client.id)
+      allow(Resource).to receive(:find) {resource}
+      allow(Resource).to receive(:operation_durations).and_return(resource)
+      request_show
     end
 
-    it "returns json success" do
-      request_show
-      expect(response).to have_http_status(:success)
+    context 'when valid parameters' do
+      it 'should assign @resource' do
+        expect(assigns[:resource]).to eq resource
+      end
+
+      it 'should assign @operation_schedule' do
+        expect(assigns[:operation_schedule]).to eq resource.operation_durations
+      end
     end
+
+
   end
 
-  describe "GET #create" do
+  describe "POST #create" do
+    let(:req){post :create, id: infra.id, physical_id: resource.physical_id}
+    let(:operation){create(:operation_duration)}
+
+    before do
+      allow(OperationDuration).to receive(:find).and_return(operation)
+      req
+    end
+
     it "returns http success" do
       get :create
       expect(response).to have_http_status(:success)
@@ -34,14 +50,14 @@ describe OperationDurationsController, type: :controller do
   end
 
   describe "GET #show_icalendar" do
-    it "returns http success" do
+    xit "returns http success" do
       get :show_icalendar
       expect(response).to have_http_status(:success)
     end
   end
 
   describe "GET #upload_icalendar" do
-    it "returns http success" do
+    xit "returns http success" do
       get :upload_icalendar
       expect(response).to have_http_status(:success)
     end

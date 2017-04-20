@@ -27,9 +27,9 @@ class OperationDurationsController < ApplicationController
   # @param [String]  physical_id
   def show
     physical_id = params.require(:physical_id)
-    resource = Resource.where(infrastructure_id: @infra.id).find_by(physical_id: physical_id)
+    @resource = Resource.find_by(physical_id: physical_id)
 
-    @operation_schedule = resource.operation_durations.order("created_at desc")
+    @operation_schedule = @resource.operation_durations
 
     if @operation_schedule.blank?
       render text: I18n.t('operation_scheduler.msg.empty'), status: 404 and return
