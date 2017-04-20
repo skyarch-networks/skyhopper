@@ -58,6 +58,18 @@ GEM
       json (~> 1.4)
       nokogiri (~> 1)
     aws-sigv4 (1.0.0)
+    aws_config (0.0.4)
+    awsecrets (1.9.0)
+      aws-sdk (~> 2)
+      aws_config (= 0.0.4)
+    awspec (0.37.7)
+      activesupport
+      aws-sdk (~> 2.2)
+      awsecrets (~> 1)
+      rspec (~> 3.0)
+      rspec-its
+      term-ansicolor
+      thor
     bcrypt (3.1.11)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -569,6 +581,7 @@ DEPENDENCIES
   awesome_print
   aws-sdk (~> 2)
   aws-sdk-v1
+  awspec
   better_errors
   binding_of_caller
   browserify-rails

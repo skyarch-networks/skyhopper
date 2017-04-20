@@ -37,7 +37,7 @@ FactoryGirl.define do
     project
   end
 
-  factory :serverspec_result do
+  factory :servertest_result do
     resource
     status :success
     message 'serverspec success'
@@ -97,10 +97,11 @@ FactoryGirl.define do
     master true
   end
 
-  factory :serverspec do
+  factory :servertest do
     infrastructure
     name 'hoge'
     value 'fuga'
     description 'piyo'
+    category :awspec
   end
 end

@@ -46,7 +46,7 @@
   Vue.component('ec2-tabpane',                require('infrastructures/ec2-tabpane.js'));
   Vue.component('edit-runlist-tabpane',       require('infrastructures/edit-runlist-tabpane.js'));
   Vue.component('edit-attr-tabpane',          require('infrastructures/edit-attr-tabpane.js'));
-  Vue.component('serverspec-results-tabpane', require('infrastructures/serverspec-results-tabpane.js'));
+  Vue.component('servertest-results-tabpane', require('infrastructures/servertest-results-tabpane.js'));
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
   Vue.component('demo-grid',                  require('demo-grid.js'));

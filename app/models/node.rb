@@ -150,13 +150,13 @@ class Node
   end
 
   # serverspec_ids => ServerspecのidのArray
-  def run_serverspec(infra_id, serverspec_ids, selected_auto_generated)
+  def run_serverspec(infra_id, servertest_ids, selected_auto_generated)
     # get params
     infra = Infrastructure.find(infra_id)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
-    raise ServerspecError, 'specs is empty' if serverspec_ids.empty? and ! selected_auto_generated
+    raise ServerspecError, 'specs is empty' if servertest_ids.empty? and ! selected_auto_generated
 
     fqdn = infra.instance(@name).fqdn
 
@@ -164,8 +164,8 @@ class Node
       local_path = scp_specs(ec2key.path_temp, fqdn)
     end
 
-    run_spec_list_path = serverspec_ids.map do |spec|
-      ::Serverspec.to_file(spec)
+    run_spec_list_path = servertest_ids.map do |spec|
+      ::Servertest.to_file(spec)
     end
 
     ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
@@ -187,36 +187,12 @@ class Node
     end
 
     # create result
-    result = JSON::parse(out, symbolize_names: true)
-    result[:examples].each do |e|
-      e[:exception].delete(:backtrace) if e[:exception]
-    end
-    result[:status] = result[:summary][:failure_count].zero?
-    result[:status_text] =
-      if result[:status]
-        if result[:summary][:pending_count].zero?
-          'success'
-        else
-          'pending'
-        end
-      else
-        'failed'
-      end
+    result =  generate_result(out)
+    Resource.find_by(physical_id: @name).status.servertest.update(value: result[:status_text])
 
-
-    case result[:status_text]
-    when 'pending'
-      result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
-      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
-    when 'failed'
-      result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
-      result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
-    end
-
-    Resource.find_by(physical_id: @name).status.serverspec.update(value: result[:status_text])
     return result
   rescue => ex
-    Resource.find_by(physical_id: @name).status.serverspec.failed!
+    Resource.find_by(physical_id: @name).status.servertest.failed!
     raise ex
   ensure
     ec2key.close_temp
@@ -273,8 +249,8 @@ class Node
         d['default']['serverspec-handler']['output_dir']
       end
 
-    Dir::mkdir(Serverspec::TmpDir) unless Dir::exist?(Serverspec::TmpDir)
-    local_path = Dir::mktmpdir(nil, Serverspec::TmpDir)
+    Dir::mkdir(Servertest::TmpDir) unless Dir::exist?(Servertest::TmpDir)
+    local_path = Dir::mktmpdir(nil, Servertest::TmpDir)
 
     Net::SCP.start(fqdn, @user, keys: sshkey_path) do |scp|
       scp.download!(remote_path, local_path, recursive: true)
@@ -350,6 +326,36 @@ class Node
     return true
   # ensure
   #   ec2key.close_temp
+  end
+
+  def generate_result(out)
+    result = JSON::parse(out, symbolize_names: true)
+    result[:examples].each do |e|
+      e[:exception].delete(:backtrace) if e[:exception]
+    end
+    result[:status] = result[:summary][:failure_count].zero?
+    result[:status_text] =
+      if result[:status]
+        if result[:summary][:pending_count].zero?
+          'success'
+        else
+          'pending'
+        end
+      else
+        'failed'
+      end
+
+
+    case result[:status_text]
+      when 'pending'
+        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'},map{|x| x[:full_description]}.join("\n")
+      when 'failed'
+        result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]+"\n"+x[:command]+"\n"+x[:exception][:message]}.join("\n")
+        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+    end
+
+    return result
   end
 
 

@@ -36,7 +36,7 @@ class DishesController < ApplicationController
 
   # GET /dishes/1
   def show
-    @selected_serverspecs = @dish.serverspecs
+    @selected_serverspecs = @dish.servertests
     @runlist = @dish.runlist
 
     render partial: 'show'
@@ -44,13 +44,13 @@ class DishesController < ApplicationController
 
   # GET /dishes/1/edit
   def edit
-    @global_serverspecs = Serverspec.global
+    @global_serverspecs = Servertest.global
 
     @cookbooks = ChefAPI.index(:cookbook).keys
     @roles     = ChefAPI.index(:role).map(&:name)
 
     @runlist = @dish.runlist
-    @selected_serverspecs = @dish.serverspecs
+    @selected_serverspecs = @dish.servertests
 
     render partial: 'edit'
   end
@@ -58,12 +58,12 @@ class DishesController < ApplicationController
   # PUT /dishes/1
   def update
     runlist        = params[:runlist]     || []
-    serverspec_ids = params[:serverspecs] || []
+    servertest_ids = params[:servertests] || []
 
     # TODO error handling
     @dish.update(
       runlist:     runlist,
-      serverspec_ids: serverspec_ids,
+      servertest_ids: servertest_ids,
       status:      nil
     )
 
