@@ -1,0 +1,43 @@
+<h3 class="page-header"><%= t 'servertests.servertests' %> <small><%= t 'servertests.operation_logs' %></small></h3>
+<div class="col-sm-12">
+  <div class="input-group">
+    <form id="search">
+      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+    </form><hr>
+  </div>
+  <table class="table table-hover ssp">
+    <tr>
+      <th v-for="key in columns"
+        :class="{active: sortKey === key}" @click="sortBy(key)">
+        <text v-html="key | wrap index"></text>
+          <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      </tr>
+    </thead>
+    <tbody class="tbody-infra-log">
+      <tr v-for="
+        entry in data
+        | filterBy filterKey
+        | orderBy sortKey sortOrders[sortKey]
+        | paginate">
+        <td v-for="key in columns">
+          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key index lang"></text>
+        </td>
+      </tr>
+      <td v-if="data.length === 0" colspan="6"><%= t('servertests.msg.empty-results') %></td>
+    </tbody>
+  </table>
+  <nav v-if="data.length >= 10">
+    <ul class="pager">
+      <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+      <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
+      <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+    </ul>
+  </nav>
+</div>
+
+<div class="col-md-12 col-sm-12">
+  <div v-if="!loading" class="form-actions-top">
+    <button @click="show_ec2()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-arrow-left"></span> <%= t 'helpers.links.back' %></button>
+  </div>
+</div>

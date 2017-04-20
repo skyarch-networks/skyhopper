@@ -14,7 +14,7 @@ class Infrastructure < ActiveRecord::Base
   belongs_to :ec2_private_key, dependent: :delete
 
   has_many :infrastructure_logs, dependent: :delete_all
-  has_many :serverspecs, dependent: :delete_all
+  has_many :servertests, dependent: :delete_all
   has_many :resources, dependent: :destroy
   has_many :monitorings, dependent: :delete_all
   has_many :master_monitorings, through: :monitorings

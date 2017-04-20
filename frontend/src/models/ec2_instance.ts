@@ -20,7 +20,7 @@ export default class EC2Instance extends ModelBase {
 
   static ajax_node       = new AjaxSet.Resources('nodes');
   static ajax_ec2        = new AjaxSet.Resources('ec2_instances');
-  static ajax_serverspec = new AjaxSet.Resources('serverspecs');
+  static ajax_servertest = new AjaxSet.Resources('servertests');
   static ajax_elb        = new AjaxSet.Resources('elb');
 
 
@@ -214,7 +214,7 @@ export default class EC2Instance extends ModelBase {
   select_serverspec(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    (<any>EC2Instance.ajax_serverspec).select({
+    (<any>EC2Instance.ajax_servertest).select({
       physical_id: this.physical_id,
       infra_id:    this.infra.id,
     }).done((data: any) => {
@@ -230,10 +230,10 @@ export default class EC2Instance extends ModelBase {
     return dfd.promise();
   }
 
-  results_serverspec(): JQueryPromise<any> {
+  results_servertest(): JQueryPromise<any> {
     const dfd = $.Deferred();
 
-    (<any>EC2Instance.ajax_serverspec).results({
+    (<any>EC2Instance.ajax_servertest).results({
       physical_id: this.physical_id,
       infra_id:    this.infra.id,
     }).done((data: any) => {
@@ -255,17 +255,17 @@ export default class EC2Instance extends ModelBase {
     }
 
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_serverspec).run({
+      (<any>EC2Instance.ajax_servertest).run_serverspec({
         physical_id:    this.physical_id,
         infra_id:       this.infra.id,
-        serverspec_ids: ids,
+        servertest_ids: ids,
       })
     );
   }
 
   schedule_serverspec(schedule: any): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
-      (<any>EC2Instance.ajax_serverspec).schedule({
+      (<any>EC2Instance.ajax_servertest).schedule({
         physical_id: this.physical_id,
         infra_id:    this.infra.id,
         schedule:    schedule,
@@ -282,7 +282,7 @@ export default class EC2Instance extends ModelBase {
   }
 
   // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
-  private wait_change_status(dfd: JQueryDeferred<any>): () => void {
+  private wait_change_status_ec2(dfd: JQueryDeferred<any>): () => void {
     return () => {
       const ws = ws_connector('ec2_status', this.physical_id);
       ws.onmessage = function (msg) {
@@ -308,7 +308,7 @@ export default class EC2Instance extends ModelBase {
   start_ec2(): JQueryPromise<any> {
     const dfd = $.Deferred();
     (<any>EC2Instance.ajax_ec2).start(this.params)
-      .done(this.wait_change_status(dfd))
+      .done(this.wait_change_status_ec2(dfd))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
@@ -317,7 +317,7 @@ export default class EC2Instance extends ModelBase {
   stop_ec2(): JQueryPromise<any> {
     const dfd = $.Deferred();
     (<any>EC2Instance.ajax_ec2).stop(this.params)
-      .done(this.wait_change_status(dfd))
+      .done(this.wait_change_status_ec2(dfd))
       .fail(this.rejectF(dfd));
 
     return dfd.promise();
@@ -488,10 +488,10 @@ EC2Instance.ajax_ec2.add_member('detach_volume', 'POST');
 EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
 EC2Instance.ajax_ec2.add_collection('create_volume', 'POST');
 
-EC2Instance.ajax_serverspec.add_collection('select', 'GET');
-EC2Instance.ajax_serverspec.add_collection('results', 'GET');
-EC2Instance.ajax_serverspec.add_collection("run", "POST");
-EC2Instance.ajax_serverspec.add_collection('schedule', 'POST');
+EC2Instance.ajax_servertest.add_collection('select', 'GET');
+EC2Instance.ajax_servertest.add_collection('results', 'GET');
+EC2Instance.ajax_servertest.add_collection("run_serverspec", "POST");
+EC2Instance.ajax_servertest.add_collection('schedule', 'POST');
 
 EC2Instance.ajax_elb.add_collection('create_listener', 'POST');
 EC2Instance.ajax_elb.add_collection('delete_listener', 'POST');

@@ -1,6 +1,0 @@
-<% provide(:title, I18n.t('serverspecs.serverspec')+" | "+I18n.t('helpers.titles.new')) %>
-<%- model_class = Serverspec -%>
-<div class="page-header">
-  <h1><%=t '.title', :default => [:'helpers.titles.new', 'New %{model}'], :model => model_class.model_name.human.titleize %></h1>
-</div>
-<%= render :partial => 'form' %>

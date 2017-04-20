@@ -251,7 +251,7 @@
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
       <bootstrap-tooltip :title.once="serverspec_time">
-        <template slot="content"><span :class="serverspec_status_class" class="label">{{serverspec_status}}</span></template>
+        <template slot="content"><span :class="servertest_status_class" class="label">{{servertest_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12" v-if="!ec2.platform">
@@ -320,12 +320,12 @@
       </div>
       <div class="dropup" style="display: inline-block">
         <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
-          <%= t('serverspecs.serverspec') %>
+          <%= t('servertests.servertest') %>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="select_serverspec()"><%= t('serverspecs.run') %></a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="serverspec_results()"><%= t('serverspecs.results') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="select_servertest()"><%= t('servertests.run') %></a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#" @click="serverspec_results()"><%= t('servertests.results') %></a></li>
         </ul>
       </div>
       <div class="pull-right">
