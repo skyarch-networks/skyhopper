@@ -1,16 +1,16 @@
 var gulp     = require('gulp');
 var ts       = require('gulp-typescript');
-var tsd      = require('gulp-tsd');
+var gulpTypings = require("gulp-typings");
+
 var tsconfig = require('gulp-tsconfig-files');
 var tslint   = require('gulp-tslint');
 
-gulp.task('tsd', function (callback) {
-  tsd({
-    command: 'reinstall',
-    config: 'tsd.json',
-  }, callback);
-});
 
+gulp.task("type",function(){
+    var stream = gulp.src("./typings.json")
+        .pipe(gulpTypings()); //will install all typingsfiles in pipeline.
+    return stream; // by returning stream gulp can listen to events from the stream and knows when it is finished.
+});
 
 gulp.task('ts', function () {
   var tsProject = ts.createProject('tsconfig.json');
@@ -25,7 +25,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('tsconfig', function () {
-  gulp.src(['src/**/*.ts', 'test/**/*.ts'])
+  gulp.src(['src/**/*.ts', 'test/**/*.ts', 'typings/**/*.ts'])
     .pipe(tsconfig({newline_eof: true}));
 });
 
