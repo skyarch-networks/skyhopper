@@ -1,0 +1,12 @@
+{
+  "name": "SkyHopper",
+  "dependencies": {},
+  "globalDependencies": {
+    "bootstrap": "registry:dt/bootstrap#3.3.5+20160726204056",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#c8a69b0b0c71cc00d4ada94a4420fb037b3cc9cd",
+    "jqueryui": "registry:dt/jqueryui#1.11.0+20161214061125",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "query-string": "github:DefinitelyTyped/DefinitelyTyped/query-string/query-string.d.ts#923c5431d9447db9d5cf41adc5914e3c94c1ff10",
+    "vue": "registry:dt/vue#1.0.21+20160929090511"
+  }
+}
