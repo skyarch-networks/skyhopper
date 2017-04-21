@@ -96,15 +96,12 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
-<<<<<<< HEAD
       insert_key:        '最初に AWS のキーを入力し、リージョンを選択してください。'
       warning_msg:  'SkyHopper が最適に動作するために、<b> Google Chrome </b> または <b> Firefox </b> Webブラウザの使用をお勧めしています。'
       db_export:         'エクスポートしたZIPファイルには下記のファイルが含まれています。'
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
-=======
->>>>>>> origin/develop
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -744,7 +741,6 @@ ja:
     incrementHour: '1時間後'
     decrementHour: '1時間前'
     pickHour: '時間を選択してください'
-<<<<<<< HEAD
   instructions:
     signup_head: '1 サインアップ'
     signup_body: |
@@ -765,8 +761,6 @@ ja:
       CloudFormation テンプレートを適用するには、<b>インフラを選択</b>して詳細を表示し <b>[Operations] メニュー</b> から <b>CloudFormation テンプレートの適用</b> を選択してください。
       その後、CloudFormation テンプレートの一覧が画面に表示されます。お好みのテンプレートを選択後、[パラメータの入力]をクリックしてフォームを埋めた後、[送信] ボタンを押すと、新規スタックの作成が開始されます。
       既に AWS に EC2 を作成しているならば、それを追加することもできます。詳細については<a href="http://skyhopper.org" target="_blank"> skyhopper.org </a>を参照してください。
-=======
-
   databases:
     db_management: 'データベースの管理'
     import_db:     'DB をインポート'
@@ -784,4 +778,3 @@ ja:
       under_maintenance: |
         データベースのインポート処理中のため、一時的に利用できなくなっています。
         少し待ってから再度お試しください。
->>>>>>> origin/develop

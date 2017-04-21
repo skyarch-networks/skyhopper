@@ -60,8 +60,6 @@ en:
         Please either insert a private key or drag-and-drop the file of private key.
         It will be inserted automatically if you generate a new keypair.
       not_found:     'No results for  <span class="text text-info"> %{name} </span> was found.'
-
-
   views:
     pagination:
       first:    '&laquo;'
@@ -748,7 +746,6 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
-
   instructions:
     signup_head: 'Sign up'
     signup_body: |
