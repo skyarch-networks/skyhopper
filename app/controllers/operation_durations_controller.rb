@@ -161,9 +161,7 @@ class OperationDurationsController < ApplicationController
     if rrules.frequency == "DAILY"
       instance[:repeat_freq] = 1
     else
-      if !defined? rrules.by_day
-        raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_by_day')
-      end
+      raise UploadCalendarError, I18n.t('operation_scheduler.msg.no_by_day') if !defined? rrules.by_day
 
       instance[:repeat_freq] = 4
       instance[:dates].map do |day|
