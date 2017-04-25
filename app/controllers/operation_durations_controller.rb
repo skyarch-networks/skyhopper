@@ -36,8 +36,8 @@ class OperationDurationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
-                                                             include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
+      format.json { render json: @operation_schedule.as_json(only: %i[id, start_date, end_date],
+                                                             include: [{recurring_date: {only: %i[id, repeats, start_time, end_time, dates]}},
                                                                        {resource: {only: [:physical_id]}} ])
       }
     end
@@ -119,19 +119,19 @@ class OperationDurationsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def create_schedule(start_date, end_date, instance)
-      ops = OperationDuration.create!(
-        resource_id:  instance[:resource_id],
-        start_date:   start_date,
-        end_date:     end_date,
-        user_id: current_user.id
-      )
-      RecurringDate.create!(
-        operation_duration_id: ops.id,
-        repeats: instance[:repeat_freq].to_i,
-        start_time:  start_date.strftime("%H:%M"),
-        end_time: end_date.strftime("%H:%M"),
-        dates: instance[:dates]
-      )
+    ops = OperationDuration.create!(
+      resource_id:  instance[:resource_id],
+      start_date:   start_date,
+      end_date:     end_date,
+      user_id: current_user.id
+    )
+    RecurringDate.create!(
+      operation_duration_id: ops.id,
+      repeats: instance[:repeat_freq].to_i,
+      start_time:  start_date.strftime("%H:%M"),
+      end_time: end_date.strftime("%H:%M"),
+      dates: instance[:dates]
+    )
   end
 
   def update_schedule(ops_exists, start_date, end_date, instance)
@@ -165,7 +165,7 @@ class OperationDurationsController < ApplicationController
 
       instance[:repeat_freq] = 4
       instance[:dates].map do |day|
-          day.second["checked"] = date_names.include?(rrules.by_day[day.second["value"].to_i]).to_s
+        day.second["checked"] = date_names.include?(rrules.by_day[day.second["value"].to_i]).to_s
       end
     end
 
