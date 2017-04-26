@@ -73,7 +73,7 @@ class Server {
     ws.onmessage = function (msg) {
       callback(msg.data);
     };
-  };
+  }
 }
 Server.ajax.add_member('start',  'POST', 'kind');
 Server.ajax.add_member('stop',   'POST', 'kind');
@@ -190,11 +190,11 @@ function Build(kind: string): void {
   const parent = document.querySelector(App.TEMPLATE_ID).parentElement;
   parent.appendChild(el);
   const vm = new App(new Server(kind), el);
-};
+}
 
 function Available(): boolean {
   return !!document.querySelector(App.TEMPLATE_ID);
-};
+}
 
 export function Do() {
   if (!Available()) { return; }

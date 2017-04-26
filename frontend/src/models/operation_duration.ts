@@ -18,7 +18,7 @@ type instance = {
     start_time: string,
     end_time: string,
     repeat_freq: string
-}
+};
 
 export default class OperationDuration extends ModelBase {
   constructor(private infra_id: string, private physical_id: string) {super(); }
@@ -53,7 +53,7 @@ export default class OperationDuration extends ModelBase {
     );
   }
 
-  upload_icalendar(instance: instance[],value: string): JQueryPromise<any> {
+  upload_icalendar(instance: instance[], value: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
       (<any>OperationDuration.ajax).upload_icalendar({
         instance: instance,

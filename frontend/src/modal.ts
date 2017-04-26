@@ -102,19 +102,19 @@ const modal = function (
 
 export function Confirm(title: string, message: string, status?: string): JQueryPromise<any> {
   return modal(title, message, ModalType.confirm, status);
-};
+}
 
 export function Alert(title: string, message: string, status?: string): JQueryPromise<any> {
   return modal(title, message, ModalType.alert, status);
-};
+}
 
 export function ConfirmHTML(title: string, message: string, status?: string): JQueryPromise<any> {
   return modal(title, message, ModalType.confirm_html, status);
-};
+}
 
 export function AlertHTML(title: string, message: string, status?: string): JQueryPromise<any> {
   return modal(title, message, ModalType.alert_html, status);
-};
+}
 
 export function Prompt(title: string, label: string, status?: string): JQueryPromise<any> {
   const input_id = _.uniqueId('bootstrap_prompt_');
@@ -147,7 +147,7 @@ export function Prompt(title: string, label: string, status?: string): JQueryPro
   });
 
   return dfd;
-};
+}
 
 
 // Example: $.ajax().done(...).fail(modal.AlertForAjaxStdError(function(){doSomething();}));
@@ -158,4 +158,4 @@ export function AlertForAjaxStdError(callback?: () => void) {
     const dfd = Alert(ex.kind, _.escape(ex.message), 'danger');
     if (callback) { dfd.done(callback); }
   };
-};
+}
