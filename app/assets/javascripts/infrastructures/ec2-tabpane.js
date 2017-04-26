@@ -63,6 +63,7 @@ module.exports = Vue.extend({
     change_status: t('ec2_instances.change_status'),
     attach_vol: t('ec2_instances.attach'),
     changing_status: t('ec2_instances.changing_status'),
+    is_yum_update: false,
   };},
 
   methods: {
@@ -185,7 +186,11 @@ module.exports = Vue.extend({
         // cook end
         self.chef_console_text = '';
         self.inprogress = false;
-        self._show_ec2();
+        if (self.is_yum_update) {
+          self._prompt_yum_log();
+        }else {
+          self._show_ec2();
+        }
       }).progress(function (state, msg) {
         if (state !== 'update') {return;}
 
@@ -205,6 +210,7 @@ module.exports = Vue.extend({
 
     yum_update: function (security, exec) {
       var self = this;
+      self.is_yum_update = true;
       var infra = new Infrastructure(this.infra_id);
       var ec2 = new EC2Instance(infra, self.physical_id);
 
@@ -218,14 +224,23 @@ module.exports = Vue.extend({
         ).progress(function (state, msg) {
           // cook start success
           if(state !== 'start'){return;}
-
-          alert_success(function () {
             self.inprogress = true;
             Vue.nextTick(function () {
               self.watch_cook(dfd);
             });
-          })(msg);
         });
+      });
+    },
+
+    _prompt_yum_log: function() {
+      var self = this;
+      self.is_yum_update = false;
+
+      modal.ConfirmHTML(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_success', {physical_id: self.physical_id}), 'success').done(function () {
+        self.$parent.tabpaneID = 'infra_logs';
+        self._loading();
+      }).fail(function () {
+        self._show_ec2();
       });
     },
 

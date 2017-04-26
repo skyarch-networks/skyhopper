@@ -309,6 +309,9 @@ en:
       runlist_empty:      'Runlist is empty'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
+      yum_update_success: |
+        Yum update for <b> %{physical_id} </b> has been successful. <br>
+        Do you want to see the logs for this operation?
 
   dishes:
     dishes:            'Dishes'

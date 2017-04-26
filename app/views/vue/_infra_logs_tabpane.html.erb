@@ -11,7 +11,7 @@
     <tr>
       <td><span v-if="log.admin" class="label label-info">admin</span>&nbsp;{{log.email}}</td>
       <td><span :class="status_class(log.status)" v-text="status_text(log.status)" class="label"></span></td>
-      <td>{{log.title}}<a v-if="log.long" href="#" data-toggle="collapse" data-target="#logbody-{{log.id}}" class="accordion-toggle btn btn-xs btn-link popovermore">...see all </a></td>
+      <td>{{log.title}}<a v-if="log.long" href="#" data-toggle="collapse" data-target="#logbody-{{log.id}}" class="accordion-toggle popovermore">...see all </a></td>
       <td v-text="toLocaleString(log.created_at)"></td>
     </tr>
     <tr v-if="log.long">
