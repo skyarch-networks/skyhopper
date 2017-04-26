@@ -22,6 +22,7 @@
   //  -------------------------------- ajax methods
   var create = function () {
     var settings = get_settings();
+    settings = remove_empty_optional_params(settings);
 
     return $.ajax({
       url: endpoint_base,
@@ -59,6 +60,15 @@
     return settings;
   };
 
+  var remove_empty_optional_params = function (obj) {
+    var optional_keys = ['vpc_id', 'subnet_id'];
+    optional_keys.forEach(function (key) {
+      if (obj[key] === '') {
+        delete obj[key];
+      }
+    });
+    return obj;
+  };
 
   var is_fill_required_input = function () {
     var elements = document.querySelectorAll(required_inputs);
