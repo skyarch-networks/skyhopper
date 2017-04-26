@@ -9,7 +9,7 @@
 class AppSettingsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :create, :chef_create]
 
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys, :db, :export_db] do
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
     if AppSetting.set?
       redirect_to root_path
     end
@@ -130,13 +130,6 @@ class AppSettingsController < ApplicationController
     @zipfile.close
   end
 
-  # GET /app_settings/export_db
-  def export_db
-    prepare_db_zip
-    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}.zip")
-    @zipfile.close
-  end
-
   private
 
   # statusに対応するメッセージをJSONとして返す
@@ -172,25 +165,5 @@ class AppSettingsController < ApplicationController
     @zipfile = Tempfile.open('chef')
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
-  end
-
-  def prepare_db_zip
-    dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
-    filename = "#{dbname}.sql"
-    path     = Rails.root.join("tmp/#{filename}")
-
-    system('rake db:data:dump')
-
-    @zipfile = Tempfile.open("skyhopper")
-    ::Zip::File.open(@zipfile.path, ::Zip::File::CREATE) do |zip|
-      zip.add(filename, path)
-
-      SkyHopper::Application.secrets.each do |key, value|
-        next if value.nil?
-        zip.get_output_stream(key) { |io| io.write(value) }
-      end
-    end
-
-    FileUtils.rm(path)
   end
 end

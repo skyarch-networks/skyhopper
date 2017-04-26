@@ -37,7 +37,7 @@ FactoryGirl.define do
     project
   end
 
-  factory :serverspec_result do
+  factory :servertest_result do
     resource
     status :success
     message 'serverspec success'
@@ -60,6 +60,7 @@ FactoryGirl.define do
     secret_access_key "1234567890"
     client
     cloud_provider_id{CloudProvider.aws.id}
+    zabbix_server
   end
 
   sequence(:status) do |n|
@@ -96,10 +97,11 @@ FactoryGirl.define do
     master true
   end
 
-  factory :serverspec do
+  factory :servertest do
     infrastructure
     name 'hoge'
     value 'fuga'
     description 'piyo'
+    category :awspec
   end
 end

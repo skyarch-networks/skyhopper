@@ -92,10 +92,6 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
-      db_export:         'When exporting SkyHopper Database into a zip file, it includes these files: '
-      env:  'SkyHopper%{env}.sql'
-      secret: 'secret_key_base'
-      db_key:  'db_crypt_key'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -141,6 +137,7 @@ en:
       cant_delete_system: 'Unable to delete project for this system.'
       empty-list:         'No Project found.'
       delete_project:     'Are you sure you want to delete this project?'
+      zabbix_not_set:     'Please Select Zabbix Server for this Project.'
 
 
   project_parameters:
@@ -179,6 +176,9 @@ en:
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
     search:             'Search by Keyword ...'
+    operations:         'Operations'
+    monitoring:         'Monitoring'
+    logs:               'Logs'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -209,6 +209,7 @@ en:
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
       modifying:                   'Modifying instance.. updates in 15 seconds.'
+      change_scale_warning:        'The instance will be stopped temporarily if the scale changes.'
 
   security_groups:
     title:        'Security Groups'
@@ -308,6 +309,9 @@ en:
       runlist_empty:      'Runlist is empty'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
+      yum_update_success: |
+        Yum update for <b> %{physical_id} </b> has been successful. <br>
+        Do you want to see the logs for this operation?
 
   dishes:
     dishes:            'Dishes'
@@ -328,38 +332,44 @@ en:
       delete_dish:            'Are you sure you want to delete this Dish?'
 
 
-  serverspecs:
+  servertests:
     name:              'Name'
-    serverspecs:       'Serverspecs'
-    serverspec:        'Serverspec'
+    servertests:       'Servertests'
+    serverspec:        'Servertest'
     description:       'Description'
     value:             'Value'
-    auto_generated:    'Auto generated Serverspecs'
+    auto_generated:    'Auto generated Servertests'
     global:            'Global'
     individual:        'Infrastructure Individual'
-    select_serverspec: 'Select Serverspecs'
+    select_serverspec: 'Select Servertests'
     created_at:        'at'
     operation_logs:    'Operation Logs'
-    run:               'Run Serverspecs'
-    results:           'Serverspec Results'
+    run:               'Run Servertests'
+    results:           'Servertest Results'
+    category:          'Category'
     btn:
-      add:       'Add Serverspec'
-      create:    'Create Serverspec'
-      run:       'Run Serverspecs'
-      generator: 'Generator'
+      add:       'Add Servertest'
+      create:    'Create Servertest'
+      run:       'Run Servertests'
+      serverspec_generator: 'Servertest Generator'
+      awspec_generator:      'AWSpec Generator'
+      generate:   'Generate'
     msg:
-      created:   'Serverspec was successfully created.'
-      updated:   'Serverspec was successfully updated.'
-      deleted:   'Serverspec was successfully deleted'
-      parseerr:  'Something went wrong with Serverspec Operation.'
+      created:   'Servertest was successfully created.'
+      updated:   'Servertest was successfully updated.'
+      deleted:   'Servertest was successfully deleted'
+      parseerr:  'Something went wrong with Servertest Operation.'
       success:   'Serverspec for %{physical_id} is successfully finished.'
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
       failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
       generated: 'Serverspec is successfully generated.'
-      delete_serverspec: 'Are you sure you want to delete this Serverspec?'
+      delete_servertest: 'Are you sure you want to delete this Servertest?'
       empty-results: 'No results found.'
       auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
       auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
+      generated:  'Generated file'
+      generating:  'Generating file spec ...'
+      select_infra: 'Select Infrastructure'
     generator:
       title:         'Serverspec Generator'
       name:          'name'
@@ -710,3 +720,21 @@ en:
     incrementHour: 'Increment Hour'
     decrementHour: 'Decrement Hour'
     pickHour: 'Pick Hour'
+
+  databases:
+    db_management: 'Database Management'
+    import_db:     'Import DB'
+    msg:
+      env:       'SkyHopper%{env}.sql'
+      secret:    'secret_key_base'
+      db_key:    'db_crypt_key'
+      db_export: 'When exporting SkyHopper Database into a zip file, the following files are included: '
+      db_import: 'When importing SkyHopper Database, select a zip file that contains these files: '
+      db_import_finish: 'Database import has finished.'
+      db_import_intro:  'You can not perform any operations until the import is complete.'
+      db_import_warning: |
+        Database of SkyHopper will be replaced completely by the import operation.
+        Please be careful when using this.
+      under_maintenance: |
+        Temporarily unavailable due to database import process.
+        Please wait for at least a minute and try to refresh the browser again.

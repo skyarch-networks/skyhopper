@@ -6,7 +6,8 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-/// <reference path="typings/tsd.d.ts" />
+/// <reference path="typings/index.d.ts" />
+
 
 declare module AjaxSet {
   class Base {

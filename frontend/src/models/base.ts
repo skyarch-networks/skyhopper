@@ -34,4 +34,20 @@ export default class ModelBase {
   protected rejectF(dfd: JQueryDeferred<any>) {
     return (xhr: XMLHttpRequest) => dfd.reject(xhr.responseText);
   }
+
+  // ec2 のステータス変更をWebSocketで待ち受けて、dfdをrejectかresolveする function を返す
+  protected wait_change_status(id: any, dfd: JQueryDeferred<any>, scope: string): () => void {
+    return () => {
+      const ws = ws_connector(scope, id);
+      ws.onmessage = function (msg) {
+        const d = JSON.parse(msg.data);
+        if (!d.status) {
+          dfd.reject(d.message);
+        } else {
+          dfd.resolve(d);
+        }
+        ws.close();
+      };
+    };
+  }
 }

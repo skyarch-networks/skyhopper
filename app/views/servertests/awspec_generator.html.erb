@@ -1,0 +1,58 @@
+<% provide(:title, I18n.t('servertests.btn.awspec_generator')) %>
+<div class="page-header">
+  <h2>
+    <%=t('servertests.btn.awspec_generator')%>
+    <% if @infra %>
+        <small><%= ('for ' + link_to(@infra.stack_name, infrastructures_path(project_id: @infra.project_id, infrastructure_id: @infra.id))).html_safe %></small>
+    <% end %>
+  </h2>
+</div>
+
+<div id="indexElement">
+  <div class="form-group" v-if="loading">
+        <span class="loader"></span>
+          <%=t('common.msg.loading')%>
+  </div>
+    <div class="form-horizontal" role="form" v-cloak>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="infras"><%=t('infrastructures.infrastructure')%></label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <select v-model="sel_infra_id" class="form-control" id="infras">
+              <option disabled selected>--- <%=t('servertests.msg.select_infra')%> ---</option>
+              <% @infras.each do |infra| %>
+                  <option value="<%= infra.id %>"><%=infra.stack_name %></option>
+              <% end %>
+            </select>
+            <span class="input-group-btn">
+              <button :disabled="!sel_infra_id" v-if="!generating" class="btn btn-default" @click="generate()"><%=t('servertests.btn.generate')%></button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" v-if="generating">
+        <span class="loader"></span>
+          <%= t 'servertests.msg.generating' %>
+        <hr>
+      </div>
+      <div class="form-group" v-if="awspec.value && !generating">
+          <label class="control-label col-sm-2" for="infras"><%=t('servertests.msg.generated')%></label>
+          <div class="col-sm-8">
+            <textarea  v-ace="awspec.value"></textarea>
+          </div>
+      </div>
+      <div class="form-group" v-if="awspec.value && !generating">
+          <label class="control-label col-sm-2" for="infras"><%=t('servertests.generator.name')%></label>
+          <div class="col-sm-8">
+          <input class="form-control" type="text" v-model="awspec.fname">
+          </div>
+      </div>
+
+      <div class="form-actions-top">
+        <button :disabled="!required_filed" class="btn btn-primary" @click="create_awspec()"><%=t('helpers.titles.save')%></button>
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+          servertests_path(infrastructure_id: @infra.try(:id)), class: 'btn-default btn' %>
+      </div>
+    </div>
+<div>
