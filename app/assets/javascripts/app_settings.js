@@ -156,5 +156,11 @@
   });
 
 
+  $(document).on('click', '#btn-show-optional-inputs', function (e) {
+    e.preventDefault();
+
+    $('#btn-show-optional-inputs').hide();
+    $('#optional-inputs').fadeIn('fast');
+  });
 
 })();
