@@ -98,6 +98,8 @@ en:
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
+      vpc_id_not_found:  'The vpc ID <b> "%{id}" </b> does not exist.'
+      subnet_id_not_found: 'The subnet ID <b> "%{id}" </b> does not exist.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'

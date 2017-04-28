@@ -30,16 +30,21 @@ class AppSettingsController < ApplicationController
     keypair_name      = settings.delete(:keypair_name)
     keypair_value     = settings.delete(:keypair_value)
 
-    vpc_id    = settings.delete(:vpc_id)    || ''
-    subnet_id = settings.delete(:subnet_id) || ''
+    vpc_id    = settings.delete(:vpc_id)
+    subnet_id = settings.delete(:subnet_id)
+
+    set_ec2(settings[:aws_region], access_key, secret_access_key)
+
+    verify_vpc_id!(vpc_id) if vpc_id
+    verify_subnet_id!(subnet_id) if subnet_id
+
+    check_eip_limit!
 
     cf_params = {
       VpcId:    vpc_id,
       SubnetId: subnet_id,
     }
     Rails.cache.write(CF_PARAMS_KEY, cf_params)
-
-    check_eip_limit!(settings[:aws_region], access_key, secret_access_key)
 
     ec2key = Ec2PrivateKey.create!(
       name:  keypair_name,
@@ -166,20 +171,31 @@ class AppSettingsController < ApplicationController
     return JSON.generate(hash)
   end
 
+  def set_ec2(region, access_key_id, secret_access_key)
+    @ec2 = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
+  end
+
   class EIPLimitError < StandardError; end
 
   # @param [String] region
   # @param [String] access_key_id
   # @param [String] secret_access_key
   # @raise [EIPLimitError] raise error when cann't allocate EIP.
-  def check_eip_limit!(region, access_key_id, secret_access_key)
-    e = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
-    a = e.describe_account_attributes
+  def check_eip_limit!
+    a = @ec2.describe_account_attributes
     limit = a.account_attributes.find{|x| x.attribute_name == 'vpc-max-elastic-ips'}.attribute_values.first.attribute_value.to_i
-    n = e.describe_addresses.addresses.size
+    n = @ec2.describe_addresses.addresses.size
     if limit - n < 2
       raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
     end
+  end
+
+  def verify_vpc_id!(vpc_id)
+    @ec2.describe_vpcs(vpc_ids: [vpc_id])
+  end
+
+  def verify_subnet_id!(subnet_id)
+    @ec2.describe_subnets(subnet_ids: [subnet_id])
   end
 
   def prepare_chef_key_zip

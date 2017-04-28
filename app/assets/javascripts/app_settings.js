@@ -30,7 +30,17 @@
       data: {
         settings: JSON.stringify(settings)
       },
-    }).fail(modal.AlertForAjaxStdError());
+    }).fail(function (xhr) {
+      var res = xhr.responseJSON;
+      var kind = res.error.kind;
+      if (kind.endsWith('VpcIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', {id: _.escape(settings.vpc_id)}), 'danger');
+      } else if (kind.endsWith('SubnetIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', {id: _.escape(settings.subnet_id)}), 'danger');
+      } else {
+        modal.AlertForAjaxStdError()(xhr);
+      }
+    });
   };
 
   var chef_create = function () {
