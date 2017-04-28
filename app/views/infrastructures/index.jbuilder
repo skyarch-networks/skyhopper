@@ -16,7 +16,7 @@ json.array!(@infrastructures) do |infra|
   json.edit_infrastructure_path edit_infra(infra)
   json.button_detach_stack button_detach_stack(infra)
   json.button_delete_stack button_delete_stack(infra)
-  json.serverspecs_path serverspecs_path(infrastructure_id: infra.id)
+  json.servertests_path servertests_path(infrastructure_id: infra.id)
 
 
   json.url infrastructure_url(infra, format: :json)

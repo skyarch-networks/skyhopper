@@ -27,7 +27,7 @@
   <div class="tab-content">
     <div class="tab-pane active" id="history-json-tab">
       <select class="form-control" size="20" v-model="selected_cft_id" number @dblclick="select_cft()">
-        <option v-for="t in templates.histories" value="{{t.id}}" v-text="t.name"></option>
+        <option v-for="t in templates.histories" value="{{t.id}}">{{t.name}} ({{t.created_at | created_at}})</option>
       </select>
     </div>
     <div class="tab-pane" id="global-json-tab">

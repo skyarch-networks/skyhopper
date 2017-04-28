@@ -198,6 +198,7 @@ h6.page-header {
 
 .recipes-selectbox-height {
   height: 285px !important;
+  background-image: none !important;
 }
 
 .runlist-selectbox-height {

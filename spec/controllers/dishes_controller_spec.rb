@@ -65,7 +65,7 @@ describe DishesController, type: :controller do
     end
 
     it 'should assigns @selected_serverspecs' do
-      expect(assigns[:selected_serverspecs]).to eq dish.serverspecs
+      expect(assigns[:selected_serverspecs]).to eq dish.servertests
     end
 
     it 'should assign @runlist' do
@@ -87,7 +87,7 @@ describe DishesController, type: :controller do
     end
 
     it 'should assign @global_serverspecs' do
-      expect(assigns[:global_serverspecs]).to eq Serverspec.global
+      expect(assigns[:global_serverspecs]).to eq Servertest.global
     end
 
     it 'should assign @cookbooks' do
@@ -103,7 +103,7 @@ describe DishesController, type: :controller do
     end
 
     it 'should assign @selected_serverspecs' do
-      expect(assigns[:selected_serverspecs]).to eq dish.serverspecs
+      expect(assigns[:selected_serverspecs]).to eq dish.servertests
     end
 
     it do
@@ -112,9 +112,9 @@ describe DishesController, type: :controller do
   end
 
   describe '#update' do
-    let(:serverspec){create(:serverspec)}
+    let(:servertest){create(:servertest)}
     let(:runlist){['hoge', 'fuga']}
-    let(:update_request){patch :update, id: dish.id, runlist: runlist, serverspecs: [serverspec.id]}
+    let(:update_request){patch :update, id: dish.id, runlist: runlist, servertests: [servertest.id]}
 
     context 'when valid params' do
       before do
@@ -135,8 +135,8 @@ describe DishesController, type: :controller do
         expect(subject.runlist).to eq runlist
       end
 
-      it 'serverspec should be equaled' do
-        expect(subject.serverspecs).to eq [serverspec]
+      it 'servertest should be equaled' do
+        expect(subject.servertests).to eq [servertest]
       end
 
       it 'status should be nil' do

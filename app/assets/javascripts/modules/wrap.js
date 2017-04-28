@@ -14,16 +14,16 @@ module.exports = function(value, index){
       return render_projects(value);
     case 'clients':
       return render_clients(value);
-    case 'serverspecs':
-      return render_serverspecs(value);
+    case 'servertests':
+      return render_servertests(value);
     case 'dishes':
       return render_dish(value);
     case 'cf_templates':
       return render_cf_templates(value);
     case 'user_admin':
       return render_user_admin(value);
-    case 'serverspec_results':
-      return render_serverspecs_results(value);
+    case 'servertest_results':
+      return render_servertests_results(value);
     case 'operation_sched':
       return render_ops_sched(value);
     default:
@@ -75,12 +75,14 @@ function render_clients(value){
   }
 }
 
-function render_serverspecs(value){
+function render_servertests(value){
   switch (value) {
     case 'description':
-      return t ('serverspecs.description');
-    case 'serverspec_name':
-      return t ('serverspecs.name');
+      return t ('servertests.description');
+    case 'servertest_name':
+      return t ('servertests.name');
+    case 'category':
+      return t ('servertests.category');
     default:
       return value;
   }
@@ -123,18 +125,18 @@ function render_user_admin(value){
   }
 }
 
-function render_serverspecs_results(value){
+function render_servertests_results(value){
   switch (value) {
-    case 'serverspec':
-      return t('serverspecs.serverspecs');
+    case 'servertest':
+      return t('servertests.servertests');
     case 'resource':
-      return t('serverspecs.generator.resources');
+      return t('servertests.generator.resources');
     case 'message':
       return t('cf_templates.details');
     case 'status':
       return t ('infrastructures.status');
     case 'created_at':
-      return t ('serverspecs.created_at');
+      return t ('servertests.created_at');
     default:
       return value;
   }
