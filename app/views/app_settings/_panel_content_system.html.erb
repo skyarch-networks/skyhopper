@@ -36,7 +36,7 @@
     <div class="form-group">
       <label for="aws_region" class="col-sm-3 control-label"><%= t 'app_settings.aws_region' %></label>
       <div class="col-sm-7">
-        <select class="form-control" id="aws_region" name="aws_region">
+        <select class="form-control" id="aws_region" name="aws_region" required>
           <%= please_select_option %>
           <%= options_for_select(AWS::Regions) %>
         </select>
@@ -51,10 +51,35 @@
         <input id="keypair_name" class="form-control ec2-private-key-name" type="text" name="keypair_name" required maxlength="255">
 
         <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
-        <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7"></textarea>
+        <textarea id="keypair_value" class="form-control ec2-private-key-value" name="keypair_value" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7" required></textarea>
         <p class="help-block"><%= t('app_settings.msg.aws_keypair') %></p>
       </div>
     </div>
+
+    <div class="form-group">
+        <button id="btn-show-optional-inputs" class="btn btn-link btn-block">
+          <span class="glyphicon glyphicon-chevron-down"></span>
+          <%= t('common.optional') %>
+        </button>
+    </div>
+
+    <div id="optional-inputs" class="well" style="display: none;">
+      <legend><%= t('common.optional') %></legend>
+      <div class="form-group">
+        <label for="vpc_id" class="col-sm-3 control-label"><%= t 'app_settings.vpc_id' %></label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control" id="vpc_id" name="vpc_id" placeholder="vpc-abcd1234 (optional)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="subnet_id" class="col-sm-3 control-label"><%= t 'app_settings.subnet_id' %></label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control" id="subnet_id" name="subnet_id" placeholder="subnet-abcd1234 (optional)">
+        </div>
+      </div>
+    </div>
+
   </fieldset>
 
 </form>

@@ -40,7 +40,7 @@ class AppSetting < ActiveRecord::Base
     # AppSetting.get 用のキャッシュを削除する。
     # 設定を更新した場合などにする必要がある
     def clear_cache
-      Rails.cache.clear('app_setting')
+      Rails.cache.delete('app_setting')
     end
   end
 

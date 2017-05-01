@@ -78,6 +78,8 @@ en:
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
     chef_server:       'Chef Server'
+    vpc_id:            'VPC ID'
+    subnet_id:         'Subnet ID'
 
     msg:
       created:           'SkyHopper was successfully setup'
@@ -92,6 +94,8 @@ en:
       aws_keypair:       'SSH key used for SkyHopper System (Registered KeyPair from EC2 console that is linked with API key above)'
       zabbix_updated:    'Zabbix Setting was successfully updated.'
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
+      vpc_id_not_found:  'The vpc ID <b> "%{id}" </b> does not exist.'
+      subnet_id_not_found: 'The subnet ID <b> "%{id}" </b> does not exist.'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
