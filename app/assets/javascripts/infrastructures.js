@@ -20,7 +20,10 @@
   //browserify modules for Vue directives
   var Infrastructure = require('models/infrastructure').default;
   var modal          = require('modal');
+  var VueRouter = require('vue-router')
 
+
+  Vue.use(VueRouter);
   Vue.use(require('./modules/datepicker'), queryString.lang);
   Vue.use(require('./modules/timepicker'), queryString.lang);
 
@@ -28,6 +31,7 @@
   require('brace/mode/json');
   require('brace/theme/github');
   Vue.use(vace, false, 'json', '25');
+
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
@@ -49,7 +53,7 @@
   Vue.component('servertest-results-tabpane', require('infrastructures/servertest-results-tabpane.js'));
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
-  Vue.component('demo-grid',                  require('demo-grid.js'));
+  var demo = Vue.component('demo-grid',                  require('demo-grid.js'));
 
 
 
@@ -147,8 +151,7 @@
 // ================================================================
 
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
-  var index = new Vue({
-    el: '#indexElement',
+  var index = Vue.extend({
     data: {
       searchQuery: '',
       gridColumns: [],
@@ -206,6 +209,54 @@
       },
     }
   });
+
+    var notFound = Vue.extend({
+        // You can use also use template path (Thanks to @jcerdan)
+        // path : '/path/to/component.html'
+        template: '<h1>Not Found</h1>'
+    })
+
+    var router = new VueRouter({
+        history: false,
+        root: '/'
+    });
+
+    // Router map for defining components
+    router.map({
+        // For Not Found template
+        '*': {
+            component: index
+        },
+
+        '/': {
+            component: demo,
+
+            // Defining Subroutes
+            // subRoutes: {
+            //     '/subroute': {
+            //         component: subRouteContent
+            //     }
+            // }
+        },
+
+        // '/about': {
+        //     component: aboutComponent,
+        //     subRoutes: {
+        //         '/subroute': {
+        //             component: subRouteContent
+        //         }
+        //     }
+        // },
+        //
+        // '/contact': {
+        //     component: contactComponent
+        // }
+    });
+
+
+    router.start(index, '#indexElement')
+
+
 
 
 
