@@ -35,15 +35,20 @@ class AppSettingsController < ApplicationController
 
     set_ec2(settings[:aws_region], access_key, secret_access_key)
 
-    verify_vpc_id!(vpc_id) if vpc_id
-    verify_subnet_id!(subnet_id) if subnet_id
+    cf_params = {}
+
+    if vpc_id
+      verify_vpc_id!(vpc_id)
+      cf_params[:VpcId] = vpc_id
+    end
+
+    if subnet_id
+      verify_subnet_id!(subnet_id)
+      cf_params[:SubnetId] = subnet_id
+    end
 
     check_eip_limit!
 
-    cf_params = {
-      VpcId:    vpc_id,
-      SubnetId: subnet_id,
-    }
     Rails.cache.write(CF_PARAMS_KEY, cf_params)
 
     ec2key = Ec2PrivateKey.create!(

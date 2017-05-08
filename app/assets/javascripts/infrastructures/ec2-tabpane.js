@@ -3,6 +3,7 @@ var Dish           = require('models/dish').default;
 var EC2Instance    = require('models/ec2_instance').default;
 var Snapshot       = require('models/snapshot').default;
 var queryString = require('query-string').parse(location.search);
+var ansi_up = require('ansi_up');
 
 var helpers = require('infrastructures/helper.js');
 var toLocaleString       = helpers.toLocaleString;
@@ -285,6 +286,7 @@ module.exports = Vue.extend({
     is_first:     function (idx) { return (idx === 0); },
     runlist_type: function (run) { return run.replace(/\[.+\]$/, ""); },
     runlist_name: function (run) { return run.replace(/^.+\[(.+)\]$/, "$1"); },
+    ansi_up:      function(log)  { return ansi_up.ansi_to_html(log); },
 
     _loading: function () { this.$parent.loading = true; },
 
