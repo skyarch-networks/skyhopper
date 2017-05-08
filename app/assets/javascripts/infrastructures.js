@@ -152,28 +152,28 @@
 
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
   var index = Vue.extend({
-    data: {
-      searchQuery: '',
-      gridColumns: [],
-      gridData: [],
-      loading: true,
-      is_empty: false,
-      url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
-      picked: {
-        button_delete_stack: null,
-        edit_infrastructure_path: null,
-        button_detach_stack: null
-      },
-      index: 'infrastructures'
+    data: function(){
+        return{
+            searchQuery: '',
+            gridColumns: [],
+            gridData: [],
+            loading: true,
+            is_empty: false,
+            url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
+            picked: {
+                button_delete_stack: null,
+                edit_infrastructure_path: null,
+                button_detach_stack: null
+            },
+            index: 'infrastructures'
+        }
     },
     created: function(){
         if (queryString.project_id >3)
           this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
         else
           this.gridColumns = ['stack_name','region', 'keypairname'];
-
       moment.locale(queryString.lang);
-
     },
     methods: {
       can_edit: function() {
@@ -225,11 +225,12 @@
     router.map({
         // For Not Found template
         '*': {
-            component: index
+            component: notFound
         },
 
         '/': {
             component: demo,
+            props: true,
 
             // Defining Subroutes
             // subRoutes: {
@@ -252,7 +253,6 @@
         //     component: contactComponent
         // }
     });
-
 
     router.start(index, '#indexElement')
 
