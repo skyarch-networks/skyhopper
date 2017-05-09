@@ -6,8 +6,6 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-require 'sidekiq/api'
-
 class Schedule < ActiveRecord::Base
   enum frequency:   %i[daily weekly intervals]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
