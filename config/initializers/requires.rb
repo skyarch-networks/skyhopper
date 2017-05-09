@@ -9,5 +9,6 @@ require 'net/scp'
 require 'tmpdir'
 require 'rbconfig'
 require 'zip'
-require_relative '../../lib/erb-builder/erb-builder.rb'
 require 'sidekiq/api'
+require_relative '../../lib/erb-builder/erb-builder.rb'
+
