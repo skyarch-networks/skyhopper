@@ -81,6 +81,8 @@ ja:
     secret_access_key: 'APIシークレット'
     chef_server:       'Chef Server'
     warning:           '警告！'
+    vpc_id:            'VPC ID'
+    subnet_id:         'サブネット ID'
 
     msg:
       created:           'SkyHopperのセットアップが完了しました。システムにログインするためのユーザーアカウントを作成する次のステップに進むために[完了]ボタンを押してください。'
@@ -102,6 +104,8 @@ ja:
       env:  'SkyHopper%{env}.sql'
       secret: 'secret_key_base'
       db_key:  'db_crypt_key'
+      vpc_id_not_found:  'VPC ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
+      subnet_id_not_found: 'サブネット ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -334,6 +338,9 @@ ja:
       runlist_empty:      'Runlist は空です'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
+      yum_update_success: |
+          %{physical_id}のYumアップデートが成功しました。 <br>
+          この操作のログを表示しますか？
 
 
   dishes:

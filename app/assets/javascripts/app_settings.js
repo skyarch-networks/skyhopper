@@ -181,10 +181,13 @@
 
   var endpoint_base = '/app_settings';
   var inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea';
+  var required_inputs = '#app-settings-form input[required],select[required],textarea[required]';
 
 
   //  -------------------------------- ajax methods
   var create = function (settings) {
+    var settings = get_settings();
+    settings = remove_empty_optional_params(settings);
 
     return $.ajax({
       url: endpoint_base,
@@ -192,7 +195,17 @@
       data: {
         settings: JSON.stringify(settings)
       },
-    }).fail(modal.AlertForAjaxStdError());
+    }).fail(function (xhr) {
+      var res = xhr.responseJSON;
+      var kind = res.error.kind;
+      if (kind.endsWith('VpcIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', {id: _.escape(settings.vpc_id)}), 'danger');
+      } else if (kind.endsWith('SubnetIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', {id: _.escape(settings.subnet_id)}), 'danger');
+      } else {
+        modal.AlertForAjaxStdError()(xhr);
+      }
+    });
   };
 
   var chef_create = function () {
@@ -211,10 +224,21 @@
 
 
   //  --------------------------------  utility methods
-  var is_fill_input = function() {
-    var set = get_settings();
-    for (var i in set) {
-      if (set[i] === '') {
+
+  var remove_empty_optional_params = function (obj) {
+    var optional_keys = ['vpc_id', 'subnet_id'];
+    optional_keys.forEach(function (key) {
+      if (obj[key] === '') {
+        delete obj[key];
+      }
+    });
+    return obj;
+  };
+
+  var is_fill_required_input = function () {
+    var elements = get_settings();
+    for (var i = 0; i < elements.length; ++i) {
+      if (elements[i].value === '') {
         return false;
       }
     }
@@ -225,7 +249,7 @@
   //  inputが全部埋まっていれば btn をenableにする。
   //  全部埋まっていなければdisableにする
   var switch_btn_enable = function (btn) {
-    if (is_fill_input()) {
+    if (is_fill_required_input()) {
       btn.removeAttr('disabled');
     } else {
       btn.attr('disabled', 'disabled');
@@ -277,7 +301,6 @@
       progress_alert.removeClass("alert-info").addClass("alert-danger");
     }
   };
-
 
 
 })();
