@@ -78,6 +78,8 @@ ja:
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
     chef_server:       'Chef Server'
+    vpc_id:            'VPC ID'
+    subnet_id:         'サブネット ID'
 
     msg:
       created:           'アプリケーションは正常に設定されました'
@@ -92,6 +94,8 @@ ja:
       aws_keypair:       'SkyHopper のシステムが使用する SSH鍵（上記の APIキー に紐付けられた EC2 のコンソールから登録した鍵ペアを指定）'
       zabbix_updated:    'Zabbix の設定は正常に更新されました。'
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
+      vpc_id_not_found:  'VPC ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
+      subnet_id_not_found: 'サブネット ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -306,6 +310,9 @@ ja:
       runlist_empty:      'Runlist は空です'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
+      yum_update_success: |
+          %{physical_id}のYumアップデートが成功しました。 <br>
+          この操作のログを表示しますか？
 
 
   dishes:
