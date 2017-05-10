@@ -34,7 +34,7 @@
 
 
 
-  Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
+  var stackEvents = Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
   Vue.component('add-modify-tabpane',         require('infrastructures/add-modify-tabpane.js'));
   Vue.component('insert-cf-params',           require('infrastructures/insert-cf-params.js'));
   Vue.component('add-ec2-tabpane',            require('infrastructures/add-ec2-tabpane.js'));
@@ -54,6 +54,7 @@
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
   var demo = Vue.component('demo-grid',                  require('demo-grid.js'));
+  var newVM = Vue.component('newVM',                  require('modules/newVM.js'));
 
 
 
@@ -152,7 +153,7 @@
 
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
   var index = Vue.extend({
-    data: function(){
+    data: function() {
         return{
             searchQuery: '',
             gridColumns: [],
@@ -240,14 +241,15 @@
             // }
         },
 
-        // '/about': {
-        //     component: aboutComponent,
-        //     subRoutes: {
-        //         '/subroute': {
-        //             component: subRouteContent
-        //         }
-        //     }
-        // },
+        '/stack/:stack_id': {
+            name: 'stack',
+            component: newVM,
+            // subRoutes: {
+            //     '/subroute': {
+            //         component: subRouteContent
+            //     }
+            // }
+        },
         //
         // '/contact': {
         //     component: contactComponent

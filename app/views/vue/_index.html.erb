@@ -28,7 +28,7 @@
         <td v-for="key in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
           <input v-if="multiSelect && $index == 0" type="checkbox" v-model="selections" :value="entry"/>
           <input v-if="!multiSelect && $index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
-          <span v-show="key === 'stack_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+          <span v-show="key === 'stack_name'"> <a v-link="{ name: 'stack', params: { stack_id: entry.id }}" v-html="entry[key]">User</a></span>
           <span v-show="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'cf_subject'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>

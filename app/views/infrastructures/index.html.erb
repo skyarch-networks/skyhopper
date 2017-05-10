@@ -79,17 +79,21 @@
       <hr>
     </div>
 
-    <div class="container">
+    <hr>
+
+    <%= button_add_infra(@selected_project) %>
+    <div class="page-header"></div>
       <router-view></router-view>
-    </div>
   </div>
 
 
-  <hr>
+
+    <%= render 'show' %>
 
 
-<%= button_add_infra(@selected_project) %>
 
-<div class="page-header"></div>
 
-<%= render 'show' %>
+
+
+
+

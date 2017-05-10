@@ -20,6 +20,7 @@ module.exports = Vue.extend({
 
   data: function () {
     var sortOrders = {};
+    console.log(this);
     this.columns.forEach(function (key) {
       sortOrders[key] = 1;
     });

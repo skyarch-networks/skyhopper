@@ -9,32 +9,44 @@
 var CFTemplate   = require('models/cf_template').default;
 var Resource     = require('models/resource').default;
 var EC2Instance  = require('models/ec2_instance').default;
+var Infrastructure = require('models/infrastructure').default;
 var helpers      = require('infrastructures/helper.js');
 var alert_danger = helpers.alert_danger;
+var stack;
 
 
-module.exports = function (stack, current_infra, current_tab) {
-  return new Vue({
+module.exports = Vue.extend({
     template: '#infra-show-template',
-    data: {
-      current_infra: {
-        id: parseInt(current_infra.id),
-        stack: stack,
-        resources : {},
-        events: [],
-        templates: {histories: null, globals: null},
-        add_modify: {name: "", detail: "", value: ""},
-      },
-      tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
-      tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
-      spec_Columns: ['serverspec', 'resource', 'message', 'status', 'created_at'],
-      sec_group: null,
-      instance_type: null,
-      ops_sched_Columns: ['physical_id', 'screen_name', 'id'],
-      serverspec_failed: t('infrastructures.serverspec_failed'),
-      loading: true,  // trueにすると、loading-tabpaneが表示される。
+    data: function() {
+        return {
+            infraModel: null,
+            current_infra: {
+                id: null,
+                stack: {},
+                resources : {},
+                events: [],
+                templates: {histories: null, globals: null},
+                add_modify: {name: "", detail: "", value: ""},
+            },
+            tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
+            tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
+            spec_Columns: ['serverspec', 'resource', 'message', 'status', 'created_at'],
+            sec_group: null,
+            instance_type: null,
+            ops_sched_Columns: ['physical_id', 'screen_name', 'id'],
+            serverspec_failed: t('infrastructures.serverspec_failed'),
+            loading: true,  // trueにすると、loading-tabpaneが表示される。
+        }
     },
     methods:{
+      fetch_data: function () {
+          var self = this;
+          self.infraModel = new Infrastructure(this.$route.params.stack_id);
+          self.infraModel.show().done(function (ret_stack) {
+              self.current_infra.stack = ret_stack;
+              self.current_infra.id = self.infraModel.id;
+          });
+      },
       screen_name: function (res) {
         if (res.screen_name) {
           return res.screen_name + ' / ' + this.subsStr(res.physical_id);
@@ -48,7 +60,6 @@ module.exports = function (stack, current_infra, current_tab) {
         }else {
           return string;
         }
-
       },
       show_ec2: function (physical_id) {
         this.show_tabpane('ec2');
@@ -75,7 +86,7 @@ module.exports = function (stack, current_infra, current_tab) {
         self.loading = true;
         self.$event.preventDefault();
 
-        var cft = new CFTemplate(current_infra);
+        var cft = new CFTemplate(self.infraModel);
         cft.new().done(function (data) {
           self.current_infra.templates.histories = data.histories;
           self.current_infra.templates.globals = data.globals;
@@ -98,7 +109,7 @@ module.exports = function (stack, current_infra, current_tab) {
         self.loading = true;
         self.$event.preventDefault();
 
-        current_infra.stack_events().done(function (res) {
+        self.infraModel.stack_events().done(function (res) {
           self.current_infra.events = res.stack_events;
           self.show_tabpane('event_logs');
         });
@@ -155,7 +166,7 @@ module.exports = function (stack, current_infra, current_tab) {
         });
       },
       update_serverspec_status: function (physical_id) {
-        var ec2 = new EC2Instance(current_infra, physical_id);
+        var ec2 = new EC2Instance(self.infraModel, physical_id);
         var self = this;
         ec2.serverspec_status().done(function (data) {
           var r = _.find(self.current_infra.resources.ec2_instances, function (v) {
@@ -167,16 +178,16 @@ module.exports = function (stack, current_infra, current_tab) {
 
       stack_in_progress: function () {
         var self = this;
-        current_infra.stack_events().done(function (res) {
+        self.infraModel.stack_events().done(function (res) {
           self.$data.current_infra.events = res.stack_events;
 
           if (res.stack_status.type === 'IN_PROGRESS') {
             setTimeout(function () {
-              self.stack_in_progress(current_infra);
+              self.stack_in_progress(self.infraModel);
             }, 15000);
           } else {
             var show_infra = require('infrastructures/show_infra.js').show_infra;
-            show_infra(current_infra.id);
+            show_infra(self.infraModel.id);
           }
         });
       },
@@ -205,6 +216,15 @@ module.exports = function (stack, current_infra, current_tab) {
     filters: {
       toLocaleString: toLocaleString,
     },
+    watch: {
+        // call again the method if the route changes
+        '$route': 'fetch_data'
+    },
+    created: function () {
+            // fetch the data when the view is created and the data is
+            // already being observed
+            this.fetch_data()
+    },
     computed: {
       no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
       in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
@@ -225,11 +245,11 @@ module.exports = function (stack, current_infra, current_tab) {
     },
     ready: function () {
       var self = this;
-      console.log(self);
-      self.back_to_top();
+      console.log(this.current_infra);
+        console.log(this.current_infra.stack);
 
-      if (stack.status.type === 'OK') {
-        var res = new Resource(current_infra);
+      if (self.current_infra.stack.status.type === 'OK') {
+        var res = new Resource(self.infraModel);
         res.index().done(function (resources) {
           _.forEach(resources.ec2_instances, function (v) {
             v.serverspec_status = true;
@@ -259,7 +279,7 @@ module.exports = function (stack, current_infra, current_tab) {
         self.$data.loading = false;
 
       } else if (stack.status.type === 'NG') {
-        current_infra.stack_events().done(function (res) {
+        self.infraModel.stack_events().done(function (res) {
           self.$data.current_infra.events = res.stack_events;
           self.$data.loading = false;
         });
@@ -270,4 +290,3 @@ module.exports = function (stack, current_infra, current_tab) {
       }
     },
   });
-};
