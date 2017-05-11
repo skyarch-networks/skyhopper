@@ -19,13 +19,16 @@
     data: {
       key_select: null,
       creating: false,
+      optional: false,
       params: {
         log_directory: null,
         access_key: null,
         secret_access_key: null,
         aws_region: null,
         keypair_name: null,
-        keypair_value: null
+        keypair_value: null,
+        subnet_id: null,
+        vpc_id: null
       },
     },
     methods: {
@@ -185,10 +188,9 @@
 
 
   //  -------------------------------- ajax methods
-  var create = function (settings) {
-    var settings = get_settings();
-    settings = remove_empty_optional_params(settings);
-
+  var create = function (params) {
+    var settings = remove_empty_optional_params(params);
+    console.log(settings);
     return $.ajax({
       url: endpoint_base,
       type: 'POST',
@@ -228,32 +230,11 @@
   var remove_empty_optional_params = function (obj) {
     var optional_keys = ['vpc_id', 'subnet_id'];
     optional_keys.forEach(function (key) {
-      if (obj[key] === '') {
+      if (obj[key] === '' || obj[key] === null || obj[key] === undefined) {
         delete obj[key];
       }
     });
     return obj;
-  };
-
-  var is_fill_required_input = function () {
-    var elements = get_settings();
-    for (var i = 0; i < elements.length; ++i) {
-      if (elements[i].value === '') {
-        return false;
-      }
-    }
-    return true;
-  };
-
-
-  //  inputが全部埋まっていれば btn をenableにする。
-  //  全部埋まっていなければdisableにする
-  var switch_btn_enable = function (btn) {
-    if (is_fill_required_input()) {
-      btn.removeAttr('disabled');
-    } else {
-      btn.attr('disabled', 'disabled');
-    }
   };
 
 
