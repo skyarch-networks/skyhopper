@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '>= 5.0.0.rc2'
 
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.3.20'
@@ -56,6 +56,7 @@ gem "net-http-persistent", '~> 2.9.4'
 
 gem "knife-windows"
 gem "chef", "~> 12", require: false
+gem "chef-zero", "~> 4.9.0"
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
