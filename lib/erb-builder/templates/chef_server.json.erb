@@ -29,6 +29,16 @@
       "Type" : "String",
       "Default": "Chef Server for SkyHopper"
     },
+    "VpcId": {
+      "Description" : "For VPC security groups without a default VPC (optional)",
+      "Type" : "String",
+      "Default": ""
+    },
+    "SubnetId": {
+      "Description" : "The ID of the subnet that you want to launch the instance into (optional)",
+      "Type" : "String",
+      "Default": ""
+    },
 
     "ChefPackageURL": { "Type" : "String", "Default": "https://packages.chef.io/stable/el/6/chef-server-core-12.6.0-1.el6.x86_64.rpm" },
     "ChefUser":       { "Type" : "String", "Default": "skyhopper" },
@@ -47,10 +57,16 @@
     "RegionMap": <%= fragment(:ami_mappings) %>
   },
 
+  "Conditions": {
+    "HasVpcId":    {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "VpcId"}]}]},
+    "HasSubnetId": {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "SubnetId"}]}]}
+  },
+
   "Resources" : {
     "SecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
+        "VpcId" : {"Fn::If": ["HasVpcId", {"Ref": "VpcId"}, {"Ref": "AWS::NoValue"}]},
         "GroupDescription" : "Enable SSH/HTTP/HTTPS",
         "SecurityGroupIngress" : [{
           "IpProtocol" : "tcp",
@@ -73,6 +89,7 @@
     "EC2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
+        "SubnetId" : {"Fn::If": ["HasSubnetId", {"Ref": "SubnetId"}, {"Ref": "AWS::NoValue"}]},
         "InstanceType" : { "Ref" : "InstanceType" },
         "KeyName" : { "Ref" : "KeyName" },
         "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
