@@ -36,14 +36,14 @@ class OperationDurationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render json: @operation_schedule.as_json(only: %i[id, start_date, end_date],
-                                                             include: [{recurring_date: {only: %i[id, repeats, start_time, end_time, dates]}},
+      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
+                                                             include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
                                                                        {resource: {only: [:physical_id]}} ])
       }
     end
   end
 
-  # POST /OperationDurations/save_schedule
+  # POST /OperationDurations/create
   # @param [Integer] infra_id
   # @param [String] physical_id
   # @param [Object] instance

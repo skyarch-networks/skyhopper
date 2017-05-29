@@ -197,18 +197,10 @@ module.exports = Vue.extend({
         var events = [];
         events = data.map(function (item) {
           var dow = [];
-          if(item.recurring_date.repeats === 4){
-            _.forEach(item.recurring_date.dates, function(date){
+          _.forEach(item.recurring_date.dates, function(date){
               if(date.checked === "true")
                 dow.push(parseInt(date.value));
-            });
-          }else if(item.recurring_date.repeats === 1){
-            dow = [1,2,3,4,5,6,0];
-          }else if(item.recurring_date.repeats === 2){
-            dow = [1,2,3,4,5];
-          }else{
-            dow = [0,6];
-          }
+          });
           return {
             title: item.resource.physical_id,
             start: item.recurring_date.start_time,

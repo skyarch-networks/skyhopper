@@ -137,7 +137,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :operation_durations, only: %i[create, show] do
+  resources :operation_durations, only: [:create, :show] do
     member do
       post 'upload_icalendar'
       get  'show_icalendar'

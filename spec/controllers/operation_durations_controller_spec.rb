@@ -12,6 +12,11 @@ describe OperationDurationsController, type: :controller do
   login_user
   let(:infra){create(:infrastructure)}
   let(:resource){create(:resource)}
+  let(:start_date){Time.at(rand * Time.now.to_i)}
+  let(:end_date){Time.at(rand * Time.now.to_i)}
+  let(:end_time){Time.at(rand * Time.now.to_i)}
+  let(:repeat_freq){'category'}
+  let(:instance_params){attributes_for(:operation_duration, resource_id: resource.id, start_date: start_date, end_date: end_date, end_time: end_time, repeat_freq: :repeat_freq)}
 
   describe "GET #show" do
     let(:request_show){get :show, id: infra.id, physical_id: resource.physical_id}
@@ -35,18 +40,32 @@ describe OperationDurationsController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:req){post :create, id: infra.id, physical_id: resource.physical_id}
-    let(:operation){create(:operation_duration)}
+    let(:req){post :create, id: infra.id, instance: instance_params}
 
     before do
-      allow(OperationDuration).to receive(:find).and_return(operation)
       req
+      allow(OperationDuration).to receive(:find).and_return(instance_params)
     end
 
-    xit "returns http success" do
-      get :create
-      expect(response).to have_http_status(:success)
+    context 'with valid paramters' do
+      it "it should assign schedule" do
+        expect(response).to have_http_status(:success)
+      end
     end
+
+    context 'with invalud parameters' do
+      before do
+        post :create, id: infra.id, instance: nil
+        allow(OperationDuration).to receive(:find).and_return(nil)
+      end
+
+      should_be_failure
+
+      it 'should have an error message' do
+        expect(response).to have_http_status(:error)
+      end
+    end
+
   end
 
   describe "GET #show_icalendar" do
