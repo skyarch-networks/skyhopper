@@ -35,12 +35,12 @@
           <span id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         </td>
       </tr>
-      <tr  v-if="filteredLength === 0 && data.length > 0">
+      <tr  v-if="isFilteredLength">
         <td><h4> <%= raw t 'common.msg.not_found', name: "{{filterKey}}" %></h4></td>
       </tr>
     </tbody>
   </table>
-  <nav v-if="data.length >= 10 && filteredLength >= 10">
+  <nav v-if="isPaginated">
     <ul class="pager">
       <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
         <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>

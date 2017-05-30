@@ -20,10 +20,11 @@ module.exports = Vue.extend({
 
   data: function () {
     var sortOrders = {};
-    console.log(this);
-    this.columns.forEach(function (key) {
-      sortOrders[key] = 1;
-    });
+    if(this.columns){
+        this.columns.forEach(function (key) {
+            sortOrders[key] = 1;
+        });
+    }
     return {
       sortKey: '',
       sortOrders: sortOrders,
@@ -94,7 +95,6 @@ module.exports = Vue.extend({
 
     load_ajax: function (request) {
       var self = this;
-      console.log(request);
       $.ajax({
         cache: false,
         url: request,
@@ -124,11 +124,19 @@ module.exports = Vue.extend({
     isEndPage: function(){
       return ((this.pageNumber + 1) * this.pages >= this.data.length);
     },
+    isFilteredLength: function () {
+      return (this.filteredLength === 0 && this.data == null && this.data == '');
+    },
+    isPaginated: function () {
+        if (this.data)
+            return this.data.length >= 10 && this.filteredLength >= 10;
+        else
+            return false;
+    }
   },
   ready: function (){
     var self = this;
-    console.log(self.url);
-      self.load_ajax(self.url);
+    self.load_ajax(self.url);
   },
 
   filters:{
