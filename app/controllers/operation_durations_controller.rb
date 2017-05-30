@@ -67,7 +67,7 @@ class OperationDurationsController < ApplicationController
   # @param [String]  physical_id
   def show_icalendar
     physical_id = params.require(:physical_id)
-    resource = Resource.where(infrastructure_id: @infra.id).find_by(physical_id: physical_id)
+    resource = Resource.find_by(physical_id: physical_id)
     schedule = OperationDuration.find_by(resource_id: resource.id)
 
     if schedule.blank?
@@ -79,7 +79,7 @@ class OperationDurationsController < ApplicationController
     calendar.publish
 
     headers['Content-Type'] = "text/calendar; charset=UTF-8"
-    render text: calendar.to_ical
+    render text: calendar.to_ical, status: 200 and return
   end
 
   # POST /OperationDurations/upload_calendar

@@ -62,24 +62,10 @@ describe OperationDurationsController, type: :controller do
       should_be_failure
 
       it 'should have an error message' do
-        expect(response).to have_http_status(:error)
+        expect(response).to have_http_status(302)
       end
     end
 
-  end
-
-  describe "GET #show_icalendar" do
-    xit "returns http success" do
-      get :show_icalendar
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe "GET #upload_icalendar" do
-    xit "returns http success" do
-      get :upload_icalendar
-      expect(response).to have_http_status(:success)
-    end
   end
 
 end
