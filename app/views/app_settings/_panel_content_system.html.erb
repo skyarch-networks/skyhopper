@@ -92,6 +92,29 @@
       </div>
     </div>
 
+    <div class="form-group" v-if="!optional">
+        <a @click="optional = true" class="btn btn-link btn-block">
+          <span class="glyphicon glyphicon-chevron-down"></span>
+          <%= t('common.optional') %>
+        </a>
+    </div>
+
+    <div class="well" v-if="optional">
+      <legend><%= t('common.optional') %></legend>
+      <div class="form-group">
+        <label for="vpc_id" class="col-sm-3 control-label"><%= t 'app_settings.vpc_id' %></label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control" :disabled="creating" v-model="params.vpc_id" placeholder="vpc-abcd1234 (optional)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="subnet_id" class="col-sm-3 control-label"><%= t 'app_settings.subnet_id' %></label>
+        <div class="col-sm-7">
+          <input type="text" class="form-control" :disabled="creating" v-model="params.subnet_id" placeholder="subnet-abcd1234 (optional)">
+        </div>
+      </div>
+    </div>
 
   </fieldset>
 

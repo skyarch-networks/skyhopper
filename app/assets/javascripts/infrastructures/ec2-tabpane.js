@@ -3,6 +3,7 @@ var Dish           = require('models/dish').default;
 var EC2Instance    = require('models/ec2_instance').default;
 var Snapshot       = require('models/snapshot').default;
 var queryString = require('query-string').parse(location.search);
+var ansi_up = require('ansi_up');
 
 var helpers = require('infrastructures/helper.js');
 var toLocaleString       = helpers.toLocaleString;
@@ -63,6 +64,7 @@ module.exports = Vue.extend({
     change_status: t('ec2_instances.change_status'),
     attach_vol: t('ec2_instances.attach'),
     changing_status: t('ec2_instances.changing_status'),
+    is_yum_update: false,
   };},
 
   methods: {
@@ -185,7 +187,11 @@ module.exports = Vue.extend({
         // cook end
         self.chef_console_text = '';
         self.inprogress = false;
-        self._show_ec2();
+        if (self.is_yum_update) {
+          self._prompt_yum_log();
+        }else {
+          self._show_ec2();
+        }
       }).progress(function (state, msg) {
         if (state !== 'update') {return;}
 
@@ -205,6 +211,7 @@ module.exports = Vue.extend({
 
     yum_update: function (security, exec) {
       var self = this;
+      self.is_yum_update = true;
       var infra = new Infrastructure(this.infra_id);
       var ec2 = new EC2Instance(infra, self.physical_id);
 
@@ -218,14 +225,23 @@ module.exports = Vue.extend({
         ).progress(function (state, msg) {
           // cook start success
           if(state !== 'start'){return;}
-
-          alert_success(function () {
             self.inprogress = true;
             Vue.nextTick(function () {
               self.watch_cook(dfd);
             });
-          })(msg);
         });
+      });
+    },
+
+    _prompt_yum_log: function() {
+      var self = this;
+      self.is_yum_update = false;
+
+      modal.ConfirmHTML(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_success', {physical_id: self.physical_id}), 'success').done(function () {
+        self.$parent.tabpaneID = 'infra_logs';
+        self._loading();
+      }).fail(function () {
+        self._show_ec2();
       });
     },
 
@@ -270,6 +286,7 @@ module.exports = Vue.extend({
     is_first:     function (idx) { return (idx === 0); },
     runlist_type: function (run) { return run.replace(/\[.+\]$/, ""); },
     runlist_name: function (run) { return run.replace(/^.+\[(.+)\]$/, "$1"); },
+    ansi_up:      function(log)  { return ansi_up.ansi_to_html(log); },
 
     _loading: function () { this.$parent.loading = true; },
 

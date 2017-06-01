@@ -359,7 +359,7 @@
     <div>
       <%# わざと一行で書いてます %>
       <%# TODO: id をつけていないとスクロール出来ない。Vueでうまくやりたい %>
-      <pre id="cook-status" class="pre-progress"><samp v-text="chef_console_text"></samp></pre>
+      <pre id="cook-status" class="pre-progress"><samp v-html="ansi_up(chef_console_text)"></samp></pre>
     </div>
   </div>
 </div>
