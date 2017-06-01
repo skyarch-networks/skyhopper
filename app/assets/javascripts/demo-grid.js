@@ -125,7 +125,7 @@ module.exports = Vue.extend({
       return ((this.pageNumber + 1) * this.pages >= this.data.length);
     },
     isFilteredLength: function () {
-      return (this.filteredLength === 0 && this.data == null && this.data == '');
+      return (this.filteredLength === 0 && this.data === null && this.data === '');
     },
     isPaginated: function () {
         if (this.data)
