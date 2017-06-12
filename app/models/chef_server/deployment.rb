@@ -107,7 +107,7 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.first
-      set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
+      set.fqdn = infra.instance(physical_id).public_dns_name
       set.save!
 
       zb = ZabbixServer.create(

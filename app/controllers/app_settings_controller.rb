@@ -60,7 +60,7 @@ class AppSettingsController < ApplicationController
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
-    app_setting.zabbix_fqdn = DummyText
+    app_setting.fqdn = DummyText
     app_setting.save!
     AppSetting.clear_cache
 
