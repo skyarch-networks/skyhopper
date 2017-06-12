@@ -93,16 +93,17 @@ class AppSettingsController < ApplicationController
     render 'zabbix_server'
   end
 
-  def update_zabbix
-    app_setting = AppSetting.get
-    user = params.require(:zabbix_user)
-    pass = params.require(:zabbix_pass)
-
-    app_setting.update!(zabbix_user: user, zabbix_pass: pass)
-    AppSetting.clear_cache
-
-    redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
-  end
+  # [Commendted] for Zabbix Server update
+  # def update_zabbix
+  #   app_setting = AppSetting.get
+  #   user = params.require(:zabbix_user)
+  #   pass = params.require(:zabbix_pass)
+  #
+  #   app_setting.update!(zabbix_user: user, zabbix_pass: pass)
+  #   AppSetting.clear_cache
+  #
+  #   redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
+  # end
 
 
   # POST /app_settings/chef_create
