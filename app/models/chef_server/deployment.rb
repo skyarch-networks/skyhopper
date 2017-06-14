@@ -34,6 +34,7 @@ class ChefServer::Deployment
   TrustedCertsPemID = "TrustedCerts".freeze
 
   class Error < StandardError; end
+  class SystemServerError < ::StandardError; end
 
 
   class << self
@@ -44,7 +45,7 @@ class ChefServer::Deployment
 
       prj = Project.for_chef_server
       unless prj
-        raise Error, "Project for Chef Server not found. Did you run db:seed? If didn't run, execute `bundle exec rake db:seed`"
+        raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Chef')
       end
 
       infra = Infrastructure.create_with_ec2_private_key(
@@ -92,6 +93,9 @@ class ChefServer::Deployment
     # XXX: こぴぺをやめてここじゃないとこにちゃんと定義する
     def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {})
       prj = Project.for_zabbix_server
+      unless prj
+        raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Zabbix')
+      end
       infra = Infrastructure.create_with_ec2_private_key(
         project:       prj,
         stack_name:    stack_name,

@@ -9,13 +9,12 @@
 class AppSettingsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :create, :chef_create]
 
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
-    if AppSetting.set?
-      redirect_to root_path
-    end
-  end
+  before_action :installation_complete, except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys]
+
+  class SystemServerError < ::StandardError; end
 
   CF_PARAMS_KEY = 'cf_params'.freeze
+
 
   # GET /app_settings
   def show
@@ -65,7 +64,12 @@ class AppSettingsController < ApplicationController
     AppSetting.clear_cache
 
 
-    projects = Project.for_system
+    begin
+      projects = Project.for_system
+    rescue
+      raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'System')
+    end
+
     projects.each do |project|
       project.update!(access_key: access_key, secret_access_key: secret_access_key)
     end
@@ -201,5 +205,13 @@ class AppSettingsController < ApplicationController
     @zipfile = Tempfile.open('chef')
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
+  end
+
+  def installation_complete
+    if AppSetting.set?
+      set = AppSetting.get
+      infra = Infrastructure.find(set.id)
+      redirect_to root_path if infra.create_complete?
+    end
   end
 end
