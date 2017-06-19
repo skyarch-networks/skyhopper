@@ -30,18 +30,21 @@ $ sudo gem install bundler
 ```
 
 ## node.js のインストール
-
+### ref: [link](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html)
 ```sh
-$ sudo yum install nodejs npm --enablerepo=epel
-$ sudo npm update -g npm
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
+$ . ~/.nvm/nvm.sh
+$ nvm install 4.4.5
+# update npm to lastest version
+$ npm update -g npm
 $ node -v
-v0.10.36
+v4.4.5
 ```
 
 ## bower のインストール
 
 ```sh
-$ sudo npm install bower --global
+$ npm install bower --global
 ```
 
 ## SkyHopper に必要なパッケージをインストール
@@ -207,7 +210,7 @@ $ bower install
 ### TypeScript のコンパイル
 
 ```sh
-$ sudo npm i -g gulp
+$ npm i -g gulp
 $ cd frontend/
 $ npm i
 $ gulp type  //TSD to typings
@@ -275,6 +278,13 @@ $ bundle exec rake db:seed RAILS_ENV=production
 $ chmod 711 ~
 ```
 
+### [注意]開発中のSkyhopperを起動する前に、このスクリプトを実行してください
+```sh
+# i18n-js辞書を生成する
+$ bundle exec rake i18n:js:export
+# アセットのプリコンパイル用
+$ bundle exec assets:precompile
+```
 
 ## 起動
 

@@ -28,13 +28,16 @@ ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
 $ sudo gem install bundler
 ```
 
-## Installing nodejs and npm using yum
+## Installing nodejs and npm using NVM
 
 ```sh
-$ sudo yum install nodejs npm --enablerepo=epel
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
+$ . ~/.nvm/nvm.sh
+$ nvm install 4.4.5
+# update npm to lastest version
 $ sudo npm update -g npm
 $ node -v
-v0.10.36
+v4.4.5
 ```
 
 ## Installing bower using npm
@@ -286,6 +289,15 @@ $ ./scripts/skyhopper_daemon.sh start
 # usage start|stop|status
 # staring mode for daemon
 ```
+
+### [Note] Make sure to run this script first before starting Skyhopper in Development
+```sh
+# for generating i18n-js dictionary
+$ bundle exec rake i18n:js:export
+# for Precompiling assets
+$ bundle exec assets:precompile
+```
+
 
 ```sh
 # for development
