@@ -48,7 +48,6 @@
 
 
           vm.keypair_name = file.name.replace(/\.\w+$/, '');
-          console.log(vm);
       },
       removeFile: function (e) {
           e.preventDefault();
@@ -190,7 +189,6 @@
   //  -------------------------------- ajax methods
   var create = function (params) {
     var settings = remove_empty_optional_params(params);
-    console.log(settings);
     return $.ajax({
       url: endpoint_base,
       type: 'POST',
