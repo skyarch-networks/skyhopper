@@ -19,7 +19,10 @@ module ChefAPI
 
   # TODO: Rails server をリスタートする必要がある
   def setup
-    @@ridley = ::Ridley.from_chef_config(File.expand_path("~/.chef/knife.rb"))
+    options = {
+      ssl: {verify: false} # disable SSL verification
+    }
+    @@ridley = ::Ridley.from_chef_config(File.expand_path("~/.chef/knife.rb"), options)
   rescue => ex
     Rails.logger.warn(ex)
   end
