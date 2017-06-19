@@ -30,7 +30,7 @@ $ sudo gem install bundler
 ```
 
 ## node.js のインストール
-### ref: [link](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html)
+###### ref: [link](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html)
 ```sh
 $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 $ . ~/.nvm/nvm.sh
