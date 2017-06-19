@@ -65,3 +65,6 @@ vendor/bower_components
 *.ts#
 *.css~
 *.css#
+
+# VSCODE config
+.vscode/*
