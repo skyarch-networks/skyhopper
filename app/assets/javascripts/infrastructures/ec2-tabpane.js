@@ -614,7 +614,7 @@ module.exports = Vue.extend({
       }
       return 'btn-default';
     },
-    has_rules: function()  {
+    has_selected: function()  {
       return has_selected(this.rules_summary);
     },
 

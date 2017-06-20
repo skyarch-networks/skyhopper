@@ -49,7 +49,7 @@
           </ul>
         </nav>
 
-        <div v-if="!has_rules" class="alert alert-dismissible alert-danger">
+        <div v-if="!has_selected" class="alert alert-dismissible alert-danger">
           <h4><%= t 'security_groups.msg.error' %></h4>
           <p><%= t 'security_groups.msg.error_msg' %></p>
         </div>
@@ -57,7 +57,7 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" @click="reload()" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_rules" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_rules ? 'modal' : ''}}">
+          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">
             <%= t 'security_groups.btn.assign' %>
           </button>
         </div>
