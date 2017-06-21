@@ -100,12 +100,19 @@
 <div id="change-scale-modal" class="modal fade" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-warning">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title"><%= t('infrastructures.btn.change_scale') %></h4>
       </div>
 
       <div class="modal-body">
+        <div class="alert alert-warning">
+          <h4>
+            <span class="glyphicon glyphicon-warning-sign"></span>
+            Warning!
+          </h4>
+          <%= t('infrastructures.msg.change_scale_warning') %>
+        </div>
         <label class="control-label"><%= t('infrastructures.instance_type') %></label>
         <select v-model="change_scale_type_to" class="form-control">
           <% RDS::Types.each do |type| %>

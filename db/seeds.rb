@@ -29,7 +29,7 @@ MasterMonitoring.delete_all
 end
 
 # -------------------- Global Serverspecs
-Serverspec.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', value: <<-EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<-EOS)
 require "serverspec_helper"
 
 describe package('httpd') do
@@ -46,8 +46,35 @@ describe port(80) do
 end
 EOS
 
-Serverspec.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', value: <<-EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<-EOS)
 require "serverspec_helper"
+
+describe package("php") do
+  it { should be_installed }
+end
+EOS
+
+
+# -------------------- Global AWSspecs
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<-EOS)
+require "awsspec_helper"
+
+describe package('httpd') do
+  it { should be_installed }
+end
+
+describe service('httpd') do
+  it { should be_enabled }
+  it { should be_running }
+end
+
+describe port(80) do
+  it { should be_listening }
+end
+EOS
+
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<-EOS)
+require "awsspec_helper"
 
 describe package("php") do
   it { should be_installed }

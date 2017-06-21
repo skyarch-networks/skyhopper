@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -10,7 +10,7 @@ class ResourceStatus < ActiveRecord::Base
   belongs_to :resource
 
   enum value:  %i(success failed pending un_executed inprogress)
-  enum kind:   %i(serverspec cook yum)
+  enum kind:   %i(servertest cook yum)
 
   kinds.each do |k, v|
     scope k, -> { find_by(kind: v) }

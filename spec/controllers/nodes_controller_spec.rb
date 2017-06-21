@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -54,7 +54,7 @@ describe NodesController, type: :controller do
       available: [],
     }}
     let(:cook_status){resource.status.cook}
-    let(:serverspec_status){resource.status.serverspec}
+    let(:servertest_status){resource.status.servertest}
     let(:yum_status){resource.status.yum}
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).and_return(instance)
@@ -147,7 +147,7 @@ describe NodesController, type: :controller do
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
         expect(assigns[:info][:cook_status]).to eq cook_status
-        expect(assigns[:info][:serverspec_status]).to eq serverspec_status
+        expect(assigns[:info][:servertest_status]).to eq servertest_status
         expect(assigns[:info][:update_status]).to eq yum_status
       end
 
@@ -410,9 +410,9 @@ describe NodesController, type: :controller do
         expect(JSON[response.body]['message']).to be nil
       end
 
-      it 'should update cook and serverspec status' do
+      it 'should update cook and servertest status' do
         expect(resource.status.cook.value).to eq 'un_executed'
-        expect(resource.status.serverspec.value).to eq 'un_executed'
+        expect(resource.status.servertest.value).to eq 'un_executed'
       end
 
       it 'resource should have dish' do
@@ -457,7 +457,7 @@ describe NodesController, type: :controller do
     context 'when success' do
       before do
         expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
-        expect(ServerspecJob).to receive(:perform_now)
+        expect(ServertestJob).to receive(:perform_now)
         req
       end
       should_be_success

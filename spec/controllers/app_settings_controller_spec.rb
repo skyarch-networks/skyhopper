@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -128,7 +128,8 @@ describe AppSettingsController, type: :controller do
     controller AppSettingsController do
       def authorize(*)end #XXX: pundit hack
       def test
-        check_eip_limit!('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
+        set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
+        check_eip_limit!
         render text: 'success'
       rescue ::AppSettingsController::EIPLimitError
         render text: 'failure', status: 400

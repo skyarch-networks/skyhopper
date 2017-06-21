@@ -30,7 +30,9 @@ module.exports = Vue.extend({
   methods: {
     get_recipes: function () {
       var self = this;
-      if (self.recipes[self.selected_cookbook]) { return; }
+
+      if (self.recipes[self.selected_cookbook]) { return; } // Avoid repeated call
+      if (self.selected_cookbook === null) { return; } // ignore no selected cookbook
 
       self.ec2.recipes(self.selected_cookbook).done(function (data) {
         Vue.set(self.recipes, self.selected_cookbook, data);

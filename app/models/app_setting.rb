@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -40,7 +40,7 @@ class AppSetting < ActiveRecord::Base
     # AppSetting.get 用のキャッシュを削除する。
     # 設定を更新した場合などにする必要がある
     def clear_cache
-      Rails.cache.clear('app_setting')
+      Rails.cache.delete('app_setting')
     end
 
     def ec2_client(access_key, secret_access_key, region)

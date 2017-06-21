@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -9,13 +9,14 @@
 class AppSettingsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :create, :chef_create]
 
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys, :db, :export_db] do
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
     if AppSetting.set?
       redirect_to root_path
     end
   end
 
   class AppSettingError < ::StandardError; end
+  CF_PARAMS_KEY = 'cf_params'.freeze
 
   # GET /app_settings
   def show
@@ -30,7 +31,26 @@ class AppSettingsController < ApplicationController
     keypair_name      = settings.delete(:keypair_name)
     keypair_value     = settings.delete(:keypair_value)
 
-    check_eip_limit!(settings[:aws_region], access_key, secret_access_key)
+    vpc_id    = settings.delete(:vpc_id)
+    subnet_id = settings.delete(:subnet_id)
+
+    set_ec2(settings[:aws_region], access_key, secret_access_key)
+
+    cf_params = {}
+
+    if vpc_id
+      verify_vpc_id!(vpc_id)
+      cf_params[:VpcId] = vpc_id
+    end
+
+    if subnet_id
+      verify_subnet_id!(subnet_id)
+      cf_params[:SubnetId] = subnet_id
+    end
+
+    check_eip_limit!
+
+    Rails.cache.write(CF_PARAMS_KEY, cf_params)
 
     ec2key = Ec2PrivateKey.create!(
       name:  keypair_name,
@@ -62,7 +82,7 @@ class AppSettingsController < ApplicationController
       set = AppSetting.get
       stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
-      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value)
+      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value, cf_params)
     end
 
     render text: I18n.t('app_settings.msg.created') and return
@@ -122,11 +142,14 @@ class AppSettingsController < ApplicationController
       CfTemplate
       # rubocop:enable Lint/Void
 
+      cf_params = Rails.cache.fetch(CF_PARAMS_KEY) || {}
+      Rails.cache.delete(CF_PARAMS_KEY)
+
       Thread.new_with_db do
         ws = WSConnector.new('chef_server_deployment', 'status')
 
         begin
-          ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value) do |data, msg|
+          ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value, cf_params) do |data, msg|
             Rails.logger.debug("ChefServer creating > #{data} #{msg}")
             ws.push(build_ws_message(data, msg))
           end
@@ -193,13 +216,6 @@ class AppSettingsController < ApplicationController
     @zipfile.close
   end
 
-  # GET /app_settings/export_db
-  def export_db
-    prepare_db_zip
-    send_file(@zipfile.path, filename: "SkyHopper-db-#{Rails.env}.zip")
-    @zipfile.close
-  end
-
   private
 
   # statusに対応するメッセージをJSONとして返す
@@ -215,45 +231,36 @@ class AppSettingsController < ApplicationController
     return JSON.generate(hash)
   end
 
+  def set_ec2(region, access_key_id, secret_access_key)
+    @ec2 = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
+  end
+
   class EIPLimitError < StandardError; end
 
   # @param [String] region
   # @param [String] access_key_id
   # @param [String] secret_access_key
   # @raise [EIPLimitError] raise error when cann't allocate EIP.
-  def check_eip_limit!(region, access_key_id, secret_access_key)
-    e = Aws::EC2::Client.new(region: region, access_key_id: access_key_id, secret_access_key: secret_access_key)
-    a = e.describe_account_attributes
+  def check_eip_limit!
+    a = @ec2.describe_account_attributes
     limit = a.account_attributes.find{|x| x.attribute_name == 'vpc-max-elastic-ips'}.attribute_values.first.attribute_value.to_i
-    n = e.describe_addresses.addresses.size
+    n = @ec2.describe_addresses.addresses.size
     if limit - n < 2
       raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
     end
+  end
+
+  def verify_vpc_id!(vpc_id)
+    @ec2.describe_vpcs(vpc_ids: [vpc_id])
+  end
+
+  def verify_subnet_id!(subnet_id)
+    @ec2.describe_subnets(subnet_ids: [subnet_id])
   end
 
   def prepare_chef_key_zip
     @zipfile = Tempfile.open('chef')
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
-  end
-
-  def prepare_db_zip
-    dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
-    filename = "#{dbname}.sql"
-    path     = Rails.root.join("tmp/#{filename}")
-
-    system('rake db:data:dump')
-
-    @zipfile = Tempfile.open("skyhopper")
-    ::Zip::File.open(@zipfile.path, ::Zip::File::CREATE) do |zip|
-      zip.add(filename, path)
-
-      SkyHopper::Application.secrets.each do |key, value|
-        next if value.nil?
-        zip.get_output_stream(key) { |io| io.write(value) }
-      end
-    end
-
-    FileUtils.rm(path)
   end
 end

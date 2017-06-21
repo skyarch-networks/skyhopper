@@ -1,12 +1,10 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
 # http://opensource.org/licenses/mit-license.php
 #
-
-require 'sidekiq/api'
 
 class Schedule < ActiveRecord::Base
   enum frequency:   %i[daily weekly intervals]

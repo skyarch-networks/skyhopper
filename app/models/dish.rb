@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -9,8 +9,8 @@
 class Dish < ActiveRecord::Base
   belongs_to :project
   has_many :resources
-  has_many :dish_serverspecs
-  has_many :serverspecs, through: :dish_serverspecs
+  has_many :dish_servertests
+  has_many :servertests, through: :dish_servertests
 
   serialize :runlist
 

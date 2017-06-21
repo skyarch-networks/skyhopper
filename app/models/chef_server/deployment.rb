@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -39,7 +39,7 @@ class ChefServer::Deployment
   class << self
     # chef_serverを作成し、自身のインスタンスを返す。
     # blockが与えられていれば、そのブロックに進捗状況を渡して実行する。
-    def create(stack_name, region, keypair_name, keypair_value, &block)
+    def create(stack_name, region, keypair_name, keypair_value, params = {}, &block)
       __yield :creating_infra, &block
 
       prj = Project.for_chef_server
@@ -55,12 +55,14 @@ class ChefServer::Deployment
         region:        region
       )
 
-      stack = create_stack(infra, 'Chef Server', params: {
+      params.merge!(
         InstanceType:      't2.small',
         UserPemID:         UserPemID,
         OrgPemID:          OrgPemID,
         TrustedCertsPemID: TrustedCertsPemID,
-      })
+      )
+
+      stack = create_stack(infra, 'Chef Server', params: params)
 
       __yield :init_ec2, &block
       stack.wait_resource_status('EC2Instance',       'CREATE_COMPLETE')
@@ -88,7 +90,7 @@ class ChefServer::Deployment
 
 
     # XXX: こぴぺをやめてここじゃないとこにちゃんと定義する
-    def create_zabbix(stack_name, region, keypair_name, keypair_value)
+    def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {})
       prj = Project.for_zabbix_server
       infra = Infrastructure.create_with_ec2_private_key(
         project:       prj,
@@ -98,7 +100,7 @@ class ChefServer::Deployment
         region:        region
       )
       template = ERB::Builder.new('zabbix_server').build
-      stack = create_stack(infra, 'Zabbix Server', template: template)
+      stack = create_stack(infra, 'Zabbix Server', params: params, template: template)
       wait_creation(stack)
 
       physical_id = stack.instances.first.physical_resource_id

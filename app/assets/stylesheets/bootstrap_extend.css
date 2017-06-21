@@ -346,3 +346,8 @@ pre {
 .instructions{
     color: #444444;;
 }
+
+.terminal-ansi{
+    color: #b2dbfb !important;
+    background-color: #212121 !important;
+}

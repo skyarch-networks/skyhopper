@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -117,7 +117,7 @@ describe Node, type: :model do
     subject{ Node.new(physical_id) }
     let(:infra){create(:infrastructure)}
     let(:resource){create(:resource, infrastructure: infra)}
-    let(:serverspec){create(:serverspec)}
+    let(:servertest){create(:servertest)}
     let(:physical_id){resource.physical_id}
 
     before do
@@ -143,14 +143,14 @@ describe Node, type: :model do
     end
 
     it 'return hash' do
-      serverspecs = [serverspec.id]
+      serverspecs = [servertest.id]
       expect(subject.run_serverspec(infra.id, serverspecs, false)).to be_kind_of(Hash)
     end
 
     it 'should update status' do
-      serverspecs = [serverspec.id]
+      serverspecs = [servertest.id]
       subject.run_serverspec(infra.id, serverspecs, false)
-      expect(resource.status.serverspec.success?).to be true
+      expect(resource.status.servertest.success?).to be true
     end
 
     context 'when command fail' do
@@ -159,9 +159,9 @@ describe Node, type: :model do
       end
 
       it 'should update status' do
-        serverspecs = [serverspec.id]
+        serverspecs = [servertest.id]
         expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
-        expect(resource.status.serverspec.failed?).to be true
+        expect(resource.status.servertest.failed?).to be true
       end
     end
   end

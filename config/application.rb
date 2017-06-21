@@ -50,7 +50,7 @@ module SkyHopper
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Marketplace Version 2017.02'
+    config.my_version = 'Marketplace Version 2017.03'
 
     config.browserify_rails.paths << /frontend\//
   end
@@ -59,7 +59,7 @@ end
 # To disable automatic retry
 Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
-    chain.remove Sidekiq::Middleware::Server::RetryJobs
+    chain.remove Sidekiq::JobRetry
   end
 end
 

@@ -90,12 +90,17 @@ EOF
 ```sh
 $ sudo tee /etc/nginx/conf.d/skyhopper.conf <<EOF >/dev/null
 server {
+        # your skyhopper installation is located
+        set \$skyhopper_root "/home/ec2-user/skyhopper";
+
+        client_max_body_size 1g;
+
         listen 80;
         server_name skyhopper.local; #Setting the environment
 
         ### production only from here ###
         location ~ ^/(assets|fonts) {
-          root /home/ec2-user/skyhopper/public; # your skyhopper installation is located
+          root \$skyhopper_root/public;
         }
         ### production only to here ###
 
@@ -112,6 +117,12 @@ server {
             proxy_set_header    Host    \$http_host;
             proxy_pass http://127.0.0.1:3210;
         }
+
+        location /502.html {
+            root \$skyhopper_root/public;
+            try_files \$uri 502.html;
+        }
+        error_page 502 /502.html;
 }
 EOF
 ```
@@ -199,7 +210,7 @@ $ bower install
 $ sudo npm i -g gulp
 $ cd frontend/
 $ npm i
-$ gulp tsd
+$ gulp type  // TSD to typings
 $ gulp ts
 $ cd ..
 ```

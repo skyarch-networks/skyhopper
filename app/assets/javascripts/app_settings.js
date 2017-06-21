@@ -19,13 +19,16 @@
     data: {
       key_select: null,
       creating: false,
+      optional: false,
       params: {
         log_directory: null,
         access_key: null,
         secret_access_key: null,
         aws_region: null,
         keypair_name: null,
-        keypair_value: null
+        keypair_value: null,
+        subnet_id: null,
+        vpc_id: null
       },
     },
     methods: {
@@ -45,7 +48,6 @@
 
 
           vm.keypair_name = file.name.replace(/\.\w+$/, '');
-          console.log(vm);
       },
       removeFile: function (e) {
           e.preventDefault();
@@ -181,18 +183,29 @@
 
   var endpoint_base = '/app_settings';
   var inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea';
+  var required_inputs = '#app-settings-form input[required],select[required],textarea[required]';
 
 
   //  -------------------------------- ajax methods
-  var create = function (settings) {
-
+  var create = function (params) {
+    var settings = remove_empty_optional_params(params);
     return $.ajax({
       url: endpoint_base,
       type: 'POST',
       data: {
         settings: JSON.stringify(settings)
       },
-    }).fail(modal.AlertForAjaxStdError());
+    }).fail(function (xhr) {
+      var res = xhr.responseJSON;
+      var kind = res.error.kind;
+      if (kind.endsWith('VpcIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', {id: _.escape(settings.vpc_id)}), 'danger');
+      } else if (kind.endsWith('SubnetIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', {id: _.escape(settings.subnet_id)}), 'danger');
+      } else {
+        modal.AlertForAjaxStdError()(xhr);
+      }
+    });
   };
 
   var chef_create = function () {
@@ -211,25 +224,15 @@
 
 
   //  --------------------------------  utility methods
-  var is_fill_input = function() {
-    var set = get_settings();
-    for (var i in set) {
-      if (set[i] === '') {
-        return false;
+
+  var remove_empty_optional_params = function (obj) {
+    var optional_keys = ['vpc_id', 'subnet_id'];
+    optional_keys.forEach(function (key) {
+      if (obj[key] === '' || obj[key] === null || obj[key] === undefined) {
+        delete obj[key];
       }
-    }
-    return true;
-  };
-
-
-  //  inputが全部埋まっていれば btn をenableにする。
-  //  全部埋まっていなければdisableにする
-  var switch_btn_enable = function (btn) {
-    if (is_fill_input()) {
-      btn.removeAttr('disabled');
-    } else {
-      btn.attr('disabled', 'disabled');
-    }
+    });
+    return obj;
   };
 
 
@@ -277,7 +280,6 @@
       progress_alert.removeClass("alert-info").addClass("alert-danger");
     }
   };
-
 
 
 })();

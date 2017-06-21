@@ -106,14 +106,16 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :serverspecs do
+  resources :servertests do
     collection do
       get  'select'
       get  'results'
-      post 'run'
+      post 'run_serverspec'
       put  'create_for_rds'
       post 'schedule'
       get  'generator'
+      get  'awspec_generator'
+      get  'generate_awspec'
     end
   end
 
@@ -170,9 +172,6 @@ SkyHopper::Application.routes.draw do
       get  :chef_server
       get  :chef_keys
 
-      get  :db
-      get  :export_db
-
       get  :edit_zabbix
       post :update_zabbix
       post :generate_key
@@ -184,6 +183,13 @@ SkyHopper::Application.routes.draw do
       post :start
       post :stop
       post :status
+    end
+  end
+
+  resource :database, only: [:show] do
+    collection do
+      post :export
+      post :import
     end
   end
 end

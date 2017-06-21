@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -92,7 +92,7 @@ describe Ec2InstancesController, type: :controller do
 
     context 'when status failed' do
       before do
-        st = resource.status.serverspec
+        st = resource.status.servertest
         st.failed!
         req
       end
@@ -104,7 +104,7 @@ describe Ec2InstancesController, type: :controller do
     ['success', 'pending', 'un_executed'].each do |status|
       context "when status #{status}" do
         before do
-          st = resource.status.serverspec
+          st = resource.status.servertest
           st.value = status
           st.save!
           req

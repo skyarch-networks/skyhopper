@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
+# Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
 # This software is released under the MIT License.
 #
@@ -16,7 +16,7 @@ FactoryGirl.define do
     version "MyString"
     details "MyString"
   end
-  
+
   factory :recurring_date do
     operation_duration_id "MyString"
     repeats 1
@@ -37,7 +37,7 @@ FactoryGirl.define do
     project
   end
 
-  factory :serverspec_result do
+  factory :servertest_result do
     resource
     status :success
     message 'serverspec success'
@@ -60,6 +60,7 @@ FactoryGirl.define do
     secret_access_key "1234567890"
     client
     cloud_provider_id{CloudProvider.aws.id}
+    zabbix_server
   end
 
   sequence(:status) do |n|
@@ -96,10 +97,11 @@ FactoryGirl.define do
     master true
   end
 
-  factory :serverspec do
+  factory :servertest do
     infrastructure
     name 'hoge'
     value 'fuga'
     description 'piyo'
+    category :awspec
   end
 end
