@@ -50,7 +50,7 @@ module SkyHopper
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Marketplace Version 2017.03'
+    config.my_version = 'Marketplace Version 2017.06'
 
     config.browserify_rails.paths << /frontend\//
   end
