@@ -34,11 +34,11 @@ $ sudo gem install bundler
 ```sh
 $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 $ . ~/.nvm/nvm.sh
-$ nvm install 4.4.5
+$ nvm install stable
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v4.4.5
+v4.4.5 # any current stable version release
 ```
 
 ## bower のインストール
