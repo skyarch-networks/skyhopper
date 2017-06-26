@@ -35,7 +35,7 @@ $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh |
 $ . ~/.nvm/nvm.sh
 $ nvm install stable
 # update npm to lastest version
-$ sudo npm update -g npm
+$ npm update -g npm
 $ node -v
 v4.4.5 # any current stable version release
 ```
@@ -43,7 +43,7 @@ v4.4.5 # any current stable version release
 ## Installing bower using npm
 
 ```sh
-$ sudo npm install bower --global
+$ npm install bower --global
 ```
 
 ## Installing other packages that are needed for SkyHopper using yum
@@ -210,7 +210,7 @@ $ bower install
 ### Compiling TypeScript
 
 ```sh
-$ sudo npm i -g gulp
+$ npm i -g gulp
 $ cd frontend/
 $ npm i
 $ gulp type  // TSD to typings
