@@ -165,7 +165,7 @@ class OperationDurationsController < ApplicationController
 
       instance[:repeat_freq] = 4
       instance[:dates].map do |day|
-        day.second["checked"] = date_names.include?(rrules.by_day[day.second["value"].to_i]).to_s
+        day.second["checked"] = rrules.by_day.include?(date_names[day.second["value"].to_i]).to_s
       end
     end
 
