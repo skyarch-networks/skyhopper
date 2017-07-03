@@ -56,6 +56,7 @@ class ChefServer::Deployment
         region:        region
       )
 
+
       params.merge!(
         InstanceType:      't2.small',
         UserPemID:         UserPemID,
@@ -78,9 +79,11 @@ class ChefServer::Deployment
       chef_server = self.new(infra, physical_id)
 
 
-
       chef_server.init_knife_rb
 
+      set = AppSetting.second
+      set.ec2_private_key_id = infra.ec2_private_key
+      chef_server.set_server_name(set, infra, prj)
 
       return chef_server
     rescue => ex
@@ -111,8 +114,8 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.first
-      set.fqdn = infra.instance(physical_id).public_dns_name
-      set.save!
+      set_server_name(set, infra, prj)
+
 
       zb = ZabbixServer.create(
         fqdn: set.zabbix_fqdn,
@@ -221,6 +224,12 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
         break
       end
     end
+  end
+
+  def set_server_name(set, infra, prj)
+    set.fqdn = infra.instance(physical_id).public_dns_name
+    set.server_name =  prj.name
+    set.save!
   end
 
   private

@@ -120,6 +120,11 @@ class AppSettingsController < ApplicationController
     region        = set.aws_region
     keypair_name  = set.ec2_private_key.name
     keypair_value = set.ec2_private_key.value
+
+    AppSetting.create!(
+      aws_region: region,
+      log_directory: set.log_directory
+    )
     @locale = I18n.locale
     # おまじない
     # rubocop:disable Lint/Void
@@ -208,10 +213,8 @@ class AppSettingsController < ApplicationController
   end
 
   def installation_complete
-    if AppSetting.set?
-      set = AppSetting.get
-      infra = Infrastructure.find(set.id)
-      redirect_to root_path if infra.create_complete?
+    if AppSetting.exists?(server_name: 'ChefServer') and AppSetting.exists?(server_name: 'ZabbixServer')
+      redirect_to root_path
     end
   end
 end
