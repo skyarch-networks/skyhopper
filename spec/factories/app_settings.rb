@@ -47,5 +47,6 @@ VGFyrUuB4RdiyT3WzLYNOcUZiUk5K0wJ67Mg9J5RI4paG3vfgDby2vs=
     aws_region "ap-northeast-1"
     ec2_private_key
     fqdn 'ec2-xx-xxx-xxx-xxx.compute-1.amazonaws.com'
+    server_name 'ZabbixServer'
   end
 end

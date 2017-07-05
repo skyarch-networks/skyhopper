@@ -83,8 +83,7 @@ class ChefServer::Deployment
 
       set = AppSetting.second
       set.ec2_private_key_id = infra.ec2_private_key_id
-      physical_id = stack.instances.first.physical_resource_id
-      chef_server.set_server_name(set, infra, prj, physical_id)
+      chef_server.set_server_name(set, infra, prj.name, physical_id)
 
       return chef_server
     rescue => ex
@@ -115,7 +114,7 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.first
-      server.set_server_name(set, infra, prj, physical_id)
+      server.set_server_name(set, infra, prj.name, physical_id)
 
 
       zb = ZabbixServer.create(
@@ -227,9 +226,9 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
     end
   end
 
-  def set_server_name(set, infra, prj, physical_id)
+  def set_server_name(set, infra, name, physical_id)
     set.fqdn = infra.instance(physical_id).public_dns_name
-    set.server_name =  prj.name
+    set.server_name =  name
     set.save!
   end
 
