@@ -213,6 +213,7 @@ ja:
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
       modifying:                   'インスタンスクラスを変更しています... 15 秒おきにステータスが更新されます'
       change_scale_warning:        'スケールを変更すると、インスタンスは一時的に停止されます'
+      save_file:                   'このファイルをダウンロードしますか?'
 
   security_groups:
       title:        'セキュリティグループ'
@@ -257,6 +258,7 @@ ja:
     btn:
       view_sched: 'スケジュールを表示'
       manage_sched: 'スケジュールを管理'
+      icalendar:    'iCalendar'
     desc:
       everyday: '毎日'
       weekdays: '平日 (月曜日 - 金曜日)'
@@ -271,10 +273,27 @@ ja:
       saturday: '土曜日'
       sunday: '日曜日'
     msg:
-      saved: '運転スケジュールは正常に保存。'
+      saved: '運用スケジュールは正常に保存されました。'
       empty: 'スケジュールはまだ設定されていません。スケジュールを取得する前にまずスケジュールを割り当ててください。'
       warn:  '注意'
-      select_day: '下記のチェックボックスから日を選択してください。 続ける前に'
+      select_day: '下記のチェックボックスから曜日を選択してください'
+      no_dtstart: '開始日時を "dtstart" として設定してください。また、開始日時は終了日時よりも前でなければなりません。'
+      no_dtend:   '終了日時を "dtend" として設定してください。また、終了日時は開始日時よりも後でなければなりません。'
+      no_frequency: 'rrule (繰り返しルール) プロパティに frequency が見つかりません。'
+      no_by_day:    'rrule (繰り返しルール) プロパティに by_day が見つかりません。'
+      invalid_frequency: '無効な frequency です。DAILY または WEEKLY から選択してください。'
+      instruction: |
+        iCalendar のアップロード前に、次に示すパラメータについて考慮してください。
+        <ol>
+          <li> dtstart (開始日時) と dtend (終了日時) を含んでいる </li>
+          <li> 次に示す rrule (繰り返しルール) を含んでいる:
+              <ul>
+                <li>有効な frequency (DAILY または WEEKLY)</li>
+                <li>有効な by_day (EC2 インスタンスを開始する任意の曜日)</li>
+              </ul>
+          </li>
+        </ol>
+
 
 
   nodes:
