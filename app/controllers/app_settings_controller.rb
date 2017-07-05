@@ -9,7 +9,12 @@
 class AppSettingsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :create, :chef_create]
 
-  before_action :installation_complete, except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys]
+  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
+    if AppSetting.set?
+      redirect_to root_path
+    end
+  end
+
 
   class SystemServerError < ::StandardError; end
 
@@ -212,9 +217,4 @@ class AppSettingsController < ApplicationController
     zf.write
   end
 
-  def installation_complete
-    if AppSetting.exists?(server_name: 'ChefServer') and AppSetting.exists?(server_name: 'ZabbixServer')
-      redirect_to root_path
-    end
-  end
 end
