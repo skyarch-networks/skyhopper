@@ -125,6 +125,7 @@ SkyHopper::Application.routes.draw do
     member do
       post 'create_host'
       post 'update_templates'
+      post 'change_zabbix_server'
       get 'show_cloudwatch_graph'
       get 'show_problems'
       get 'show_url_status'

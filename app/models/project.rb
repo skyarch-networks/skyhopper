@@ -56,4 +56,28 @@ class Project < ActiveRecord::Base
     z.delete_usergroup(self.code + '-read-write')
     return self
   end
+
+  def register_hosts(zabbix, user)
+    z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
+    # add new hostgroup on zabbix with project code as its name
+    if z.get_hostgroup_ids(self.code).empty?
+      hostgroup_id = z.add_hostgroup(self.code)
+      z.create_usergroup(self.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
+      z.create_usergroup(self.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
+
+      hostgroup_names = Project.pluck(:code)
+      hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
+      z.change_mastergroup_rights(hostgroup_ids)
+    end
+
+    # Register current user from zabbix
+    z.create_user(user) unless z.user_exists?(user.email)
+  end
+
+  def change_zabbix(zabbix_id, user)
+    zabbix = ZabbixServer.find(zabbix_id)
+    self.register_hosts(zabbix, user)
+    self.zabbix_server_id = zabbix_id
+    self.save!
+  end
 end

@@ -95,7 +95,7 @@ class ProjectsController < ApplicationController
     end
 
     begin
-      register_hosts
+      Project.register_hosts(@zabbix, current_user)
 
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.created') and return
@@ -119,7 +119,7 @@ class ProjectsController < ApplicationController
 
     @zabbix = ZabbixServer.find(zid)
     if @project.update(project_params)
-      register_hosts
+      Project.register_hosts(@zabbix, current_user)
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.updated')
     else
@@ -184,19 +184,6 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def register_hosts
-    z = Zabbix.new(@zabbix.fqdn, @zabbix.username, @zabbix.password)
-    # add new hostgroup on zabbix with project code as its name
-    if z.get_hostgroup_ids(@project.code).empty?
-      hostgroup_id = z.add_hostgroup(@project.code)
-      z.create_usergroup(@project.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
-      z.create_usergroup(@project.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
 
-      hostgroup_names = Project.pluck(:code)
-      hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
-      z.change_mastergroup_rights(hostgroup_ids)
-    end
-
-  end
 
 end
