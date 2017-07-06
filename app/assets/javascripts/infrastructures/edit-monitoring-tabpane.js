@@ -27,6 +27,7 @@ module.exports = Vue.extend({
     loading: false,
     temp_loading: false,
     zb_loading: false,
+    display_zb_server: false,
     page: 0,
     dispItemSize: 10,
     templates: [],

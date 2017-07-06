@@ -89,9 +89,15 @@
     <%= render 'monitorings/modal_update_templates' %>
   </div>
   <div class="col-md-7 col-sm-4">
-    <h4 class="page-header"><%= t 'monitoring.zabbix_servers' %></h4>
+      <div class="form-group">
+        <button id="btn-show-optional-inputs" class="btn btn-link btn-block" @click="display_zb_server = !display_zb_server">
+          <i v-if="!display_zb_server"><%=	fa('chevron-down')%></i>
+          <i v-if="display_zb_server"><%=	 fa('chevron-up')%></i>
+          <%= t 'monitoring.zabbix_servers' %>
+        </button>
+      </div>
 
-    <div class="list-group">
+    <div class="list-group" v-if="display_zb_server">
       <a href="#" class="list-group-item" v-for="z in zabbix_servers" :class="{active: z.is_checked}" @click="select_server(z)">
         <bootstrap-tooltip :title.once="'<%= t 'monitoring.click_to_select' %>'">
           <template slot="content">
