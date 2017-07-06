@@ -95,7 +95,7 @@ class ProjectsController < ApplicationController
     end
 
     begin
-      Project.register_hosts(@zabbix, current_user)
+      @project.register_hosts(@zabbix, current_user)
 
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.created') and return
@@ -119,7 +119,7 @@ class ProjectsController < ApplicationController
 
     @zabbix = ZabbixServer.find(zid)
     if @project.update(project_params)
-      Project.register_hosts(@zabbix, current_user)
+      @project.register_hosts(@zabbix, current_user)
       redirect_to projects_path(client_id: @project.client_id),
         notice: I18n.t('projects.msg.updated')
     else
@@ -183,7 +183,4 @@ class ProjectsController < ApplicationController
       redirect_to clients_path, alert: msg
     end
   end
-
-
-
 end
