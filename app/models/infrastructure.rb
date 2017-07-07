@@ -175,6 +175,11 @@ class Infrastructure < ActiveRecord::Base
     return self.status == 'CREATE_COMPLETE'
   end
 
+  # @return [TrueClass|FalseClass]
+  def inprogress?
+    return self.status == 'IN_PROGRESS'
+  end
+
   def resource(physical_id)
     resources.find_by(physical_id: physical_id)
   end

@@ -14,9 +14,6 @@ class AppSetting < ActiveRecord::Base
   validates :log_directory, format: {with: /\A(~?\/)|(#{Regexp.escape(DummyText)}$)/}
   validates :aws_region, inclusion: {in: AWS::Regions | [DummyText]}
 
-  extend Concerns::Cryptize
-  cryptize :zabbix_pass
-
   class ValidateError < StandardError; end
 
   class << self
