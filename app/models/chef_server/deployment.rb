@@ -34,6 +34,7 @@ class ChefServer::Deployment
   TrustedCertsPemID = "TrustedCerts".freeze
 
   class Error < StandardError; end
+  class SystemServerError < ::StandardError; end
 
 
   class << self
@@ -44,7 +45,7 @@ class ChefServer::Deployment
 
       prj = Project.for_chef_server
       unless prj
-        raise Error, "Project for Chef Server not found. Did you run db:seed? If didn't run, execute `bundle exec rake db:seed`"
+        raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Chef')
       end
 
       infra = Infrastructure.create_with_ec2_private_key(
@@ -54,6 +55,7 @@ class ChefServer::Deployment
         keypair_value: keypair_value,
         region:        region
       )
+
 
       params.merge!(
         InstanceType:      't2.small',
@@ -77,9 +79,11 @@ class ChefServer::Deployment
       chef_server = self.new(infra, physical_id)
 
 
-
       chef_server.init_knife_rb
 
+      set = AppSetting.second
+      set.ec2_private_key_id = infra.ec2_private_key_id
+      chef_server.set_server_name(set, infra, prj.name, physical_id)
 
       return chef_server
     rescue => ex
@@ -92,6 +96,9 @@ class ChefServer::Deployment
     # XXX: こぴぺをやめてここじゃないとこにちゃんと定義する
     def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {})
       prj = Project.for_zabbix_server
+      unless prj
+        raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Zabbix')
+      end
       infra = Infrastructure.create_with_ec2_private_key(
         project:       prj,
         stack_name:    stack_name,
@@ -107,11 +114,11 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.first
-      set.zabbix_fqdn = infra.instance(physical_id).public_dns_name
-      set.save!
+      server.set_server_name(set, infra, prj.name, physical_id)
+
 
       zb = ZabbixServer.create(
-        fqdn: set.zabbix_fqdn,
+        fqdn: set.fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
@@ -217,6 +224,12 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
         break
       end
     end
+  end
+
+  def set_server_name(set, infra, name, physical_id)
+    set.fqdn = infra.instance(physical_id).public_dns_name
+    set.server_name =  name
+    set.save!
   end
 
   private

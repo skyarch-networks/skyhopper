@@ -37,7 +37,9 @@
         modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', {id: _.escape(settings.vpc_id)}), 'danger');
       } else if (kind.endsWith('SubnetIDNotFound')) {
         modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', {id: _.escape(settings.subnet_id)}), 'danger');
-      } else {
+      } else if (kind.endsWith('SystemServerError')) {
+        modal.AlertHTML(kind, res.error.message, 'danger');
+      }else {
         modal.AlertForAjaxStdError()(xhr);
       }
     });

@@ -90,39 +90,40 @@ describe AppSettingsController, type: :controller do
     end
   end
 
-  describe '#update_zabbix' do
-    let(:set){create(:app_setting)}
-    before{set}
-    let(:zabbix_user){SecureRandom.hex(20)}
-    let(:zabbix_pass){SecureRandom.hex(20)}
-    let(:req){post :update_zabbix, zabbix_user: zabbix_user, zabbix_pass: zabbix_pass}
-
-    context 'when success' do
-      before{req}
-
-      it {is_expected.to redirect_to clients_path}
-
-      it 'should update AppSetting' do
-        expect(AppSetting.get.zabbix_user).to eq zabbix_user
-        expect(AppSetting.get.zabbix_pass).to eq zabbix_pass
-      end
-    end
-
-    context 'when failure' do
-      before do
-        allow_any_instance_of(AppSetting).to receive(:update!).and_raise
-        req
-      end
-
-      should_be_failure
-
-      it 'should not update AppSetting' do
-        AppSetting.clear_cache
-        expect(AppSetting.get.zabbix_user).not_to eq zabbix_user
-        expect(AppSetting.get.zabbix_pass).not_to eq zabbix_pass
-      end
-    end
-  end
+  # [Commendted] for Zabbix Server update
+  # describe '#update_zabbix' do
+  #   let(:set){create(:app_setting)}
+  #   before{set}
+  #   let(:zabbix_user){SecureRandom.hex(20)}
+  #   let(:zabbix_pass){SecureRandom.hex(20)}
+  #   let(:req){post :update_zabbix, zabbix_user: zabbix_user, zabbix_pass: zabbix_pass}
+  #
+  #   context 'when success' do
+  #     before{req}
+  #
+  #     it {is_expected.to redirect_to clients_path}
+  #
+  #     it 'should update AppSetting' do
+  #       expect(AppSetting.get.zabbix_user).to eq zabbix_user
+  #       expect(AppSetting.get.zabbix_pass).to eq zabbix_pass
+  #     end
+  #   end
+  #
+  #   context 'when failure' do
+  #     before do
+  #       allow_any_instance_of(AppSetting).to receive(:update!).and_raise
+  #       req
+  #     end
+  #
+  #     should_be_failure
+  #
+  #     it 'should not update AppSetting' do
+  #       AppSetting.clear_cache
+  #       expect(AppSetting.get.zabbix_user).not_to eq zabbix_user
+  #       expect(AppSetting.get.zabbix_pass).not_to eq zabbix_pass
+  #     end
+  #   end
+  # end
 
   describe '#check_eip_limit!' do
     controller AppSettingsController do
