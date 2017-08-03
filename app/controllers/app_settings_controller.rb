@@ -15,7 +15,11 @@ class AppSettingsController < ApplicationController
     end
   end
 
+
+  class SystemServerError < ::StandardError; end
+
   CF_PARAMS_KEY = 'cf_params'.freeze
+
 
   # GET /app_settings
   def show
@@ -60,12 +64,17 @@ class AppSettingsController < ApplicationController
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
-    app_setting.zabbix_fqdn = DummyText
+    app_setting.fqdn = DummyText
     app_setting.save!
     AppSetting.clear_cache
 
 
-    projects = Project.for_system
+    begin
+      projects = Project.for_system
+    rescue
+      raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'System')
+    end
+
     projects.each do |project|
       project.update!(access_key: access_key, secret_access_key: secret_access_key)
     end
@@ -93,16 +102,17 @@ class AppSettingsController < ApplicationController
     render 'zabbix_server'
   end
 
-  def update_zabbix
-    app_setting = AppSetting.get
-    user = params.require(:zabbix_user)
-    pass = params.require(:zabbix_pass)
-
-    app_setting.update!(zabbix_user: user, zabbix_pass: pass)
-    AppSetting.clear_cache
-
-    redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
-  end
+  # [Commendted] for Zabbix Server update
+  # def update_zabbix
+  #   app_setting = AppSetting.get
+  #   user = params.require(:zabbix_user)
+  #   pass = params.require(:zabbix_pass)
+  #
+  #   app_setting.update!(zabbix_user: user, zabbix_pass: pass)
+  #   AppSetting.clear_cache
+  #
+  #   redirect_to clients_path, notice: I18n.t('app_settings.msg.zabbix_updated')
+  # end
 
 
   # POST /app_settings/chef_create
@@ -115,6 +125,11 @@ class AppSettingsController < ApplicationController
     region        = set.aws_region
     keypair_name  = set.ec2_private_key.name
     keypair_value = set.ec2_private_key.value
+
+    AppSetting.create!(
+      aws_region: region,
+      log_directory: set.log_directory
+    )
     @locale = I18n.locale
     # おまじない
     # rubocop:disable Lint/Void
@@ -201,4 +216,5 @@ class AppSettingsController < ApplicationController
     zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
     zf.write
   end
+
 end

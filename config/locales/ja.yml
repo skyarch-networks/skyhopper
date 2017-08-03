@@ -96,6 +96,7 @@ ja:
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       vpc_id_not_found:  'VPC ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
       subnet_id_not_found: 'サブネット ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
+      db_seed_not_found:  '<b>%{server}</b>サーバーのプロジェクトが見つかりません。 db:seedを実行しましたか？ そうでない場合は、 `bundle exec rake db：seed`を実行してください。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
