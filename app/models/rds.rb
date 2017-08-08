@@ -85,4 +85,15 @@ class RDS < SimpleDelegator
     self.db_instance_identifier
   end
 
+  def start_db_instance
+    @rds.start_db_instance(db_instance_identifier: physical_id)
+  end
+
+  def stop_db_instance
+    @rds.stop_db_instance(db_instance_identifier: physical_id)
+  end
+
+  def reboot_db_instance
+    @rds.reboot_db_instance(db_instance_identifier: physical_id)
+  end
 end

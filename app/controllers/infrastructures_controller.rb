@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb]
+  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb, :start_rds, :stop_rds, :reboot_rds]
 
   before_action do
     infra = @infrastructure || (
@@ -344,6 +344,27 @@ class InfrastructuresController < ApplicationController
 
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
+  end
+
+  def start_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.start_db_instance
+    render text: result, status: 200
+  end
+
+  def stop_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.stop_db_instance
+    render text: result, status: 200
+  end
+
+  def reboot_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.reboot_db_instance
+    render text: result, status: 200
   end
 
   private
