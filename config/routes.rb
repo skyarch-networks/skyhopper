@@ -50,6 +50,7 @@ SkyHopper::Application.routes.draw do
       post 'save_schedule'
       post 'start_rds'
       post 'stop_rds'
+      post 'reboot_rds'
     end
   end
 
