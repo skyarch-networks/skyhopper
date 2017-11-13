@@ -252,6 +252,7 @@ production:
 
 ```sh
 $ bundle exec rake db:create
+$ bundle exec rake db:create RAILS_ENV=production
 ```
 
 ### テーブルの作成
