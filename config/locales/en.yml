@@ -215,9 +215,12 @@ en:
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
       modifying:                   'Modifying instance.. updates in 15 seconds.'
       change_scale_warning:        'The instance will be stopped temporarily if the scale changes.'
-      start_rds:                   'Are you sure you want to start DB instance?'
-      stop_rds:                    'Are you sure you want to stop DB instance?'
-      reboot_rds:                  'Are you sure you want to reboot DB instance?'
+      confirm_start_rds:           'Are you sure you want to start DB instance?'
+      confirm_stop_rds:            'Are you sure you want to stop DB instance?'
+      confirm_reboot_rds:          'Are you sure you want to reboot DB instance?'
+      start_rds:                   'DB instance is starting.'
+      stop_rds:                    'DB instance is stopping.'
+      reboot_rds:                  'DB instance is rebooting.'
 
   security_groups:
     title:        'Security Groups'

@@ -212,11 +212,14 @@ ja:
       empty-list:                  'インフラストラクチャのリストは空です.'
       loading-list:                'インフラストラクチャのロード中です...'
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
-      modifying:                   'インスタンスクラスを変更しています... 15 秒おきにステータスが更新されます'
+      modifying:                   'インスタンスを変更しています... 15 秒おきにステータスが更新されます'
       change_scale_warning:        'スケールを変更すると、インスタンスは一時的に停止されます'
-      start_rds:                   'DB インスタンスを今すぐ開始してよろしいですか?'
-      stop_rds:                    'DB インスタンスを今すぐ停止してよろしいですか?'
-      reboot_rds:                  'DB インスタンスを今すぐ再起動してよろしいですか?'
+      confirm_start_rds:           'DB インスタンスを今すぐ開始してよろしいですか?'
+      confirm_stop_rds:            'DB インスタンスを今すぐ停止してよろしいですか?'
+      confirm_reboot_rds:          'DB インスタンスを今すぐ再起動してよろしいですか?'
+      start_rds:                   'DB インスタンスの起動が開始されました'
+      stop_rds:                    'DB インスタンスの停止が開始されました'
+      reboot_rds:                  'DB インスタンスの再起動が開始されました'
 
   security_groups:
       title:        'セキュリティグループ'

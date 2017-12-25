@@ -115,7 +115,7 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.start_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds'), 'danger').done(function () {
         rds.start_rds().done(function (data) {
           self.modifying = true;
           alert_danger()(data);
@@ -127,7 +127,7 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.stop_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'danger').done(function () {
         rds.stop_rds().done(function (data) {
           self.modifying = true;
           alert_danger()(data);
@@ -139,7 +139,7 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.reboot_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'danger').done(function () {
         rds.reboot_rds().done(function (data) {
           self.modifying = true;
           alert_danger()(data);
