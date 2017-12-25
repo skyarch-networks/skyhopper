@@ -251,7 +251,10 @@ production:
 ### Creating database using rake
 
 ```sh
+# development
 $ bundle exec rake db:create
+# production
+$ bundle exec rake db:create RAILS_ENV=production
 ```
 
 ### Creating tables using rake
@@ -295,7 +298,7 @@ $ ./scripts/skyhopper_daemon.sh start
 # for generating i18n-js dictionary
 $ bundle exec rake i18n:js:export
 # for Precompiling assets
-$ bundle exec assets:precompile
+$ bundle exec rake assets:precompile
 ```
 
 

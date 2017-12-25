@@ -251,7 +251,9 @@ production:
 ### データベースの作成
 
 ```sh
+# development
 $ bundle exec rake db:create
+# production
 $ bundle exec rake db:create RAILS_ENV=production
 ```
 
@@ -284,7 +286,7 @@ $ chmod 711 ~
 # i18n-js辞書を生成する
 $ bundle exec rake i18n:js:export
 # アセットのプリコンパイル用
-$ bundle exec assets:precompile
+$ bundle exec rake assets:precompile
 ```
 
 ## 起動
