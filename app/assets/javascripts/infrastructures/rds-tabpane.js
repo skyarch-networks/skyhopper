@@ -38,7 +38,6 @@ module.exports = Vue.extend({
     dispItemSize: 10,
     filteredLength: null,
     filterKey: '',
-    changing_status: t('infrastructures.msg.modifying'),
     modifying: false,
   };},
 
@@ -117,7 +116,9 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds'), 'danger').done(function () {
         rds.start_rds().done(function (data) {
           self.modifying = true;
-          alert_danger()(data);
+          self.rds = data.rds;
+          self.reload();
+          alert_danger()(data.message);
         });
       });
     },
@@ -129,7 +130,9 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'danger').done(function () {
         rds.stop_rds().done(function (data) {
           self.modifying = true;
-          alert_danger()(data);
+          self.rds = data.rds;
+          self.reload();
+          alert_danger()(data.message);
         });
       });
     },
@@ -141,7 +144,9 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'danger').done(function () {
         rds.reboot_rds().done(function (data) {
           self.modifying = true;
-          alert_danger()(data);
+          self.rds = data.rds;
+          self.reload();
+          alert_danger()(data.message);
         });
       });
     },
@@ -173,6 +178,10 @@ module.exports = Vue.extend({
         return 'btn-success';
       }
       return 'btn-default';
+    },
+    changing_status: function () {
+      var t_status = t('infrastructures.' + this.rds.db_instance_status);
+      return t('infrastructures.msg.modifying', {status: t_status});
     },
   },
 

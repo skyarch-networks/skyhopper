@@ -349,22 +349,28 @@ class InfrastructuresController < ApplicationController
   def start_rds
     physical_id = params.require(:physical_id)
     rds = @infrastructure.rds(physical_id)
-    rds.start_db_instance
-    render text: t('infrastructures.msg.start_rds'), status: 200
+    result = rds.start_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.start_rds')
   end
 
   def stop_rds
     physical_id = params.require(:physical_id)
     rds = @infrastructure.rds(physical_id)
-    rds.stop_db_instance
-    render text: t('infrastructures.msg.stop_rds'), status: 200
+    result = rds.stop_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.stop_rds')
   end
 
   def reboot_rds
     physical_id = params.require(:physical_id)
     rds = @infrastructure.rds(physical_id)
-    rds.reboot_db_instance
-    render text: t('infrastructures.msg.reboot_rds'), status: 200
+    result = rds.reboot_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.reboot_rds')
   end
 
   private
