@@ -113,12 +113,12 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(function () {
         rds.start_rds().done(function (data) {
           self.modifying = true;
           self.rds = data.rds;
           self.reload();
-          alert_danger()(data.message);
+          alert_success()(data.message);
         });
       });
     },
@@ -127,12 +127,12 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(function () {
         rds.stop_rds().done(function (data) {
           self.modifying = true;
           self.rds = data.rds;
           self.reload();
-          alert_danger()(data.message);
+          alert_success()(data.message);
         });
       });
     },
@@ -141,12 +141,12 @@ module.exports = Vue.extend({
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'danger').done(function () {
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(function () {
         rds.reboot_rds().done(function (data) {
           self.modifying = true;
           self.rds = data.rds;
           self.reload();
-          alert_danger()(data.message);
+          alert_success()(data.message);
         });
       });
     },
