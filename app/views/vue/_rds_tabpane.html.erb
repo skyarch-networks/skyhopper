@@ -24,7 +24,7 @@
         <span v-if="!modifying">{{rds.db_instance_status}}</span>
       </td>
       <td>
-        <bootstrap-tooltip :title="change_status">
+        <bootstrap-tooltip title="<%=t('common.actions')%>">
           <template slot="content">
           <div class="btn-group">
             <button :class="rds_button_class" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">

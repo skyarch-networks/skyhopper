@@ -40,7 +40,6 @@ module.exports = Vue.extend({
     filterKey: '',
     changing_status: t('infrastructures.msg.modifying'),
     modifying: false,
-    change_status: t('common.actions'),
   };},
 
   methods: {
