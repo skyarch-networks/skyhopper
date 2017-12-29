@@ -109,7 +109,7 @@ module.exports = Vue.extend({
     },
     has_selected: has_selected(this.rules_summary),
     start_rds: function () {
-      if (this.running) { return }
+      if (this.available) { return }
       var self = this;
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
@@ -119,7 +119,7 @@ module.exports = Vue.extend({
           self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
-        });
+        }).fail(alert_danger());
       });
     },
     stop_rds: function () {
@@ -133,7 +133,7 @@ module.exports = Vue.extend({
           self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
-        });
+        }).fail(alert_danger());
       });
     },
     reboot_rds: function () {
@@ -147,7 +147,7 @@ module.exports = Vue.extend({
           self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
-        });
+        }).fail(alert_danger());
       });
     },
   },
