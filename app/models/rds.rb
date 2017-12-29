@@ -52,21 +52,20 @@ class RDS < SimpleDelegator
       raise ChangeScaleError, "Invalid type name: #{scale}"
     end
 
-    if scale == @db_instance[:db_instance_class]
-      return scale
-    end
-
     begin
-      @rds.modify_db_instance({
+      res = @rds.modify_db_instance({
         db_instance_class: scale,
         db_instance_identifier: @db_instance.db_instance_identifier,
         apply_immediately: true,
       })
+      if res.db_instance.pending_modified_values.to_a.none?
+        raise ChangeScaleError, 'DB instance is not modified.'
+      end
     rescue AWS::RDS::Errors::InvalidParameterValue => ex
       raise ChangeScaleError, ex.message
     end
 
-    scale
+    res
   end
 
   def modify_security_groups(group_ids)

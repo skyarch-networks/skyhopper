@@ -241,21 +241,13 @@ class InfrastructuresController < ApplicationController
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
 
-    before_type = rds.db_instance_class
-
     begin
-      changed_type = rds.change_scale(type)
+      result = rds.change_scale(type)
     rescue RDS::ChangeScaleError => ex
       render text: ex.message, status: 400 and return
     end
 
-    if before_type == changed_type
-      render text: "There is not change '#{type}'", status: 200 and return
-    end
-
-
-    # TODO: status を取得
-    render text: "change scale to #{type}" and return
+    render json: {rds: result.db_instance} and return
   end
 
   # POST /infreastructures/rds_submit_groups

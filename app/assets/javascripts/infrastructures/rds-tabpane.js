@@ -48,10 +48,9 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
       rds.change_scale(this.change_scale_type_to)
-      .done(alert_success(self.reload))
+      .done(self.reload)
       .fail(alert_danger(self.reload));
 
-      this.modifying = true;
       $('#change-scale-modal').modal('hide');
     },
 
@@ -180,8 +179,7 @@ module.exports = Vue.extend({
       return 'btn-default';
     },
     changing_status: function () {
-      var t_status = t('infrastructures.' + this.rds.db_instance_status);
-      return t('infrastructures.msg.modifying', {status: t_status});
+      return t('rds.msg.' + this.rds.db_instance_status);
     },
   },
 
@@ -193,6 +191,9 @@ module.exports = Vue.extend({
       self.rds = data.rds;
       self.address = self.rds.endpoint.address;
       self.rules_summary = data.security_groups;
+      if (self.rds.pending_modified_values.db_instance_class) {
+        self.rds.db_instance_status = 'modifying';
+      }
       if(self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting' ){
         setTimeout(function () {
           self.reload();

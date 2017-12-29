@@ -184,8 +184,6 @@ en:
     operations:         'Operations'
     monitoring:         'Monitoring'
     logs:               'Logs'
-    starting:           'Starting'
-    stopping:           'Stopping'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -215,7 +213,6 @@ en:
       empty-list:                  'No Infrastructure found.'
       loading-list:                'Loading Infrastructures ...'
       invalid_keypair:             'Invalid key pair! Please check the keypair file.'
-      modifying:                   '%{status} instance.. updates in 15 seconds.'
       change_scale_warning:        'The instance will be stopped temporarily if the scale changes.'
       confirm_start_rds:           'Are you sure you want to start DB instance?'
       confirm_stop_rds:            'Are you sure you want to stop DB instance?'
@@ -223,6 +220,12 @@ en:
       start_rds:                   'DB instance is starting.'
       stop_rds:                    'DB instance is stopping.'
       reboot_rds:                  'DB instance is rebooting.'
+
+  rds:
+    msg:
+      starting:   'Starting instance.. updates in 15 seconds.'
+      stopping:   'Stopping instance.. updates in 15 seconds.'
+      modifying:  'Modifying instance.. updates in 15 seconds.'
 
   security_groups:
     title:        'Security Groups'
