@@ -114,8 +114,6 @@ module.exports = Vue.extend({
       var rds = new RDSInstance(infra, this.physical_id);
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(function () {
         rds.start_rds().done(function (data) {
-          self.modifying = true;
-          self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
@@ -128,8 +126,6 @@ module.exports = Vue.extend({
       var rds = new RDSInstance(infra, this.physical_id);
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(function () {
         rds.stop_rds().done(function (data) {
-          self.modifying = true;
-          self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
@@ -142,8 +138,6 @@ module.exports = Vue.extend({
       var rds = new RDSInstance(infra, this.physical_id);
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(function () {
         rds.reboot_rds().done(function (data) {
-          self.modifying = true;
-          self.rds = data.rds;
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
