@@ -48,6 +48,9 @@ SkyHopper::Application.routes.draw do
       get  'get_schedule'
       post 'delete_stack'
       post 'save_schedule'
+      post 'start_rds'
+      post 'stop_rds'
+      post 'reboot_rds'
     end
   end
 

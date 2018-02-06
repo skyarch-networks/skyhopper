@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb]
+  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb, :start_rds, :stop_rds, :reboot_rds]
 
   before_action do
     infra = @infrastructure || (
@@ -241,21 +241,13 @@ class InfrastructuresController < ApplicationController
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
 
-    before_type = rds.db_instance_class
-
     begin
-      changed_type = rds.change_scale(type)
+      result = rds.change_scale(type)
     rescue RDS::ChangeScaleError => ex
       render text: ex.message, status: 400 and return
     end
 
-    if before_type == changed_type
-      render text: "There is not change '#{type}'", status: 200 and return
-    end
-
-
-    # TODO: status を取得
-    render text: "change scale to #{type}" and return
+    render json: {rds: result.db_instance} and return
   end
 
   # POST /infreastructures/rds_submit_groups
@@ -344,6 +336,33 @@ class InfrastructuresController < ApplicationController
 
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
+  end
+
+  def start_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.start_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.start_rds')
+  end
+
+  def stop_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.stop_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.stop_rds')
+  end
+
+  def reboot_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.reboot_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.reboot_rds')
   end
 
   private

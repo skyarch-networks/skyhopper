@@ -14,7 +14,7 @@ class InfrastructurePolicy < ApplicationPolicy
     end
   end
 
-  %i[edit? update? destroy? delete_stack? change_rds_scale? save_schedule? rds_submit_groups?].each do |action|
+  %i[edit? update? destroy? delete_stack? change_rds_scale? save_schedule? rds_submit_groups? start_rds? stop_rds? reboot_rds?].each do |action|
     define_method(action) do
       user.admin? and user.allow?(record)
     end
