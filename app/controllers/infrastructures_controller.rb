@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb]
+  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb, :start_rds, :stop_rds, :reboot_rds]
 
   before_action do
     infra = @infrastructure || (
@@ -241,21 +241,13 @@ class InfrastructuresController < ApplicationController
 
     rds = Infrastructure.find(infra_id).rds(physical_id)
 
-    before_type = rds.db_instance_class
-
     begin
-      changed_type = rds.change_scale(type)
+      result = rds.change_scale(type)
     rescue RDS::ChangeScaleError => ex
       render text: ex.message, status: 400 and return
     end
 
-    if before_type == changed_type
-      render text: "There is not change '#{type}'", status: 200 and return
-    end
-
-
-    # TODO: status を取得
-    render text: "change scale to #{type}" and return
+    render json: {rds: result.db_instance} and return
   end
 
   # POST /infreastructures/rds_submit_groups
@@ -280,6 +272,97 @@ class InfrastructuresController < ApplicationController
     @s3 = S3.new(infrastructure, @bucket_name)
 
     render partial: 'show_s3'
+  end
+
+
+  # GET /infreastructures/get_schedule
+  # @param [Integer] infra_id
+  # @param [String]  physical_id
+  def get_schedule
+    infra_id = params.require(:infra_id)
+    physical_id = params.require(:physical_id)
+    resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+
+    @operation_schedule = resource.operation_durations.order("created_at desc")
+
+    respond_to do |format|
+      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
+        include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
+                  {resource: {only: [:physical_id]}} ])
+      }
+    end
+  end
+
+  # POST /infrastructures/save_schedule
+  # @param [Integer] infra_id
+  # @param [String] physical_id
+  # @param [Object] selected_instance
+  def save_schedule
+    selected_instance =  params.require(:selected_instance)
+    ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
+    start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone
+    end_date = Time.at(selected_instance[:end_date].to_i).in_time_zone
+
+    if ops_exists
+      ops_exists.start_date = start_date
+      ops_exists.end_date =  end_date
+      ops_exists.save
+
+      recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
+      recur_exits.repeats = selected_instance[:repeat_freq].to_i
+      recur_exits.start_time = start_date.strftime("%H:%M")
+      recur_exits.end_time = end_date.strftime("%H:%M")
+      recur_exits.dates = selected_instance[:dates]
+      recur_exits.save
+    else
+      begin
+        ops = OperationDuration.create!(
+          resource_id:  selected_instance[:id],
+          start_date:   start_date,
+          end_date:     end_date,
+          user_id: current_user.id
+        )
+        RecurringDate.create!(
+          operation_duration_id: ops.id,
+          repeats: selected_instance[:repeat_freq].to_i,
+          start_time:  start_date.strftime("%H:%M"),
+          end_time: end_date.strftime("%H:%M"),
+          dates: selected_instance[:dates]
+        )
+      rescue => ex
+        render text: ex.message, status: 500 and return
+      end
+    end
+
+
+    render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
+  end
+
+  def start_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.start_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.start_rds')
+  end
+
+  def stop_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.stop_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.stop_rds')
+  end
+
+  def reboot_rds
+    physical_id = params.require(:physical_id)
+    rds = @infrastructure.rds(physical_id)
+    result = rds.reboot_db_instance
+
+    @db_instance = result.db_instance
+    @message     = t('infrastructures.msg.reboot_rds')
   end
 
   private

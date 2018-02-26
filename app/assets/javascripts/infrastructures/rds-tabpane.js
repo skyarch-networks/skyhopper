@@ -1,3 +1,4 @@
+var modal          = require('modal');
 var Infrastructure = require('models/infrastructure').default;
 var RDSInstance    = require('models/rds_instance').default;
 
@@ -37,7 +38,6 @@ module.exports = Vue.extend({
     dispItemSize: 10,
     filteredLength: null,
     filterKey: '',
-    changing_status: t('infrastructures.msg.modifying'),
     modifying: false,
   };},
 
@@ -48,10 +48,9 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(this.infra_id);
       var rds = new RDSInstance(infra, this.physical_id);
       rds.change_scale(this.change_scale_type_to)
-      .done(alert_success(self.reload))
+      .done(self.reload)
       .fail(alert_danger(self.reload));
 
-      this.modifying = true;
       $('#change-scale-modal').modal('hide');
     },
 
@@ -108,6 +107,42 @@ module.exports = Vue.extend({
       check_tag(r);
     },
     has_selected: has_selected(this.rules_summary),
+    start_rds: function () {
+      if (this.available) { return }
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(function () {
+        rds.start_rds().done(function (data) {
+          self.reload();
+          alert_success()(data.message);
+        }).fail(alert_danger());
+      });
+    },
+    stop_rds: function () {
+      if (this.stopped) { return }
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(function () {
+        rds.stop_rds().done(function (data) {
+          self.reload();
+          alert_success()(data.message);
+        }).fail(alert_danger());
+      });
+    },
+    reboot_rds: function () {
+      if (this.stopped) { return }
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(function () {
+        rds.reboot_rds().done(function (data) {
+          self.reload();
+          alert_success()(data.message);
+        }).fail(alert_danger());
+      });
+    },
   },
   computed: {
     gen_serverspec_enable: function () {
@@ -115,6 +150,7 @@ module.exports = Vue.extend({
       return !!(s.username && s.password && s.database);
     },
     available: function () { return this.rds.db_instance_status === 'available'; },
+    stopped: function () { return this.rds.db_instance_status === 'stopped'; },
     dispItems: function(){
       var startPage = this.page * this.dispItemSize;
       if (this.filterKey === ''){
@@ -126,7 +162,19 @@ module.exports = Vue.extend({
     },
 
     isStartPage: function(){ return (this.page === 0); },
-    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); }
+    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
+    rds_button_class: function () {
+      if (this.modifying) {
+        return 'disabled';
+      }
+      if (this.available) {
+        return 'btn-success';
+      }
+      return 'btn-default';
+    },
+    changing_status: function () {
+      return t('rds.msg.' + this.rds.db_instance_status);
+    },
   },
 
   created: function () {
@@ -137,7 +185,10 @@ module.exports = Vue.extend({
       self.rds = data.rds;
       self.address = self.rds.endpoint.address;
       self.rules_summary = data.security_groups;
-      if(self.rds.db_instance_status == 'modifying'){
+      if (self.rds.pending_modified_values.db_instance_class) {
+        self.rds.db_instance_status = 'modifying';
+      }
+      if(self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting' ){
         setTimeout(function () {
           self.reload();
         }, 15000);

@@ -53,10 +53,31 @@ export default class RDSInstance extends ModelBase {
       (<any>RDSInstance.ajax_infra).rds_submit_groups(_.merge(this.params, {group_ids: group_ids}))
     );
   }
+
+  start_rds(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).start_rds(this.params)
+    );
+  }
+
+  stop_rds(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).stop_rds(this.params)
+    );
+  }
+
+  reboot_rds(): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>RDSInstance.ajax_infra).reboot_rds(this.params)
+    );
+  }
 }
 
 RDSInstance.ajax_infra.add_member('show_rds', 'GET');
 RDSInstance.ajax_infra.add_member('change_rds_scale', 'POST');
 RDSInstance.ajax_infra.add_member('rds_submit_groups', 'POST');
+RDSInstance.ajax_infra.add_member('start_rds', 'POST');
+RDSInstance.ajax_infra.add_member('stop_rds', 'POST');
+RDSInstance.ajax_infra.add_member('reboot_rds', 'POST');
 
 RDSInstance.ajax_serverspec.add_collection('create_for_rds', 'PUT');
