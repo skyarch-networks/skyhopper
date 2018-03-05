@@ -1,1 +1,1 @@
-../../bower_components/noty/js/noty/packaged/jquery.noty.packaged.js
+../../../frontend/node_modules/noty/js/noty/packaged/jquery.noty.packaged.min.js
