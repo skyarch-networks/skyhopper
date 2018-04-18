@@ -14,7 +14,7 @@ class MonitoringPolicy < ApplicationPolicy
     end
   end
 
-  %i[show? show_cloudwatch_graph? show_zabbix_graph? show_problems? show_url_status?].each do |action|
+  %i[show? show_cloudwatch_graph? show_zabbix_graph? show_problems? show_url_status? change_zabbix_server?].each do |action|
     define_method(action) do
       user.allow?(record)
     end

@@ -470,6 +470,7 @@ ja:
     before_reg_title:     '先に進む前に、テンプレートを選択してください。'
     zabbix_templates:     'Zabbixのテンプレート'
     template:             '監視テンプレート'
+    click_to_select:      'このZabbix Serverを選択するにはクリックしてください'
     btn:
       create: '登録'
       add:    '追加'
@@ -494,6 +495,7 @@ ja:
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
+      change_zabbix:            'このインフラストラクチャのZabbixサーバを変更してもよろしいですか？'
       page:                    'ページ'
       of:                      'の'
       no_data: |
