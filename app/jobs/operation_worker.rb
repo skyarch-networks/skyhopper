@@ -18,16 +18,16 @@ class OperationWorker
       # Check if resource is still available.
       if Resource.exists?(item.resource_id)
         resource = Resource.find(item.resource_id)
+        start_time = item.recurring_date.start_time.strftime( "%H%M%S%N" ).to_i
+        end_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
+        params = { start_time: start_time,
+                   end_time: end_time,
+                   resource: resource,
+                   now: now,
+                   user: item.user_id,
+                   recurring_date: item.recurring_date.dates,
+                   repeats: item.recurring_date.repeats}
         if now >= item.start_date && now <= item.end_date
-          start_time = item.recurring_date.start_time.strftime( "%H%M%S%N" ).to_i
-          end_time = item.recurring_date.end_time.strftime( "%H%M%S%N" ).to_i
-          params = { start_time: start_time,
-                     end_time: end_time,
-                     resource: resource,
-                     now: now,
-                     user: item.user_id,
-                     recurring_date: item.recurring_date.dates,
-                     repeats: item.recurring_date.repeats}
           case item.recurring_date.repeats
             when "everyday"
               evaluate_evr(params)
@@ -39,7 +39,7 @@ class OperationWorker
               evaluate_other(params)
           end
         else
-          stop(resource)
+          stop(params)
         end
       else
         OperationDuration.where(resource_id: item.resource_id).destroy_all
