@@ -103,7 +103,7 @@ group :development, :test do
   gem 'redcarpet'
   gem 'github-markup'
 
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.55.0', require: false
 
   gem 'spring'
   gem 'sprint'
