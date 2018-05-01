@@ -1,7 +1,7 @@
-<% provide(:title, I18n.t('serverspecs.generator.title')) %>
+<% provide(:title, I18n.t('servertests.generator.title')) %>
 <div class="container">
   <h2 class="page-header">
-    <%=t('serverspecs.generator.title')%>
+    <%=t('servertests.generator.title')%>
     <% if @infra %>
       <small><%= ('for ' + link_to(@infra.stack_name, infrastructures_path(project_id: @infra.project_id, infrastructure_id: @infra.id))).html_safe %></small>
     <% end %>
