@@ -119,7 +119,10 @@
         }else{ return value; }
         break;
       case 'servertest':
-        return  (value.length > 0) ? value.map(function(val){ return val.name; }) : 'auto generated';
+        if (value.length > 0)
+          return value.map(function (val){ return val.name; }).join(', ');
+        else
+          return 'auto generated';
       case 'category':
         var category = [];
         value.forEach(function (argument) {
