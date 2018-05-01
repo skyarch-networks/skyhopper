@@ -6,12 +6,14 @@
     </form><hr>
   </div>
   <table class="table table-hover ssp">
-    <tr>
-      <th v-for="key in columns"
-        :class="{active: sortKey === key}" @click="sortBy(key)">
-        <text v-html="key | wrap index"></text>
+    <thead>
+      <tr>
+        <th v-for="key in columns"
+            :class="{active: sortKey === key}"
+            @click="sortBy(key)">
+          <text v-html="key | wrap index"></text>
           <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-      </th>
+        </th>
       </tr>
     </thead>
     <tbody class="tbody-infra-log">
