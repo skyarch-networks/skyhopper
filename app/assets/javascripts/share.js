@@ -158,7 +158,8 @@ $(document).ready(function() {
 
 // for websocket
 var ws_connector = function (kind, id) {
-  return new WebSocket('ws://' + location.hostname + '/ws/' + kind + '/' + id );
+  var ws_protocol = (("https:" == document.location.protocol) ? "wss:" : "ws:");
+  return new WebSocket(ws_protocol + '//' + location.hostname + '/ws/' + kind + '/' + id );
 };
 
 
