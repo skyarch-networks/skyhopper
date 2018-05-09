@@ -16,7 +16,7 @@ class InfrastructureLog < ActiveRecord::Base
 
   class << self
     def for_infra(infra_id)
-      where(infra_id).includes(:user).order("created_at DESC")
+      where(infrastructure_id: infra_id).includes(:user).order("created_at DESC")
     end
 
     # define success and fail
