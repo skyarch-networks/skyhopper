@@ -38,7 +38,7 @@ class Stack
       stack_name:    @name,
       template_body: template,
       parameters:    parameters,
-      capabilities:  %w[CAPABILITY_IAM]
+      capabilities: %w[CAPABILITY_NAMED_IAM]
     )
   end
 
@@ -47,7 +47,11 @@ class Stack
   end
 
   def update(template, parameters)
-    @stack.update(template_body: template, parameters: parameters)
+    @stack.update(
+      template_body: template,
+      parameters: parameters,
+      capabilities: %w[CAPABILITY_NAMED_IAM]
+    )
   end
 
   # Stack を作成、すでにスタックが存在すればUpdate
