@@ -183,6 +183,7 @@ ja:
     operations:         'オペレーション'
     monitoring:         'モニタリング'
     logs:               'ログ'
+    no_resource:        '情報なし'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -219,6 +220,7 @@ ja:
       start_rds:                   'DB インスタンスの起動が開始されました'
       stop_rds:                    'DB インスタンスの停止が開始されました'
       reboot_rds:                  'DB インスタンスの再起動が開始されました'
+      no_resource:                 '表示できるリソースはありません'
 
   rds:
     msg:

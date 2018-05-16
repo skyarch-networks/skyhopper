@@ -184,6 +184,7 @@ en:
     operations:         'Operations'
     monitoring:         'Monitoring'
     logs:               'Logs'
+    no_resource:        'No resource information.'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -220,6 +221,7 @@ en:
       start_rds:                   'DB instance is starting.'
       stop_rds:                    'DB instance is stopping.'
       reboot_rds:                  'DB instance is rebooting.'
+      no_resource:                 'There are no resources that can be displayed.'
 
   rds:
     msg:
