@@ -25,7 +25,7 @@ describe Stack, type: :model do
           stack_name: stack_name,
           template_body: template,
           parameters: params,
-          capabilities: %w[CAPABILITY_IAM]
+          capabilities: %w[CAPABILITY_NAMED_IAM]
       )
       subject.create(template, params)
     end
