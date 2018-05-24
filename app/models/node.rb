@@ -353,6 +353,16 @@ class Node
         result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
 
+    result[:long_message] = result[:examples].map{|example|
+      message = example[:status] + "\n"
+      message += example[:full_description] + "\n"
+      message += example[:command] + "\n"
+      if example[:status] == 'pending' ||  example[:status] == 'failed'
+        message += example[:exception][:message] + "\n"
+      end
+      message
+    }.join("\n")
+
     return result
   end
 

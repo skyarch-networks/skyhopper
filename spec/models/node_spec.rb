@@ -128,7 +128,10 @@ describe Node, type: :model do
     {
       "exception": {
         "backtrace": "piyo"
-      }
+      },
+      "status": "passed",
+      "full_description": "aaaa",
+      "command": "bbbb"
     }
   ],
   "summary": {

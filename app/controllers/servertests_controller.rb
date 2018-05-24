@@ -192,7 +192,7 @@ class ServertestsController < ApplicationController
     ServertestResult.create(
       resource_id:    resource.id,
       status:         resp[:status_text],
-      message:        resp[:message],
+      message:        resp[:long_message],
       servertest_ids: servertest_ids
     )
     render text: render_msg, status: 200 and return
