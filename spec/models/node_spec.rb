@@ -128,13 +128,17 @@ describe Node, type: :model do
     {
       "exception": {
         "backtrace": "piyo"
-      }
+      },
+      "status": "passed",
+      "full_description": "aaaa",
+      "command": "bbbb"
     }
   ],
   "summary": {
     "failure_count": 0,
     "pending_count": 0
-  }
+  },
+  "summary_line": "1 example, 0 failures"
 }
       EOS
       allow(status).to receive(:success?).and_return(true)
