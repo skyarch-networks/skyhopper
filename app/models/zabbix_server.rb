@@ -10,8 +10,9 @@ class ZabbixServer < ActiveRecord::Base
 
   def self.selected_zabbix(zabbix_id)
     zb = []
-    self.all.each do |z|
-      zb.push(id: z.id,
+    self.all.find_each do |z|
+      zb.push(
+        id: z.id,
         fqdn: z.fqdn,
         version: z.version,
         details: z.details,
