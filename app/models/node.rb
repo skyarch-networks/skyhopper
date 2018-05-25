@@ -366,6 +366,7 @@ class Node
       end
       message
     }.join("\n")
+    result[:long_message] += "\n" + result[:summary_line]
 
     return result
   end
