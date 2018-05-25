@@ -95,6 +95,7 @@
          <a v-if="no_stack"    @click="show_tabpane('default')"><%= t 'infrastructures.no_stack_info' %></a>
          <a v-if="in_progress" @click="show_tabpane('default')"><%= t 'infrastructures.in_progress' %></a>
          <a v-if="stack_fail"  @click="show_tabpane('default')"><%= t 'infrastructures.stack_fail' %></a>
+         <a v-if="no_resource" @click="show_tabpane('default')"><%= t 'infrastructures.no_resource' %></a>
        </li>
      </ul>
 
@@ -126,6 +127,15 @@
 
           <%# Stack Event Table %>
           <stack-events-table :events="current_infra.events"></stack-events-table>
+
+          <%# No resource %>
+          <div v-if="no_resource">
+            <div class="jumbotron">
+              <div class="container">
+                <%= t('infrastructures.msg.no_resource')%>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div v-show="!loading">
