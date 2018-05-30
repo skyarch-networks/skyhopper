@@ -37,7 +37,7 @@ RSpec.describe ZabbixServersController, type: :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) {
     {
-      id:  SecureRandom.random_number(20),
+      id: ZabbixServer.maximum(:id).to_i + 1 + SecureRandom.random_number(20),
       fqdn: SecureRandom.hex(20),
       username: "test",
       password: "ilsdseeetest",
