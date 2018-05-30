@@ -16,7 +16,7 @@ class ZabbixServer < ActiveRecord::Base
         version: z.version,
         details: z.details,
         created_at: z.created_at.strftime("%B %d, %Y at %l:%m %p %Z"),
-        is_checked: (z.id == zabbix_id)
+        is_checked: (z.id == zabbix_id),
       }
     }
   end
