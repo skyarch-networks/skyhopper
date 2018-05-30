@@ -88,7 +88,29 @@
     </table>
     <%= render 'monitorings/modal_update_templates' %>
   </div>
-  <div class="col-md-8 col-sm-6"></div>
+  <div class="col-md-7 col-sm-4">
+      <div class="form-group">
+        <button id="btn-show-optional-inputs" class="btn btn-link btn-block" @click="display_zb_server = !display_zb_server">
+          <i v-if="!display_zb_server"><%=	fa('chevron-down')%></i>
+          <i v-if="display_zb_server"><%=	 fa('chevron-up')%></i>
+          <%= t 'monitoring.zabbix_servers' %>
+        </button>
+      </div>
+
+    <div class="list-group" v-if="display_zb_server">
+      <a href="#" class="list-group-item" v-for="z in zabbix_servers" :class="{active: z.is_checked}" @click="select_server(z)">
+        <bootstrap-tooltip :title.once="'<%= t 'monitoring.click_to_select' %>'">
+          <template slot="content">
+            <h4 class="list-group-item-heading">{{z.fqdn}}</h4>
+            <small>{{z.details}}</small>
+            <p class="list-group-item-text">{{z.created_at}}</p>
+            <p class="list-group-item-text">Version: {{z.version}}</p>
+          </template>
+        </bootstrap-tooltip>
+      </a>
+    </div>
+
+  </div>
 </div>
 
 <div class="form-actions-top">

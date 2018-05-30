@@ -200,4 +200,26 @@ RSpec.describe MonitoringsController, type: :controller do
       should_be_failure
     end
   end
+
+  describe '#change_zabbix_server' do
+    before do
+      create(:ec2_resource, infrastructure: infra)
+      allow(ZabbixServer).to receive(:find) {zabbix_server}
+    end
+    let(:req){post :change_zabbix_server, id: infra.id, zabbix_id: zabbix_server.id}
+
+    context 'when success' do
+      before{req}
+      should_be_success
+    end
+
+    context 'when failure' do
+      before do
+        allow(_zabbix).to receive(:find){''}.and_raise
+        post :change_zabbix_server, id: infra.id, zabbix_id: ''
+      end
+
+      should_be_failure
+    end
+  end
 end

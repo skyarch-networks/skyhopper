@@ -48,6 +48,9 @@ SkyHopper::Application.routes.draw do
       get  'get_schedule'
       post 'delete_stack'
       post 'save_schedule'
+      post 'start_rds'
+      post 'stop_rds'
+      post 'reboot_rds'
     end
   end
 
@@ -125,6 +128,7 @@ SkyHopper::Application.routes.draw do
     member do
       post 'create_host'
       post 'update_templates'
+      post 'change_zabbix_server'
       get 'show_cloudwatch_graph'
       get 'show_problems'
       get 'show_url_status'

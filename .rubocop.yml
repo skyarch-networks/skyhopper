@@ -277,7 +277,7 @@ Style/NumericLiterals:
 Style/OneLineConditional:
   Enabled: false
 
-Style/OpMethod:
+Naming/BinaryOperatorParameterName:
   Enabled: false
 
 Style/ParenthesesAroundCondition:
@@ -412,7 +412,11 @@ Style/Tab:
 Style/TrailingBlankLines:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: comma
 

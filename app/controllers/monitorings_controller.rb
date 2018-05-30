@@ -190,6 +190,7 @@ class MonitoringsController < ApplicationController
     hostname = @infra.resources.ec2.first.physical_id
     @trigger_expressions = z.get_trigger_expressions_by_hostname(hostname)
     @web_scenarios = z.all_web_scenarios(@infra)
+    @zabbix_servers = ZabbixServer.selected_zabbix(@zabbix_server.id)
   end
 
   # PUT /monitorings/:id
@@ -284,6 +285,17 @@ class MonitoringsController < ApplicationController
     end
 
     infra_logger_success("Infrastructure is registered to Zabbix")
+    render nothing: true and return
+  end
+
+  # POST /monitorings/:id/change_zabbix_server
+  # PARAMS Selected Zabbix server ID
+  def change_zabbix_server
+    zabbix_id = params.require(:zabbix_id)
+    @infra.project.change_zabbix(zabbix_id, current_user)
+    @infra.project.save!
+
+    infra_logger_success("Zabbix Server Changed!")
     render nothing: true and return
   end
 

@@ -58,6 +58,15 @@ export default class Monitoring extends ModelBase {
     );
   }
 
+  change_zabbix_server(zabbix_id: number): JQueryPromise<any> {
+    return this.WrapAndResolveReject(() =>
+      (<any>Monitoring.ajax).change_zabbix_server({
+        zabbix_id: zabbix_id,
+        id: this.infra.id
+      })
+    );
+  }
+
 
   edit(): JQueryPromise<any> {
     const dfd = $.Deferred();
@@ -165,6 +174,7 @@ export default class Monitoring extends ModelBase {
 
 Monitoring.ajax.add_member('create_host',  'POST');
 Monitoring.ajax.add_member('update_templates',  'POST');
+Monitoring.ajax.add_member('change_zabbix_server',  'POST');
 Monitoring.ajax.add_member("show_cloudwatch_graph", "GET");
 Monitoring.ajax.add_member("show_problems", "GET");
 Monitoring.ajax.add_member("show_url_status", "GET");

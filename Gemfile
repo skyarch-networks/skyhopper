@@ -59,7 +59,7 @@ gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
-gem 'sidekiq' # for Active Job
+gem 'sidekiq', "~> 5" # for Active Job
 gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
 gem 'foreman', require: false
 
@@ -103,7 +103,7 @@ group :development, :test do
   gem 'redcarpet'
   gem 'github-markup'
 
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.55.0', require: false
 
   gem 'spring'
   gem 'sprint'

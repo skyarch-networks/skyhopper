@@ -5,6 +5,7 @@ var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
 var alert_danger         = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
+var modal = require('modal');
 
 module.exports = Vue.extend({
   template: "#edit-monitoring-tabpane-template",
@@ -25,6 +26,8 @@ module.exports = Vue.extend({
     add_scenario: {},
     loading: false,
     temp_loading: false,
+    zb_loading: false,
+    display_zb_server: false,
     page: 0,
     dispItemSize: 10,
     templates: [],
@@ -128,6 +131,17 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.page++;
     },
+    select_server: function (z) {
+        if (z.is_checked) {return;}
+        var self = this;
+        modal.Confirm(t('monitoring.title'), t('monitoring.msg.change_zabbix'), 'warning').done(function () {
+            self.zb_loading = true;
+            self.monitoring.change_zabbix_server(z.id).done(function ()  {
+                self.temp_loading = false;
+                self.$parent.show_edit_monitoring();
+            }).fail(alert_and_show_infra(this.infra_id));
+        });
+    }
   },
 
   computed: {
@@ -157,6 +171,8 @@ module.exports = Vue.extend({
       self.web_scenarios           = data.web_scenarios;
       self.mysql_rds_host          = null;
       self.postgresql_rds_host     = null;
+      self.zabbix_servers          = data.zabbix_servers;
+      console.log(data.zabbix_servers);
 
       self.$parent.loading = false;
 

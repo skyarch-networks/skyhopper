@@ -183,6 +183,7 @@ ja:
     operations:         'オペレーション'
     monitoring:         'モニタリング'
     logs:               'ログ'
+    no_resource:        '情報なし'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -212,8 +213,20 @@ ja:
       empty-list:                  'インフラストラクチャのリストは空です.'
       loading-list:                'インフラストラクチャのロード中です...'
       invalid_keypair:             'キーペアが無効です! キーペアファイルを確認してください。'
-      modifying:                   'インスタンスクラスを変更しています... 15 秒おきにステータスが更新されます'
       change_scale_warning:        'スケールを変更すると、インスタンスは一時的に停止されます'
+      confirm_start_rds:           'DB インスタンスを今すぐ開始してよろしいですか?'
+      confirm_stop_rds:            'DB インスタンスを今すぐ停止してよろしいですか?'
+      confirm_reboot_rds:          'DB インスタンスを今すぐ再起動してよろしいですか?'
+      start_rds:                   'DB インスタンスの起動が開始されました'
+      stop_rds:                    'DB インスタンスの停止が開始されました'
+      reboot_rds:                  'DB インスタンスの再起動が開始されました'
+      no_resource:                 '表示できるリソースはありません'
+
+  rds:
+    msg:
+      starting:     'インスタンスを開始中です... 15 秒おきにステータスが更新されます'
+      stopping:     'インスタンスを停止中です... 15 秒おきにステータスが更新されます'
+      modifying:    'インスタンスクラスを変更中です... 15 秒おきにステータスが更新されます'
 
   security_groups:
       title:        'セキュリティグループ'
@@ -459,6 +472,7 @@ ja:
     before_reg_title:     '先に進む前に、テンプレートを選択してください。'
     zabbix_templates:     'Zabbixのテンプレート'
     template:             '監視テンプレート'
+    click_to_select:      'このZabbix Serverを選択するにはクリックしてください'
     btn:
       create: '登録'
       add:    '追加'
@@ -483,6 +497,7 @@ ja:
       not_running:             ' Zabbix Server が起動していません'
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
+      change_zabbix:            'このインフラストラクチャのZabbixサーバを変更してもよろしいですか？'
       page:                    'ページ'
       of:                      'の'
       no_data: |

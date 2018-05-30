@@ -19,9 +19,25 @@
     </tr>
     <tr>
       <td>Status</td>
-      <td colspan="2">
+      <td>
         <div-loader v-if="modifying" :text="changing_status"></div-loader>
         <span v-if="!modifying">{{rds.db_instance_status}}</span>
+      </td>
+      <td>
+        <bootstrap-tooltip title="<%=t('common.actions')%>">
+          <template slot="content">
+          <div class="btn-group">
+            <button :class="rds_button_class" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
+              <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li :class="{disabled: !stopped}"><a @click="start_rds()" href="#"><%= glyphicon 'play' %> Start</a></li>
+              <li :class="{disabled: !available}"><a @click="stop_rds()" href="#"><%= glyphicon 'stop' %> Stop</a></li>
+              <li :class="{disabled: !available}"><a @click="reboot_rds()" href="#"><%= fa 'retweet' %> Reboot</a></li>
+            </ul>
+          </div>
+          </template>
+        </bootstrap-tooltip>
       </td>
     </tr>
     <tr>
