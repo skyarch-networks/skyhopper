@@ -51,6 +51,8 @@ SkyHopper::Application.routes.draw do
       post 'start_rds'
       post 'stop_rds'
       post 'reboot_rds'
+      get 'edit_keypair'
+      patch 'update_keypair'
     end
   end
 

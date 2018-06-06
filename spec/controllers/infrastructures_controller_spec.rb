@@ -547,4 +547,21 @@ describe InfrastructuresController, type: :controller do
       end
     end
   end
+
+  describe '#update_keypair' do
+    let(:ec2_key){create(:ec2_private_key)}
+    let(:infra_key_name){ec2_key.name}
+    let(:infra_key_value){ec2_key.value}
+    let(:params){{id: infra.id, infrastructure: infra_hash}}
+    let(:req){patch :update_keypair, params}
+    before do
+      allow(KeyPair).to receive(:validate!)
+    end
+
+    context 'when update success' do
+      before{req}
+
+      it {is_expected.to redirect_to infrastructures_path(project_id: infra.project_id)}
+    end
+  end
 end

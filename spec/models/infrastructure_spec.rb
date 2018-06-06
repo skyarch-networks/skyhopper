@@ -83,6 +83,27 @@ describe Infrastructure, type: :model do
     end
   end
 
+  describe '#update_with_ec2_private_key!' do
+    let(:infra){build(:infrastructure, resources: [])}
+    let(:params){{
+      keypair_name: ec2key.name,
+      keypair_value: ec2key.value,
+    }}
+
+    it 'should create ec2_private_key and update attributes' do
+      old_ec2_private_key_id = infra.ec2_private_key.id
+      infra.update_with_ec2_private_key!(params)
+      expect(infra.ec2_private_key.id).not_to eq(old_ec2_private_key_id)
+    end
+
+    it 'should delete old ec2_private_key' do
+      old_ec2_private_key_id = infra.ec2_private_key.id
+      infra.update_with_ec2_private_key!(params)
+      expect{Ec2PrivateKey.find(old_ec2_private_key_id)}.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+  end
+
   describe '#resources_or_create' do
     let(:infra){build(:infrastructure, resources: [])}
     let(:resources){build_list(:ec2_resource, 3)}

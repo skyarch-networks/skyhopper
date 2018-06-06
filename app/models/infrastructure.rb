@@ -63,9 +63,6 @@ class Infrastructure < ActiveRecord::Base
       return infrastructure
     end
 
-
-    private
-
     # @param [Hash{Symbol => String}] infra_params Same as Infrastructure#create
     # @return [Hash]
     def create_ec2_private_key(infra_params)
@@ -83,6 +80,14 @@ class Infrastructure < ActiveRecord::Base
       infra_params.delete(:keypair_value)
 
       return infra_params
+    end
+  end
+
+  def update_with_ec2_private_key!(infra_params)
+    old_ec2_private_key = self.ec2_private_key
+    update!(self.class.create_ec2_private_key(infra_params))
+    if old_ec2_private_key.present?
+      old_ec2_private_key.delete
     end
   end
 

@@ -15,10 +15,10 @@ class InfrastructuresController < ApplicationController
 
   # --------------- existence check
   before_action :project_exist, only: [:index]
-  before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
+  before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :edit_keypair, :update_keypair]
 
 
-  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds)
+  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair)
 
   before_action do
     infra = @infrastructure || (
@@ -336,6 +336,31 @@ class InfrastructuresController < ApplicationController
 
 
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
+  end
+
+  # GET /infrastructures/1/edit_keypair
+  def edit_keypair
+  end
+
+  # PATCH /infrastructures/1/update_keypair
+  def update_keypair
+    begin
+      keypair_params = params.require(:infrastructure).permit(:keypair_name, :keypair_value)
+      # raise error if uploaded keypair does not exist
+      KeyPair.validate!(
+        @infrastructure.project_id,
+        @infrastructure.region,
+        keypair_params[:keypair_name],
+        keypair_params[:keypair_value]
+      )
+
+      @infrastructure.update_with_ec2_private_key!(keypair_params)
+    rescue => ex
+      flash[:alert] = ex.message
+      render action: :edit_keypair, status: 400 and return
+    else
+      redirect_to infrastructures_path(project_id: @infrastructure.project_id), notice: I18n.t('infrastructures.msg.updated')
+    end
   end
 
   def start_rds
