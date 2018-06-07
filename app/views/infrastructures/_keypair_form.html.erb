@@ -19,10 +19,6 @@
   <div class="form-group">
     <label class="col-sm-2 control-label"><%= t 'app_settings.aws_keypair' %></label>
     <div class="col-sm-5">
-    <% if controller.action_name == "edit" ||  controller.action_name == "update" %>
-      <%= f.text_field :key_name, value: @infrastructure.ec2_private_key.name, class: 'form-control', readonly: true if @infrastructure.ec2_private_key_id %>
-      <%= uneditable_input(t('infrastructures.msg.no_keypair')) unless @infrastructure.ec2_private_key_id %>
-    <% else %>
       <p class="help-block"><%= t('ec2_private_keys.msg.enter_or_generate') %></p>
       <p><button class="btn btn-default btn-sm create_ec2_key"><%= t 'ec2_private_keys.btn.new' %></button></p>
       <label for="keypair_name" class="control-label"><%= t 'app_settings.keypair_name' %></label>
@@ -31,7 +27,6 @@
       <label for="keypair_value" class="control-label"><%= t 'app_settings.private_key' %></label>
       <textarea id="keypair_value" class="form-control ec2-private-key-value allow-empty" name="infrastructure[keypair_value]" placeholder="<%= t 'common.msg.key_droppable' %>" rows="7" required></textarea>
       <p class="help-block"><%= t('infrastructures.msg.help_keypair') %></p>
-    <% end %>
     </div>
   </div>
 
