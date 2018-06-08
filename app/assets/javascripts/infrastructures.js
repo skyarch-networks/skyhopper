@@ -207,7 +207,9 @@
     }
   });
 
-
+  var keypair_form_group = new Vue({
+    el: '#KeypairFormGroup'
+  });
 
 
 
@@ -215,7 +217,6 @@
     e.preventDefault();
     new_ec2_key();
   });
-
 
 
 })();

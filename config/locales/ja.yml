@@ -184,6 +184,7 @@ ja:
     monitoring:         'モニタリング'
     logs:               'ログ'
     no_resource:        '情報なし'
+    copy_keypair:       '別のインフラストラクチャから鍵ペアをコピーする'
     title:
       change_keypair:    '鍵ペアの変更'
     btn:
@@ -198,6 +199,9 @@ ja:
       stack_eventlog:       'スタックのイベント履歴'
       infrastructure_log:   '作業履歴'
       change_keypair:       '鍵ペアを変更'
+    radio:
+      input_keypair:        '鍵ペアを新規に入力する'
+      select_keypair:       '既存の鍵ペアをコピーする'
     msg:
       created:                     'インフラ情報が正常に追加されました'
       updated:                     'インフラ情報が正常に更新されました'

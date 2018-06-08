@@ -185,6 +185,7 @@ en:
     monitoring:         'Monitoring'
     logs:               'Logs'
     no_resource:        'No resource information.'
+    copy_keypair:       'Copy the KeyPair from another infrastructure.'
     title:
       change_keypair:    'Change KeyPair'
     btn:
@@ -199,6 +200,9 @@ en:
       stack_eventlog:       'Stack Eventlog'
       infrastructure_log:   'Operation Log'
       change_keypair:       'Change KeyPair'
+    radio:
+      input_keypair:        'Input a new KeyPair'
+      select_keypair:       'Copy an existing KeyPair'
     msg:
       created:                     'Infrastructure was successfully created.'
       updated:                     'Infrastructure was successfully updated.'
