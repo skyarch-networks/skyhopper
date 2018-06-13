@@ -41,7 +41,7 @@
       </div>
       <div v-if="input_type === 'select'" v-cloak>
         <label for="ec2_private_key_id" class="control-label"><%= t('infrastructures.copy_keypair') %></label>
-        <select class="form-control" name="infrastructure[copy_ec2_private_key_id]">
+        <select class="form-control" name="infrastructure[copy_ec2_private_key_id]" required>
           <% @ec2_private_key_list.each {|ec2_private_key_name, ec2_private_key_id| %>
             <option value="<%= ec2_private_key_id %>"><%= ec2_private_key_name %></option>
           <% } %>
