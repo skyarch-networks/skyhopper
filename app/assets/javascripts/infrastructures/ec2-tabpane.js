@@ -273,7 +273,7 @@ module.exports = Vue.extend({
     _label_class: function (status) {
       if ( status === 'Success') {
         return 'label-success';
-      } else if (status === 'Failed') {
+      } else if (status === 'Failed' || status === 'Error') {
         return 'label-danger';
       } else if (status === 'UnExecuted') {
         return 'label-warning';

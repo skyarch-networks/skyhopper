@@ -331,7 +331,7 @@ class Node
     result[:examples].each do |e|
       e[:exception].delete(:backtrace) if e[:exception]
     end
-    result[:status] = result[:summary][:failure_count].zero?
+    result[:status] = result[:summary][:failure_count].zero? && result[:summary][:errors_outside_of_examples_count].zero?
     result[:status_text] =
       if result[:status]
         if result[:summary][:pending_count].zero?
@@ -340,7 +340,11 @@ class Node
           'pending'
         end
       else
-        'failed'
+        if result[:summary][:errors_outside_of_examples_count].zero?
+          'failed'
+        else
+          'error'
+        end
       end
 
 

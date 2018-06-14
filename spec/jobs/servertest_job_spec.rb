@@ -19,7 +19,7 @@ RSpec.describe ServertestJob, type: :job do
     let(:resp){{
       status_text: status_text,
       message: 'Success!',
-      status: status_text != 'failed',
+      status: (status_text != 'failed') && (status_text != 'error'),
     }}
     let(:job){ServertestJob.perform_now(physical_id, infra.id, user.id)}
 
@@ -90,6 +90,19 @@ RSpec.describe ServertestJob, type: :job do
 
     context 'when status pending' do
       let(:status_text){'failed'}
+
+      it 'should create infra log' do
+        expect{job}.to change(InfrastructureLog, :count).by(2)
+      end
+
+      it 'should be failure' do
+        job
+        expect(InfrastructureLog.last.status).to be false
+      end
+    end
+
+    context 'when status error' do
+      let(:status_text){'error'}
 
       it 'should create infra log' do
         expect{job}.to change(InfrastructureLog, :count).by(2)

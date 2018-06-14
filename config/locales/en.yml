@@ -380,6 +380,7 @@ en:
       success:   'Serverspec for %{physical_id} is successfully finished.'
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
       failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
+      error:   'Serverspec of %{physical_id} caused an error.'
       generated: 'Serverspec is successfully generated.'
       delete_servertest: 'Are you sure you want to delete this Servertest?'
       empty-results: 'No results found.'

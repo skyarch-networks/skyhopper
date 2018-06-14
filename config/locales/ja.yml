@@ -378,6 +378,7 @@ ja:
       success:   '%{physical_id} の Serverspec が正常に終了しました'
       pending:   '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
+      error:   '%{physical_id} の Serverspec がエラーを起こしました。'
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
       delete_servertest: 'この Servertest を削除してもよろしいですか？'

@@ -136,7 +136,8 @@ describe Node, type: :model do
   ],
   "summary": {
     "failure_count": 0,
-    "pending_count": 0
+    "pending_count": 0,
+    "errors_outside_of_examples_count": 0
   },
   "summary_line": "1 example, 0 failures"
 }

@@ -362,6 +362,12 @@ describe ServertestsController, type: :controller do
       should_be_success
     end
 
+    context 'when servertest result is error' do
+      let(:status_text){'error'}
+      before{req}
+      should_be_success
+    end
+
     context 'when servertest result is pending' do
       let(:status_text){'pending'}
       before{req}
