@@ -188,7 +188,7 @@ class ServertestsController < ApplicationController
     when 'failed'
       render_msg = I18n.t('servertests.msg.failure', physical_id: physical_id, failure_specs: resp[:short_msg])
     when 'error'
-      render_msg = I18n.t('servertests.msg.error', physical_id: physical_id)
+      render_msg = I18n.t('servertests.msg.error', physical_id: physical_id, error_specs: resp[:error_servertest_names].join(','))
     end
 
     ServertestResult.create(

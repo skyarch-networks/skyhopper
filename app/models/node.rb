@@ -160,12 +160,26 @@ class Node
 
     fqdn = infra.instance(@name).fqdn
 
-    if selected_auto_generated
-      local_path = scp_specs(ec2key.path_temp, fqdn)
+    run_spec_list = []
+    if servertest_ids.present?
+      run_spec_list.concat(servertest_ids.map{|servertest_id|
+        path = ::Servertest.to_file(servertest_id)
+        {
+          name: Servertest.find(servertest_id).name,
+          path: path,
+          files: [get_relative_path_string(path)]
+        }
+      })
     end
-
-    run_spec_list_path = servertest_ids.map do |spec|
-      ::Servertest.to_file(spec)
+    if selected_auto_generated
+      auto_generated_servertests_path = scp_specs(ec2key.path_temp, fqdn)
+      run_spec_list.push(
+        {
+          name: 'Auto-generated-Servertests',
+          path: auto_generated_servertests_path,
+          files: Dir.glob(auto_generated_servertests_path + '/**/*', File::FNM_DOTMATCH).map{|path|get_relative_path_string(path)}
+        }
+      )
     end
 
     ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
@@ -175,8 +189,7 @@ class Node
     cmd << "User=#{@user}"
     cmd << "FQDN=#{fqdn}"
     cmd << ruby_cmd << '-S rspec' << "-I #{Rails.root.join('serverspec', 'spec')}"
-    cmd << run_spec_list_path.join(' ').to_s
-    cmd << local_path if selected_auto_generated
+    cmd << run_spec_list.map{|run_spec|run_spec[:path]}.join(' ').to_s
     cmd << '--format ServerspecDebugFormatter --require ./serverspec/formatters/serverspec_debug_formatter.rb'
     cmd = cmd.flatten.reject(&:blank?).join(" ")
 
@@ -190,6 +203,8 @@ class Node
     result =  generate_result(out)
     Resource.find_by(physical_id: @name).status.servertest.update(value: result[:status_text])
 
+    result[:error_servertest_names] = get_error_servertest_names(result, run_spec_list)
+
     return result
   rescue => ex
     Resource.find_by(physical_id: @name).status.servertest.failed!
@@ -197,10 +212,7 @@ class Node
   ensure
     ec2key.close_temp
 
-    FileUtils::rm_rf(run_spec_list_path) if run_spec_list_path
-    if selected_auto_generated then
-      FileUtils::rm_rf(local_path, secure: true)
-    end
+    FileUtils::rm_rf(run_spec_list.map{|run_spec|run_spec[:path]})
   end
 
 
@@ -375,5 +387,29 @@ class Node
     return result
   end
 
+  def get_error_servertest_names(result, run_spec_list)
+    if result[:messages].nil?
+      return []
+    end
+    error_servertest_names = []
+    result[:messages].each do |message|
+      match = /^An error occurred while loading (.+)\.$/.match(message)
+      unless match
+        next
+      end
+      error_servertest_names.concat(run_spec_list.select{|run_spec|
+        run_spec[:files].include?(match[1])
+      }.map{|run_spec|
+        run_spec[:name]
+      })
+    end
+    error_servertest_names
+  end
+
+  def get_relative_path_string(path_string)
+    path_from = Rails.root
+    path_to = Pathname(path_string)
+    './' + path_to.relative_path_from(path_from).to_s
+  end
 
 end

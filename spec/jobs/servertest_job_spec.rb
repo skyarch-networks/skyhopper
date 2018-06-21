@@ -20,6 +20,7 @@ RSpec.describe ServertestJob, type: :job do
       status_text: status_text,
       message: 'Success!',
       status: (status_text != 'failed') && (status_text != 'error'),
+      error_servertest_names: [],
     }}
     let(:job){ServertestJob.perform_now(physical_id, infra.id, user.id)}
 

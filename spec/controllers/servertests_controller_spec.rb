@@ -313,6 +313,7 @@ describe ServertestsController, type: :controller do
       examples: [{status: 'pending', full_description: 'hogefuga'}],
       status: true,
       status_text: status_text,
+      error_servertest_names: [],
     }}
     let(:req){post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids}
 

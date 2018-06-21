@@ -51,7 +51,7 @@ class ServertestJob < ActiveJob::Base
     when 'failed'
       log_msg    = "servertest for #{physical_id} is failed. failure specs: \n#{resp[:message]}"
     when 'error'
-      log_msg    = "servertest of #{physical_id} caused an error."
+      log_msg    = "servertest of #{physical_id} caused an error. specs where the error occurred: #{resp[:error_servertest_names].join(',')}"
     end
 
     log = InfrastructureLog.create(infrastructure_id: infra_id, user_id: user_id, details: log_msg, status: resp[:status])
