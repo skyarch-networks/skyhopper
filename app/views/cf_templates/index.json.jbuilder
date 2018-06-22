@@ -1,4 +1,4 @@
-json.array!(@global_jsons) do |cf_template|
+json.array!(@global_cf_templates) do |cf_template|
   json.cf_subject cf_template.name
   json.details cf_template.detail
   json.id cf_template.id
@@ -10,4 +10,4 @@ json.array!(@global_jsons) do |cf_template|
 
   json.url cf_template_url(cf_template, format: :json)
 end
-# json.cf_templates @global_jsons
+# json.cf_templates @global_cf_templates

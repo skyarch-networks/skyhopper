@@ -11,7 +11,7 @@
 class CfTemplate < ActiveRecord::Base
   validates :id,
     uniqueness: true
-  validates :value, json: true
+  validates :value, yaml: true
 
   belongs_to :infrastructure
   belongs_to :user
@@ -30,7 +30,7 @@ class CfTemplate < ActiveRecord::Base
   # create parameters set for cloudformation
   def create_cfparams_set(infrastructure, params_inserted = {})
     parameters = []
-    if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
+    if YAML::load(self.value)['Parameters'].try(:include?, "KeyName")
       parameters.push(
         parameter_key:   "KeyName",
         parameter_value: infrastructure.keypairname

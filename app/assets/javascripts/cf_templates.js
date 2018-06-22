@@ -14,7 +14,7 @@
   var queryString = require('query-string').parse(location.search);
   var ace = require('brace');
   require('brace/theme/github');
-  require('brace/mode/json');
+  require('brace/mode/yaml');
 
   var JSZip = require('jszip');
 
@@ -39,7 +39,7 @@
         minLines: 15,
       });
       editor.setTheme("ace/theme/github");
-      editor.getSession().setMode("ace/mode/json");
+      editor.getSession().setMode("ace/mode/yaml");
       $("#ace-loading").hide();
     }
   });
@@ -101,7 +101,7 @@
             readOnly: true
           });
           viewer.setTheme("ace/theme/github");
-          viewer.getSession().setMode("ace/mode/json");
+          viewer.getSession().setMode("ace/mode/yaml");
         });
       },
       confirm_export: function () {

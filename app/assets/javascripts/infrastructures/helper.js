@@ -1,4 +1,5 @@
 var modal = require('modal');
+var yaml = require('js-yaml');
 
 // Vueに登録したfilterを、外から見る方法ってないのかな。
 var jsonParseErr = function (str) {
@@ -7,6 +8,17 @@ var jsonParseErr = function (str) {
   }
   try {
     JSON.parse(str);
+  } catch (ex) {
+    return ex;
+  }
+};
+
+var yamlParseErr = function (str) {
+  if (_.trim(str) === '') {
+    return 'YAML String is empty. Please input YAML.';
+  }
+  try {
+    yaml.safeLoad(str);
   } catch (ex) {
     return ex;
   }
@@ -49,6 +61,7 @@ var alert_and_show_infra = function (infra_id) {
 
 module.exports = {
   jsonParseErr:         jsonParseErr,
+  yamlParseErr:         yamlParseErr,
   toLocaleString:       toLocaleString,
   alert_success:        alert_success,
   alert_danger:         alert_danger,
