@@ -1,4 +1,4 @@
-var jsonParseErr = require('./helper.js').jsonParseErr;
+var yamlParseErr = require('./helper.js').yamlParseErr;
 
 module.exports = Vue.extend({
   props: {
@@ -30,14 +30,14 @@ module.exports = Vue.extend({
     },
 
     submit: function () {
-      if (this.jsonParseErr) {return;}
+      if (this.yamlParseErr) {return;}
       this.$parent.show_tabpane('insert-cf-params');
       this.$parent.loading = true;
     },
   },
 
   computed: {
-    jsonParseErr: function () { return jsonParseErr(this.result.value); },
+    yamlParseErr: function () { return yamlParseErr(this.result.value); },
   },
   filters:{
     created_at: function (date) {

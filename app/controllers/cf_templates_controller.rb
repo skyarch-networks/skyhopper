@@ -25,11 +25,11 @@ class CfTemplatesController < ApplicationController
   def index
     page = params[:page] || 1
 
-    @global_jsons = CfTemplate.global
+    @global_cf_templates = CfTemplate.global
 
     respond_to do |format|
-      format.json { @global_jsons = @global_jsons }
-      format.html { @global_jsons = @global_jsons.page(page)}
+      format.json { @global_cf_templates = @global_cf_templates }
+      format.html { @global_cf_templates = @global_cf_templates.page(page)}
     end
   end
 
@@ -81,8 +81,8 @@ class CfTemplatesController < ApplicationController
     infra = Infrastructure.find(cf_template_params[:infrastructure_id])
 
     begin
-      @tpl = JSON.parse(@cf_template.value)
-    rescue JSON::ParserError => ex
+      @tpl = YAML.load(@cf_template.value)
+    rescue Psych::SyntaxError => ex
       render text: ex.message, status: 400 and return
     end
 
@@ -191,8 +191,8 @@ class CfTemplatesController < ApplicationController
     stack = Stack.new(infrastructure)
 
     begin
-      JSON.parse(cf_template.value)
-    rescue JSON::ParserError => ex
+      YAML.load(cf_template.value)
+    rescue Psych::SyntaxError => ex
       return {message: ex.message, status: false}
     end
 

@@ -20,20 +20,20 @@ describe CfTemplatesController, type: :controller do
 
   describe '#index' do
     context 'format json' do
-      let(:global_jsons){klass.global}
+      let(:global_cf_templates){klass.global}
 
-      it 'should assign @global_jsons' do
+      it 'should assign @global_cf_templates' do
         get :index, format: 'json'
-        expect(assigns[:global_jsons]).to eq global_jsons
+        expect(assigns[:global_cf_templates]).to eq global_cf_templates
       end
     end
 
     context 'format html' do
-      let(:global_jsons){ klass.global.page(1) }
+      let(:global_cf_templates){ klass.global.page(1) }
 
-      it 'should assign @global_jsons' do
+      it 'should assign @global_cf_templates' do
         get :index, format: 'html'
-        expect(assigns[:global_jsons]).to eq global_jsons
+        expect(assigns[:global_cf_templates]).to eq global_cf_templates
       end
     end
   end
@@ -145,17 +145,17 @@ describe CfTemplatesController, type: :controller do
       },
       infrastructure_id: infra.id,
     }}
-    let(:value){JSON[{Parameters: {}}]}
+    let(:value){YAML.dump({"Parameters" => {}})}
     let(:req){post :insert_cf_params, http_params}
     before do
       allow_any_instance_of(CfTemplate).to receive(:validate_template)
     end
 
-    context 'when valid as JSON' do
+    context 'when valid as YAML' do
       before{req}
 
       context 'when create EC2 instance' do
-        let(:value){JSON[{Parameters: {KeyName: ''}}]}
+        let(:value){YAML.dump({"Parameters" => {"KeyName" => ''}})}
 
         context 'when infra not has ec2_private_key' do
           let(:infra){ create(:infrastructure, ec2_private_key: nil) }
@@ -175,8 +175,8 @@ describe CfTemplatesController, type: :controller do
       end
     end
 
-    context 'when invalid as JSON' do
-      let(:value){'fooo'}
+    context 'when invalid as YAML' do
+      let(:value){'fooo: fooo: fooo'}
       before{req}
 
       should_be_failure

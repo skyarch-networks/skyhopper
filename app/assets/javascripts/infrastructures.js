@@ -25,9 +25,9 @@
   Vue.use(require('./modules/timepicker'), queryString.lang);
 
   var vace = require('vue-ace');
-  require('brace/mode/json');
+  require('brace/mode/yaml');
   require('brace/theme/github');
-  Vue.use(vace, false, 'json', '25');
+  Vue.use(vace, false, 'yaml', '25');
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));

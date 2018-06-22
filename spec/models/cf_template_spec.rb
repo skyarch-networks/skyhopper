@@ -15,10 +15,15 @@ describe CfTemplate, type: :model do
     describe 'column value' do
       let(:cft){build(:cf_template)}
 
-      it 'should be a JSON' do
-        cft.value = "{Invalid As JSON!}"
-        expect(cft.save).to be false
+      it 'should be allow JSON' do
         cft.value = '{"valid": "as JSON"}'
+        expect(cft.save).to be true
+      end
+
+      it 'should be a YAML' do
+        cft.value = "Invalid: As: YAML!"
+        expect(cft.save).to be false
+        cft.value = 'valid: "as YAML"'
         expect(cft.save).to be true
       end
     end
@@ -65,18 +70,18 @@ describe CfTemplate, type: :model do
 
       context 'when not have KeyName' do
         before do
-          v = JSON.parse(cft.value)
+          v = YAML.load(cft.value)
           v['Parameters'].delete('KeyName')
-          cft.value = JSON.generate(v)
+          cft.value = YAML.dump(v)
         end
         it {is_expected.to eq []}
       end
 
       context 'when not have Parameters field' do
         before do
-          v = JSON.parse(cft.value)
+          v = YAML.load(cft.value)
           v.delete('Parameters')
-          cft.value = JSON.generate(v)
+          cft.value = YAML.dump(v)
         end
         it {is_expected.to eq []}
       end
