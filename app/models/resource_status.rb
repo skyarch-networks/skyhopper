@@ -9,7 +9,7 @@
 class ResourceStatus < ActiveRecord::Base
   belongs_to :resource
 
-  enum value:  %i(success failed pending un_executed inprogress error)
+  enum value:  %i(success failed pending un_executed inprogress)
   enum kind:   %i(servertest cook yum)
 
   kinds.each do |k, v|

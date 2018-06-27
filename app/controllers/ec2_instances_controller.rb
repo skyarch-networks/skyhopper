@@ -156,8 +156,7 @@ class Ec2InstancesController < ApplicationController
   # @return [String] JSON. {status: Boolean}
   def serverspec_status
     physical_id = params.require(:id)
-    servertest = Resource.find_by(physical_id: physical_id).status.servertest
-    status = !servertest.failed? && !servertest.error?
+    status = ! Resource.find_by(physical_id: physical_id).status.servertest.failed?
 
     render json: {status: status}
   end

@@ -90,18 +90,15 @@ describe Ec2InstancesController, type: :controller do
     let(:req){get :serverspec_status, id: resource.physical_id, infra_id: infra.id}
     subject{JSON.parse(response.body)['status']}
 
-    ['failed', 'error'].each do |status|
-      context "when status #{status}" do
-        before do
-          st = resource.status.servertest
-          st.value = status
-          st.save
-          req
-        end
-
-        should_be_success
-        it{expect(subject).to be false}
+    context 'when status failed' do
+      before do
+        st = resource.status.servertest
+        st.failed!
+        req
       end
+
+      should_be_success
+      it{expect(subject).to be false}
     end
 
     ['success', 'pending', 'un_executed'].each do |status|
