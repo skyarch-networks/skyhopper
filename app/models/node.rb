@@ -162,10 +162,12 @@ class Node
 
     run_spec_list = []
     if servertest_ids.present?
-      run_spec_list.concat(servertest_ids.map{|servertest_id|
-        path = ::Servertest.to_file(servertest_id)
+      run_spec_list.concat(Servertest.where(id: servertest_ids).map{|servertest|
+        screen_name = servertest.name
+        screen_name << " (#{servertest.description})" if servertest.description.present?
+        path = ::Servertest.to_file(servertest.id)
         {
-          name: Servertest.find(servertest_id).name,
+          name: screen_name,
           path: path,
           files: [get_relative_path_string(path)]
         }
@@ -175,7 +177,7 @@ class Node
       auto_generated_servertests_path = scp_specs(ec2key.path_temp, fqdn)
       run_spec_list.push(
         {
-          name: 'Auto-generated-Servertests',
+          name: 'auto_generated',
           path: auto_generated_servertests_path,
           files: Dir.glob(auto_generated_servertests_path + '/**/*', File::FNM_DOTMATCH).map{|path|get_relative_path_string(path)}
         }
