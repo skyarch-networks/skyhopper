@@ -14,8 +14,9 @@ class InfrastructureLogsController < ApplicationController
     page = params[:page] || 1
     page = page.to_i
 
-    @logs = InfrastructureLog.for_infra(infra_id).page(page).per(20)
-    @max = (InfrastructureLog.count / 20.0).ceil
+    infrastructure_logs = InfrastructureLog.for_infra(infra_id)
+    @logs = infrastructure_logs.page(page).per(20)
+    @max = (infrastructure_logs.size / 20.0).ceil
     @current = page
   end
 end
