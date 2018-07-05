@@ -346,7 +346,7 @@ class Node
 
     case result[:status_text]
       when 'pending'
-        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:pending_message]}.join("\n")
+        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| "#{x[:full_description]}\n#{x[:pending_message]}"}.join("\n")
         result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
       when 'failed'
         result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| "#{x[:full_description]}\n#{x[:command]}¥n#{x[:exception][:message]}"}.join("\n")
