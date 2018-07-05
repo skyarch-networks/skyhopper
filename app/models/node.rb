@@ -346,12 +346,27 @@ class Node
 
     case result[:status_text]
       when 'pending'
-        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| "#{x[:full_description]}\n#{x[:command]}¥n#{x[:exception][:message]}"}.join("\n")
+        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| x[:full_description]+"\n"+x[:pending_message]}.join("\n")
         result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
       when 'failed'
         result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| "#{x[:full_description]}\n#{x[:command]}¥n#{x[:exception][:message]}"}.join("\n")
         result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
     end
+
+    result[:long_message] = result[:examples].map{|example|
+      message = example[:status] + "\n"
+      message += example[:full_description] + "\n"
+      unless example[:command].nil?
+        message += example[:command] + "\n"
+      end
+      if example[:status] == 'pending'
+        message += example[:pending_message] + "\n"
+      elsif example[:status] == 'failed'
+        message += example[:exception][:message] + "\n"
+      end
+      message
+    }.join("\n")
+    result[:long_message] += "\n" + result[:summary_line]
 
     return result
   end

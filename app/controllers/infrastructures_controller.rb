@@ -18,7 +18,7 @@ class InfrastructuresController < ApplicationController
   before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
 
 
-  before_action :set_infrastructure, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :show_rds, :show_elb, :start_rds, :stop_rds, :reboot_rds]
+  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds)
 
   before_action do
     infra = @infrastructure || (

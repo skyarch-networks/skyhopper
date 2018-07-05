@@ -70,6 +70,9 @@ module.exports = function (stack, current_infra, current_tab) {
         this.tabpaneGroupID = physical_id;
         this.loading = true;
       },
+      show_no_resource: function () {
+        this.loading = false;
+      },
       show_add_modify: function () {
         var self = this;
         self.loading = true;
@@ -209,6 +212,10 @@ module.exports = function (stack, current_infra, current_tab) {
       no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
       in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
       stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
+      no_resource: function () {
+        return this.current_infra.stack.status.type === 'OK' &&
+          _(this.current_infra.resources).values().flatten().value().length === 0;
+      },
 
       status_label_class: function () {
         var resp = "label-";
@@ -236,18 +243,24 @@ module.exports = function (stack, current_infra, current_tab) {
           });
           self.current_infra.resources = resources;
           // show first tab
-          var instance = _(resources).values().flatten().first();
-          var physical_id = instance.physical_id;
           if(current_tab === 'show_sched'){
             self.show_operation_sched(resources);
-          } else if (instance.type_name === "AWS::EC2::Instance") {
-            self.show_ec2(physical_id);
-          } else if (instance.type_name === "AWS::RDS::DBInstance"){
-            self.show_rds(physical_id);
-          } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
-            self.show_elb(physical_id);
-          } else {  // S3
-            self.show_s3(physical_id);
+          } else {
+            var instance = _(resources).values().flatten().first();
+            if (instance) {
+              var physical_id = instance.physical_id;
+              if (instance.type_name === "AWS::EC2::Instance") {
+                self.show_ec2(physical_id);
+              } else if (instance.type_name === "AWS::RDS::DBInstance"){
+                self.show_rds(physical_id);
+              } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
+                self.show_elb(physical_id);
+              } else { // S3
+                self.show_s3(physical_id);
+              }
+            } else {
+              self.show_no_resource();
+            }
           }
 
           _.forEach(self.current_infra.resources.ec2_instances, function (v) {

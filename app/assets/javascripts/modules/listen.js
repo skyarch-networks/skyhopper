@@ -34,17 +34,29 @@
 
 
   function render_infrastructures(value, key, lang){
+    var SUCCESS_STATUSES = [
+      "CREATE_COMPLETE", "UPDATE_COMPLETE", "DELETE_COMPLETE"
+    ];
+    var DANGER_STATUSES = [
+      "CREATE_FAILED", "ROLLBACK_IN_PROGRESS", "ROLLBACK_FAILED", "ROLLBACK_COMPLETE",
+      "DELETE_FAILED", "UPDATE_ROLLBACK_IN_PROGRESS", "UPDATE_ROLLBACK_FAILED",
+      "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_ROLLBACK_COMPLETE",
+      "DELETE_IN_PROGRESS"
+    ];
+    var INFO_STATUSES = [
+      "CREATE_IN_PROGRESS", "UPDATE_IN_PROGRESS", "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS"
+    ];
     if (key === 'status') {
-      switch (value) {
-        case 'CREATE_COMPLETE':
-          return "<span class='text text-success'>"+value+"</span>";
-        case 'DELETE_IN_PROGRESS':
-          return "<span class='text text-danger'>"+value+"</span>";
-        case 'CREATE_IN_PROGRESS':
-          return "<span class='text text-info'>"+value+"</span>";
-        default:
-          return "<span class='text text-default'> NO_STACK_INFO </span>";
+      if (SUCCESS_STATUSES.includes(value)) {
+        return "<span class='text text-success'>"+value+"</span>";
       }
+      if (DANGER_STATUSES.includes(value)) {
+        return "<span class='text text-danger'>"+value+"</span>";
+      }
+      if (INFO_STATUSES.includes(value)) {
+        return "<span class='text text-info'>"+value+"</span>";
+      }
+      return "<span class='text text-default'> NO_STACK_INFO </span>";
     }else if (key === 'stack_name') {
       return '';
     }else{
