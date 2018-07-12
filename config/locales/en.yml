@@ -433,6 +433,7 @@ en:
     cf_template:  'CloudFormation Template'
     subject:      'Subject'
     details:      'Details'
+    format:       'format'
     operator:     'Operator'
     parameters:   'Parameters'
     history:      'History'

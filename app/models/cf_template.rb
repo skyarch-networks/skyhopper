@@ -11,10 +11,14 @@
 class CfTemplate < ActiveRecord::Base
   validates :id,
     uniqueness: true
-  validates :value, json: true
+  validates :value, json: true, if: :JSON?
+  validates :value, yaml: true, if: :YAML?
 
   belongs_to :infrastructure
   belongs_to :user
+  enum format: [:JSON, :YAML]
+
+  class ParseError < ::StandardError; end
 
   # @param [String|Integer] infra_id ID of Infrastructure
   # @return [Array<CfTemplate>]
@@ -30,7 +34,7 @@ class CfTemplate < ActiveRecord::Base
   # create parameters set for cloudformation
   def create_cfparams_set(infrastructure, params_inserted = {})
     parameters = []
-    if JSON::parse(self.value)['Parameters'].try(:include?, "KeyName")
+    if parse_value['Parameters'].try(:include?, "KeyName")
       parameters.push(
         parameter_key:   "KeyName",
         parameter_value: infrastructure.keypairname
@@ -61,5 +65,23 @@ class CfTemplate < ActiveRecord::Base
 
   def update_cfparams
     self.params = @params_not_json.to_json if @params_not_json
+  end
+
+  def parse_value
+    if self.format == 'JSON'
+      begin
+        return JSON::parse(self.value)
+      rescue JSON::ParserError => ex
+        raise ParseError, ex.message
+      end
+    end
+    if self.format == 'YAML'
+      begin
+        return YAML::load(self.value)
+      rescue Psych::SyntaxError => ex
+        raise ParseError, ex.message
+      end
+    end
+    raise ParseError, 'format attribute is invalid'
   end
 end

@@ -26,8 +26,8 @@
 
   var vace = require('vue-ace');
   require('brace/mode/json');
+  require('brace/mode/yaml');
   require('brace/theme/github');
-  Vue.use(vace, false, 'json', '25');
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));

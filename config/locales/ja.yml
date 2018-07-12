@@ -431,6 +431,7 @@ ja:
     cf_template:  'CloudFormation テンプレート'
     subject:      'タイトル'
     details:      '詳細'
+    format:       'フォーマット'
     operator:     '作業者'
     parameters:   'パラメータ'
     history:      '履歴'

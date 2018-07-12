@@ -51,6 +51,7 @@ export default class CFTemplate extends ModelBase {
     name:   string;
     detail: string;
     value:  string;
+    format: string;
     params: Array<any>; // XXX: Array だっけ?
   }): JQueryPromise<any> {
     return this.WrapAndResolveReject((dfd) => {
@@ -62,6 +63,7 @@ export default class CFTemplate extends ModelBase {
         name:              data.name,
         detail:            data.detail,
         value:             data.value,
+        format:             data.format,
         params:            data.params,
         infrastructure_id: this.infra.id,
       }};
@@ -86,6 +88,7 @@ export default class CFTemplate extends ModelBase {
       name:   string;
       detail: string;
       value:  string;
+      format: string;
     },
     params: {
       [s: string]: string;
@@ -97,6 +100,7 @@ export default class CFTemplate extends ModelBase {
         name:              cft.name,
         detail:            cft.detail,
         value:             cft.value,
+        format:             cft.format,
         cfparams:          params,
       }};
 

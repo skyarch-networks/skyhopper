@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206020140) do
+ActiveRecord::Schema.define(version: 20180705035046) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         null: false
@@ -19,9 +19,8 @@ ActiveRecord::Schema.define(version: 20161206020140) do
     t.datetime "updated_at"
     t.string   "log_directory",      null: false
     t.integer  "ec2_private_key_id"
-    t.string   "zabbix_fqdn"
-    t.string   "zabbix_user"
-    t.string   "zabbix_pass"
+    t.string   "fqdn"
+    t.string   "server_name"
   end
 
   create_table "cf_templates", force: :cascade do |t|
@@ -33,6 +32,7 @@ ActiveRecord::Schema.define(version: 20161206020140) do
     t.datetime "updated_at"
     t.text     "params"
     t.integer  "user_id"
+    t.integer  "format",            null: false
   end
 
   add_index "cf_templates", ["infrastructure_id"], name: "manage_jsons_infrastructure_id_fk"
