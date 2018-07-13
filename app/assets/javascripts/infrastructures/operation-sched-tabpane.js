@@ -270,7 +270,7 @@ module.exports = Vue.extend({
 
       self.$parent.loading = false;
       $("#loading_results").hide();
-      var empty = t('serverspecs.msg.empty-results');
+      var empty = t('servertests.msg.empty-results');
       if(self.data.length === 0){ $('#empty_results').show().html(empty);}
   },
 });
