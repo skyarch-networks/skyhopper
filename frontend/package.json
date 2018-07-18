@@ -27,7 +27,8 @@
     "query-string": "^2.4.1",
     "serverspec-generator": "^1.0.0",
     "vue": "~1.0.24",
-    "vue-ace": "0.0.1"
+    "vue-ace": "0.0.1",
+    "vue-router": "github:vuejs/vue-router#1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
