@@ -8,6 +8,11 @@
 
 <script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
+<div id="infrastructureApp">
+  <router-view></router-view>
+</div>
+
+<script id="index-template" type="text/template">
   <div id="indexElement" v-el:node>
 
     <div v-cloak>
@@ -79,7 +84,9 @@
       <hr>
     </div>
   </div>
-  <hr>
+</script>
+
+<hr>
 
 
 <%= button_add_infra(@selected_project) %>

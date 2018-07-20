@@ -53,6 +53,8 @@ SkyHopper::Application.routes.draw do
       post 'reboot_rds'
     end
   end
+  get 'infra-app', to: 'infrastructures#index'
+  get 'infra-app/*path', to: 'infrastructures#index'
 
   resources :ec2_private_keys, only: [:create]
 

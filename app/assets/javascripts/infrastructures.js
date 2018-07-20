@@ -147,9 +147,10 @@
 // ================================================================
 
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
-  var index = new Vue({
-    el: '#indexElement',
-    data: {
+  var index = {
+    template: '#index-template',
+    replace: true,
+    data: function () { return {
       searchQuery: '',
       gridColumns: [],
       gridData: [],
@@ -162,7 +163,7 @@
         button_detach_stack: null
       },
       index: 'infrastructures'
-    },
+    };},
     created: function(){
         if (queryString.project_id >3)
           this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
@@ -205,7 +206,29 @@
         this.$children[0].load_ajax(this.url);
       },
     }
+  };
+
+  var infrastructureApp = {};
+  var router = new VueRouter({
+    history: true,
   });
+  router.beforeEach(function (transition) {
+    console.log(transition.to.path);
+    if (transition.to.redirect) {
+      transition.redirect(transition.to.redirect);
+      return;
+    }
+    transition.next();
+  });
+  router.map({
+    '/infrastructures': {
+      redirect: '/infra-app',
+    },
+    '/infra-app': {
+      component: index,
+    }
+  });
+  router.start(infrastructureApp, '#infrastructureApp');
 
 
 
