@@ -210,7 +210,7 @@
           is_created = true;
         }
         router.go({
-          path: '/infra-app/' + infra_id,
+          path: '/infra/' + infra_id,
           query: queryString
         });
         if (is_created) {
@@ -257,9 +257,9 @@
   router.map({
     '/infrastructures': {
       component: {},
-      redirect: '/infra-app',
+      redirect: '/infra',
     },
-    '/infra-app': {
+    '/infra': {
       component: index,
       subRoutes: {
         '/:infra_id': {
