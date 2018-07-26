@@ -67,6 +67,7 @@
     </div>
 
     <demo-grid
+    v-ref:demogrid
     :data.sync="gridData"
     :columns="gridColumns"
     :filter-key="searchQuery"
@@ -84,10 +85,17 @@
       <hr>
     </div>
   </div>
+
+  <div style="display: none;">
+    <router-view
+      v-ref:infrastructure
+      :current_tab="infra_oepn_tab">
+    </router-view>
+  </div>
 </script>
 
-<hr>
 
+<hr>
 
 <%= button_add_infra(@selected_project) %>
 

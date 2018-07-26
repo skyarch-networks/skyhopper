@@ -146,6 +146,10 @@
 // event bindings
 // ================================================================
 
+  var router = new VueRouter({
+    history: true,
+  });
+
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
   var index = {
     template: '#index-template',
@@ -162,7 +166,8 @@
         edit_infrastructure_path: null,
         button_detach_stack: null
       },
-      index: 'infrastructures'
+      index: 'infrastructures',
+      infra_oepn_tab: '',
     };},
     created: function(){
         if (queryString.project_id >3)
@@ -191,11 +196,26 @@
         this.reload();
       },
       show_infra: function(item_id)  {
-        show_infra(item_id, '');
-      },
+        this.infra_oepn_tab = '';
+          this.show_infra_and_rewrite_url(item_id);
+        },
       show_sched: function()  {
-        show_infra(this.picked.id, 'show_sched');
+        this.infra_oepn_tab = 'show_sched';
+        this.show_infra_and_rewrite_url(this.picked.id);
         this.reload();
+      },
+      show_infra_and_rewrite_url: function (infra_id) {
+        var is_created = false;
+        if (this.$refs.infrastructure) {
+          is_created = true;
+        }
+        router.go({
+          path: '/infra-app/' + infra_id,
+          query: queryString
+        });
+        if (is_created) {
+          this.$refs.infrastructure.show();
+        }
       },
       detach_infra: function()  {
         detach(this.picked.id);
@@ -203,17 +223,31 @@
       },
       reload: function () {
         this.loading = true;
-        this.$children[0].load_ajax(this.url);
+        this.$refs.demogrid.load_ajax(this.url);
       },
     }
   };
 
+  var infrastructure = {
+    template: '',
+    props: {
+      current_tab: String,
+    },
+    data: function () {
+      return {};
+    },
+    methods: {
+      show: function () {
+        show_infra(this.$route.params.infra_id, this.current_tab);
+      }
+    },
+    ready: function () {
+      this.show();
+    }
+  };
+
   var infrastructureApp = {};
-  var router = new VueRouter({
-    history: true,
-  });
   router.beforeEach(function (transition) {
-    console.log(transition.to.path);
     if (transition.to.redirect) {
       transition.redirect(transition.to.redirect);
       return;
@@ -222,14 +256,19 @@
   });
   router.map({
     '/infrastructures': {
+      component: {},
       redirect: '/infra-app',
     },
     '/infra-app': {
       component: index,
+      subRoutes: {
+        '/:infra_id': {
+          component: infrastructure,
+        }
+      }
     }
   });
   router.start(infrastructureApp, '#infrastructureApp');
-
 
 
 
