@@ -42,7 +42,7 @@ module.exports = Vue.extend({
       self.sortKey = key;
       self.sortOrders[key] = self.sortOrders[key] * -1;
       var infra = new Infrastructure(self.infra_id);
-      infra.logs(1, self.sortKey, self.sortOrders[self.sortKey]).done(function (data) {
+      infra.logs(self.page.current, self.sortKey, self.sortOrders[self.sortKey]).done(function (data) {
         self.logs = data.logs;
         self.page = data.page;
       }).fail(alert_and_show_infra(infra.id));
