@@ -98,6 +98,17 @@ class Infrastructure < ActiveRecord::Base
     return self.resources
   end
 
+  # リソースが更新されているか否かを返す
+  # @return [Boolean]
+  def resources_updated?
+    old_physical_ids = self.resources.pluck(:physical_id)
+    stack = Stack.new(self)
+    now_physical_ids = stack.instances_for_resources.map{|aws_resource|
+      aws_resource.physical_resource_id
+    }
+    return old_physical_ids.sort != now_physical_ids.sort
+  end
+
   # AWS の access key を返す。
   # @return [String]
   def access_key
