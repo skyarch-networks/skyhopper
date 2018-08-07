@@ -16,7 +16,7 @@ describe CfTemplatesController, type: :controller do
   let(:detail){'detail'}
   let(:value){'{}'}
   let(:params){'params'}
-  let(:cftemplate_hash) { attributes_for(:cf_template, infrastructure_id: infra.id.to_s, name: name, detail: detail, value: value, params: params) }
+  let(:cftemplate_hash) { attributes_for(:cf_template, infrastructure_id: infra.id.to_s, name: name, detail: detail, value: value, format: 'JSON', params: params) }
 
   describe '#index' do
     context 'format json' do
@@ -141,6 +141,7 @@ describe CfTemplatesController, type: :controller do
         name: 'foo',
         details: 'hogehoge',
         value: value,
+        format: 'JSON',
         params: nil,
       },
       infrastructure_id: infra.id,
