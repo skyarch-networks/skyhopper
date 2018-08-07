@@ -137,6 +137,38 @@ describe Infrastructure, type: :model do
     end
   end
 
+  describe '#resources_updated?' do
+    let(:infra){build(:infrastructure, resources: [])}
+    let(:resources){build_list(:ec2_resource, 3)}
+    subject{infra.resources_updated?}
+
+    before do
+      infra.resources = resources
+      infra.save!
+      allow_any_instance_of(Stack).to receive(:instances_for_resources).and_return(instances_for_resources)
+    end
+
+    context 'when there is a difference in physical_id of resources' do
+      let(:instances_for_resources){[]}
+
+      it 'shoud return true' do
+        is_expected.to eq true
+      end
+    end
+
+    context 'when there is not a difference in physical_id of resources' do
+      let(:instances_for_resources){resources.map{|resource|
+        resource_mock = double('resource')
+        allow(resource_mock).to receive(:physical_resource_id).and_return(resource.physical_id)
+        resource_mock
+      }}
+
+      it 'shoud return false' do
+        is_expected.to eq false
+      end
+    end
+  end
+
   describe '#access_key' do
     subject{build(:infrastructure)}
 

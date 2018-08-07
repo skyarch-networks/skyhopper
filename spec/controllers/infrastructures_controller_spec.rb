@@ -111,13 +111,29 @@ describe InfrastructuresController, type: :controller do
           case action
           when "create", "update"
             if action == "update"
+              let(:resources_updated){false}
+
               before do
                 allow_any_instance_of(Infrastructure).to receive(:resources_or_create).and_return(infra.resources)
+                allow_any_instance_of(Infrastructure).to receive(:resources_updated?).and_return(resources_updated)
               end
 
-              it "should delete resource" do
-                infra.reload
-                expect(infra.resources).to be_empty
+              context 'when the resources is updated' do
+                let(:resources_updated){true}
+
+                it "should delete resource" do
+                  infra.reload
+                  expect(infra.resources).to be_empty
+                end
+              end
+
+              context 'when the resources is not updated' do
+                let(:resources_updated){false}
+
+                it "should not delete resource" do
+                  infra.reload
+                  expect(infra.resources).not_to be_empty
+                end
               end
             end
           end

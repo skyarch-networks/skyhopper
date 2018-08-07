@@ -73,7 +73,7 @@ class InfrastructuresController < ApplicationController
       resp[:message] = stack.status[:message]
     end
 
-    if stack.update_complete?
+    if stack.update_complete? && @infrastructure.resources_updated?
       @infrastructure.resources.destroy_all
     end
 
