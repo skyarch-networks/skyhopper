@@ -126,7 +126,7 @@
           </div>
 
           <%# Stack Event Table %>
-          <stack-events-table :events="current_infra.events"></stack-events-table>
+          <stack-events-table :events="current_infra.events" :enable_sort="false"></stack-events-table>
 
           <%# No resource %>
           <div v-if="no_resource">
@@ -143,7 +143,7 @@
           <insert-cf-params           v-if="tabpane_active('insert-cf-params')"   :infra_id.once="current_infra.id"></insert-cf-params>
           <add-ec2-tabpane            v-if="tabpane_active('add-ec2')"            :infra_id.once="current_infra.id"></add-ec2-tabpane>
           <cf-history-tabpane         v-if="tabpane_active('cf_history')"         :infra_id.once="current_infra.id"></cf-history-tabpane>
-          <stack-events-table         v-if="tabpane_active('event_logs')"         :events.once="current_infra.events"></stack-events-table>
+          <stack-events-table         v-if="tabpane_active('event_logs')"         :events.once="current_infra.events" :enable_sort="true"></stack-events-table>
           <security-groups-tabpane    v-if="tabpane_active('security_groups')"    :infra_id.once="current_infra.id" :ec2_instances.once="current_infra.resources.ec2_instances"></security-groups-tabpane>
           <monitoring-tabpane         v-if="tabpane_active('monitoring')"         :infra_id.once="current_infra.id"></monitoring-tabpane>
           <edit-monitoring-tabpane    v-if="tabpane_active('edit-monitoring')"    :infra_id.once="current_infra.id"></edit-monitoring-tabpane>
