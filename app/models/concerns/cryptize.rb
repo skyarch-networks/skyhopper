@@ -25,7 +25,7 @@ module Concerns::Cryptize
 
   private
   def crypter
-    secret = SkyHopper::Application.secrets[:db_crypt_key]
+    secret = SkyHopper::Application.secrets[:db_crypt_secret]
     ::ActiveSupport::MessageEncryptor.new(secret)
   end
 end
