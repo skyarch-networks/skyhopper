@@ -13,13 +13,13 @@ You can also use SkyHopper in Ubuntu, Archlinux by installing the corresponding 
 
 ## Installing Ruby
 
-To install, you need ruby 2.2 version(SkyHopper doesn't work with Ruby 2.3).
+To install, you need ruby 2.4 version.
 
 ```sh
 $ sudo yum remove ruby ruby20
-$ sudo yum install ruby22
+$ sudo yum install ruby24
 $ ruby -v
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
+ruby 2.4.4p296 (2018-03-28 revision 63013) [x86_64-linux-gnu]
 ```
 
 ## Installing Bundler using gem
@@ -50,7 +50,7 @@ $ npm install bower --global
 
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
-$ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
+$ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
 ```

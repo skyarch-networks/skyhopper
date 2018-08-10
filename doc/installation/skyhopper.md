@@ -14,13 +14,13 @@ Amazon Linux へのインストール方法しか記載していませんが、�
 
 ## ruby のインストール
 
-Ruby 2.2系をインストール(Ruby 2.3 系では動きません)
+Ruby 2.4系をインストール
 
 ```sh
 $ sudo yum remove ruby ruby20
-$ sudo yum install ruby22
+$ sudo yum install ruby24
 $ ruby -v
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
+ruby 2.4.4p296 (2018-03-28 revision 63013) [x86_64-linux-gnu]
 ```
 
 ## Bundler のインストール
@@ -51,7 +51,7 @@ $ npm install bower --global
 
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
-$ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
+$ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
 ```
