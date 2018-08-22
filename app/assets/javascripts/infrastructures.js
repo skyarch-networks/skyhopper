@@ -207,9 +207,11 @@
     }
   });
 
-  var keypair_form_group = new Vue({
-    el: '#KeypairFormGroup'
-  });
+  if ($('#KeypairFormGroup').length){
+    var keypair_form_group = new Vue({
+      el: '#KeypairFormGroup'
+    });
+  }
 
 
 
