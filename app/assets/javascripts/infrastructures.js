@@ -147,65 +147,67 @@
 // ================================================================
 
   var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
-  var index = new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: [],
-      gridData: [],
-      loading: true,
-      is_empty: false,
-      url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
-      picked: {
-        button_delete_stack: null,
-        edit_infrastructure_path: null,
-        button_detach_stack: null
+  if ($('#indexElement').length) {
+    var index = new Vue({
+      el: '#indexElement',
+      data: {
+        searchQuery: '',
+        gridColumns: [],
+        gridData: [],
+        loading: true,
+        is_empty: false,
+        url: 'infrastructures?lang=' + queryString.lang + infrastructure_url,
+        picked: {
+          button_delete_stack: null,
+          edit_infrastructure_path: null,
+          button_detach_stack: null
+        },
+        index: 'infrastructures'
       },
-      index: 'infrastructures'
-    },
-    created: function(){
-        if (queryString.project_id >3)
-          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
+      created: function () {
+        if (queryString.project_id > 3)
+          this.gridColumns = ['stack_name', 'region', 'keypairname', 'created_at', 'status'];
         else
-          this.gridColumns = ['stack_name','region', 'keypairname'];
+          this.gridColumns = ['stack_name', 'region', 'keypairname'];
 
-      moment.locale(queryString.lang);
+        moment.locale(queryString.lang);
 
-    },
-    methods: {
-      can_edit: function() {
-        return (this.picked.edit_infrastructure_path);
       },
-      can_delete: function() {
-        return (this.picked.button_delete_stack);
-      },
-      can_detach: function() {
-        return (this.picked.button_detach_stack);
-      },
-      is_picked: function() {
-        return (this.picked.id);
-      },
-      delete_stack: function()  {
-        delete_stack(this.picked.id);
-        this.reload();
-      },
-      show_infra: function(item_id)  {
-        show_infra(item_id, '');
-      },
-      show_sched: function()  {
-        show_infra(this.picked.id, 'show_sched');
-        this.reload();
-      },
-      detach_infra: function()  {
-        detach(this.picked.id);
-        this.reload();
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url);
-      },
-    }
-  });
+      methods: {
+        can_edit: function () {
+          return (this.picked.edit_infrastructure_path);
+        },
+        can_delete: function () {
+          return (this.picked.button_delete_stack);
+        },
+        can_detach: function () {
+          return (this.picked.button_detach_stack);
+        },
+        is_picked: function () {
+          return (this.picked.id);
+        },
+        delete_stack: function () {
+          delete_stack(this.picked.id);
+          this.reload();
+        },
+        show_infra: function (item_id) {
+          show_infra(item_id, '');
+        },
+        show_sched: function () {
+          show_infra(this.picked.id, 'show_sched');
+          this.reload();
+        },
+        detach_infra: function () {
+          detach(this.picked.id);
+          this.reload();
+        },
+        reload: function () {
+          this.loading = true;
+          this.$children[0].load_ajax(this.url);
+        },
+      }
+    });
+  }
 
   if ($('#KeypairFormGroup').length){
     var keypair_form_group = new Vue({
