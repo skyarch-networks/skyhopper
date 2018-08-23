@@ -21,36 +21,37 @@ Vue.use(vace, false, 'ruby', '25');
 Vue.component('demo-grid', require('demo-grid.js'));
 var servertest_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
 
-var servertestIndex = new Vue({
-  el: '#indexElement',
-  data: {
+if ($('#indexElement').length) {
+  var servertestIndex = new Vue({
+    el: '#indexElement',
+    data: {
       searchQuery: '',
-      gridColumns: ['servertest_name','description', 'category'],
+      gridColumns: ['servertest_name', 'description', 'category'],
       gridData: [],
       index: 'servertests',
       picked: {
-          servertest_path: null,
-          edit_servertest_path: null
+        servertest_path: null,
+        edit_servertest_path: null
       },
-      infra_id: queryString.infrastructure_id ? '&infrastructure_id='+queryString.infrastructure_id: '',
+      infra_id: queryString.infrastructure_id ? '&infrastructure_id=' + queryString.infrastructure_id : '',
       sel_infra_id: null,
-      url: 'servertests?'+servertest_url,
+      url: 'servertests?' + servertest_url,
       is_empty: false,
       loading: true,
       generating: false,
-      awspec:{
+      awspec: {
         value: null,
         fname: null
       }
     },
     methods: {
-      can_edit: function() {
+      can_edit: function () {
         return this.picked.edit_servertest_path === null ? true : false;
       },
-      can_delete: function() {
-        return (this.picked.servertest_path === null) ? true: false;
+      can_delete: function () {
+        return (this.picked.servertest_path === null) ? true : false;
       },
-      delete_entry: function()  {
+      delete_entry: function () {
         var self = this;
         console.log(self.picked.servertest_path);
         modal.Confirm(t('servertests.servertest'), t('servertests.msg.delete_servertest'), 'danger').done(function () {
@@ -58,11 +59,11 @@ var servertestIndex = new Vue({
             type: "POST",
             url: self.picked.servertest_path,
             dataType: "json",
-            data: {"_method":"delete"},
+            data: {"_method": "delete"},
             success: function (data) {
-                location.reload();
+              location.reload();
             },
-        }).fail(modal.AlertForAjaxStdError());
+          }).fail(modal.AlertForAjaxStdError());
         });
       },
       reload: function () {
@@ -70,15 +71,15 @@ var servertestIndex = new Vue({
         this.$children[0].load_ajax(this.url);
         this.picked = {};
       },
-      show_servertest: function(servertest_id) {
+      show_servertest: function (servertest_id) {
         $.ajax({
-          url : "/servertests/" + servertest_id,
-          type : "GET",
-          success : function (data) {
+          url: "/servertests/" + servertest_id,
+          type: "GET",
+          success: function (data) {
             $("#value-information").html(data);
           }
         });
-        document.getElementById('value').style.display='';
+        document.getElementById('value').style.display = '';
       },
       generate: function () {
         var self = this;
@@ -90,20 +91,20 @@ var servertestIndex = new Vue({
           self.generating = false;
         }).fail(modal.AlertForAjaxStdError());
       },
-      create_awspec: function ()  {
+      create_awspec: function () {
         var self = this;
         var params = self.awspec;
         self.generating = true;
 
         var svt = new Servertest(self.sel_infra_id);
         svt.create(params.fname, params.value, 'awspec').done(function (data) {
-            modal.Alert(t('servertests.servertest'), data, 'success').done(function(){
-              location.href = "/servertests?infrastructure_id="+self.sel_infra_id+location.search;
+            modal.Alert(t('servertests.servertest'), data, 'success').done(function () {
+              location.href = "/servertests?infrastructure_id=" + self.sel_infra_id + location.search;
             });
           }
-        ).fail(function (msg)  {
+        ).fail(function (msg) {
           modal.Alert(t('servertests.servertest'), msg, 'danger');
-            self.generating = false;
+          self.generating = false;
         });
       }
     },
@@ -113,11 +114,12 @@ var servertestIndex = new Vue({
         return (awspec.value && awspec.fname);
       },
     },
-    ready: function() {
-      var self  = this;
+    ready: function () {
+      var self = this;
       self.loading = false;
     }
-});
+  });
+}
 
 
 
