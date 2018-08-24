@@ -12,13 +12,13 @@ namespace :update do
   def update_from_old_encrypted_attribute_value(model, attribute)
     model.find_each do |record|
       begin
-        record.send(attribute)
+        record.__send__(attribute)
       rescue ActiveSupport::MessageVerifier::InvalidSignature
         old_encrypted_value = record.read_attribute(attribute)
         if old_encrypted_value.nil?
           next
         end
-        record.send("#{attribute}=".to_sym, legacy_crypter.decrypt_and_verify(old_encrypted_value))
+        record.__send__("#{attribute}=".to_sym, legacy_crypter.decrypt_and_verify(old_encrypted_value))
         record.save!
       end
     end
