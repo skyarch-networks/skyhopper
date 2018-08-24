@@ -756,6 +756,7 @@ en:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
       db_key:    'db_crypt_key'
+      db_salt:    'db_crypt_salt'
       db_export: 'When exporting SkyHopper Database into a zip file, the following files are included: '
       db_import: 'When importing SkyHopper Database, select a zip file that contains these files: '
       db_import_finish: 'Database import has finished.'
