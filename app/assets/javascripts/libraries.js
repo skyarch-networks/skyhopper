@@ -8,7 +8,7 @@
 
 
 //= require jquery
-//= require jquery_ui
+//= require jquery-ui
 //= require jquery.textcomplete
 //= require rails
 //= require ajax_set
@@ -19,7 +19,7 @@
 //= require jquery.noty.packaged
 //= require vue
 //= require lodash
-//= require moment-with-locales.min
+//= require moment-with-locales
 //= require bootstrap-datetimepicker
 //= require microplugin
 //= require sifter
