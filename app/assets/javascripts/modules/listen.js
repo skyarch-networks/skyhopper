@@ -131,10 +131,13 @@
         }else{ return value; }
         break;
       case 'servertest':
-        if (value.length > 0)
-          return value.map(function (val){ return val.name; }).join(', ');
-        else
-          return 'auto generated';
+        var names = value.servertests.map(function (val){ return val.name; });
+        if (value.auto_generated === true) {
+          names.push('auto generated');
+        } else if (value.auto_generated === null) {
+          names.push('(auto generated servertest may have been executed)');
+        }
+        return names.join(', ');
       case 'category':
         var category = [];
         value.forEach(function (argument) {
@@ -145,22 +148,22 @@
         return (value.length > 0) ? category : 'serverspec';
 
       case 'message':
-        if(value[3].length <= 0){
-          return "<span class='text text-success'> serverspec for "+value[1]+" is successfully finished. </span>";
-        }else{
-          var head = "<td>Serverspec for "+value[1]+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value[0]+"' class='accordion-toggle popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
-          var body = '';
-          if(value[2]){
-              body = "<div class='col-sm-12'>" +
-              "<td class='hidden-row'>" +
-              "  <div class='accordion-body collapse' id='logbody-"+value[0]+"'>" +
-              "    <pre style='margin: 5px'>"+value[2]+"</pre>" +
-              "  </div>" +
-              "</td>" +
+        if(value.servertest_result_details.length <= 0 && value.auto_generated_servertest === false){
+          return "<span class='text text-success'> serverspec for "+value.physical_id+" is successfully finished. </span>";
+        }
+        var head = "<td>Serverspec for "+value.physical_id+" <a href='#' data-toggle='collapse' data-target='#logbody-"+value.id+"' class='accordion-toggle popovermore'> ... <span class='glyphicon glyphicon-zoom-in'></span></a></td>";
+        var body = '';
+        if(value.message){
+          body = "<div class='col-sm-12'>" +
+            "<td class='hidden-row'>" +
+            "  <div class='accordion-body collapse' id='logbody-"+value.id+"'>" +
+            "    <pre style='margin: 5px'>"+value.message+"</pre>" +
+            "  </div>" +
+            "</td>" +
             "</div>";
-          }
-          return head+body;
-        }break;
+        }
+        return head+body;
+        break;
       default:
         return value;
     }

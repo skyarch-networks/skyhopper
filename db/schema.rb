@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180705035046) do
+ActiveRecord::Schema.define(version: 20180816061427) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -22,8 +22,6 @@ ActiveRecord::Schema.define(version: 20180705035046) do
     t.string   "fqdn",               limit: 255
     t.string   "server_name",        limit: 255
   end
-
-  add_index "app_settings", ["ec2_private_key_id"], name: "fk_rails_cab00b44e4", using: :btree
 
   create_table "cf_templates", force: :cascade do |t|
     t.integer  "infrastructure_id", limit: 4
@@ -98,7 +96,6 @@ ActiveRecord::Schema.define(version: 20180705035046) do
     t.integer  "ec2_private_key_id", limit: 4
   end
 
-  add_index "infrastructures", ["ec2_private_key_id"], name: "fk_rails_0e13016c7c", using: :btree
   add_index "infrastructures", ["project_id"], name: "infrastructures_project_id_fk", using: :btree
   add_index "infrastructures", ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true, using: :btree
 
@@ -217,11 +214,12 @@ ActiveRecord::Schema.define(version: 20180705035046) do
   end
 
   create_table "servertest_results", force: :cascade do |t|
-    t.integer  "resource_id", limit: 4
-    t.integer  "status",      limit: 4
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.text     "message",     limit: 65535
+    t.integer  "resource_id",               limit: 4
+    t.boolean  "auto_generated_servertest"
+    t.integer  "status",                    limit: 4
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.text     "message",                   limit: 65535
   end
 
   create_table "servertests", force: :cascade do |t|
@@ -281,15 +279,4 @@ ActiveRecord::Schema.define(version: 20180705035046) do
     t.datetime "updated_at",             null: false
   end
 
-  add_foreign_key "app_settings", "ec2_private_keys", on_delete: :cascade
-  add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade
-  add_foreign_key "infrastructures", "ec2_private_keys", on_delete: :cascade
-  add_foreign_key "infrastructures", "projects", on_delete: :cascade
-  add_foreign_key "project_parameters", "projects"
-  add_foreign_key "projects", "clients", on_delete: :cascade
-  add_foreign_key "projects", "zabbix_servers"
-  add_foreign_key "user_projects", "projects", on_delete: :cascade
-  add_foreign_key "user_projects", "users", on_delete: :cascade
-  add_foreign_key "user_zabbix_servers", "users", on_delete: :cascade
-  add_foreign_key "user_zabbix_servers", "zabbix_servers", on_delete: :cascade
 end

@@ -331,6 +331,16 @@ describe ServertestsController, type: :controller do
         )
         req
       end
+
+      it 'should create ServertestResult with auto_generated_servertest value true' do
+        expect{req}.to change{ ServertestResult.last }
+                         .from(nil)
+                         .to(
+                           have_attributes(
+                             auto_generated_servertest: true
+                           )
+                         )
+      end
     end
 
     context 'when not selected auto generated' do
@@ -340,6 +350,16 @@ describe ServertestsController, type: :controller do
           servertest_ids: servertests.map{|x|x.id.to_s}, auto_generated: false
         )
         req
+      end
+
+      it 'should create ServertestResult with auto_generated_servertest value false' do
+        expect{req}.to change{ ServertestResult.last }
+                         .from(nil)
+                         .to(
+                           have_attributes(
+                             auto_generated_servertest: false
+                           )
+                         )
       end
     end
 
