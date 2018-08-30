@@ -13,13 +13,26 @@ describe CfTemplate, type: :model do
 
   describe 'with validation' do
     describe 'column value' do
-      let(:cft){build(:cf_template)}
+      context 'when format is "JSON"' do
+        let(:cft){build(:cf_template)}
 
-      it 'should be a JSON' do
-        cft.value = "{Invalid As JSON!}"
-        expect(cft.save).to be false
-        cft.value = '{"valid": "as JSON"}'
-        expect(cft.save).to be true
+        it 'should be a JSON' do
+          cft.value = "{Invalid As JSON!}"
+          expect(cft.save).to be false
+          cft.value = '{"valid": "as JSON"}'
+          expect(cft.save).to be true
+        end
+      end
+
+      context 'when format is "YAML"' do
+        let(:cft){build(:cf_template_yaml)}
+
+        it 'should be a YAML' do
+          cft.value = "Invalid: As: YAML!"
+          expect(cft.save).to be false
+          cft.value = 'valid: "as YAML"'
+          expect(cft.save).to be true
+        end
       end
     end
   end
@@ -138,6 +151,54 @@ describe CfTemplate, type: :model do
     it 'should set CfTemplate#params' do
       subject
       expect(cf_template.params).to eq params_not_json.to_json
+    end
+  end
+
+  describe '#parse_value' do
+    subject{cf_template.parse_value}
+
+    context 'when format is nil' do
+      let(:cf_template){build(:cf_template)}
+
+      it 'should raise ParseError' do
+        cf_template.format = nil
+        cf_template.value = '{Invalid As JSON!}'
+        expect{subject}.to raise_error(CfTemplate::ParseError)
+      end
+    end
+
+    context 'when format is "JSON"' do
+      let(:cf_template){build(:cf_template)}
+
+      context 'when value is valid as JSON' do
+        it 'should return parsed value' do
+          is_expected.to eq JSON::parse(cf_template.value)
+        end
+      end
+
+      context 'when value is invalid as JSON' do
+        it 'should raise ParseError' do
+          cf_template.value = '{Invalid As JSON!}'
+          expect{subject}.to raise_error(CfTemplate::ParseError)
+        end
+      end
+    end
+
+    context 'when format is "YAML"' do
+      let(:cf_template){build(:cf_template_yaml)}
+
+      context 'when value is valid as YAML' do
+        it 'should return parsed value' do
+          is_expected.to eq YAML::load(cf_template.value)
+        end
+      end
+
+      context 'when value is invalid as YAML' do
+        it 'should raise ParseError' do
+          cf_template.value = 'Invalid: As: YAML!'
+          expect{subject}.to raise_error(CfTemplate::ParseError)
+        end
+      end
     end
   end
 end

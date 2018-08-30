@@ -15,10 +15,10 @@ class InfrastructuresController < ApplicationController
 
   # --------------- existence check
   before_action :project_exist, only: [:index]
-  before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events]
+  before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :edit_keypair, :update_keypair]
 
 
-  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds)
+  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair)
 
   before_action do
     infra = @infrastructure || (
@@ -73,7 +73,7 @@ class InfrastructuresController < ApplicationController
       resp[:message] = stack.status[:message]
     end
 
-    if stack.update_complete?
+    if stack.update_complete? && @infrastructure.resources_updated?
       @infrastructure.resources.destroy_all
     end
 
@@ -107,6 +107,7 @@ class InfrastructuresController < ApplicationController
       project_id: project_id
     )
     @regions = @@regions
+    set_ec2_private_key_list(Project.find(project_id))
   end
 
   # GET /infrastructures/1/edit
@@ -123,11 +124,22 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures
   # POST /infrastructures.json
   def create
-    keypair_validation
-    infra = Infrastructure.create_with_ec2_private_key!(infrastructure_params)
+    current_params = insert_selected_ec2_private_key(infrastructure_params)
+
+    # raise error if uploaded keypair does not exist
+    KeyPair.validate!(
+      current_params[:project_id],
+      current_params[:region],
+      current_params[:keypair_name],
+      current_params[:keypair_value]
+    )
+
+    infra = Infrastructure.create_with_ec2_private_key!(current_params)
   rescue => ex
     flash[:alert] = ex.message
     @regions        = @@regions
+    project = Project.find(params[:infrastructure][:project_id])
+    set_ec2_private_key_list(project)
     @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
 
     render action: 'new', status: 400 and return
@@ -338,6 +350,36 @@ class InfrastructuresController < ApplicationController
     render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
   end
 
+  # GET /infrastructures/1/edit_keypair
+  def edit_keypair
+    set_ec2_private_key_list(@infrastructure.project)
+  end
+
+  # PATCH /infrastructures/1/update_keypair
+  def update_keypair
+    begin
+      keypair_params = insert_selected_ec2_private_key(
+        params.require(:infrastructure).permit(:keypair_name, :keypair_value)
+      )
+
+      # raise error if uploaded keypair does not exist
+      KeyPair.validate!(
+        @infrastructure.project_id,
+        @infrastructure.region,
+        keypair_params[:keypair_name],
+        keypair_params[:keypair_value]
+      )
+
+      @infrastructure.update_with_ec2_private_key!(keypair_params)
+    rescue => ex
+      flash[:alert] = ex.message
+      set_ec2_private_key_list(@infrastructure.project)
+      render action: :edit_keypair, status: 400 and return
+    else
+      redirect_to infrastructures_path(project_id: @infrastructure.project_id), notice: I18n.t('infrastructures.msg.updated')
+    end
+  end
+
   def start_rds
     physical_id = params.require(:physical_id)
     rds = @infrastructure.rds(physical_id)
@@ -380,13 +422,6 @@ class InfrastructuresController < ApplicationController
       p.delete(:keypair_value)
     end
     return p
-  end
-
-  # raise error if uploaded keypair does not exist
-  def keypair_validation
-    p = infrastructure_params
-
-    KeyPair.validate!(p[:project_id], p[:region], p[:keypair_name], p[:keypair_value])
   end
 
   # mapping of security groups by resource
@@ -436,4 +471,26 @@ class InfrastructuresController < ApplicationController
     redirect_to path, alert: msg
   end
 
+  def set_ec2_private_key_list(project)
+    @ec2_private_key_list = project.infrastructures.map{|infrastructure|
+      [
+        "#{infrastructure.stack_name}(#{infrastructure.ec2_private_key.name})",
+        infrastructure.ec2_private_key.id
+      ]
+    }
+  end
+
+  def insert_selected_ec2_private_key(target_params)
+    if params[:infrastructure][:keypair_input_type] == 'select'
+      project = @infrastructure.present? ? @infrastructure.project : Project.find(params[:infrastructure][:project_id])
+      unless project.infrastructures.pluck(:ec2_private_key_id).include?(params[:infrastructure][:copy_ec2_private_key_id].to_i)
+        raise "Parameter copy_ec2_private_key_id is invalid."
+      end
+
+      ec2_private_key = Ec2PrivateKey.find(params[:infrastructure][:copy_ec2_private_key_id])
+      target_params[:keypair_name] = ec2_private_key.name
+      target_params[:keypair_value] = ec2_private_key.value
+    end
+    target_params
+  end
 end

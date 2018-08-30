@@ -81,8 +81,8 @@ class CfTemplatesController < ApplicationController
     infra = Infrastructure.find(cf_template_params[:infrastructure_id])
 
     begin
-      @tpl = JSON.parse(@cf_template.value)
-    rescue JSON::ParserError => ex
+      @tpl = @cf_template.parse_value
+    rescue CfTemplate::ParseError => ex
       render text: ex.message, status: 400 and return
     end
 
@@ -183,7 +183,7 @@ class CfTemplatesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def cf_template_params
-    params.require(:cf_template).permit(:infrastructure_id, :name, :detail, :value, :params)
+    params.require(:cf_template).permit(:infrastructure_id, :name, :detail, :value, :format, :params)
   end
 
   def send_cloudformation_template(cf_template, template_parameters)
@@ -191,8 +191,8 @@ class CfTemplatesController < ApplicationController
     stack = Stack.new(infrastructure)
 
     begin
-      JSON.parse(cf_template.value)
-    rescue JSON::ParserError => ex
+      cf_template.parse_value
+    rescue CfTemplate::ParseError => ex
       return {message: ex.message, status: false}
     end
 

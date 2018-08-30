@@ -23,7 +23,7 @@ module.exports = function (stack, current_infra, current_tab) {
         resources : {},
         events: [],
         templates: {histories: null, globals: null},
-        add_modify: {name: "", detail: "", value: ""},
+        add_modify: {name: "", detail: "", format: "JSON", value: ""},
       },
       tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
       tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される

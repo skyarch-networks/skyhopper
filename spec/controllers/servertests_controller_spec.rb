@@ -313,6 +313,7 @@ describe ServertestsController, type: :controller do
       examples: [{status: 'pending', full_description: 'hogefuga'}],
       status: true,
       status_text: status_text,
+      error_servertest_names: [],
     }}
     let(:req){post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids}
 
@@ -331,6 +332,16 @@ describe ServertestsController, type: :controller do
         )
         req
       end
+
+      it 'should create ServertestResult with auto_generated_servertest value true' do
+        expect{req}.to change{ ServertestResult.last }
+                         .from(nil)
+                         .to(
+                           have_attributes(
+                             auto_generated_servertest: true
+                           )
+                         )
+      end
     end
 
     context 'when not selected auto generated' do
@@ -340,6 +351,16 @@ describe ServertestsController, type: :controller do
           servertest_ids: servertests.map{|x|x.id.to_s}, auto_generated: false
         )
         req
+      end
+
+      it 'should create ServertestResult with auto_generated_servertest value false' do
+        expect{req}.to change{ ServertestResult.last }
+                         .from(nil)
+                         .to(
+                           have_attributes(
+                             auto_generated_servertest: false
+                           )
+                         )
       end
     end
 
@@ -358,6 +379,12 @@ describe ServertestsController, type: :controller do
 
     context 'when servertest result is fail' do
       let(:status_text){'failed'}
+      before{req}
+      should_be_success
+    end
+
+    context 'when servertest result is error' do
+      let(:status_text){'error'}
       before{req}
       should_be_success
     end

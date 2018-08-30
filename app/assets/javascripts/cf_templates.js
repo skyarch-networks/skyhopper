@@ -15,6 +15,7 @@
   var ace = require('brace');
   require('brace/theme/github');
   require('brace/mode/json');
+  require('brace/mode/yaml');
 
   var JSZip = require('jszip');
 
@@ -39,7 +40,16 @@
         minLines: 15,
       });
       editor.setTheme("ace/theme/github");
-      editor.getSession().setMode("ace/mode/json");
+
+      $('#cf_template_format').change(function() {
+        var format = $(this).val();
+        if (format === 'YAML') {
+          editor.getSession().setMode("ace/mode/yaml");
+          return;
+        }
+        editor.getSession().setMode("ace/mode/json");
+      }).change();
+
       $("#ace-loading").hide();
     }
   });
@@ -101,7 +111,12 @@
             readOnly: true
           });
           viewer.setTheme("ace/theme/github");
-          viewer.getSession().setMode("ace/mode/json");
+          var format = $("#template-information #cf_value").data('format');
+          if (format === 'YAML') {
+            viewer.getSession().setMode("ace/mode/yaml");
+          } else {
+            viewer.getSession().setMode("ace/mode/json");
+          }
         });
       },
       confirm_export: function () {

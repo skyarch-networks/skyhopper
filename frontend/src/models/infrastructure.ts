@@ -41,14 +41,21 @@ export default class Infrastructure extends ModelBase {
     );
   }
 
-  logs(page = 1): JQueryPromise<any> {
+  logs(page = 1, sort_key: string, order: number): JQueryPromise<any> {
+    const data:any = {
+      infrastructure_id: this.id,
+      page: page,
+    };
+    if (sort_key !== void 0) {
+      data.sort_key = sort_key;
+    }
+    if (order !== void 0) {
+      data.order = order;
+    }
     return this.WrapAndResolveReject(() =>
       $.ajax({
         url: '/infrastructure_logs',
-        data: {
-          infrastructure_id: this.id,
-          page: page,
-        },
+        data: data,
       })
     );
   }

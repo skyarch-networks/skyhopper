@@ -153,7 +153,7 @@ class ServertestsController < ApplicationController
     @servertest_results = resource.servertest_results.order("created_at desc")
 
     respond_to do |format|
-      format.json { render json: @servertest_results.as_json(only: [:id, :status, :message, :created_at, :category],
+      format.json { render json: @servertest_results.as_json(only: [:id, :auto_generated_servertest, :status, :message, :created_at, :category],
         include: [{servertest_result_details: {only: [:id]}},{servertests: {only: [:name, :category]}}, {resource: {only: [:physical_id]}} ]) }
     end
   end
@@ -187,10 +187,13 @@ class ServertestsController < ApplicationController
       render_msg = I18n.t('servertests.msg.pending', physical_id: physical_id, pending_specs: resp[:short_msg])
     when 'failed'
       render_msg = I18n.t('servertests.msg.failure', physical_id: physical_id, failure_specs: resp[:short_msg])
+    when 'error'
+      render_msg = I18n.t('servertests.msg.error', physical_id: physical_id, error_specs: resp[:error_servertest_names].join(','))
     end
 
     ServertestResult.create(
       resource_id:    resource.id,
+      auto_generated_servertest: selected_auto_generated,
       status:         resp[:status_text],
       message:        resp[:long_message],
       servertest_ids: servertest_ids

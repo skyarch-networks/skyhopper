@@ -62,6 +62,7 @@ class TemplateBuilderController < ApplicationController
       name:              params.require(:subject),
       detail:            params[:detail],
       value:             template_builder.to_pretty_json,
+      format:            'JSON',
       user_id:           current_user.id
     )
 

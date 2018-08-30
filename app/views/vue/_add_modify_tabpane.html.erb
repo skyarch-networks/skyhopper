@@ -10,11 +10,22 @@
       <input v-model="result.detail" type="text" id="add_modify_detail" class="form-control">
     </div>
 
+
+    <div class="form-group">
+      <label for="add_modify_format"><%= t('cf_templates.format') %></label>
+      <select v-model="result.format" type="text" id="add_modify_format" class="form-control" @change="select_format()">
+        <% CfTemplate.formats.keys.each{|key| %>
+          <option value="<%= key %>"><%= key %></option>
+        <% } %>
+      </select>
+    </div>
+
     <div class="form-group">
         <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
     </div>
-    <div class="alert alert-danger" v-show="jsonParseErr">{{jsonParseErr}}</div>
-    <div style="position: absolute; width: 100%; left: 0px; height: 429px; font-size: 12px;" autofocus v-ace="result.value" name="description" id="add_modify_value"></div>
+    <div class="alert alert-danger" v-show="parseErr">{{parseErr}}</div>
+    <textarea style="display: none;" v-model="result.value" name="description" id="add_modify_value"></textarea>
+    <div style="position: absolute; width: 100%; left: 0px; height: 429px; font-size: 12px;" autofocus id="add_modify_value_ace"></div>
   </fieldset>
 </div>
 
@@ -43,7 +54,7 @@
 </div>
 
 <div class="form-actions-top col-md-12 col-sm-12">
-  <button class="btn btn-primary btn-sm" :class="{disabled: jsonParseErr}" @click="submit()">
+  <button class="btn btn-primary btn-sm" :class="{disabled: parseErr}" @click="submit()">
     <%= t 'cf_templates.insert_parameters' %>
   </button>
 </div>
