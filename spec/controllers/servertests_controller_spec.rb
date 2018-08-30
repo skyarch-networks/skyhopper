@@ -313,6 +313,7 @@ describe ServertestsController, type: :controller do
       examples: [{status: 'pending', full_description: 'hogefuga'}],
       status: true,
       status_text: status_text,
+      error_servertest_names: [],
     }}
     let(:req){post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids}
 
@@ -378,6 +379,12 @@ describe ServertestsController, type: :controller do
 
     context 'when servertest result is fail' do
       let(:status_text){'failed'}
+      before{req}
+      should_be_success
+    end
+
+    context 'when servertest result is error' do
+      let(:status_text){'error'}
       before{req}
       should_be_success
     end

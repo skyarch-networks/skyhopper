@@ -124,7 +124,7 @@
       case 'status':
         if(value == 'success') {
           return "<span class='label label-success'>"+value+"</span>";
-        }else if (value == 'failed') {
+        }else if (value == 'failed' || value == 'error') {
           return "<span class='label label-danger'>"+value+"</span>";
         }else if (value == 'pending') {
           return "<span class='label label-warning'>"+value+"</span>";

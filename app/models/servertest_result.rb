@@ -10,5 +10,5 @@ class ServertestResult < ActiveRecord::Base
   belongs_to :resource
   has_many :servertest_result_details
   has_many :servertests, through: :servertest_result_details
-  enum status: [:success, :pending, :failed]
+  enum status: [:success, :pending, :failed, :error]
 end
