@@ -19,6 +19,13 @@ module.exports = Vue.extend({
   data: function () {return {
     logs: [],
     page: {},
+    sortKey: '',
+    sortOrders: {
+      'users.email': 1,
+      'infrastructure_logs.status': 1,
+      'infrastructure_logs.details': 1,
+      'infrastructure_logs.created_at': 1
+    },
   };},
 
   components: {
@@ -29,7 +36,17 @@ module.exports = Vue.extend({
     status_class: function (status) { return status ? 'label-success' : 'label-danger'; },
     status_text: function (status)  { return status ? 'SUCCESS' : 'FAILED'; },
     toLocaleString: toLocaleString,
-    ansi_up: function(log)  { return ansi_up.ansi_to_html(log); }
+    ansi_up: function(log)  { return ansi_up.ansi_to_html(log); },
+    sortBy: function (key) {
+      var self = this;
+      self.sortKey = key;
+      self.sortOrders[key] = self.sortOrders[key] * -1;
+      var infra = new Infrastructure(self.infra_id);
+      infra.logs(self.page.current, self.sortKey, self.sortOrders[self.sortKey]).done(function (data) {
+        self.logs = data.logs;
+        self.page = data.page;
+      }).fail(alert_and_show_infra(infra.id));
+    },
   },
 
   created: function () {
@@ -50,7 +67,8 @@ module.exports = Vue.extend({
 
     this.$on('show', function (page) {
       var infra = new Infrastructure(self.infra_id);
-      infra.logs(page).done(function (data) {
+      var sortKey = self.sortKey === '' ? void 0 : self.sortKey;
+      infra.logs(page, sortKey, self.sortOrders[self.sortKey]).done(function (data) {
         self.logs = data.logs;
         self.page = data.page;
       }).fail(alert_and_show_infra(infra.id));
