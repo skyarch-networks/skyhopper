@@ -1,10 +1,22 @@
 <table class="table table-condensed" style="border-collapse:collapse;">
   <thead>
     <tr>
-      <th>Operator</th>
-      <th>Status</th>
-      <th>Details</th>
-      <th>at</th>
+      <th :class="{active: sortKey == 'users.email'}" @click="sortBy('users.email')">
+        <span>Operator</span>
+        <span class="pull-right glyphicon" :class="sortOrders['users.email'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.status'}" @click="sortBy('infrastructure_logs.status')">
+        <span>Status</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.status'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.details'}" @click="sortBy('infrastructure_logs.details')">
+        <span>Details</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.details'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.created_at'}" @click="sortBy('infrastructure_logs.created_at')">
+        <span>at</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.created_at'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
     </tr>
   </thead>
   <tbody v-for="log in logs" class="tbody-infra-log">

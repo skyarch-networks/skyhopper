@@ -13,7 +13,7 @@ class RubyValidator < ActiveModel::EachValidator
     begin
       RubyParser.parse(value)
     rescue => ex
-      msg = "#{I18n.t('serverspecs.msg.parseerr')} (#{ex.message})"
+      msg = "#{I18n.t('servertests.msg.parseerr')} (#{ex.message})"
       record.errors[attribute] << msg
     end
   end

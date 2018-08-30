@@ -10,28 +10,28 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :name, t('serverspecs.name'), class: 'control-label col-sm-2'%>
+    <%= f.label :name, t('servertests.name'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
       <%= f.text_field :name, class: 'form-control', required: true%>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :description, t('serverspecs.description'), class: 'control-label col-sm-2'%>
+    <%= f.label :description, t('servertests.description'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
       <%= f.text_field :description, class: ' form-control text_field_no_validation'%>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :value, t('serverspecs.value'), class: 'control-label col-sm-2'%>
+    <%= f.label :value, t('servertests.value'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
       <%= f.text_area :value, class: 'form-control', required: true%>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :value, t('serverspecs.category'), class: 'control-label col-sm-2'%>
+    <%= f.label :value, t('servertests.category'), class: 'control-label col-sm-2'%>
     <div class="col-sm-5">
       <%= f.radio_button(:category, :awspec) %>
       <%= label(:category, "Awspec") %>

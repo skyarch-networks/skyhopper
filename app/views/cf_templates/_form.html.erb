@@ -14,6 +14,14 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :detail, t('cf_templates.format'), class: 'control-label col-sm-3' %>
+    <div class="col-sm-7">
+      <%= f.select :format, CfTemplate.formats.keys, {}, class: "form-control" %>
+    </div>
+  </div>
+
+
+  <div class="form-group">
     <%= f.label :value, t('cf_templates.cf_template'), class: 'control-label col-sm-3' %>
     <div class="col-sm-7">
       <div class="resizable">

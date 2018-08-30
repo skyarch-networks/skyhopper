@@ -83,6 +83,27 @@ describe Infrastructure, type: :model do
     end
   end
 
+  describe '#update_with_ec2_private_key!' do
+    let(:infra){build(:infrastructure, resources: [])}
+    let(:params){{
+      keypair_name: ec2key.name,
+      keypair_value: ec2key.value,
+    }}
+
+    it 'should create ec2_private_key and update attributes' do
+      old_ec2_private_key_id = infra.ec2_private_key.id
+      infra.update_with_ec2_private_key!(params)
+      expect(infra.ec2_private_key.id).not_to eq(old_ec2_private_key_id)
+    end
+
+    it 'should delete old ec2_private_key' do
+      old_ec2_private_key_id = infra.ec2_private_key.id
+      infra.update_with_ec2_private_key!(params)
+      expect{Ec2PrivateKey.find(old_ec2_private_key_id)}.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+  end
+
   describe '#resources_or_create' do
     let(:infra){build(:infrastructure, resources: [])}
     let(:resources){build_list(:ec2_resource, 3)}
@@ -112,6 +133,38 @@ describe Infrastructure, type: :model do
       it 'should save resources' do
         r = subject
         expect(infra.resources).to eq r
+      end
+    end
+  end
+
+  describe '#resources_updated?' do
+    let(:infra){build(:infrastructure, resources: [])}
+    let(:resources){build_list(:ec2_resource, 3)}
+    subject{infra.resources_updated?}
+
+    before do
+      infra.resources = resources
+      infra.save!
+      allow_any_instance_of(Stack).to receive(:instances_for_resources).and_return(instances_for_resources)
+    end
+
+    context 'when there is a difference in physical_id of resources' do
+      let(:instances_for_resources){[]}
+
+      it 'shoud return true' do
+        is_expected.to eq true
+      end
+    end
+
+    context 'when there is not a difference in physical_id of resources' do
+      let(:instances_for_resources){resources.map{|resource|
+        resource_mock = double('resource')
+        allow(resource_mock).to receive(:physical_resource_id).and_return(resource.physical_id)
+        resource_mock
+      }}
+
+      it 'shoud return false' do
+        is_expected.to eq false
       end
     end
   end

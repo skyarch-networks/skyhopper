@@ -41,6 +41,7 @@
                <li v-if="picked">
                  <a @click="show_sched()" href='#'> <%=  t('infrastructures.btn.operation_schedule') %></a>
                  <a :href='picked.servertests_path'>Serverspecs</a>
+                 <a :href='picked.edit_keypair_infrastructure_path'><%=  t('infrastructures.btn.change_keypair') %></a>
                </li>
              </ul>
         </div>
