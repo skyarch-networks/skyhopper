@@ -23,7 +23,7 @@
     "jszip": "^3.0.0",
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
-    "pdfmake-browserified": "^0.1.4",
+    "pdfmake": "^0.1.37",
     "query-string": "^2.4.1",
     "serverspec-generator": "^1.0.0",
     "vue": "~1.0.24",

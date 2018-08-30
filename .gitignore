@@ -48,6 +48,7 @@ vendor/bower_components
 /frontend/dest/
 /frontend/node_modules/
 /frontend/typings/
+/frontend/fonts/
 
 # MAC system files
 .DS_Store

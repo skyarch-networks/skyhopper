@@ -218,6 +218,19 @@ $ gulp ts
 $ cd ..
 ```
 
+### Font download and build
+
+Details of the font to use: <https://github.com/m13253/kaigen-fonts>
+```sh
+$ cd frontend/fonts/
+$ curl -LO https://github.com/m13253/kaigen-fonts/releases/download/v1.004-1.001-1/KaigenSansJ.zip
+$ unzip KaigenSansJ.zip
+$ cd ..
+$ node build_font.js fonts/KaigenSansJ/KaigenSansJ-Regular.ttf
+$ cd ..
+```
+
+
 ### database.yml
 
 ```sh
