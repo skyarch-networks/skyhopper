@@ -4,7 +4,7 @@ AllCops:
     - 'spec/factories.rb'
   Rails: true
   DisplayCopNames: true
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.4
 
 Style/BlockDelimiters:
   Enabled: false
