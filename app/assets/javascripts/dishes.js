@@ -21,59 +21,61 @@
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
-  var dishIndex = new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: ['dish_name','detail', 'status'],
-      gridData: [],
-      index: 'dishes',
-      project_id: queryString.project_id ? '&project_id='+queryString.project_id: '',
-      url: 'dishes?lang='+queryString.lang+dish_url,
-      is_empty: false,
-      loading: true,
-      picked: {
-        dish_path: null
-      }
-    },
-    methods: {
-      can_delete: function() {
-        return (this.picked.dish_path === null);
+  if ($('#indexElement').length) {
+    var dishIndex = new Vue({
+      el: '#indexElement',
+      data: {
+        searchQuery: '',
+        gridColumns: ['dish_name', 'detail', 'status'],
+        gridData: [],
+        index: 'dishes',
+        project_id: queryString.project_id ? '&project_id=' + queryString.project_id : '',
+        url: 'dishes?lang=' + queryString.lang + dish_url,
+        is_empty: false,
+        loading: true,
+        picked: {
+          dish_path: null
+        }
       },
+      methods: {
+        can_delete: function () {
+          return (this.picked.dish_path === null);
+        },
 
-      delete_entry: function()  {
-        var self = this;
-        modal.Confirm(t('dishes.dish'), t('dishes.msg.delete_dish'), 'danger').done(function () {
-          $.ajax({
-            url: self.picked.dish_path,
-            type: "POST",
-            dataType: "json",
-            data: {"_method":"delete"},
-            success: function (data) {
-              location.reload();
-            },
-        }).fail(modal.AlertForAjaxStdError());
-        });
+        delete_entry: function () {
+          var self = this;
+          modal.Confirm(t('dishes.dish'), t('dishes.msg.delete_dish'), 'danger').done(function () {
+            $.ajax({
+              url: self.picked.dish_path,
+              type: "POST",
+              dataType: "json",
+              data: {"_method": "delete"},
+              success: function (data) {
+                location.reload();
+              },
+            }).fail(modal.AlertForAjaxStdError());
+          });
+        },
+
+        show_dish: function (item) {
+          var self = this;
+          show_dish(item).done(function (data) {
+            //  show dish
+            set_current_dish_id(item);
+
+          }).fail(function (data) {
+            modal.Alert(t('dishes.dish'), data.responseText, 'danger');
+          });
+        },
+        reload: function () {
+          this.loading = true;
+          this.$children[0].load_ajax(this.url);
+          this.picked = {};
+        },
+
       },
-
-      show_dish: function(item) {
-        var self = this;
-        show_dish(item).done(function (data) {
-          //  show dish
-          set_current_dish_id(item);
-
-        }).fail(function (data) {
-          modal.Alert(t('dishes.dish'), data.responseText, 'danger');
-        });
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url);
-        this.picked = {};
-      },
-
-    },
-  });
+    });
+  }
 
   //    -----------------     functions
 
