@@ -49,7 +49,8 @@ class ServertestsController < ApplicationController
   # POST /servertests/1
   def update
     if @servertest.update(global_servertest_params)
-      redirect_to servertests_path, notice: I18n.t('servertests.msg.updated')
+      infra_id = @servertest.infrastructure_id
+      redirect_to servertests_path(infrastructure_id: infra_id), notice: I18n.t('servertests.msg.updated')
     else
       flash.now[:alert] = @servertest.errors[:value] if @servertest.errors[:value]
       render action: 'edit'
