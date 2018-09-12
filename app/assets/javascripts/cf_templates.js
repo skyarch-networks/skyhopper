@@ -54,135 +54,140 @@
     }
   });
 
-  var cf_templatesIndex = new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: ['cf_subject','details'],
-      gridData: [],
-      index: 'cf_templates',
-      picked: {
-        button_destroy_cft: null,
-        button_edit_cft: null
+  if ($('#indexElement').length) {
+    var cf_templatesIndex = new Vue({
+      el: '#indexElement',
+      data: {
+        searchQuery: '',
+        gridColumns: ['cf_subject', 'details'],
+        gridData: [],
+        index: 'cf_templates',
+        picked: {
+          button_destroy_cft: null,
+          button_edit_cft: null
+        },
+        multiSelect: false,
+        selections: [],
+        url: 'cf_templates?lang=' + queryString.lang,
+        is_empty: false,
+        loading: true,
       },
-      multiSelect: false,
-      selections: [],
-      url: 'cf_templates?lang='+queryString.lang,
-      is_empty: false,
-      loading: true,
-    },
-    computed: {
-      can_export: function () {
-        return (!this.multiSelect && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
+      computed: {
+        can_export: function () {
+          return (!this.multiSelect && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
+        },
       },
-    },
-    methods: {
-      can_edit: function() {
-        return (!this.multiSelect && this.picked.button_edit_cft !== null);
-      },
-      can_delete: function() {
-        return (!this.multiSelect && this.picked.button_destroy_cft !== null);
-      },
-      delete_entry: function()  {
-        var self = this;
-        modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
-          $.ajax({
-            type: "POST",
-            url: self.picked.button_destroy_cft,
-            dataType: "json",
-            data: {"_method":"delete"},success: function (data) {
-              location.reload();
-            },
-        }).fail(modal.AlertForAjaxStdError());
-        });
-      },
-      show_template: function(cf_template_id) {
-        $.ajax({
-          url : "/cf_templates/" + cf_template_id,
-          type : "GET",
-          success : function (data) {
-            $("#template-information").html(data);
-          }
-        }).done(function () {
-          var viewer = ace.edit('cf_value');
-          viewer.setOptions({
-            maxLines: Infinity,
-            minLines: 15,
-            readOnly: true
+      methods: {
+        can_edit: function () {
+          return (!this.multiSelect && this.picked.button_edit_cft !== null);
+        },
+        can_delete: function () {
+          return (!this.multiSelect && this.picked.button_destroy_cft !== null);
+        },
+        delete_entry: function () {
+          var self = this;
+          modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
+            $.ajax({
+              type: "POST",
+              url: self.picked.button_destroy_cft,
+              dataType: "json",
+              data: {"_method": "delete"}, success: function (data) {
+                location.reload();
+              },
+            }).fail(modal.AlertForAjaxStdError());
           });
-          viewer.setTheme("ace/theme/github");
-          var format = $("#template-information #cf_value").data('format');
-          if (format === 'YAML') {
-            viewer.getSession().setMode("ace/mode/yaml");
+        },
+        show_template: function (cf_template_id) {
+          $.ajax({
+            url: "/cf_templates/" + cf_template_id,
+            type: "GET",
+            success: function (data) {
+              $("#template-information").html(data);
+            }
+          }).done(function () {
+            var viewer = ace.edit('cf_value');
+            viewer.setOptions({
+              maxLines: Infinity,
+              minLines: 15,
+              readOnly: true
+            });
+            viewer.setTheme("ace/theme/github");
+            var format = $("#template-information #cf_value").data('format');
+            if (format === 'YAML') {
+              viewer.getSession().setMode("ace/mode/yaml");
+            } else {
+              viewer.getSession().setMode("ace/mode/json");
+            }
+          });
+        },
+        confirm_export: function () {
+          var self = this;
+          var html = $('<div>', {class: 'panel panel-info', style: 'margin-bottom: 0px'});
+          html.append(
+            $('<div>', {
+              class: 'panel-heading',
+              text: t('cf_templates.msg.confirm_export')
+            }).prepend(
+              $('<span>', {class: 'glyphicon glyphicon-info-sign'})
+            ),
+            $('<ul>').append(
+              this.selections.map(function (obj) {
+                return $('<li>', {text: obj.cf_subject});
+              })
+            )
+          );
+          modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(function () {
+            self.export_templates(self.selections);
+          });
+        },
+        export_templates: function (templates) {
+          var self = this;
+          var zip = new JSZip();
+          templates.forEach(function (obj) {
+            var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
+            zip.file(filename, obj.value);
+          });
+          zip.generateAsync({type: 'blob'}).then(function (content) {
+            self.download_blob('cf_templates.zip', content);
+          });
+        },
+        export_selected: function () {
+          if (this.multiSelect) {
+            this.confirm_export();
           } else {
-            viewer.getSession().setMode("ace/mode/json");
+            this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
           }
-        });
+        },
+        export_all: function () {
+          this.export_templates(this.gridData);
+        },
+        download_blob: function (filename, value) {
+          var file = new File([value], filename);
+          var event = new MouseEvent("click");
+          var url = window.URL.createObjectURL(file);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = file.name;
+          a.dispatchEvent(event);
+        },
+        escape_invalid_character: function (str) {
+          return str.replace(/[\\/:*?<>"|]/g, '-');
+        },
+        reload: function () {
+          this.loading = true;
+          this.$children[0].load_ajax(this.url, this.empty);
+          this.selections = [];
+          this.picked = {};
+        },
       },
-      confirm_export: function () {
-        var self = this;
-        var html = $('<div>', {class: 'panel panel-info', style: 'margin-bottom: 0px'});
-        html.append(
-          $('<div>', {class: 'panel-heading', text: t('cf_templates.msg.confirm_export')}).prepend(
-            $('<span>', {class: 'glyphicon glyphicon-info-sign'})
-          ),
-          $('<ul>').append(
-            this.selections.map(function (obj) {
-              return $('<li>', {text: obj.cf_subject});
-            })
-          )
-        );
-        modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(function () {
-          self.export_templates(self.selections);
-        });
-      },
-      export_templates: function (templates) {
-        var self = this;
-        var zip = new JSZip();
-        templates.forEach(function (obj) {
-          var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
-          zip.file(filename, obj.value);
-        });
-        zip.generateAsync({type: 'blob'}).then(function (content) {
-          self.download_blob('cf_templates.zip', content);
-        });
-      },
-      export_selected: function () {
-        if (this.multiSelect) {
-          this.confirm_export();
-        } else {
-          this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
-        }
-      },
-      export_all: function () {
-        this.export_templates(this.gridData);
-      },
-      download_blob: function (filename, value) {
-        var file = new File([value], filename);
-        var event = new MouseEvent("click");
-        var url = window.URL.createObjectURL(file);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = file.name;
-        a.dispatchEvent(event);
-      },
-      escape_invalid_character: function (str) {
-        return str.replace(/[\\/:*?<>"|]/g, '-');
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url, this.empty);
-        this.selections = [];
-        this.picked = {};
-      },
-    },
 
-    watch: {
-      'multiSelect': function () {
-        this.selections = [];
+      watch: {
+        'multiSelect': function () {
+          this.selections = [];
+        },
       },
-    },
 
-  });
+    });
+  }
 
 })();

@@ -40,7 +40,7 @@ module.exports = Vue.extend({
     ec2_status_changing: false,
     chef_console_text:   '',
     selected_dish:       null,
-    ec2:                 {},
+    ec2:                 { availability_zones: {} },
     volume_selected:     false,
     sort_key:            '',
     sort_asc:            false,
