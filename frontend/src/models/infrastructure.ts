@@ -60,6 +60,16 @@ export default class Infrastructure extends ModelBase {
     );
   }
 
+  download_log(infrastructure_log_id: number): void {
+    const url = '/infrastructure_logs/' + infrastructure_log_id + '/download';
+    window.open(url, '_blank');
+  }
+
+  download_logs(): void {
+    const url = '/infrastructure_logs/download_all?infrastructure_id=' + this.id;
+    window.open(url, '_blank');
+  }
+
   get_schedule(physical_id: string): JQueryPromise<any> {
     return this.WrapAndResolveReject(() =>
         (<any>Infrastructure.ajax_infra).get_schedule({

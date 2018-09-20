@@ -124,7 +124,15 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :infrastructure_logs, only: :index
+  resources :infrastructure_logs, only: :index do
+    member do
+      get 'download'
+    end
+
+    collection do
+      get 'download_all'
+    end
+  end
 
   resources :monitorings, only: [:create, :show, :edit, :update] do
     member do
