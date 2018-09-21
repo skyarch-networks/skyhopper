@@ -144,4 +144,65 @@ EOS
       it {is_expected.to eq 33}
     end
   end
+
+  describe '.export_as_zip' do
+    let(:logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+
+    it 'should call block with Tempfile' do
+      logs
+      expect{|b|klass.export_as_zip(&b)}.to yield_with_args(Tempfile)
+    end
+  end
+
+  describe '#to_text' do
+    let(:infrastructure_log){build(:infrastructure_log, status: status)}
+    before do
+      infrastructure_log.infrastructure.stack_name = 'test-stack'
+      infrastructure_log.created_at = Time.zone.local(2018, 1, 23, 12, 34, 56)
+      infrastructure_log.user.email = 'test1@example.com'
+    end
+
+    context 'when status is true' do
+      let(:status){true}
+
+      it 'should return text' do
+        expect(infrastructure_log.to_text).to eq <<-"EOS"
+===== Information =====
+StackName: test-stack
+at: 2018/01/23 12:34:56
+Operator: test1@example.com
+Status: SUCCESS
+===== Details =====
+------ Sugoi Log ------
+        EOS
+      end
+    end
+
+    context 'when status is false' do
+      let(:status){false}
+
+      it 'should return text' do
+        expect(infrastructure_log.to_text).to eq <<-"EOS"
+===== Information =====
+StackName: test-stack
+at: 2018/01/23 12:34:56
+Operator: test1@example.com
+Status: FAILD
+===== Details =====
+------ Sugoi Log ------
+        EOS
+      end
+    end
+  end
+
+  describe '#to_filename' do
+    let(:infrastructure_log){build(:infrastructure_log)}
+
+    it 'should return filename' do
+      id = infrastructure_log.id
+      infrastructure_log.infrastructure.stack_name = 'test-stack'
+      infrastructure_log.created_at = Time.zone.local(2018, 1, 23, 12, 34, 56)
+      expect(infrastructure_log.to_filename).to eq "infrastructure_log-#{id}-test-stack-20180123123456.log"
+    end
+  end
 end
