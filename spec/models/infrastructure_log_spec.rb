@@ -146,7 +146,7 @@ EOS
   end
 
   describe '.export_as_zip' do
-    let(:logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+    let(:logs){create_list(:infrastructure_log, 3)}
 
     it 'should call block with Tempfile' do
       logs
