@@ -29,15 +29,15 @@ module Concerns::Cryptize
   end
 
   def db_crypt_secret
-    db_crypt_secret = SkyHopper::Application.secrets[:db_crypt_secret]
+    db_crypt_secret = ::SkyHopper::Application.secrets[:db_crypt_secret]
     unless db_crypt_secret.nil?
       return db_crypt_secret
     end
-    db_crypt_key = SkyHopper::Application.secrets[:db_crypt_key]
-    db_crypt_salt = SkyHopper::Application.secrets[:db_crypt_salt]
-    key_len = ActiveSupport::MessageEncryptor.key_len
-    db_crypt_secret = ActiveSupport::KeyGenerator.new(db_crypt_key).generate_key(db_crypt_salt, key_len)
-    SkyHopper::Application.secrets[:db_crypt_secret] = db_crypt_secret
+    db_crypt_key = ::SkyHopper::Application.secrets[:db_crypt_key]
+    db_crypt_salt = ::SkyHopper::Application.secrets[:db_crypt_salt]
+    key_len = ::ActiveSupport::MessageEncryptor.key_len
+    db_crypt_secret = ::ActiveSupport::KeyGenerator.new(db_crypt_key).generate_key(db_crypt_salt, key_len)
+    ::SkyHopper::Application.secrets[:db_crypt_secret] = db_crypt_secret
     db_crypt_secret
   end
 end
