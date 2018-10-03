@@ -14,7 +14,6 @@
     "bootswatch-dist": "paper",
     "ajax_set.js": "https://github.com/pocke/ajax_set.js.git#106d927aba64fa99220a1199973d41f2a448bd2c",
     "ws_proxy": "https://github.com/skyarch-networks/ws_proxy.git",
-    "ipam00303": "https://github.com/Joeper214/ipam00303.git",
     "noty": "~2.3.5",
     "animate.css": "~3.3.0",
     "jquery": "~2.1.4",
