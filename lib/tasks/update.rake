@@ -1,5 +1,5 @@
 namespace :update do
-  desc 'Update the encrypted value of the database'
+  desc 'Update the encrypted value of the database from the old type to the current type'
   task :update_encrypted_value => :environment do
     update_from_old_encrypted_attribute_value(User, :mfa_secret_key)
     update_from_old_encrypted_attribute_value(ZabbixServer, :password)
