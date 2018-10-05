@@ -36,6 +36,7 @@ vendor/bower_components
 
 # i18n-js
 /app/assets/javascripts/i18n/
+/public/javascripts/i18n.js
 
 /coverage/
 
