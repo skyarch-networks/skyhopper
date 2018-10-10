@@ -7,8 +7,8 @@
 //
 
 
-//= require jquery
-//= require jquery_ui
+//= require jquery.min
+//= require jquery-ui
 //= require jquery.textcomplete
 //= require rails
 //= require ajax_set
@@ -16,7 +16,7 @@
 //= require_tree ./i18n
 //= require bootstrap
 //= require favico
-//= require jquery.noty.packaged
+//= require jquery.noty.packaged.min
 //= require vue
 //= require lodash
 //= require moment-with-locales.min

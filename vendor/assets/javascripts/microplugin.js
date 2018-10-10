@@ -1,1 +1,1 @@
-../../bower_components/microplugin/src/microplugin.js
+../../../frontend/node_modules/@bower_components/microplugin/src/microplugin.js

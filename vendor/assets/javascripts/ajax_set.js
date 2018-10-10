@@ -1,1 +1,1 @@
-../../bower_components/ajax_set.js/ajax_set.js
+../../../frontend/node_modules/@bower_components/ajax_set.js/ajax_set.js

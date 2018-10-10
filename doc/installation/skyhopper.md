@@ -201,10 +201,13 @@ $ git checkout <使いたいSkyHopperのバージョン>
 $ bundle install --path vendor/bundle
 ```
 
-### bower install
+### Yarn
 
 ```sh
-$ bower install
+$ npm install -g yarn
+$ cd frontend/
+$ yarn
+$ cd ..
 ```
 
 ### TypeScript のコンパイル
@@ -212,7 +215,6 @@ $ bower install
 ```sh
 $ npm i -g gulp
 $ cd frontend/
-$ npm i
 $ gulp type  //TSD to typings
 $ gulp ts
 $ cd ..
