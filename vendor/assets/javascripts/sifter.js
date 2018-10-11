@@ -1,1 +1,0 @@
-../../../frontend/node_modules/@bower_components/sifter/sifter.js

@@ -21,8 +21,6 @@
 //= require lodash
 //= require moment-with-locales.min
 //= require bootstrap-datetimepicker
-//= require microplugin
-//= require sifter
 //= require fullcalendar
 //= require lang-all
 //= require offline.min
