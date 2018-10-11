@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "karma start --single-run",
+    "postinstall": "npm run build-jquery-ui",
     "build-jquery-ui": "cd node_modules/jquery-ui ; npm i && npx grunt concat ; cd ../.."
   },
   "dependencies": {

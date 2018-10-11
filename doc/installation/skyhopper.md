@@ -206,7 +206,6 @@ $ bundle install --path vendor/bundle
 ```sh
 $ cd frontend/
 $ yarn
-$ yarn run build-jquery-ui
 $ cd ..
 ```
 
