@@ -40,10 +40,10 @@ $ node -v
 v4.4.5 # any current stable version release
 ```
 
-## Installing bower using npm
+## Installing Yarn using npm
 
 ```sh
-$ npm install bower --global
+$ npm install -g yarn
 ```
 
 ## Installing other packages that are needed for SkyHopper using yum
@@ -204,7 +204,6 @@ $ bundle install --path vendor/bundle
 ### Yarn
 
 ```sh
-$ npm install -g yarn
 $ cd frontend/
 $ yarn
 $ yarn run build-jquery-ui
