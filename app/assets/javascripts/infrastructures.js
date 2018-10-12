@@ -203,7 +203,7 @@
       },
       show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
         router.go({
-          path: '/infra/' + infra_id,
+          path: '/infrastructures/infras/' + infra_id,
           query: queryString
         });
         this.$refs.infrastructure.current_tab = infra_oepn_tab;
@@ -236,22 +236,11 @@
   };
 
   var infrastructureApp = {};
-  router.beforeEach(function (transition) {
-    if (transition.to.redirect) {
-      transition.redirect(transition.to.redirect);
-      return;
-    }
-    transition.next();
-  });
   router.map({
     '/infrastructures': {
-      component: {},
-      redirect: '/infra',
-    },
-    '/infra': {
       component: index,
       subRoutes: {
-        '/:infra_id': {
+        '/infras/:infra_id': {
           component: infrastructure,
         }
       }

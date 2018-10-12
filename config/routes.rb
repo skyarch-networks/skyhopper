@@ -37,6 +37,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
+  get 'infrastructures/infras/*path', to: 'infrastructures#index'
   resources :infrastructures do
     member do
       post 'change_rds_scale'
@@ -55,8 +56,6 @@ SkyHopper::Application.routes.draw do
       patch 'update_keypair'
     end
   end
-  get 'infra', to: 'infrastructures#index'
-  get 'infra/*path', to: 'infrastructures#index'
 
   resources :ec2_private_keys, only: [:create]
 
