@@ -41,10 +41,10 @@ $ node -v
 v4.4.5 # any current stable version release
 ```
 
-## bower のインストール
+## Yarn のインストール
 
 ```sh
-$ npm install bower --global
+$ npm install -g yarn
 ```
 
 ## SkyHopper に必要なパッケージをインストール
@@ -201,10 +201,12 @@ $ git checkout <使いたいSkyHopperのバージョン>
 $ bundle install --path vendor/bundle
 ```
 
-### bower install
+### Yarn
 
 ```sh
-$ bower install
+$ cd frontend/
+$ yarn
+$ cd ..
 ```
 
 ### TypeScript のコンパイル
@@ -212,7 +214,6 @@ $ bower install
 ```sh
 $ npm i -g gulp
 $ cd frontend/
-$ npm i
 $ gulp type  //TSD to typings
 $ gulp ts
 $ cd ..

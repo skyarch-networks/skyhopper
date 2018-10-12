@@ -40,10 +40,10 @@ $ node -v
 v4.4.5 # any current stable version release
 ```
 
-## Installing bower using npm
+## Installing Yarn using npm
 
 ```sh
-$ npm install bower --global
+$ npm install -g yarn
 ```
 
 ## Installing other packages that are needed for SkyHopper using yum
@@ -201,10 +201,12 @@ $ git checkout <SKYHOPPER_VERSION_YOU_WANT_TO_USE>
 $ bundle install --path vendor/bundle
 ```
 
-### bower install
+### Yarn
 
 ```sh
-$ bower install
+$ cd frontend/
+$ yarn
+$ cd ..
 ```
 
 ### Compiling TypeScript
@@ -212,7 +214,6 @@ $ bower install
 ```sh
 $ npm i -g gulp
 $ cd frontend/
-$ npm i
 $ gulp type  // TSD to typings
 $ gulp ts
 $ cd ..

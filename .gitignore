@@ -28,9 +28,6 @@ vendor/bundle
 vendor/bundler
 vendor/knife
 
-# Ignore bower_components
-vendor/bower_components
-
 # assets precompile
 /public/assets/
 

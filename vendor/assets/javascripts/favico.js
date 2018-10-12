@@ -1,1 +1,1 @@
-../../bower_components/favico.js/favico.js
+../../../frontend/node_modules/@bower_components/favico.js/favico.js
