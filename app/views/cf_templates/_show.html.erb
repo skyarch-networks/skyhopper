@@ -6,5 +6,5 @@
   <h5><%= t('cf_templates.details') %></h5>
   <pre><%= @cf_template.detail %></pre>
   <h5><%= t('cf_templates.cf_template') %></h5>
-  <pre id="cf_value"><%= @cf_template.value %></pre>
+  <pre id="cf_value" data-format="<%= @cf_template.format %>"><%= @cf_template.value %></pre>
 </div>

@@ -1,1 +1,1 @@
-../../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js
+../../../frontend/node_modules/@bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js

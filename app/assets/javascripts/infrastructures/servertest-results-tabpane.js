@@ -89,12 +89,18 @@ module.exports = Vue.extend({
         console.log(item)
         var last_log = (item.created_at ? new Date(item.created_at) : '');
           return {
-            servertest: item.servertests,
+            servertest: {
+              servertests: item.servertests,
+              auto_generated: item.auto_generated_servertest
+            },
             resource: item.resource.physical_id,
-            message: [item.id,
-                      item.resource.physical_id,
-                      item.message,
-                      item.servertest_result_details],
+            message: {
+              id: item.id,
+              physical_id: item.resource.physical_id,
+              message: item.message,
+              servertest_result_details: item.servertest_result_details,
+              auto_generated_servertest: item.auto_generated_servertest
+            },
             status: item.status,
             created_at: last_log.toLocaleString(),
             category: item.servertests,

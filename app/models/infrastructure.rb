@@ -63,9 +63,6 @@ class Infrastructure < ActiveRecord::Base
       return infrastructure
     end
 
-
-    private
-
     # @param [Hash{Symbol => String}] infra_params Same as Infrastructure#create
     # @return [Hash]
     def create_ec2_private_key(infra_params)
@@ -86,6 +83,14 @@ class Infrastructure < ActiveRecord::Base
     end
   end
 
+  def update_with_ec2_private_key!(infra_params)
+    old_ec2_private_key = self.ec2_private_key
+    update!(self.class.create_ec2_private_key(infra_params))
+    if old_ec2_private_key.present?
+      old_ec2_private_key.delete
+    end
+  end
+
   # resourcesを返す。
   # もしresourcesが存在しなければ、Stackから情報を取得し作成する。
   # @return [Resource::ActiveRecord_Associations_CollectionProxy]
@@ -96,6 +101,17 @@ class Infrastructure < ActiveRecord::Base
     self.resources = stack.get_resources
 
     return self.resources
+  end
+
+  # リソースが更新されているか否かを返す
+  # @return [Boolean]
+  def resources_updated?
+    old_physical_ids = self.resources.pluck(:physical_id)
+    stack = Stack.new(self)
+    now_physical_ids = stack.instances_for_resources.map{|aws_resource|
+      aws_resource.physical_resource_id
+    }
+    return old_physical_ids.sort != now_physical_ids.sort
   end
 
   # AWS の access key を返す。

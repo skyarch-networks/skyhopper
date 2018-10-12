@@ -1,7 +1,7 @@
 language: ruby
 
 rvm:
-  - 2.2.4
+  - 2.4.4
 #  - ruby-head  # because can't build ruby-head
 
 cache: bundler

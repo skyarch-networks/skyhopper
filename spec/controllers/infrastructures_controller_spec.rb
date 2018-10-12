@@ -19,6 +19,14 @@ describe InfrastructuresController, type: :controller do
   let(:zabbix_server){create(:zabbix_server)}
 
   let(:regions) {AWS::Regions}
+  let(:ec2_private_key_list){
+    project.infrastructures.map{|infrastructure|
+      [
+        "#{infrastructure.stack_name}(#{infrastructure.ec2_private_key.name})",
+        infrastructure.ec2_private_key.id
+      ]
+    }
+  }
 
   describe '#index' do
     before { get :index, project_id: project.id }
@@ -103,13 +111,29 @@ describe InfrastructuresController, type: :controller do
           case action
           when "create", "update"
             if action == "update"
+              let(:resources_updated){false}
+
               before do
                 allow_any_instance_of(Infrastructure).to receive(:resources_or_create).and_return(infra.resources)
+                allow_any_instance_of(Infrastructure).to receive(:resources_updated?).and_return(resources_updated)
               end
 
-              it "should delete resource" do
-                infra.reload
-                expect(infra.resources).to be_empty
+              context 'when the resources is updated' do
+                let(:resources_updated){true}
+
+                it "should delete resource" do
+                  infra.reload
+                  expect(infra.resources).to be_empty
+                end
+              end
+
+              context 'when the resources is not updated' do
+                let(:resources_updated){false}
+
+                it "should not delete resource" do
+                  infra.reload
+                  expect(infra.resources).not_to be_empty
+                end
               end
             end
           end
@@ -166,6 +190,10 @@ describe InfrastructuresController, type: :controller do
     it "assigns @infrastructure" do
       expect(assigns[:infrastructure]).to be_a(Infrastructure)
     end
+
+    it "assigns @ec2_private_key_list" do
+      expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
+    end
   end
 
   describe '#edit' do
@@ -202,7 +230,8 @@ describe InfrastructuresController, type: :controller do
     let(:ec2_key){create(:ec2_private_key)}
     let(:infra_key_name){ec2_key.name}
     let(:infra_key_value){ec2_key.value}
-    let(:create_request){post :create, infrastructure: infra_hash}
+    let(:params){{infrastructure: infra_hash}}
+    let(:create_request){post :create, params}
     before do
       allow(KeyPair).to receive(:validate!)
     end
@@ -216,6 +245,24 @@ describe InfrastructuresController, type: :controller do
       it do
         create_request
         expect(response).to redirect_to(infrastructures_path(project_id: project.id))
+      end
+    end
+
+    context 'when select KeyPair and create success' do
+      let(:old_ec2_private_key){infra.ec2_private_key}
+      before do
+        params[:infrastructure][:keypair_input_type] = 'select'
+        params[:infrastructure][:copy_ec2_private_key_id] = old_ec2_private_key.id
+      end
+
+      it 'shoud copied ec2_private_key is set' do
+        old_infrastructure_ids = Infrastructure.pluck(:id)
+        create_request
+        created_infrastructure = Infrastructure.find(Infrastructure.pluck(:id) - old_infrastructure_ids)[0]
+        created_ec2_private_key = created_infrastructure.ec2_private_key
+        expect(created_ec2_private_key.id).not_to eq(old_ec2_private_key.id)
+        expect(created_ec2_private_key.name).to eq(old_ec2_private_key.name)
+        expect(created_ec2_private_key.value).to eq(old_ec2_private_key.value)
       end
     end
 
@@ -233,6 +280,10 @@ describe InfrastructuresController, type: :controller do
 
       it 'should assign @regions' do
         expect(assigns(:regions)).to eq regions
+      end
+
+      it "should assigns @ec2_private_key_list" do
+        expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
       end
 
       it 'should make a new infra instance' do
@@ -544,6 +595,67 @@ describe InfrastructuresController, type: :controller do
         before{infra.delete; req}
 
         it {is_expected.to redirect_to projects_path}
+      end
+    end
+  end
+
+  describe '#edit_keypair' do
+    before do
+      get :edit_keypair, id: infra.id
+    end
+
+    let(:infra){create(:infrastructure, status: '')}
+
+    should_be_success
+
+    it "assigns @ec2_private_key_list" do
+      expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
+    end
+  end
+
+  describe '#update_keypair' do
+    let(:ec2_key){create(:ec2_private_key)}
+    let(:infra_key_name){ec2_key.name}
+    let(:infra_key_value){ec2_key.value}
+    let(:params){{id: infra.id, infrastructure: infra_hash}}
+    let(:req){patch :update_keypair, params}
+    before do
+      allow(KeyPair).to receive(:validate!)
+    end
+
+    context 'when update success' do
+      before{req}
+
+      it {is_expected.to redirect_to infrastructures_path(project_id: infra.project_id)}
+    end
+
+    context 'when select KeyPair and update success' do
+      let(:old_ec2_private_key){infra.ec2_private_key}
+      before do
+        params[:infrastructure][:keypair_input_type] = 'select'
+        params[:infrastructure][:copy_ec2_private_key_id] = old_ec2_private_key.id
+        req
+      end
+
+      it 'shoud copied ec2_private_key is set' do
+        infra.reload
+        created_ec2_private_key = infra.ec2_private_key
+        expect(created_ec2_private_key.id).not_to eq(old_ec2_private_key.id)
+        expect(created_ec2_private_key.name).to eq(old_ec2_private_key.name)
+        expect(created_ec2_private_key.value).to eq(old_ec2_private_key.value)
+      end
+    end
+
+    context 'when update failure' do
+      before do
+        params[:infrastructure][:keypair_value] = 'Invalid as keypair_value'
+        req
+      end
+
+      should_be_failure
+
+      it "assigns @ec2_private_key_list" do
+        expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
       end
     end
   end

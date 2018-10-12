@@ -29,4 +29,7 @@ $(document).on('click', '.save-serverspec-btn', () => {
   });
 });
 
-document.querySelector("#vue-serverspec-gen").appendChild(app.$el);
+let vueServerspecGenElement = document.querySelector("#vue-serverspec-gen");
+if (vueServerspecGenElement) {
+  vueServerspecGenElement.appendChild(app.$el);
+}

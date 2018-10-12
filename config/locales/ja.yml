@@ -184,6 +184,9 @@ ja:
     monitoring:         'モニタリング'
     logs:               'ログ'
     no_resource:        '情報なし'
+    copy_keypair:       '別のインフラストラクチャから鍵ペアをコピーする'
+    title:
+      change_keypair:    '鍵ペアの変更'
     btn:
       delete_stack:         'スタックの削除'
       delete_stack_confirm: '実行'
@@ -195,6 +198,10 @@ ja:
       template_history:     'CloudFormation テンプレートの履歴'
       stack_eventlog:       'スタックのイベント履歴'
       infrastructure_log:   '作業履歴'
+      change_keypair:       '鍵ペアを変更'
+    radio:
+      input_keypair:        '鍵ペアを新規に入力する'
+      select_keypair:       '既存の鍵ペアをコピーする'
     msg:
       created:                     'インフラ情報が正常に追加されました'
       updated:                     'インフラ情報が正常に更新されました'
@@ -221,6 +228,7 @@ ja:
       stop_rds:                    'DB インスタンスの停止が開始されました'
       reboot_rds:                  'DB インスタンスの再起動が開始されました'
       no_resource:                 '表示できるリソースはありません'
+      change_keypair_warning:    '鍵ペアを変更する場合、既存のEC2::Instanceの鍵ペアを手動で変更する必要があります'
 
   rds:
     msg:
@@ -378,6 +386,7 @@ ja:
       success:   '%{physical_id} の Serverspec が正常に終了しました'
       pending:   '%{physical_id} の Serverspec が正常に終了しました。ただし Pending なスペックがあります。 %{pending_specs}'
       failure:   '%{physical_id} の Serverspec が失敗しました。 失敗したスペック: %{failure_specs}'
+      error:   '%{physical_id} の Serverspec がエラーを起こしました。 エラーが発生したスペック: %{error_specs}'
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
       delete_servertest: 'この Servertest を削除してもよろしいですか？'
@@ -431,6 +440,7 @@ ja:
     cf_template:  'CloudFormation テンプレート'
     subject:      'タイトル'
     details:      '詳細'
+    format:       'フォーマット'
     operator:     '作業者'
     parameters:   'パラメータ'
     history:      '履歴'
@@ -746,6 +756,7 @@ ja:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
       db_key:    'db_crypt_key'
+      db_salt:    'db_crypt_salt'
       db_export: 'エクスポートしたZIPファイルには下記のファイルが含まれています。'
       db_import: 'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
       db_import_finish: 'データベースのインポートが完了しました'

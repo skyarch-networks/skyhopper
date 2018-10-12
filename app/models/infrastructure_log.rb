@@ -16,7 +16,7 @@ class InfrastructureLog < ActiveRecord::Base
 
   class << self
     def for_infra(infra_id)
-      where(infrastructure_id: infra_id).includes(:user).order("created_at DESC")
+      where(infrastructure_id: infra_id).eager_load(:user).preload(:infrastructure)
     end
 
     # define success and fail
@@ -53,6 +53,18 @@ class InfrastructureLog < ActiveRecord::Base
           end
         end
       })
+
+      def export_as_zip
+        zipfile = Tempfile.open('infrastructure_logs')
+        ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
+          all.find_each do |infrastructure_log|
+            zip.get_output_stream(infrastructure_log.to_filename) { |io| io.write(infrastructure_log.to_text) }
+          end
+        end
+        yield(zipfile)
+      ensure
+        zipfile.close
+      end
     end
 
     # @param [Integer] infra_id
@@ -69,5 +81,25 @@ class InfrastructureLog < ActiveRecord::Base
         num == 'No' ? 0 : num.to_i
       end
     end
+  end
+
+  def to_text
+    at_text = self.created_at.strftime('%Y/%m/%d %H:%M:%S')
+    operator_text = self.user.try(:email) || 'Unregistered'
+    status_text = self.status ? 'SUCCESS' : 'FAILD'
+    <<-"EOS"
+===== Information =====
+StackName: #{self.infrastructure.stack_name}
+at: #{at_text}
+Operator: #{operator_text}
+Status: #{status_text}
+===== Details =====
+#{self.details}
+    EOS
+  end
+
+  def to_filename
+    created_at_text = self.created_at.strftime('%Y%m%d%H%M%S')
+    "infrastructure_log-#{self.id}-#{self.infrastructure.stack_name}-#{created_at_text}.log"
   end
 end

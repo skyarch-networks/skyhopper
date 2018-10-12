@@ -1,1 +1,1 @@
-../../bower_components/jquery-ujs/src/rails.js
+../../../frontend/node_modules/jquery-ujs/src/rails.js

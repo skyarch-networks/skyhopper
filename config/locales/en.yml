@@ -185,6 +185,9 @@ en:
     monitoring:         'Monitoring'
     logs:               'Logs'
     no_resource:        'No resource information.'
+    copy_keypair:       'Copy the KeyPair from another infrastructure.'
+    title:
+      change_keypair:    'Change KeyPair'
     btn:
       delete_stack:         'Delete Stack'
       delete_stack_confirm: 'Execute'
@@ -196,6 +199,10 @@ en:
       template_history:     'CloudFormation Template History'
       stack_eventlog:       'Stack Eventlog'
       infrastructure_log:   'Operation Log'
+      change_keypair:       'Change KeyPair'
+    radio:
+      input_keypair:        'Input a new KeyPair'
+      select_keypair:       'Copy an existing KeyPair'
     msg:
       created:                     'Infrastructure was successfully created.'
       updated:                     'Infrastructure was successfully updated.'
@@ -222,6 +229,7 @@ en:
       stop_rds:                    'DB instance is stopping.'
       reboot_rds:                  'DB instance is rebooting.'
       no_resource:                 'There are no resources that can be displayed.'
+      change_keypair_warning:    'If change the key pair, you need to manually change the existing EC2::Instance key pair.'
 
   rds:
     msg:
@@ -380,6 +388,7 @@ en:
       success:   'Serverspec for %{physical_id} is successfully finished.'
       pending:   'Serverspec for %{physical_id} is successfully finished. Pending specs: %{pending_specs}'
       failure:   'Serverspec for %{physical_id} has failed. failure specs: %{failure_specs}'
+      error:   'Serverspec of %{physical_id} caused an error. specs where the error occurred: %{error_specs}'
       generated: 'Serverspec is successfully generated.'
       delete_servertest: 'Are you sure you want to delete this Servertest?'
       empty-results: 'No results found.'
@@ -433,6 +442,7 @@ en:
     cf_template:  'CloudFormation Template'
     subject:      'Subject'
     details:      'Details'
+    format:       'format'
     operator:     'Operator'
     parameters:   'Parameters'
     history:      'History'
@@ -748,6 +758,7 @@ en:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
       db_key:    'db_crypt_key'
+      db_salt:    'db_crypt_salt'
       db_export: 'When exporting SkyHopper Database into a zip file, the following files are included: '
       db_import: 'When importing SkyHopper Database, select a zip file that contains these files: '
       db_import_finish: 'Database import has finished.'

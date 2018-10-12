@@ -41,16 +41,33 @@ export default class Infrastructure extends ModelBase {
     );
   }
 
-  logs(page = 1): JQueryPromise<any> {
+  logs(page = 1, sort_key: string, order: number): JQueryPromise<any> {
+    const data:any = {
+      infrastructure_id: this.id,
+      page: page,
+    };
+    if (sort_key !== void 0) {
+      data.sort_key = sort_key;
+    }
+    if (order !== void 0) {
+      data.order = order;
+    }
     return this.WrapAndResolveReject(() =>
       $.ajax({
         url: '/infrastructure_logs',
-        data: {
-          infrastructure_id: this.id,
-          page: page,
-        },
+        data: data,
       })
     );
+  }
+
+  download_log(infrastructure_log_id: number): void {
+    const url = '/infrastructure_logs/' + infrastructure_log_id + '/download';
+    window.open(url, '_blank');
+  }
+
+  download_logs(): void {
+    const url = '/infrastructure_logs/download_all?infrastructure_id=' + this.id;
+    window.open(url, '_blank');
   }
 
   get_schedule(physical_id: string): JQueryPromise<any> {

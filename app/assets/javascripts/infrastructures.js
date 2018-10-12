@@ -26,8 +26,8 @@
 
   var vace = require('vue-ace');
   require('brace/mode/json');
+  require('brace/mode/yaml');
   require('brace/theme/github');
-  Vue.use(vace, false, 'json', '25');
 
 
   Vue.component('stack-events-table',         require('infrastructures/stack-events-table.js'));
@@ -160,7 +160,7 @@
       gridData: [],
       loading: true,
       is_empty: false,
-      url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
+      url: 'infrastructures?lang=' + queryString.lang + infrastructure_url,
       picked: {
         button_delete_stack: null,
         edit_infrastructure_path: null,
@@ -170,36 +170,36 @@
       infra_oepn_tab: '',
     };},
     created: function(){
-        if (queryString.project_id >3)
-          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
-        else
-          this.gridColumns = ['stack_name','region', 'keypairname'];
+      if (queryString.project_id >3)
+        this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
+      else
+        this.gridColumns = ['stack_name', 'region', 'keypairname'];
 
       moment.locale(queryString.lang);
 
     },
     methods: {
-      can_edit: function() {
+      can_edit: function () {
         return (this.picked.edit_infrastructure_path);
       },
-      can_delete: function() {
+      can_delete: function () {
         return (this.picked.button_delete_stack);
       },
-      can_detach: function() {
+      can_detach: function () {
         return (this.picked.button_detach_stack);
       },
-      is_picked: function() {
+      is_picked: function () {
         return (this.picked.id);
       },
-      delete_stack: function()  {
+      delete_stack: function ()  {
         delete_stack(this.picked.id);
         this.reload();
       },
-      show_infra: function(item_id)  {
+      show_infra: function (item_id)  {
         this.infra_oepn_tab = '';
           this.show_infra_and_rewrite_url(item_id);
         },
-      show_sched: function()  {
+      show_sched: function ()  {
         this.infra_oepn_tab = 'show_sched';
         this.show_infra_and_rewrite_url(this.picked.id);
         this.reload();
@@ -217,7 +217,7 @@
           this.$refs.infrastructure.show();
         }
       },
-      detach_infra: function()  {
+      detach_infra: function ()  {
         detach(this.picked.id);
         this.reload();
       },
@@ -270,6 +270,11 @@
   });
   router.start(infrastructureApp, '#infrastructureApp');
 
+  if ($('#KeypairFormGroup').length){
+    var keypair_form_group = new Vue({
+      el: '#KeypairFormGroup'
+    });
+  }
 
 
 
@@ -277,7 +282,6 @@
     e.preventDefault();
     new_ec2_key();
   });
-
 
 
 })();

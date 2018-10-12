@@ -136,7 +136,8 @@ describe Node, type: :model do
   ],
   "summary": {
     "failure_count": 0,
-    "pending_count": 0
+    "pending_count": 0,
+    "errors_outside_of_examples_count": 0
   },
   "summary_line": "1 example, 0 failures"
 }
@@ -167,6 +168,57 @@ describe Node, type: :model do
         expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
         expect(resource.status.servertest.failed?).to be true
       end
+    end
+  end
+
+  describe '#get_error_servertest_names' do
+    subject { Node.new("test") }
+    let(:run_spec_list){
+      [
+        {
+        name: 'test-spec',
+        files: ['./tmp/serverspec/1234567890-1234-abc123']
+        }
+      ]
+    }
+
+    context 'when result has no messages key' do
+      let(:result){{}}
+
+      it 'return empty array' do
+        s = subject.__send__(:get_error_servertest_names, result, run_spec_list)
+        expect(s).to eq []
+      end
+    end
+
+    context 'when result has messages key' do
+      error_message = <<'EOS'
+
+An error occurred while loading ./tmp/serverspec/1234567890-1234-abc123.
+On host `ec2-XX-XX-XX-XX.ap-northeast-1.compute.amazonaws.com'
+Failure/Error: super
+NameError:
+  undefined local variable or method `aaaaa' for RSpec::ExampleGroups::CommandLsAl:Class
+
+# ./tmp/serverspec/1234567890-1234-abc123:4:in `block in <top (required)>'
+# ./tmp/serverspec/1234567890-1234-abc123:3:in `<top (required)>'
+EOS
+      let(:result){{messages: [error_message]}}
+
+      it 'return error_servertest_names' do
+        s = subject.__send__(:get_error_servertest_names, result, run_spec_list)
+        expect(s).to eq ['test-spec']
+      end
+    end
+  end
+
+  describe '#get_relative_path_string' do
+    subject { Node.new("test") }
+
+    it 'return relative_path' do
+      path = Rails.root.join("a/b/c").to_s
+      s = subject.__send__(:get_relative_path_string, path)
+      expect(s).to eq './a/b/c'
     end
   end
 end

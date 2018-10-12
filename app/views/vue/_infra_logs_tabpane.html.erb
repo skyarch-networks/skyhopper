@@ -1,14 +1,43 @@
-<table class="table table-condensed" style="border-collapse:collapse;">
+<div class="pull-right">
+  <div class="btn-group" role="group">
+    <a class="btn btn-success btn-sm"
+       :class="{disabled: !can_download}"
+       @click="download_selected">
+      <span class='glyphicon glyphicon-export'></span>
+      <%= t 'common.btn.export' %>
+    </a>
+    <a class="btn btn-success btn-sm"
+       @click="download_all">
+      <%= t 'common.btn.all' %>
+    </a>&nbsp
+  </div>
+</div>
+
+<table class="table table-condensed table-hover" style="border-collapse:collapse;">
   <thead>
     <tr>
-      <th>Operator</th>
-      <th>Status</th>
-      <th>Details</th>
-      <th>at</th>
+      <th></th>
+      <th :class="{active: sortKey == 'users.email'}" @click="sortBy('users.email')">
+        <span>Operator</span>
+        <span class="pull-right glyphicon" :class="sortOrders['users.email'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.status'}" @click="sortBy('infrastructure_logs.status')">
+        <span>Status</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.status'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.details'}" @click="sortBy('infrastructure_logs.details')">
+        <span>Details</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.details'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
+      <th :class="{active: sortKey == 'infrastructure_logs.created_at'}" @click="sortBy('infrastructure_logs.created_at')">
+        <span>at</span>
+        <span class="pull-right glyphicon" :class="sortOrders['infrastructure_logs.created_at'] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+      </th>
     </tr>
   </thead>
   <tbody v-for="log in logs" class="tbody-infra-log">
-    <tr>
+    <tr :class="{info: is_select_entry(log)}" @click="select_entry(log)">
+      <td><input type="radio" v-model="picked_id" v-bind:value="log.id"/></td>
       <td><span v-if="log.admin" class="label label-info">admin</span>&nbsp;{{log.email}}</td>
       <td><span :class="status_class(log.status)" v-text="status_text(log.status)" class="label"></span></td>
       <td>{{log.title}}<a v-if="log.long" href="#" data-toggle="collapse" data-target="#logbody-{{log.id}}" class="accordion-toggle popovermore">...see all </a></td>
