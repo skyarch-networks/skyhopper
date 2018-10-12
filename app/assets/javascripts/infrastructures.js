@@ -167,7 +167,6 @@
         button_detach_stack: null
       },
       index: 'infrastructures',
-      infra_oepn_tab: '',
     };},
     created: function(){
       if (queryString.project_id >3)
@@ -196,26 +195,19 @@
         this.reload();
       },
       show_infra: function (item_id)  {
-        this.infra_oepn_tab = '';
-          this.show_infra_and_rewrite_url(item_id);
-        },
+        this.show_infra_and_rewrite_url(item_id, '');
+      },
       show_sched: function ()  {
-        this.infra_oepn_tab = 'show_sched';
-        this.show_infra_and_rewrite_url(this.picked.id);
+        this.show_infra_and_rewrite_url(this.picked.id, 'show_sched');
         this.reload();
       },
-      show_infra_and_rewrite_url: function (infra_id) {
-        var is_created = false;
-        if (this.$refs.infrastructure) {
-          is_created = true;
-        }
+      show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
         router.go({
           path: '/infra/' + infra_id,
           query: queryString
         });
-        if (is_created) {
-          this.$refs.infrastructure.show();
-        }
+        this.$refs.infrastructure.current_tab = infra_oepn_tab;
+        this.$refs.infrastructure.show();
       },
       detach_infra: function ()  {
         detach(this.picked.id);
@@ -230,12 +222,9 @@
 
   var infrastructure = {
     template: '',
-    props: {
-      current_tab: String,
-    },
-    data: function () {
-      return {};
-    },
+    data: function () { return {
+      current_tab: '',
+    };},
     methods: {
       show: function () {
         show_infra(this.$route.params.infra_id, this.current_tab);
