@@ -38,7 +38,7 @@ $ nvm install stable
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v4.4.5 # any current stable version release
+v10.12.0 # any current stable version release
 ```
 
 ## Yarn のインストール
