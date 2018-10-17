@@ -40,10 +40,13 @@ $ node -v
 v4.4.5 # any current stable version release
 ```
 
-## Installing Yarn using npm
+## Installing Yarn
 
 ```sh
-$ npm install -g yarn
+$ curl -o- -L https://yarnpkg.com/install.sh | bash
+(Log out of the shell and login again)
+$ yarn -v
+1.10.1
 ```
 
 ## Installing other packages that are needed for SkyHopper using yum
