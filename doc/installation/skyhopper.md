@@ -38,13 +38,16 @@ $ nvm install stable
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v4.4.5 # any current stable version release
+v10.12.0 # any current stable version release
 ```
 
 ## Yarn のインストール
 
 ```sh
-$ npm install -g yarn
+$ curl -o- -L https://yarnpkg.com/install.sh | bash
+(シェルからログアウトし、再度ログインしてください)
+$ yarn -v
+1.10.1
 ```
 
 ## SkyHopper に必要なパッケージをインストール
