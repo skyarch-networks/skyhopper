@@ -169,7 +169,7 @@
             button_detach_stack: null
           },
           index: 'infrastructures',
-          infra_oepn_tab: '',
+          infra_initial_tab: '',
         };
       },
       created: function () {
@@ -206,20 +206,18 @@
           this.reload();
         },
         show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
-          this.infra_oepn_tab = infra_oepn_tab;
-          var prev_infra_id = null;
-          if (this.$refs.infrastructure) {
-            prev_infra_id = this.$refs.infrastructure.infra_id;
-          }
+          var prev_infra_id = this.$route.params.infra_id;
+          this.infra_initial_tab = infra_oepn_tab;
           router.go({
             name: 'infra',
             params: {
               infra_id: infra_id,
             },
-            query: queryString
+            query: queryString,
           });
-          if (prev_infra_id === infra_id) {
-            this.$refs.infrastructure.show();
+          this.infra_initial_tab = '';
+          if (String(prev_infra_id) === String(infra_id)) {
+            this.$refs.infrastructure.show(infra_oepn_tab);
           }
         },
         detach_infra: function () {
@@ -236,24 +234,22 @@
     var infrastructure = {
       template: '',
       props: {
-        current_tab: String,
+        initial_tab: String,
       },
       data: function () {
-        return {
-          infra_id: null,
-        };
+        return {};
       },
       methods: {
-        show: function () {
-          this.infra_id = parseInt(this.$route.params.infra_id);
-          show_infra(this.infra_id, this.current_tab);
+        show: function (open_tab) {
+          var infra_id = this.$route.params.infra_id;
+          show_infra(infra_id, open_tab);
         }
       },
       ready: function () {
         this.$watch('$route.params.infra_id', function (val) {
-          this.show();
+          this.show('');
         });
-        this.show();
+        this.show(this.initial_tab);
       },
       beforeDestroy: function () {
         $(SHOW_INFRA_ID).empty();
