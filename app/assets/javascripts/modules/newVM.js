@@ -186,7 +186,7 @@ module.exports = function (infra_id, current_tab) {
             }, 15000);
           } else {
             var show_infra = require('infrastructures/show_infra.js').show_infra;
-            show_infra(self.infra_model);
+            show_infra(self.infra_model.id);
           }
         });
       },
