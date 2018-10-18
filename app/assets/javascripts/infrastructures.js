@@ -212,7 +212,10 @@
             prev_infra_id = this.$refs.infrastructure.infra_id;
           }
           router.go({
-            path: '/infrastructures/infras/' + infra_id,
+            name: 'infra',
+            params: {
+              infra_id: infra_id,
+            },
             query: queryString
           });
           if (prev_infra_id === infra_id) {
@@ -262,7 +265,8 @@
       '/infrastructures': {
         component: index,
         subRoutes: {
-          '/infras/:infra_id': {
+          '/infra/:infra_id': {
+            name: 'infra',
             component: infrastructure,
           }
         }
