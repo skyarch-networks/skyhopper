@@ -15,9 +15,8 @@ var alert_danger = helpers.alert_danger;
 
 
 module.exports = function (infra_id, current_tab) {
-  return new Vue({
-    template: '#infra-show-template',
-    data: {
+  function data(infra_id) {
+    return {
       infra_model: new Infrastructure(infra_id),
       current_infra: {
         id: parseInt(infra_id),
@@ -40,7 +39,11 @@ module.exports = function (infra_id, current_tab) {
       serverspec_failed: t('infrastructures.serverspec_failed'),
       loading: true,  // trueにすると、loading-tabpaneが表示される。
       infra_loading: true,
-    },
+    };
+  }
+  return new Vue({
+    template: '#infra-show-template',
+    data: data(infra_id),
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
@@ -182,11 +185,10 @@ module.exports = function (infra_id, current_tab) {
 
           if (res.stack_status.type === 'IN_PROGRESS') {
             setTimeout(function () {
-              self.stack_in_progress(self.infra_model);
+              self.stack_in_progress();
             }, 15000);
           } else {
-            var show_infra = require('infrastructures/show_infra.js').show_infra;
-            show_infra(self.infra_model.id);
+            self.reset(this.current_infra.id);
           }
         });
       },
@@ -209,6 +211,19 @@ module.exports = function (infra_id, current_tab) {
           event.preventDefault();
         $('html, body').animate({scrollTop: 0}, duration);
           return false;
+        });
+      },
+      reset: function (infra_id) {
+        this.$data = data(infra_id);
+        this.load_infra();
+      },
+      load_infra: function () {
+        var self = this;
+        self.infra_loading = true;
+        self.infra_model.show().done(function (stack) {
+          self.infra_loading = false;
+          self.current_infra.stack = stack;
+          self.init_infra();
         });
       },
       init_infra: function () {
@@ -249,7 +264,7 @@ module.exports = function (infra_id, current_tab) {
             });
           });
         } else if (self.current_infra.stack.status.type === 'IN_PROGRESS') {
-          self.stack_in_progress(current_infra);
+          self.stack_in_progress();
           self.$data.loading = false;
 
         } else if (self.current_infra.stack.status.type === 'NG') {
@@ -290,13 +305,7 @@ module.exports = function (infra_id, current_tab) {
       },
     },
     ready: function () {
-      var self = this;
-      var infra = new Infrastructure(infra_id);
-      infra.show().done(function (stack) {
-        self.infra_loading = false;
-        self.current_infra.stack = stack;
-        self.init_infra();
-      });
+      this.load_infra();
     },
   });
 };
