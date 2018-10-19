@@ -87,19 +87,17 @@
     </div>
   </div>
 
-  <div style="display: none;">
-    <router-view
-      v-ref:infrastructure
-      :initial_tab="infra_initial_tab">
-    </router-view>
-  </div>
+  <hr>
+
+  <%= button_add_infra(@selected_project) %>
+
+  <div class="page-header"></div>
+
+  <router-view
+    v-ref:infrastructure
+    :initial_tab="infra_initial_tab">
+  </router-view>
+
 </script>
-
-
-<hr>
-
-<%= button_add_infra(@selected_project) %>
-
-<div class="page-header"></div>
 
 <%= render 'show' %>

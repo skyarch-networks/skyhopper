@@ -28,7 +28,7 @@ module.exports = Vue.extend({
       var res = new Resource(infra);
       res.create(this.physical_id, this.screen_name)
         .done(alert_success(function () {
-          self.$parent.reset(infra.id);
+          require('infrastructures/show_infra').show_infra(infra.id);
         }))
         .fail(alert_and_show_infra(infra.id));
     },

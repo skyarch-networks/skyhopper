@@ -54,6 +54,7 @@
 
 
   var show = require('infrastructures/show_infra.js');
+  var show_infra_initialize = show.initialize;
   var show_infra = show.show_infra;
   var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
 
@@ -147,6 +148,8 @@
 // ================================================================
 
   if ($('#infrastructureApp').length) {
+    var newVM = require('modules/newVM');
+
     var router = new VueRouter({
       history: true,
     });
@@ -217,7 +220,7 @@
           });
           this.infra_initial_tab = '';
           if (String(prev_infra_id) === String(infra_id)) {
-            this.$refs.infrastructure.show(infra_oepn_tab);
+            this.$refs.infrastructure.reset(infra_oepn_tab);
           }
         },
         detach_infra: function () {
@@ -228,33 +231,12 @@
           this.loading = true;
           this.$refs.demogrid.load_ajax(this.url);
         },
-      }
-    };
-
-    var infrastructure = {
-      template: '',
-      props: {
-        initial_tab: String,
-      },
-      data: function () {
-        return {};
-      },
-      methods: {
-        show: function (open_tab) {
-          var infra_id = this.$route.params.infra_id;
-          show_infra(infra_id, open_tab);
-        }
       },
       ready: function () {
-        this.$watch('$route.params.infra_id', function (val) {
-          this.show('');
-        });
-        this.show(this.initial_tab);
-      },
-      beforeDestroy: function () {
-        $(SHOW_INFRA_ID).empty();
+        show_infra_initialize(this.show_infra_and_rewrite_url);
       },
     };
+
 
     var infrastructureApp = {};
     router.map({
@@ -263,7 +245,7 @@
         subRoutes: {
           '/infra/:infra_id': {
             name: 'infra',
-            component: infrastructure,
+            component: newVM(),
           }
         }
       }

@@ -1,22 +1,16 @@
-var Infrastructure = require('models/infrastructure').default;
-var newVM = require('modules/newVM');
-
-
 var SHOW_INFRA_ID = '#infra-show';
-var app;
+var show_infra;
+
+var initialize = function (show_infra_func) {
+  show_infra = show_infra_func;
+};
 
 var show_infra = function (infra_id, current_tab) {
-  if (app) {
-    app.$destroy();
-  }
-  app = newVM(
-    infra_id,
-    current_tab
-  );
-  app.$mount(SHOW_INFRA_ID);
+  show_infra(infra_id, current_tab);
 };
 
 module.exports = {
   SHOW_INFRA_ID: SHOW_INFRA_ID,
+  initialize: initialize,
   show_infra: show_infra
 };

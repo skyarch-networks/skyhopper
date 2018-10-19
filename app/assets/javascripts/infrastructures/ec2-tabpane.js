@@ -124,7 +124,7 @@ module.exports = Vue.extend({
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
         ec2.detach_ec2(self.x_zabbix, self.x_chef)
           .done(alert_success(function () {
-            self.$parent.reset(infra.id);
+            require('infrastructures/show_infra').show_infra(infra.id);
           }))
           .fail(alert_danger(self._show_ec2));
       });
@@ -138,7 +138,7 @@ module.exports = Vue.extend({
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.terminate'), 'danger').done(function () {
         ec2.terminate_ec2()
           .done(alert_success(function () {
-            self.$parent.reset(infra.id);
+            require('infrastructures/show_infra').show_infra(infra.id);
           }))
           .fail(alert_danger(self._show_ec2));
       });

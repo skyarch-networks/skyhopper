@@ -13,19 +13,18 @@ var EC2Instance  = require('models/ec2_instance').default;
 var helpers      = require('infrastructures/helper.js');
 var alert_danger = helpers.alert_danger;
 
-
-module.exports = function (infra_id, current_tab) {
-  function data(infra_id) {
+module.exports = function () {
+  function data () {
     return {
-      infra_model: new Infrastructure(infra_id),
+      infra_model: null,
       current_infra: {
-        id: parseInt(infra_id),
+        id: null,
         stack: {
           status: {
             type: null,
           },
         },
-        resources : {},
+        resources: {},
         events: [],
         templates: {histories: null, globals: null},
         add_modify: {name: "", detail: "", format: "JSON", value: ""},
@@ -40,10 +39,13 @@ module.exports = function (infra_id, current_tab) {
       loading: true,  // trueにすると、loading-tabpaneが表示される。
       infra_loading: true,
     };
-  }
-  return new Vue({
+  };
+  return {
     template: '#infra-show-template',
-    data: data(infra_id),
+    props: {
+      initial_tab: String,
+    },
+    data: data,
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
@@ -188,7 +190,7 @@ module.exports = function (infra_id, current_tab) {
               self.stack_in_progress();
             }, 15000);
           } else {
-            self.reset(this.current_infra.id);
+            show_infra(this.current_infra.id);
           }
         });
       },
@@ -209,24 +211,24 @@ module.exports = function (infra_id, current_tab) {
 
         $('.back-to-top').click(function(event) {
           event.preventDefault();
-        $('html, body').animate({scrollTop: 0}, duration);
+          $('html, body').animate({scrollTop: 0}, duration);
           return false;
         });
       },
-      reset: function (infra_id) {
-        this.$data = data(infra_id);
-        this.load_infra();
-      },
-      load_infra: function () {
+      reset: function (open_tab) {
         var self = this;
+        var infra_id = this.$route.params.infra_id;
+        self.$data = data();
+        self.current_infra.id = parseInt(infra_id);
         self.infra_loading = true;
+        self.infra_model = new Infrastructure(infra_id);
         self.infra_model.show().done(function (stack) {
           self.infra_loading = false;
           self.current_infra.stack = stack;
-          self.init_infra();
+          self.init_infra(open_tab);
         });
       },
-      init_infra: function () {
+      init_infra: function (current_tab) {
         var self = this;
         console.log(self);
         self.back_to_top();
@@ -305,7 +307,11 @@ module.exports = function (infra_id, current_tab) {
       },
     },
     ready: function () {
-      this.load_infra();
+      var self = this;
+      self.$watch('$route.params.infra_id', function (val) {
+        self.reset();
+      });
+      self.reset(self.initial_tab);
     },
-  });
+  };
 };

@@ -27,7 +27,7 @@ module.exports = Vue.extend({
       var cft = new CFTemplate(infra);
       var self = this;
       cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(function () {
-        self.$parent.reset(infra.id);
+        require('infrastructures/show_infra').show_infra(infra.id);
       })).fail(alert_danger(function () {
         self.loading = false;
       }));
