@@ -217,6 +217,7 @@ module.exports = function () {
         });
       },
       reset: function (open_tab) {
+        // FIXME このビューや子ビューで動いている非同期処理の一部を止めないとまずい予感がする
         var self = this;
         var infra_id = this.$route.params.infra_id;
         self.$data = data();
