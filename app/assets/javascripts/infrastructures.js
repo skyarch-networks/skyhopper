@@ -57,6 +57,7 @@
   var show_infra_initialize = show.initialize;
   var show_infra = show.show_infra;
   var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
+  var reload_infra_index_page = show.reload_infra_index_page;
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -66,7 +67,7 @@
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
-          location.reload();
+          reload_infra_index_page();
         });
       }).fail(modal.AlertForAjaxStdError()).always(l.$destroy);
     });
