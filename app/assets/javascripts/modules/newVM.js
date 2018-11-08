@@ -12,6 +12,7 @@ var Resource     = require('models/resource').default;
 var EC2Instance  = require('models/ec2_instance').default;
 var helpers      = require('infrastructures/helper.js');
 var alert_danger = helpers.alert_danger;
+var reload_infra_index_page = require('infrastructures/show_infra').reload_infra_index_page;
 
 module.exports = function () {
   function data () {
@@ -226,6 +227,8 @@ module.exports = function () {
           self.infra_loading = false;
           self.current_infra.stack = stack;
           self.init_infra(open_tab);
+        }).fail(function (msg) {
+          alert_danger(reload_infra_index_page)(msg);
         });
       },
       init_infra: function (current_tab) {
