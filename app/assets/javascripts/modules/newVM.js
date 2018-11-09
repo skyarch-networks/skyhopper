@@ -191,7 +191,7 @@ module.exports = function () {
               self.stack_in_progress();
             }, 15000);
           } else {
-            show_infra(this.current_infra.id);
+            self.reset();
           }
         }));
       },
