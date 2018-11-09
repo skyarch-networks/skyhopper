@@ -17,7 +17,7 @@ var reload_infra_index_page = require('infrastructures/show_infra').reload_infra
 module.exports = function () {
   function data () {
     return {
-      infra_model: null,
+      infra_model: null, // これが別のオブジェクトを指したら、表示系の非同期処理は取り消される
       current_infra: {
         id: null,
         stack: {
