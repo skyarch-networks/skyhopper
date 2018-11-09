@@ -92,12 +92,12 @@ module.exports = function () {
         self.$event.preventDefault();
 
         var cft = new CFTemplate(self.infra_model);
-        cft.new().done(function (data) {
+        cft.new().done(self.wrapping_into_same_model_check(function (data) {
           self.current_infra.templates.histories = data.histories;
           self.current_infra.templates.globals = data.globals;
 
           self.show_tabpane('add_modify');
-        }).fail(alert_danger());
+        })).fail(self.wrapping_into_same_model_check(alert_danger()));
       },
 
       show_add_ec2: function () { this.show_tabpane('add-ec2'); },
@@ -114,10 +114,10 @@ module.exports = function () {
         self.loading = true;
         self.$event.preventDefault();
 
-        self.infra_model.stack_events().done(function (res) {
+        self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.current_infra.events = res.stack_events;
           self.show_tabpane('event_logs');
-        });
+        }));
       },
       show_infra_logs: function () {
         var self = this;
@@ -173,17 +173,17 @@ module.exports = function () {
       update_serverspec_status: function (physical_id) {
         var self = this;
         var ec2 = new EC2Instance(self.infra_model, physical_id);
-        ec2.serverspec_status().done(function (data) {
+        ec2.serverspec_status().done(self.wrapping_into_same_model_check(function (data) {
           var r = _.find(self.current_infra.resources.ec2_instances, function (v) {
             return v.physical_id === physical_id;
           });
           r.serverspec_status = data;
-        });
+        }));
       },
 
       stack_in_progress: function () {
         var self = this;
-        self.infra_model.stack_events().done(function (res) {
+        self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.$data.current_infra.events = res.stack_events;
 
           if (res.stack_status.type === 'IN_PROGRESS') {
@@ -193,7 +193,7 @@ module.exports = function () {
           } else {
             show_infra(this.current_infra.id);
           }
-        });
+        }));
       },
       is_progress: function () {
         return (this.current_infra.stack.status.type === 'IN_PROGRESS');
@@ -224,13 +224,26 @@ module.exports = function () {
         self.current_infra.id = parseInt(infra_id);
         self.infra_loading = true;
         self.infra_model = new Infrastructure(infra_id);
-        self.infra_model.show().done(function (stack) {
-          self.infra_loading = false;
-          self.current_infra.stack = stack;
-          self.init_infra(open_tab);
-        }).fail(function (msg) {
-          alert_danger(reload_infra_index_page)(msg);
+        self.infra_model.show().done(
+          self.wrapping_into_same_model_check(function (stack) {
+            self.infra_loading = false;
+            self.current_infra.stack = stack;
+            self.init_infra(open_tab);
+          })
+        ).fail(function (msg) {
+          self.wrapping_into_same_model_check(alert_danger(reload_infra_index_page)(msg));
         });
+      },
+      wrapping_into_same_model_check: function(callback) {
+        var self = this;
+        return (function (my_model) {
+          return function (arg1) {
+            if (my_model !== self.infra_model){
+              return;
+            }
+            callback(arg1);
+          };
+        }(self.infra_model))
       },
       init_infra: function (current_tab) {
         var self = this;
@@ -239,7 +252,7 @@ module.exports = function () {
 
         if (self.current_infra.stack.status.type === 'OK') {
           var res = new Resource(self.infra_model);
-          res.index().done(function (resources) {
+          res.index().done(self.wrapping_into_same_model_check(function (resources) {
             _.forEach(resources.ec2_instances, function (v) {
               v.serverspec_status = true;
             });
@@ -268,16 +281,16 @@ module.exports = function () {
             _.forEach(self.current_infra.resources.ec2_instances, function (v) {
               self.update_serverspec_status(v.physical_id);
             });
-          });
+          }));
         } else if (self.current_infra.stack.status.type === 'IN_PROGRESS') {
           self.stack_in_progress();
           self.$data.loading = false;
 
         } else if (self.current_infra.stack.status.type === 'NG') {
-          self.infra_model.stack_events().done(function (res) {
+          self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
             self.$data.current_infra.events = res.stack_events;
             self.$data.loading = false;
-          });
+          }));
 
         } else if (self.current_infra.stack.status.type === "NONE") {
           // no stack info
