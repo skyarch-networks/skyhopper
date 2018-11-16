@@ -8,6 +8,11 @@
 
 <script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
+<div id="infrastructureApp">
+  <router-view></router-view>
+</div>
+
+<script id="index-template" type="text/template">
   <div id="indexElement" v-el:node>
 
     <div v-cloak>
@@ -63,6 +68,7 @@
     </div>
 
     <demo-grid
+    v-ref:demogrid
     :data.sync="gridData"
     :columns="gridColumns"
     :filter-key="searchQuery"
@@ -80,11 +86,18 @@
       <hr>
     </div>
   </div>
+
   <hr>
 
+  <%= button_add_infra(@selected_project) %>
 
-<%= button_add_infra(@selected_project) %>
+  <div class="page-header"></div>
 
-<div class="page-header"></div>
+  <router-view
+    v-ref:infrastructure
+    :initial_tab="infra_initial_tab">
+  </router-view>
+
+</script>
 
 <%= render 'show' %>

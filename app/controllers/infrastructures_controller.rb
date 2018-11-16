@@ -15,10 +15,10 @@ class InfrastructuresController < ApplicationController
 
   # --------------- existence check
   before_action :project_exist, only: [:index]
-  before_action :infrastructure_exist, only: [:show, :edit, :update, :destroy, :delete_stack, :stack_events, :edit_keypair, :update_keypair]
+  before_action :infrastructure_exist, only: [:edit, :update, :destroy, :delete_stack, :stack_events, :edit_keypair, :update_keypair]
 
 
-  before_action :set_infrastructure, only: %i(show edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair)
+  before_action :set_infrastructure, only: %i(edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair)
 
   before_action do
     infra = @infrastructure || (
@@ -56,6 +56,9 @@ class InfrastructuresController < ApplicationController
 
   # GET /infrastructures/:id
   def show
+    raise "Infrastructure \##{params[:id]} does not exist" if !Infrastructure.exists?(id: params[:id])
+    set_infrastructure
+
     stack = Stack.new(@infrastructure)
 
     resp = {

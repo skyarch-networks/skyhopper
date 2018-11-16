@@ -37,6 +37,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
+  get 'infrastructures/infra/*path', to: 'infrastructures#index'
   resources :infrastructures do
     member do
       post 'change_rds_scale'

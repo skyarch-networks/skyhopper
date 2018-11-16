@@ -233,3 +233,6 @@ new Clipboard('[data-clipboard]').on('success', function (e) {
     btn.attr('disabled', null);
   }, 1000);
 });
+
+// setup vue-router
+Vue.use(VueRouter);

@@ -4780,6 +4780,11 @@ vue-ace@0.0.1, vue-ace@^0.0.1:
     brace "0.7.0"
     vue "^1.0.11"
 
+vue-router@~0.7.13:
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-0.7.13.tgz#e1f0f042ac2561504b27f46f6dcd17b832b1c8d1"
+  integrity sha1-4fDwQqwlYVBLJ/Rvbc0XuDKxyNE=
+
 vue@^1.0.11, vue@^1.0.8, vue@~1.0.24:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/vue/-/vue-1.0.28.tgz#ed2ff07b200bde15c87a90ef8727ceea7d38567d"
