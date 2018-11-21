@@ -143,7 +143,8 @@ class ChefServer::Deployment
         infrastructure_id: infra.id,
         name:              name,
         detail:            "#{name} auto generated",
-        value:             template
+        value:             template,
+        format:            "JSON"
       )
       cf_template.create_cfparams_set(infra, params)
       cf_template.update_cfparams
