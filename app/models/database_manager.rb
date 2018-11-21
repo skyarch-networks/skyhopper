@@ -8,7 +8,7 @@
 
 class DatabaseManager
   SQLPATH = 'tmp/import.sql'.freeze
-  SECRETS = [:secret_key_base, :db_crypt_key].freeze
+  SECRETS = [:secret_key_base, :db_crypt_key, :db_crypt_salt].freeze
   SUFFIX = {
     'development' => 'dev',
     'test'        => 'test',
@@ -27,7 +27,9 @@ class DatabaseManager
       ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
         zip.add(filename, path)
 
-        Rails.application.secrets.each do |key, value|
+        Rails.application.secrets.select do |key, value|
+          SECRETS.include?(key)
+        end.slice(*SECRETS).each do |key, value|
           next if value.nil?
           zip.get_output_stream(key) { |io| io.write(value) }
         end

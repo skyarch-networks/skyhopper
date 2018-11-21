@@ -48,6 +48,14 @@ Vue.component('tr-helper', {
 
 const Loader = Vue.extend({
   template: '<span><div class="loader"></div> {{text}}</span>',
+  data: function () { return {
+    // XXX: When test, t is undefined...
+    text: typeof t !== 'undefined' ? t('common.msg.loading') : "",
+  }},
+});
+
+Vue.component('div-loader', {
+  template: '<span><div class="loader"></div> {{text}}</span>',
   props: {
     text: {
       type: String,
@@ -56,5 +64,3 @@ const Loader = Vue.extend({
     },
   },
 });
-
-Vue.component('div-loader', Loader);

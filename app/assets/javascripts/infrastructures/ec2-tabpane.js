@@ -40,7 +40,7 @@ module.exports = Vue.extend({
     ec2_status_changing: false,
     chef_console_text:   '',
     selected_dish:       null,
-    ec2:                 {},
+    ec2:                 { availability_zones: {} },
     volume_selected:     false,
     sort_key:            '',
     sort_asc:            false,
@@ -124,7 +124,7 @@ module.exports = Vue.extend({
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(function () {
         ec2.detach_ec2(self.x_zabbix, self.x_chef)
           .done(alert_success(function () {
-            require('infrastructures/show_infra.js').show_infra(infra.id);
+            require('infrastructures/show_infra').show_infra(infra.id);
           }))
           .fail(alert_danger(self._show_ec2));
       });
@@ -138,7 +138,7 @@ module.exports = Vue.extend({
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.terminate'), 'danger').done(function () {
         ec2.terminate_ec2()
           .done(alert_success(function () {
-            require('infrastructures/show_infra.js').show_infra(infra.id);
+            require('infrastructures/show_infra').show_infra(infra.id);
           }))
           .fail(alert_danger(self._show_ec2));
       });

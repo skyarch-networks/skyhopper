@@ -28,14 +28,12 @@ vendor/bundle
 vendor/bundler
 vendor/knife
 
-# Ignore bower_components
-vendor/bower_components
-
 # assets precompile
 /public/assets/
 
 # i18n-js
 /app/assets/javascripts/i18n/
+/public/javascripts/i18n.js
 
 /coverage/
 
@@ -48,6 +46,7 @@ vendor/bower_components
 /frontend/dest/
 /frontend/node_modules/
 /frontend/typings/
+/frontend/fonts/
 
 # MAC system files
 .DS_Store

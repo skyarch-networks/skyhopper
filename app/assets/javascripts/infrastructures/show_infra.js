@@ -1,31 +1,24 @@
-var Infrastructure = require('models/infrastructure').default;
-var newVM = require('modules/newVM');
-
-
+var queryString = require('query-string');
 var SHOW_INFRA_ID = '#infra-show';
-var app;
+var show_infra;
+
+var initialize = function (show_infra_func) {
+  show_infra = show_infra_func;
+};
 
 var show_infra = function (infra_id, current_tab) {
-  var infra = new Infrastructure(infra_id);
+  show_infra(infra_id, current_tab);
+};
 
-  var l = new Loader();
-  l.text = "Loading...";
-  l.$mount(SHOW_INFRA_ID);
-  if (app) {
-    app.$destroy();
-  }
-  infra.show().done(function (stack) {
-    app = newVM(
-      stack,
-      infra,
-      current_tab
-    );
-    l.$destroy();
-    app.$mount(SHOW_INFRA_ID);
-  });
+var reload_infra_index_page = function () {
+  var parsed_query_string  = queryString.parse(location.search);
+  var project_id_query = parsed_query_string.project_id ? '&project_id=' + parsed_query_string.project_id : '';
+  location.href = '/infrastructures?lang=' + parsed_query_string.lang + project_id_query;
 };
 
 module.exports = {
   SHOW_INFRA_ID: SHOW_INFRA_ID,
-  show_infra: show_infra
+  initialize: initialize,
+  show_infra: show_infra,
+  reload_infra_index_page: reload_infra_index_page,
 };

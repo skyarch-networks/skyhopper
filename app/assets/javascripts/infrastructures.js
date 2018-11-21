@@ -54,8 +54,10 @@
 
 
   var show = require('infrastructures/show_infra.js');
+  var show_infra_initialize = show.initialize;
   var show_infra = show.show_infra;
   var SHOW_INFRA_ID = show.SHOW_INFRA_ID;
+  var reload_infra_index_page = show.reload_infra_index_page;
 
   var detach = function (infra_id) {
     modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.detach_stack_confirm'), 'danger').done(function () {
@@ -65,7 +67,7 @@
       l.$mount(SHOW_INFRA_ID);
       infra.detach().done(function (msg) {
         modal.Alert(t('infrastructures.infrastructure'), msg).done(function () {
-          location.reload();
+          reload_infra_index_page();
         });
       }).fail(modal.AlertForAjaxStdError()).always(l.$destroy);
     });
@@ -146,70 +148,117 @@
 // event bindings
 // ================================================================
 
-  var infrastructure_url = queryString.project_id ? '&project_id='+queryString.project_id: '';
-  var index = new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: [],
-      gridData: [],
-      loading: true,
-      is_empty: false,
-      url: 'infrastructures?lang='+queryString.lang+infrastructure_url,
-      picked: {
-        button_delete_stack: null,
-        edit_infrastructure_path: null,
-        button_detach_stack: null
+  if ($('#infrastructureApp').length) {
+    var newVM = require('modules/newVM');
+
+    var router = new VueRouter({
+      history: true,
+    });
+
+    var infrastructure_url = queryString.project_id ? '&project_id=' + queryString.project_id : '';
+    var index = {
+      template: '#index-template',
+      replace: true,
+      data: function () {
+        return {
+          searchQuery: '',
+          gridColumns: [],
+          gridData: [],
+          loading: true,
+          is_empty: false,
+          url: 'infrastructures?lang=' + queryString.lang + infrastructure_url,
+          picked: {
+            button_delete_stack: null,
+            edit_infrastructure_path: null,
+            button_detach_stack: null
+          },
+          index: 'infrastructures',
+          infra_initial_tab: '',
+        };
       },
-      index: 'infrastructures'
-    },
-    created: function(){
-        if (queryString.project_id >3)
-          this.gridColumns = ['stack_name','region', 'keypairname', 'created_at', 'status'];
+      created: function () {
+        if (queryString.project_id > 3)
+          this.gridColumns = ['stack_name', 'region', 'keypairname', 'created_at', 'status'];
         else
-          this.gridColumns = ['stack_name','region', 'keypairname'];
+          this.gridColumns = ['stack_name', 'region', 'keypairname'];
 
-      moment.locale(queryString.lang);
+        moment.locale(queryString.lang);
 
-    },
-    methods: {
-      can_edit: function() {
-        return (this.picked.edit_infrastructure_path);
       },
-      can_delete: function() {
-        return (this.picked.button_delete_stack);
+      methods: {
+        can_edit: function () {
+          return (this.picked.edit_infrastructure_path);
+        },
+        can_delete: function () {
+          return (this.picked.button_delete_stack);
+        },
+        can_detach: function () {
+          return (this.picked.button_detach_stack);
+        },
+        is_picked: function () {
+          return (this.picked.id);
+        },
+        delete_stack: function () {
+          delete_stack(this.picked.id);
+          this.reload();
+        },
+        show_infra: function (item_id) {
+          this.show_infra_and_rewrite_url(item_id, '');
+        },
+        show_sched: function () {
+          this.show_infra_and_rewrite_url(this.picked.id, 'show_sched');
+          this.reload();
+        },
+        show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
+          var prev_infra_id = this.$route.params.infra_id;
+          this.infra_initial_tab = infra_oepn_tab;
+          router.go({
+            name: 'infra',
+            params: {
+              infra_id: infra_id,
+            },
+            query: queryString,
+          });
+          this.infra_initial_tab = '';
+          if (String(prev_infra_id) === String(infra_id)) {
+            this.$refs.infrastructure.reset(infra_oepn_tab);
+          }
+        },
+        detach_infra: function () {
+          detach(this.picked.id);
+          this.reload();
+        },
+        reload: function () {
+          this.loading = true;
+          this.$refs.demogrid.load_ajax(this.url);
+        },
       },
-      can_detach: function() {
-        return (this.picked.button_detach_stack);
+      ready: function () {
+        show_infra_initialize(this.show_infra_and_rewrite_url);
       },
-      is_picked: function() {
-        return (this.picked.id);
-      },
-      delete_stack: function()  {
-        delete_stack(this.picked.id);
-        this.reload();
-      },
-      show_infra: function(item_id)  {
-        show_infra(item_id, '');
-      },
-      show_sched: function()  {
-        show_infra(this.picked.id, 'show_sched');
-        this.reload();
-      },
-      detach_infra: function()  {
-        detach(this.picked.id);
-        this.reload();
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url);
-      },
-    }
-  });
+    };
 
-  var keypair_form_group = new Vue({
-    el: '#KeypairFormGroup'
-  });
+
+    var infrastructureApp = {};
+    router.map({
+      '/infrastructures': {
+        component: index,
+        subRoutes: {
+          '/infra/:infra_id': {
+            name: 'infra',
+            component: newVM(),
+          }
+        }
+      }
+    });
+    router.start(infrastructureApp, '#infrastructureApp');
+  }
+
+  if ($('#KeypairFormGroup').length){
+    var keypair_form_group = new Vue({
+      el: '#KeypairFormGroup'
+    });
+  }
 
 
 

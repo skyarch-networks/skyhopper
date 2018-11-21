@@ -23,12 +23,12 @@ module.exports = Vue.extend({
 
   methods: {
     submit: function () {
+      var self = this;
       var infra = new Infrastructure(this.infra_id);
       var res = new Resource(infra);
       res.create(this.physical_id, this.screen_name)
         .done(alert_success(function () {
-          var show_infra = require('./show_infra.js').show_infra;
-          show_infra(infra.id);
+          require('infrastructures/show_infra').show_infra(infra.id);
         }))
         .fail(alert_and_show_infra(infra.id));
     },

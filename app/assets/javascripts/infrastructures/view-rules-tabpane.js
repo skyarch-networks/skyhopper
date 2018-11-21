@@ -1,9 +1,11 @@
 var queryString    = require('query-string').parse(location.search);
 var Infrastructure = require('models/infrastructure').default;
 var EC2Instance    = require('models/ec2_instance').default;
-var createPdf      = require('pdfmake-browserified');
-var map            = require('../modules/ipam00303.map');
-var data_mapping   = require('../modules/ipam00303');
+var pdfMake      = require('pdfmake/build/pdfmake.js');
+var pdfFonts     = require('../modules/vfs_fonts.js');
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+var fontsMap    = require('../modules/fonts_map.js');
+pdfMake.fonts = fontsMap;
 var tableRender    = require('../modules/table_render');
 
 module.exports = Vue.extend({
@@ -66,7 +68,7 @@ module.exports = Vue.extend({
     },
     print_pdf: function(){
       var data = this.rules_summary;
-      var defaultFont = Object.keys(map)[0];
+      var defaultFont = Object.keys(fontsMap)[0];
 
       var docDefinition = {
         footer: function(currentPage, pageCount) {
@@ -126,7 +128,8 @@ module.exports = Vue.extend({
 
       };
 
-      createPdf(docDefinition, map, data_mapping).open();
+      pdfMake.createPdf(docDefinition).open();
+
       this.get_rules();
     },
     check_length: function(args){

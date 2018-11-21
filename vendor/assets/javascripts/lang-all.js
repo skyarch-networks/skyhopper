@@ -1,1 +1,1 @@
-../../bower_components/fullcalendar/dist/lang-all.js
+../../../frontend/node_modules/@bower_components/fullcalendar/dist/lang-all.js

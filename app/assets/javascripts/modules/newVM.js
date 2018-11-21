@@ -6,21 +6,26 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
+var Infrastructure = require('models/infrastructure').default;
 var CFTemplate   = require('models/cf_template').default;
 var Resource     = require('models/resource').default;
 var EC2Instance  = require('models/ec2_instance').default;
 var helpers      = require('infrastructures/helper.js');
 var alert_danger = helpers.alert_danger;
+var reload_infra_index_page = require('infrastructures/show_infra').reload_infra_index_page;
 
-
-module.exports = function (stack, current_infra, current_tab) {
-  return new Vue({
-    template: '#infra-show-template',
-    data: {
+module.exports = function () {
+  function data () {
+    return {
+      infra_model: null, // これが別のオブジェクトを指したら、表示系の非同期処理は取り消される
       current_infra: {
-        id: parseInt(current_infra.id),
-        stack: stack,
-        resources : {},
+        id: null,
+        stack: {
+          status: {
+            type: null,
+          },
+        },
+        resources: {},
         events: [],
         templates: {histories: null, globals: null},
         add_modify: {name: "", detail: "", format: "JSON", value: ""},
@@ -33,7 +38,15 @@ module.exports = function (stack, current_infra, current_tab) {
       ops_sched_Columns: ['physical_id', 'screen_name', 'id'],
       serverspec_failed: t('infrastructures.serverspec_failed'),
       loading: true,  // trueにすると、loading-tabpaneが表示される。
+      infra_loading: true,
+    };
+  };
+  return {
+    template: '#infra-show-template',
+    props: {
+      initial_tab: String,
     },
+    data: data,
     methods:{
       screen_name: function (res) {
         if (res.screen_name) {
@@ -78,13 +91,13 @@ module.exports = function (stack, current_infra, current_tab) {
         self.loading = true;
         self.$event.preventDefault();
 
-        var cft = new CFTemplate(current_infra);
-        cft.new().done(function (data) {
+        var cft = new CFTemplate(self.infra_model);
+        cft.new().done(self.wrapping_into_same_model_check(function (data) {
           self.current_infra.templates.histories = data.histories;
           self.current_infra.templates.globals = data.globals;
 
           self.show_tabpane('add_modify');
-        }).fail(alert_danger());
+        })).fail(self.wrapping_into_same_model_check(alert_danger()));
       },
 
       show_add_ec2: function () { this.show_tabpane('add-ec2'); },
@@ -101,10 +114,10 @@ module.exports = function (stack, current_infra, current_tab) {
         self.loading = true;
         self.$event.preventDefault();
 
-        current_infra.stack_events().done(function (res) {
+        self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.current_infra.events = res.stack_events;
           self.show_tabpane('event_logs');
-        });
+        }));
       },
       show_infra_logs: function () {
         var self = this;
@@ -158,30 +171,29 @@ module.exports = function (stack, current_infra, current_tab) {
         });
       },
       update_serverspec_status: function (physical_id) {
-        var ec2 = new EC2Instance(current_infra, physical_id);
         var self = this;
-        ec2.serverspec_status().done(function (data) {
+        var ec2 = new EC2Instance(self.infra_model, physical_id);
+        ec2.serverspec_status().done(self.wrapping_into_same_model_check(function (data) {
           var r = _.find(self.current_infra.resources.ec2_instances, function (v) {
             return v.physical_id === physical_id;
           });
           r.serverspec_status = data;
-        });
+        }));
       },
 
       stack_in_progress: function () {
         var self = this;
-        current_infra.stack_events().done(function (res) {
+        self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.$data.current_infra.events = res.stack_events;
 
           if (res.stack_status.type === 'IN_PROGRESS') {
             setTimeout(function () {
-              self.stack_in_progress(current_infra);
+              self.stack_in_progress();
             }, 15000);
           } else {
-            var show_infra = require('infrastructures/show_infra.js').show_infra;
-            show_infra(current_infra.id);
+            self.reset();
           }
-        });
+        }));
       },
       is_progress: function () {
         return (this.current_infra.stack.status.type === 'IN_PROGRESS');
@@ -200,10 +212,90 @@ module.exports = function (stack, current_infra, current_tab) {
 
         $('.back-to-top').click(function(event) {
           event.preventDefault();
-        $('html, body').animate({scrollTop: 0}, duration);
+          $('html, body').animate({scrollTop: 0}, duration);
           return false;
         });
-      }
+      },
+      reset: function (open_tab) {
+        var self = this;
+        var infra_id = this.$route.params.infra_id;
+        self.$data = data();
+        self.current_infra.id = parseInt(infra_id);
+        self.infra_loading = true;
+        self.infra_model = new Infrastructure(infra_id);
+        self.infra_model.show().done(
+          self.wrapping_into_same_model_check(function (stack) {
+            self.infra_loading = false;
+            self.current_infra.stack = stack;
+            self.init_infra(open_tab);
+          })
+        ).fail(function (msg) {
+          self.wrapping_into_same_model_check(alert_danger(reload_infra_index_page)(msg));
+        });
+      },
+      wrapping_into_same_model_check: function(callback) {
+        var self = this;
+        return (function (my_model) {
+          return function (arg1) {
+            if (my_model !== self.infra_model){
+              return;
+            }
+            callback(arg1);
+          };
+        }(self.infra_model))
+      },
+      init_infra: function (current_tab) {
+        var self = this;
+        console.log(self);
+        self.back_to_top();
+
+        if (self.current_infra.stack.status.type === 'OK') {
+          var res = new Resource(self.infra_model);
+          res.index().done(self.wrapping_into_same_model_check(function (resources) {
+            _.forEach(resources.ec2_instances, function (v) {
+              v.serverspec_status = true;
+            });
+            self.current_infra.resources = resources;
+            // show first tab
+            if(current_tab === 'show_sched'){
+              self.show_operation_sched(resources);
+            } else {
+              var instance = _(resources).values().flatten().first();
+              if (instance) {
+                var physical_id = instance.physical_id;
+                if (instance.type_name === "AWS::EC2::Instance") {
+                  self.show_ec2(physical_id);
+                } else if (instance.type_name === "AWS::RDS::DBInstance"){
+                  self.show_rds(physical_id);
+                } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
+                  self.show_elb(physical_id);
+                } else { // S3
+                  self.show_s3(physical_id);
+                }
+              } else {
+                self.show_no_resource();
+              }
+            }
+
+            _.forEach(self.current_infra.resources.ec2_instances, function (v) {
+              self.update_serverspec_status(v.physical_id);
+            });
+          }));
+        } else if (self.current_infra.stack.status.type === 'IN_PROGRESS') {
+          self.stack_in_progress();
+          self.$data.loading = false;
+
+        } else if (self.current_infra.stack.status.type === 'NG') {
+          self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
+            self.$data.current_infra.events = res.stack_events;
+            self.$data.loading = false;
+          }));
+
+        } else if (self.current_infra.stack.status.type === "NONE") {
+          // no stack info
+          self.$data.loading = false;
+        }
+      },
     },
     filters: {
       toLocaleString: toLocaleString,
@@ -232,55 +324,10 @@ module.exports = function (stack, current_infra, current_tab) {
     },
     ready: function () {
       var self = this;
-      console.log(self);
-      self.back_to_top();
-
-      if (stack.status.type === 'OK') {
-        var res = new Resource(current_infra);
-        res.index().done(function (resources) {
-          _.forEach(resources.ec2_instances, function (v) {
-            v.serverspec_status = true;
-          });
-          self.current_infra.resources = resources;
-          // show first tab
-          if(current_tab === 'show_sched'){
-            self.show_operation_sched(resources);
-          } else {
-            var instance = _(resources).values().flatten().first();
-            if (instance) {
-              var physical_id = instance.physical_id;
-              if (instance.type_name === "AWS::EC2::Instance") {
-                self.show_ec2(physical_id);
-              } else if (instance.type_name === "AWS::RDS::DBInstance"){
-                self.show_rds(physical_id);
-              } else if (instance.type_name === "AWS::ElasticLoadBalancing::LoadBalancer") {
-                self.show_elb(physical_id);
-              } else { // S3
-                self.show_s3(physical_id);
-              }
-            } else {
-              self.show_no_resource();
-            }
-          }
-
-          _.forEach(self.current_infra.resources.ec2_instances, function (v) {
-            self.update_serverspec_status(v.physical_id);
-          });
-        });
-      } else if (stack.status.type === 'IN_PROGRESS') {
-        self.stack_in_progress(current_infra);
-        self.$data.loading = false;
-
-      } else if (stack.status.type === 'NG') {
-        current_infra.stack_events().done(function (res) {
-          self.$data.current_infra.events = res.stack_events;
-          self.$data.loading = false;
-        });
-
-      } else if (stack.status.type === "NONE") {
-        // no stack info
-        self.$data.loading = false;
-      }
+      self.$watch('$route.params.infra_id', function (val) {
+        self.reset();
+      });
+      self.reset(self.initial_tab);
     },
-  });
+  };
 };

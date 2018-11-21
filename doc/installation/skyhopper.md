@@ -14,13 +14,13 @@ Amazon Linux へのインストール方法しか記載していませんが、�
 
 ## ruby のインストール
 
-Ruby 2.2系をインストール(Ruby 2.3 系では動きません)
+Ruby 2.4系をインストール
 
 ```sh
 $ sudo yum remove ruby ruby20
-$ sudo yum install ruby22
+$ sudo yum install ruby24
 $ ruby -v
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
+ruby 2.4.4p296 (2018-03-28 revision 63013) [x86_64-linux-gnu]
 ```
 
 ## Bundler のインストール
@@ -38,20 +38,23 @@ $ nvm install stable
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v4.4.5 # any current stable version release
+v10.12.0 # any current stable version release
 ```
 
-## bower のインストール
+## Yarn のインストール
 
 ```sh
-$ npm install bower --global
+$ curl -o- -L https://yarnpkg.com/install.sh | bash
+(シェルからログアウトし、再度ログインしてください)
+$ yarn -v
+1.10.1
 ```
 
 ## SkyHopper に必要なパッケージをインストール
 
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
-$ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
+$ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
 ```
@@ -201,10 +204,12 @@ $ git checkout <使いたいSkyHopperのバージョン>
 $ bundle install --path vendor/bundle
 ```
 
-### bower install
+### Yarn
 
 ```sh
-$ bower install
+$ cd frontend/
+$ yarn
+$ cd ..
 ```
 
 ### TypeScript のコンパイル
@@ -212,9 +217,20 @@ $ bower install
 ```sh
 $ npm i -g gulp
 $ cd frontend/
-$ npm i
 $ gulp type  //TSD to typings
 $ gulp ts
+$ cd ..
+```
+
+### フォントのダウンロードとビルド
+
+使用するフォントの詳細: <https://github.com/m13253/kaigen-fonts>
+```sh
+$ cd frontend/fonts/
+$ curl -LO https://github.com/m13253/kaigen-fonts/releases/download/v1.004-1.001-1/KaigenSansJ.zip
+$ unzip KaigenSansJ.zip
+$ cd ..
+$ node build_font.js fonts/KaigenSansJ/KaigenSansJ-Regular.ttf
 $ cd ..
 ```
 

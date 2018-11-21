@@ -756,6 +756,7 @@ ja:
       env:       'SkyHopper%{env}.sql'
       secret:    'secret_key_base'
       db_key:    'db_crypt_key'
+      db_salt:    'db_crypt_salt'
       db_export: 'エクスポートしたZIPファイルには下記のファイルが含まれています。'
       db_import: 'DB をインポートするには下記のファイルを含む ZIP ファイルを指定してください'
       db_import_finish: 'データベースのインポートが完了しました'

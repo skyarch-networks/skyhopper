@@ -13,13 +13,13 @@ You can also use SkyHopper in Ubuntu, Archlinux by installing the corresponding 
 
 ## Installing Ruby
 
-To install, you need ruby 2.2 version(SkyHopper doesn't work with Ruby 2.3).
+To install, you need ruby 2.4 version.
 
 ```sh
 $ sudo yum remove ruby ruby20
-$ sudo yum install ruby22
+$ sudo yum install ruby24
 $ ruby -v
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-linux-gnu]
+ruby 2.4.4p296 (2018-03-28 revision 63013) [x86_64-linux-gnu]
 ```
 
 ## Installing Bundler using gem
@@ -37,20 +37,23 @@ $ nvm install stable
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v4.4.5 # any current stable version release
+v10.12.0 # any current stable version release
 ```
 
-## Installing bower using npm
+## Installing Yarn
 
 ```sh
-$ npm install bower --global
+$ curl -o- -L https://yarnpkg.com/install.sh | bash
+(Log out of the shell and login again)
+$ yarn -v
+1.10.1
 ```
 
 ## Installing other packages that are needed for SkyHopper using yum
 
 ```sh
 $ sudo yum groupinstall 'Development tools' 'Development Libraries'
-$ sudo yum install ruby22-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
+$ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
 ```
@@ -201,10 +204,12 @@ $ git checkout <SKYHOPPER_VERSION_YOU_WANT_TO_USE>
 $ bundle install --path vendor/bundle
 ```
 
-### bower install
+### Yarn
 
 ```sh
-$ bower install
+$ cd frontend/
+$ yarn
+$ cd ..
 ```
 
 ### Compiling TypeScript
@@ -212,11 +217,23 @@ $ bower install
 ```sh
 $ npm i -g gulp
 $ cd frontend/
-$ npm i
 $ gulp type  // TSD to typings
 $ gulp ts
 $ cd ..
 ```
+
+### Font download and build
+
+Details of the font to use: <https://github.com/m13253/kaigen-fonts>
+```sh
+$ cd frontend/fonts/
+$ curl -LO https://github.com/m13253/kaigen-fonts/releases/download/v1.004-1.001-1/KaigenSansJ.zip
+$ unzip KaigenSansJ.zip
+$ cd ..
+$ node build_font.js fonts/KaigenSansJ/KaigenSansJ-Regular.ttf
+$ cd ..
+```
+
 
 ### database.yml
 

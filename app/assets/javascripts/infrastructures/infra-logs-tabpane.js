@@ -17,6 +17,7 @@ module.exports = Vue.extend({
   },
 
   data: function () {return {
+    picked_id: null,
     logs: [],
     page: {},
     sortKey: '',
@@ -30,6 +31,12 @@ module.exports = Vue.extend({
 
   components: {
     'vue-paginator': require('./vue-paginator'),
+  },
+
+  computed: {
+    can_download: function () {
+      return this.picked_id !== null;
+    },
   },
 
   methods: {
@@ -46,6 +53,20 @@ module.exports = Vue.extend({
         self.logs = data.logs;
         self.page = data.page;
       }).fail(alert_and_show_infra(infra.id));
+    },
+    select_entry: function(item)  {
+      this.picked_id = item.id;
+    },
+    is_select_entry: function(item)  {
+      return this.picked_id === item.id;
+    },
+    download_selected: function () {
+      var infra = new Infrastructure(this.infra_id);
+      infra.download_log(this.picked_id);
+    },
+    download_all: function () {
+      var infra = new Infrastructure(this.infra_id);
+      infra.download_logs();
     },
   },
 

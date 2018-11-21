@@ -17,53 +17,57 @@
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
-  new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: ['code','name'],
-      gridData: [],
-      lang: queryString.lang,
-      url: 'clients?lang='+queryString.lang,
-      is_empty: false,
-      loading: true,
-      picked: {
-        edit_client_path: null,
-        code: null
+  if ($('#indexElement').length) {
+    new Vue({
+      el: '#indexElement',
+      data: {
+        searchQuery: '',
+        gridColumns: ['code', 'name'],
+        gridData: [],
+        lang: queryString.lang,
+        url: 'clients?lang=' + queryString.lang,
+        is_empty: false,
+        loading: true,
+        picked: {
+          edit_client_path: null,
+          code: null
+        },
+        index: 'clients'
       },
-      index: 'clients'
-    },
-    methods: {
-      can_edit: function() {
-        if (this.picked.edit_client_path)
-          return this.picked.edit_client_path ? true : false;
-      },
-      can_delete: function() {
-        if (this.picked.code)
-          return (this.picked.code[1] === 0) ? true : false;
-      },
-      delete_entry: function()  {
-        var self = this;
-        modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
-                $.ajax({
-                    type: "POST",
-                    url: self.picked.delete_client_path,
-                    dataType: "json",
-                    data: {"_method":"delete"},
-                    success: function (data) {
-                      self.gridData = data;
-                      self.picked = {};
-                    },
-                }).fail(function() {location.reload();});
-        });
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url);
-        this.picked = {};
-      },
+      methods: {
+        can_edit: function () {
+          if (this.picked.edit_client_path)
+            return this.picked.edit_client_path ? true : false;
+        },
+        can_delete: function () {
+          if (this.picked.code)
+            return (this.picked.code[1] === 0) ? true : false;
+        },
+        delete_entry: function () {
+          var self = this;
+          modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
+            $.ajax({
+              type: "POST",
+              url: self.picked.delete_client_path,
+              dataType: "json",
+              data: {"_method": "delete"},
+              success: function (data) {
+                self.gridData = data;
+                self.picked = {};
+              },
+            }).fail(function () {
+              location.reload();
+            });
+          });
+        },
+        reload: function () {
+          this.loading = true;
+          this.$children[0].load_ajax(this.url);
+          this.picked = {};
+        },
 
-    }
-  });
+      }
+    });
+  }
 
 })();

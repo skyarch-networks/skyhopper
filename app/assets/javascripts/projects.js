@@ -19,57 +19,61 @@
 
   var project_url = queryString.client_id ? '&client_id='+queryString.client_id: '';
 
-  var projectIndex = new Vue({
-    el: '#indexElement',
-    data: {
-      searchQuery: '',
-      gridColumns: ['code','name', 'cloud_provider', 'access_key'],
-      url: 'projects?lang='+queryString.lang+project_url,
-      gridData: [],
-      is_empty: false,
-      loading: true,
-      picked: {
-        edit_url: null,
-        project_settings: {
-          dishes_path: null,
-          key_pairs_path: null,
-          project_parameters_path: null
+  if ($('#indexElement').length) {
+    var projectIndex = new Vue({
+      el: '#indexElement',
+      data: {
+        searchQuery: '',
+        gridColumns: ['code', 'name', 'cloud_provider', 'access_key'],
+        url: 'projects?lang=' + queryString.lang + project_url,
+        gridData: [],
+        is_empty: false,
+        loading: true,
+        picked: {
+          edit_url: null,
+          project_settings: {
+            dishes_path: null,
+            key_pairs_path: null,
+            project_parameters_path: null
+          }
+        },
+        index: 'projects'
+      },
+      methods: {
+        can_edit: function () {
+          if (this.picked)
+            return this.picked.edit_project_url ? true : false;
+        },
+        can_delete: function () {
+          if (this.picked.delete_project_url)
+            return (this.picked.code[1] === 0) ? true : false;
+        },
+        is_picked: function () {
+          return (this.picked.id);
+        },
+        delete_entry: function () {
+          var self = this;
+          modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
+            $.ajax({
+              type: "POST",
+              url: self.picked.delete_project_url,
+              dataType: "json",
+              data: {"_method": "delete"},
+              success: function (data) {
+                self.gridData = data;
+                self.picked = null;
+              },
+            }).fail(function () {
+              location.reload();
+            });
+          });
+        },
+        reload: function () {
+          this.loading = true;
+          this.$children[0].load_ajax(this.url);
         }
       },
-      index: 'projects'
-    },
-    methods: {
-      can_edit: function() {
-        if (this.picked)
-          return this.picked.edit_project_url ? true : false;
-      },
-      can_delete: function() {
-        if (this.picked.delete_project_url)
-          return (this.picked.code[1] === 0) ? true : false;
-      },
-      is_picked: function() {
-        return (this.picked.id);
-      },
-      delete_entry: function()  {
-        var self = this;
-        modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
-                $.ajax({
-                    type: "POST",
-                    url: self.picked.delete_project_url,
-                    dataType: "json",
-                    data: {"_method":"delete"},
-                    success: function (data) {
-                      self.gridData = data;
-                      self.picked = null;
-                    },
-                }).fail(function() {location.reload();});
-        });
-      },
-      reload: function () {
-        this.loading = true;
-        this.$children[0].load_ajax(this.url);
-      }
-    },
 
-  });
+    });
+  }
 })();
