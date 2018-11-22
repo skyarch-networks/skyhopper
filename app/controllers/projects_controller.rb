@@ -128,6 +128,9 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
+    if @project.zabbix_server_id.present?
+      with_zabbix
+    end
     go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
     begin
       @project.destroy!
