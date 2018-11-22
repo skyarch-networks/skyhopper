@@ -153,7 +153,11 @@ class Infrastructure < ActiveRecord::Base
   end
 
   def detach_zabbix
-    s = ZabbixServer.find(self.project.zabbix_server_id)
+    zabbix_server_id = self.project.zabbix_server_id
+    if zabbix_server_id.nil?
+      return
+    end
+    s = ZabbixServer.find(zabbix_server_id)
     begin
       z = Zabbix.new(s.fqdn, s.username, s.password)
       z.delete_hosts_by_infra(self)
