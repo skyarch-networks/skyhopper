@@ -32,6 +32,7 @@ ja:
     please_select: '選択してください'
     not_set:       '設定なし'
     selected:      '選択されています'
+    none:           'なし'
     btn:
       architecture:    'インフラ管理'
       settings:        '設定'

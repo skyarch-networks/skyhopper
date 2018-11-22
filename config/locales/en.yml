@@ -32,6 +32,7 @@ en:
     please_select: 'Select one'
     not_set:       'Not set'
     selected:      'Selected'
+    none:           'None'
     btn:
       architecture:    'Architecture'
       settings:        'Settings'

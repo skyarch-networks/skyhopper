@@ -58,6 +58,9 @@ class Project < ActiveRecord::Base
   end
 
   def register_hosts(zabbix, user)
+    if zabbix.nil?
+      return
+    end
     z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
     # add new hostgroup on zabbix with project code as its name
     if z.get_hostgroup_ids(self.code).empty?
