@@ -94,10 +94,17 @@ class ChefServer::Deployment
 
 
     # XXX: こぴぺをやめてここじゃないとこにちゃんと定義する
-    def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {})
+    def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {}, skip_creation = false)
       prj = Project.for_zabbix_server
       unless prj
         raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Zabbix')
+      end
+      if skip_creation
+        set = AppSetting.first
+        set.fqdn = nil
+        set.save!
+        AppSetting.clear_cache
+        return
       end
       infra = Infrastructure.create_with_ec2_private_key(
         project:       prj,

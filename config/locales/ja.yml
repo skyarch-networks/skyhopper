@@ -81,6 +81,7 @@ ja:
     chef_server:       'Chef Server'
     vpc_id:            'VPC ID'
     subnet_id:         'サブネット ID'
+    skip_zabbix_server: 'Zabbix Serverを作成しない'
 
     msg:
       created:           'アプリケーションは正常に設定されました'

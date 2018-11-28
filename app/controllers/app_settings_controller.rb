@@ -36,6 +36,7 @@ class AppSettingsController < ApplicationController
 
     vpc_id    = settings.delete(:vpc_id)
     subnet_id = settings.delete(:subnet_id)
+    skip_zabbix_server = settings.delete(:skip_zabbix_server)
 
     set_ec2(settings[:aws_region], access_key, secret_access_key)
 
@@ -90,7 +91,7 @@ class AppSettingsController < ApplicationController
       set = AppSetting.get
       stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
-      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value, cf_params)
+      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value, cf_params, skip_zabbix_server)
     end
 
     render text: I18n.t('app_settings.msg.created') and return
