@@ -65,7 +65,7 @@ class AppSettingsController < ApplicationController
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
-    app_setting.fqdn = DummyText
+    app_setting.dummy = true
     app_setting.save!
     AppSetting.clear_cache
 
@@ -127,10 +127,6 @@ class AppSettingsController < ApplicationController
     keypair_name  = set.ec2_private_key.name
     keypair_value = set.ec2_private_key.value
 
-    AppSetting.create!(
-      aws_region: region,
-      log_directory: set.log_directory
-    )
     @locale = I18n.locale
     # おまじない
     # rubocop:disable Lint/Void

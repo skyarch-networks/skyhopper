@@ -81,10 +81,6 @@ class ChefServer::Deployment
 
       chef_server.init_knife_rb
 
-      set = AppSetting.second
-      set.ec2_private_key_id = infra.ec2_private_key_id
-      chef_server.set_server_name(set, infra, prj.name, physical_id)
-
       return chef_server
     rescue => ex
       Rails.logger.error(ex.message)
@@ -121,11 +117,11 @@ class ChefServer::Deployment
       server = self.new(infra, physical_id)
       server.wait_init_ec2
       set = AppSetting.first
-      server.set_server_name(set, infra, prj.name, physical_id)
-
+      set.dummy = false
+      set.save!
 
       zb = ZabbixServer.create(
-        fqdn: set.fqdn,
+        fqdn: server.fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
@@ -232,12 +228,6 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
         break
       end
     end
-  end
-
-  def set_server_name(set, infra, name, physical_id)
-    set.fqdn = infra.instance(physical_id).public_dns_name
-    set.server_name =  name
-    set.save!
   end
 
   private
