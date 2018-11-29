@@ -4,7 +4,10 @@ class AddDummyAndRemoveFqdnAndRemoveServerNameToAppSetting < ActiveRecord::Migra
     sql = <<'EOS'
 UPDATE app_settings
   SET dummy = CASE
+    WHEN aws_region = "This is dummy!" THEN 1
+    WHEN log_directory = "This is dummy!" THEN 1
     WHEN fqdn = "This is dummy!" THEN 1
+    WHEN server_name = "This is dummy!" THEN 1
     ELSE 0
     END;
 EOS
