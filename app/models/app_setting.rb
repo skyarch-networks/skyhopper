@@ -11,8 +11,8 @@ require 'uri'
 class AppSetting < ActiveRecord::Base
   belongs_to :ec2_private_key, dependent: :delete
 
-  validates :log_directory, format: {with: /\A(~?\/)|(#{Regexp.escape(DummyText)}$)/}
-  validates :aws_region, inclusion: {in: AWS::Regions | [DummyText]}
+  validates :log_directory, format: {with: /\A(~?\/)/}
+  validates :aws_region, inclusion: {in: AWS::Regions}
 
   class ValidateError < StandardError; end
 
@@ -39,12 +39,5 @@ class AppSetting < ActiveRecord::Base
     def clear_cache
       Rails.cache.delete('app_setting')
     end
-  end
-
-  # ダミー設定かどうかを返す
-  # kind_of? で String のみを見ないと warning が出る(将来的にはエラー?) https://github.com/rails/rails/pull/18365
-  # @return [Boolean]
-  def dummy?
-    attributes.any?{|_, val| val.kind_of?(String) && val == DummyText}
   end
 end
