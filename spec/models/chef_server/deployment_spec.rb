@@ -50,7 +50,6 @@ describe ChefServer::Deployment, type: :model do
       expect(klass).to receive(:wait_creation).with(stack)
 
       expect(chef_server).to receive(:init_knife_rb).with(no_args)
-      expect(chef_server).to receive(:set_server_name).with(set, infra, project.name, physical_id).and_return(set)
 
       klass.create(
         stack_name,
