@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180816061427) do
+ActiveRecord::Schema.define(version: 20181128083719) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -19,8 +19,7 @@ ActiveRecord::Schema.define(version: 20180816061427) do
     t.datetime "updated_at"
     t.string   "log_directory",      limit: 255, null: false
     t.integer  "ec2_private_key_id", limit: 4
-    t.string   "fqdn",               limit: 255
-    t.string   "server_name",        limit: 255
+    t.boolean  "dummy"
   end
 
   create_table "cf_templates", force: :cascade do |t|

@@ -21,11 +21,6 @@ describe AppSetting, type: :model do
         set.log_directory = '~/hogehoge'
         expect(set.valid?).to be true
       end
-
-      it 'or should be DummyText' do
-        set.log_directory = DummyText
-        expect(set.valid?).to be true
-      end
     end
 
     describe 'column aws_region' do
@@ -81,7 +76,7 @@ describe AppSetting, type: :model do
     context 'when have dummy setting' do
       before do
         klass.delete_all
-        create(:app_setting, aws_region: ::DummyText)
+        create(:app_setting, dummy: true)
       end
 
       subject{klass.clear_cache;klass.set?}
@@ -92,7 +87,7 @@ describe AppSetting, type: :model do
 
   describe '.clear_dummy' do
     before do
-      create(:app_setting, aws_region: ::DummyText)
+      create(:app_setting, dummy: true)
     end
 
     it 'should clear dummy setting' do
@@ -117,7 +112,7 @@ describe AppSetting, type: :model do
 
   describe '#dummy?' do
     context 'when dummy' do
-      subject{build(:app_setting, aws_region: ::DummyText)}
+      subject{build(:app_setting, dummy: true)}
 
       it 'should return true' do
         expect(subject.dummy?).to be true
