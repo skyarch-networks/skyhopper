@@ -40,9 +40,9 @@
     "pdfmake": "^0.1.37",
     "query-string": "^2.4.1",
     "serverspec-generator": "^1.0.0",
-    "vue": "~1.0.24",
+    "vue": "~2.5.17",
     "vue-ace": "0.0.1",
-    "vue-router": "~0.7.13"
+    "vue-router": "~3.0.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

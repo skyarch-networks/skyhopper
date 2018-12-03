@@ -31,6 +31,7 @@ module.exports = Vue.extend({
       pages: 10,
       pageNumber: 0,
       filteredLength: null,
+      tbl_data: [],
     };
   },
 
@@ -56,7 +57,8 @@ module.exports = Vue.extend({
       this.picked = item;
       if (this.multiSelect) {
         if (this.selections.includes(item)) {
-          this.selections.$remove(item);
+          var index = this.selections.indexOf(item);
+          this.selections.splice(index,1);
         } else {
           this.selections.push(item);
         }
@@ -91,6 +93,34 @@ module.exports = Vue.extend({
 
     },
 
+    coltxt_key: function(key,index){
+      return wrap(key,index);
+    },
+
+    table_data: function(filterKey,sortKey,sortOrder){
+      var data_tbl = this.tbl_data.filter(function (data) {
+        if(filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).indexOf(filterKey);
+        }
+      });
+      Vue.set(this, 'filteredLength', data_tbl.length);
+      data_tbl = data_tbl.sort(function (data) {
+          return data[sortKey];
+      });
+      if(sortOrder === -1){
+        data_tbl.reverse();
+      }
+      var index = this.pageNumber * this.pages;
+      return data_tbl.slice(index, index + this.pages);
+    },
+
+    table_text: function(value,key,index,lang){
+       return listen(value,key,index,lang);
+    },
+
+
     load_ajax: function (request) {
       var self = this;
       console.log(request);
@@ -99,6 +129,7 @@ module.exports = Vue.extend({
         url: request,
         success: function (data) {
           self.data = data;
+          self.tbl_data = data;
           this.pages = data.length;
           self.close_loading();
         }
@@ -121,13 +152,15 @@ module.exports = Vue.extend({
       return (this.pageNumber === 0);
     },
     isEndPage: function(){
-      return ((this.pageNumber + 1) * this.pages >= this.data.length);
+      return ((this.pageNumber + 1) * this.pages >= this.tbl_data.length);
     },
   },
-  ready: function (){
-    var self = this;
-    console.log(self.url);
+  mounted: function (){
+    this.$nextTick(function () {
+      var self = this;
+      console.log(self.url);
       self.load_ajax(self.url);
+    });
   },
 
   filters:{
