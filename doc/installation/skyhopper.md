@@ -212,16 +212,6 @@ $ yarn
 $ cd ..
 ```
 
-### TypeScript のコンパイル
-
-```sh
-$ npm i -g gulp
-$ cd frontend/
-$ gulp type  //TSD to typings
-$ gulp ts
-$ cd ..
-```
-
 ### フォントのダウンロードとビルド
 
 使用するフォントの詳細: <https://github.com/m13253/kaigen-fonts>
