@@ -44,7 +44,6 @@ vendor/knife
 /secrets/
 
 /frontend/node_modules/
-/frontend/typings/
 /frontend/fonts/
 
 # MAC system files
