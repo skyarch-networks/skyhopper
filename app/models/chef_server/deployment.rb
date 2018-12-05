@@ -25,6 +25,7 @@ class ChefServer::Deployment
     download_chef:  {percentage:  40, status: :in_progress},
     install_chef:   {percentage:  60, status: :in_progress},
     setting_chef:   {percentage:  80, status: :in_progress},
+    wait_for_zabbix_created: {percentage:  90, status: :in_progress},
     complete:       {percentage: 100, status: :complete},
     error:          {percentage: nil, status: :error},
   }.freeze
@@ -57,14 +58,14 @@ class ChefServer::Deployment
       )
 
 
-      params.merge!(
+      made_params = params.deep_dup.merge(
         InstanceType:      't2.small',
         UserPemID:         UserPemID,
         OrgPemID:          OrgPemID,
         TrustedCertsPemID: TrustedCertsPemID,
       )
 
-      stack = create_stack(infra, 'Chef Server', params: params)
+      stack = create_stack(infra, 'Chef Server', params: made_params)
 
       __yield :init_ec2, &block
       stack.wait_resource_status('EC2Instance',       'CREATE_COMPLETE')
@@ -90,17 +91,10 @@ class ChefServer::Deployment
 
 
     # XXX: こぴぺをやめてここじゃないとこにちゃんと定義する
-    def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {}, skip_creation = false)
+    def create_zabbix(stack_name, region, keypair_name, keypair_value, params = {})
       prj = Project.for_zabbix_server
       unless prj
         raise SystemServerError, I18n.t('app_settings.msg.db_seed_not_found', server: 'Zabbix')
-      end
-      if skip_creation
-        set = AppSetting.first
-        set.fqdn = nil
-        set.save!
-        AppSetting.clear_cache
-        return
       end
       infra = Infrastructure.create_with_ec2_private_key(
         project:       prj,
@@ -116,9 +110,6 @@ class ChefServer::Deployment
       physical_id = stack.instances.first.physical_resource_id
       server = self.new(infra, physical_id)
       server.wait_init_ec2
-      set = AppSetting.first
-      set.dummy = false
-      set.save!
 
       zb = ZabbixServer.create(
         fqdn: server.fqdn,
@@ -131,16 +122,15 @@ class ChefServer::Deployment
       # Save newly created zabbix server id to zabbix infra.
       prj.zabbix_server_id = zb.id
       prj.save!
-
-      AppSetting.clear_cache
     rescue => ex
       Rails.logger.error(ex)
+      raise ex
     end
 
     private
 
     def create_stack(infra, name, params: {}, template: ERB::Builder.new('chef_server').build)
-      params[:InstanceName] = name
+      made_params = params.deep_dup.merge({InstanceName: name})
 
       cf_template = CfTemplate.new(
         infrastructure_id: infra.id,
@@ -149,7 +139,7 @@ class ChefServer::Deployment
         value:             template,
         format:            "JSON"
       )
-      cf_template.create_cfparams_set(infra, params)
+      cf_template.create_cfparams_set(infra, made_params)
       cf_template.update_cfparams
       cf_template.save!
 

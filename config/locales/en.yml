@@ -581,6 +581,7 @@ en:
       download_chef:  'Downloading Chef Server packages...'
       install_chef:   'Installing Chef Server...'
       setting_chef:   'Setting up Chef Server...'
+      wait_for_zabbix_created: 'Waiting for completion of Zabbix Server creation...'
       complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
       confirm_start:  'Do you want to start Chef Server?'
       confirm_stop:   'Do you want to stop Chef Server?'
