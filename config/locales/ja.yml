@@ -32,6 +32,7 @@ ja:
     please_select: '選択してください'
     not_set:       '設定なし'
     selected:      '選択されています'
+    none:           'なし'
     btn:
       architecture:    'インフラ管理'
       settings:        '設定'
@@ -80,6 +81,7 @@ ja:
     chef_server:       'Chef Server'
     vpc_id:            'VPC ID'
     subnet_id:         'サブネット ID'
+    skip_zabbix_server: 'Zabbix Serverを作成しない'
 
     msg:
       created:           'アプリケーションは正常に設定されました'
@@ -577,6 +579,7 @@ ja:
       download_chef:  'Chef Server のパッケージをダウンロードしています...'
       install_chef:   'Chef Server をインストールしています...'
       setting_chef:   'Chef Server を設定しています...'
+      wait_for_zabbix_created: 'Zabbix Server の作成完了を待っています...'
       complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
       confirm_start:  'Chef Server を起動しますか?'
       confirm_stop:   'Chef Server を停止しますか?'

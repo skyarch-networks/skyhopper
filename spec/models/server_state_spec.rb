@@ -45,6 +45,16 @@ describe ServerState, type: :model do
       subject{ServerState.new('invalid as kind')}
       it {expect{subject}.to raise_error(ArgumentError)}
     end
+
+    context 'when infra not found' do
+      subject{ServerState.new('zabbix')}
+      before do
+        zabbix_server = Project.for_zabbix_server
+        zabbix_server.infrastructures = []
+        zabbix_server.save!
+      end
+      it {expect{subject}.to raise_error(ServerState::InfrastructureNotFound)}
+    end
   end
 
   let(:chef){ServerState.new('chef')}

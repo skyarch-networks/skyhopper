@@ -8,6 +8,11 @@
 
 class ServerState
   class NotRunning < StandardError; end
+  class InfrastructureNotFound < StandardError;
+    def status_code
+      404
+    end
+  end
 
   def initialize(kind)
     case kind
@@ -18,6 +23,7 @@ class ServerState
     else
       raise ArgumentError, "#{kind} is invalid as ServerStatus kind"
     end
+    raise InfrastructureNotFound if infra.nil?
 
     resources = infra.resources_or_create
     physical_id = resources.first.physical_id
