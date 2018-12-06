@@ -48,6 +48,9 @@ class Project < ActiveRecord::Base
   end
 
   def detach_zabbix
+    if self.zabbix_server_id.nil?
+      return
+    end
     s = ZabbixServer.find(self.zabbix_server_id)
     # delete associated host and user group from Zabbix
     z = Zabbix.new(s.fqdn, s.username, s.password)
@@ -58,6 +61,9 @@ class Project < ActiveRecord::Base
   end
 
   def register_hosts(zabbix, user)
+    if zabbix.nil?
+      return
+    end
     z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
     # add new hostgroup on zabbix with project code as its name
     if z.get_hostgroup_ids(self.code).empty?

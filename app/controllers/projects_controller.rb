@@ -27,8 +27,6 @@ class ProjectsController < ApplicationController
     authorize(@project || Project.new(client_id: client_id))
   end
 
-  before_action :with_zabbix, only: [:destroy, :create, :new]
-
   # GET /projects
   # GET /projects.json
   def index
@@ -82,11 +80,11 @@ class ProjectsController < ApplicationController
     }
 
     zid = project_params[:zabbix_server_id]
-    if zid.empty?
-      flash[:alert] = t('projects.msg.zabbix_not_set')
-      on_error.() and return
+    @zabbix = nil
+    if zid.present?
+      with_zabbix
+      @zabbix = ZabbixServer.find(zid)
     end
-    @zabbix = ZabbixServer.find(zid)
 
     @project = Project.new(project_params)
     unless @project.save
@@ -112,12 +110,11 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1.json
   def update
     zid = project_params[:zabbix_server_id]
-    if zid.empty?
-      flash[:alert] = t('projects.msg.zabbix_not_set')
-      redirect_to edit_project_path and return
+    @zabbix = nil
+    if zid.present?
+      with_zabbix
+      @zabbix = ZabbixServer.find(zid)
     end
-
-    @zabbix = ZabbixServer.find(zid)
     if @project.update(project_params)
       @project.register_hosts(@zabbix, current_user)
       redirect_to projects_path(client_id: @project.client_id),
@@ -131,6 +128,9 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
+    if @project.zabbix_server_id.present?
+      with_zabbix
+    end
     go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
     begin
       @project.destroy!
