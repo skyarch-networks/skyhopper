@@ -57,13 +57,13 @@ namespace :release do
       puts 'bower install'
     end
 
-    npm_i = diff_files.include?('frontend/package.json')
+    yarn = diff_files.include?('frontend/package.json')
     gulp_ts = !!diff_files.find{|x| %r!^frontend/.+\.ts!.match(x)}
     gulp_tsd = !!diff_files.include?('frontend/tsd.json')
 
-    if npm_i || gulp_ts || gulp_tsd
+    if yarn || gulp_ts || gulp_tsd
       puts 'cd frontend/'
-      puts 'npm install' if npm_i
+      puts 'yarn' if yarn
       puts 'gulp ts' if gulp_ts
       puts 'gulp tsd' if gulp_tsd
       puts 'cd ..'
