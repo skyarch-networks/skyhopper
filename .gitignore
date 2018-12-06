@@ -43,9 +43,7 @@ vendor/knife
 /.yardoc/
 /secrets/
 
-/frontend/dest/
 /frontend/node_modules/
-/frontend/typings/
 /frontend/fonts/
 
 # MAC system files

@@ -45,13 +45,5 @@
     "vue-router": "~0.7.13"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-tsconfig-files": "icholy/gulp-tsconfig-files",
-    "gulp-tslint": "^3.2.0",
-    "gulp-typescript": "^2.9.2",
-    "gulp-typings": "^2.0.4",
-    "tslint": "^2.4.2",
-    "typescript": "^1.6.2",
-    "typings": "^2.1.0"
   }
 }

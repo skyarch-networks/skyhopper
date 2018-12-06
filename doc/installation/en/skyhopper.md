@@ -212,16 +212,6 @@ $ yarn
 $ cd ..
 ```
 
-### Compiling TypeScript
-
-```sh
-$ npm i -g gulp
-$ cd frontend/
-$ gulp type  // TSD to typings
-$ gulp ts
-$ cd ..
-```
-
 ### Font download and build
 
 Details of the font to use: <https://github.com/m13253/kaigen-fonts>
