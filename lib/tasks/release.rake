@@ -53,19 +53,11 @@ namespace :release do
       puts 'bundle exec rake db:migrate'
     end
 
-    if diff_files.include?('bower.json')
-      puts 'bower install'
-    end
+    yarn = diff_files.include?('frontend/package.json')
 
-    npm_i = diff_files.include?('frontend/package.json')
-    gulp_ts = !!diff_files.find{|x| %r!^frontend/.+\.ts!.match(x)}
-    gulp_tsd = !!diff_files.include?('frontend/tsd.json')
-
-    if npm_i || gulp_ts || gulp_tsd
+    if yarn
       puts 'cd frontend/'
-      puts 'npm install' if npm_i
-      puts 'gulp ts' if gulp_ts
-      puts 'gulp tsd' if gulp_tsd
+      puts 'yarn' if yarn
       puts 'cd ..'
     end
 
