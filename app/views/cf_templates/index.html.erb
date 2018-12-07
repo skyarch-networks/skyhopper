@@ -7,7 +7,7 @@
 
 <script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<div id="indexElement" v-el:node>
+<div id="indexElement" ref="node">
 
   <div v-cloak>
     <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>

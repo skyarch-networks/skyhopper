@@ -97,25 +97,6 @@ module.exports = Vue.extend({
       return wrap(key,index);
     },
 
-    table_data: function(filterKey,sortKey,sortOrder){
-      var data_tbl = this.tbl_data.filter(function (data) {
-        if(filterKey === ""){
-          return true
-        } else {
-          return JSON.stringify(data).indexOf(filterKey);
-        }
-      });
-      Vue.set(this, 'filteredLength', data_tbl.length);
-      data_tbl = data_tbl.sort(function (data) {
-          return data[sortKey];
-      });
-      if(sortOrder === -1){
-        data_tbl.reverse();
-      }
-      var index = this.pageNumber * this.pages;
-      return data_tbl.slice(index, index + this.pages);
-    },
-
     table_text: function(value,key,index,lang){
        return listen(value,key,index,lang);
     },
@@ -128,7 +109,6 @@ module.exports = Vue.extend({
         cache: false,
         url: request,
         success: function (data) {
-          self.data = data;
           self.tbl_data = data;
           this.pages = data.length;
           self.close_loading();
@@ -140,10 +120,10 @@ module.exports = Vue.extend({
     close_loading: function(){
       var self = this;
       self.$parent.loading = false;
-      if(self.data.length === 0){
+      if(self.tbl_data.length === 0){
         self.$parent.is_empty = true;
       }
-      self.filteredLength = self.data.length;
+      self.filteredLength = self.tbl_data.length;
     }
   },
 
@@ -153,6 +133,28 @@ module.exports = Vue.extend({
     },
     isEndPage: function(){
       return ((this.pageNumber + 1) * this.pages >= this.tbl_data.length);
+    },
+    table_data: function(){
+      var self = this;
+      var data_tbl = self.tbl_data.filter(function (data) {
+        if(self.filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+        }
+      });
+      Vue.set(self, 'filteredLength', data_tbl.length);
+      data_tbl = data_tbl.sort(function (data) {
+        return data[self.sortKey];
+      });
+      if(self.sortOrders[self.sortKey] === -1){
+        data_tbl.reverse();
+      }
+      var index = self.pageNumber * self.pages;
+      return data_tbl.slice(index, index + self.pages);
+    },
+    max_pages: function(){
+      return Math.ceil(this.filteredLength / this.pages);
     },
   },
   mounted: function (){

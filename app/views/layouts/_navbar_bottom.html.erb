@@ -19,7 +19,7 @@
             <span v-show="state">
               <bootstrap-tooltip :title="tooltip">
                 <template slot="content">
-                  <button class="btn btn-xs" :disabled="is_inprogress" @click="toggle()" :class="[btn_class]">
+                  <button class="btn btn-xs" :disabled="is_inprogress" @click="toggle()" :class="btn_class">
                     <span :class="{blinking: is_inprogress}" class="glyphicon glyphicon-off"></span>&nbsp;
                     <span v-text="status_text"></span>
                   </button>

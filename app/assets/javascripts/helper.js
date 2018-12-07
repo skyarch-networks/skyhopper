@@ -14,7 +14,7 @@ Vue.component('bootstrap-tooltip', {
         },
     },
     template: "\n<span data-toggle=\"tooltip\" :data-placement=\"placement\" :data-original-title=\"title\">\n  <content class=\"content\">\n    <slot name=\"content\"></slot>\n  </content>\n</span>",
-    compiled: function () {
+    mounted: function () {
         console.log(this);
         $(this.$el).tooltip();
     },
