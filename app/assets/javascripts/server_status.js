@@ -122,6 +122,7 @@ function Build(kind) {
     var el = document.createElement('div');
     var parent = document.querySelector(App.TEMPLATE_ID).parentElement;
     parent.appendChild(el);
+    parent.appendChild(document.createTextNode('\n'));
     var vm = new App(new Server(kind), el);
 }
 function Available() {
