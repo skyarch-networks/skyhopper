@@ -265,7 +265,7 @@
   <%# Runlist table %>
   <div class="col-xs-12 col-sm-10">
     <h5 class="page-header">Runlist</h5>
-    <table class="table table-condensed">
+    <table v-if="!ec2.chef_server_not_running" class="table table-condensed">
       <thead>
         <tr>
           <th>type</th>
@@ -284,6 +284,7 @@
         </tr>
       </tbody>
     </table>
+    <p v-if="ec2.chef_server_not_running" v-text="ec2.runlist_error_message"></p>
   </div>
 
   <%# Buttons %>

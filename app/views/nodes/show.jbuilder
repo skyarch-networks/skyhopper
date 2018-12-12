@@ -13,6 +13,7 @@ json.before_bootstrap @before_bootstrap
 json.chef_server_not_running @chef_server_not_running
 
 json.runlist       @runlist
+json.runlist_error_message       @runlist_error_message
 json.selected_dish @selected_dish
 json.dishes        @dishes
 json.attribute_set @attribute_set

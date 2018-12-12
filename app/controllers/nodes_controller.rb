@@ -98,6 +98,7 @@ class NodesController < ApplicationController
     @chef_server_not_running = false
     if !chef_server.is_running?
       @chef_server_not_running = true
+      @runlist_error_message = I18n.t('chef_servers.msg.not_running')
       return
     end
 
