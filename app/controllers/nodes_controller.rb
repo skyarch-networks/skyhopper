@@ -23,6 +23,7 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
+  before_action :check_chef_server_running, only: [:edit, :recipes, :update, :edit_attributes, :update_attributes, :cook]
 
 
   # GET /nodes/:id/run_bootstrap
@@ -465,5 +466,10 @@ class NodesController < ApplicationController
 
   def set_infra
     @infra = Infrastructure.find(params.require(:infra_id))
+  end
+
+  def check_chef_server_running
+    chef_server = ServerState.new('chef')
+    chef_server.should_be_running!(I18n.t('chef_servers.msg.not_running'))
   end
 end
