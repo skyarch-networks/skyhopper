@@ -80,14 +80,27 @@ class NodesController < ApplicationController
       return
     end
 
-    chef_server = ServerState.new('chef')
+    resource = @infra.resource(physical_id)
 
-    if @chef_error = !chef_server.is_running?
-      @chef_msg = t 'chef_servers.msg.not_running'
+    @info = {}
+    status = resource.status
+    @info[:cook_status]       = status.cook
+    @info[:servertest_status] = status.servertest
+    @info[:update_status]     = status.yum
+
+    @dishes = Dish.valid_dishes(@infra.project_id)
+
+    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
+
+    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
+
+    chef_server = ServerState.new('chef')
+    @chef_server_not_running = false
+    if !chef_server.is_running?
+      @chef_server_not_running = true
       return
     end
 
-    resource = @infra.resource(physical_id)
     n = Node.new(physical_id)
     begin
       @runlist       = n.details["run_list"]
@@ -101,18 +114,6 @@ class NodesController < ApplicationController
       @chef_msg = ex.message
       return
     end
-
-    @info = {}
-    status = resource.status
-    @info[:cook_status]       = status.cook
-    @info[:servertest_status] = status.servertest
-    @info[:update_status]     = status.yum
-
-    @dishes = Dish.valid_dishes(@infra.project_id)
-
-    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
-
-    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
 
     @attribute_set = n.attribute_set?
   end

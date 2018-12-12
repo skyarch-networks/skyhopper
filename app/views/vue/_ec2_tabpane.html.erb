@@ -293,7 +293,7 @@
         <button @click="cook({whyrun: true})" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook_in_why_run_mode'%>
         </button>
-        <button type="button" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" :disabled="ec2.chef_server_not_running || !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -301,8 +301,8 @@
           <li><a @click="cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
         </ul>
       </div>
-      <button @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
-      <button @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
+      <button :disabled="ec2.chef_server_not_running" @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
+      <button :disabled="ec2.chef_server_not_running" @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.chef_server_not_running && !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
       <div class="dropup" style="display: inline-block" v-if="!ec2.platform">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum

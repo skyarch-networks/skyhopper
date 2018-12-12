@@ -10,6 +10,7 @@ json.availability_zone @instance_summary[:availability_zone]
 json.chef_error @chef_error
 json.chef_msg   @chef_msg
 json.before_bootstrap @before_bootstrap
+json.chef_server_not_running @chef_server_not_running
 
 json.runlist       @runlist
 json.selected_dish @selected_dish
