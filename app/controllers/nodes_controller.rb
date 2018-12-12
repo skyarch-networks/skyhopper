@@ -243,7 +243,11 @@ class NodesController < ApplicationController
   # [infra_id] 認証に必要
   def edit_attributes
     physical_id = params.require(:id)
-    fqdn = @infra.project.zabbix_server.fqdn
+    begin
+      fqdn = @infra.project.zabbix_server.fqdn
+    rescue NoMethodError
+      fqdn = ''
+    end
     node = Node.new(physical_id)
 
     @attrs = node.enabled_attributes.dup.select do |_key, value|
