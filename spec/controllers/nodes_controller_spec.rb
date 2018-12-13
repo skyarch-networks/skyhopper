@@ -13,6 +13,10 @@ describe NodesController, type: :controller do
   let(:infra){create(:infrastructure)}
   let(:physical_id){attributes_for(:resource)[:physical_id]}
 
+  before do
+    allow(controller).to receive(:check_chef_server_running).and_return(nil)
+  end
+
   describe '#run_bootstrap' do
     let(:req){get :run_bootstrap, id: physical_id, infra_id: infra.id}
     let(:fqdn){'sky.example.com'}
