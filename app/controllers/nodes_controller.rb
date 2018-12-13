@@ -23,7 +23,7 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
-  before_action :check_chef_server_running, only: [:edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
+  before_action :check_chef_server_running, only: [:run_bootstrap, :edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
 
 
   # GET /nodes/:id/run_bootstrap
