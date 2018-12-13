@@ -23,7 +23,7 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
-  before_action :check_chef_server_running, only: [:edit, :recipes, :update, :edit_attributes, :update_attributes, :cook]
+  before_action :check_chef_server_running, only: [:edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
 
 
   # GET /nodes/:id/run_bootstrap
@@ -96,10 +96,9 @@ class NodesController < ApplicationController
     @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
 
     chef_server = ServerState.new('chef')
-    @chef_server_not_running = false
-    if !chef_server.is_running?
-      @chef_server_not_running = true
-      @runlist_error_message = I18n.t('chef_servers.msg.not_running')
+    if @chef_error = !chef_server.is_running?
+      @chef_msg = t 'chef_servers.msg.not_running'
+      @runlist_error = true
       return
     end
 
@@ -110,10 +109,12 @@ class NodesController < ApplicationController
     rescue ChefAPI::Error::NotFound
       # in many cases, before bootstrap
       @before_bootstrap = true
+      @runlist_error = true
       return
     rescue ChefAPI::Error => ex
       @chef_error = true
       @chef_msg = ex.message
+      @runlist_error = true
       return
     end
 
