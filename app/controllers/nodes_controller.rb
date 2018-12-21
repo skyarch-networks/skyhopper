@@ -23,6 +23,7 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
+  before_action :check_chef_server_running, only: [:run_bootstrap, :edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
 
 
   # GET /nodes/:id/run_bootstrap
@@ -80,27 +81,7 @@ class NodesController < ApplicationController
       return
     end
 
-    chef_server = ServerState.new('chef')
-
-    if @chef_error = !chef_server.is_running?
-      @chef_msg = t 'chef_servers.msg.not_running'
-      return
-    end
-
     resource = @infra.resource(physical_id)
-    n = Node.new(physical_id)
-    begin
-      @runlist       = n.details["run_list"]
-      @selected_dish = resource.dish
-    rescue ChefAPI::Error::NotFound
-      # in many cases, before bootstrap
-      @before_bootstrap = true
-      return
-    rescue ChefAPI::Error => ex
-      @chef_error = true
-      @chef_msg = ex.message
-      return
-    end
 
     @info = {}
     status = resource.status
@@ -113,6 +94,29 @@ class NodesController < ApplicationController
     @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
     @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
+
+    chef_server = ServerState.new('chef')
+    if @chef_error = !chef_server.is_running?
+      @chef_msg = t 'chef_servers.msg.not_running'
+      @runlist_error = true
+      return
+    end
+
+    n = Node.new(physical_id)
+    begin
+      @runlist       = n.details["run_list"]
+      @selected_dish = resource.dish
+    rescue ChefAPI::Error::NotFound
+      # in many cases, before bootstrap
+      @before_bootstrap = true
+      @runlist_error = true
+      return
+    rescue ChefAPI::Error => ex
+      @chef_error = true
+      @chef_msg = ex.message
+      @runlist_error = true
+      return
+    end
 
     @attribute_set = n.attribute_set?
   end
@@ -463,5 +467,10 @@ class NodesController < ApplicationController
 
   def set_infra
     @infra = Infrastructure.find(params.require(:infra_id))
+  end
+
+  def check_chef_server_running
+    chef_server = ServerState.new('chef')
+    chef_server.should_be_running!(I18n.t('chef_servers.msg.not_running'))
   end
 end

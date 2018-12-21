@@ -12,6 +12,7 @@ json.chef_msg   @chef_msg
 json.before_bootstrap @before_bootstrap
 
 json.runlist       @runlist
+json.runlist_error       @runlist_error
 json.selected_dish @selected_dish
 json.dishes        @dishes
 json.attribute_set @attribute_set

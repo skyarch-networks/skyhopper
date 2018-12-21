@@ -179,6 +179,7 @@ en:
     in_progress:        'In progress...'
     database:           'Database'
     runlist:            'Runlist'
+    failed_to_get_runlist: 'Failed to get Runlist'
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'

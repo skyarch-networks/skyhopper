@@ -235,7 +235,7 @@
 </div>
 
 <%# show-node-infomation %>
-<div v-if="!ec2.chef_error && !ec2.before_bootstrap && running">
+<div v-if="running">
   <h4 class="page-header col-xs-12"><%= t 'ec2_instances.settings' %></h4>
 
   <%# Status labels %>
@@ -265,7 +265,7 @@
   <%# Runlist table %>
   <div class="col-xs-12 col-sm-10">
     <h5 class="page-header">Runlist</h5>
-    <table class="table table-condensed">
+    <table v-if="!ec2.runlist_error" class="table table-condensed">
       <thead>
         <tr>
           <th>type</th>
@@ -284,6 +284,7 @@
         </tr>
       </tbody>
     </table>
+    <p v-if="ec2.runlist_error"><%= t('infrastructures.failed_to_get_runlist') %></p>
   </div>
 
   <%# Buttons %>
@@ -293,7 +294,7 @@
         <button @click="cook({whyrun: true})" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook_in_why_run_mode'%>
         </button>
-        <button type="button" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" :disabled="ec2.chef_error || ec2.before_bootstrap || !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -301,8 +302,8 @@
           <li><a @click="cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
         </ul>
       </div>
-      <button @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
-      <button @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
+      <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
+      <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.chef_error  && !ec2.before_bootstrap && !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
       <div class="dropup" style="display: inline-block" v-if="!ec2.platform">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
