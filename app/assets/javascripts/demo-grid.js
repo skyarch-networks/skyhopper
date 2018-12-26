@@ -144,6 +144,7 @@ module.exports = Vue.extend({
           return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
         }
       });
+      self.$parent.gridData = data_tbl;
       Vue.set(self, 'filteredLength', data_tbl.length);
       data_tbl = data_tbl.sort(function (data) {
         return data[self.sortKey];
