@@ -64,7 +64,8 @@
         index: 'cf_templates',
         picked: {
           button_destroy_cft: null,
-          button_edit_cft: null
+          button_edit_cft: null,
+          id: null
         },
         multiSelect: false,
         selections: [],
@@ -74,16 +75,16 @@
       },
       computed: {
         can_export: function () {
-          return (!this.multiSelect && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
+          return (this.multiSelect === false && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
         },
-      },
-      methods: {
         can_edit: function () {
           return (!this.multiSelect && this.picked.button_edit_cft !== null);
         },
         can_delete: function () {
           return (!this.multiSelect && this.picked.button_destroy_cft !== null);
         },
+      },
+      methods: {
         delete_entry: function () {
           var self = this;
           modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
@@ -177,7 +178,11 @@
           this.loading = true;
           this.$children[0].load_ajax(this.url, this.empty);
           this.selections = [];
-          this.picked = {};
+          this.picked = {
+            button_destroy_cft: null,
+            button_edit_cft: null,
+            id: null
+          };
         },
       },
 

@@ -54,7 +54,7 @@ module.exports = Vue.extend({
       this.pageNumber++;
     },
     select_entry: function(item)  {
-      this.picked = item;
+      this.$parent.picked = item;
       if (this.multiSelect) {
         if (this.selections.includes(item)) {
           var index = this.selections.indexOf(item);
@@ -63,6 +63,7 @@ module.exports = Vue.extend({
           this.selections.push(item);
         }
       }
+      this.$emit('can_edit');
     },
     show_entry: function(item){
       var self = this;
