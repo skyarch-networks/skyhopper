@@ -46,10 +46,10 @@ if ($('#indexElement').length) {
     },
     methods: {
       can_edit: function () {
-        return this.picked.edit_servertest_path === null ? true : false;
+        return this.picked.edit_servertest_path === null;
       },
       can_delete: function () {
-        return (this.picked.servertest_path === null) ? true : false;
+        return this.picked.servertest_path === null;
       },
       delete_entry: function () {
         var self = this;
@@ -69,7 +69,10 @@ if ($('#indexElement').length) {
       reload: function () {
         this.loading = true;
         this.$children[0].load_ajax(this.url);
-        this.picked = {};
+        this.picked = {
+          servertest_path: null,
+          edit_servertest_path: null
+        };
       },
       show_servertest: function (servertest_id) {
         $.ajax({
@@ -114,10 +117,12 @@ if ($('#indexElement').length) {
         return (awspec.value && awspec.fname);
       },
     },
-    ready: function () {
-      var self = this;
-      self.loading = false;
-    }
+    mounted: function () {
+      this.$nextTick(function () {
+        var self = this;
+        self.loading = false;
+      });
+    },
   });
 }
 
