@@ -46,11 +46,11 @@
     methods:  {
       can_delete: function() {
         if (this.picked.delete_zabbix_server_path)
-          return this.picked.delete_zabbix_server_path ? true : false;
+          return !!this.picked.delete_zabbix_server_path;
       },
       can_edit: function() {
         if (this.picked.edit_zabbix_server_url)
-          return this.picked.edit_zabbix_server_url ? true : false;
+          return !!this.picked.edit_zabbix_server_url;
       },
       delete_entry: function()  {
         var self = this;

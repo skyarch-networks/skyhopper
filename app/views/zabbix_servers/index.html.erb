@@ -15,7 +15,7 @@
     <div class="col-md-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
     <div class="pull-right">
-      <a class="btn btn-danger btn-sm disabled"
+      <a class="btn btn-danger btn-sm"
       @click="delete_entry()"
       :class="{disabled: !can_delete()}">
           <%= fa 'times' %>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="pull-right">
-      <a class="btn btn-default btn-sm disabled"
+      <a class="btn btn-default btn-sm"
           v-bind:href="picked.edit_zabbix_server_url"
           :class="{disabled: !can_edit()}">
           <span class='glyphicon glyphicon-edit'></span>
