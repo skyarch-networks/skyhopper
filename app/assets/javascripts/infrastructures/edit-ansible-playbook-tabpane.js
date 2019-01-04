@@ -21,13 +21,14 @@ module.exports = Vue.extend({
     playbook_roles:   null,
     selected_playbook_roles:   null,
     roles:             null,
+    extra_vers:       null,
   };},
 
   methods: {
     update: function () {
       var self = this;
       self.loading = true;
-      self.ec2.update_ansible_playbook(self.playbook_roles)
+      self.ec2.update_ansible_playbook(self.playbook_roles, self.extra_vers)
         .done(alert_success(self.show_ec2))
         .fail(alert_danger(self.show_ec2));
     },
@@ -90,6 +91,7 @@ module.exports = Vue.extend({
     self.ec2.edit_ansible_playbook().done(function (data) {
       self.playbook_roles   = data.playbook_roles;
       self.roles     = data.roles;
+      self.extra_vers     = data.extra_vers;
       self.$parent.loading = false;
     }).fail(alert_danger(self.show_ec2));
   }

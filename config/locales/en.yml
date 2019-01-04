@@ -312,6 +312,7 @@ en:
     playbook:     'playbook'
     ansible_role:        'Ansible role'
     playbook_roles:     'playbook roles'
+    extra_vers:          'extra-vers'
     statuses:    'Statuses'
     latest_cook_status:       'Latest Cook Status'
     latest_update_status:     'Latest yum command Status'

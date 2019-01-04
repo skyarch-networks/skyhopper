@@ -36,6 +36,14 @@
   </div>
 </div>
 
+<%# extra_vers %>
+<div class="col-md-12 col-sm-12">
+  <h5 class="page-header"><%= t 'nodes.extra_vers' %></h5>
+  <div class="form-group">
+    <input type="text" v-model="extra_vers" class="form-control" />
+  </div>
+</div>
+
 <%# Buttons %>
 <div class="col-md-12 col-sm-12">
   <div v-if="!loading" class="form-actions-top">

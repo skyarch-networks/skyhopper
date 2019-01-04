@@ -362,17 +362,19 @@ class NodesController < ApplicationController
     @roles = [
       'aaa',
       'bbb',
-      'bbb/ccc'
+      'bbb/ccc',
     ]
+    @extra_vers = '{}';
   end
 
   # PUT /nodes/:id/update_ansible_playbook
   def update_ansible_playbook
     physical_id = params.require(:id)
     playbook_roles     = params[:playbook_roles] || []
+    extra_vers     = params[:extra_vers] || '{}'
 
     # TODO 今はダミー、後で実装する
-    ret = { status: true}
+    ret = { status: true }
 
     if ret[:status]
       render text: I18n.t('nodes.msg.playbook_updated') and return
