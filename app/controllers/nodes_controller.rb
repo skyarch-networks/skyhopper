@@ -86,6 +86,7 @@ class NodesController < ApplicationController
     @info = {}
     status = resource.status
     @info[:cook_status]       = status.cook
+    @info[:ansible_status]       = status.ansible
     @info[:servertest_status] = status.servertest
     @info[:update_status]     = status.yum
 
@@ -357,14 +358,17 @@ class NodesController < ApplicationController
 
   # GET /nodes/:id/edit_ansible_playbook
   def edit_ansible_playbook
+    physical_id = params.require(:id)
+    resource = @infra.resource(physical_id)
+
+    @playbook_roles = JSON.parse(resource.playbook_roles) || []
     # TODO 今はダミー、後で実装する
-    @playbook_roles = []
     @roles = [
       'aaa',
       'bbb',
       'bbb/ccc',
     ]
-    @extra_vers = '{}';
+    @extra_vers = resource.extra_vers || ''
   end
 
   # PUT /nodes/:id/update_ansible_playbook
@@ -373,8 +377,7 @@ class NodesController < ApplicationController
     playbook_roles     = params[:playbook_roles] || []
     extra_vers     = params[:extra_vers] || '{}'
 
-    # TODO 今はダミー、後で実装する
-    ret = { status: true }
+    ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vers: extra_vers)
 
     if ret[:status]
       render text: I18n.t('nodes.msg.playbook_updated') and return
@@ -453,6 +456,27 @@ class NodesController < ApplicationController
     if r.dish_id # if resource has dish
       ServertestJob.perform_now(physical_id, @infra.id, current_user.id)
     end
+  end
+
+  def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vers: nil)
+    infra_logger_success("Updating playbook for #{physical_id} is started.")
+
+    begin
+      r = infrastructure.resource(physical_id)
+      r.playbook_roles = playbook_roles.to_json
+      r.extra_vers = extra_vers
+      r.save!
+    rescue => ex
+      infra_logger_fail("Updating playbook for #{physical_id} is failed. \n #{ex.message}")
+      return {status: false, message: ex.message}
+    end
+
+    # change cookstatus to unexected
+    r.status.ansible.un_executed!
+    r.status.servertest.un_executed!
+
+    infra_logger_success("Updating playbook for #{physical_id} is successfully updated.")
+    return {status: true, message: nil}
   end
 
   # TODO: DRY

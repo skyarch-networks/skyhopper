@@ -315,6 +315,7 @@ en:
     extra_vers:          'extra-vers'
     statuses:    'Statuses'
     latest_cook_status:       'Latest Cook Status'
+    latest_ansible_status:    'Latest Ansible Status'
     latest_update_status:     'Latest yum command Status'
     latest_serverspec_status: 'Latest Serverspec Status'
     cook_in_why_run_mode:     'Cook(why-run)'

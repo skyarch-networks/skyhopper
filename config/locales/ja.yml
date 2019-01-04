@@ -312,6 +312,7 @@ ja:
     extra_vers:          'extra-vers'
     statuses:    '状態'
     latest_cook_status:       'Cook'
+    latest_ansible_status:       'Ansible'
     latest_update_status:     'yum'
     latest_serverspec_status: 'Serverspec'
     cook_in_why_run_mode:     'Cook(why-run)'

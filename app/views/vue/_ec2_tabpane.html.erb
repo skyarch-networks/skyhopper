@@ -249,6 +249,12 @@
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
+      <h6><%= t 'nodes.latest_ansible_status' %></h6>
+      <bootstrap-tooltip :title.once="ansible_time">
+        <template slot="content"><span :class="ansible_status_class" class="label">{{ansible_status}}</span></template>
+      </bootstrap-tooltip>
+    </div>
+    <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
       <bootstrap-tooltip :title.once="serverspec_time">
         <template slot="content"><span :class="servertest_status_class" class="label">{{servertest_status}}</span></template>
