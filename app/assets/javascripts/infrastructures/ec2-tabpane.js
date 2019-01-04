@@ -253,6 +253,10 @@ module.exports = Vue.extend({
       this.$parent.tabpaneID = 'edit_attr';
       this._loading();
     },
+    edit_ansible_playbook: function () {
+      this.$parent.tabpaneID = 'edit_ansible_playbook';
+      this._loading();
+    },
     select_servertest: function () {
       this.$parent.tabpaneID = 'serverspec';
       this._loading();

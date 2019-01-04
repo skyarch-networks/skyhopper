@@ -355,6 +355,32 @@ class NodesController < ApplicationController
     render text: I18n.t('nodes.msg.yum_update_started'), status: 202
   end
 
+  # GET /nodes/:id/edit_ansible_playbook
+  def edit_ansible_playbook
+    # TODO 今はダミー、後で実装する
+    @playbook_roles = []
+    @roles = [
+      'aaa',
+      'bbb',
+      'bbb/ccc'
+    ]
+  end
+
+  # PUT /nodes/:id/update_ansible_playbook
+  def update_ansible_playbook
+    physical_id = params.require(:id)
+    playbook_roles     = params[:playbook_roles] || []
+
+    # TODO 今はダミー、後で実装する
+    ret = { status: true}
+
+    if ret[:status]
+      render text: I18n.t('nodes.msg.playbook_updated') and return
+    end
+
+    render text: ret[:message], status: 500 and return
+  end
+
 
   private
 

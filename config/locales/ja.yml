@@ -306,6 +306,9 @@ ja:
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
+    playbook:     'playbook'
+    ansible_role:        'Ansible role'
+    playbook_roles:     'playbook roles'
     statuses:    '状態'
     latest_cook_status:       'Cook'
     latest_update_status:     'yum'
@@ -313,6 +316,7 @@ ja:
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Runlist の編集'
+      edit_playbook:              'playbook の編集'
       apply_dish:                 'ディッシュの適用'
       bootstrap_with_chef_server: 'Chef Server に登録'
       instance_settings:          'インスタンスの設定'
@@ -326,6 +330,7 @@ ja:
       changed_scale:      '%{type} のスケールが変更されました'
       runlist_updated:    'Runlist は正常に更新されました'
       runlist_applying:   'Runlist を適用中です...'
+      playbook_updated:    'playbook は正常に更新されました'
       cook_started:       'Cook が正常に開始されました'
       should_set_attr:    "Cook は開始できませんでした。インスタンスの設定を行ってください"
       attribute_updated:  'Attribute が正常に更新されました'

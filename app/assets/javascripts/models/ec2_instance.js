@@ -139,6 +139,18 @@ var EC2Instance = (function (_super) {
             return EC2Instance.ajax_node.update_attributes(_.merge(_this.params, { attributes: JSON.stringify(req) }));
         });
     };
+    EC2Instance.prototype.edit_ansible_playbook = function () {
+        var _this = this;
+        return this.WrapAndResolveReject(function () {
+          return EC2Instance.ajax_node.edit_ansible_playbook(_this.params);
+        });
+    };
+    EC2Instance.prototype.update_ansible_playbook = function (playbook_roles) {
+        var _this = this;
+        return this.WrapAndResolveReject(function () {
+          return EC2Instance.ajax_node.update_ansible_playbook(_.merge(_this.params, { playbook_roles: playbook_roles }));
+        });
+    };
     EC2Instance.prototype.schedule_yum = function (schedule) {
         var _this = this;
         return this.WrapAndResolveReject(function () {
@@ -392,6 +404,8 @@ EC2Instance.ajax_node.add_member('apply_dish', 'POST');
 EC2Instance.ajax_node.add_member('submit_groups', 'POST');
 EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
 EC2Instance.ajax_node.add_member('update_attributes', 'PUT');
+EC2Instance.ajax_node.add_member('edit_ansible_playbook', 'GET');
+EC2Instance.ajax_node.add_member('update_ansible_playbook', 'PUT');
 EC2Instance.ajax_node.add_member('schedule_yum', 'POST');
 EC2Instance.ajax_node.add_collection('recipes', 'GET');
 EC2Instance.ajax_node.add_collection('create_group', 'POST');
