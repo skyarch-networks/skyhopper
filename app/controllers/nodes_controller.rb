@@ -83,6 +83,8 @@ class NodesController < ApplicationController
 
     resource = @infra.resource(physical_id)
 
+    @playbook_roles = resource.get_playbook_roles
+
     @info = {}
     status = resource.status
     @info[:cook_status]       = status.cook
@@ -361,14 +363,14 @@ class NodesController < ApplicationController
     physical_id = params.require(:id)
     resource = @infra.resource(physical_id)
 
-    @playbook_roles = JSON.parse(resource.playbook_roles) || []
+    @playbook_roles = resource.get_playbook_roles
     # TODO 今はダミー、後で実装する
     @roles = [
       'aaa',
       'bbb',
       'bbb/ccc',
     ]
-    @extra_vers = resource.extra_vers || ''
+    @extra_vers = resource.extra_vers || '{}'
   end
 
   # PUT /nodes/:id/update_ansible_playbook
@@ -463,7 +465,7 @@ class NodesController < ApplicationController
 
     begin
       r = infrastructure.resource(physical_id)
-      r.playbook_roles = playbook_roles.to_json
+      r.set_playbook_roles(playbook_roles)
       r.extra_vers = extra_vers
       r.save!
     rescue => ex

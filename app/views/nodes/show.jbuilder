@@ -11,6 +11,8 @@ json.chef_error @chef_error
 json.chef_msg   @chef_msg
 json.before_bootstrap @before_bootstrap
 
+json.playbook_roles       @playbook_roles
+
 json.runlist       @runlist
 json.runlist_error       @runlist_error
 json.selected_dish @selected_dish

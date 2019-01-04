@@ -293,6 +293,29 @@
     <p v-if="ec2.runlist_error"><%= t('infrastructures.failed_to_get_runlist') %></p>
   </div>
 
+  <%# playbook_roles table %>
+  <div class="col-xs-12 col-sm-10">
+    <h5 class="page-header"><%= t 'nodes.playbook' %></h5>
+    <table class="table table-condensed">
+      <thead>
+      <tr>
+        <th>name</th>
+      </tr>
+      </thead>
+      <tbody v-if="ec2.playbook_roles.length !== 0">
+      <tr v-for="r in ec2.playbook_roles" :class="{success: is_role(r)}">
+        <td v-text="r"></td>
+      </tr>
+      </tbody>
+      <tbody v-if="ec2.playbook_roles.length === 0">
+      <tr>
+        <td><%= t 'common.msg.empty', name: t('nodes.playbook') %></td>
+      </tr>
+      </tbody>
+    </table>
+    <p v-if="ec2.runlist_error"><%= t('infrastructures.failed_to_get_runlist') %></p>
+  </div>
+
   <%# Buttons %>
   <div class="col-xs-12" v-if="!inprogress">
     <div class="form-actions-top">

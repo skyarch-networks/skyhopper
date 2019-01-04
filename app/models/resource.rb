@@ -63,4 +63,15 @@ class Resource < ActiveRecord::Base
       raise ex
     end
   end
+
+  def get_playbook_roles
+    if self.playbook_roles.nil?
+      return []
+    end
+    JSON.parse(self.playbook_roles)
+  end
+
+  def set_playbook_roles(playbook_role)
+    self.playbook_roles = playbook_role.to_json
+  end
 end
