@@ -364,12 +364,7 @@ class NodesController < ApplicationController
     resource = @infra.resource(physical_id)
 
     @playbook_roles = resource.get_playbook_roles
-    # TODO 今はダミー、後で実装する
-    @roles = [
-      'aaa',
-      'bbb',
-      'bbb/ccc',
-    ]
+    @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
     @extra_vers = resource.extra_vers || '{}'
   end
 

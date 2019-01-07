@@ -11,6 +11,7 @@ class Node
 
   ChefDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
+  AnsibleWorkspacePath = Rails.root.join('ansible').to_s
 
   class BootstrapError < ::StandardError; end
   class CookError < ::StandardError; end
