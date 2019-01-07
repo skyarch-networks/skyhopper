@@ -16,9 +16,9 @@ module Ansible
     return true
   end
 
-  def self.open(ansible_workspace_path, target_hosts)
+  def self.open(ansible_workspace_path, target_hosts, become=true)
     Tempfile.open('playbook-', ansible_workspace_path) do |playbook_file|
-      yield(Client.new(playbook_file, ansible_workspace_path, target_hosts))
+      yield(Client.new(playbook_file, ansible_workspace_path, target_hosts, become))
     end
   end
 
@@ -31,12 +31,12 @@ module Ansible
     ROLE_DIRECTYORY_NAME = 'roles'
     ROLE_MAIN_FILE_PATH_REGEX = /^[^\/]+\/([^\/]*\/)*tasks\/main.yml$/
 
-    def initialize(playbook_file, ansible_workspace_path, target_hosts)
+    def initialize(playbook_file, ansible_workspace_path, target_hosts, become=true)
       @playbook_file = playbook_file
       @ansible_workspace_path = ansible_workspace_path
       @playbook_data = [{
                           'hosts' => target_hosts,
-                          'become' => true,
+                          'become' => become,
                           'roles' => roles,
                         }]
     end
@@ -86,7 +86,7 @@ module Ansible
       command = "ansible-playbook #{@playbook_file.path}"
       command += " -i #{hosts_path}" unless hosts_path.nil?
       command += " --private-key=#{private_key_path}" unless private_key_path.nil?
-      command += " --extra-vars=#{extra_vers}" unless extra_vers.nil?
+      command += " --extra-vars='#{extra_vers}'" unless extra_vers.nil?
       Ansible.exec_command(command, &block)
     end
   end
