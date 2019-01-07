@@ -13,6 +13,7 @@ module Ansible
       end
       raise CommandNotSuccessError unless wait_thr.value.success?
     end
+    return true
   end
 
   def self.open(ansible_workspace_path, target_hosts)

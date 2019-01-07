@@ -365,7 +365,7 @@ class NodesController < ApplicationController
 
     @playbook_roles = resource.get_playbook_roles
     @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
-    @extra_vers = resource.extra_vers || '{}'
+    @extra_vers = resource.get_extra_vers
   end
 
   # PUT /nodes/i-0b8e7f12/run_ansible_playbook
@@ -481,7 +481,7 @@ class NodesController < ApplicationController
       return {status: false, message: ex.message}
     end
 
-    # change cookstatus to unexected
+    # change ansiblestatus to unexected
     r.status.ansible.un_executed!
     r.status.servertest.un_executed!
 
@@ -502,7 +502,7 @@ class NodesController < ApplicationController
     ws = WSConnector.new('run-ansible-playbook', physical_id)
 
     begin
-      node.run_ansible_playbook(infrastructure) do |line|
+      node.run_ansible_playbook(infrastructure, r.get_playbook_roles, r.get_extra_vers) do |line|
         ws.push_as_json({v: line})
         Rails.logger.debug "running-ansible-playbook #{physical_id} > #{line}"
         log << line
@@ -515,11 +515,8 @@ class NodesController < ApplicationController
       return
     end
 
-    if whyrun
-      r.status.ansible.un_executed!
-    else
-      r.status.ansible.success!
-    end
+    r.status.ansible.success!
+
     infra_logger_success("Run ansible-playbook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
     ws.push_as_json({v: true})
   end

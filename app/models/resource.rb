@@ -74,4 +74,11 @@ class Resource < ActiveRecord::Base
   def set_playbook_roles(playbook_role)
     self.playbook_roles = playbook_role.to_json
   end
+
+  def get_extra_vers
+    if self.extra_vers.nil?
+      return '{}'
+    end
+    self.extra_vers
+  end
 end
