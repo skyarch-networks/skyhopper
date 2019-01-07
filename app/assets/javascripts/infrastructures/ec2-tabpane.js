@@ -209,6 +209,28 @@ module.exports = Vue.extend({
 
     cook:       function (params) { this._cook('cook', params); },
 
+    run_ansible_playbook: function () {
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, self.physical_id);
+
+      var dfd = ec2['run_ansible_playbook']();
+      dfd.fail(
+        // run_ansible start fail
+        alert_danger(self._show_ec2)
+      ).progress(function (state, msg) {
+        // run_ansible start success
+        if(state !== 'start'){return;}
+
+        alert_success(function () {
+          self.inprogress = true;
+          Vue.nextTick(function () {
+            self.watch_cook(dfd);
+          });
+        })(msg);
+      });
+    },
+
     yum_update: function (security, exec) {
       var self = this;
       self.is_yum_update = true;

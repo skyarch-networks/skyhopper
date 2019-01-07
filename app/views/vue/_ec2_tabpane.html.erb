@@ -332,6 +332,18 @@
       </div>
       <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
       <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.chef_error  && !ec2.before_bootstrap && !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
+      <div :class="{'border-blink': ansible_status === 'UnExecuted'}" class="btn-group dropup">
+        <button disabled class="btn btn-sm btn-primary">
+          <%= t 'nodes.ansible'%>
+        </button>
+        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a @click="run_ansible_playbook()" href="#"><%= t 'nodes.run_ansible_playbook' %></a></li>
+        </ul>
+      </div>
       <button @click="edit_ansible_playbook()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_playbook' %></button>
       <div class="dropup" style="display: inline-block" v-if="!ec2.platform">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">

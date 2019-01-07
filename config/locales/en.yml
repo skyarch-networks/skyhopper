@@ -309,6 +309,8 @@ en:
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
+    ansible:      'Ansible'
+    run_ansible_playbook: 'run ansible-playbook'
     playbook:     'playbook'
     ansible_role:        'Ansible role'
     playbook_roles:     'playbook roles'
@@ -336,6 +338,7 @@ en:
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
       playbook_updated:    'playbook was successfully updated.'
+      playbook_applying:   'playbook is being applied...'
       cook_started:       'Cook was successfully started'
       should_set_attr:    "Cook wasn't started. You should set the attribute(s)"
       attribute_updated:  'Attribute was successfully updated.'

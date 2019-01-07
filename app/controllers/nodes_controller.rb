@@ -368,6 +368,19 @@ class NodesController < ApplicationController
     @extra_vers = resource.extra_vers || '{}'
   end
 
+  # PUT /nodes/i-0b8e7f12/run_ansible_playbook
+  def run_ansible_playbook
+    physical_id = params.require(:id)
+
+    node = Node.new(physical_id)
+
+    Thread.new_with_db do
+      run_ansible_playbook_node(@infra, physical_id)
+    end
+
+    render text: I18n.t('nodes.msg.playbook_applying'), status: 202
+  end
+
   # PUT /nodes/:id/update_ansible_playbook
   def update_ansible_playbook
     physical_id = params.require(:id)
@@ -474,6 +487,10 @@ class NodesController < ApplicationController
 
     infra_logger_success("Updating playbook for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
+  end
+
+  def run_ansible_playbook_node(infrastructure, physical_id)
+    # TODO 実装する
   end
 
   # TODO: DRY

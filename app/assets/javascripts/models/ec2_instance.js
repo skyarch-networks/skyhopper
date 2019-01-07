@@ -73,6 +73,17 @@ var EC2Instance = (function (_super) {
     EC2Instance.prototype.cook = function (params) {
         return this._cook('cook', _.merge(this.params, params));
     };
+    EC2Instance.prototype.run_ansible_playbook = function () {
+        var _this = this;
+        var dfd = $.Deferred();
+        EC2Instance.ajax_node['run_ansible_playbook'](_this.params)
+          .done(function (data) {
+            dfd.notify('start', data);
+            _this.watch_cook(dfd);
+          })
+          .fail(this.rejectF(dfd));
+        return dfd.promise();
+    };
     EC2Instance.prototype.yum_update = function (security, exec) {
         var extra_params = {
             security: security ? 'security' : 'all',
@@ -399,6 +410,7 @@ var EC2Instance = (function (_super) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = EC2Instance;
 EC2Instance.ajax_node.add_member('cook', 'PUT');
+EC2Instance.ajax_node.add_member('run_ansible_playbook', 'PUT');
 EC2Instance.ajax_node.add_member('yum_update', 'PUT');
 EC2Instance.ajax_node.add_member('run_bootstrap', 'GET');
 EC2Instance.ajax_node.add_member('get_rules', 'GET');
