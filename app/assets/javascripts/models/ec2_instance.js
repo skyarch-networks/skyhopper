@@ -73,13 +73,27 @@ var EC2Instance = (function (_super) {
     EC2Instance.prototype.cook = function (params) {
         return this._cook('cook', _.merge(this.params, params));
     };
+    EC2Instance.prototype.watch_run_ansible_playbook = function (dfd) {
+        var ws = ws_connector('run-ansible-playbook', this.physical_id);
+        ws.onmessage = function (msg) {
+            var data = JSON.parse(msg.data).v;
+            if (typeof (data) === 'boolean') {
+                ws.close();
+                dfd.resolve(data);
+            }
+            else {
+                dfd.notify('update', data + "\n");
+            }
+        };
+        return dfd;
+    };
     EC2Instance.prototype.run_ansible_playbook = function () {
         var _this = this;
         var dfd = $.Deferred();
         EC2Instance.ajax_node['run_ansible_playbook'](_this.params)
           .done(function (data) {
             dfd.notify('start', data);
-            _this.watch_cook(dfd);
+            _this.watch_run_ansible_playbook(dfd);
           })
           .fail(this.rejectF(dfd));
         return dfd.promise();

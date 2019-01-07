@@ -490,7 +490,38 @@ class NodesController < ApplicationController
   end
 
   def run_ansible_playbook_node(infrastructure, physical_id)
-    # TODO 実装する
+    user_id = current_user.id
+    infra_logger_success("Run ansible-playbook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+
+    r = infrastructure.resource(physical_id)
+    r.status.ansible.inprogress!
+    r.status.servertest.un_executed!
+    node = Node.new(physical_id)
+    log = []
+
+    ws = WSConnector.new('run-ansible-playbook', physical_id)
+
+    begin
+      node.run_ansible_playbook(infrastructure) do |line|
+        ws.push_as_json({v: line})
+        Rails.logger.debug "running-ansible-playbook #{physical_id} > #{line}"
+        log << line
+      end
+    rescue => ex
+      Rails.logger.debug(ex)
+      r.status.ansible.failed!
+      infra_logger_fail("Run ansible-playbook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      ws.push_as_json({v: false})
+      return
+    end
+
+    if whyrun
+      r.status.ansible.un_executed!
+    else
+      r.status.ansible.success!
+    end
+    infra_logger_success("Run ansible-playbook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+    ws.push_as_json({v: true})
   end
 
   # TODO: DRY

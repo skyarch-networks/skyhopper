@@ -130,6 +130,15 @@ class Node
     end
   end
 
+  # node.run_ansible_playbook do |line|
+  #   # line is ansible-playbook log
+  # end
+  def run_ansible_playbook(infra, &block)
+    # TODO 実装
+    sleep 10
+    raise '実装してください'
+  end
+
   def wait_search_index
     sleep WaitSearchIndexInterval while ChefAPI.search_node(@name).empty?
   end
