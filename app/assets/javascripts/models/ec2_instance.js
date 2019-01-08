@@ -170,12 +170,12 @@ var EC2Instance = (function (_super) {
           return EC2Instance.ajax_node.edit_ansible_playbook(_this.params);
         });
     };
-    EC2Instance.prototype.update_ansible_playbook = function (playbook_roles, extra_vers) {
+    EC2Instance.prototype.update_ansible_playbook = function (playbook_roles, extra_vars) {
         var _this = this;
         return this.WrapAndResolveReject(function () {
           return EC2Instance.ajax_node.update_ansible_playbook(_.merge(_this.params, {
             playbook_roles: playbook_roles,
-            extra_vers: extra_vers,
+            extra_vars: extra_vars,
           }));
         });
     };

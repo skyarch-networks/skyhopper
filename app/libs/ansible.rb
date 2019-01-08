@@ -83,11 +83,11 @@ module Ansible
     def run(options = {}, &block)
       hosts_path = options[:hosts_path]
       private_key_path = options[:private_key_path]
-      extra_vers = options[:extra_vers]
+      extra_vars = options[:extra_vars]
       command = "ansible-playbook #{Shellwords.escape(@playbook_file.path)}"
       command += " -i #{Shellwords.escape(hosts_path)}" unless hosts_path.nil?
       command += " --private-key=#{Shellwords.escape(private_key_path)}" unless private_key_path.nil?
-      command += " --extra-vars=#{Shellwords.escape(extra_vers)}" unless extra_vers.nil?
+      command += " --extra-vars=#{Shellwords.escape(extra_vars)}" unless extra_vars.nil?
       Ansible.exec_command(command, &block)
     end
   end

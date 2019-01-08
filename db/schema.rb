@@ -181,7 +181,7 @@ ActiveRecord::Schema.define(version: 20190104063406) do
     t.string   "screen_name",       limit: 255
     t.integer  "dish_id",           limit: 4
     t.text     "playbook_roles",    limit: 65535
-    t.text     "extra_vers",        limit: 65535
+    t.text     "extra_vars",        limit: 65535
   end
 
   add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree

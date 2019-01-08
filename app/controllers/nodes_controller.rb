@@ -365,7 +365,7 @@ class NodesController < ApplicationController
 
     @playbook_roles = resource.get_playbook_roles
     @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
-    @extra_vers = resource.get_extra_vers
+    @extra_vars = resource.get_extra_vars
   end
 
   # PUT /nodes/i-0b8e7f12/run_ansible_playbook
@@ -385,9 +385,9 @@ class NodesController < ApplicationController
   def update_ansible_playbook
     physical_id = params.require(:id)
     playbook_roles     = params[:playbook_roles] || []
-    extra_vers     = params[:extra_vers] || '{}'
+    extra_vars     = params[:extra_vars] || '{}'
 
-    ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vers: extra_vers)
+    ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
 
     if ret[:status]
       render text: I18n.t('nodes.msg.playbook_updated') and return
@@ -468,13 +468,13 @@ class NodesController < ApplicationController
     end
   end
 
-  def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vers: nil)
+  def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)
     infra_logger_success("Updating playbook for #{physical_id} is started.")
 
     begin
       r = infrastructure.resource(physical_id)
       r.set_playbook_roles(playbook_roles)
-      r.extra_vers = extra_vers
+      r.extra_vars = extra_vars
       r.save!
     rescue => ex
       infra_logger_fail("Updating playbook for #{physical_id} is failed. \n #{ex.message}")
@@ -502,7 +502,7 @@ class NodesController < ApplicationController
     ws = WSConnector.new('run-ansible-playbook', physical_id)
 
     begin
-      node.run_ansible_playbook(infrastructure, r.get_playbook_roles, r.get_extra_vers) do |line|
+      node.run_ansible_playbook(infrastructure, r.get_playbook_roles, r.get_extra_vars) do |line|
         ws.push_as_json({v: line})
         Rails.logger.debug "running-ansible-playbook #{physical_id} > #{line}"
         log << line

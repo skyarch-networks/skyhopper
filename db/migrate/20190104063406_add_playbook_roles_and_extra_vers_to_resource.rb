@@ -1,7 +1,7 @@
 class AddPlaybookRolesAndExtraVersToResource < ActiveRecord::Migration
   def change
     add_column :resources, :playbook_roles, :text, after: :dish_id
-    add_column :resources, :extra_vers, :text, after: :playbook_roles
+    add_column :resources, :extra_vars, :text, after: :playbook_roles
     # resources毎にansibleのstatusの値にun_executedを設定する
     connection = ActiveRecord::Base.connection
     select_sql = 'SELECT id FROM resources'

@@ -134,7 +134,7 @@ class Node
   # node.run_ansible_playbook do |line|
   #   # line is ansible-playbook log
   # end
-  def run_ansible_playbook(infra, playbook_roles, extra_vers, &block)
+  def run_ansible_playbook(infra, playbook_roles, extra_vars, &block)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
@@ -142,14 +142,13 @@ class Node
     hosts_file.print(ansible_hosts_text(infra))
     hosts_file.flush
 
-    # TODO extra_versの実装
     Ansible::open(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
       ansible.set_roles(playbook_roles)
       begin
         ansible.run(
           hosts_path: hosts_file.path,
           private_key_path: ec2key.path_temp,
-          extra_vers: extra_vers
+          extra_vars: extra_vars
         ) do |line|
           block.call(line)
         end

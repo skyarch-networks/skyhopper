@@ -311,7 +311,7 @@ ja:
     playbook:     'playbook'
     ansible_role:        'Ansible role'
     playbook_roles:     'playbook roles'
-    extra_vers:          'extra-vers'
+    extra_vars:          'extra-vars'
     statuses:    '状態'
     latest_cook_status:       'Cook'
     latest_ansible_status:       'Ansible'
