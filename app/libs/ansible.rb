@@ -1,5 +1,6 @@
 require "tempfile"
 require "yaml"
+require 'shellwords'
 require 'open3'
 
 module Ansible
@@ -83,10 +84,10 @@ module Ansible
       hosts_path = options[:hosts_path]
       private_key_path = options[:private_key_path]
       extra_vers = options[:extra_vers]
-      command = "ansible-playbook #{@playbook_file.path}"
-      command += " -i #{hosts_path}" unless hosts_path.nil?
-      command += " --private-key=#{private_key_path}" unless private_key_path.nil?
-      command += " --extra-vars='#{extra_vers}'" unless extra_vers.nil?
+      command = "ansible-playbook #{Shellwords.escape(@playbook_file.path)}"
+      command += " -i #{Shellwords.escape(hosts_path)}" unless hosts_path.nil?
+      command += " --private-key=#{Shellwords.escape(private_key_path)}" unless private_key_path.nil?
+      command += " --extra-vars=#{Shellwords.escape(extra_vers)}" unless extra_vers.nil?
       Ansible.exec_command(command, &block)
     end
   end
