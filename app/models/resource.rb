@@ -20,6 +20,7 @@ class Resource < ActiveRecord::Base
 
   validates :physical_id, uniqueness: true
   validates :playbook_roles, json: true
+  validates :extra_vars, json: true
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}

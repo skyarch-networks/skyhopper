@@ -27,6 +27,14 @@ module.exports = Vue.extend({
   methods: {
     update: function () {
       var self = this;
+
+      try {
+        JSON.parse(self.extra_vars);
+      } catch (ex) {
+        alert_danger()('extra-vars is invalid: ' + ex.message);
+        return;
+      }
+
       self.loading = true;
       self.ec2.update_ansible_playbook(self.playbook_roles, self.extra_vars)
         .done(alert_success(self.show_ec2))
