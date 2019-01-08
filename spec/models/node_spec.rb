@@ -221,4 +221,21 @@ EOS
       expect(s).to eq './a/b/c'
     end
   end
+
+  describe '#ansible_hosts_text' do
+    subject { Node.new("test").__send__(:ansible_hosts_text, infra) }
+    let(:infra){create(:infrastructure)}
+    before do
+      ec2_instance = double("ec2_instance")
+      allow(ec2_instance).to receive(:fqdn).and_return('test.test')
+      allow(infra).to receive(:instance).and_return(ec2_instance)
+    end
+
+    it 'return Ansible hosts text' do
+      is_expected.to eq <<'EOS'
+[ec2]
+test.test ansible_ssh_user=ec2-user
+EOS
+    end
+  end
 end
