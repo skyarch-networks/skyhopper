@@ -19,8 +19,8 @@ class Resource < ActiveRecord::Base
   has_one :servertest_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   validates :physical_id, uniqueness: true
-  validates :playbook_roles, json: true
-  validates :extra_vars, json: true
+  validates :playbook_roles, json: true, unless: Proc.new{|a| a.playbook_roles.nil?}
+  validates :extra_vars, json: true, unless: Proc.new{|a| a.extra_vars.nil?}
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
