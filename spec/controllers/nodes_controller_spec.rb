@@ -58,6 +58,7 @@ describe NodesController, type: :controller do
       available: [],
     }}
     let(:cook_status){resource.status.cook}
+    let(:ansible_status){resource.status.ansible}
     let(:servertest_status){resource.status.servertest}
     let(:yum_status){resource.status.yum}
     before do
@@ -151,6 +152,7 @@ describe NodesController, type: :controller do
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
         expect(assigns[:info][:cook_status]).to eq cook_status
+        expect(assigns[:info][:ansible_status]).to eq ansible_status
         expect(assigns[:info][:servertest_status]).to eq servertest_status
         expect(assigns[:info][:update_status]).to eq yum_status
       end
