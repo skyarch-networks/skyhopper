@@ -72,8 +72,8 @@ class Resource < ActiveRecord::Base
     JSON.parse(self.playbook_roles)
   end
 
-  def set_playbook_roles(playbook_role)
-    self.playbook_roles = playbook_role.to_json
+  def set_playbook_roles(playbook_roles)
+    self.playbook_roles = playbook_roles.to_json
   end
 
   def get_extra_vars
