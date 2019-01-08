@@ -45,6 +45,22 @@ describe Node, type: :model do
     end
   end
 
+  describe "#run_ansible_playbook" do
+    subject { Node.new("test") }
+    let(:infra){build(:infrastructure)}
+
+    before do
+      allow(Ansible).to receive(:open).and_return(true)
+      ec2_instance = double("ec2_instance")
+      allow(ec2_instance).to receive(:fqdn).and_return('test.test')
+      allow(infra).to receive(:instance).and_return(ec2_instance)
+    end
+
+    it "returns true if status is success" do
+      expect(subject.run_ansible_playbook(infra, [], '{}')).to eq true
+    end
+  end
+
   describe '#all_recipe' do
     subject { Node.new("test") }
 
