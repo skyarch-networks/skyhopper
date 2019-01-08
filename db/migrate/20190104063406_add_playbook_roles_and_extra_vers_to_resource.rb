@@ -17,8 +17,8 @@ INSERT INTO resource_statuses (
 )
   VALUES (
     #{resource['id']},
-    NOW(),
-    NOW(),
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
     3,
     3
   )
