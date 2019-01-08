@@ -385,6 +385,79 @@ describe NodesController, type: :controller do
     end
   end
 
+  describe '#edit_ansible_playbook' do
+    let(:req){get :edit_ansible_playbook, id: resource.physical_id, infra_id: infra.id}
+    let(:resource){create(:resource, infrastructure: infra)}
+
+    before do
+      allow(Ansible).to receive(:get_roles).and_return(['aaa', 'bbb'])
+      req
+    end
+
+    should_be_success
+
+    it 'should assign @playbook_roles' do
+      expect(assigns[:playbook_roles]).to eq resource.get_playbook_roles
+    end
+
+    it 'should assign @roles' do
+      expect(assigns[:roles]).to eq ['aaa', 'bbb']
+    end
+
+    it 'should assign @extra_vars' do
+      expect(assigns[:extra_vars]).to eq resource.get_extra_vars
+    end
+  end
+
+  describe '#update_ansible_playbook' do
+    let(:playbook_roles){['aaa', 'bbb']}
+    let(:extra_vars){'{"aaa":"abc"}'}
+    let(:req){put :update_ansible_playbook, id: resource.physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars}
+    let(:resource){create(:resource, infrastructure: infra)}
+    let(:status){true}
+    let(:message){'hogefuga piyoyo'}
+
+    before do
+      allow_any_instance_of(NodesController).to receive(:update_playbook).and_return({status: status, message: message})
+      req
+    end
+
+    context 'when update success' do
+      should_be_success
+
+      it 'should render text' do
+        expect(response.body).to eq I18n.t('nodes.msg.playbook_updated')
+      end
+    end
+
+    context 'when update fail' do
+      let(:status){false}
+      should_be_failure
+
+      it 'should render text' do
+        expect(response.body).to eq message
+      end
+    end
+  end
+
+  describe "#run_ansible_playbook" do
+    let(:run_ansible_playbook_request){put :run_ansible_playbook, id: physical_id, infra_id: infra.id}
+
+    before do
+      allow(Thread).to receive(:new_with_db).and_yield
+      expect_any_instance_of(NodesController).to receive(:run_ansible_playbook_node)
+      run_ansible_playbook_request
+    end
+
+    it "should render" do
+      expect(response.body).not_to be nil
+    end
+
+    it "should be success" do
+      expect(response.status).to eq 202
+    end
+  end
+
   describe '#update_runlist' do
     controller NodesController do
       def show
