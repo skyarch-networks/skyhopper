@@ -558,4 +558,67 @@ describe NodesController, type: :controller do
       end
     end
   end
+
+  describe '#update_playbook' do
+    controller NodesController do
+      def show
+        physical_id = params.require(:id)
+        infra_id    = params.require(:infra_id)
+        infra       = Infrastructure.find(infra_id)
+        playbook_roles = params.require(:playbook_roles)
+        extra_vars = params.require(:extra_vars)
+        render json: update_playbook(physical_id: physical_id, infrastructure: infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
+      end
+    end
+    let(:playbook_roles){['aaa', 'bbb']}
+    let(:extra_vars){'{"aaa":"abc"}'}
+    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
+    let(:req){get :show, id: physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars}
+    before do
+      resource
+    end
+
+    context 'when success' do
+      before do
+        req
+      end
+
+      should_be_success
+
+      it 'should status is true, message is nil' do
+        expect(JSON[response.body]['status']).to be true
+        expect(JSON[response.body]['message']).to be nil
+      end
+
+      it 'should update ansible and servertest status' do
+        expect(resource.status.ansible.value).to eq 'un_executed'
+        expect(resource.status.servertest.value).to eq 'un_executed'
+      end
+
+      it 'resource should have playbook_roles JSON' do
+        resource.reload
+        expect(resource.playbook_roles).to eq '["aaa","bbb"]'
+      end
+
+      it 'resource should have extra_vars' do
+        resource.reload
+        expect(resource.extra_vars).to eq extra_vars
+      end
+    end
+
+    context 'when failure' do
+      let(:err_msg){'THIS IS ERROR!!!'}
+      before do
+        expect_any_instance_of(Resource).to receive(:save!).and_raise(err_msg)
+        req
+      end
+
+      should_be_success
+
+      it 'should status is false, message is error message' do
+        expect(JSON[response.body]['status']).to be false
+        expect(JSON[response.body]['message']).to eq err_msg
+      end
+    end
+  end
 end
