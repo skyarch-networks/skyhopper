@@ -34,15 +34,18 @@
         },
         index: 'clients'
       },
-      methods: {
+      computed: {
         can_edit: function () {
           if (this.picked.edit_client_path)
-            return this.picked.edit_client_path ? true : false;
+            return !!this.picked.edit_client_path;
         },
         can_delete: function () {
           if (this.picked.code)
-            return (this.picked.code[1] === 0) ? true : false;
+            return (this.picked.code[1] === 0);
         },
+      },
+      methods: {
+
         delete_entry: function () {
           var self = this;
           modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
