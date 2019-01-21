@@ -5,7 +5,6 @@ require 'open3'
 
 module Ansible
   class CommandNotSuccessError < ::RuntimeError; end
-  class ValidateError < ::RuntimeError; end
 
   def self.exec_command(command, &block)
     Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
