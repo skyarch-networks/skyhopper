@@ -621,4 +621,42 @@ describe NodesController, type: :controller do
       end
     end
   end
+
+  describe '#run_ansible_playbook_node' do
+    controller NodesController do
+      def show
+        physical_id = params.require(:id)
+        infra_id = params.require(:infra_id)
+        infra = Infrastructure.find(infra_id)
+        run_ansible_playbook_node(infra, physical_id)
+        render nothing: true
+      end
+    end
+    let(:resource){create(:resource, infrastructure: infra)}
+    let(:req){get :show, id: resource.physical_id, infra_id: infra.id}
+
+    context 'when success' do
+      before do
+        expect_any_instance_of(Node).to receive(:run_ansible_playbook).and_yield('hoge')
+        req
+      end
+      should_be_success
+
+      it 'should ansible status is Success' do
+        expect(resource.status.ansible.success?).to be true
+      end
+    end
+
+    context 'when failure' do
+      before do
+        allow_any_instance_of(Node).to receive(:run_ansible_playbook).and_raise
+        req
+      end
+      should_be_success
+
+      it 'should ansible status is Failed' do
+        expect(resource.status.ansible.failed?).to be true
+      end
+    end
+  end
 end
