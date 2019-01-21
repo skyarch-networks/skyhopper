@@ -104,4 +104,35 @@ RSpec.describe Resource, type: :model do
       it {is_expected.to eq '{"aaa":"abc"}'}
     end
   end
+
+
+  describe '#verify_playbook_roles' do
+    subject{resource.__send__(:verify_playbook_roles)}
+
+    context 'when playbook_roles is valid' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.set_playbook_roles(['aaa', 'bbb'])
+        subject
+      end
+
+      it 'should number of errors[:playbook_roles] is 0' do
+        expect(resource.errors[:playbook_roles].length).to eq 0
+      end
+    end
+
+    context 'when playbook_roles is invalid' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.set_playbook_roles(['aaa', 123])
+        subject
+      end
+
+      it 'should number of error[:playbook_roles] is not 0' do
+        expect(resource.errors[:playbook_roles].length).not_to eq 0
+      end
+    end
+  end
 end

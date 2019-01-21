@@ -20,6 +20,7 @@ class Resource < ActiveRecord::Base
 
   validates :physical_id, uniqueness: true
   validates :playbook_roles, json: true, unless: Proc.new{|a| a.playbook_roles.nil?}
+  validate :verify_playbook_roles
   validates :extra_vars, json: true, unless: Proc.new{|a| a.extra_vars.nil?}
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
@@ -81,5 +82,13 @@ class Resource < ActiveRecord::Base
       return '{}'
     end
     self.extra_vars
+  end
+
+  private
+
+  def verify_playbook_roles
+    unless Ansible::verify_roles(get_playbook_roles)
+      errors.add(:playbook_roles, 'structure is incorrect')
+    end
   end
 end

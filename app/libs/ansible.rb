@@ -5,6 +5,7 @@ require 'open3'
 
 module Ansible
   class CommandNotSuccessError < ::RuntimeError; end
+  class ValidateError < ::RuntimeError; end
 
   def self.exec_command(command, &block)
     Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
@@ -26,6 +27,15 @@ module Ansible
   def self.get_roles(ansible_workspace_path)
     ansible = Client.new(nil, ansible_workspace_path, nil)
     return ansible.roles
+  end
+
+  # 正しければtrue、正しくなければfalseが返る
+  def self.verify_roles(roles)
+    return false unless roles.is_a?(Array)
+    roles.each do |role|
+      return false unless role.is_a?(String)
+    end
+    return true
   end
 
   class Client
