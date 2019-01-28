@@ -207,11 +207,46 @@ class CfTemplatesController < ApplicationController
     infrastructure.status = stack.status[:message]
     infrastructure.save!
 
+    add_keys_in_known_hosts(infrastructure)
+
     cf_template.update_cfparams
 
     if cf_template.save
       infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
       return {message: t("cf_templates.msg.#{action.downcase}"), status: true}
+    end
+  end
+
+  def add_keys_in_known_hosts(infrastructure)
+    # TODO 実装途中
+    Thread.new_with_db do
+      begin
+        Rails.logger.info("[add_keys_in_known_hosts] Add keys in known_hosts is started. infra_id: #{infrastructure.id}")
+
+        stack = Stack.new(infrastructure)
+
+        Rails.logger.info("[add_keys_in_known_hosts] Waiting creat complate or update complete. stack_name: #{stack.name}")
+        stack.wait_creat_complate_or_update_complete
+
+        resources = infrastructure.resources_or_create
+
+        ec2_resources = resources.ec2
+        ec2_resources.each do |ec2_resource|
+          instance = infrastructure.instance(ec2_resource.physical_id)
+          # TODO fqdnが空になっているので直す
+          # おそらく手前の処理で問題が発生している
+          fqdn = instance.fqdn
+          ::KnownHosts::scan_and_add_keys(fqdn)
+          Rails.logger.info("[add_keys_in_known_hosts] Scan and add key in known_hosts. instance_fqdn: #{fqdn}")
+        end
+      rescue => ex
+        Rails.logger.error("[add_keys_in_known_hosts] Add keys in known_hosts is failed. infra_id: #{infrastructure.id}")
+        Rails.logger.error ex
+        infra_logger_fail('Add keys in known_hosts is failed.', infrastructure_id: infrastructure.id)
+      else
+        Rails.logger.info("[add_keys_in_known_hosts] Add keys in known_hosts is finished. infra_id: #{infrastructure.id}")
+        infra_logger_success('Add keys in known_hosts is completed.', infrastructure_id: infrastructure.id)
+      end
     end
   end
 end
