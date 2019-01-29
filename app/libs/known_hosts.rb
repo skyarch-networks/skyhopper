@@ -1,4 +1,3 @@
-require 'net/ssh'
 require 'open3'
 
 module KnownHosts
@@ -6,26 +5,46 @@ module KnownHosts
 
   class << self
     def scan_and_add_keys(domain_name)
-      init_ssh_dir
+      keys = scan_keys(domain_name)
+      return false if keys.empty?
+      add_keys(keys)
+      true
+    end
 
-      command  = "ssh-keyscan -H #{Shellwords.escape(domain_name)}>> ~/.ssh/known_hosts"
-      exec_command(command)
+    def scan_keys(domain_name)
+      command  = "ssh-keyscan -H #{Shellwords.escape(domain_name)}"
+      result = exec_command(command)
+      result.split("\n")
+    end
+
+    def add_keys(keys)
+      append_text = keys.map{|key| "#{key}\n"}.join()
+
+      init_ssh_dir
+      File.open(known_hosts_path, mode: 'a') do |file|
+        file.flock(File::LOCK_EX)
+        file.puts(append_text)
+        file.flock(File::LOCK_UN)
+      end
     end
 
     private
+
+    def known_hosts_path
+      File.expand_path('~/.ssh/known_hosts')
+    end
 
     def init_ssh_dir
       ssh_dir = File.expand_path('~/.ssh')
       Dir.mkdir(ssh_dir, perm: 0700) unless Dir.exist?(ssh_dir)
 
-      known_hosts_path = File.expand_path('~/.ssh/known_hosts')
       File.open(known_hosts_path, mode: 'w', perm: 0600).close() unless File.exist?(known_hosts_path)
     end
 
     def exec_command(command)
       out, err, status = Open3.capture3(command)
       raise CommandNotSuccessError unless status.success?
-      return out
+      out
     end
   end
 end

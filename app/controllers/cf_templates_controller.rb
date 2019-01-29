@@ -236,7 +236,8 @@ class CfTemplatesController < ApplicationController
           instance = infrastructure.instance(ec2_resource.physical_id)
           fqdn = instance.fqdn
           raise 'failed to get fqdn' if fqdn.blank?
-          ::KnownHosts::scan_and_add_keys(fqdn)
+          added = ::KnownHosts::scan_and_add_keys(fqdn)
+          raise 'failed to add keys in known_hosts' unless added
           Rails.logger.info("[add_keys_in_known_hosts] Scan and add key in known_hosts. instance_fqdn: #{fqdn}")
         end
       rescue => ex
