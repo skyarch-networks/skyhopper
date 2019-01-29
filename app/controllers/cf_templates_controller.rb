@@ -228,21 +228,15 @@ class CfTemplatesController < ApplicationController
         stack.wait_creat_complate_or_update_complete
 
         infrastructure.resources.destroy_all
+        infrastructure.save!
         infrastructure.reload
         resources = infrastructure.resources_or_create
 
         ec2_resources = resources.ec2
         ec2_resources.each do |ec2_resource|
           instance = infrastructure.instance(ec2_resource.physical_id)
-          fqdn = instance.fqdn
-          raise 'failed to get fqdn' if fqdn.blank?
-
-          ip_addr = instance.ip_addr
-          raise 'failed to get ip_addr' if ip_addr.blank?
-
-          added = ::KnownHosts::scan_and_add_keys("#{fqdn},#{ip_addr}")
-          raise 'failed to add keys in known_hosts' unless added
-          Rails.logger.info("[add_keys_in_known_hosts] Scan and add key in known_hosts. instance_fqdn: #{fqdn}")
+          instance.wait_status(:running)
+          instance.register_in_known_hosts
         end
       rescue => ex
         Rails.logger.error("[add_keys_in_known_hosts] Add keys in known_hosts is failed. infra_id: #{infrastructure.id}")

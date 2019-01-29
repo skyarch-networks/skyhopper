@@ -113,6 +113,17 @@ class EC2Instance < SimpleDelegator
            self.private_ip_address
   end
 
+  def register_in_known_hosts
+    fqdn_memo = self.fqdn
+    raise 'failed to get fqdn' if fqdn_memo.blank?
+
+    ip_addr_memo = self.ip_addr
+    raise 'failed to get ip_addr' if ip_addr_memo.blank?
+
+    added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{ip_addr_memo}")
+    raise 'failed to add keys in known_hosts' unless added
+  end
+
   def platform
     return @instance.platform
   end

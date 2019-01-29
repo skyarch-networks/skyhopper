@@ -12,7 +12,7 @@ module KnownHosts
     end
 
     def scan_keys(domain_name)
-      command  = "ssh-keyscan -H #{Shellwords.escape(domain_name)}"
+      command  = "ssh-keyscan #{Shellwords.escape(domain_name)}"
       result = exec_command(command)
       result.split("\n")
     end
