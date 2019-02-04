@@ -145,11 +145,11 @@ class EC2Instance < SimpleDelegator
     fqdn_memo = self.fqdn
     raise RegisterNotSuccessError, 'failed to get fqdn' if fqdn_memo.blank?
 
-    ip_addr_memo = self.ip_addr
-    raise RegisterNotSuccessError, 'failed to get ip_addr' if ip_addr_memo.blank?
+    private_ip_address_memo = self.private_ip_address
+    raise RegisterNotSuccessError, 'failed to get private_ip_address' if private_ip_address_memo.blank?
 
     Retryable.retryable(tries: tries, on: RegisterNotSuccessError, sleep: sleep) do
-      added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{ip_addr_memo}")
+      added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{private_ip_address_memo}")
       raise RegisterNotSuccessError, 'failed to add keys in known_hosts' unless added
     end
   end
