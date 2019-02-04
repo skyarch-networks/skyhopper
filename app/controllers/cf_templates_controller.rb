@@ -222,7 +222,7 @@ class CfTemplatesController < ApplicationController
       begin
         Rails.logger.info("[add_keys_in_known_hosts] Add keys in known_hosts is started. infra_id: #{infrastructure.id}")
 
-        stack = Stack.new(infrastructure)q
+        stack = Stack.new(infrastructure)
 
         Rails.logger.info("[add_keys_in_known_hosts] Waiting creat complate or update complete. stack_name: #{stack.name}")
         stack.wait_creat_complate_or_update_complete
