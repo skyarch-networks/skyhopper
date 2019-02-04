@@ -236,7 +236,7 @@ class CfTemplatesController < ApplicationController
         ec2_resources.each do |ec2_resource|
           instance = infrastructure.instance(ec2_resource.physical_id)
           instance.wait_status(:running)
-          instance.register_in_known_hosts
+          instance.register_in_known_hosts(tries: 12, sleep: 5)
         end
       rescue => ex
         Rails.logger.error("[add_keys_in_known_hosts] Add keys in known_hosts is failed. infra_id: #{infrastructure.id}")

@@ -11,6 +11,8 @@ class EC2Instance < SimpleDelegator
   Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
 
   class ChangeScaleError < StandardError; end
+  class RegisterNotSuccessError < StandardError; end
+
 
   attr_reader :physical_id
 
@@ -113,15 +115,17 @@ class EC2Instance < SimpleDelegator
            self.private_ip_address
   end
 
-  def register_in_known_hosts
+  def register_in_known_hosts(tries:1, sleep: 5)
     fqdn_memo = self.fqdn
-    raise 'failed to get fqdn' if fqdn_memo.blank?
+    raise RegisterNotSuccessError, 'failed to get fqdn' if fqdn_memo.blank?
 
     ip_addr_memo = self.ip_addr
-    raise 'failed to get ip_addr' if ip_addr_memo.blank?
+    raise RegisterNotSuccessError, 'failed to get ip_addr' if ip_addr_memo.blank?
 
-    added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{ip_addr_memo}")
-    raise 'failed to add keys in known_hosts' unless added
+    Retryable.retryable(tries: tries, on: RegisterNotSuccessError, sleep: sleep) do
+      added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{ip_addr_memo}")
+      raise RegisterNotSuccessError, 'failed to add keys in known_hosts' unless added
+    end
   end
 
   def platform
