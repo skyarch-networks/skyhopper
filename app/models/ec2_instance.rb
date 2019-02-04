@@ -17,6 +17,7 @@ class EC2Instance < SimpleDelegator
   attr_reader :physical_id
 
   def initialize(infra, physical_id:)
+    @infra = infra
     @physical_id = physical_id
 
     @instance = Aws::EC2::Instance.new(physical_id, client: infra.ec2)
@@ -37,6 +38,31 @@ class EC2Instance < SimpleDelegator
         raise StandardError, "#{s} is not expected status."
       end
     end
+  end
+
+  def wait_status_check_ok
+    loop do
+      s = self.status_check_info
+      if s[:instance_status] == 'ok' && s[:system_status] == 'ok'
+        break
+      end
+      if ['ok', 'initializing'].include?(s[:instance_status]) && ['ok', 'initializing'].include?(s[:system_status])
+          sleep 5
+      else
+        raise StandardError, 'status check failed'
+      end
+    end
+  end
+
+  def status_check_info
+    response = @infra.ec2.describe_instance_status(
+      instance_ids: [self.physical_id]
+    )
+    raise 'acquisition of instance status failed' if response.instance_statuses.length != 1
+    return {
+      instance_status: response.instance_statuses[0].instance_status.status,
+      system_status: response.instance_statuses[0].system_status.status,
+    }
   end
 
   def change_scale(type)

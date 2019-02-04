@@ -236,6 +236,7 @@ class CfTemplatesController < ApplicationController
         ec2_resources.each do |ec2_resource|
           instance = infrastructure.instance(ec2_resource.physical_id)
           instance.wait_status(:running)
+          instance.wait_status_check_ok
           instance.register_in_known_hosts(tries: 12, sleep: 5)
         end
       rescue => ex
