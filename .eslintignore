@@ -1,0 +1,5 @@
+/
+!/app/assets/javascripts/**
+/app/assets/javascripts/i18n/
+/app/assets/javascripts/modules/fonts_map.js
+/app/assets/javascripts/modules/vfs_fonts.js
