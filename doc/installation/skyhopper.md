@@ -57,8 +57,18 @@ $ sudo yum groupinstall 'Development tools' 'Development Libraries'
 $ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
+$ sudo yum install ansible --enablerepo=epel
 ```
 
+## Ansibleの設定
+
+```sh
+$ sudo vim /etc/ansible/ansible.cfg
+(以下の行をアンコメントしてください)
+#retry_files_enabled = False
+↓
+retry_files_enabled = False
+```
 
 ## リバースプロキシ(nginx)の設定
 
