@@ -142,7 +142,7 @@ class Node
     hosts_file.print(ansible_hosts_text(infra))
     hosts_file.flush
 
-    Ansible::open(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
+    Ansible::create(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
       ansible.set_roles(playbook_roles)
       begin
         ansible.run(

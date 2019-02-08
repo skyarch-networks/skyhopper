@@ -50,7 +50,7 @@ describe Node, type: :model do
     let(:infra){build(:infrastructure)}
 
     before do
-      allow(Ansible).to receive(:open).and_return(true)
+      allow(Ansible).to receive(:create).and_return(true)
       ec2_instance = double("ec2_instance")
       allow(ec2_instance).to receive(:fqdn).and_return('test.test')
       allow(infra).to receive(:instance).and_return(ec2_instance)

@@ -17,8 +17,8 @@ module Ansible
     return true
   end
 
-  def self.open(ansible_workspace_path, target_hosts, become=true)
-    Tempfile.open('playbook-', ansible_workspace_path) do |playbook_file|
+  def self.create(ansible_workspace_path, target_hosts, become=true)
+    Tempfile.create('playbook-', ansible_workspace_path) do |playbook_file|
       yield(Client.new(playbook_file, ansible_workspace_path, target_hosts, become))
     end
   end
