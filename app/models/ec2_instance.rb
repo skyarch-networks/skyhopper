@@ -11,10 +11,13 @@ class EC2Instance < SimpleDelegator
   Types = AWS::InstanceTypes[:current] + AWS::InstanceTypes[:previous]
 
   class ChangeScaleError < StandardError; end
+  class RegisterNotSuccessError < StandardError; end
+
 
   attr_reader :physical_id
 
   def initialize(infra, physical_id:)
+    @infra = infra
     @physical_id = physical_id
 
     @instance = Aws::EC2::Instance.new(physical_id, client: infra.ec2)
@@ -35,6 +38,31 @@ class EC2Instance < SimpleDelegator
         raise StandardError, "#{s} is not expected status."
       end
     end
+  end
+
+  def wait_status_check_ok
+    loop do
+      s = self.status_check_info
+      if s[:instance_status] == 'ok' && s[:system_status] == 'ok'
+        break
+      end
+      if ['ok', 'initializing'].include?(s[:instance_status]) && ['ok', 'initializing'].include?(s[:system_status])
+          sleep 5
+      else
+        raise StandardError, 'status check failed'
+      end
+    end
+  end
+
+  def status_check_info
+    response = @infra.ec2.describe_instance_status(
+      instance_ids: [self.physical_id]
+    )
+    raise 'acquisition of instance status failed' if response.instance_statuses.length != 1
+    return {
+      instance_status: response.instance_statuses[0].instance_status.status,
+      system_status: response.instance_statuses[0].system_status.status,
+    }
   end
 
   def change_scale(type)
@@ -111,6 +139,19 @@ class EC2Instance < SimpleDelegator
     return self.elastic_ip.presence ||
            self.public_ip_address.presence ||
            self.private_ip_address
+  end
+
+  def register_in_known_hosts(tries:1, sleep: 5)
+    fqdn_memo = self.fqdn
+    raise RegisterNotSuccessError, 'failed to get fqdn' if fqdn_memo.blank?
+
+    private_ip_address_memo = self.private_ip_address
+    raise RegisterNotSuccessError, 'failed to get private_ip_address' if private_ip_address_memo.blank?
+
+    Retryable.retryable(tries: tries, on: RegisterNotSuccessError, sleep: sleep) do
+      added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{private_ip_address_memo}")
+      raise RegisterNotSuccessError, 'failed to add keys in known_hosts' unless added
+    end
   end
 
   def platform
