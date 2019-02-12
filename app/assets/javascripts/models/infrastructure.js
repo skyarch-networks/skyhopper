@@ -23,21 +23,21 @@ const Infrastructure = class Infrastructure extends ModelBase {
   detach() {
     const self = this;
     return this.WrapAndResolveReject(
-      () => Infrastructure.ajax_infra.destroy({ id: self.id }),
+      () => self.ajax_infra.destroy({ id: self.id }),
     );
   }
 
   delete_stack() {
     const self = this;
     return this.WrapAndResolveReject(
-      () => Infrastructure.ajax_infra.delete_stack({ id: self.id }),
+      () => self.ajax_infra.delete_stack({ id: self.id }),
     );
   }
 
   stack_events() {
     const self = this;
     return this.WrapAndResolveReject(
-      () => Infrastructure.ajax_infra.stack_events({ id: self.id }),
+      () => self.ajax_infra.stack_events({ id: self.id }),
     );
   }
 
@@ -77,7 +77,7 @@ const Infrastructure = class Infrastructure extends ModelBase {
   get_schedule(physicalId) {
     const self = this;
     return this.WrapAndResolveReject(
-      () => Infrastructure.ajax_infra.get_schedule({
+      () => self.ajax_infra.get_schedule({
         infra_id: self.id,
         physical_id: physicalId,
       }),
@@ -86,19 +86,20 @@ const Infrastructure = class Infrastructure extends ModelBase {
 
   show_elb(physicalId) {
     const self = this;
-    return this.WrapAndResolveReject(() => Infrastructure.ajax_infra.show_elb({
+    return this.WrapAndResolveReject(() => self.ajax_infra.show_elb({
       id: self.id,
       physical_id: physicalId,
     }));
   }
 
   save_schedule(physicalId, _selInstance) {
+    const self = this;
     let selInstance = _selInstance;
     if (selInstance === undefined) {
       selInstance = [];
     }
     return this.WrapAndResolveReject(
-      () => Infrastructure.ajax_infra.save_schedule({
+      () => self.ajax_infra.save_schedule({
         physical_id: physicalId,
         selected_instance: selInstance,
       }),
