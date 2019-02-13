@@ -19,6 +19,9 @@ class Resource < ActiveRecord::Base
   has_one :servertest_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   validates :physical_id, uniqueness: true
+  validates :playbook_roles, json: true, unless: Proc.new{|a| a.playbook_roles.nil?}
+  validate :verify_playbook_roles
+  validates :extra_vars, json: true, unless: Proc.new{|a| a.extra_vars.nil?}
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
@@ -60,6 +63,32 @@ class Resource < ActiveRecord::Base
     rescue => ex
       return self if ex.message.include("physical id not found.")
       raise ex
+    end
+  end
+
+  def get_playbook_roles
+    if self.playbook_roles.nil?
+      return []
+    end
+    JSON.parse(self.playbook_roles)
+  end
+
+  def set_playbook_roles(playbook_roles)
+    self.playbook_roles = playbook_roles.to_json
+  end
+
+  def get_extra_vars
+    if self.extra_vars.nil?
+      return '{}'
+    end
+    self.extra_vars
+  end
+
+  private
+
+  def verify_playbook_roles
+    unless Ansible::verify_roles(get_playbook_roles)
+      errors.add(:playbook_roles, 'structure is incorrect')
     end
   end
 end

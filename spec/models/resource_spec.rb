@@ -42,4 +42,97 @@ RSpec.describe Resource, type: :model do
       it {is_expected.to match_array resource.servertest_ids}
     end
   end
+
+  describe '#get_playbook_roles' do
+    subject{resource.get_playbook_roles}
+
+    context 'when playbook_roles is nil' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.playbook_roles = nil
+      end
+
+      it {is_expected.to eq []}
+    end
+
+    context 'when playbook_roles is \'["aaa", "bbb"]\'(JSON string)' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.playbook_roles = '["aaa", "bbb"]'
+      end
+
+      it {is_expected.to eq ['aaa', 'bbb']}
+    end
+  end
+
+  describe '#set_playbook_roles' do
+    let(:resource){build(:resource)}
+
+    context 'when argument playbook_roles is array' do
+      before do
+        resource.set_playbook_roles(['aaa', 'bbb'])
+      end
+
+      it 'playbook_roles is JSON text' do
+        expect(resource.playbook_roles).to eq '["aaa","bbb"]'
+      end
+    end
+  end
+
+  describe '#get_extra_vars' do
+    subject{resource.get_extra_vars}
+
+    context 'when extra_vars is nil' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.extra_vars = nil
+      end
+
+      it {is_expected.to eq '{}'}
+    end
+
+    context 'when playbook_roles is not nil' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.extra_vars = '{"aaa":"abc"}'
+      end
+
+      it {is_expected.to eq '{"aaa":"abc"}'}
+    end
+  end
+
+
+  describe '#verify_playbook_roles' do
+    subject{resource.__send__(:verify_playbook_roles)}
+
+    context 'when playbook_roles is valid' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.set_playbook_roles(['aaa', 'bbb'])
+        subject
+      end
+
+      it 'should number of errors[:playbook_roles] is 0' do
+        expect(resource.errors[:playbook_roles].length).to eq 0
+      end
+    end
+
+    context 'when playbook_roles is invalid' do
+      let(:resource){build(:resource)}
+
+      before do
+        resource.set_playbook_roles(['aaa', 123])
+        subject
+      end
+
+      it 'should number of error[:playbook_roles] is not 0' do
+        expect(resource.errors[:playbook_roles].length).not_to eq 0
+      end
+    end
+  end
 end

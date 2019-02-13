@@ -11,6 +11,8 @@ json.chef_error @chef_error
 json.chef_msg   @chef_msg
 json.before_bootstrap @before_bootstrap
 
+json.playbook_roles       @playbook_roles
+
 json.runlist       @runlist
 json.runlist_error       @runlist_error
 json.selected_dish @selected_dish
@@ -32,6 +34,7 @@ json.availability_zones @availability_zones
 if @info
   json.info do
     json.cook_status       @info[:cook_status]
+    json.ansible_status    @info[:ansible_status]
     json.servertest_status @info[:servertest_status] # TODO: Refactor all serverspec status
     json.update_status     @info[:update_status]
   end

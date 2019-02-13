@@ -11,6 +11,8 @@ class Node
 
   ChefDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
+  AnsibleWorkspacePath = Rails.root.join('ansible').to_s
+  AnsibleTargetHostName = 'ec2'.freeze
 
   class BootstrapError < ::StandardError; end
   class CookError < ::StandardError; end
@@ -127,6 +129,34 @@ class Node
       cmd = 'chef-client --manual-list'
       exec_knife_winrm(cmd, infra, &block)
     end
+  end
+
+  # node.run_ansible_playbook do |line|
+  #   # line is ansible-playbook log
+  # end
+  def run_ansible_playbook(infra, playbook_roles, extra_vars, &block)
+    ec2key = infra.ec2_private_key
+    ec2key.output_temp(prefix: @name)
+
+    hosts_file = Tempfile.open(@name)
+    hosts_file.print(ansible_hosts_text(infra))
+    hosts_file.flush
+
+    Ansible::create(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
+      ansible.set_roles(playbook_roles)
+      begin
+        ansible.run(
+          hosts_path: hosts_file.path,
+          private_key_path: ec2key.path_temp,
+          extra_vars: extra_vars
+        ) do |line|
+          block.call(line)
+        end
+      end
+    end
+  ensure
+    ec2key.close_temp
+    hosts_file.close! if hosts_file
   end
 
   def wait_search_index
@@ -413,6 +443,13 @@ class Node
     path_from = Rails.root
     path_to = Pathname(path_string)
     './' + path_to.relative_path_from(path_from).to_s
+  end
+
+  def ansible_hosts_text(infra)
+    <<"EOS"
+[#{AnsibleTargetHostName}]
+#{infra.instance(@name).fqdn} ansible_ssh_user=#{@user}
+EOS
   end
 
 end
