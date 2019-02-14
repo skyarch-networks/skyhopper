@@ -33,6 +33,7 @@ ja:
         user_pass_required:    'ユーザー名とパスワードは必須項目です'
         gen_serverspec_failed: 'Serverspec の生成に失敗しました'
         serverspec_deleted:    'Serverspec を削除しました'
+        fonts_loading_in_progress: 'フォントを読み込み中です。しばらくしてからもう一度お試し下さい。'
 
 
     template_builder:
