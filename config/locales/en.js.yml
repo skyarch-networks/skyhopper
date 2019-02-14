@@ -33,6 +33,7 @@ en:
         user_pass_required:    'Username and Password are required.'
         gen_serverspec_failed: 'Failed to generate serverspec.'
         serverspec_deleted:    'serverspec deleted'
+        fonts_loading_in_progress: 'Fonts loading in progress. Please try again later.'
 
 
     template_builder:
