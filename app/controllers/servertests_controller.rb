@@ -139,8 +139,6 @@ class ServertestsController < ApplicationController
 
     servertests = Servertest.for_infra_serverspec(infra_id)
     @individual_servertests, @global_servertests = servertests.partition{|spec| spec.infrastructure_id }
-    node = Node.new(physical_id)
-    @is_available_auto_generated = node.have_auto_generated
 
     @servertest_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
   end
@@ -167,9 +165,13 @@ class ServertestsController < ApplicationController
     infra_id       = params.require(:infra_id)
     servertest_ids = params.require(:servertest_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
+
     if selected_auto_generated = servertest_ids.include?('-1')
       servertest_ids.delete('-1')
     end
+
+    # TODO auto_generated機能は削除されたため、リファクタリング推奨
+    selected_auto_generated = false
 
     begin
       resp = ServertestJob.perform_now(

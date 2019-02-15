@@ -361,7 +361,7 @@
         </ul>
       </div>
       <div class="dropup" style="display: inline-block">
-        <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+        <button :disabled="cook_status !== 'Success' && ansible_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
           <%= t('servertests.servertest') %>
           <span class="caret"></span>
         </button>

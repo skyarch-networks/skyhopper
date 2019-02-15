@@ -105,30 +105,6 @@ describe Node, type: :model do
     end
   end
 
-  describe 'have_auto_generated' do
-    subject { Node.new("test") }
-
-    shared_context 'have_auto_generated?' do |bool|
-      before do
-        r = ['recipe[hoge]', 'recipe[fuga]']
-        r << 'recipe[serverspec-handler]' if bool
-        allow(subject).to receive(:all_recipe).and_return(r)
-      end
-
-      it 'return boolean' do
-        expect(subject.have_auto_generated).to __send__(bool ? :be_truthy : :be_falsey)
-      end
-    end
-
-    context 'have serverspec-handler recipe' do
-      include_context 'have_auto_generated?', true
-    end
-
-    context 'dont have serverspec-handler recipe' do
-      include_context 'have_auto_generated?', false
-    end
-  end
-
   describe '#run_serverspec' do
     subject{ Node.new(physical_id) }
     let(:infra){create(:infrastructure)}

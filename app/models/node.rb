@@ -163,11 +163,6 @@ class Node
     sleep WaitSearchIndexInterval while ChefAPI.search_node(@name).empty?
   end
 
-  # for serverspec
-  def have_auto_generated
-    have_recipes?(%w{recipe[serverspec-handler::default] recipe[serverspec-handler]})
-  end
-
   # recipe が適用されているかを返す。
   def have_recipes?(recipes)
     recipes = [recipes] unless recipes.kind_of?(Array)
