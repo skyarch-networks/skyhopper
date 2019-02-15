@@ -141,12 +141,12 @@ describe Node, type: :model do
 
     it 'return hash' do
       serverspecs = [servertest.id]
-      expect(subject.run_serverspec(infra.id, serverspecs, false)).to be_kind_of(Hash)
+      expect(subject.run_serverspec(infra.id, serverspecs)).to be_kind_of(Hash)
     end
 
     it 'should update status' do
       serverspecs = [servertest.id]
-      subject.run_serverspec(infra.id, serverspecs, false)
+      subject.run_serverspec(infra.id, serverspecs)
       expect(resource.status.servertest.success?).to be true
     end
 
@@ -157,7 +157,7 @@ describe Node, type: :model do
 
       it 'should update status' do
         serverspecs = [servertest.id]
-        expect{subject.run_serverspec(infra.id, serverspecs, false)}.to raise_error StandardError
+        expect{subject.run_serverspec(infra.id, serverspecs)}.to raise_error StandardError
         expect(resource.status.servertest.failed?).to be true
       end
     end
@@ -169,7 +169,7 @@ describe Node, type: :model do
       [
         {
         name: 'test-spec',
-        files: ['./tmp/serverspec/1234567890-1234-abc123']
+        file: './tmp/serverspec/1234567890-1234-abc123'
         }
       ]
     }

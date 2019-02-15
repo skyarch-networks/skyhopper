@@ -187,7 +187,7 @@ module DishesController::Validate
     svrspecs    = dish.serverspecs
     return true if svrspecs.empty?
     @infrastructure.resources_or_create
-    svrspec_res = @node.run_serverspec(infrastructure.id, svrspecs.map(&:id), false)
+    svrspec_res = @node.run_serverspec(infrastructure.id, svrspecs.map(&:id))
 
     return svrspec_res[:summary][:failure_count].zero?
   end

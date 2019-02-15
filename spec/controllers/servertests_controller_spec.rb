@@ -309,7 +309,6 @@ describe ServertestsController, type: :controller do
         expect(ServertestJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
           servertest_ids: servertests.map{|x|x.id.to_s},
-          auto_generated: false
         )
         req
       end

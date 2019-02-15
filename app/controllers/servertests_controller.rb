@@ -166,17 +166,10 @@ class ServertestsController < ApplicationController
     servertest_ids = params.require(:servertest_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    if selected_auto_generated = servertest_ids.include?('-1')
-      servertest_ids.delete('-1')
-    end
-
-    # TODO auto_generated機能は削除されたため、リファクタリング推奨
-    selected_auto_generated = false
-
     begin
       resp = ServertestJob.perform_now(
         physical_id, infra_id, current_user.id,
-        servertest_ids: servertest_ids, auto_generated: selected_auto_generated
+        servertest_ids: servertest_ids
       )
     rescue => ex
       # serverspec が正常に実行されなかったとき
@@ -196,7 +189,7 @@ class ServertestsController < ApplicationController
 
     ServertestResult.create(
       resource_id:    resource.id,
-      auto_generated_servertest: selected_auto_generated,
+      auto_generated_servertest: false,
       status:         resp[:status_text],
       message:        resp[:long_message],
       servertest_ids: servertest_ids
