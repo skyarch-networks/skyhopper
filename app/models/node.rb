@@ -163,11 +163,6 @@ class Node
     sleep WaitSearchIndexInterval while ChefAPI.search_node(@name).empty?
   end
 
-  # for serverspec
-  def have_auto_generated
-    have_recipes?(%w{recipe[serverspec-handler::default] recipe[serverspec-handler]})
-  end
-
   # recipe が適用されているかを返す。
   def have_recipes?(recipes)
     recipes = [recipes] unless recipes.kind_of?(Array)
@@ -180,39 +175,26 @@ class Node
   end
 
   # serverspec_ids => ServerspecのidのArray
-  def run_serverspec(infra_id, servertest_ids, selected_auto_generated)
+  def run_serverspec(infra_id, servertest_ids)
     # get params
     infra = Infrastructure.find(infra_id)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
-    raise ServerspecError, 'specs is empty' if servertest_ids.empty? and ! selected_auto_generated
+    raise ServerspecError, 'specs is empty' if servertest_ids.empty?
 
     fqdn = infra.instance(@name).fqdn
 
-    run_spec_list = []
-    if servertest_ids.present?
-      run_spec_list.concat(Servertest.where(id: servertest_ids).map{|servertest|
-        screen_name = servertest.name
-        screen_name << " (#{servertest.description})" if servertest.description.present?
-        path = ::Servertest.to_file(servertest.id)
-        {
-          name: screen_name,
-          path: path,
-          files: [get_relative_path_string(path)]
-        }
-      })
-    end
-    if selected_auto_generated
-      auto_generated_servertests_path = scp_specs(ec2key.path_temp, fqdn)
-      run_spec_list.push(
-        {
-          name: 'auto_generated',
-          path: auto_generated_servertests_path,
-          files: Dir.glob(auto_generated_servertests_path + '/**/*', File::FNM_DOTMATCH).map{|path|get_relative_path_string(path)}
-        }
-      )
-    end
+    run_spec_list = Servertest.where(id: servertest_ids).map{|servertest|
+      screen_name = servertest.name
+      screen_name << " (#{servertest.description})" if servertest.description.present?
+      path = ::Servertest.to_file(servertest.id)
+      {
+        name: screen_name,
+        path: path,
+        file: get_relative_path_string(path)
+      }
+    }
 
     ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
 
@@ -431,7 +413,7 @@ class Node
         next
       end
       error_servertest_names.concat(run_spec_list.select{|run_spec|
-        run_spec[:files].include?(match[1])
+        run_spec[:file] == match[1]
       }.map{|run_spec|
         run_spec[:name]
       })
