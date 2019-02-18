@@ -4,7 +4,7 @@
 [English Readme](README_EN.md)
 
 ## Notice
-Version2から、ChefはAnsibleに置き換えられます。  
+SkyHopper Version2から、ChefはAnsibleに置き換えられます。  
 Chefの機能の一部はまだ使える状態ですが、将来的には削除される予定です。
 
 ## blog

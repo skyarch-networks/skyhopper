@@ -4,7 +4,7 @@ A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 [日本語ドキュメント](README.md)
 
 ## Notice
-From Version 2, Chef is replaced by Ansible.  
+From SkyHopper Version 2, Chef is replaced by Ansible.  
 Some features of Chef are still available but will be removed in the future.
 
 ## blog
