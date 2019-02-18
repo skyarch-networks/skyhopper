@@ -30,6 +30,8 @@ class Resource < ActiveRecord::Base
 
   after_create :initialize_statuses
 
+  class NotRegisterInKnownHosts < StandardError; end
+
   # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
   # @return [Array<Serverspec>]
@@ -82,6 +84,10 @@ class Resource < ActiveRecord::Base
       return '{}'
     end
     self.extra_vars
+  end
+
+  def should_be_registered_in_known_hosts(msg)
+    raise NotRegisterInKnownHosts, msg unless self.register_in_known_hosts?
   end
 
   private

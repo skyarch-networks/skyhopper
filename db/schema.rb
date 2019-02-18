@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190104063406) do
+ActiveRecord::Schema.define(version: 20190218035754) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -173,15 +173,16 @@ ActiveRecord::Schema.define(version: 20190104063406) do
   end
 
   create_table "resources", force: :cascade do |t|
-    t.string   "physical_id",       limit: 255,   null: false
-    t.string   "type_name",         limit: 255,   null: false
-    t.integer  "infrastructure_id", limit: 4,     null: false
+    t.string   "physical_id",             limit: 255,   null: false
+    t.string   "type_name",               limit: 255,   null: false
+    t.integer  "infrastructure_id",       limit: 4,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "screen_name",       limit: 255
-    t.integer  "dish_id",           limit: 4
-    t.text     "playbook_roles",    limit: 65535
-    t.text     "extra_vars",        limit: 65535
+    t.string   "screen_name",             limit: 255
+    t.boolean  "register_in_known_hosts"
+    t.integer  "dish_id",                 limit: 4
+    t.text     "playbook_roles",          limit: 65535
+    t.text     "extra_vars",              limit: 65535
   end
 
   add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree
