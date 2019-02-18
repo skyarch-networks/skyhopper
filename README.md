@@ -3,30 +3,23 @@
 
 [English Readme](README_EN.md)
 
+## Notice
+SkyHopper Version2から、ChefはAnsibleに置き換えられます。  
+Chefの機能の一部はまだ使える状態ですが、将来的には削除される予定です。
+
 ## blog
+以下のリンク先の情報はVersion1のものです。  
 http://www.skyarch.net/blog/?p=2709
 
 RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
 
 ## デプロイ手順フロー
+Chefの機能に一部の処理が依存していため、Chefのインストールが必要です。
+Chefの機能は将来的に削除される予定です。
 
 ### アプリケーションのデプロイ
 
 [doc/installation/skyhopper.md](doc/installation/skyhopper.md)
-
-1. rubyのインストール
-1. node.jsのインストール
-1. SkyHopperに必要なパッケージをインストール
-1. リバースプロキシの設定
-1. サービスの起動
-1. SkyHopperのダウンロード
-1. MySQLのセットアップ
-1. SkyHopperのセットアップ
-1. DBのセットアップ
-1. パーミッションの設定
-1. SkyHopperの初期設定
-1. Chef Serverの鍵を設置
-
 
 ### Cookbook/Roleのアップロード
 
@@ -37,6 +30,9 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 
 [doc/installation/zabbix_server.md](doc/installation/zabbix_server.md)
 
+
+### Ansible
+`<project-root>/ansible/roles`配下にお好きなAnsibleロールを配置してください。
 
 ### アップデート手順
 
