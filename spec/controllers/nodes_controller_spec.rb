@@ -368,11 +368,12 @@ describe NodesController, type: :controller do
   describe '#yum_update' do
     let(:security){'security'}
     let(:exec){'exec'}
-    let(:req){put :yum_update, id: physical_id, infra_id: infra.id, security: security, exec: exec}
+    let(:resource){create(:resource)}
+    let(:req){put :yum_update, id: resource.physical_id, infra_id: resource.infrastructure.id, security: security, exec: exec}
 
     before do
       allow_any_instance_of(NodesController).to receive(:exec_yum_update)
-        .with(infra, physical_id, security=='security', exec=='exec')
+        .with(resource.infrastructure, resource.physical_id, security=='security', exec=='exec')
       req
     end
 
@@ -441,7 +442,8 @@ describe NodesController, type: :controller do
   end
 
   describe "#run_ansible_playbook" do
-    let(:run_ansible_playbook_request){put :run_ansible_playbook, id: physical_id, infra_id: infra.id}
+    let(:resource){create(:resource)}
+    let(:run_ansible_playbook_request){put :run_ansible_playbook, id: resource.physical_id, infra_id: resource.infrastructure.id}
 
     before do
       allow(Thread).to receive(:new_with_db).and_yield
