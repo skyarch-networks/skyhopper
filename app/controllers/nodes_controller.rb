@@ -24,7 +24,7 @@ class NodesController < ApplicationController
   end
 
   before_action :check_chef_server_running, only: [:run_bootstrap, :edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
-
+  before_action :check_register_in_knwon_hosts, only: [:yum_update, :run_ansible_playbook]
 
   # GET /nodes/:id/run_bootstrap
   # @param [String] id physical_id of EC2 instance.
@@ -561,6 +561,11 @@ class NodesController < ApplicationController
 
   def set_infra
     @infra = Infrastructure.find(params.require(:infra_id))
+  end
+
+  def check_register_in_knwon_hosts
+    physical_id = params.require(:id)
+    @infra.resource(physical_id).should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
   end
 
   def check_chef_server_running

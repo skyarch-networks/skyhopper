@@ -166,6 +166,8 @@ class ServertestsController < ApplicationController
     servertest_ids = params.require(:servertest_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
+    resource.should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
+
     begin
       resp = ServertestJob.perform_now(
         physical_id, infra_id, current_user.id,
