@@ -31,6 +31,9 @@ The function of Chef will be removed in the future.
 [doc/installation/zabbix_server.md](doc/installation/en/zabbix_server.md)
 
 
+### Ansible
+Lease place your favorite Ansible role under `<project-root>/ansible/roles`.
+
 ### Update procedure
 
 Please refer to the latest release page for reference.

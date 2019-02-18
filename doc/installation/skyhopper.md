@@ -1,11 +1,5 @@
 # SkyHopper デプロイ手順
 
-[SkyHopper 用の Cookbook](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper)
-を使用することで、パッケージのインストールなどを自動化することが出来ます。
-
-Cookbook を使用した場合は、[MySQL ユーザーの作成](#user-content-mysql-ユーザーの作成) から実行していきます。
-
-
 ## 対象
 
 Amazon Linux (RHEL系)
@@ -163,11 +157,6 @@ $ sudo service nginx start
 $ cd ~ #SkyHopperを設置したいディレクトリへ移動
 $ git clone https://github.com/skyarch-networks/skyhopper.git
 ```
-
-
-ここまでは Chef によって実行することが出来ます。
-
----------------------------------
 
 ### MySQL ユーザーの作成
 

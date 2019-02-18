@@ -31,6 +31,9 @@ Chefの機能は将来的に削除される予定です。
 [doc/installation/zabbix_server.md](doc/installation/zabbix_server.md)
 
 
+### Ansible
+`<project-root>/ansible/roles`配下にお好きなAnsibleロールを配置してください。
+
 ### アップデート手順
 
 最新のリリースページを参考にしてください。
