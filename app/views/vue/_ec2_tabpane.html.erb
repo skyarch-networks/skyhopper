@@ -235,7 +235,7 @@
 </div>
 
 <%# show-node-infomation %>
-<div v-if="!ec2.chef_error && !ec2.before_bootstrap && running">
+<div v-if="running">
   <h4 class="page-header col-xs-12"><%= t 'ec2_instances.settings' %></h4>
 
   <%# Status labels %>
@@ -246,6 +246,12 @@
       <h6><%= t 'nodes.latest_cook_status' %></h6>
       <bootstrap-tooltip :title.once="cook_time">
         <template slot="content"><span :class="cook_status_class" class="label">{{cook_status}}</span></template>
+      </bootstrap-tooltip>
+    </div>
+    <div class="col-xs-4 col-sm-12">
+      <h6><%= t 'nodes.latest_ansible_status' %></h6>
+      <bootstrap-tooltip :title.once="ansible_time">
+        <template slot="content"><span :class="ansible_status_class" class="label">{{ansible_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
@@ -265,7 +271,7 @@
   <%# Runlist table %>
   <div class="col-xs-12 col-sm-10">
     <h5 class="page-header">Runlist</h5>
-    <table class="table table-condensed">
+    <table v-if="!ec2.runlist_error" class="table table-condensed">
       <thead>
         <tr>
           <th>type</th>
@@ -284,6 +290,29 @@
         </tr>
       </tbody>
     </table>
+    <p v-if="ec2.runlist_error"><%= t('infrastructures.failed_to_get_runlist') %></p>
+  </div>
+
+  <%# playbook_roles table %>
+  <div class="col-xs-12 col-sm-10">
+    <h5 class="page-header"><%= t 'nodes.playbook' %></h5>
+    <table class="table table-condensed">
+      <thead>
+      <tr>
+        <th>name</th>
+      </tr>
+      </thead>
+      <tbody v-if="ec2.playbook_roles.length !== 0">
+      <tr v-for="r in ec2.playbook_roles" :class="{success: is_role(r)}">
+        <td v-text="r"></td>
+      </tr>
+      </tbody>
+      <tbody v-if="ec2.playbook_roles.length === 0">
+      <tr>
+        <td><%= t 'common.msg.empty', name: t('nodes.playbook') %></td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 
   <%# Buttons %>
@@ -293,7 +322,7 @@
         <button @click="cook({whyrun: true})" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary">
           <%= t 'nodes.cook_in_why_run_mode'%>
         </button>
-        <button type="button" :disabled="!ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" :disabled="ec2.chef_error || ec2.before_bootstrap || !ec2.attribute_set" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="caret"></span>
           <span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -301,8 +330,21 @@
           <li><a @click="cook({whyrun: false})" href="#"><%= t 'nodes.cook' %></a></li>
         </ul>
       </div>
-      <button @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
-      <button @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
+      <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_runlist()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_runlist' %></button>
+      <button :disabled="ec2.chef_error || ec2.before_bootstrap" @click="edit_attr()" class="btn btn-sm btn-default" :class="{'border-blink': !ec2.chef_error  && !ec2.before_bootstrap && !ec2.attribute_set}"><%= t 'nodes.btn.instance_settings' %></button>
+      <div :class="{'border-blink': ansible_status === 'UnExecuted'}" class="btn-group dropup">
+        <button disabled class="btn btn-sm btn-primary">
+          <%= t 'nodes.ansible'%>
+        </button>
+        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a @click="run_ansible_playbook()" href="#"><%= t 'nodes.run_ansible_playbook' %></a></li>
+        </ul>
+      </div>
+      <button @click="edit_ansible_playbook()" class="btn btn-default btn-sm"><%= t 'nodes.btn.edit_playbook' %></button>
       <div class="dropup" style="display: inline-block" v-if="!ec2.platform">
         <button class="btn btn-sm btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           yum
@@ -319,7 +361,7 @@
         </ul>
       </div>
       <div class="dropup" style="display: inline-block">
-        <button :disabled="cook_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+        <button :disabled="cook_status !== 'Success' && ansible_status !== 'Success'" class="btn btn-sm btn-info" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
           <%= t('servertests.servertest') %>
           <span class="caret"></span>
         </button>

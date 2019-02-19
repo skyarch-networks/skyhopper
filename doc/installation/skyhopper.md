@@ -1,11 +1,5 @@
 # SkyHopper デプロイ手順
 
-[SkyHopper 用の Cookbook](https://github.com/skyarch-networks/skyhopper_cookbooks/tree/master/cookbooks/skyhopper)
-を使用することで、パッケージのインストールなどを自動化することが出来ます。
-
-Cookbook を使用した場合は、[MySQL ユーザーの作成](#user-content-mysql-ユーザーの作成) から実行していきます。
-
-
 ## 対象
 
 Amazon Linux (RHEL系)
@@ -57,8 +51,18 @@ $ sudo yum groupinstall 'Development tools' 'Development Libraries'
 $ sudo yum install ruby24-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel mysql-server nginx
 $ sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 $ sudo yum --enablerepo=remi,remi-test install redis
+$ sudo yum install ansible --enablerepo=epel
 ```
 
+## Ansibleの設定
+
+```sh
+$ sudo vim /etc/ansible/ansible.cfg
+(以下の行をアンコメントしてください)
+#retry_files_enabled = False
+↓
+retry_files_enabled = False
+```
 
 ## リバースプロキシ(nginx)の設定
 
@@ -154,11 +158,6 @@ $ cd ~ #SkyHopperを設置したいディレクトリへ移動
 $ git clone https://github.com/skyarch-networks/skyhopper.git
 ```
 
-
-ここまでは Chef によって実行することが出来ます。
-
----------------------------------
-
 ### MySQL ユーザーの作成
 
 ```sh
@@ -209,16 +208,6 @@ $ bundle install --path vendor/bundle
 ```sh
 $ cd frontend/
 $ yarn
-$ cd ..
-```
-
-### TypeScript のコンパイル
-
-```sh
-$ npm i -g gulp
-$ cd frontend/
-$ gulp type  //TSD to typings
-$ gulp ts
 $ cd ..
 ```
 

@@ -209,6 +209,28 @@ module.exports = Vue.extend({
 
     cook:       function (params) { this._cook('cook', params); },
 
+    run_ansible_playbook: function () {
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, self.physical_id);
+
+      var dfd = ec2['run_ansible_playbook']();
+      dfd.fail(
+        // run_ansible start fail
+        alert_danger(self._show_ec2)
+      ).progress(function (state, msg) {
+        // run_ansible start success
+        if(state !== 'start'){return;}
+
+        alert_success(function () {
+          self.inprogress = true;
+          Vue.nextTick(function () {
+            self.watch_cook(dfd);
+          });
+        })(msg);
+      });
+    },
+
     yum_update: function (security, exec) {
       var self = this;
       self.is_yum_update = true;
@@ -251,6 +273,10 @@ module.exports = Vue.extend({
     },
     edit_attr: function () {
       this.$parent.tabpaneID = 'edit_attr';
+      this._loading();
+    },
+    edit_ansible_playbook: function () {
+      this.$parent.tabpaneID = 'edit_ansible_playbook';
       this._loading();
     },
     select_servertest: function () {
@@ -619,14 +645,17 @@ module.exports = Vue.extend({
     },
 
     cook_status_class:       function () { return this._label_class(this.cook_status); },
+    ansible_status_class:    function () { return this._label_class(this.ansible_status); },
     servertest_status_class: function () { return this._label_class(this.servertest_status); },
     update_status_class:     function () { return this._label_class(this.update_status); },
 
     cook_status:       function () { return this.capitalize(this.ec2.info.cook_status.value); },
+    ansible_status:    function () { return this.capitalize(this.ec2.info.ansible_status.value); },
     servertest_status: function () { return this.capitalize(this.ec2.info.servertest_status.value); },
     update_status:     function () { return this.capitalize(this.ec2.info.update_status.value); },
 
     cook_time:       function () { return this.cook_status       === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.cook_status.updated_at);},
+    ansible_time:    function () { return this.ansible_status    === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.ansible_status.updated_at);},
     serverspec_time: function () { return this.servertest_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.servertest_status.updated_at);},
     update_time:     function () { return this.update_status     === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at);},
 

@@ -49,6 +49,7 @@
   Vue.component('servertest-results-tabpane', require('infrastructures/servertest-results-tabpane.js'));
   Vue.component('serverspec-tabpane',         require('infrastructures/serverspec-tabpane.js'));
   Vue.component('operation-sched-tabpane',    require('infrastructures/operation-sched-tabpane.js'));
+  Vue.component('edit-ansible-playbook-tabpane',       require('infrastructures/edit-ansible-playbook-tabpane.js'));
   Vue.component('demo-grid',                  require('demo-grid.js'));
 
 

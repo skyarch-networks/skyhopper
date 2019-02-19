@@ -2,11 +2,11 @@ var queryString    = require('query-string').parse(location.search);
 var Infrastructure = require('models/infrastructure').default;
 var EC2Instance    = require('models/ec2_instance').default;
 var pdfMake      = require('pdfmake/build/pdfmake.js');
-var pdfFonts     = require('../modules/vfs_fonts.js');
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 var fontsMap    = require('../modules/fonts_map.js');
 pdfMake.fonts = fontsMap;
 var tableRender    = require('../modules/table_render');
+var helpers = require('infrastructures/helper.js');
+var alert_success  = helpers.alert_success;
 
 module.exports = Vue.extend({
   template: '#view-rules-tabpane-template',
@@ -67,6 +67,11 @@ module.exports = Vue.extend({
       }
     },
     print_pdf: function(){
+      if (!pdfMake.vfs) {
+        alert_success()(t('js.infrastructures.msg.fonts_loading_in_progress'));
+        return;
+      }
+
       var data = this.rules_summary;
       var defaultFont = Object.keys(fontsMap)[0];
 

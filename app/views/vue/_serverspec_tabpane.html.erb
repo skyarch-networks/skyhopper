@@ -2,13 +2,6 @@
 
 <div class="col-md-6 col-sm-6">
   <h4 class="page-header"><%= t 'servertests.global' %></h4>
-  <div class="checkbox">
-    <label class="checkbox">
-      <input type="checkbox" v-model="checked_auto_generated" :disabled="!available_auto_generated">
-      <%= t 'servertests.auto_generated' %>
-    </label>
-  </div>
-  <p class="muted"><%= t 'servertests.msg.auto_generated_disabled_html' %></p>
 
   <div v-for="s in globals" class="checkbox">
     <label class="checkbox">

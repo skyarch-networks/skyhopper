@@ -15,7 +15,7 @@
 
 
   var endpoint_base = '/app_settings';
-  var inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea';
+  var inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea,input[type=checkbox]';
   var required_inputs = '#app-settings-form input[required],select[required],textarea[required]';
 
 
@@ -66,6 +66,10 @@
     $(inputs_selector).each(function () {
       var input = $(this);
       var key = input.attr('name');
+      if (input.is(':checkbox')) {
+        settings[key] = input.prop("checked");
+        return;
+      }
       var val = input.val();
       settings[key] = val;
     });

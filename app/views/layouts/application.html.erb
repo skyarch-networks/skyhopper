@@ -51,5 +51,8 @@
     <% if Rails.application.assets.find_asset(controller_name) %>
       <%= javascript_include_tag controller_name %>
     <% end %>
+    <% if controller_name == 'infrastructures' %>
+      <%= javascript_include_tag 'modules/vfs_fonts.js', async: true %>
+    <% end %>
   </body>
 </html>

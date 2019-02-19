@@ -6,8 +6,6 @@ module ZabbixServersHelper
 
   def delete_zabbix_server_path(zabbix_server, user: current_user)
     return nil unless Pundit.policy(user, zabbix_server).destroy?
-    # Exclude the default zabbix server from deletion
-    return nil if zabbix_server.id == 1
     return zabbix_server_path(zabbix_server)
   end
 end

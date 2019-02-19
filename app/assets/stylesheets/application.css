@@ -205,6 +205,10 @@ h6.page-header {
   height: 600px !important;
 }
 
+.playbook-selectbox-height {
+    height: 600px !important;
+}
+
 .blinking {
   -webkit-animation: blink 0.7s ease-in-out infinite alternate;
   -moz-animation: blink 0.7s ease-in-out infinite alternate;

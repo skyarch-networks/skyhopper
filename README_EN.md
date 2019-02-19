@@ -3,30 +3,23 @@ A Tool for Automatic Construction of Systems (IaaS/ Infrastructure as Code)
 
 [日本語ドキュメント](README.md)
 
+## Notice
+From SkyHopper Version 2, Chef is replaced by Ansible.  
+Some features of Chef are still available but will be removed in the future.
+
 ## blog
+The information on the following link destination is for Version 1.  
 http://www.skyarch.net/blog/?p=2709
 
 RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?branch=master)](https://travis-ci.org/skyarch-networks/skyhopper)
 
 ## Deployment steps
+Since some processing depends on the function of Chef, installation of Chef is necessary.  
+The function of Chef will be removed in the future.
 
 ### Deploying Applications
 
 [doc/installation/en/skyhopper.md](doc/installation/en/skyhopper.md)
-
-1. Installation of Ruby
-1. Installation of Node.js
-1. Installing the necessary packages for SkyHopper
-1. Setting up a reverse proxy
-1. Starting of Services
-1. Downloading/Cloning SkyHopper from GitHub
-1. MySQL Setup
-1. SkyHopper Setup
-1. Database Setup
-1. Setting permissions
-1. Initializing settings for SkyHopper
-1. And establishing the Chef Server keys
-
 
 ### Cookbook / Role Upload
 
@@ -37,6 +30,9 @@ RSpec: [![Build Status](https://travis-ci.org/skyarch-networks/skyhopper.svg?bra
 
 [doc/installation/zabbix_server.md](doc/installation/en/zabbix_server.md)
 
+
+### Ansible
+Lease place your favorite Ansible role under `<project-root>/ansible/roles`.
 
 ### Update procedure
 

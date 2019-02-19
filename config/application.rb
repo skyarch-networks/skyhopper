@@ -43,7 +43,6 @@ module SkyHopper
 
     # for i18n-js assets pipeline
     config.assets.paths << "#{Rails.root}/bundle/ruby/*/gems/*/vendor/assets/javascript"
-    config.assets.paths << "#{Rails.root}/frontend/dest"
 
     config.session_store :redis_store, servers: 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
 
@@ -51,7 +50,7 @@ module SkyHopper
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Version 1.25.0'
+    config.my_version = 'Version 2.0.0'
 
     config.browserify_rails.paths << /frontend\//
   end

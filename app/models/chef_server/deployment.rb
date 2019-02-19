@@ -25,6 +25,7 @@ class ChefServer::Deployment
     download_chef:  {percentage:  40, status: :in_progress},
     install_chef:   {percentage:  60, status: :in_progress},
     setting_chef:   {percentage:  80, status: :in_progress},
+    wait_for_zabbix_created: {percentage:  90, status: :in_progress},
     complete:       {percentage: 100, status: :complete},
     error:          {percentage: nil, status: :error},
   }.freeze
@@ -57,14 +58,14 @@ class ChefServer::Deployment
       )
 
 
-      params.merge!(
+      made_params = params.deep_dup.merge(
         InstanceType:      't2.small',
         UserPemID:         UserPemID,
         OrgPemID:          OrgPemID,
         TrustedCertsPemID: TrustedCertsPemID,
       )
 
-      stack = create_stack(infra, 'Chef Server', params: params)
+      stack = create_stack(infra, 'Chef Server', params: made_params)
 
       __yield :init_ec2, &block
       stack.wait_resource_status('EC2Instance',       'CREATE_COMPLETE')
@@ -80,10 +81,6 @@ class ChefServer::Deployment
 
 
       chef_server.init_knife_rb
-
-      set = AppSetting.second
-      set.ec2_private_key_id = infra.ec2_private_key_id
-      chef_server.set_server_name(set, infra, prj.name, physical_id)
 
       return chef_server
     rescue => ex
@@ -113,12 +110,9 @@ class ChefServer::Deployment
       physical_id = stack.instances.first.physical_resource_id
       server = self.new(infra, physical_id)
       server.wait_init_ec2
-      set = AppSetting.first
-      server.set_server_name(set, infra, prj.name, physical_id)
-
 
       zb = ZabbixServer.create(
-        fqdn: set.fqdn,
+        fqdn: server.fqdn,
         username: 'admin',
         password: 'ilikerandompasswords',
         version: '2.2.9',
@@ -128,16 +122,15 @@ class ChefServer::Deployment
       # Save newly created zabbix server id to zabbix infra.
       prj.zabbix_server_id = zb.id
       prj.save!
-
-      AppSetting.clear_cache
     rescue => ex
       Rails.logger.error(ex)
+      raise ex
     end
 
     private
 
     def create_stack(infra, name, params: {}, template: ERB::Builder.new('chef_server').build)
-      params[:InstanceName] = name
+      made_params = params.deep_dup.merge({InstanceName: name})
 
       cf_template = CfTemplate.new(
         infrastructure_id: infra.id,
@@ -146,7 +139,7 @@ class ChefServer::Deployment
         value:             template,
         format:            "JSON"
       )
-      cf_template.create_cfparams_set(infra, params)
+      cf_template.create_cfparams_set(infra, made_params)
       cf_template.update_cfparams
       cf_template.save!
 
@@ -225,12 +218,6 @@ syntax_check_cache_path  '/home/#{EC2User}/.chef/syntax_check_cache'
         break
       end
     end
-  end
-
-  def set_server_name(set, infra, name, physical_id)
-    set.fqdn = infra.instance(physical_id).public_dns_name
-    set.server_name =  name
-    set.save!
   end
 
   private

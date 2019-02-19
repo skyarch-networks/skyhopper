@@ -19,6 +19,7 @@ class AppSettingsController < ApplicationController
   class SystemServerError < ::StandardError; end
 
   CF_PARAMS_KEY = 'cf_params'.freeze
+  CREATE_OPTIONS_KEY = 'create_options'.freeze
 
 
   # GET /app_settings
@@ -36,6 +37,7 @@ class AppSettingsController < ApplicationController
 
     vpc_id    = settings.delete(:vpc_id)
     subnet_id = settings.delete(:subnet_id)
+    skip_zabbix_server = settings.delete(:skip_zabbix_server)
 
     set_ec2(settings[:aws_region], access_key, secret_access_key)
 
@@ -54,6 +56,9 @@ class AppSettingsController < ApplicationController
     check_eip_limit!
 
     Rails.cache.write(CF_PARAMS_KEY, cf_params)
+    Rails.cache.write(CREATE_OPTIONS_KEY, {
+      skip_zabbix_server: skip_zabbix_server
+    })
 
     ec2key = Ec2PrivateKey.create!(
       name:  keypair_name,
@@ -64,7 +69,7 @@ class AppSettingsController < ApplicationController
 
     AppSetting.clear_dummy
     app_setting = AppSetting.new(settings)
-    app_setting.fqdn = DummyText
+    app_setting.dummy = true
     app_setting.save!
     AppSetting.clear_cache
 
@@ -77,20 +82,6 @@ class AppSettingsController < ApplicationController
 
     projects.each do |project|
       project.update!(access_key: access_key, secret_access_key: secret_access_key)
-    end
-
-    Thread.new_with_db do
-      # おまじない
-      # rubocop:disable Lint/Void
-      ChefServer
-      ChefServer::Deployment
-      CfTemplate
-      # rubocop:enable Lint/Void
-
-      set = AppSetting.get
-      stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
-
-      ChefServer::Deployment.create_zabbix(stack_name, set.aws_region, set.ec2_private_key.name, set.ec2_private_key.value, cf_params)
     end
 
     render text: I18n.t('app_settings.msg.created') and return
@@ -117,31 +108,49 @@ class AppSettingsController < ApplicationController
 
   # POST /app_settings/chef_create
   def chef_create
-    # とりあえず決め打ちでいい気がする
-    # stack_name = params.require(:stack_name)
-    stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
-
     set = AppSetting.first
     region        = set.aws_region
     keypair_name  = set.ec2_private_key.name
     keypair_value = set.ec2_private_key.value
 
-    AppSetting.create!(
-      aws_region: region,
-      log_directory: set.log_directory
-    )
     @locale = I18n.locale
+
+    cf_params = Rails.cache.fetch(CF_PARAMS_KEY)
+    raise 'Failure to acquire cf_params' if cf_params.nil?
+    Rails.cache.delete(CF_PARAMS_KEY)
+
+    create_options = Rails.cache.fetch(CREATE_OPTIONS_KEY)
+    raise 'Failure to acquire create_options' if create_options.nil?
+    Rails.cache.delete(CREATE_OPTIONS_KEY)
+
     # おまじない
     # rubocop:disable Lint/Void
     ChefServer
     ChefServer::Deployment
     CfTemplate
+    Client
+    Infrastructure
+    Project
+    ProjectParameter
+    Stack
+    ZabbixServer
     # rubocop:enable Lint/Void
 
-    cf_params = Rails.cache.fetch(CF_PARAMS_KEY) || {}
-    Rails.cache.delete(CF_PARAMS_KEY)
+    unless create_options[:skip_zabbix_server]
+      # ZabbixServerの構築
+      create_zabbix_thread = Thread.new_with_db do
+        stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
 
+        ChefServer::Deployment.create_zabbix(stack_name, region, keypair_name, keypair_value, cf_params)
+      end
+    end
+
+    # ChefServerの構築
     Thread.new_with_db do
+      # とりあえず決め打ちでいい気がする
+      # stack_name = params.require(:stack_name)
+      stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
+
       ws = WSConnector.new('chef_server_deployment', 'status')
 
       begin
@@ -151,6 +160,17 @@ class AppSettingsController < ApplicationController
         end
 
         Rails.logger.debug("ChefServer creating > complete")
+
+        unless create_options[:skip_zabbix_server]
+          # ZabbixServerの作成完了を待つ
+          ws.push(build_ws_message(:wait_for_zabbix_created))
+          create_zabbix_thread.join
+        end
+
+        set.dummy = false
+        set.save!
+        AppSetting.clear_cache
+
         ws.push(build_ws_message(:complete))
       rescue => ex
         Rails.logger.error(ex.message)
