@@ -19,6 +19,9 @@ class Resource < ActiveRecord::Base
   has_one :servertest_schedule, dependent: :destroy, foreign_key: 'physical_id', primary_key: 'physical_id'
 
   validates :physical_id, uniqueness: true
+  validates :playbook_roles, json: true, unless: Proc.new{|a| a.playbook_roles.nil?}
+  validate :verify_playbook_roles
+  validates :extra_vars, json: true, unless: Proc.new{|a| a.extra_vars.nil?}
 
   scope :ec2, -> {where(type_name: 'AWS::EC2::Instance')}
   scope :rds, -> {where(type_name: 'AWS::RDS::DBInstance')}
@@ -26,6 +29,8 @@ class Resource < ActiveRecord::Base
   scope :elb,  -> {where(type_name: 'AWS::ElasticLoadBalancing::LoadBalancer')}
 
   after_create :initialize_statuses
+
+  class NotRegisterInKnownHosts < StandardError; end
 
   # 自身の持つ Serverpsec と、自身が持つ Dish に紐づく Serverspec の和集合を返す。
   # @XXX ActiveRecord::Relation を返したい。だけど arel の union が relation を返してくれなくてうまくいかない。
@@ -60,6 +65,36 @@ class Resource < ActiveRecord::Base
     rescue => ex
       return self if ex.message.include("physical id not found.")
       raise ex
+    end
+  end
+
+  def get_playbook_roles
+    if self.playbook_roles.nil?
+      return []
+    end
+    JSON.parse(self.playbook_roles)
+  end
+
+  def set_playbook_roles(playbook_roles)
+    self.playbook_roles = playbook_roles.to_json
+  end
+
+  def get_extra_vars
+    if self.extra_vars.nil?
+      return '{}'
+    end
+    self.extra_vars
+  end
+
+  def should_be_registered_in_known_hosts(msg)
+    raise NotRegisterInKnownHosts, msg unless self.register_in_known_hosts?
+  end
+
+  private
+
+  def verify_playbook_roles
+    unless Ansible::verify_roles(get_playbook_roles)
+      errors.add(:playbook_roles, 'structure is incorrect')
     end
   end
 end

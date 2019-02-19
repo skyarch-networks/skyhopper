@@ -56,24 +56,6 @@ module Concerns::InfraLogger
     infra_logger_success("Updating runlist for #{physical_id} is started. \nrun_list:\n #{screen_runlist.join("\n ")}")
   end
 
-  def infra_logger_serverspec_start(selected_auto_generated, serverspec_ids)
-    physical_id       = params.require(:physical_id)
-
-    selected_serverspecs = Serverspec.where(id: serverspec_ids)
-
-    serverspec_names = []
-
-    serverspec_names << 'auto_generated' if selected_auto_generated
-
-    serverspec_names.concat(selected_serverspecs.map{|spec|
-      screen_name = spec.name
-      screen_name << " (#{spec.description})" if spec.description.present?
-      screen_name
-    })
-
-    infra_logger_success("serverspec for #{physical_id} is started. serverspecs: \n#{serverspec_names.join(",\n")}")
-  end
-
   def ws_send(details, status)
     ws = WSConnector.new('notifications', current_user.ws_key)
     ws.push_as_json({message: details.truncate(100), status: status, timestamp: Time.zone.now.to_s})

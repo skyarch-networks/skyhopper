@@ -25,7 +25,7 @@ RSpec.describe ServertestJob, type: :job do
     let(:job){ServertestJob.perform_now(physical_id, infra.id, user.id)}
 
     before do
-      allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, servertests.map(&:id), false).and_return(resp)
+      allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, servertests.map(&:id)).and_return(resp)
       resource
     end
 
@@ -37,7 +37,7 @@ RSpec.describe ServertestJob, type: :job do
       let(:altr_serverspecs){create_list(:servertest, 4)}
       it 'servertest_ids of resource should be update' do
         ids = altr_serverspecs.map(&:id)
-        allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, ids, false).and_return(resp)
+        allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, ids).and_return(resp)
         ServertestJob.perform_now(physical_id, infra.id, user.id, servertest_ids: ids)
         resource.reload
         expect(resource.servertests).to eq altr_serverspecs

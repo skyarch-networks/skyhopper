@@ -23,7 +23,8 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
-
+  before_action :check_chef_server_running, only: [:run_bootstrap, :edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
+  before_action :check_register_in_knwon_hosts, only: [:yum_update, :run_ansible_playbook]
 
   # GET /nodes/:id/run_bootstrap
   # @param [String] id physical_id of EC2 instance.
@@ -80,31 +81,14 @@ class NodesController < ApplicationController
       return
     end
 
-    chef_server = ServerState.new('chef')
-
-    if @chef_error = !chef_server.is_running?
-      @chef_msg = t 'chef_servers.msg.not_running'
-      return
-    end
-
     resource = @infra.resource(physical_id)
-    n = Node.new(physical_id)
-    begin
-      @runlist       = n.details["run_list"]
-      @selected_dish = resource.dish
-    rescue ChefAPI::Error::NotFound
-      # in many cases, before bootstrap
-      @before_bootstrap = true
-      return
-    rescue ChefAPI::Error => ex
-      @chef_error = true
-      @chef_msg = ex.message
-      return
-    end
+
+    @playbook_roles = resource.get_playbook_roles
 
     @info = {}
     status = resource.status
     @info[:cook_status]       = status.cook
+    @info[:ansible_status]       = status.ansible
     @info[:servertest_status] = status.servertest
     @info[:update_status]     = status.yum
 
@@ -113,6 +97,29 @@ class NodesController < ApplicationController
     @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
 
     @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
+
+    chef_server = ServerState.new('chef')
+    if @chef_error = !chef_server.is_running?
+      @chef_msg = t 'chef_servers.msg.not_running'
+      @runlist_error = true
+      return
+    end
+
+    n = Node.new(physical_id)
+    begin
+      @runlist       = n.details["run_list"]
+      @selected_dish = resource.dish
+    rescue ChefAPI::Error::NotFound
+      # in many cases, before bootstrap
+      @before_bootstrap = true
+      @runlist_error = true
+      return
+    rescue ChefAPI::Error => ex
+      @chef_error = true
+      @chef_msg = ex.message
+      @runlist_error = true
+      return
+    end
 
     @attribute_set = n.attribute_set?
   end
@@ -243,7 +250,11 @@ class NodesController < ApplicationController
   # [infra_id] 認証に必要
   def edit_attributes
     physical_id = params.require(:id)
-    fqdn = @infra.project.zabbix_server.fqdn
+    begin
+      fqdn = @infra.project.zabbix_server.fqdn
+    rescue NoMethodError
+      fqdn = ''
+    end
     node = Node.new(physical_id)
 
     @attrs = node.enabled_attributes.dup.select do |_key, value|
@@ -347,6 +358,44 @@ class NodesController < ApplicationController
     render text: I18n.t('nodes.msg.yum_update_started'), status: 202
   end
 
+  # GET /nodes/:id/edit_ansible_playbook
+  def edit_ansible_playbook
+    physical_id = params.require(:id)
+    resource = @infra.resource(physical_id)
+
+    @playbook_roles = resource.get_playbook_roles
+    @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
+    @extra_vars = resource.get_extra_vars
+  end
+
+  # PUT /nodes/i-0b8e7f12/run_ansible_playbook
+  def run_ansible_playbook
+    physical_id = params.require(:id)
+
+    node = Node.new(physical_id)
+
+    Thread.new_with_db do
+      run_ansible_playbook_node(@infra, physical_id)
+    end
+
+    render text: I18n.t('nodes.msg.playbook_applying'), status: 202
+  end
+
+  # PUT /nodes/:id/update_ansible_playbook
+  def update_ansible_playbook
+    physical_id = params.require(:id)
+    playbook_roles     = params[:playbook_roles] || []
+    extra_vars     = params[:extra_vars] || '{}'
+
+    ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
+
+    if ret[:status]
+      render text: I18n.t('nodes.msg.playbook_updated') and return
+    end
+
+    render text: ret[:message], status: 500 and return
+  end
+
 
   private
 
@@ -419,6 +468,59 @@ class NodesController < ApplicationController
     end
   end
 
+  def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)
+    infra_logger_success("Updating playbook for #{physical_id} is started.")
+
+    begin
+      r = infrastructure.resource(physical_id)
+      r.set_playbook_roles(playbook_roles)
+      r.extra_vars = extra_vars
+      r.save!
+    rescue => ex
+      infra_logger_fail("Updating playbook for #{physical_id} is failed. \n #{ex.message}")
+      return {status: false, message: ex.message}
+    end
+
+    # change ansiblestatus to unexected
+    r.status.ansible.un_executed!
+    r.status.servertest.un_executed!
+
+    infra_logger_success("Updating playbook for #{physical_id} is successfully updated.")
+    return {status: true, message: nil}
+  end
+
+  def run_ansible_playbook_node(infrastructure, physical_id)
+    user_id = current_user.id
+    infra_logger_success("Run ansible-playbook for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
+
+    r = infrastructure.resource(physical_id)
+    r.status.ansible.inprogress!
+    r.status.servertest.un_executed!
+    node = Node.new(physical_id)
+    log = []
+
+    ws = WSConnector.new('run-ansible-playbook', physical_id)
+
+    begin
+      node.run_ansible_playbook(infrastructure, r.get_playbook_roles, r.get_extra_vars) do |line|
+        ws.push_as_json({v: line})
+        Rails.logger.debug "running-ansible-playbook #{physical_id} > #{line}"
+        log << line
+      end
+    rescue => ex
+      Rails.logger.debug(ex)
+      r.status.ansible.failed!
+      infra_logger_fail("Run ansible-playbook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+      ws.push_as_json({v: false})
+      return
+    end
+
+    r.status.ansible.success!
+
+    infra_logger_success("Run ansible-playbook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
+    ws.push_as_json({v: true})
+  end
+
   # TODO: DRY
   def exec_yum_update(infra, physical_id, security=true, exec=false)
     Thread.new_with_db(infra, current_user.id) do |this_infra, user_id|
@@ -459,5 +561,15 @@ class NodesController < ApplicationController
 
   def set_infra
     @infra = Infrastructure.find(params.require(:infra_id))
+  end
+
+  def check_register_in_knwon_hosts
+    physical_id = params.require(:id)
+    @infra.resource(physical_id).should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
+  end
+
+  def check_chef_server_running
+    chef_server = ServerState.new('chef')
+    chef_server.should_be_running!(I18n.t('chef_servers.msg.not_running'))
   end
 end

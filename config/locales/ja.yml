@@ -178,6 +178,7 @@ ja:
     in_progress:        '実行中...'
     database:           'データベース'
     runlist:            'Runlist'
+    failed_to_get_runlist: 'Runlistの取得に失敗しました'
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
@@ -305,13 +306,21 @@ ja:
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
+    ansible:      'Ansible'
+    run_ansible_playbook: 'run ansible-playbook'
+    playbook:     'playbook'
+    ansible_role:        'Ansible role'
+    playbook_roles:     'playbook roles'
+    extra_vars:          'extra-vars'
     statuses:    '状態'
     latest_cook_status:       'Cook'
+    latest_ansible_status:       'Ansible'
     latest_update_status:     'yum'
     latest_serverspec_status: 'Serverspec'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Runlist の編集'
+      edit_playbook:              'playbook の編集'
       apply_dish:                 'ディッシュの適用'
       bootstrap_with_chef_server: 'Chef Server に登録'
       instance_settings:          'インスタンスの設定'
@@ -325,6 +334,8 @@ ja:
       changed_scale:      '%{type} のスケールが変更されました'
       runlist_updated:    'Runlist は正常に更新されました'
       runlist_applying:   'Runlist を適用中です...'
+      playbook_updated:    'playbook は正常に更新されました'
+      playbook_applying:    'playbook を適用中です...'
       cook_started:       'Cook が正常に開始されました'
       should_set_attr:    "Cook は開始できませんでした。インスタンスの設定を行ってください"
       attribute_updated:  'Attribute が正常に更新されました'
@@ -337,6 +348,7 @@ ja:
       yum_update_success: |
           %{physical_id}のYumアップデートが成功しました。 <br>
           この操作のログを表示しますか？
+      not_register_in_known_hosts: known_hostsに鍵が登録されていません。しばらくしてから再度お試しください。
 
 
   dishes:
@@ -392,8 +404,6 @@ ja:
       generated: 'Serverspec は正常に作成されました。'
       empty-results: '結果が見つかりませんでした。'
       delete_servertest: 'この Servertest を削除してもよろしいですか？'
-      auto_generated_enabled_html:  '<small>この Serverspec は Cookbook "<em>serverspec-handler</em>" により自動生成されます</small>'
-      auto_generated_disabled_html: '<small>このオプションは Cookbook "<em>serverspec-handler</em>" が Runlist に含まれている場合に使用できます</small>'
       generated:  '生成されたファイル'
       generating:  'ファイル仕様の生成 ...'
       select_infra: 'インフラストラクチャの選択'

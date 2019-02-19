@@ -222,7 +222,7 @@ describe ServertestsController, type: :controller do
   end #end of delete # destroy
 
   describe '#select' do
-    shared_context 'get_page' do |bool|
+    context 'get_page' do
       let(:infra){create(:infrastructure)}
       let(:specs){create_list(:servertest, 3, infrastructure: infra, category: 1)}
       let(:physical_id){SecureRandom.base64(10)}
@@ -232,8 +232,6 @@ describe ServertestsController, type: :controller do
       before do
         specs
         resource
-        node = double(have_auto_generated: bool)
-        allow(Node).to receive(:new).and_return(node)
       end
 
       before do
@@ -262,22 +260,6 @@ describe ServertestsController, type: :controller do
 
       it 'assigns @servertest_schedule' do
         expect(assigns[:servertest_schedule]).to be_a ServertestSchedule
-      end
-    end
-
-    context 'when have auto_generated' do
-      include_context 'get_page', true
-
-      it 'assigns @is_available_auto_generated' do
-        expect(assigns[:is_available_auto_generated]).to be_truthy
-      end
-    end
-
-    context 'when not have auto_generated' do
-      include_context 'get_page', false
-
-      it 'assigns @is_available_auto_generated' do
-        expect(assigns[:is_available_auto_generated]).to be_falsey
       end
     end
   end
@@ -322,38 +304,16 @@ describe ServertestsController, type: :controller do
       allow(ServertestJob).to receive(:perform_now).and_return(resp)
     end
 
-    context 'when selected auto generated' do
-      let(:servertest_ids){servertests.map(&:id).push('-1')}
-
-      it 'should call run_serverspec with auto generated flag true' do
+    context 'when normal' do
+      it 'should call run_serverspec' do
         expect(ServertestJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          servertest_ids: servertests.map{|x|x.id.to_s}, auto_generated: true
+          servertest_ids: servertests.map{|x|x.id.to_s},
         )
         req
       end
 
-      it 'should create ServertestResult with auto_generated_servertest value true' do
-        expect{req}.to change{ ServertestResult.last }
-                         .from(nil)
-                         .to(
-                           have_attributes(
-                             auto_generated_servertest: true
-                           )
-                         )
-      end
-    end
-
-    context 'when not selected auto generated' do
-      it 'should call run_serverspec with auto generated flag false' do
-        expect(ServertestJob).to receive(:perform_now).with(
-          physical_id, infra.id.to_param, kind_of(Integer),
-          servertest_ids: servertests.map{|x|x.id.to_s}, auto_generated: false
-        )
-        req
-      end
-
-      it 'should create ServertestResult with auto_generated_servertest value false' do
+      it 'should create ServertestResult' do
         expect{req}.to change{ ServertestResult.last }
                          .from(nil)
                          .to(

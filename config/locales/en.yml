@@ -179,6 +179,7 @@ en:
     in_progress:        'In progress...'
     database:           'Database'
     runlist:            'Runlist'
+    failed_to_get_runlist: 'Failed to get Runlist'
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
@@ -308,13 +309,21 @@ en:
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
+    ansible:      'Ansible'
+    run_ansible_playbook: 'run ansible-playbook'
+    playbook:     'playbook'
+    ansible_role:        'Ansible role'
+    playbook_roles:     'playbook roles'
+    extra_vars:          'extra-vars'
     statuses:    'Statuses'
     latest_cook_status:       'Latest Cook Status'
+    latest_ansible_status:    'Latest Ansible Status'
     latest_update_status:     'Latest yum command Status'
     latest_serverspec_status: 'Latest Serverspec Status'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
       edit_runlist:               'Edit Runlist'
+      edit_playbook:    'Edit playbook'
       apply_dish:                 'Apply Dish'
       bootstrap_with_chef_server: 'Bootstrap with Chef Server'
       instance_settings:          'Settings'
@@ -328,6 +337,8 @@ en:
       changed_scale:      'Change scale to %{type}'
       runlist_updated:    'Runlist was successfully updated.'
       runlist_applying:   'Runlist is being applied...'
+      playbook_updated:    'playbook was successfully updated.'
+      playbook_applying:   'playbook is being applied...'
       cook_started:       'Cook was successfully started'
       should_set_attr:    "Cook wasn't started. You should set the attribute(s)"
       attribute_updated:  'Attribute was successfully updated.'
@@ -340,6 +351,7 @@ en:
       yum_update_success: |
         Yum update for <b> %{physical_id} </b> has been successful. <br>
         Do you want to see the logs for this operation?
+      not_register_in_known_hosts: There is no key registered in known_hosts. Please try again later.
 
   dishes:
     dishes:            'Dishes'
@@ -394,8 +406,6 @@ en:
       generated: 'Serverspec is successfully generated.'
       delete_servertest: 'Are you sure you want to delete this Servertest?'
       empty-results: 'No results found.'
-      auto_generated_enabled_html:  '<small>This Serverspec was created automatically by "<em>serverspec-handler</em>" cookbook.</small>'
-      auto_generated_disabled_html: '<small>This option is available only when runlist includes "<em>serverspec-handler</em>" cookbook.</small>'
       generated:  'Generated file'
       generating:  'Generating file spec ...'
       select_infra: 'Select Infrastructure'

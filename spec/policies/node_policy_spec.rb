@@ -43,7 +43,7 @@ describe NodePolicy do
     end
   end
 
-  %i[run_bootstrap? edit? update? cook? apply_dish? update_attributes? edit_attributes? yum_update?].each do |action|
+  %i[run_bootstrap? edit? update? cook? apply_dish? update_attributes? edit_attributes? yum_update? run_ansible_playbook? edit_ansible_playbook? update_ansible_playbook?].each do |action|
     permissions action do
       context 'when allowed user' do
         before do

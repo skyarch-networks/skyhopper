@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.10'
+gem 'rails', '~> 4.2.11'
 
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.3.20'
@@ -118,7 +118,7 @@ gem 'pundit'
 # pagination
 gem 'kaminari'
 
-gem 'i18n', '0.7.0'
+gem 'i18n', '>= 0.8.0'
 gem 'i18n-js'
 gem 'devise-i18n'
 gem 'rails-i18n'
@@ -134,8 +134,10 @@ gem 'rqrcode'
 
 gem 'sky_zabbix', '~> 2.2.0'
 
-gem 'nokogiri', '>= 1.7.1'
+gem 'nokogiri', '>= 1.8.5'
 
 gem 'rails-html-sanitizer', '~> 1.0.3'
 
-gem 'rubyzip', '>= 1.2.1'
+gem 'rubyzip', '>= 1.2.2'
+gem 'ffi', '>= 1.9.24'
+gem 'loofah', '>= 2.2.3'

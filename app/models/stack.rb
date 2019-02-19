@@ -152,6 +152,17 @@ class Stack
     end
   end
 
+  def wait_creat_complate_or_update_complete(interval=10)
+    current_status = status[:status]
+    until ['CREATE_COMPLETE', 'UPDATE_COMPLETE'].include?(current_status)
+      raise CreationError, "stack creation failed (#{current_status})" if failed?(current_status)
+      sleep interval
+      update_status
+      current_status = status[:status]
+    end
+  end
+
+
   # @param [String] logical_id is logical_resource_id. You defined in CloudFormation template.
   # @param [String] status_to_wait
   # @param [Integer] interval
