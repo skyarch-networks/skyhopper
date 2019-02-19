@@ -77,6 +77,9 @@ SkyHopper::Application.routes.draw do
       get  'get_rules'
       get  'get_security_groups'
       post 'schedule_yum'
+      put  'run_ansible_playbook'
+      get  'edit_ansible_playbook'
+      put  'update_ansible_playbook'
     end
   end
 

@@ -139,8 +139,6 @@ class ServertestsController < ApplicationController
 
     servertests = Servertest.for_infra_serverspec(infra_id)
     @individual_servertests, @global_servertests = servertests.partition{|spec| spec.infrastructure_id }
-    node = Node.new(physical_id)
-    @is_available_auto_generated = node.have_auto_generated
 
     @servertest_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
   end
@@ -167,14 +165,13 @@ class ServertestsController < ApplicationController
     infra_id       = params.require(:infra_id)
     servertest_ids = params.require(:servertest_ids)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
-    if selected_auto_generated = servertest_ids.include?('-1')
-      servertest_ids.delete('-1')
-    end
+
+    resource.should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
 
     begin
       resp = ServertestJob.perform_now(
         physical_id, infra_id, current_user.id,
-        servertest_ids: servertest_ids, auto_generated: selected_auto_generated
+        servertest_ids: servertest_ids
       )
     rescue => ex
       # serverspec が正常に実行されなかったとき
@@ -194,7 +191,7 @@ class ServertestsController < ApplicationController
 
     ServertestResult.create(
       resource_id:    resource.id,
-      auto_generated_servertest: selected_auto_generated,
+      auto_generated_servertest: false,
       status:         resp[:status_text],
       message:        resp[:long_message],
       servertest_ids: servertest_ids

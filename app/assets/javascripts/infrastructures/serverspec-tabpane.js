@@ -16,7 +16,6 @@ module.exports = Vue.extend({
   },
 
   data: function () {return {
-    available_auto_generated: null,
     individuals: null,
     globals: null,
     loading: false,
@@ -96,7 +95,6 @@ module.exports = Vue.extend({
     var self = this;
     self.ec2.select_serverspec().done(function (data) {
       var schedule = data.schedule;
-      self.available_auto_generated = data.available_auto_generated;
       self.individuals = data.individuals || [];
       self.globals = data.globals || [];
       self.enabled = schedule.enabled;

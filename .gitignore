@@ -65,3 +65,6 @@ vendor/knife
 
 # VSCODE config
 .vscode/*
+
+# ansible
+/ansible/*

@@ -238,6 +238,8 @@ class CfTemplatesController < ApplicationController
           instance.wait_status(:running)
           instance.wait_status_check_ok
           instance.register_in_known_hosts(tries: 12, sleep: 5)
+          ec2_resource.register_in_known_hosts = true
+          ec2_resource.save!
         end
       rescue => ex
         Rails.logger.error("[add_keys_in_known_hosts] Add keys in known_hosts is failed. infra_id: #{infrastructure.id}")
