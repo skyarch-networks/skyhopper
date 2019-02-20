@@ -61,19 +61,15 @@ SkyHopper::Application.routes.draw do
 
   resources :resources, only: [:index, :create]
 
-  resources :nodes, only: [:update, :show, :edit] do
+  resources :nodes, only: [:show] do
     collection do
       get  'recipes'
       post 'create_group'
     end
     member do
-      put  'cook'
       put  'yum_update'
-      get  'run_bootstrap'
       post 'apply_dish'
       post 'submit_groups'
-      put  'update_attributes'
-      get  'edit_attributes'
       get  'get_rules'
       get  'get_security_groups'
       post 'schedule_yum'

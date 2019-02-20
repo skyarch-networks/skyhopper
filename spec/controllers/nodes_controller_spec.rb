@@ -17,32 +17,6 @@ describe NodesController, type: :controller do
     allow(controller).to receive(:check_chef_server_running).and_return(nil)
   end
 
-  describe '#run_bootstrap' do
-    let(:req){get :run_bootstrap, id: physical_id, infra_id: infra.id}
-    let(:fqdn){'sky.example.com'}
-    before do
-      expect(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(Infrastructure).to receive_message_chain(:instance, :fqdn).and_return(fqdn)
-    end
-
-    context 'when success' do
-      before do
-        expect(Node).to receive(:bootstrap).with(fqdn, physical_id, infra)
-        req
-      end
-
-      should_be_success
-    end
-
-    context 'when failure' do
-      before do
-        expect(Node).to receive(:bootstrap).with(fqdn, physical_id, infra).and_raise()
-        req
-      end
-      should_be_success
-    end
-  end
-
   describe "#show" do
     let(:resource){create(:resource, infrastructure: infra, dish: dish)}
     let(:request){get :show, infra_id: infra.id, id: resource.physical_id, format: 'json'}
@@ -163,101 +137,6 @@ describe NodesController, type: :controller do
     end
   end
 
-  describe "#POST cook" do
-    let(:whyrun){false}
-    let(:cook_request){post :cook, id: physical_id, infra_id: infra.id, whyrun: whyrun}
-
-    before do
-      allow(Thread).to receive(:new_with_db).and_yield
-      expect_any_instance_of(NodesController).to receive(:cook_node).with(infra, physical_id, whyrun)
-      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
-      cook_request
-    end
-
-    it "should render" do
-      expect(response.body).not_to be nil
-    end
-
-    it "should be success" do
-      expect(response.status).to eq 202
-    end
-  end
-
-  describe '#edit' do
-    let(:req){get :edit, id: physical_id, infra_id: infra.id}
-    let(:details){{"run_list" => ['foo', 'bar']}}
-    let(:roles){[double('role1', name: 'ROLE1'), double('role2', name: 'ROLE2')]}
-    let(:cookbooks){{hoge: 'Hoge Cookbook', fuga: 'Fuga Cookbook'}}
-
-    before do
-      allow_any_instance_of(Node).to receive(:details).and_return(details)
-      allow(ChefAPI).to receive(:index).with(:role).and_return(roles)
-      allow(ChefAPI).to receive(:index).with(:cookbook).and_return(cookbooks)
-      req
-    end
-
-    should_be_success
-
-    it 'should assign @runlist' do
-      expect(assigns[:runlist]).to eq details['run_list']
-    end
-
-    it 'should assign @roles' do
-      expect(assigns[:roles]).to eq roles.map(&:name).sort
-    end
-
-    it 'should assign @cookbooks' do
-      expect(assigns[:cookbooks]).to eq cookbooks.keys.sort
-    end
-  end
-
-  describe '#recipes' do
-    let(:recipes){%w[default package source]}
-    let(:cookbook){'apache'}
-    before do
-      allow(ChefAPI).to receive(:recipes).and_return(recipes)
-    end
-
-    before{get :recipes, cookbook: cookbook}
-
-    should_be_success
-
-    it 'should assign @recipes' do
-      expect(assigns[:recipes]).to eq recipes.sort
-    end
-  end
-
-  describe '#update' do
-    let(:runlist){['a', 'b', 'c']}
-    let(:req){put :update, id: physical_id, infra_id: infra.id, runlist: runlist}
-    let(:status){true}
-    let(:message){'hogefuga piyoyo'}
-
-    before do
-      allow_any_instance_of(NodesController).to receive(:update_runlist)
-        .with(physical_id: physical_id, infrastructure: infra, runlist: runlist)
-        .and_return({status: status, message: message})
-      req
-    end
-
-    context 'when update success' do
-      should_be_success
-
-      it 'should render text' do
-        expect(response.body).to eq I18n.t('nodes.msg.runlist_updated')
-      end
-    end
-
-    context 'when update fail' do
-      let(:status){false}
-      should_be_failure
-
-      it 'should render text' do
-        expect(response.body).to eq message
-      end
-    end
-  end
-
   describe '#apply_dish' do
     let(:dish){create(:dish)}
     let(:req){post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id}
@@ -308,60 +187,6 @@ describe NodesController, type: :controller do
       it 'should render message' do
         expect(response.body).to eq I18n.t('nodes.msg.dish_applied')
       end
-    end
-  end
-
-  describe '#update_attributes' do
-    let(:attributes){JSON.generate({'yum_releasever/releasever' => '2014.09', 'zabbix/agent/servers' => 'example.com'})}
-    let(:req){put :update_attributes, id: physical_id, infra_id: infra.id, attributes: attributes}
-    before do
-      create(:resource, physical_id: physical_id)
-    end
-
-    context 'update success' do
-      before do
-        allow_any_instance_of(Node).to receive(:update_attributes)
-        req
-      end
-      should_be_success
-
-      it 'should render text' do
-        expect(response.body).to eq I18n.t('nodes.msg.attribute_updated')
-      end
-    end
-
-    context 'update failures' do
-      let(:msg){'!!!ERROR!!!'}
-      before do
-        allow_any_instance_of(Node).to receive(:update_attributes).and_raise(msg)
-        req
-      end
-      should_be_failure
-
-      it 'should render text' do
-        expect(response.body).to eq msg
-      end
-    end
-  end
-
-  describe '#edit_attributes' do
-    let(:req){get :edit_attributes, id: physical_id, infra_id: infra.id}
-    let(:attrs){{foo: {bar: 'hoge'}}}
-    let(:current_attr){{foo: 'piyopiyo'}}
-    let(:fqdn){'ec2-ip-.zabbix.com-example'}
-    let(:node){double(:node, enabled_attributes: attrs, get_attributes: current_attr)}
-    before do
-      expect_any_instance_of(Infrastructure).to receive_message_chain(:project, :zabbix_server, :fqdn).and_return(fqdn)
-      allow(Node).to receive(:new).with(physical_id).and_return(node)
-      req
-    end
-
-    it 'should assign @attrs' do
-      expect(assigns[:attrs]).to eq attrs
-    end
-
-    it 'should assign @current_attributes' do
-      expect(assigns[:current_attributes]).to eq current_attr
     end
   end
 
@@ -514,49 +339,6 @@ describe NodesController, type: :controller do
       it 'should status is false, message is error message' do
         expect(JSON[response.body]['status']).to be false
         expect(JSON[response.body]['message']).to eq err_msg
-      end
-    end
-  end
-
-  describe '#cook_node' do
-    controller NodesController do
-      def show
-        physical_id = params.require(:id)
-        infra_id = params.require(:infra_id)
-        infra = Infrastructure.find(infra_id)
-        cook_node(infra, physical_id, false)
-        render nothing: true
-      end
-    end
-    let(:dish){create(:dish)}
-    let(:resource){create(:resource, infrastructure: infra, dish: dish)}
-    let(:req){get :show, id: resource.physical_id, infra_id: infra.id}
-    before do
-      expect_any_instance_of(Node).to receive(:wait_search_index)
-    end
-
-    context 'when success' do
-      before do
-        expect_any_instance_of(Node).to receive(:cook).and_yield('hoge')
-        expect(ServertestJob).to receive(:perform_now)
-        req
-      end
-      should_be_success
-
-      it 'should cook status is Success' do
-        expect(resource.status.cook.success?).to be true
-      end
-    end
-
-    context 'when failure' do
-      before do
-        allow_any_instance_of(Node).to receive(:cook).and_raise
-        req
-      end
-      should_be_success
-
-      it 'should cook status is Failed' do
-        expect(resource.status.cook.failed?).to be true
       end
     end
   end

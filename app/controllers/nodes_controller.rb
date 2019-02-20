@@ -14,45 +14,17 @@ class NodesController < ApplicationController
 
   # --------------- Auth
   before_action :authenticate_user!
-  before_action :set_infra, except: [:recipes]
+  before_action :set_infra
 
   # infra
-  before_action except: [:recipes] do
+  before_action do
     def @infra.policy_class; NodePolicy;end
     authorize(@infra)
     @locale = I18n.locale
   end
 
-  before_action :check_chef_server_running, only: [:run_bootstrap, :edit, :recipes, :update, :edit_attributes, :update_attributes, :cook, :apply_dish]
+  before_action :check_chef_server_running, only: [:apply_dish]
   before_action :check_register_in_knwon_hosts, only: [:yum_update, :run_ansible_playbook]
-
-  # GET /nodes/:id/run_bootstrap
-  # @param [String] id physical_id of EC2 instance.
-  # @param [String] infra_id Infrastructure id.
-  def run_bootstrap
-    Thread.new_with_db do
-      physical_id = params.require(:id)
-      fqdn        = @infra.instance(physical_id).fqdn
-      I18n.locale = @locale
-
-      infra_logger_success("Bootstrapping for #{physical_id} is started.")
-
-      ws = WSConnector.new('bootstrap', physical_id)
-
-      begin
-        Node.bootstrap(fqdn, physical_id, @infra)
-      rescue => ex
-        logger.error ex
-        infra_logger_fail("Bootstrapping for #{physical_id} is failed. \n #{ex.message}")
-        ws.push_as_json({message: ex.message, status: false})
-      else
-        infra_logger_success("Bootstrapping for #{physical_id} is successfully finished.")
-        ws.push_as_json({message: I18n.t('nodes.msg.bootstrap_finish', physical_id: physical_id), status: true})
-      end
-    end
-
-    render nothing: true, status: 200 and return
-  end
 
   # GET /nodes/i-0b8e7f12
   def show
@@ -124,57 +96,6 @@ class NodesController < ApplicationController
     @attribute_set = n.attribute_set?
   end
 
-  # GET /nodes/i-0b8e7f12/edit
-  def edit
-    physical_id = params.require(:id)
-    details = Node.new(physical_id).details
-    @runlist = details["run_list"]
-
-    @roles     = ChefAPI.index(:role).map(&:name).sort
-    @cookbooks = ChefAPI.index(:cookbook).keys.sort
-  end
-
-  # GET /nodes/recipes/:cookbook
-  def recipes
-    cookbook_name = params.require(:cookbook)
-    @recipes = ChefAPI.recipes(cookbook_name).sort
-    render json: @recipes
-  end
-
-  # PUT /nodes/i-0b8e7f12
-  def update
-    physical_id = params.require(:id)
-    runlist     = params[:runlist] || []
-
-
-    ret = update_runlist(physical_id: physical_id, infrastructure: @infra, runlist: runlist)
-
-    if ret[:status]
-      render text: I18n.t('nodes.msg.runlist_updated') and return
-    end
-
-    render text: ret[:message], status: 500 and return
-  end
-
-  # PUT /nodes/i-0b8e7f12/cook
-  def cook
-    physical_id = params.require(:id)
-    whyrun      = params.require(:whyrun) == 'true'
-
-    node = Node.new(physical_id)
-
-    unless node.attribute_set?
-      render text: I18n.t('nodes.msg.should_set_attr'), status: 400
-      return
-    end
-
-    Thread.new_with_db do
-      cook_node(@infra, physical_id, whyrun)
-    end
-
-    render text: I18n.t('nodes.msg.runlist_applying'), status: 202
-  end
-
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
     physical_id = params.require(:id)
@@ -197,35 +118,6 @@ class NodesController < ApplicationController
   end
 
 
-  # ==== Route
-  # PUT /nodes/i-hogehoge/update_attributes
-  # ==== params
-  # [id] physical_id
-  # [attributes] JSON string
-  # [infra_id] 認証に必要
-  def update_attributes
-    physical_id = params.require(:id)
-    attr  = JSON.parse(params.require(:attributes))
-    attr.each do |key, val|
-      next unless val
-      val = val.first if val.is_a?(Array)
-      attr[key] = ProjectParameter.exec(val, project_id: @infra.project_id)
-    end
-
-    node = Node.new(physical_id)
-
-    parsed_attr = node.attr_slash_to_hash(attr)
-
-    begin
-      node.update_attributes(parsed_attr)
-    rescue => e
-      render text: e.message, status: 500 and return
-    end
-
-    Resource.find_by(physical_id: physical_id).status.cook.un_executed!
-    render text: I18n.t('nodes.msg.attribute_updated') and return
-  end
-
   # POST /nodes/i-hogehoge/schedule_yum
   def schedule_yum
     physical_id = params.require(:physical_id)
@@ -241,26 +133,6 @@ class NodesController < ApplicationController
     end
 
     render text: I18n.t('schedules.msg.yum_updated'), status: 200 and return
-  end
-
-  # ==== Route
-  # GET /nodes/:id/edit_attributes
-  # ==== params
-  # [id] physical_id
-  # [infra_id] 認証に必要
-  def edit_attributes
-    physical_id = params.require(:id)
-    begin
-      fqdn = @infra.project.zabbix_server.fqdn
-    rescue NoMethodError
-      fqdn = ''
-    end
-    node = Node.new(physical_id)
-
-    @attrs = node.enabled_attributes.dup.select do |_key, value|
-      value[:default] = fqdn
-    end
-    @current_attributes = node.get_attributes
   end
 
   # GET /nodes/:id/get_rules
@@ -424,48 +296,6 @@ class NodesController < ApplicationController
 
     infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
     return {status: true, message: nil}
-  end
-
-  # TODO: refactor
-  def cook_node(infrastructure, physical_id, whyrun)
-    user_id = current_user.id
-    mode_string = '(why-run mode)' if whyrun
-    infra_logger_success("Cook#{mode_string} for #{physical_id} is started.", infrastructure_id: infrastructure.id, user_id: user_id)
-
-    r = infrastructure.resource(physical_id)
-    r.status.cook.inprogress!
-    r.status.servertest.un_executed!
-    node = Node.new(physical_id)
-    node.wait_search_index
-    log = []
-
-    ws = WSConnector.new('cooks', physical_id)
-
-    begin
-      node.cook(infrastructure, whyrun) do |line|
-        ws.push_as_json({v: line})
-        Rails.logger.debug "cooking#{mode_string} #{physical_id} > #{line}"
-        log << line
-      end
-    rescue => ex
-      Rails.logger.debug(ex)
-      r.status.cook.failed!
-      infra_logger_fail("Cook#{mode_string} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-      ws.push_as_json({v: false})
-      return
-    end
-
-    if whyrun
-      r.status.cook.un_executed!
-    else
-      r.status.cook.success!
-    end
-    infra_logger_success("Cook#{mode_string} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-    ws.push_as_json({v: true})
-
-    if r.dish_id # if resource has dish
-      ServertestJob.perform_now(physical_id, @infra.id, current_user.id)
-    end
   end
 
   def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)
