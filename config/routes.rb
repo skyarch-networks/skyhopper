@@ -183,8 +183,6 @@ SkyHopper::Application.routes.draw do
 
       get  :chef_new
       post :chef_create
-      get  :chef_server
-      get  :chef_keys
 
       get  :edit_zabbix
       post :update_zabbix
