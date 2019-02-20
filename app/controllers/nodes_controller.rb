@@ -23,7 +23,6 @@ class NodesController < ApplicationController
     @locale = I18n.locale
   end
 
-  before_action :check_chef_server_running, only: [:apply_dish]
   before_action :check_register_in_knwon_hosts, only: [:yum_update, :run_ansible_playbook]
 
   # GET /nodes/i-0b8e7f12
@@ -98,23 +97,7 @@ class NodesController < ApplicationController
 
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
-    physical_id = params.require(:id)
-    dish_id     = params.require(:dish_id)
-
-    dish           = Dish.find(dish_id)
-
-    runlist = dish.runlist
-    if runlist.blank?
-      render text: I18n.t('nodes.msg.runlist_empty') and return
-    end
-
-    ret = update_runlist(physical_id: physical_id, infrastructure: @infra, runlist: runlist, dish_id: dish_id)
-
-    unless ret[:status]
-      render text: ret[:message], status: 500 and return
-    end
-
-    render text: I18n.t('nodes.msg.dish_applied')
+    render text: 'Sorry, not implemented yet.', status: 500
   end
 
 
@@ -271,33 +254,6 @@ class NodesController < ApplicationController
 
   private
 
-  # @param [String] physical_id physical_id of EC2 instance.
-  # @param [Infrastructure] infrastructure
-  # @param [Array<String>] runlist Array of cookbook/recipe
-  # @param [String] dish_id Dish id.
-  # @return [Hash] status and message. If update fail, status is false and message is error message.
-  def update_runlist(physical_id: nil, infrastructure: nil, runlist: nil, dish_id: nil)
-    node = Node.new(physical_id)
-    infra_logger_update_runlist(node)
-
-    begin
-      node.update_runlist(runlist)
-      r = infrastructure.resource(physical_id)
-      r.dish_id = dish_id
-      r.save!
-    rescue => ex
-      infra_logger_fail("Updating runlist for #{physical_id} is failed. \n #{ex.message}")
-      return {status: false, message: ex.message}
-    end
-
-    # change cookstatus to unexected
-    r.status.cook.un_executed!
-    r.status.servertest.un_executed!
-
-    infra_logger_success("Updating runlist for #{physical_id} is successfully updated.")
-    return {status: true, message: nil}
-  end
-
   def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)
     infra_logger_success("Updating playbook for #{physical_id} is started.")
 
@@ -396,10 +352,5 @@ class NodesController < ApplicationController
   def check_register_in_knwon_hosts
     physical_id = params.require(:id)
     @infra.resource(physical_id).should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
-  end
-
-  def check_chef_server_running
-    chef_server = ServerState.new('chef')
-    chef_server.should_be_running!(I18n.t('chef_servers.msg.not_running'))
   end
 end

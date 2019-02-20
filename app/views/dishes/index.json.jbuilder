@@ -9,7 +9,6 @@ json.array!(@dishes) do |dish|
     json.dish_name dish.name
     json.detail dish.detail
     json.project_id dish.project_id
-    json.runlist dish.runlist
 
     if allow_change
       json.dish_path dish_path(dish)

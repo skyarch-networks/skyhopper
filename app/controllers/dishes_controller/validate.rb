@@ -25,29 +25,16 @@ module DishesController::Validate
         end
 
 
-
-        validate_section(:bootstrapping, dish) do
-          bootstrap_test_instance(@infrastructure)
-        end
+        physical_id = @stack.instances.first.physical_resource_id
+        @node = Node.new(physical_id)
 
 
-
-        # update runlist and cook
-        validate_section(:applying, dish) do
-          begin
-            apply_dish_for_test(@infrastructure, dish)
-          rescue Node::CookError
-            update_validate_status(dish, :failure)
-            Thread.current.exit
-          end
-        end
-
+        # インスタンスのsshサービスの立ち上がりを待つ
+        # TODO よりより方法を検討
+        sleep(180)
 
 
         # serverspec
-
-        # TODO: auto_generated なものを使用する?
-        #       使用したいけど、invalidなserverspecが生成される場合があるので難しそう
         validate_section(:serverspec, dish) do
           validate = serverspec_for_test(dish, @infrastructure)
 
@@ -75,7 +62,6 @@ module DishesController::Validate
         # TODO: error handling
         Rails.logger.debug('start destroy test stack')
 
-        @infrastructure.detach_chef rescue true
         @stack.delete               rescue true
         @infrastructure.destroy     rescue true
 
@@ -116,7 +102,8 @@ module DishesController::Validate
       name:              "t2.micro for Dish validate",
       detail:            "Dish: #{dish.name}",
       value:             ERB::Builder.new('dish_test').build,
-      user_id:           current_user.id
+      user_id:           current_user.id,
+      format:             'JSON',
     )
 
     @stack = Stack.new(infrastructure)
@@ -142,49 +129,13 @@ module DishesController::Validate
     @stack.wait_status('CREATE_COMPLETE')
   end
 
-  # テスト用のインスタンスに対して、Bootstrapする。
-  # 20秒おきに9回試し、それ以降はタイムアウト。
-  # また、以下のインスタンス変数をセットする
-  #   - @node
-  #   - @physical_id
-  def bootstrap_test_instance(infrastructure)
-    @physical_id = @stack.instances.first.physical_resource_id
-    fqdn         = infrastructure.instance(@physical_id).public_dns_name
-    retry_count  = 9     # 20 * 9 = 180 sec
-    begin
-      @node = Node.bootstrap(fqdn, @physical_id, infrastructure)
-    rescue
-      retry_count -= 1
-      if retry_count < 0
-        raise 'Bootstrap Timeout'
-      end
 
-      sleep 20
-      Rails.logger.info("Retry bootstrap...")
-      retry
-    end
-  end
-
-
-  # テスト用のインスタンスに対して、RunlistをUpdateした後にCookする。
-  # cookに失敗した場合は Node::CookError が投げられる。
-  def apply_dish_for_test(infrastructure, dish)
-    # Update runlist
-    runlist = dish.runlist
-    @node.update_runlist(runlist)
-
-    # Cook
-    @node.wait_search_index
-    @node.cook(infrastructure) do |line|
-      Rails.logger.debug("cooking #{@physical_id} > #{line}")
-    end
-  end
 
   # テスト用のインスタンスに対して、Serverspecを実行する。
   # Serverspecに失敗した場合は、 Node::ServerspecError が投げられる
   # serverspecの成功をBoolで返す
   def serverspec_for_test(dish, infrastructure)
-    svrspecs    = dish.serverspecs
+    svrspecs    = dish.servertests
     return true if svrspecs.empty?
     @infrastructure.resources_or_create
     svrspec_res = @node.run_serverspec(infrastructure.id, svrspecs.map(&:id))
