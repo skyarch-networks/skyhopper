@@ -26,62 +26,6 @@ class Node
     return out, err, status
   end
 
-  # knife bootstrap を実行し、Chef ServerにNodeを登録する。
-  # ==== Args
-  # [fqdn] {String} 対象のNodeのfqdn
-  # [node_name] {String} Nodeを一意に決定する名前。EC2のphysical_idを使用する。
-  # [infra] {Infrastructure} Nodeが紐づくInfrastructure
-  # [user] {String} ssh接続に使用するユーザー。デフォルトで ec2-user が使用される。
-  # [chef_client_version] {String} Chef client のバージョン
-  # ==== return
-  # {Node} Node class のインスタンスを作成して返す。
-  def self.bootstrap(fqdn, node_name, infra, user: nil, chef_client_version: nil)
-    user ||= ChefDefaultUser
-
-    ec2key = infra.ec2_private_key
-    ec2key.output_temp(prefix: node_name)
-
-    uri = URI.parse(ChefAPI.server_url)
-    uri.path = '/bootstrap/install.sh'
-    install_sh_url = uri.to_s
-    platform = infra.instance(node_name).platform
-    if platform.nil?
-      cmd = <<-EOS
-            knife bootstrap #{fqdn} \
-            --identity-file #{ec2key.path_temp} \
-            --ssh-user #{user} \
-            --node-name #{node_name} \
-            --sudo \
-            --bootstrap-url #{install_sh_url} \
-            --bootstrap-wget-options '--no-check-certificate'
-            EOS
-    else
-      password = infra.instance(node_name).password(ec2key)
-      cmd = <<-EOS
-            knife bootstrap windows winrm #{fqdn} \
-            --winrm-ssl-verify-mode verify_none \
-            --winrm-user Administrator \
-            --winrm-password '#{password}' \
-            --node-name #{node_name} \
-            --winrm-transport ssl
-            EOS
-          end
-
-    if chef_client_version
-      cmd.chomp!
-      cmd.concat(" --bootstrap-version #{chef_client_version}")
-    end
-
-    ssh_dir = File.expand_path('~/.ssh')
-    Dir.mkdir(ssh_dir, 0700) unless Dir.exist?(ssh_dir)
-
-    exec_command(cmd, BootstrapError)
-
-    return self.new(node_name)
-  ensure
-    ec2key.close_temp
-  end
-
   def initialize(name, user: ChefDefaultUser)
     @name = name
     @user = user
@@ -113,22 +57,6 @@ class Node
     n = ChefAPI.find(:node, @name)
     n.run_list = runlist
     n.save
-  end
-
-
-  # node.cook do |line|
-  #   # line is chef-clinet log
-  # end
-  def cook(infra, whyrun, &block)
-    platform = infra.instance(@name).platform
-    if platform.nil?
-      cmd = 'sudo chef-client'
-      cmd << ' -W' if whyrun
-      exec_knife_ssh(cmd, infra, &block)
-    else
-      cmd = 'chef-client --manual-list'
-      exec_knife_winrm(cmd, infra, &block)
-    end
   end
 
   # node.run_ansible_playbook do |line|
