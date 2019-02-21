@@ -30,7 +30,7 @@ module DishesController::Validate
 
 
         # インスタンスのsshサービスの立ち上がりを待つ
-        # TODO よりより方法を検討
+        # TODO 良い方法を検討する
         sleep(180)
 
 
