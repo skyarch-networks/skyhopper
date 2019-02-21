@@ -11,6 +11,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     this.ajax_servertest = new AjaxSet.Resources('servertests');
     this.ajax_elb = new AjaxSet.Resources('elb');
     this.ajax_node.add_member('cook', 'PUT');
+    this.ajax_node.add_member('run_ansible_playbook', 'PUT');
     this.ajax_node.add_member('yum_update', 'PUT');
     this.ajax_node.add_member('run_bootstrap', 'GET');
     this.ajax_node.add_member('get_rules', 'GET');
@@ -19,6 +20,8 @@ const EC2Instance = class EC2Instance extends ModelBase {
     this.ajax_node.add_member('submit_groups', 'POST');
     this.ajax_node.add_member('edit_attributes', 'GET');
     this.ajax_node.add_member('update_attributes', 'PUT');
+    this.ajax_node.add_member('edit_ansible_playbook', 'GET');
+    this.ajax_node.add_member('update_ansible_playbook', 'PUT');
     this.ajax_node.add_member('schedule_yum', 'POST');
     this.ajax_node.add_collection('recipes', 'GET');
     this.ajax_node.add_collection('create_group', 'POST');
@@ -112,6 +115,32 @@ const EC2Instance = class EC2Instance extends ModelBase {
     return this._cook('cook', Object.assign({}, this.params, params));
   }
 
+  watch_run_ansible_playbook(dfd) {
+    const ws = ws_connector('run-ansible-playbook', this.physical_id);
+    ws.onmessage = (msg) => {
+      const data = JSON.parse(msg.data).v;
+      if (typeof data === 'boolean') {
+        ws.close();
+        dfd.resolve(data);
+      } else {
+        dfd.notify('update', `${data}\n`);
+      }
+    };
+    return dfd;
+  }
+
+  run_ansible_playbook() {
+    const self = this;
+    const dfd = $.Deferred();
+    this.ajax_node.run_ansible_playbook(self.params)
+      .done((data) => {
+        dfd.notify('start', data);
+        self.watch_run_ansible_playbook(dfd);
+      })
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
   yum_update(security, exec) {
     const extraParams = {
       security: security ? 'security' : 'all',
@@ -119,6 +148,25 @@ const EC2Instance = class EC2Instance extends ModelBase {
     };
     const params = Object.assign({}, this.params, extraParams);
     return this._cook('yum_update', params);
+  }
+
+  edit_ansible_playbook() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => this.ajax_node.edit_ansible_playbook(self.params),
+    );
+  }
+
+  update_ansible_playbook(playbookRoles, extraVars) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => this.ajax_node.update_ansible_playbook(
+        Object.assign({}, self.params, {
+          playbook_roles: playbookRoles,
+          extra_vars: extraVars,
+        }),
+      ),
+    );
   }
 
   apply_dish(dishId) {
