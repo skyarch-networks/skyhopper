@@ -23,7 +23,7 @@
 
       <div class="pull-right" v-cloak="picked">
         <a class="btn btn-default btn-sm edit-user"
-            href="#" user-id="{{picked.id}}" :class="{disabled: can_edit()}">
+            href="#" v-bind:user-id="picked.id" :class="{disabled: can_edit()}">
             <span class='glyphicon glyphicon-edit'></span>
             <%= t 'helpers.links.edit' %>
         </a>&nbsp
@@ -36,10 +36,10 @@
       </div>
 
   <demo-grid
-    :data.sync="gridData"
+    :data="gridData"
     :columns="gridColumns"
     :filter-key="searchQuery"
-    :picked.sync="picked"
+    :picked="picked"
     :index="index"
     :url="url">
   </demo-grid>

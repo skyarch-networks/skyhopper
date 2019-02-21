@@ -180,16 +180,16 @@ var UsersAdmin;
     var app;
     function show_edit(user_id) {
         var l = new Loader();
-        l.$mount().$appendTo('#user-edit');
+        document.getElementById('user-edit').appendChild(l.$mount().$el);
         if (app) {
-            app.$remove();
+            document.getElementById('user-edit').removeChild(app.$mount().$el);
         }
         ajax.edit({ id: user_id }).done(function (data) {
-            l.$remove();
+            document.getElementById('user-edit').removeChild(l.$mount().$el);
             app = new App(data);
-            app.$mount().$appendTo('#user-edit');
+            document.getElementById('user-edit').appendChild(app.$mount().$el);
         }).fail(modal_1.AlertForAjaxStdError(function () {
-            l.$remove();
+            document.getElementById('user-edit').removeChild(l.$mount().$el);
         }));
     }
     $(document).on('click', '.edit-user', function (e) {
