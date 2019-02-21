@@ -175,14 +175,7 @@ SkyHopper::Application.routes.draw do
 
   resource :app_settings, only: [:create, :show] do
     collection do
-      get :project
-      get :system
-      get :chef
-
-      post :project_update
-
-      get  :chef_new
-      post :chef_create
+      post :system_server_create
 
       get  :edit_zabbix
       post :update_zabbix

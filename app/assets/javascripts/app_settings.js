@@ -45,17 +45,13 @@
     });
   };
 
+  // TODO 変数名を直す
   var chef_create = function () {
-    var stack_name = $('#chef_stack_name').val();
-
     return $.ajax({
-      url: endpoint_base + '/chef_create',
+      url: endpoint_base + '/system_server_create',
       type: 'POST',
-      data: {
-        stack_name: stack_name,
-      },
+      data: {},
       dataType: "json",
-
     }).fail(modal.AlertForAjaxStdError());
   };
 

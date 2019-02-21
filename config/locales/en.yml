@@ -584,23 +584,10 @@ en:
       error:                 'An error occured while processing Zabbix: "%{msg}"'
 
 
-  chef_servers:
+  system_servers:
     msg:
-      creating_infra: 'Creating Infrastructure...'
-      init_ec2:       'Initializing EC2 Instance...'
-      download_chef:  'Downloading Chef Server packages...'
-      install_chef:   'Installing Chef Server...'
-      setting_chef:   'Setting up Chef Server...'
-      wait_for_zabbix_created: 'Waiting for completion of Zabbix Server creation...'
-      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
-      confirm_start:  'Do you want to start Chef Server?'
-      confirm_stop:   'Do you want to stop Chef Server?'
-      start:          'Stopping Chef Server...'
-      stop:           'Starting Chef Server...'
-      not_running:    'Chef Server is not running.'
-      chef_instruction:   'The Knife file can be installed in your environment by deploying the downloaded file in `~/.chef/` path. When executing the knife command, this file is neccessary to access the Chef Server.'
-    btn:
-      download_keys:  'Download keys'
+      creating_zabbix_server: 'Creating Zabbix Server(If necessary)...'
+      complete:       'We have completed building the necessary server for the system. Please restart SkyHopper.'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'

@@ -582,23 +582,10 @@ ja:
       error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
 
 
-  chef_servers:
+  system_servers:
     msg:
-      creating_infra: 'Chef Server 用のインフラを作成しています...'
-      init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
-      download_chef:  'Chef Server のパッケージをダウンロードしています...'
-      install_chef:   'Chef Server をインストールしています...'
-      setting_chef:   'Chef Server を設定しています...'
-      wait_for_zabbix_created: 'Zabbix Server の作成完了を待っています...'
-      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
-      confirm_start:  'Chef Server を起動しますか?'
-      confirm_stop:   'Chef Server を停止しますか?'
-      start:          'Chef Server を起動しています...'
-      stop:           'Chef Server を停止しています...'
-      not_running:    'Chef Server が起動していません'
-      chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
-    btn:
-      download_keys:  '鍵ファイルのダウンロード'
+      creating_zabbix_server: 'Zabbix Server を作成しています(必要なら)...'
+      complete:       'システムに必要なサーバーの構築が完了しました. SkyHopperを再起動してください.'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
