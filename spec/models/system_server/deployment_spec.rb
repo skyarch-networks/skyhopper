@@ -9,8 +9,8 @@
 require_relative '../../spec_helper'
 
 FactoryGirl.create(:app_setting)
-describe ChefServer::Deployment, type: :model do
-  let(:klass){ChefServer::Deployment}
+describe SystemServer::Deployment, type: :model do
+  let(:klass){SystemServer::Deployment}
 
   describe '.create' do
     let(:stack_name){'FooStack'}
@@ -24,7 +24,7 @@ describe ChefServer::Deployment, type: :model do
     let(:set){create(:app_setting)}
     let(:physical_id){'i-hogefuga'}
 
-    let(:chef_server){klass.new(infra, physical_id)}
+    let(:system_server){klass.new(infra, physical_id)}
 
     before do
       allow(stack).to receive_message_chain(:instances, :first, :physical_resource_id).and_return(physical_id)
@@ -32,7 +32,7 @@ describe ChefServer::Deployment, type: :model do
     end
 
     before do
-      expect(klass).to receive(:new).with(infra, physical_id).and_return(chef_server)
+      expect(klass).to receive(:new).with(infra, physical_id).and_return(system_server)
     end
 
     before do
@@ -49,7 +49,7 @@ describe ChefServer::Deployment, type: :model do
       expect(klass).to receive(:create_stack).with(infra, String, Hash).and_return(stack)
       expect(klass).to receive(:wait_creation).with(stack)
 
-      expect(chef_server).to receive(:init_knife_rb).with(no_args)
+      expect(system_server).to receive(:init_knife_rb).with(no_args)
 
       klass.create(
         stack_name,
