@@ -297,7 +297,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     }).done((data) => {
       data.globals.forEach((s) => {
         // eslint-disable-next-line no-param-reassign
-        s.checked = Array.include(data.selected_ids, s.id);
+        s.checked = data.selected_ids.includes(s.id);
       });
       data.individuals.forEach((s) => {
         // eslint-disable-next-line no-param-reassign
