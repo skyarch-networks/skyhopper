@@ -64,13 +64,13 @@
 
 
   <demo-grid
-  :data.sync="gridData"
+  :data="gridData"
   :columns="gridColumns"
   :filter-key="searchQuery"
-  :picked.sync="picked"
+  :picked="picked"
   :index="index"
   :multi-select="multiSelect"
-  :selections.sync="selections"
+  :selections="selections"
   :url="url">
   </demo-grid>
   <div v-if="is_empty" v-cloak>
