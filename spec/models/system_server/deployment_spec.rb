@@ -12,7 +12,7 @@ FactoryGirl.create(:app_setting)
 describe SystemServer::Deployment, type: :model do
   let(:klass){SystemServer::Deployment}
 
-  describe '.create' do
+  describe '.create_zabbix' do
     let(:stack_name){'FooStack'}
     let(:region){'ap-northeast-1'}
     let(:keypair_name){'hogekey'}
@@ -27,31 +27,26 @@ describe SystemServer::Deployment, type: :model do
     let(:system_server){klass.new(infra, physical_id)}
 
     before do
+      allow(klass).to receive(:new).and_return(
+        double('system_server_deployment', wait_init_ec2: nil, fqdn: 'example.com')
+      )
+
       allow(stack).to receive_message_chain(:instances, :first, :physical_resource_id).and_return(physical_id)
-      allow(stack).to receive(:wait_resource_status).with(String, String)
-    end
 
-    before do
-      expect(klass).to receive(:new).with(infra, physical_id).and_return(system_server)
-    end
-
-    before do
       allow(Infrastructure).to receive(:create_with_ec2_private_key).and_return(infra)
-      allow(Project).to receive(:for_test).and_return(project)
-    end
 
-    before do
-      c = create(:client, code: Client::ForSystemCodeName)
-      create(:project, code: Project::ChefServerCodeName, client: c)
+      # TODO テストが走る順番に影響を受けてしまうため、修正すること
+      unless Client.find_by(code: Client::ForSystemCodeName)
+        client = create(:client, code: Client::ForSystemCodeName)
+        create(:project, code: Project::ZabbixServerCodeName, client: client)
+      end
     end
 
     it 'should call methods' do
-      expect(klass).to receive(:create_stack).with(infra, String, Hash).and_return(stack)
+      expect(klass).to receive(:create_stack).with(infra, 'Zabbix Server', Hash).and_return(stack)
       expect(klass).to receive(:wait_creation).with(stack)
 
-      expect(system_server).to receive(:init_knife_rb).with(no_args)
-
-      klass.create(
+      klass.create_zabbix(
         stack_name,
         region,
         keypair_name,
