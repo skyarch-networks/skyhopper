@@ -78,7 +78,7 @@ en:
     private_key:       'Secret SSH Key'
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
-    chef_server:       'Chef Server'
+    system_server:    'System Server'
     vpc_id:            'VPC ID'
     subnet_id:         'Subnet ID'
     skip_zabbix_server: 'Not create Zabbix Server'
@@ -103,10 +103,10 @@ en:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
       system: 'System Settings'
-      chef:   'Chef Server Settings'
+      system_server:   'System Server Settings'
       aws:    'AWS Settings'
     btn:
-      create_chefserver: 'Create Chef Server'
+      create_system_server: 'Create System Server'
       done:              'Done'
 
   clients:

@@ -78,7 +78,7 @@ ja:
     private_key:       '秘密鍵'
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
-    chef_server:       'Chef Server'
+    system_server:    'System Server'
     vpc_id:            'VPC ID'
     subnet_id:         'サブネット ID'
     skip_zabbix_server: 'Zabbix Serverを作成しない'
@@ -103,10 +103,10 @@ ja:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
       system: 'システムの設定'
-      chef:   'Chef Server の設定'
+      system_server:   'System Server の設定'
       aws:    'AWS の設定'
     btn:
-      create_chefserver: 'Chef Server の構築'
+      create_system_server: 'System Server の構築'
       done:              '完了'
 
   clients:
