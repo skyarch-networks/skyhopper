@@ -194,16 +194,6 @@ class Stack
     end
   end
 
-  def detach_chef
-    return unless @status[:available]
-
-    instances.each do |i|
-      next if i.physical_resource_id.blank?
-
-      Node.new(i.physical_resource_id).delete
-    end
-  end
-
   # CloudFormationの持つResourceをModelのインスタンスとして取得する。
   def get_resources
     aws_resources = instances_for_resources

@@ -26,20 +26,6 @@ describe Node, type: :model do
     end
   end
 
-  describe '#all_recipe' do
-    subject { Node.new("test") }
-
-    before do
-      allow(ChefAPI).to receive_message_chain(:find, :run_list).and_return(%w[recipe[hoge] recipe[fuga] recipe[piyo]])
-    end
-
-    it 'return all run_list' do
-      s = subject.__send__(:all_recipe, %w{role[role1] recipe[bar]})
-      expect(s).to match_array %w{recipe[bar] recipe[hoge] recipe[fuga] recipe[piyo]}
-    end
-  end
-
-
   describe ".exec_command" do
     let(:command){'hoge'}
 

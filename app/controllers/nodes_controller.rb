@@ -69,30 +69,7 @@ class NodesController < ApplicationController
 
     @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
 
-    chef_server = ServerState.new('chef')
-    if @chef_error = !chef_server.is_running?
-      @chef_msg = t 'chef_servers.msg.not_running'
-      @runlist_error = true
-      return
-    end
-
-    n = Node.new(physical_id)
-    begin
-      @runlist       = n.details["run_list"]
-      @selected_dish = resource.dish
-    rescue ChefAPI::Error::NotFound
-      # in many cases, before bootstrap
-      @before_bootstrap = true
-      @runlist_error = true
-      return
-    rescue ChefAPI::Error => ex
-      @chef_error = true
-      @chef_msg = ex.message
-      @runlist_error = true
-      return
-    end
-
-    @attribute_set = n.attribute_set?
+    @selected_dish = resource.dish
   end
 
   # POST /nodes/i-0b8e7f12/apply_dish

@@ -31,7 +31,6 @@ describe NodesController, type: :controller do
     let(:availability_zones) {{
       available: [],
     }}
-    let(:cook_status){resource.status.cook}
     let(:ansible_status){resource.status.ansible}
     let(:servertest_status){resource.status.servertest}
     let(:yum_status){resource.status.yum}
@@ -41,24 +40,7 @@ describe NodesController, type: :controller do
       allow(instance).to receive(:availability_zones).and_return(availability_zones)
     end
 
-    let(:chef_server){double('chef-server')}
-    let(:chef_running){true}
-    before do
-      allow(ServerState).to receive(:new).and_return(chef_server)
-      allow(chef_server).to receive(:is_running?).and_return(chef_running)
-    end
-
     let(:dish){create(:dish)}
-    let(:details){{
-      "run_list" => ['a', 'b', 'f'],
-    }}
-    before do
-      allow_any_instance_of(Node).to receive(:details).and_return(details)
-    end
-
-    before do
-      allow_any_instance_of(Node).to receive(:attribute_set?).and_return(true)
-    end
 
 
     [:terminated, :stopped].each do |state|
@@ -73,59 +55,11 @@ describe NodesController, type: :controller do
       end
     end
 
-    context 'when chef server stopped' do
-      let(:chef_running){false}
-      before{request}
-
-      it '@chef_error should be true' do
-        expect(assigns[:chef_error]).to be true
-      end
-
-      it 'should assign @chef_msg' do
-        expect(assigns[:chef_msg]).to be_a String
-      end
-    end
-
-    context 'when before bootstrap' do
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_raise(ChefAPI::Error::NotFound)
-      end
-      before{request}
-
-      it '@before_bootstrap should be true' do
-        expect(assigns[:before_bootstrap]).to be true
-      end
-    end
-
-    context 'when chef api error' do
-      let(:error_msg){'Internal server error'}
-      before do
-        allow_any_instance_of(Node).to receive(:details).and_raise(ChefAPI::Error, error_msg)
-      end
-      before{request}
-
-      it '@chef_error should be true' do
-        expect(assigns[:chef_error]).to eq true
-      end
-
-      it 'should assigns @chef_msg' do
-        expect(assigns[:chef_msg]).to eq error_msg
-      end
-    end
-
     context 'when all success' do
       before{request}
-      it 'should assigns @runlist' do
-        expect(assigns[:runlist]).to eq details['run_list']
-      end
-
-      it 'should assigns @selected_dish' do
-        expect(assigns[:selected_dish]).to eq dish
-      end
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:cook_status]).to eq cook_status
         expect(assigns[:info][:ansible_status]).to eq ansible_status
         expect(assigns[:info][:servertest_status]).to eq servertest_status
         expect(assigns[:info][:update_status]).to eq yum_status

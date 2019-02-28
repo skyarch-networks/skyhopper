@@ -7,7 +7,6 @@
 #
 
 class Node
-  include ::Node::Attribute
 
   ChefDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
@@ -31,33 +30,6 @@ class Node
     @user = user
   end
   attr_reader :name
-
-  # memo化される
-  def details
-    @details ||= ChefAPI.details('node', @name)
-  end
-
-  def delete
-    ChefAPI.destroy('node', @name)
-    ChefAPI.destroy('client', @name)
-  end
-
-  def delete_node
-    cmd = <<-EOS
-            knife node delete #{@name} -y
-          EOS
-    out, err, status = Open3.capture3(cmd)
-    unless status.success? || status.exitstatus == 100
-      raise CookError, out + err
-    end
-    return out, err, status
-  end
-
-  def update_runlist(runlist)
-    n = ChefAPI.find(:node, @name)
-    n.run_list = runlist
-    n.save
-  end
 
   # node.run_ansible_playbook do |line|
   #   # line is ansible-playbook log
@@ -85,21 +57,6 @@ class Node
   ensure
     ec2key.close_temp
     hosts_file.close! if hosts_file
-  end
-
-  def wait_search_index
-    sleep WaitSearchIndexInterval while ChefAPI.search_node(@name).empty?
-  end
-
-  # recipe が適用されているかを返す。
-  def have_recipes?(recipes)
-    recipes = [recipes] unless recipes.kind_of?(Array)
-    (all_recipe & recipes).present?
-  end
-
-  def have_roles?(roles)
-    roles = [roles] unless roles.kind_of?(Array)
-    (all_role & roles).present?
   end
 
   # serverspec_ids => ServerspecのidのArray
@@ -175,24 +132,6 @@ class Node
 
 
   private
-
-  # TODO: API request memoize
-  def all_recipe(run_list = details['run_list'])
-    @roles ||= {}
-    recipes, roles = run_list.partition{|x| x[/^recipe/]}
-    roles = roles.map {|role|
-      role_name = role[/^role\[(.+)\]$/, 1]
-      all_recipe(@roles[role_name] ||= ChefAPI.find(:role, role_name).run_list)
-    }.flatten
-    recipes.concat(roles)
-  end
-
-  # TODO: role が role を include している場合
-  def all_role(run_list = details['run_list'])
-    _recipes, roles = run_list.partition{|x| x[/^recipe/]}
-
-    roles
-  end
 
   # @param [String] fqdn
   def scp_specs(sshkey_path, fqdn)
