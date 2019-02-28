@@ -43,7 +43,7 @@ describe SystemServer::Deployment, type: :model do
     end
 
     it 'should call methods' do
-      expect(klass).to receive(:create_stack).with(infra, 'Zabbix Server', Hash).and_return(stack)
+      expect(klass).to receive(:create_stack).with(infra, 'Zabbix Server', String, Hash).and_return(stack)
       expect(klass).to receive(:wait_creation).with(stack)
 
       klass.create_zabbix(
@@ -70,7 +70,7 @@ describe SystemServer::Deployment, type: :model do
         allow(Stack).to receive(:new).and_return(stack)
       end
 
-      subject{klass.__send__(:create_stack, infra, 'Chef Server')}
+      subject{klass.__send__(:create_stack, infra, 'Zabbix Server', ERB::Builder.new('zabbix_server').build)}
 
 
       it 'should call methods' do

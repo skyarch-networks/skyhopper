@@ -8,7 +8,7 @@
 
 class Node
 
-  ChefDefaultUser = "ec2-user".freeze
+  OperationDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
   AnsibleWorkspacePath = Rails.root.join('ansible').to_s
   AnsibleTargetHostName = 'ec2'.freeze
@@ -25,7 +25,7 @@ class Node
     return out, err, status
   end
 
-  def initialize(name, user: ChefDefaultUser)
+  def initialize(name, user: OperationDefaultUser)
     @name = name
     @user = user
   end

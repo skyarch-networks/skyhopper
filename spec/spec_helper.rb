@@ -55,7 +55,6 @@ RSpec.configure do |config|
   config.extend ControllerMacros, type: :controller
   config.extend ControllerMacros, type: :view
   config.extend StackStub
-  config.extend InfraStub
   config.extend ZabbixStub
   config.extend RDSStub
   config.extend S3Stub

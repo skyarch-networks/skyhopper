@@ -42,10 +42,6 @@ class Stack
     )
   end
 
-  def validate_template(template)
-    @cloud_formation.client.validate_template(template_body: template)
-  end
-
   def update(template, parameters)
     @stack.update(
       template_body: template,

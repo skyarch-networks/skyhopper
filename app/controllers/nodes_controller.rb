@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-# for Node model and Chef
+# for Node model
 
 class NodesController < ApplicationController
   include Concerns::InfraLogger

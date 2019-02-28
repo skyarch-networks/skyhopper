@@ -36,7 +36,7 @@ class SystemServer::Deployment
         region:        region
       )
       template = ERB::Builder.new('zabbix_server').build
-      stack = create_stack(infra, 'Zabbix Server', params: params, template: template)
+      stack = create_stack(infra, 'Zabbix Server', template, params: params)
       wait_creation(stack)
 
       physical_id = stack.instances.first.physical_resource_id
@@ -61,7 +61,7 @@ class SystemServer::Deployment
 
     private
 
-    def create_stack(infra, name, params: {}, template: ERB::Builder.new('chef_server').build)
+    def create_stack(infra, name, template, params: {})
       made_params = params.deep_dup.merge({InstanceName: name})
 
       cf_template = CfTemplate.new(
