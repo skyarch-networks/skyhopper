@@ -63,7 +63,6 @@ SkyHopper::Application.routes.draw do
 
   resources :nodes, only: [:show] do
     collection do
-      get  'recipes'
       post 'create_group'
     end
     member do
@@ -169,7 +168,6 @@ SkyHopper::Application.routes.draw do
   resources :dishes do
     member do
       post 'validate'
-      get  'runlist'
     end
   end
 
