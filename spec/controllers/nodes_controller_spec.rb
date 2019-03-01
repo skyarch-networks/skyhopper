@@ -13,10 +13,6 @@ describe NodesController, type: :controller do
   let(:infra){create(:infrastructure)}
   let(:physical_id){attributes_for(:resource)[:physical_id]}
 
-  before do
-    allow(controller).to receive(:check_chef_server_running).and_return(nil)
-  end
-
   describe "#show" do
     let(:resource){create(:resource, infrastructure: infra, dish: dish)}
     let(:request){get :show, infra_id: infra.id, id: resource.physical_id, format: 'json'}
