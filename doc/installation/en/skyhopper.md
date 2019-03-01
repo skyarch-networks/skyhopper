@@ -319,14 +319,7 @@ $ ./scripts/dev_server.sh
 Perform the initial set up from the browser by accessing SkyHopper
 
 
-## Establishing the Chef Server keys
-
-Copy the installation files under the project directory of SkyHopper `tmp/chef` to ` ~/.chef`
-```sh
-$ cp -r ~/skyhopper/tmp/chef ~/.chef
-```
-
-Restart SkyHopper
+## Restart SkyHopper
 ```sh
 $ ./scripts/skyhopper_daemon.sh stop
 $ ./scripts/skyhopper_daemon.sh start

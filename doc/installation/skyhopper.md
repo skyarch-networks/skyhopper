@@ -316,14 +316,7 @@ $ ./scripts/dev_server.sh
 ブラウザから SkyHopper にアクセスし、初期設定を行ってください
 
 
-## Chef Server の鍵を設置
-
-SkyHopper のプロジェクトディレクトリ下の`tmp/chef`内のファイルを`~/.chef`に設置
-```sh
-$ cp -r ~/skyhopper/tmp/chef ~/.chef
-```
-
-SkyHopper の再起動
+## SkyHopper の再起動
 ```sh
 $ ./scripts/skyhopper_daemon.sh stop
 $ ./scripts/skyhopper_daemon.sh start
