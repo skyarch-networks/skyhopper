@@ -585,7 +585,7 @@ ja:
   system_servers:
     msg:
       creating_zabbix_server: 'Zabbix Server を作成しています(必要なら)...'
-      complete:       'システムに必要なサーバーの構築が完了しました. SkyHopperを再起動してください.'
+      complete:       'システムに必要なサーバーの構築が完了しました.'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'

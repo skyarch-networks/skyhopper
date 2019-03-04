@@ -317,10 +317,3 @@ $ ./scripts/dev_server.sh
 ## Initializing settings for SkyHopper
 
 Perform the initial set up from the browser by accessing SkyHopper
-
-
-## Restart SkyHopper
-```sh
-$ ./scripts/skyhopper_daemon.sh stop
-$ ./scripts/skyhopper_daemon.sh start
-```

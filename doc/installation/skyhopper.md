@@ -314,10 +314,3 @@ $ ./scripts/dev_server.sh
 ## SkyHopper の初期設定
 
 ブラウザから SkyHopper にアクセスし、初期設定を行ってください
-
-
-## SkyHopper の再起動
-```sh
-$ ./scripts/skyhopper_daemon.sh stop
-$ ./scripts/skyhopper_daemon.sh start
-```
