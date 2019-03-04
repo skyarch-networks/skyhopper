@@ -39,5 +39,3 @@ AWS.config(logger: Rails.logger, log_formatter: AWS::Core::LogFormatter.colored)
 # for aws-sdk-v2
 Aws.config[:logger]        = Rails.logger
 Aws.config[:log_formatter] = Seahorse::Client::Logging::Formatter.colored
-
-Celluloid.logger = Rails.logger
