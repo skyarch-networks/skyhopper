@@ -19,7 +19,7 @@ describe DishPolicy do
   let(:dish_without_project){create(:dish, project: nil)}
   let(:dish_with_project){   create(:dish, project: create(:project))}
 
-  %i[show? index? runlist?].each do |action|
+  %i[show? index?].each do |action|
     permissions action do
       context 'when dish with project' do
         context 'when user allowed' do

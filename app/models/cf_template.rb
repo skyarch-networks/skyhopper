@@ -54,8 +54,19 @@ class CfTemplate < ActiveRecord::Base
 
   # @raise [Aws::CloudFormation::Errors::ValidationError] when invalid as cf_template
   def validate_template
-    s = Stack.new(Project.for_chef_server.infrastructures.first)
-    s.validate_template(self.value)
+    # TODO 修正する
+    # access_keyとsecret_access_keyをProject.for_zabbix_serverから取得しているが
+    # この処理にzabbix_serverが関係ない
+    aws_region = AppSetting.get.aws_region
+    zabbix_server_project = Project.for_zabbix_server
+    access_key = zabbix_server_project.access_key
+    secret_access_key = zabbix_server_project.secret_access_key
+    cf_client = Aws::CloudFormation::Client.new(
+      region: aws_region,
+      access_key_id: access_key,
+      secret_access_key: secret_access_key
+    )
+    cf_client.validate_template(template_body: self.value)
   end
 
   # @return [Hash<String => String>]

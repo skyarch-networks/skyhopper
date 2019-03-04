@@ -155,7 +155,6 @@ describe ProjectsController, type: :controller do
     let(:request){delete :destroy, id: project.id}
 
     stubize_zabbix
-    stubize_infra
     run_zabbix_server
 
     context 'when delete success' do

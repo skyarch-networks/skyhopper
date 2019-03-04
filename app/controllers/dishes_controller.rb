@@ -13,7 +13,7 @@ class DishesController < ApplicationController
   # --------------- Auth
   before_action :authenticate_user!
 
-  before_action :set_dish, only: [:show, :edit, :update, :destroy, :runlist]
+  before_action :set_dish, only: [:show, :edit, :update, :destroy]
 
   before_action do
     project_id = params[:project_id] || (params[:dish][:project_id] rescue nil)
@@ -37,7 +37,6 @@ class DishesController < ApplicationController
   # GET /dishes/1
   def show
     @selected_serverspecs = @dish.servertests
-    @runlist = @dish.runlist
 
     render partial: 'show'
   end
@@ -46,10 +45,6 @@ class DishesController < ApplicationController
   def edit
     @global_serverspecs = Servertest.global
 
-    @cookbooks = ChefAPI.index(:cookbook).keys
-    @roles     = ChefAPI.index(:role).map(&:name)
-
-    @runlist = @dish.runlist
     @selected_serverspecs = @dish.servertests
 
     render partial: 'edit'
@@ -57,12 +52,10 @@ class DishesController < ApplicationController
 
   # PUT /dishes/1
   def update
-    runlist        = params[:runlist]     || []
-    servertest_ids = params[:servertests] || []
+    servertest_ids = params[:serverspecs] || []
 
     # TODO error handling
     @dish.update(
-      runlist:     runlist,
       servertest_ids: servertest_ids,
       status:      nil
     )
@@ -98,11 +91,6 @@ class DishesController < ApplicationController
     @dish.destroy
 
     redirect_to dishes_path(project_id: project_id), notice: I18n.t('dishes.msg.deleted')
-  end
-
-  # GET /dishes/1/runlist.json
-  def runlist
-    @runlist = @dish.runlist
   end
 
   private

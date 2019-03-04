@@ -56,7 +56,6 @@ describe InfrastructuresController, type: :controller do
     let(:stack_status){{available: stack_availability, message: "stack_message", status: ""}}
 
     before do
-      allow_any_instance_of(Resource).to receive(:detach_chef)
       allow_any_instance_of(Resource).to receive(:detach_zabbix)
       ec2_resource
       rds_resource
@@ -320,7 +319,6 @@ describe InfrastructuresController, type: :controller do
     let(:req){delete :destroy, id: infra.id}
 
     stubize_zabbix
-    stubize_infra
     run_zabbix_server
     request_as_ajax
 
@@ -353,7 +351,6 @@ describe InfrastructuresController, type: :controller do
 
   describe '#delete_stack' do
     stubize_zabbix
-    stubize_infra
     run_zabbix_server
     request_as_ajax
 

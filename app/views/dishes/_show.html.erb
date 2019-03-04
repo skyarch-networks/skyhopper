@@ -2,28 +2,8 @@
 <div class="row">
 
   <div class="col-md-6 col-sm-6">
-    <h4 class="page-header">Runlist</h4>
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th>type</th>
-          <th>name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @runlist.each do |item| %>
-          <tr <% if item.include?("role") %>class="success"<% end %>>
-            <td><%= item.split("[")[0] %></td>
-            <td><%= item.split("[")[1][0..-2] %></td>
-          </tr>
-        <% end %>
-        <% if @runlist.empty? %>
-          <tr>
-            <td colspan="2"><%= t('common.msg.empty', name: t('infrastructures.runlist')) %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <h4 class="page-header">playbook</h4>
+    <p>Sorry, not implemented yet.</p>
   </div>
 
   <div class="col-md-6 col-sm-6">

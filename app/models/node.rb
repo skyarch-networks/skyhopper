@@ -7,9 +7,8 @@
 #
 
 class Node
-  include ::Node::Attribute
 
-  ChefDefaultUser = "ec2-user".freeze
+  OperationDefaultUser = "ec2-user".freeze
   WaitSearchIndexInterval = 5
   AnsibleWorkspacePath = Rails.root.join('ansible').to_s
   AnsibleTargetHostName = 'ec2'.freeze
@@ -26,110 +25,11 @@ class Node
     return out, err, status
   end
 
-  # knife bootstrap を実行し、Chef ServerにNodeを登録する。
-  # ==== Args
-  # [fqdn] {String} 対象のNodeのfqdn
-  # [node_name] {String} Nodeを一意に決定する名前。EC2のphysical_idを使用する。
-  # [infra] {Infrastructure} Nodeが紐づくInfrastructure
-  # [user] {String} ssh接続に使用するユーザー。デフォルトで ec2-user が使用される。
-  # [chef_client_version] {String} Chef client のバージョン
-  # ==== return
-  # {Node} Node class のインスタンスを作成して返す。
-  def self.bootstrap(fqdn, node_name, infra, user: nil, chef_client_version: nil)
-    user ||= ChefDefaultUser
-
-    ec2key = infra.ec2_private_key
-    ec2key.output_temp(prefix: node_name)
-
-    uri = URI.parse(ChefAPI.server_url)
-    uri.path = '/bootstrap/install.sh'
-    install_sh_url = uri.to_s
-    platform = infra.instance(node_name).platform
-    if platform.nil?
-      cmd = <<-EOS
-            knife bootstrap #{fqdn} \
-            --identity-file #{ec2key.path_temp} \
-            --ssh-user #{user} \
-            --node-name #{node_name} \
-            --sudo \
-            --bootstrap-url #{install_sh_url} \
-            --bootstrap-wget-options '--no-check-certificate'
-            EOS
-    else
-      password = infra.instance(node_name).password(ec2key)
-      cmd = <<-EOS
-            knife bootstrap windows winrm #{fqdn} \
-            --winrm-ssl-verify-mode verify_none \
-            --winrm-user Administrator \
-            --winrm-password '#{password}' \
-            --node-name #{node_name} \
-            --winrm-transport ssl
-            EOS
-          end
-
-    if chef_client_version
-      cmd.chomp!
-      cmd.concat(" --bootstrap-version #{chef_client_version}")
-    end
-
-    ssh_dir = File.expand_path('~/.ssh')
-    Dir.mkdir(ssh_dir, 0700) unless Dir.exist?(ssh_dir)
-
-    exec_command(cmd, BootstrapError)
-
-    return self.new(node_name)
-  ensure
-    ec2key.close_temp
-  end
-
-  def initialize(name, user: ChefDefaultUser)
+  def initialize(name, user: OperationDefaultUser)
     @name = name
     @user = user
   end
   attr_reader :name
-
-  # memo化される
-  def details
-    @details ||= ChefAPI.details('node', @name)
-  end
-
-  def delete
-    ChefAPI.destroy('node', @name)
-    ChefAPI.destroy('client', @name)
-  end
-
-  def delete_node
-    cmd = <<-EOS
-            knife node delete #{@name} -y
-          EOS
-    out, err, status = Open3.capture3(cmd)
-    unless status.success? || status.exitstatus == 100
-      raise CookError, out + err
-    end
-    return out, err, status
-  end
-
-  def update_runlist(runlist)
-    n = ChefAPI.find(:node, @name)
-    n.run_list = runlist
-    n.save
-  end
-
-
-  # node.cook do |line|
-  #   # line is chef-clinet log
-  # end
-  def cook(infra, whyrun, &block)
-    platform = infra.instance(@name).platform
-    if platform.nil?
-      cmd = 'sudo chef-client'
-      cmd << ' -W' if whyrun
-      exec_knife_ssh(cmd, infra, &block)
-    else
-      cmd = 'chef-client --manual-list'
-      exec_knife_winrm(cmd, infra, &block)
-    end
-  end
 
   # node.run_ansible_playbook do |line|
   #   # line is ansible-playbook log
@@ -157,21 +57,6 @@ class Node
   ensure
     ec2key.close_temp
     hosts_file.close! if hosts_file
-  end
-
-  def wait_search_index
-    sleep WaitSearchIndexInterval while ChefAPI.search_node(@name).empty?
-  end
-
-  # recipe が適用されているかを返す。
-  def have_recipes?(recipes)
-    recipes = [recipes] unless recipes.kind_of?(Array)
-    (all_recipe & recipes).present?
-  end
-
-  def have_roles?(roles)
-    roles = [roles] unless roles.kind_of?(Array)
-    (all_role & roles).present?
   end
 
   # serverspec_ids => ServerspecのidのArray
@@ -247,24 +132,6 @@ class Node
 
 
   private
-
-  # TODO: API request memoize
-  def all_recipe(run_list = details['run_list'])
-    @roles ||= {}
-    recipes, roles = run_list.partition{|x| x[/^recipe/]}
-    roles = roles.map {|role|
-      role_name = role[/^role\[(.+)\]$/, 1]
-      all_recipe(@roles[role_name] ||= ChefAPI.find(:role, role_name).run_list)
-    }.flatten
-    recipes.concat(roles)
-  end
-
-  # TODO: role が role を include している場合
-  def all_role(run_list = details['run_list'])
-    _recipes, roles = run_list.partition{|x| x[/^recipe/]}
-
-    roles
-  end
 
   # @param [String] fqdn
   def scp_specs(sshkey_path, fqdn)

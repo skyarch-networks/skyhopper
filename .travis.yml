@@ -13,9 +13,6 @@ branches:
   except: /^no-ci-.*$/
 
 before_script:
-  - mkdir ~/.chef
-  - cp .travis/knife.rb ~/.chef/knife.rb
-  - cp .travis/test.pem ~/.chef/test.pem
   - cp .travis/database.yml config/database.yml
   - touch log/test.log
   - bundle exec rake db:migrate:reset

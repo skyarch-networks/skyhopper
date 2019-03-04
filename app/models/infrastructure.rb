@@ -8,7 +8,6 @@
 
 class Infrastructure < ActiveRecord::Base
   before_destroy :detach_zabbix
-  before_destroy :detach_chef
 
   belongs_to :project
   belongs_to :ec2_private_key, dependent: :delete
@@ -145,11 +144,6 @@ class Infrastructure < ActiveRecord::Base
     else
       nil
     end
-  end
-
-  # Chef から登録を削除する。
-  def detach_chef
-    Stack.new(self).detach_chef
   end
 
   def detach_zabbix

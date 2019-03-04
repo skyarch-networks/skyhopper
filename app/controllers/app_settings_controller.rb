@@ -7,9 +7,9 @@
 #
 
 class AppSettingsController < ApplicationController
-  before_action :authenticate_user!, except: [:show, :create, :chef_create]
+  before_action :authenticate_user!, except: [:show, :create, :system_server_create]
 
-  before_action except: [:edit_zabbix, :update_zabbix, :chef_server, :chef_keys] do
+  before_action except: [:edit_zabbix, :update_zabbix] do
     if AppSetting.set?
       redirect_to root_path
     end
@@ -53,7 +53,7 @@ class AppSettingsController < ApplicationController
       cf_params[:SubnetId] = subnet_id
     end
 
-    check_eip_limit!
+    check_eip_limit!(skip_zabbix_server)
 
     Rails.cache.write(CF_PARAMS_KEY, cf_params)
     Rails.cache.write(CREATE_OPTIONS_KEY, {
@@ -106,8 +106,8 @@ class AppSettingsController < ApplicationController
   # end
 
 
-  # POST /app_settings/chef_create
-  def chef_create
+  # POST /app_settings/system_server_create
+  def system_server_create
     set = AppSetting.first
     region        = set.aws_region
     keypair_name  = set.ec2_private_key.name
@@ -125,8 +125,8 @@ class AppSettingsController < ApplicationController
 
     # おまじない
     # rubocop:disable Lint/Void
-    ChefServer
-    ChefServer::Deployment
+    SystemServer
+    SystemServer::Deployment
     CfTemplate
     Client
     Infrastructure
@@ -136,35 +136,16 @@ class AppSettingsController < ApplicationController
     ZabbixServer
     # rubocop:enable Lint/Void
 
-    unless create_options[:skip_zabbix_server]
-      # ZabbixServerの構築
-      create_zabbix_thread = Thread.new_with_db do
-        stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
-
-        ChefServer::Deployment.create_zabbix(stack_name, region, keypair_name, keypair_value, cf_params)
-      end
-    end
-
-    # ChefServerの構築
     Thread.new_with_db do
-      # とりあえず決め打ちでいい気がする
-      # stack_name = params.require(:stack_name)
-      stack_name = "SkyHopperChefServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
-
       ws = WSConnector.new('chef_server_deployment', 'status')
 
       begin
-        ChefServer::Deployment.create(stack_name, region, keypair_name, keypair_value, cf_params) do |data, msg|
-          Rails.logger.debug("ChefServer creating > #{data} #{msg}")
-          ws.push(build_ws_message(data, msg))
-        end
-
-        Rails.logger.debug("ChefServer creating > complete")
-
         unless create_options[:skip_zabbix_server]
-          # ZabbixServerの作成完了を待つ
-          ws.push(build_ws_message(:wait_for_zabbix_created))
-          create_zabbix_thread.join
+          # ZabbixServerの構築
+          stack_name = "SkyHopperZabbixServer-#{Digest::MD5.hexdigest(DateTime.now.in_time_zone.to_s)}"
+          SystemServer::Deployment.create_zabbix(stack_name, region, keypair_name, keypair_value, cf_params)
+        else
+          sleep(1) # ZabbixServerの構築がスキップされた場合、少し待たないとWebSocket通信が失敗する
         end
 
         set.dummy = false
@@ -179,14 +160,7 @@ class AppSettingsController < ApplicationController
       end
     end
 
-    render text: build_ws_message(:creating_infra)
-  end
-
-  # GET /app_settings/chef_keys
-  def chef_keys
-    prepare_chef_key_zip
-    send_file(@zipfile.path, filename: 'chef_keys.zip')
-    @zipfile.close
+    render text: build_ws_message(:creating_zabbix_server)
   end
 
   private
@@ -198,9 +172,9 @@ class AppSettingsController < ApplicationController
   #   message:    I18ned String
   # }
   def build_ws_message(status, msg = nil)
-    hash = ChefServer::Deployment::Progress[status].dup
+    hash = SystemServer::Deployment::Progress[status].dup
     I18n.locale = @locale
-    hash[:message] = msg || I18n.t("chef_servers.msg.#{status}")
+    hash[:message] = msg || I18n.t("system_servers.msg.#{status}")
     return JSON.generate(hash)
   end
 
@@ -214,11 +188,12 @@ class AppSettingsController < ApplicationController
   # @param [String] access_key_id
   # @param [String] secret_access_key
   # @raise [EIPLimitError] raise error when cann't allocate EIP.
-  def check_eip_limit!
+  def check_eip_limit!(skip_zabbix_server)
+    return if skip_zabbix_server
     a = @ec2.describe_account_attributes
     limit = a.account_attributes.find{|x| x.attribute_name == 'vpc-max-elastic-ips'}.attribute_values.first.attribute_value.to_i
     n = @ec2.describe_addresses.addresses.size
-    if limit - n < 2
+    if limit - n < 1 # ZabbixServer1個分
       raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
     end
   end
@@ -229,12 +204,6 @@ class AppSettingsController < ApplicationController
 
   def verify_subnet_id!(subnet_id)
     @ec2.describe_subnets(subnet_ids: [subnet_id])
-  end
-
-  def prepare_chef_key_zip
-    @zipfile = Tempfile.open('chef')
-    zf = ZipFileGenerator.new(File.expand_path('~/.chef'), @zipfile.path)
-    zf.write
   end
 
 end

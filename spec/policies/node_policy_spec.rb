@@ -43,7 +43,7 @@ describe NodePolicy do
     end
   end
 
-  %i[run_bootstrap? edit? update? cook? apply_dish? update_attributes? edit_attributes? yum_update? run_ansible_playbook? edit_ansible_playbook? update_ansible_playbook?].each do |action|
+  %i[apply_dish? yum_update? run_ansible_playbook? edit_ansible_playbook? update_ansible_playbook?].each do |action|
     permissions action do
       context 'when allowed user' do
         before do
@@ -64,16 +64,6 @@ describe NodePolicy do
           [admin, normal].each do |user|
             is_expected.not_to permit(user, infra)
           end
-        end
-      end
-    end
-  end
-
-  %i[recipes?].each do |action|
-    permissions action do
-      it 'grants allways' do
-        [master_admin, master, admin, normal].each do |user|
-          is_expected.to permit(user, infra)
         end
       end
     end

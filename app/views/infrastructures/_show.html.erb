@@ -154,8 +154,6 @@
                 <rds-tabpane                v-if="tabpane_active('rds')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></rds-tabpane>
                 <elb-tabpane                v-if="tabpane_active('elb')"                :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></elb-tabpane>
                 <s3-tabpane                 v-if="tabpane_active('s3')"                 :infra_id.once="current_infra.id" :physical_id.once="tabpaneGroupID"></s3-tabpane>
-                <edit-runlist-tabpane       v-if="tabpane_active('edit_runlist')"       :infra_id.once="current_infra.id" ></edit-runlist-tabpane>
-                <edit-attr-tabpane          v-if="tabpane_active('edit_attr')"          :infra_id.once="current_infra.id" ></edit-attr-tabpane>
                 <serverspec-tabpane         v-if="tabpane_active('serverspec')"         :infra_id.once="current_infra.id" ></serverspec-tabpane>
                 <servertest-results-tabpane v-if="tabpane_active('serverspec_results')" :infra_id.once="current_infra.id" :columns.once="spec_Columns" :physical_id="tabpaneGroupID"   ></servertest-results-tabpane>
                 <operation-sched-tabpane    v-if="tabpane_active('operation-sched')"    :infra_id.once="current_infra.id" :columns.once="ops_sched_Columns" :resources="resources"></operation-sched-tabpane>
@@ -187,8 +185,6 @@
 <script id="vue-paginator-template"           type="text/template"> <%= render 'vue/vue_paginator' %> </script>
 
 <script id="ec2-tabpane-template"             type="text/template"> <%= render 'vue/ec2_tabpane' %> </script>
-<script id="edit-runlist-tabpane-template"    type="text/template"> <%= render 'vue/edit_runlist_tabpane' %> </script>
-<script id="edit-attr-tabpane-template"       type="text/template"> <%= render 'vue/edit_attr_tabpane' %> </script>
 <script id="serverspec-tabpane-template"      type="text/template"> <%= render 'vue/serverspec_tabpane' %> </script>
 <script id="servertest-results-tabpane-template"      type="text/template"> <%= render 'vue/servertest_results_tabpane' %> </script>
 

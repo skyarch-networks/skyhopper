@@ -67,39 +67,15 @@ describe DishesController, type: :controller do
     it 'should assigns @selected_serverspecs' do
       expect(assigns[:selected_serverspecs]).to eq dish.servertests
     end
-
-    it 'should assign @runlist' do
-      expect(assigns[:runlist]).to eq dish.runlist
-    end
   end
 
   describe '#edit' do
-    let(:cookbooks){{foo: 'bar', hoge: 'fuga'}}
-    let(:roles){[double('hoge role', name: 'hoge'), double('fuga role', name: 'fuga')]}
-
-    before do
-      allow(ChefAPI).to receive(:index).with(:cookbook).and_return(cookbooks)
-      allow(ChefAPI).to receive(:index).with(:role).and_return(roles)
-    end
-
-    before do
+     before do
       get :edit, id: dish.id
     end
 
     it 'should assign @global_serverspecs' do
       expect(assigns[:global_serverspecs]).to eq Servertest.global
-    end
-
-    it 'should assign @cookbooks' do
-      expect(assigns[:cookbooks]).to eq cookbooks.keys
-    end
-
-    it 'should assign @roles' do
-      expect(assigns[:roles]).to eq roles.map(&:name)
-    end
-
-    it 'should assign @runlist' do
-      expect(assigns[:runlist]).to eq dish.runlist
     end
 
     it 'should assign @selected_serverspecs' do
@@ -114,7 +90,7 @@ describe DishesController, type: :controller do
   describe '#update' do
     let(:servertest){create(:servertest)}
     let(:runlist){['hoge', 'fuga']}
-    let(:update_request){patch :update, id: dish.id, runlist: runlist, servertests: [servertest.id]}
+    let(:update_request){patch :update, id: dish.id, serverspecs: [servertest.id]}
 
     context 'when valid params' do
       before do
@@ -129,10 +105,6 @@ describe DishesController, type: :controller do
 
       it 'should success' do
         expect(response).to be_success
-      end
-
-      it 'runlist should be equaled' do
-        expect(subject.runlist).to eq runlist
       end
 
       it 'servertest should be equaled' do
@@ -227,16 +199,6 @@ describe DishesController, type: :controller do
 
     it 'record should not exist' do
       expect(Dish).not_to be_exists(id: dish.id)
-    end
-  end
-
-  describe '#runlist' do
-    before do
-      get :runlist, id: dish.id
-    end
-
-    it 'should assign @runlist' do
-      expect(assigns[:runlist]).to eq dish.runlist
     end
   end
 end
