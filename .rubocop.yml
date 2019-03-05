@@ -66,9 +66,6 @@ Style/SpecialGlobalVars:
 Style/WhileUntilModifier:
   Enabled: false
 
-Style/WordArray:
-  Enabled: false
-
 Metrics/AbcSize:
   Enabled: false
 
