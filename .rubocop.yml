@@ -2,80 +2,22 @@ AllCops:
   Exclude:
     - 'vendor/**/*'
     - 'spec/factories.rb'
-  Rails: true
   DisplayCopNames: true
   TargetRubyVersion: 2.4
 
-Style/BlockDelimiters:
-  Enabled: false
+Rails:
+  Enabled: true
 
-Style/AccessModifierIndentation:
-  Enabled: false
-
-Style/AccessorMethodName:
-  Enabled: false
-
-Style/Alias:
-  Enabled: false
-
-Style/AlignArray:
-  Enabled: false
-
-Style/AlignHash:
-  Enabled: false
-
-Style/AlignParameters:
+Naming/AccessorMethodName:
   Enabled: false
 
 Style/AndOr:
   Enabled: false
 
-Style/ArrayJoin:
-  Enabled: false
-
 Style/AsciiComments:
   Enabled: false
 
-Style/AsciiIdentifiers:
-  Enabled: false
-
-Style/Attr:
-  Enabled: false
-
-Style/BeginBlock:
-  Enabled: false
-
-Style/BarePercentLiterals:
-  Enabled: false
-
-Style/BlockComments:
-  Enabled: false
-
-Style/BlockEndNewline:
-  Enabled: false
-
 Style/BracesAroundHashParameters:
-  Enabled: false
-
-Style/CaseEquality:
-  Enabled: true
-
-Style/CaseIndentation:
-  Enabled: false
-
-Style/CharacterLiteral:
-  Enabled: false
-
-Style/ClassAndModuleCamelCase:
-  Enabled: false
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/ClassCheck:
-  Enabled: false
-
-Style/ClassMethods:
   Enabled: false
 
 Style/ClassVars:
@@ -84,382 +26,47 @@ Style/ClassVars:
 Style/ColonMethodCall:
   Enabled: false
 
-Style/ClosingParenthesisIndentation:
-  Enabled: false
-
 Style/CommentAnnotation:
-  Enabled: false
-
-Style/CommentIndentation:
-  Enabled: false
-
-Style/ConstantName:
-  Enabled: false
-
-Style/DefWithParentheses:
-  Enabled: false
-
-Style/PreferredHashMethods:
   Enabled: false
 
 Style/Documentation:
   Enabled: false
 
-Style/DotPosition:
-  Enabled: false
-
 Style/DoubleNegation:
   Enabled: false
 
-Style/EachWithObject:
+Layout/EndOfLine:
+  EnforcedStyle: 'lf'
+
+Naming/FileName:
   Enabled: false
-
-Style/ElseAlignment:
-  Enabled: false
-
-Style/EmptyElse:
-  Enabled: false
-
-Style/EmptyLineBetweenDefs:
-  Enabled: false
-
-Style/EmptyLines:
-  Enabled: false
-
-Style/EmptyLinesAroundAccessModifier:
-  Enabled: false
-
-Style/EmptyLinesAroundBlockBody:
-  Enabled: false
-
-Style/EmptyLinesAroundClassBody:
-  Enabled: false
-
-Style/EmptyLinesAroundModuleBody:
-  Enabled: false
-
-Style/EmptyLinesAroundMethodBody:
-  Enabled: false
-
-Style/EmptyLiteral:
-  Enabled: false
-
-Style/EndBlock:
-  Enabled: false
-
-Style/EndOfLine:
-  Enabled: false
-
-Style/EvenOdd:
-  Enabled: false
-
-Style/ExtraSpacing:
-  Enabled: false
-
-Style/FileName:
-  Enabled: false
-
-Style/FirstParameterIndentation:
-  Enabled: false
-
-Style/FlipFlop:
-  Enabled: false
-
-Style/For:
-  Enabled: false
-
-Style/FormatString:
-  Enabled: false
-
-Style/GlobalVars:
-  Enabled: true
-
-Style/GuardClause:
-  Enabled: false
-
-Style/HashSyntax:
-  Enabled: true
-  SupportedStyles:
-    - ruby19
-    - ruby19_no_mixed_keys
-    - hash_rockets
-  UseHashRocketsWithSymbolValues: false
 
 Style/IfUnlessModifier:
   Enabled: false
 
-Style/IfWithSemicolon:
+Layout/IndentationConsistency:
   Enabled: false
 
-Style/IndentationConsistency:
-  Enabled: false
-
-Style/IndentationWidth:
+Layout/IndentationWidth:
   Enabled: true
   Width: 2
 
-Style/IndentArray:
-  Enabled: false
-
-Style/IndentHash:
-  Enabled: false
-
-Style/InfiniteLoop:
-  Enabled: false
-
-Style/Lambda:
-  Enabled: false
-
-Style/LambdaCall:
-  Enabled: false
-
-Style/LeadingCommentSpace:
-  Enabled: false
-
-Style/LineEndConcatenation:
-  Enabled: false
-
-Style/MethodCallWithoutArgsParentheses:
-  Enabled: false
-
-Style/MethodDefParentheses:
-  Enabled: false
-
-Style/MethodName:
-  Enabled: false
-
-Style/ModuleFunction:
-  Enabled: false
-
 Style/MultilineBlockChain:
-  Enabled: false
-
-Style/MultilineBlockLayout:
-  Enabled: false
-
-Style/MultilineIfThen:
-  Enabled: false
-
-Style/MultilineMethodCallIndentation:
-  Enabled: true
-  EnforcedStyle: indented
-
-Style/MultilineOperationIndentation:
-  Enabled: false
-
-Style/MultilineTernaryOperator:
-  Enabled: false
-
-Style/NegatedIf:
-  Enabled: false
-
-Style/NegatedWhile:
-  Enabled: false
-
-Style/NestedTernaryOperator:
-  Enabled: false
-
-Style/Next:
-  Enabled: false
-
-Style/NilComparison:
-  Enabled: false
-
-Style/NonNilCheck:
-  Enabled: false
-
-Style/Not:
-  Enabled: false
-
-Style/NumericLiterals:
   Enabled: false
 
 Style/OneLineConditional:
   Enabled: false
 
-Naming/BinaryOperatorParameterName:
-  Enabled: false
-
-Style/ParenthesesAroundCondition:
-  Enabled: false
-
-Style/PercentLiteralDelimiters:
-  Enabled: false
-
-Style/PercentQLiterals:
-  Enabled: false
-
-Style/PerlBackrefs:
-  Enabled: false
-
-Style/PredicateName:
-  Enabled: false
-
-Style/Proc:
-  Enabled: false
-
-Style/RaiseArgs:
-  Enabled: false
-
-Style/RedundantBegin:
-  Enabled: false
-
-Style/RedundantException:
-  Enabled: false
-
-Style/RedundantReturn:
-  Enabled: false
-
-Style/RedundantSelf:
-  Enabled: false
-
-Style/RegexpLiteral:
-  Enabled: false
-
-Style/RescueModifier:
-  Enabled: false
-
-Style/SelfAssignment:
-  Enabled: false
-
-Style/Semicolon:
-  Enabled: false
-
-Style/SignalException:
-  Enabled: false
-
 Style/SingleLineBlockParams:
   Enabled: false
 
-Style/SingleLineMethods:
-  Enabled: false
-
-Style/SpaceBeforeFirstArg:
-  Enabled: false
-
-Style/SpaceAfterColon:
-  Enabled: false
-
-Style/SpaceAfterComma:
-  Enabled: false
-
-Style/SpaceAroundKeyword:
-  Enabled: false
-
-Style/SpaceAfterMethodName:
-  Enabled: false
-
-Style/SpaceAfterNot:
-  Enabled: false
-
-Style/SpaceAfterSemicolon:
-  Enabled: false
-
-Style/SpaceBeforeBlockBraces:
-  Enabled: false
-
-Style/SpaceBeforeComma:
-  Enabled: false
-
-Style/SpaceBeforeComment:
-  Enabled: false
-
-Style/SpaceBeforeSemicolon:
-  Enabled: false
-
-Style/SpaceInsideBlockBraces:
-  Enabled: false
-
-Style/SpaceAroundBlockParameters:
-  Enabled: false
-
-Style/SpaceAroundEqualsInParameterDefault:
-  Enabled: false
-
-Style/SpaceAroundOperators:
-  Enabled: false
-
-Style/SpaceInsideBrackets:
-  Enabled: false
-
-Style/SpaceInsideHashLiteralBraces:
-  Enabled: false
-
-Style/SpaceInsideParens:
-  Enabled: false
-
-Style/SpaceInsideRangeLiteral:
-  Enabled: false
-
 Style/SpecialGlobalVars:
-  Enabled: false
-
-Style/StringLiterals:
-  Enabled: false
-
-Style/StringLiteralsInInterpolation:
-  Enabled: false
-
-Style/StructInheritance:
-  Enabled: false
-
-Style/SymbolProc:
-  Enabled: false
-
-Style/Tab:
-  Enabled: false
-
-Style/TrailingBlankLines:
-  Enabled: false
-
-Style/TrailingCommaInArrayLiteral:
-  Enabled: true
-  EnforcedStyleForMultiline: comma
-
-Style/TrailingCommaInHashLiteral:
-  Enabled: true
-  EnforcedStyleForMultiline: comma
-
-Style/TrailingWhitespace:
-  Enabled: false
-
-Style/TrivialAccessors:
-  Enabled: false
-
-Style/UnlessElse:
-  Enabled: false
-
-Style/UnneededCapitalW:
-  Enabled: false
-
-Style/UnneededPercentQ:
-  Enabled: false
-
-Style/VariableInterpolation:
-  Enabled: false
-
-Style/VariableName:
-  Enabled: false
-
-Style/WhenThen:
-  Enabled: false
-
-Style/WhileUntilDo:
   Enabled: false
 
 Style/WhileUntilModifier:
   Enabled: false
 
 Style/WordArray:
-  Enabled: false
-
-Lint/EndAlignment:
-  Enabled: false
-
-Lint/StringConversionInInterpolation:
-  Enabled: false
-
-Lint/AssignmentInCondition:
   Enabled: false
 
 Metrics/AbcSize:
