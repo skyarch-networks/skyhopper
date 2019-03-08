@@ -41,6 +41,9 @@ Layout/EndOfLine:
 Naming/FileName:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/IfUnlessModifier:
   Enabled: false
 
