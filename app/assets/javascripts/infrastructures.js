@@ -137,11 +137,11 @@
     });
   };
 
-  Vue.transition('fade', {
-    leave: function (el, done) {
-      $(el).fadeOut('normal');
-    }
-  });
+  //Vue.transition('fade', {
+    //leave: function (el, done) {
+      //$(el).fadeOut('normal');
+    //}
+  //});
 
 // ================================================================
 // event bindings
@@ -150,9 +150,7 @@
   if ($('#infrastructureApp').length) {
     var newVM = require('modules/newVM');
 
-    var router = new VueRouter({
-      history: true,
-    });
+
 
     var infrastructure_url = queryString.project_id ? '&project_id=' + queryString.project_id : '';
     var index = {
@@ -211,7 +209,7 @@
         show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
           var prev_infra_id = this.$route.params.infra_id;
           this.infra_initial_tab = infra_oepn_tab;
-          router.go({
+          router.push({
             name: 'infra',
             params: {
               infra_id: infra_id,
@@ -232,30 +230,38 @@
           this.$refs.demogrid.load_ajax(this.url);
         },
       },
-      ready: function () {
-        show_infra_initialize(this.show_infra_and_rewrite_url);
+      mounted: function () {
+        this.$nextTick(function () {
+          show_infra_initialize(this.show_infra_and_rewrite_url);
+        })
       },
     };
 
-
-    var infrastructureApp = {};
-    router.map({
-      '/infrastructures': {
+    var router = new VueRouter({
+      mode: 'history',
+      routes: [{
+        path: '/infrastructures',
         component: index,
-        subRoutes: {
-          '/infra/:infra_id': {
-            name: 'infra',
-            component: newVM(),
-          }
-        }
-      }
+        children: [{
+          path :'/infra/:infra_id',
+          name: 'infra',
+          component: newVM()
+        }]
+      }]
     });
-    router.start(infrastructureApp, '#infrastructureApp');
+
+    new Vue({
+      el: '#infrastructureApp',
+      router: router
+    })
   }
 
   if ($('#KeypairFormGroup').length){
     var keypair_form_group = new Vue({
-      el: '#KeypairFormGroup'
+      el: '#KeypairFormGroup',
+      data: {
+        input_type: ''
+      },
     });
   }
 

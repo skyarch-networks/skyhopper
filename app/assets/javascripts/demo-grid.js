@@ -67,7 +67,7 @@ module.exports = Vue.extend({
     },
     show_entry: function(item){
       var self = this;
-      switch (self.index) {
+      switch (self.$parent.index) {
         case 'clients':
           window.location.assign(item.projects_path);
           break;

@@ -7,13 +7,13 @@
 
 <script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<div id="indexElement" v-el:node>
+<div id="indexElement" ref="node">
 
   <div v-cloak>
     <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
     <div class="pull-right">
-      <a class="btn btn-danger btn-sm disabled"
+      <a class="btn btn-danger btn-sm"
       @click="delete_entry()"
         :class="{disabled: !can_delete()}">
           <%= fa 'times' %>
@@ -23,7 +23,7 @@
 
     <div class="pull-right">
       <div class="btn-group">
-           <a class="btn btn-default btn-sm dropdown-toggle disabled" data-toggle="dropdown" href="#" :class="{disabled: !is_picked()}">
+           <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" href="#" :class="{disabled: !is_picked()}">
              <%= t 'common.btn.settings' %> <span class="caret"></span>
            </a>
            <ul class="dropdown-menu">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="pull-right" v-cloak="picked">
-      <a class="btn btn-default btn-sm disabled"
+      <a class="btn btn-default btn-sm"
           :href="picked.edit_project_url" :class="{disabled: !can_edit()}">
           <span class='glyphicon glyphicon-edit'></span>
           <%= t 'helpers.links.edit' %>
