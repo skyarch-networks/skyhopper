@@ -26,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="v in events | powerfulOrderBy sortKey sortOrders[sortKey]" :class="event_tr_class(v.status)">
+        <tr v-for="v in sorted_events" :class="event_tr_class(v.status)">
           <td v-text="toLocaleString(v.time)"></td>
           <td v-text="v.type"></td>
           <td v-text="v.logical"></td>

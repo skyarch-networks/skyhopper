@@ -219,7 +219,7 @@ module.exports = function () {
       reset: function (open_tab) {
         var self = this;
         var infra_id = this.$route.params.infra_id;
-        self.$data = data();
+        self.$parent.data = data();
         self.current_infra.id = parseInt(infra_id);
         self.infra_loading = true;
         self.infra_model = new Infrastructure(infra_id);

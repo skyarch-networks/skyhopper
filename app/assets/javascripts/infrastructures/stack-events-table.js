@@ -34,23 +34,23 @@ module.exports = Vue.extend({
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
   },
+  computed: {
+    sorted_events: function(){
+      if (this.sortKey === "") {
+        return this.events;
+      }
+      var listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      if (this.sortOrders[this.sortKey] < 0) {
+        return listOrderByAsc.reverse();
+      }
+      return listOrderByAsc;
+    },
+  },
   created: function () {
     var self = this;
     console.log(self);
     this.$watch('events', function () {
       $(self.$el).hide().fadeIn(800);
     });
-  },
-  filters: {
-    powerfulOrderBy: function (list, sortKey, order) {
-      if (sortKey === "") {
-        return list;
-      }
-      var listOrderByAsc = _.sortBy(list, sortKey);
-      if (order < 0) {
-        return listOrderByAsc.reverse();
-      }
-      return listOrderByAsc;
-    }
   },
 });

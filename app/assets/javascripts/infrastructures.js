@@ -243,7 +243,7 @@
         path: '/infrastructures',
         component: index,
         children: [{
-          path :'/infra/:infra_id',
+          path :'/infrastructures/infra/:infra_id',
           name: 'infra',
           component: newVM()
         }]
