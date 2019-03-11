@@ -29,6 +29,7 @@ module.exports = Vue.extend({
       self.result.format  = cft.format;
       self.result.value  = cft.value;
       self.select_format();
+
       self.editor.getSession().setValue(cft.value);
     },
 
@@ -63,22 +64,24 @@ module.exports = Vue.extend({
         return moment(date).format('YYYY/MM/D H:mm');
     },
   },
-  ready: function () {
-    var self = this;
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
 
-    self.editor = ace.edit("add_modify_value_ace");
-    self.editor.getSession().setValue(self.result.value);
-    self.editor.getSession().on('change', function() {
-      self.result.value = self.editor.getSession().getValue();
-    });
-    self.editor.setOptions({
-      maxLines: 25,
-      minLines: 15,
-    });
-    self.editor.setTheme("ace/theme/github");
-    self.editor.getSession().setMode("ace/mode/json");
-    self.editor.getSession().setUseWrapMode(true);
-    self.editor.$blockScrolling = Infinity;
-    self.select_format();
+      self.editor = ace.edit("add_modify_value_ace");
+      self.editor.getSession().setValue(self.result.value);
+      self.editor.getSession().on('change', function () {
+        self.result.value = self.editor.getSession().getValue();
+      });
+      self.editor.setOptions({
+        maxLines: 25,
+        minLines: 15,
+      });
+      self.editor.setTheme("ace/theme/github");
+      self.editor.getSession().setMode("ace/mode/json");
+      self.editor.getSession().setUseWrapMode(true);
+      self.editor.$blockScrolling = Infinity;
+      self.select_format();
+    })
   },
 });

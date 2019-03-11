@@ -1,3 +1,4 @@
+<div>
 <div class="col-md-8 col-sm-8">
   <fieldset>
     <div class="form-group">
@@ -37,13 +38,13 @@
 
   <div class="tab-content">
     <div class="tab-pane active" id="history-json-tab">
-      <select class="form-control" size="20" v-model="selected_cft_id" number @dblclick="select_cft()">
-        <option v-for="t in templates.histories" value="{{t.id}}">{{t.name}} ({{t.created_at | created_at}})</option>
+      <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
+        <option v-for="t in templates.histories" v-bind:value="t.id">{{t.name}} ({{t.created_at | created_at}})</option>
       </select>
     </div>
     <div class="tab-pane" id="global-json-tab">
-      <select class="form-control" size="20" v-model="selected_cft_id" number @dblclick="select_cft()">
-        <option v-for="t in templates.globals"   value="{{t.id}}" v-text="t.name"></option>
+      <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
+        <option v-for="t in templates.globals"   v-bind:value="t.id" v-text="t.name"></option>
       </select>
     </div>
   </div>
@@ -57,4 +58,5 @@
   <button class="btn btn-primary btn-sm" :class="{disabled: parseErr}" @click="submit()">
     <%= t 'cf_templates.insert_parameters' %>
   </button>
+</div>
 </div>

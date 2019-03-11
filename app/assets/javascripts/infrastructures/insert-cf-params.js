@@ -19,6 +19,7 @@ module.exports = Vue.extend({
     params: {},
     result: {},
     loading: false,
+    key: '',
   };},
   methods: {
     submit: function () {
@@ -35,29 +36,31 @@ module.exports = Vue.extend({
 
     back: function () { this.$parent.show_tabpane('add_modify'); },
   },
-  ready: function () {
-    var self = this;
-    console.log(self);
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
+      console.log(self);
 
-    var infra = new Infrastructure(this.infra_id);
-    var cft = new CFTemplate(infra);
-    cft.insert_cf_params(this.$parent.current_infra.add_modify)
-    .fail(alert_danger(function () {
-      self.back();
-    })).then(function (data) {
-      self.params = data;
-      _.each(data, function (val, key) {
-        Vue.set(self.result, key, val.Default);
-      });
-      self.$parent.loading = false;
+      var infra = new Infrastructure(this.infra_id);
+      var cft = new CFTemplate(infra);
+      cft.insert_cf_params(this.$parent.current_infra.add_modify)
+        .fail(alert_danger(function () {
+          self.back();
+        })).then(function (data) {
+        self.params = data;
+        _.each(data, function (val, key) {
+          Vue.set(self.result, key, val.Default);
+        });
+        self.$parent.loading = false;
 
-      Vue.nextTick(function () {
-        var inputs = $(self.$el).parent().find('input');
-        var project_id = queryString.project_id;
-        inputs.textcomplete([
-          require('complete_project_parameter').default(project_id),
-        ]);
+        Vue.nextTick(function () {
+          var inputs = $(self.$el).parent().find('input');
+          var project_id = queryString.project_id;
+          inputs.textcomplete([
+            require('complete_project_parameter').default(project_id),
+          ]);
+        });
       });
-    });
+    })
   },
 });

@@ -89,7 +89,7 @@ module.exports = function () {
       show_add_modify: function () {
         var self = this;
         self.loading = true;
-        self.$event.preventDefault();
+        //self.$event.preventDefault();
 
         var cft = new CFTemplate(self.infra_model);
         cft.new().done(self.wrapping_into_same_model_check(function (data) {
