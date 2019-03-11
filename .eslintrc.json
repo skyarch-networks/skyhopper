@@ -5,6 +5,8 @@
   },
   "globals": {
     "$": false,
-    "t": false
+    "t": false,
+    "ws_connector": false,
+    "AjaxSet": false
   }
 }

@@ -42,10 +42,6 @@ class Stack
     )
   end
 
-  def validate_template(template)
-    @cloud_formation.client.validate_template(template_body: template)
-  end
-
   def update(template, parameters)
     @stack.update(
       template_body: template,
@@ -191,16 +187,6 @@ class Stack
         status:  event.resource_status,
         reason:  event.resource_status_reason,
       }
-    end
-  end
-
-  def detach_chef
-    return unless @status[:available]
-
-    instances.each do |i|
-      next if i.physical_resource_id.blank?
-
-      Node.new(i.physical_resource_id).delete
     end
   end
 

@@ -13,11 +13,8 @@ json.before_bootstrap @before_bootstrap
 
 json.playbook_roles       @playbook_roles
 
-json.runlist       @runlist
-json.runlist_error       @runlist_error
 json.selected_dish @selected_dish
 json.dishes        @dishes
-json.attribute_set @attribute_set
 
 json.number_of_security_updates @number_of_security_updates
 json.yum_schedule @yum_schedule
@@ -33,7 +30,6 @@ json.availability_zones @availability_zones
 
 if @info
   json.info do
-    json.cook_status       @info[:cook_status]
     json.ansible_status    @info[:ansible_status]
     json.servertest_status @info[:servertest_status] # TODO: Refactor all serverspec status
     json.update_status     @info[:update_status]

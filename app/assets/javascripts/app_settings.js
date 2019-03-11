@@ -45,17 +45,13 @@
     });
   };
 
+  // TODO 変数名を直す
   var chef_create = function () {
-    var stack_name = $('#chef_stack_name').val();
-
     return $.ajax({
-      url: endpoint_base + '/chef_create',
+      url: endpoint_base + '/system_server_create',
       type: 'POST',
-      data: {
-        stack_name: stack_name,
-      },
+      data: {},
       dataType: "json",
-
     }).fail(modal.AlertForAjaxStdError());
   };
 
@@ -110,8 +106,8 @@
 
   var watch_chef_create_progress = function () {
     // TODO
-    $('#btn-create-chefserver').hide();
-    $('.create-chefserver').show();
+    $('#btn-create-system-server').hide();
+    $('.create-system-server').show();
 
 
     var ws = ws_connector('chef_server_deployment', 'status');
@@ -124,9 +120,9 @@
 
 
   var update_creating_chefserver_progress = function (data) {
-    var progress       = $("#progress-create-chefserver");
+    var progress       = $("#progress-create-system-server");
     var progress_bar   = progress.children(".progress-bar");
-    var progress_alert = $("#alert-create-chefserver");
+    var progress_alert = $("#alert-create-system-server");
     var current_percentage = parseInt( progress_bar.attr("area-valuenow") );
 
     progress_alert.text(data.message);
@@ -154,7 +150,7 @@
   //  ----------------------------- event binding
 
 
-  $(document).on('click', '#btn-create-chefserver', function (e) {
+  $(document).on('click', '#btn-create-system-server', function (e) {
     e.preventDefault();
 
     create().done(function (data) {
@@ -167,7 +163,7 @@
 
 
   $(document).on('change keyup', required_inputs, function () {
-    var btn = $('#btn-create-chefserver');
+    var btn = $('#btn-create-system-server');
     switch_btn_enable(btn);
   });
 

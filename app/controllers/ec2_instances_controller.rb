@@ -98,15 +98,10 @@ class Ec2InstancesController < ApplicationController
   def detach
     physical_id = params.require(:id)
     zabbix = params.require(:zabbix)
-    chef = params.require(:chef)
     resource = Resource.find_by(physical_id: physical_id)
 
     if zabbix == "true"
       resource.detach_zabbix
-    end
-
-    if chef == "true"
-      resource.detach_chef
     end
 
     resource.destroy
@@ -127,7 +122,6 @@ class Ec2InstancesController < ApplicationController
     instance.terminate
     resource = Resource.find_by(physical_id: physical_id)
     resource.detach_zabbix
-    resource.detach_chef
     resource.destroy
 
     infra_logger_success("#{physical_id} has been terminated.")

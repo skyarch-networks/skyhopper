@@ -61,19 +61,14 @@ SkyHopper::Application.routes.draw do
 
   resources :resources, only: [:index, :create]
 
-  resources :nodes, only: [:update, :show, :edit] do
+  resources :nodes, only: [:show] do
     collection do
-      get  'recipes'
       post 'create_group'
     end
     member do
-      put  'cook'
       put  'yum_update'
-      get  'run_bootstrap'
       post 'apply_dish'
       post 'submit_groups'
-      put  'update_attributes'
-      get  'edit_attributes'
       get  'get_rules'
       get  'get_security_groups'
       post 'schedule_yum'
@@ -173,22 +168,12 @@ SkyHopper::Application.routes.draw do
   resources :dishes do
     member do
       post 'validate'
-      get  'runlist'
     end
   end
 
   resource :app_settings, only: [:create, :show] do
     collection do
-      get :project
-      get :system
-      get :chef
-
-      post :project_update
-
-      get  :chef_new
-      post :chef_create
-      get  :chef_server
-      get  :chef_keys
+      post :system_server_create
 
       get  :edit_zabbix
       post :update_zabbix

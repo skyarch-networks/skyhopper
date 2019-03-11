@@ -130,7 +130,7 @@ describe AppSettingsController, type: :controller do
       def authorize(*)end #XXX: pundit hack
       def test
         set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
-        check_eip_limit!
+        check_eip_limit!(false)
         render text: 'success'
       rescue ::AppSettingsController::EIPLimitError
         render text: 'failure', status: 400
@@ -159,7 +159,7 @@ describe AppSettingsController, type: :controller do
     end
 
     context 'when cannot allocate EIP' do
-      let(:eip_n){4}
+      let(:eip_n){5}
       should_be_failure
 
       it 'should be set body' do

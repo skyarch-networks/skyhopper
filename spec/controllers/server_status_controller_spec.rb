@@ -18,7 +18,7 @@ describe ServerStatusController, type: :controller do
   end
 
   describe '#start' do
-    %w[chef zabbix].each do |kind|
+    %w[zabbix].each do |kind|
       context "when #{kind}" do
         before{post :start, kind: kind}
         should_be_success
@@ -27,9 +27,9 @@ describe ServerStatusController, type: :controller do
   end
 
   describe '#stop' do
-    %w[chef zabbix].each do |kind|
+    %w[zabbix].each do |kind|
       context "when #{kind}" do
-        before{post :stop, kind: :chef}
+        before{post :stop, kind: kind}
         should_be_success
       end
     end
@@ -42,7 +42,7 @@ describe ServerStatusController, type: :controller do
       allow(server).to receive(:is_in_progress?).and_return(false)
     end
 
-    %w[chef zabbix].each do |kind|
+    %w[zabbix].each do |kind|
       context "when #{kind}" do
         context 'when not work background' do
           let(:req){post :status, kind: kind}

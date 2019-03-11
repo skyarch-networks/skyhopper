@@ -60,11 +60,15 @@ class ResourcesController < ApplicationController
     end
 
     begin
+      instance = infra.instance(physical_id)
+      instance.register_in_known_hosts
+
       Resource.create!(
         infrastructure_id: infra_id,
         physical_id:       physical_id,
         screen_name:       screen_name,
-        type_name:         type_name
+        type_name:         type_name,
+        register_in_known_hosts: true
       )
     rescue => ex
       render text: ex.message, status: 500 and return

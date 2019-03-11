@@ -52,10 +52,6 @@ class Resource < ActiveRecord::Base
     )}
   end
 
-  def detach_chef
-    Node.new(self.physical_id).delete_node
-  end
-
   def detach_zabbix
     z = ZabbixServer.find(self.infrastructure.project.zabbix_server_id)
 

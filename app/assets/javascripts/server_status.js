@@ -133,6 +133,5 @@ function Do() {
         return;
     }
     Build('zabbix');
-    Build('chef');
 }
 exports.Do = Do;

@@ -35,10 +35,6 @@ class Project < ActiveRecord::Base
     return Client.for_system.projects.find_by(code: ForDishTestCodeName)
   end
 
-  def self.for_chef_server
-    return Client.for_system.projects.find_by(code: ChefServerCodeName)
-  end
-
   def self.for_zabbix_server
     return Client.for_system.projects.find_by(code: ZabbixServerCodeName)
   end

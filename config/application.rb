@@ -34,13 +34,6 @@ module SkyHopper
       g.fixture_replacement :factory_girl, dir: "spec/factories"
     end
 
-    # XXX: disabling SSL verify to connect chef-server (it has no valid SSL certificate)
-    stderr_back = $stderr.dup
-    $stderr.reopen('/dev/null')
-    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-    $stderr.flush
-    $stderr.reopen stderr_back
-
     # for i18n-js assets pipeline
     config.assets.paths << "#{Rails.root}/bundle/ruby/*/gems/*/vendor/assets/javascript"
 

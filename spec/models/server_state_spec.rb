@@ -9,17 +9,12 @@
 require_relative '../spec_helper'
 
 describe ServerState, type: :model do
-  servers = %w[zabbix chef]
+  servers = %w[zabbix]
 
   let(:server){double('@server')}
   before(:all) do
     unless Client.for_system
       c = create(:client, code: Client::ForSystemCodeName)
-    end
-    unless Project.for_chef_server
-      p = create(:project, code: Project::ChefServerCodeName, client: c)
-      i = create(:infrastructure, project: p)
-      create(:ec2_resource, infrastructure: i)
     end
 
     unless Project.for_zabbix_server
@@ -57,13 +52,12 @@ describe ServerState, type: :model do
     end
   end
 
-  let(:chef){ServerState.new('chef')}
   let(:zabbix){ServerState.new('zabbix')}
-  let(:server_status){{'chef' => chef, 'zabbix' => zabbix}}
+  let(:server_status){{'zabbix' => zabbix}}
 
   let(:status){SecureRandom.base64(10)}
   before do
-    [server, chef, zabbix].each do |s|
+    [server, zabbix].each do |s|
       allow(s).to receive(:status).and_return(status)
     end
   end
