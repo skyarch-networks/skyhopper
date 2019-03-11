@@ -122,11 +122,11 @@
   function render_servertests_results(value, key){
     switch (key) {
       case 'status':
-        if(value == 'success') {
+        if(value === 'success') {
           return "<span class='label label-success'>"+value+"</span>";
-        }else if (value == 'failed' || value == 'error') {
+        }else if (value === 'failed' || value === 'error') {
           return "<span class='label label-danger'>"+value+"</span>";
-        }else if (value == 'pending') {
+        }else if (value === 'pending') {
           return "<span class='label label-warning'>"+value+"</span>";
         }else{ return value; }
         break;

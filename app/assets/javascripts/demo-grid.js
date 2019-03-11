@@ -94,11 +94,13 @@ module.exports = Vue.extend({
 
     },
 
-    coltxt_key: function(key,index){
+    coltxt_key: function(key){
+      index = this.$parent.index;
       return wrap(key,index);
     },
 
-    table_text: function(value,key,index,lang){
+    table_text: function(value,key,lang){
+       index = this.$parent.index;
        return listen(value,key,index,lang);
     },
 

@@ -6,7 +6,7 @@
       <th v-for="(key,index) in columns"
           :class="{active: sortKey == key}"
           @click="sortBy(key)">
-        <span v-html="coltxt_key(key,index)"></span>
+        <span v-html="coltxt_key(key)"></span>
           <span v-if="key !== 'id' && key !== 'role'" class="pull-right glyphicon" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
           <i v-if="key === 'role'"><a href="#" id="role" @click="pop()"
             data-content="<%= t('users.msg.role')%>"
@@ -29,7 +29,7 @@
           <span v-show="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
           <span v-show="key === 'cf_subject'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
-          <span :id="key" v-html="table_text(entry[key],key,index,lang)"></span>
+          <span :id="key" v-html="table_text(entry[key],key,lang)"></span>
         </td>
       </tr>
       <tr  v-if="filteredLength === 0">
