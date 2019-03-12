@@ -1,3 +1,4 @@
+<div>
 <h3 class="page-header"><%= t 'servertests.servertests' %> <small><%= t 'servertests.operation_logs' %></small></h3>
 <div class="col-sm-12">
   <div class="input-group">
@@ -11,19 +12,16 @@
         <th v-for="key in columns"
             :class="{active: sortKey === key}"
             @click="sortBy(key)">
-          <text v-html="key | wrap index"></text>
+          <span v-html="coltxt_key(key)"></span>
           <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
         </th>
       </tr>
     </thead>
     <tbody class="tbody-infra-log">
       <tr v-for="
-        entry in data
-        | filterBy filterKey
-        | orderBy sortKey sortOrders[sortKey]
-        | paginate">
+        (entry,index) in servertest_filter">
         <td v-for="key in columns">
-          <text v-if="key !== message" id="{{key}}" v-html="entry[key] | listen key index lang"></text>
+          <span v-if="key !== message" :id="key" v-html="table_text(entry[key],key,lang)"></span>
         </td>
       </tr>
       <td v-if="data.length === 0" colspan="6"><%= t('servertests.msg.empty-results') %></td>
@@ -42,4 +40,5 @@
   <div v-if="!loading" class="form-actions-top">
     <button @click="show_ec2()" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-arrow-left"></span> <%= t 'helpers.links.back' %></button>
   </div>
+</div>
 </div>

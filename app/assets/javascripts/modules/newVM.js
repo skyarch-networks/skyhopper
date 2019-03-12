@@ -32,7 +32,7 @@ module.exports = function () {
       },
       tabpaneID: 'default',     // tabpane 一つ一つのID. これに対応する tab の中身が表示される
       tabpaneGroupID: null,     // 複数の tabpane をまとめるID. これに対応する tab が表示される
-      spec_Columns: ['serverspec', 'resource', 'message', 'status', 'created_at'],
+      spec_Columns: ['servertest', 'resource', 'message', 'status', 'created_at'],
       sec_group: null,
       instance_type: null,
       ops_sched_Columns: ['physical_id', 'screen_name', 'id'],

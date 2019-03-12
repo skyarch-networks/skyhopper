@@ -17,9 +17,9 @@ module.exports = Vue.extend({
 
   data: function () {return {
     loading:           false,
-    selected_roles:   null,
+    selected_roles:   [],
     playbook_roles:   null,
-    selected_playbook_roles:   null,
+    selected_playbook_roles:   [],
     roles:             null,
     extra_vars:       null,
   };},
