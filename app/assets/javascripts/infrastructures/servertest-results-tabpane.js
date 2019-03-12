@@ -64,8 +64,6 @@ module.exports = Vue.extend({
     },
     table_text: function(value,key,lang){
       index = this.index;
-      console.log(value);
-      console.log(key);
       return listen(value,key,index,lang);
     },
 
