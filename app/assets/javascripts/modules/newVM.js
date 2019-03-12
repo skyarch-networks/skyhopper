@@ -104,7 +104,7 @@ module.exports = function () {
 
       show_cf_history: function () {
         var self = this;
-        self.$event.preventDefault();
+        //self.$event.preventDefault();
         self.show_tabpane('cf_history');
         self.loading = true;
       },
@@ -112,7 +112,7 @@ module.exports = function () {
         if (this.no_stack) {return;}
         var self = this;
         self.loading = true;
-        self.$event.preventDefault();
+        //self.$event.preventDefault();
 
         self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.current_infra.events = res.stack_events;
@@ -121,13 +121,13 @@ module.exports = function () {
       },
       show_infra_logs: function () {
         var self = this;
-        self.$event.preventDefault();
+        //self.$event.preventDefault();
         self.show_tabpane('infra_logs');
         self.loading = true;
       },
       show_sec_groups: function () {
         var self = this;
-        self.$event.preventDefault();
+        //self.$event.preventDefault();
         self.show_tabpane('security_groups');
         self.loading = true;
       },
