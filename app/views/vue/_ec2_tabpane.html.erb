@@ -1,4 +1,5 @@
 <div>
+<div>
   <h3 class="page-header">
     {{physical_id}}&nbsp;<small>{{ec2.public_ip}} </small>
   </h3>
@@ -21,7 +22,7 @@
           <td>
             <%# TODO: I18n %>
             <div-loader v-if="ec2_status_changing" :text="changing_status"></div-loader>
-            <span v-if="!ec2_status_changing">{{ec2.status}}</span>
+            <span v-else-if="!ec2_status_changing">{{ec2.status}}</span>
           </td>
           <td>
             <bootstrap-tooltip :title="change_status">
@@ -87,7 +88,8 @@
             </bootstrap-tooltip>
             <div class="panel-group collapse" id="ebs_panel" role="tabpanel" style="margin-bottom: 0px">
               <div class="panel panel-info">
-                <div class="panel-heading" transition="fade">
+                <transition name="fade">
+                <div class="panel-heading">
                   <strong>{{volume_selected}} :</strong>
                   <button @click="create_snapshot(volume_selected)" class="btn btn-xs btn-primary">
                     <span class="glyphicon glyphicon-camera"></span>
@@ -99,7 +101,7 @@
                     <span v-if="is_retention_policy_set" class="label label-danger">
                       Max: {{ec2.retention_policies[volume_selected].max_amount}} item(s)
                     </span>
-                    <span v-if="!is_retention_policy_set" class="label label-default">
+                    <span v-else-if="!is_retention_policy_set" class="label label-default">
                       <%= t('common.not_set') %>
                     </span>
                   </button>
@@ -109,7 +111,7 @@
                     <span v-if="is_snapshot_schedule_set" class="label label-danger">
                       {{schedule_indicator_message}}
                     </span>
-                    <span v-if="!is_snapshot_schedule_set" class="label label-default">
+                    <span v-else-if="!is_snapshot_schedule_set" class="label label-default">
                       <%= t('common.not_set') %>
                     </span>
                   </button>
@@ -117,6 +119,7 @@
                     <button @click="detach_volume" class="btn btn-xs btn-default"><span class="fa fa-eject"></span></button>
                   </span>
                 </div>
+                </transition>
               </div>
               <div id="ebs_panel" class="panel">
                 <div class="panel-heading">
@@ -128,7 +131,7 @@
                   </span>
                 </div>
                 <div-loader v-if="loading_snapshots" style="padding-left: 20px"></div-loader>
-                <table v-if="!loading_snapshots" class="table table-condensed table-hover">
+                <table v-else-if="!loading_snapshots" class="table table-condensed table-hover">
                   <thead>
                     <th></th>
                     <th class=""         @click="sort_by('tags.Name')"  >Name<span           :class="{'caret': sorting_by('tags.Name'),   'caret-reversed': sort_asc}"></span></th>
@@ -139,7 +142,7 @@
                     <th></th>
                   </thead>
                   <tbody>
-                    <tr v-for="snapshot in ec2.snapshots | filterBy volume_selected in 'volume_id' | count" :class="{info: snapshot.selected}">
+                    <tr v-for="snapshot in filterd_snapshot" :class="{info: snapshot.selected}">
                       <td><input v-model="snapshot.selected" type="checkbox"></td>
                       <td v-text="snapshot.tags.Name" style="word-break: break-all"></td>
                       <td v-text="snapshot.snapshot_id"></td>
@@ -159,7 +162,7 @@
         </tr>
         <tr>
           <td>Public DNS</td>
-          <td><%= link_to '{{ec2.public_dns}}', '//{{ec2.public_dns}}', target: '_blank' %></td>
+          <td><a target="_blank" :href="'//' + ec2.public_dns">{{ec2.public_dns}}</a></td>
           <td><%= copy_to_clipboard_button('ec2.public_dns') %></td>
         </tr>
         <tr>
@@ -191,12 +194,12 @@
               </bootstrap-tooltip>
             </td>
           <td>
-            <button href="#view-rules-modal" @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+            <button href="#view-rules-modal" @click="view_rules()" class="btn btn-xs btn-info dropdown-toggle" data-toggle="modal">
               <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
             </button>
           </td>
           <td>
-              <button href="#change-rules-modal" @click="get_security_groups()" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+              <button href="#change-rules-modal" @click="get_security_groups()" class="btn btn-xs btn-default dropdown-toggle" data-toggle="modal">
                 <%= t 'security_groups.btn.change_groups' %>
               </button>
           </td>
@@ -218,19 +221,19 @@
 
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_ansible_status' %></h6>
-      <bootstrap-tooltip :title.once="ansible_time">
+      <bootstrap-tooltip :title="ansible_time">
         <template slot="content"><span :class="ansible_status_class" class="label">{{ansible_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12">
       <h6><%= t 'nodes.latest_serverspec_status' %></h6>
-      <bootstrap-tooltip :title.once="serverspec_time">
+      <bootstrap-tooltip :title="serverspec_time">
         <template slot="content"><span :class="servertest_status_class" class="label">{{servertest_status}}</span></template>
       </bootstrap-tooltip>
     </div>
     <div class="col-xs-4 col-sm-12" v-if="!ec2.platform">
       <h6><%= t 'nodes.latest_update_status' %></h6>
-      <bootstrap-tooltip :title.once="update_time">
+      <bootstrap-tooltip :title="update_time">
         <template slot="content"><span :class="update_status_class" class="label">{{update_status}}</span></template>
       </bootstrap-tooltip>
     </div>
@@ -250,7 +253,7 @@
         <td v-text="r"></td>
       </tr>
       </tbody>
-      <tbody v-if="ec2.playbook_roles.length === 0">
+      <tbody v-else-if="ec2.playbook_roles.length === 0">
       <tr>
         <td><%= t 'common.msg.empty', name: t('nodes.playbook') %></td>
       </tr>
@@ -308,7 +311,7 @@
           </button>
         </span>
 
-        <div v-if="!dishes_empty" class="input-group">
+        <div v-else-if="!dishes_empty" class="input-group">
           <select class="form-control input-sm" v-model="selected_dish" options="dish_option"></select>
 
           <div class="input-group-btn">
@@ -366,7 +369,7 @@
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
           <button @click="change_scale()" :disabled="!change_scale_type_to" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
-        <div-loader v-if="loading"></div-loader>
+        <div-loader v-else-if="loading"></div-loader>
       </div>
     </div>
   </div>
@@ -401,15 +404,19 @@
                 <option value=<%= e %>><%= t "schedules.day_of_week.#{e}" %></option>
               <% end %>
             </select>
-            <select v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency !== 'intervals'" class="form-control">
-              <% 0.upto(23) do |n| %>
-                <option><%= n %></option>
-              <% end %>
-            </select>
-            <label v-if="schedule.frequency !== 'intervals'"><%= t 'schedules.o_clock' %></label>
-            <input type="number" min="1" max="12" v-model="schedule.time" :disabled="loading_s" v-if="schedule.frequency === 'intervals'" class="form-control">
-            <label v-if="schedule.frequency === 'intervals'"><%= t 'schedules.hours' %></label>
-            <div v-if="schedule.frequency === 'intervals'"><%= t 'schedules.next_run' %></div>
+            <div v-else-if="schedule.frequency !== 'intervals'">
+              <select v-model="schedule.time" :disabled="loading_s" class="form-control">
+                <% 0.upto(23) do |n| %>
+                  <option><%= n %></option>
+                <% end %>
+              </select>
+              <label><%= t 'schedules.o_clock' %></label>
+            </div>
+            <div v-else-if="schedule.frequency === 'intervals'">
+              <input type="number" min="1" max="12" v-model="schedule.time" :disabled="loading_s" class="form-control">
+              <label><%= t 'schedules.hours' %></label>
+              <div><%= t 'schedules.next_run' %></div>
+            </div>
           </div>
         </form>
       </div>
@@ -419,7 +426,7 @@
           <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
           <button @click="change_schedule()" :disabled="!filled_all" class="btn btn-warning"><%= t('helpers.links.change') %></button>
         </div>
-        <div-loader v-if="loading_s"></div-loader>
+        <div-loader v-else-if="loading_s"></div-loader>
       </div>
     </div>
   </div>
@@ -427,3 +434,4 @@
 
 <%= render 'infrastructures/modal/modal_snapshot_retention_policy' %>
 <%= render 'infrastructures/modal/modal_create_volume' %>
+</div>

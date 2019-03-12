@@ -137,12 +137,6 @@
     });
   };
 
-  //Vue.transition('fade', {
-    //leave: function (el, done) {
-      //$(el).fadeOut('normal');
-    //}
-  //});
-
 // ================================================================
 // event bindings
 // ================================================================
@@ -183,6 +177,9 @@
 
       },
       methods: {
+        leave: function (el, done) {
+          $(el).fadeOut('normal');
+        },
         can_edit: function () {
           return (this.picked.edit_infrastructure_path);
         },

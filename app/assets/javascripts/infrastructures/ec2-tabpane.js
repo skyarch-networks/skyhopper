@@ -40,8 +40,8 @@ module.exports = Vue.extend({
     ec2_status_changing: false,
     chef_console_text:   '',
     selected_dish:       null,
-    ec2:                 { availability_zones: {} },
-    volume_selected:     false,
+    ec2:                 { availability_zones: {},snapshots: [] ,},
+    volume_selected:     '',
     sort_key:            '',
     sort_asc:            false,
     schedule_type:       '',
@@ -65,6 +65,9 @@ module.exports = Vue.extend({
     attach_vol: t('ec2_instances.attach'),
     changing_status: t('ec2_instances.changing_status'),
     is_yum_update: false,
+    change_scale_type_to: '',
+    cook_status: '',
+    suffix_current_az: '',
   };},
 
   methods: {
@@ -506,7 +509,7 @@ module.exports = Vue.extend({
       if (panel_opened && same) {
         $('#ebs_panel').collapse('hide');
         setTimeout(function () {
-          self.volume_selected = false;
+          self.volume_selected = '';
         }, 300);
       } else {
         this.volume_selected = volume_id;
@@ -721,6 +724,33 @@ module.exports = Vue.extend({
       }
     },
 
+    filterd_dispitems: function(){
+      console.log(this);
+      var self = this;
+      var items = this.dispItems().filter(function (data) {
+        if(self.filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+        }
+      });
+      this.$set('filteredLength', items.length);
+      return items;
+    },
+
+    filterd_snapshot: function(){
+      var self = this;
+      var items = this.ec2.snapshots.filter(function (data) {
+        if(self.volume_selected === ""){
+          return true
+        } else {
+          return JSON.stringify(data.volume_id).indexOf(self.volume_selected) !== -1;
+        }
+      });
+      this.filteredLength = items.length;
+      return items;
+    },
+
     isStartPage: function(){ return (this.page === 0); },
     isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
 
@@ -731,47 +761,43 @@ module.exports = Vue.extend({
     },
   },
 
-  ready: function () {
-    var self = this;
-    console.log(self);
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
+      console.log(self);
 
-    var infra = new Infrastructure(this.infra_id);
-    var ec2 = new EC2Instance(infra, this.physical_id);
-    ec2.show().done(function (data) {
-      self.ec2 = data;
-      self.max_sec_group = data.security_groups.length-1;
-      var dish_id = '0';
-      if (self.ec2.selected_dish) {
-        dish_id = self.ec2.selected_dish.id;
-      }
-      self.selected_dish = dish_id;
+      var infra = new Infrastructure(this.infra_id);
+      var ec2 = new EC2Instance(infra, this.physical_id);
+      ec2.show().done(function (data) {
+        self.ec2 = data;
+        self.max_sec_group = data.security_groups.length - 1;
+        var dish_id = '0';
+        if (self.ec2.selected_dish) {
+          dish_id = self.ec2.selected_dish.id;
+        }
+        self.selected_dish = dish_id;
 
-      self.$watch('selected_dish', function (dish_id) {
-        var dish = new Dish();
-        dish.runlist(dish_id).done(function (runlist) {
-          self.ec2.runlist = runlist;
+        self.$watch('selected_dish', function (dish_id) {
+          var dish = new Dish();
+          dish.runlist(dish_id).done(function (runlist) {
+            self.ec2.runlist = runlist;
+          });
         });
-      });
 
-      if (self.ec2.info.cook_status === 'InProgress' || self.ec2.info.update_status === 'InProgress') {
-        var dfd = $.Deferred();
-        ec2.watch_cook(dfd);  // watch WebSocket and trigger event.
-        self.watch_cook(dfd); // watch dfd event and update DOM.
-        self.inprogress = true;
-      }
-      self.$parent.loading = false;
-    }).fail(alert_and_show_infra(infra.id));
+        if (self.ec2.info.cook_status === 'InProgress' || self.ec2.info.update_status === 'InProgress') {
+          var dfd = $.Deferred();
+          ec2.watch_cook(dfd);  // watch WebSocket and trigger event.
+          self.watch_cook(dfd); // watch dfd event and update DOM.
+          self.inprogress = true;
+        }
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra(infra.id));
+    })
   },
 
   filters: {
     zero_as_null: function (str) { return (str === 0) ? null : str; },
     roundup: function (val) { return (Math.ceil(val));},
-    count: function (arr) {
-      // record length
-      this.$set('filteredLength', arr.length);
-      // return it intact
-      return arr;
-    },
     suffix_current_az: function (zone_name) {
       return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
     },
