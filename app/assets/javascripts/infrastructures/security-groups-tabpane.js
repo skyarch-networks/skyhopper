@@ -54,7 +54,6 @@ module.exports = Vue.extend({
             if(i === 0) {
               record.push({text: rule.description, row: row_length, th: true});
               record.push({text: rule.group_id, row: row_length, th: true});
-              console.log(rule.group_id);
             }
             if (rule.ip_permissions[i]) {
               record.push({text: rule.ip_permissions[i].prefix_list_ids, row: 1});
