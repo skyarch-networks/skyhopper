@@ -50,6 +50,8 @@ module.exports = Vue.extend({
       });
     },
 
+    roundup: function (val) { return (Math.ceil(val));},
+
     create: function () {
       if(!this.has_selected) {return;}
 
@@ -252,6 +254,6 @@ module.exports = Vue.extend({
   },
 
   filters: {
-    roundup: function (val) { return (Math.ceil(val));},
+
   },
 });

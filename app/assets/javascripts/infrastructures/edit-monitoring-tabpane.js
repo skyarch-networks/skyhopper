@@ -91,7 +91,7 @@ module.exports = Vue.extend({
     },
 
     submit: function () {
-      this.$event.preventDefault();
+      //this.$event.preventDefault();
       this.loading = true;
       var self = this;
       this.monitoring.update(
@@ -121,6 +121,8 @@ module.exports = Vue.extend({
         self.$parent.show_edit_monitoring();
       }).fail(alert_and_show_infra(this.infra_id));
     },
+
+    roundup: function (val) { return (Math.ceil(val));},
 
     showPrev: function () {
       if(this.isStartPage) return;
@@ -196,6 +198,6 @@ module.exports = Vue.extend({
   },
 
   filters: {
-    roundup: function (val) { return (Math.ceil(val));},
+
   },
 });

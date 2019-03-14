@@ -43,7 +43,7 @@
         &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>
       &nbsp<span v-html="data.length / pages  | roundup"></span>
       <li :class="{disabled: isEndPage}">
-        <a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a>
+        <a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</span></a>
       </li>
     </ul>
   </nav>
