@@ -1,9 +1,10 @@
-<h3 class="page-header"><%= I18n.t('operation_scheduler.title')%></small></h3>
+<h3 class="page-header"><%= I18n.t('operation_scheduler.title') %></small></h3>
 <div class="col-sm-12">
   <div class="input-group">
     <form id="search">
       <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-    </form><hr>
+    </form>
+    <hr>
   </div>
   <span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
   <table class="table table-hover ssp">
@@ -12,7 +13,7 @@
           :class="{active: sortKey === key}"
           @click="sortBy(key)">
         <span v-html="key | wrap index"></span>
-        <span  v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
       </th>
     </tr>
     </thead>
@@ -25,9 +26,9 @@
       <td v-for="key in columns">
         <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key index lang"></span>
         <span v-if="key === 'id'">
-          <button class="btn btn-xs btn-primary"  @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched')%></button>
-          <button class="btn btn-xs btn-success"  @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
-          <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched')%></button>
+          <button class="btn btn-xs btn-primary" @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched') %></button>
+          <button class="btn btn-xs btn-success" @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
+          <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched') %></button>
         </span>
       </td>
     </tr>
@@ -36,9 +37,14 @@
   </table>
   <nav v-if="check_length(data)">
     <ul class="pager">
-      <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
-      <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="data.length / pages  | roundup"></span>
-      <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+      <li :class="{disabled: isStartPage}">
+        <a @click="showPrev()"><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+      <label><%= t 'monitoring.msg.page' %>:
+        &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>
+      &nbsp<span v-html="data.length / pages  | roundup"></span>
+      <li :class="{disabled: isEndPage}">
+        <a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a>
+      </li>
     </ul>
   </nav>
 </div>

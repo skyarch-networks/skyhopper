@@ -2,30 +2,30 @@
 
 <table class="table table-condensed table-striped">
   <thead>
-    <tr>
-      <th><%= t 'infrastructures.genre' %></th>
-      <th colspan="2"><%= t 'common.value' %></th>
-    </tr>
+  <tr>
+    <th><%= t 'infrastructures.genre' %></th>
+    <th colspan="2"><%= t 'common.value' %></th>
+  </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>Instance Class</td>
-      <td>{{rds.db_instance_class}}</td>
-      <td>
-        <button :disabled="!available" href="#change-scale-modal" role="button" class="btn btn-xs btn-warning" data-toggle="modal">
-          <%= t 'infrastructures.btn.change_scale' %>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td>Status</td>
-      <td>
-        <div-loader v-if="modifying" :text="changing_status"></div-loader>
-        <span v-if="!modifying">{{rds.db_instance_status}}</span>
-      </td>
-      <td>
-        <bootstrap-tooltip title="<%=t('common.actions')%>">
-          <template slot="content">
+  <tr>
+    <td>Instance Class</td>
+    <td>{{rds.db_instance_class}}</td>
+    <td>
+      <button :disabled="!available" href="#change-scale-modal" role="button" class="btn btn-xs btn-warning" data-toggle="modal">
+        <%= t 'infrastructures.btn.change_scale' %>
+      </button>
+    </td>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td>
+      <div-loader v-if="modifying" :text="changing_status"></div-loader>
+      <span v-if="!modifying">{{rds.db_instance_status}}</span>
+    </td>
+    <td>
+      <bootstrap-tooltip title="<%= t('common.actions') %>">
+        <template slot="content">
           <div class="btn-group">
             <button :class="rds_button_class" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
               <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
@@ -36,41 +36,41 @@
               <li :class="{disabled: !available}"><a @click="reboot_rds()" href="#"><%= fa 'retweet' %> Reboot</a></li>
             </ul>
           </div>
-          </template>
-        </bootstrap-tooltip>
-      </td>
-    </tr>
-    <tr>
-      <td>Allocated Storage (GB)</td>
-      <td colspan="2">{{rds.allocated_storage}}</td>
-    </tr>
-    <tr>
-      <td>Endpoint Address</td>
-      <td colspan="2">{{address}}</td>
-    </tr>
-    <tr>
-      <td>Multi AZ</td>
-      <td colspan="2">
-        <span v-if="rds.multi_az">YES</span>
-        <span v-else="rds.multi_az">NO</span>
-      </td>
-    </tr>
-    <tr>
-      <td>Database Engine</td>
-      <td colspan="2">{{rds.engine}}</td>
-    </tr>
-    <tr>
-      <td> <%=t('security_groups.title')%> </td>
-      <td>
-        <button @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
-          <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
-        </button>
-      </td>
-      <td>
-        <button :disabled="!available" href="#change-rules-modal" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
-          <%= t 'security_groups.btn.change_groups' %>
-        </button>
-      </td>
+        </template>
+      </bootstrap-tooltip>
+    </td>
+  </tr>
+  <tr>
+    <td>Allocated Storage (GB)</td>
+    <td colspan="2">{{rds.allocated_storage}}</td>
+  </tr>
+  <tr>
+    <td>Endpoint Address</td>
+    <td colspan="2">{{address}}</td>
+  </tr>
+  <tr>
+    <td>Multi AZ</td>
+    <td colspan="2">
+      <span v-if="rds.multi_az">YES</span>
+      <span v-else="rds.multi_az">NO</span>
+    </td>
+  </tr>
+  <tr>
+    <td>Database Engine</td>
+    <td colspan="2">{{rds.engine}}</td>
+  </tr>
+  <tr>
+    <td> <%= t('security_groups.title') %> </td>
+    <td>
+      <button @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+        <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
+      </button>
+    </td>
+    <td>
+      <button :disabled="!available" href="#change-rules-modal" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
+        <%= t 'security_groups.btn.change_groups' %>
+      </button>
+    </td>
   </tbody>
 </table>
 

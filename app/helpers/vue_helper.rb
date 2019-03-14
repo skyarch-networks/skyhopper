@@ -10,7 +10,7 @@ module VueHelper
   def link_and_dropdown_ssh(value)
     <<-EOS.html_safe
 <div v-if="#{value}" class="dropdown">
-  <a target="_blank" :href="'//' + #{value}">#{value}</a>
+  <a target="_blank" :href="'//' + #{value}">{{#{value}}}</a>
   <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     <span class="caret"></span>
   </a>

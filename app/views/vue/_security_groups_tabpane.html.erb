@@ -1,9 +1,11 @@
-<h3> <%= t 'security_groups.list_all' %>
-  <small>
-    <a href="#create_security_group_modal" data-toggle="modal" class="btn btn-primary"><%= t 'security_groups.btn.create' %></a>
-  </small>
-</h3>
+<div>
+  <h3> <%= t 'security_groups.list_all' %>
+    <small>
+      <a href="#create_security_group_modal" data-toggle="modal" class="btn btn-primary"><%= t 'security_groups.btn.create' %></a>
+    </small>
+  </h3>
 
 
-<%= render 'infrastructures/security_groups_table' %>
-<%= render 'infrastructures/modal/create_security_group_modal' %>
+  <%= render 'infrastructures/security_groups_table' %>
+  <%= render 'infrastructures/modal/create_security_group_modal' %>
+</div>

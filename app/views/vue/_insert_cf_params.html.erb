@@ -21,7 +21,7 @@
 
   <div v-if="!loading" class="form-actions-top">
     <button @click="submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
-    <button @click="back()"   class="btn btn-default"><%= t 'helpers.links.back' %></button>
+    <button @click="back()" class="btn btn-default"><%= t 'helpers.links.back' %></button>
   </div>
   <div v-if="loading" class="form-actions-top">
     <div-loader></div-loader>

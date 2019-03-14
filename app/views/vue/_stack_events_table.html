@@ -2,37 +2,42 @@
   <div v-if="events && events.length != 0">
     <table class="table table-condensed">
       <thead>
-        <tr>
-          <th :class="{active: sortKey == 'time'}" @click="sortBy('time')">
-            <span>time</span>
-            <span v-if="enable_sort" class="pull-right glyphicon" :class="sortOrders.time > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          </th>
-          <th :class="{active: sortKey == 'type'}" @click="sortBy('type')">
-            <span>type</span>
-            <span v-if="enable_sort"  class="pull-right glyphicon" :class="sortOrders.type > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          </th>
-          <th :class="{active: sortKey == 'logical'}" @click="sortBy('logical')">
-            <span>logical</span>
-            <span v-if="enable_sort"  class="pull-right glyphicon" :class="sortOrders.logical > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          </th>
-          <th :class="{active: sortKey == 'status'}" @click="sortBy('status')">
-            <span>status</span>
-            <span v-if="enable_sort"  class="pull-right glyphicon" :class="sortOrders.status > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          </th>
-          <th :class="{active: sortKey == 'reason'}" @click="sortBy('reason')">
-            <span>reason</span>
-            <span v-if="enable_sort"  class="pull-right glyphicon" :class="sortOrders.reason > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-          </th>
-        </tr>
+      <tr>
+        <th :class="{active: sortKey == 'time'}" @click="sortBy('time')">
+          <span>time</span>
+          <span v-if="enable_sort" class="pull-right glyphicon"
+                :class="sortOrders.time > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+        <th :class="{active: sortKey == 'type'}" @click="sortBy('type')">
+          <span>type</span>
+          <span v-if="enable_sort" class="pull-right glyphicon"
+                :class="sortOrders.type > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+        <th :class="{active: sortKey == 'logical'}" @click="sortBy('logical')">
+          <span>logical</span>
+          <span v-if="enable_sort" class="pull-right glyphicon"
+                :class="sortOrders.logical > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+        <th :class="{active: sortKey == 'status'}" @click="sortBy('status')">
+          <span>status</span>
+          <span v-if="enable_sort" class="pull-right glyphicon"
+                :class="sortOrders.status > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+        <th :class="{active: sortKey == 'reason'}" @click="sortBy('reason')">
+          <span>reason</span>
+          <span v-if="enable_sort" class="pull-right glyphicon"
+                :class="sortOrders.reason > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="v in sorted_events" :class="event_tr_class(v.status)">
-          <td v-text="toLocaleString(v.time)"></td>
-          <td v-text="v.type"></td>
-          <td v-text="v.logical"></td>
-          <td v-text="v.status"></td>
-          <td v-text="v.reason"></td>
-        </tr>
+      <tr v-for="v in sorted_events" :class="event_tr_class(v.status)">
+        <td v-text="toLocaleString(v.time)"></td>
+        <td v-text="v.type"></td>
+        <td v-text="v.logical"></td>
+        <td v-text="v.status"></td>
+        <td v-text="v.reason"></td>
+      </tr>
       </tbody>
     </table>
   </div>

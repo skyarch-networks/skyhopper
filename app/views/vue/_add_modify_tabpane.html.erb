@@ -1,62 +1,63 @@
 <div>
-<div class="col-md-8 col-sm-8">
-  <fieldset>
-    <div class="form-group">
-      <label for="add_modify_name"><%= t('cf_templates.subject') %></label>
-      <input v-model="result.name" type="text" id="add_modify_name" class="form-control" required>
-    </div>
+  <div class="col-md-8 col-sm-8">
+    <fieldset>
+      <div class="form-group">
+        <label for="add_modify_name"><%= t('cf_templates.subject') %></label>
+        <input v-model="result.name" type="text" id="add_modify_name" class="form-control" required>
+      </div>
 
-    <div class="form-group">
-      <label for="add_modify_detail"><%= t('cf_templates.details') %></label>
-      <input v-model="result.detail" type="text" id="add_modify_detail" class="form-control">
-    </div>
+      <div class="form-group">
+        <label for="add_modify_detail"><%= t('cf_templates.details') %></label>
+        <input v-model="result.detail" type="text" id="add_modify_detail" class="form-control">
+      </div>
 
 
-    <div class="form-group">
-      <label for="add_modify_format"><%= t('cf_templates.format') %></label>
-      <select v-model="result.format" type="text" id="add_modify_format" class="form-control" @change="select_format()">
-        <% CfTemplate.formats.keys.each{|key| %>
-          <option value="<%= key %>"><%= key %></option>
-        <% } %>
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="add_modify_format"><%= t('cf_templates.format') %></label>
+        <select v-model="result.format" type="text" id="add_modify_format" class="form-control" @change="select_format()">
+          <% CfTemplate.formats.keys.each {|key| %>
+            <option value="<%= key %>"><%= key %></option>
+          <% } %>
+        </select>
+      </div>
 
-    <div class="form-group">
+      <div class="form-group">
         <label for="add_modify_value"><%= t('cf_templates.cf_template') %></label>
-    </div>
-    <div class="alert alert-danger" v-show="parseErr">{{parseErr}}</div>
-    <textarea style="display: none;" v-model="result.value" name="description" id="add_modify_value"></textarea>
-    <div style="position: absolute; width: 100%; left: 0px; height: 429px; font-size: 12px;" autofocus id="add_modify_value_ace"></div>
-  </fieldset>
-</div>
+      </div>
+      <div class="alert alert-danger" v-show="parseErr">{{parseErr}}</div>
+      <textarea style="display: none;" v-model="result.value" name="description" id="add_modify_value"></textarea>
+      <div style="position: absolute; width: 100%; left: 0px; height: 429px; font-size: 12px;" autofocus id="add_modify_value_ace"></div>
+    </fieldset>
+  </div>
 
-<div class="tabbable col-md-4 col-sm-4">
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#history-json-tab" data-toggle="tab"><%= t 'cf_templates.history' %></a></li>
-    <li><a href="#global-json-tab" data-toggle="tab"><%= t 'cf_templates.global' %></a></li>
-  </ul>
+  <div class="tabbable col-md-4 col-sm-4">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#history-json-tab" data-toggle="tab"><%= t 'cf_templates.history' %></a></li>
+      <li><a href="#global-json-tab" data-toggle="tab"><%= t 'cf_templates.global' %></a></li>
+    </ul>
 
-  <div class="tab-content">
-    <div class="tab-pane active" id="history-json-tab">
-      <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
-        <option v-for="t in templates.histories" v-bind:value="t.id">{{t.name}} ({{t.created_at | created_at}})</option>
-      </select>
+    <div class="tab-content">
+      <div class="tab-pane active" id="history-json-tab">
+        <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
+          <option v-for="t in templates.histories" v-bind:value="t.id">{{t.name}} ({{t.created_at | created_at}})
+          </option>
+        </select>
+      </div>
+      <div class="tab-pane" id="global-json-tab">
+        <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
+          <option v-for="t in templates.globals" v-bind:value="t.id" v-text="t.name"></option>
+        </select>
+      </div>
     </div>
-    <div class="tab-pane" id="global-json-tab">
-      <select class="form-control" size="20" v-model.number="selected_cft_id" @dblclick="select_cft()">
-        <option v-for="t in templates.globals"   v-bind:value="t.id" v-text="t.name"></option>
-      </select>
+
+    <div class="form-actions-top">
+      <button class="btn btn-default" @click="select_cft()"><%= glyphicon "chevron-left" %></button>
     </div>
   </div>
 
-  <div class="form-actions-top">
-    <button class="btn btn-default" @click="select_cft()"><%= glyphicon "chevron-left" %></button>
+  <div class="form-actions-top col-md-12 col-sm-12">
+    <button class="btn btn-primary btn-sm" :class="{disabled: parseErr}" @click="submit()">
+      <%= t 'cf_templates.insert_parameters' %>
+    </button>
   </div>
-</div>
-
-<div class="form-actions-top col-md-12 col-sm-12">
-  <button class="btn btn-primary btn-sm" :class="{disabled: parseErr}" @click="submit()">
-    <%= t 'cf_templates.insert_parameters' %>
-  </button>
-</div>
 </div>

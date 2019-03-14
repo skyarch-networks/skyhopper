@@ -27,10 +27,10 @@
       <tbody>
       <template v-for="rule in rules_summary" track-by="$index">
         <tr>
-          <th v-if="rule.ip_permissions.length > rule.ip_permissions_egress.length" style="width: 20%" rowspan="{{rule.ip_permissions.length +1}}">{{rule.description}}</th>
-          <th v-else rowspan="{{rule.ip_permissions_egress.length +1}}">{{rule.description}}</th>
-          <th v-if="rule.ip_permissions.length > rule.ip_permissions_egress.length" rowspan="{{rule.ip_permissions.length+1}}">{{rule.group_id}}</th>
-          <th v-else rowspan="{{rule.ip_permissions_egress.length+1}}">{{rule.group_id}}</th>
+          <th v-if="rule.ip_permissions.length > rule.ip_permissions_egress.length" style="width: 20%" :rowspan="rule.ip_permissions.length +1">{{rule.description}}</th>
+          <th v-else :rowspan="rule.ip_permissions_egress.length +1">{{rule.description}}</th>
+          <th v-if="rule.ip_permissions.length > rule.ip_permissions_egress.length" :rowspan="rule.ip_permissions.length+1">{{rule.group_id}}</th>
+          <th v-else :rowspan="rule.ip_permissions_egress.length+1">{{rule.group_id}}</th>
         </tr>
 
         <!--If inbound contents is greater than outbound contents, inbounr>will be the base loop-->

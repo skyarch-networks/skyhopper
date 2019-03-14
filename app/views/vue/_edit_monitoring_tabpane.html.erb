@@ -5,9 +5,9 @@
 
   <div class="col-md-10 col-sm-6">
     <h4 class="page-header"><%= t 'monitoring.trigger' %>
-    <small>
-      <a href="#" data-toggle="modal" data-target="#trigger-warning"><%= glyphicon('question-sign') %></a>
-    </small>
+      <small>
+        <a href="#" data-toggle="modal" data-target="#trigger-warning"><%= glyphicon('question-sign') %></a>
+      </small>
     </h4>
   </div>
 </div>
@@ -30,26 +30,26 @@
       <!-- if following parameters, dont let trigger value to be set -->
       <div v-if="type(master) === 'trigger'" class="col-md-1" style="padding-left: 0px; height: 32px">
         <input v-if="master.checked" type="number" class="form-control" v-model="master.value" style="padding: 5px !important" min="1">
-        <p     v-if="!master.checked" style="margin-bottom: 5px; margin-top: 5px">--</p>
+        <p v-if="!master.checked" style="margin-bottom: 5px; margin-top: 5px">--</p>
       </div>
       <div v-if="type(master) === 'url'">
         <div v-if="master.checked">
           <table class="table">
             <thead>
-              <tr>
-                <% url_settings.each do |setting| %>
-                  <th><%= setting[:name] %></th>
-                <% end %>
-                <th>Actions</th>
-              </tr>
+            <tr>
+              <% url_settings.each do |setting| %>
+                <th><%= setting[:name] %></th>
+              <% end %>
+              <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-              <tr v-for="s in web_scenarios">
-                <td v-for="v in s">{{v}}</td>
-                <td class="actions">
-                  <a @click="delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
-                </td>
-              </tr>
+            <tr v-for="s in web_scenarios">
+              <td v-for="v in s">{{v}}</td>
+              <td class="actions">
+                <a @click="delete_step(s)" class="btn btn-danger btn-xs"><%= t "monitoring.btn.delete" %></a>
+              </td>
+            </tr>
             </tbody>
           </table>
           <a class="btn btn-primary btn-sm" data-target="#new-scenario" data-toggle="modal" style="margin-bottom: 10px"><%= t "monitoring.btn.add" %></a>
@@ -71,7 +71,8 @@
       <tr>
         <th>Physical ID</th>
         <th>Linked</th>
-        <th></th></tr>
+        <th></th>
+      </tr>
       <tr v-for="l in linked_resources">
         <td>{{l.resource}}</td>
         <td v-if="l.linked"><%= glyphicon 'ok text-success' %></td>
@@ -89,13 +90,13 @@
     <%= render 'monitorings/modal_update_templates' %>
   </div>
   <div class="col-md-7 col-sm-4">
-      <div class="form-group">
-        <button id="btn-show-optional-inputs" class="btn btn-link btn-block" @click="display_zb_server = !display_zb_server">
-          <i v-if="!display_zb_server"><%=	fa('chevron-down')%></i>
-          <i v-if="display_zb_server"><%=	 fa('chevron-up')%></i>
-          <%= t 'monitoring.zabbix_servers' %>
-        </button>
-      </div>
+    <div class="form-group">
+      <button id="btn-show-optional-inputs" class="btn btn-link btn-block" @click="display_zb_server = !display_zb_server">
+        <i v-if="!display_zb_server"><%= fa('chevron-down') %></i>
+        <i v-if="display_zb_server"><%= fa('chevron-up') %></i>
+        <%= t 'monitoring.zabbix_servers' %>
+      </button>
+    </div>
 
     <div class="list-group" v-if="display_zb_server">
       <a href="#" class="list-group-item" v-for="z in zabbix_servers" :class="{active: z.is_checked}" @click="select_server(z)">

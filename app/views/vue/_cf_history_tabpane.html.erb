@@ -5,8 +5,8 @@
       <a href="#" class="list-group-item" v-for="v in history" :class="{active: active(v.id)}" @click="get(v.id)">
         <bootstrap-tooltip :title.once="v.detail">
           <template slot="content">
-          <h4 class="list-group-item-heading">{{v.name}}</h4>
-          <p class="list-group-item-text">{{toLocaleString(v.created_at)}}</p>
+            <h4 class="list-group-item-heading">{{v.name}}</h4>
+            <p class="list-group-item-text">{{toLocaleString(v.created_at)}}</p>
           </template>
         </bootstrap-tooltip>
       </a>

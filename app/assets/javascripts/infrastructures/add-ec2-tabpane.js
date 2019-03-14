@@ -19,6 +19,7 @@ module.exports = Vue.extend({
     physical_id: '',
     screen_name: '',
     physical_ids: null,
+    loading: '',
   };},
 
   methods: {

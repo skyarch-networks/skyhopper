@@ -34,6 +34,7 @@ module.exports = Vue.extend({
     lang: queryString.lang,
     type: [],
     physical_id: null,
+    loading_s: false,
   };},
 
   methods: {
@@ -109,10 +110,12 @@ module.exports = Vue.extend({
     },
   },
 
-  ready: function() {
-    console.log(this);
-    this.get_rules();
-    this.$parent.loading = false;
+  mounted: function (){
+    this.$nextTick(function () {
+      console.log(this);
+      this.get_rules();
+      this.$parent.loading = false;
+    })
   },
 
   filters: {
