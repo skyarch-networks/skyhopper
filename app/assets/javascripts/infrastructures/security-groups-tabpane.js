@@ -28,6 +28,7 @@ module.exports = Vue.extend({
     group_name:     null,
     description:    null,
     name:           null,
+    table_data:     [[]],
     inbound: [],
     sec_group: null,
     ip: null,
@@ -44,7 +45,43 @@ module.exports = Vue.extend({
       var ec2 = new EC2Instance(infra, '');
       ec2.get_rules().done(function (data) {
         self.rules_summary = data.rules_summary;
+        var records = [];
 
+        self.rules_summary.forEach(function (rule) {
+          var row_length = Math.max(rule.ip_permissions.length,rule.ip_permissions_egress.length,1);
+          for(var i = 0 ; i < row_length ; i++) {
+            var record = [];
+            if(i === 0) {
+              record.push({text: rule.description, row: row_length, th: true});
+              record.push({text: rule.group_id, row: row_length, th: true});
+              console.log(rule.group_id);
+            }
+            if (rule.ip_permissions[i]) {
+              record.push({text: rule.ip_permissions[i].prefix_list_ids, row: 1});
+              record.push({text: rule.ip_permissions[i].ip_protocol, row: 1});
+              record.push({text: rule.ip_permissions[i].to_port, row: 1});
+              record.push({text: rule.ip_permissions[i].ip_ranges.map(x => x.cidr_ip).join(', '), row: 1});
+            } else {
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+            }
+            if (rule.ip_permissions_egress[i]) {
+              record.push({text: rule.ip_permissions_egress[i].prefix_list_ids, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].ip_protocol, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].to_port, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].ip_ranges[0].cidr_ip, row: 1});
+            } else {
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+            }
+            records.push(record);
+          }
+        });
+        self.table_data = records;
         self.sec_group = data.sec_groups;
         var vpcs = [];
         _.forEach(data.vpcs, function (vpc) {
@@ -100,6 +137,9 @@ module.exports = Vue.extend({
       this.name = null;
       this.vpc = null;
       this.$parent.loading = false;
+    },
+    check_length: function(args){
+      return args.length > 0;
     },
   },
 
