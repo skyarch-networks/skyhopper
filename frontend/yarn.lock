@@ -303,6 +303,11 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+brace@0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/brace/-/brace-0.11.1.tgz#4896fcc9d544eef45f4bb7660db320d3b379fe58"
+  integrity sha1-SJb8ydVE7vRfS7dmDbMg07N5/lg=
+
 brace@0.7.0, brace@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/brace/-/brace-0.7.0.tgz#90651da5bd486edbb41888dec78afdcd07375b21"
@@ -2856,7 +2861,7 @@ vm-browserify@~0.0.1:
   dependencies:
     indexof "0.0.1"
 
-vue-ace@0.0.1, vue-ace@^0.0.1:
+vue-ace@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/vue-ace/-/vue-ace-0.0.1.tgz#c3a92629c7a13bc1d5bbda3c3f70b822474aaf24"
   integrity sha1-w6kmKcehO8HVu9o8P3C4IkdKryQ=

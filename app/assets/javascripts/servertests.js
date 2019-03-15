@@ -13,7 +13,7 @@ var queryString = require('query-string').parse(location.search);
 var modal = require('modal');
 
 var Servertest   = require('models/servertest').default;
-var vace = require('vue-ace');
+var vace = require('./modules/vue-ace');
 require('brace/mode/ruby');
 require('brace/theme/github');
 Vue.use(vace, false, 'ruby', '25');

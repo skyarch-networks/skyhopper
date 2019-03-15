@@ -23,7 +23,7 @@
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
 
-  var vace = require('vue-ace');
+  var vace = require('./modules/vue-ace');
   require('brace/mode/json');
   require('brace/mode/yaml');
   require('brace/theme/github');
