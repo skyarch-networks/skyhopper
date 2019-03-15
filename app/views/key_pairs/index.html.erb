@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="key_pair in key_pairs | filterBy filterKey | paginate" v-show="is_selected(key_pair.region)">
+        <tr v-for="key_pair in filterd_keys" v-show="is_selected(key_pair.region)">
           <td>{{key_pair.name}}</td>
           <td>{{key_pair.fingerprint}}</td>
           <td>{{key_pair.region}}</td>
@@ -62,9 +62,9 @@
 
     <nav v-if="check_length">
       <ul class="pager">
-        <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
+        <li :class="{disabled: isStartPage}"><a @click="showPrev()" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></span></a></li>
         <label><%= t 'monitoring.msg.page' %>: &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>&nbsp<span v-html="roundup(key_pairs.length / pages)"></span>
-        <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+        <li :class="{disabled: isEndPage}"><a @click="showNext()" :disabled="!isEndPage"><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</span></a></li>
       </ul>
     </nav>
   </div>

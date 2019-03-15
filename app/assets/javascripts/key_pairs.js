@@ -19,11 +19,12 @@
       loading: true,
       pages: 10,
       pageNumber: 0,
-      key_pairs: null,
-      project_id: null,
+      key_pairs: [],
+      project_id: '',
       regions: null,
       filterKey: '',
       selected_key_pairs: null,
+      zero_as_blank: '',
     },
     methods: {
       switch_region: function (region_name) {
@@ -84,20 +85,20 @@
       reload: function () {
         var self = this;
         self.loading = true;
-        self.$set('key_pairs', []);
+        self.key_pairs = [];
         $.ajax({
           url: '/key_pairs/retrieve' + location.search
         }).done(function (data) {
-          self.$set('project_id', data.project_id);
-          self.$set('key_pairs', data.key_pairs);
+          self.project_id = data.project_id;
+          self.key_pairs = data.key_pairs;
           _.forEach(data.key_pairs, function (key_pair) {
             key_pair.using_sign = key_pair.using ? '✔' : '';
           });
-          self.$set('selected', 'All');
-          self.$set('regions', [{
+          self.selected = 'All';
+          self.regions = [{
             name: 'All',
             selected: true,
-          }]);
+          }];
           _.forEach(data.regions, function (region) {
             self.regions.push({
               name: region,
@@ -128,7 +129,19 @@
         if(this.selected_key_pairs){
           return (this.selected_key_pairs.length >= 10);
         }
-      }
+      },
+      filterd_keys: function(){
+        var self = this;
+        var items = this.key_pairs.filter(function (data) {
+          if(self.filterKey === ""){
+            return true
+          } else {
+            return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+          }
+        });
+        self.filteredLength = items.length;
+        return items;
+      },
     },
     created: function () {
       this.reload();
@@ -145,7 +158,7 @@
         var self = this;
         var index = this.pageNumber * this.pages;
         var isSelected = [];
-        if(self.selected != 'All'){
+        if(self.selected !== 'All'){
           list.forEach(function (value, key) {
             if(value.region === self.selected){
               isSelected.push(value);

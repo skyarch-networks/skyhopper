@@ -257,7 +257,7 @@
     var keypair_form_group = new Vue({
       el: '#KeypairFormGroup',
       data: {
-        input_type: ''
+        input_type: 'input'
       },
     });
   }
