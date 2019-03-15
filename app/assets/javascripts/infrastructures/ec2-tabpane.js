@@ -67,7 +67,6 @@ module.exports = Vue.extend({
     is_yum_update: false,
     change_scale_type_to: '',
     cook_status: '',
-    suffix_current_az: '',
   };},
 
   methods: {
@@ -411,7 +410,8 @@ module.exports = Vue.extend({
         _.each(snapshots, function (snapshot) {
           s.destroy(snapshot.snapshot_id)
             .done(function (msg) {
-              self.ec2.snapshots.$remove(snapshot);
+              var index = self.ec2.snapshots.indexOf(snapshot);
+              self.ec2.snapshots.splice(index, 1);
             })
             .fail(alert_danger());
         });
@@ -614,6 +614,9 @@ module.exports = Vue.extend({
       return check_tag(r);
     },
     roundup: function (val) { return (Math.ceil(val));},
+    suffix_current_az: function (zone_name) {
+      return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
+    },
   },
 
   computed: {
@@ -797,9 +800,5 @@ module.exports = Vue.extend({
 
   filters: {
     zero_as_null: function (str) { return (str === 0) ? null : str; },
-
-    suffix_current_az: function (zone_name) {
-      return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
-    },
   },
 });

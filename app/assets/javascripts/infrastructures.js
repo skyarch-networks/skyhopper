@@ -22,7 +22,6 @@
   var modal          = require('modal');
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
-  Vue.use(require('./modules/timepicker'), queryString.lang);
 
   var vace = require('vue-ace');
   require('brace/mode/json');

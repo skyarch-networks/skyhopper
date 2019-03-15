@@ -24,7 +24,6 @@
       regions: null,
       filterKey: '',
       selected_key_pairs: null,
-      zero_as_blank: '',
     },
     methods: {
       switch_region: function (region_name) {
@@ -74,7 +73,8 @@
           }).done(function () {
             var index = self.key_pairs.indexOf(key_pair);
             $('.table > tbody > tr:nth-child(' + (index + 1) + ')').fadeOut('normal', function () {
-              self.key_pairs.$remove(key_pair);
+              var index = self.key_pairs.indexOf(key_pair);
+              self.key_pairs.splice(index, 1);
               if (self.has_no_key_pairs(key_pair.region)) {
                 self.switch_region('All');
               }
@@ -117,6 +117,10 @@
         this.pageNumber++;
       },
       roundup: function (val) { return (Math.ceil(val));},
+
+      zero_as_blank: function (num) {
+        return (num === 0) ? null : num;
+      },
     },
     computed: {
       isStartPage: function(){
@@ -146,14 +150,12 @@
     created: function () {
       this.reload();
     },
-    ready: function ()  {
-      console.log(this.key_pairs);
+    mounted: function (){
+      this.$nextTick(function () {
+        console.log(this.key_pairs);
+      })
     },
     filters: {
-      zero_as_blank: function (str) {
-        return (str === 0) ? null : str;
-
-      },
       paginate: function(list) {
         var self = this;
         var index = this.pageNumber * this.pages;

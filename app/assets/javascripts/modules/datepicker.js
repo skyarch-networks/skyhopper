@@ -9,7 +9,6 @@
 exports.install = function(Vue, lang){
 
   Vue.directive('datepicker', {
-    twoWay: true,
 
     bind: function (el,binding,vnode) {
       //var vm = this.vm;

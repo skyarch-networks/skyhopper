@@ -147,7 +147,7 @@ module.exports = Vue.extend({
         }
       });
       self.$parent.gridData = data_tbl;
-      Vue.set(self, 'filteredLength', data_tbl.length);
+      self.filteredLength = data_tbl.length;
       data_tbl = data_tbl.sort(function (data) {
         return data[self.sortKey];
       });

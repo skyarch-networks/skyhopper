@@ -117,8 +117,10 @@
         );
       },
     },
-    ready: function() {
-      this.new_loader = false;
+    mounted: function (){
+      this.$nextTick(function () {
+        this.new_loader = false;
+      })
     },
   });
 })();

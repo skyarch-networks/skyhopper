@@ -25,7 +25,5 @@
     },
     methods: {
     },
-    ready: function () {
-    },
   });
 })();

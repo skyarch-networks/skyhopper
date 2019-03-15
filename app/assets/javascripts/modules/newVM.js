@@ -322,12 +322,14 @@ module.exports = function () {
         return resp;
       },
     },
-    ready: function () {
-      var self = this;
-      self.$watch('$route.params.infra_id', function (val) {
-        self.reset();
-      });
-      self.reset(self.initial_tab);
+    mounted: function (){
+      this.$nextTick(function () {
+        var self = this;
+        self.$watch('$route.params.infra_id', function (val) {
+          self.reset();
+        });
+        self.reset(self.initial_tab);
+      })
     },
   };
 };

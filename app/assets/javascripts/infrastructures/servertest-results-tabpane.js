@@ -83,7 +83,7 @@ module.exports = Vue.extend({
           return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
         }
       });
-      Vue.set(self, 'filteredLength', data.length);
+      self.filteredLength = data.length;
       data = data.sort(function (data) {
         return data[self.sortKey];
       });

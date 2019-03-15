@@ -9,7 +9,6 @@ var editable_div = Vue.extend({
     data: function () { return {}; },
     props: {
         text: {
-            twoWay: true,
             required: true,
             type: String,
         },
@@ -26,7 +25,6 @@ Vue.component('param-tr', {
     data: function () { return {}; },
     props: {
         param: {
-            twoWay: true,
             required: true,
             type: Object,
         },

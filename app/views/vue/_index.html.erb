@@ -32,7 +32,7 @@
         <span :id="key" v-html="table_text(entry[key],key,lang)"></span>
       </td>
     </tr>
-    <tr v-if="filteredLength === 0">
+    <tr v-if="filteredLength === 0 && tbl_data.length !== 0">
       <td><h4> <%= raw t 'common.msg.not_found', name: "{{filterKey}}" %></h4></td>
     </tr>
     </tbody>
