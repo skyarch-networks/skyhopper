@@ -613,6 +613,7 @@ module.exports = Vue.extend({
     check_tag: function(r){
       return check_tag(r);
     },
+    roundup: function (val) { return (Math.ceil(val));},
   },
 
   computed: {
@@ -725,16 +726,15 @@ module.exports = Vue.extend({
     },
 
     filterd_dispitems: function(){
-      console.log(this);
       var self = this;
-      var items = this.dispItems().filter(function (data) {
+      var items = this.dispItems.filter(function (data) {
         if(self.filterKey === ""){
           return true
         } else {
           return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
         }
       });
-      this.$set('filteredLength', items.length);
+      self.filteredLength = items.length;
       return items;
     },
 
@@ -797,7 +797,7 @@ module.exports = Vue.extend({
 
   filters: {
     zero_as_null: function (str) { return (str === 0) ? null : str; },
-    roundup: function (val) { return (Math.ceil(val));},
+
     suffix_current_az: function (zone_name) {
       return (this.ec2.availability_zone === zone_name) ? (zone_name + '(current)') : zone_name;
     },

@@ -35,6 +35,7 @@ module.exports = Vue.extend({
     rules_summary:  null,
     ip: null,
     lang: queryString.lang,
+    table_data: [[]],
   };},
 
   methods: {
@@ -54,6 +55,42 @@ module.exports = Vue.extend({
 
       ec2.get_rules(group_ids).done(function (data) {
         self.rules_summary = data.rules_summary;
+        var records = [];
+
+        self.rules_summary.forEach(function (rule) {
+          var row_length = Math.max(rule.ip_permissions.length,rule.ip_permissions_egress.length,1);
+          for(var i = 0 ; i < row_length ; i++) {
+            var record = [];
+            if(i === 0) {
+              record.push({text: rule.description, row: row_length, th: true});
+              record.push({text: rule.group_id, row: row_length, th: true});
+            }
+            if (rule.ip_permissions[i]) {
+              record.push({text: rule.ip_permissions[i].prefix_list_ids, row: 1});
+              record.push({text: rule.ip_permissions[i].ip_protocol, row: 1});
+              record.push({text: rule.ip_permissions[i].to_port, row: 1});
+              record.push({text: rule.ip_permissions[i].ip_ranges.map(x => x.cidr_ip).join(', '), row: 1});
+            } else {
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+            }
+            if (rule.ip_permissions_egress[i]) {
+              record.push({text: rule.ip_permissions_egress[i].prefix_list_ids, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].ip_protocol, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].to_port, row: 1});
+              record.push({text: rule.ip_permissions_egress[i].ip_ranges[0].cidr_ip, row: 1});
+            } else {
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+              record.push({text: '', row: 1});
+            }
+            records.push(record);
+          }
+        });
+        self.table_data = records;
       });
     },
 
@@ -141,9 +178,11 @@ module.exports = Vue.extend({
       return args.length > 0;
     },
   },
-  compiled: function() {
+  mounted: function (){
+    this.$nextTick(function () {
     console.log(this);
     this.get_rules();
     this.$parent.loading = false;
+    })
   },
 });

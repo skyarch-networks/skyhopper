@@ -1,57 +1,57 @@
-<h3 class="page-header"><%= I18n.t('operation_scheduler.title') %></small></h3>
-<div class="col-sm-12">
-  <div class="input-group">
-    <form id="search">
-      <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
-    </form>
-    <hr>
-  </div>
-  <span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
-  <table class="table table-hover ssp">
-    <tr>
-      <th v-for="key in columns"
-          :class="{active: sortKey === key}"
-          @click="sortBy(key)">
-        <span v-html="key | wrap index"></span>
-        <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
-      </th>
-    </tr>
-    </thead>
-    <tbody class="tbody-infra-log">
-    <tr v-for="
-        entry in data
-        | filterBy filterKey
-        | orderBy sortKey sortOrders[sortKey]
-        | paginate">
-      <td v-for="key in columns">
-        <span v-if="key !== message && key !== 'id'" id="{{key}}" v-html="entry[key] | listen key index lang"></span>
-        <span v-if="key === 'id'">
+<div>
+  <h3 class="page-header"><%= I18n.t('operation_scheduler.title') %></small></h3>
+  <div class="col-sm-12">
+    <div class="input-group">
+      <form id="search">
+        <input type="text" name="query" v-model="filterKey" class="form-control" placeholder="<%= t 'infrastructures.search' %>">
+      </form>
+      <hr>
+    </div>
+    <span id="loading_results"><div class="loader"></div> <%= t 'common.msg.loading' %></span>
+    <table class="table table-hover ssp">
+      <tr>
+        <th v-for="key in columns"
+            :class="{active: sortKey === key}"
+            @click="sortBy(key)">
+          <span v-html="coltxt_key(key)"></span>
+          <span v-if="key !== 'id' && key !== 'role'" class="glyphicon pull-right" :class="sortOrders[key] > 0? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"></span>
+        </th>
+      </tr>
+      </thead>
+      <tbody class="tbody-infra-log">
+      <tr v-for="
+        (entry,index) in operation_filter">
+        <td v-for="key in columns">
+          <span v-if="key !== message && key !== 'id'" :id="key" v-html="table_text(entry[key],key,lang)"></span>
+          <span v-if="key === 'id'">
           <button class="btn btn-xs btn-primary" @click="get_sched(entry[key])"><%= glyphicon 'calendar' %> <%= I18n.t('operation_scheduler.btn.view_sched') %></button>
           <button class="btn btn-xs btn-success" @click="manage_sched(entry[key])" data-toggle="modal" data-target="#manage_schedule">
           <%= glyphicon 'edit' %> <%= I18n.t('operation_scheduler.btn.manage_sched') %></button>
         </span>
-      </td>
-    </tr>
-    <td v-if="!data" style="display: none;"></td>
-    </tbody>
-  </table>
-  <nav v-if="check_length(data)">
-    <ul class="pager">
-      <li :class="{disabled: isStartPage}">
-        <a @click="showPrev()"><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
-      <label><%= t 'monitoring.msg.page' %>:
-        &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>
-      &nbsp<span v-html="data.length / pages  | roundup"></span>
-      <li :class="{disabled: isEndPage}">
-        <a @click="showNext()" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</span></a>
-      </li>
-    </ul>
-  </nav>
-</div>
+        </td>
+      </tr>
+      <td v-if="!data" style="display: none;"></td>
+      </tbody>
+    </table>
+    <nav v-if="check_length(data)">
+      <ul class="pager">
+        <li :class="{disabled: isStartPage}">
+          <a @click="showPrev()"><span aria-hidden="true">&larr;</span> <%= t 'monitoring.btn.prev' %></a></li>
+        <label><%= t 'monitoring.msg.page' %>:
+          &nbsp </label><strong v-html="pageNumber + 1"></strong> <%= t 'monitoring.msg.of' %>
+        &nbsp<span v-html="data.length / pages  | roundup"></span>
+        <li :class="{disabled: isEndPage}">
+          <a @click="showNext()" :disabled="!isEndPage"><%= t 'monitoring.btn.next' %>
+            <span aria-hidden="true">&rarr;</span></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 
-<%= render 'infrastructures/modal/modal_manage_schedule' %>
+  <%= render 'infrastructures/modal/modal_manage_schedule' %>
 
-<div-loader v-if="event_loading"></div-loader>
-<div class="container" v-if="!event_loading">
-  <div id="calendar"></div>
+  <div-loader v-if="event_loading"></div-loader>
+  <div class="container" v-if="!event_loading">
+    <div id="calendar"></div>
+  </div>
 </div>

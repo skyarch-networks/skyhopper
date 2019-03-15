@@ -20,13 +20,16 @@ module.exports = Vue.extend({
 
   data: function () {return {html: ""};},
 
-  compiled: function () {
-    var self = this;
-    var infra = new Infrastructure(self.infra_id);
-    var s3 = new S3Bucket(infra, this.physical_id);
-    s3.show().done(function (res) {
-      self.html = res;
-      self.$parent.loading = false;
-    }).fail(alert_and_show_infra(infra.id));
+
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
+      var infra = new Infrastructure(self.infra_id);
+      var s3 = new S3Bucket(infra, this.physical_id);
+      s3.show().done(function (res) {
+        self.html = res;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra(infra.id));
+    })
   },
 });

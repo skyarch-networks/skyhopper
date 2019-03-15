@@ -15,9 +15,7 @@ module.exports = Vue.extend({
   replace: true,
 
   props: {
-    data: Array,
     columns: Array,
-    filterKey: String,
     infra_id: {
       type: Number,
       required: true,
@@ -56,13 +54,15 @@ module.exports = Vue.extend({
       repeat_freq: null,
     },
     sources: [],
-    is_specific: null,
+    filterKey: '',
     sortKey: '',
     sortOrders: sortOrders,
     index: 'operation_sched',
     lang: null,
     pages: 10,
     pageNumber: 0,
+    data: [],
+    message: '',
   };},
 
   methods: {
@@ -125,21 +125,18 @@ module.exports = Vue.extend({
       var infra = new Infrastructure(this.infra_id);
       infra.get_schedule(instance.physical_id).done(function  (data){
         self.sel_instance.physical_id = instance.physical_id;
-        _.forEach(data, function(item){
-          self.sel_instance.start_date = moment(item.start_date).format('YYYY/MM/D H:mm');
-          self.sel_instance.end_date = moment(item.end_date).format('YYYY/MM/D H:mm');
-        });
       });
     },
 
     save_sched: function () {
       var self = this;
       self.$parent.loading = true;
-      self.sel_instance.dates = self.dates;
-      self.sel_instance.start_date = moment(self.sel_instance.start_date).unix();
-      self.sel_instance.end_date = moment(self.sel_instance.end_date).unix();
+      var submit_sel_instance = Object.assign({},self.sel_instance);
+      submit_sel_instance.dates = self.dates;
+      submit_sel_instance.start_date = moment(self.sel_instance.start_date).unix();
+      submit_sel_instance.end_date = moment(self.sel_instance.end_date).unix();
       var infra = new Infrastructure(this.infra_id);
-      infra.save_schedule(self.sel_instance.physical_id, self.sel_instance).done(function () {
+      infra.save_schedule(self.sel_instance.physical_id, submit_sel_instance).done(function () {
         self.loading = false;
         alert_success(function () {
         })(t('operation_scheduler.msg.saved'));
@@ -221,7 +218,16 @@ module.exports = Vue.extend({
       if (argument) {
         return (argument.length >= 10);
       }
-    }
+    },
+    coltxt_key: function(key){
+      index = this.$parent.index;
+      return wrap(key,index);
+    },
+
+    table_text: function(value,key,lang){
+      index = this.$parent.index;
+      return listen(value,key,index,lang);
+    },
 
   },
 
@@ -230,6 +236,26 @@ module.exports = Vue.extend({
       return _.some(this.dates, function(c){
         return c.checked;
       });
+    },
+
+    operation_filter: function(){
+      var self = this;
+      var data = self.data.filter(function (data) {
+        if(self.filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+        }
+      });
+      self.filteredLength = data.length;
+      data = data.sort(function (data) {
+        return data[self.sortKey];
+      });
+      if(self.sortOrders[self.sortKey] === -1){
+        data.reverse();
+      }
+      var index = self.pageNumber * self.pages;
+      return data.slice(index, index + self.pages);
     },
 
     is_specific: function(){
@@ -255,10 +281,11 @@ module.exports = Vue.extend({
     roundup: function (val) { return (Math.ceil(val));},
   },
 
-  ready: function(){
-    var self = this;
-    console.log(self.resources);
-    //TODO: get all assigned dates and print to calendar. :D
+  mounted: function (){
+    this.$nextTick(function () {
+      var self = this;
+      console.log(self.resources);
+      //TODO: get all assigned dates and print to calendar. :D
       self.data = self.resources.ec2_instances.map(function (item) {
         return {
           physical_id: item.physical_id,
@@ -271,6 +298,9 @@ module.exports = Vue.extend({
       self.$parent.loading = false;
       $("#loading_results").hide();
       var empty = t('servertests.msg.empty-results');
-      if(self.data.length === 0){ $('#empty_results').show().html(empty);}
+      if (self.data.length === 0) {
+        $('#empty_results').show().html(empty);
+      }
+    })
   },
 });

@@ -11,11 +11,11 @@ exports.install = function(Vue, lang){
   Vue.directive('datepicker', {
     twoWay: true,
 
-    bind: function () {
-      var vm = this.vm;
-      var key = this.expression;
+    bind: function (el,binding,vnode) {
+      //var vm = this.vm;
+      var keypath = binding.expression.split('.');
       moment.locale(lang);
-      var dp = $(this.el).datetimepicker({
+      var dp = $(el).datetimepicker({
         format: 'YYYY/MM/D H:mm',
         showTodayButton: true,
         locale: lang,
@@ -35,17 +35,18 @@ exports.install = function(Vue, lang){
       dp.on("dp.change", function (e) {
         var startDate =  moment(e.date._d).format('YYYY/MM/D H:mm');
         var startDateUnix = moment(e.date._d).unix();
-
+        console.log(binding);
         if(e.target.id !== "op-sched-start" && e.target.id !== "op-sched-end"){
           dp.data("DateTimePicker").maxDate('now');
-          vm.$set(key, startDateUnix);
+          vnode.context[keypath[0]][keypath[1]]=startDateUnix;
         }else{
-          vm.$set(key, startDate);
+          vnode.context[keypath[0]][keypath[1]]=startDate;
         }
 
+        console.log(vnode.context);
         // Sets the start vallue into a hidden type form to be able to let end picker to acces it
         if(e.target.placeholder === "Start" || e.target.id === "op-sched-start")
-          $("input[type='hidden']").val(startDate);
+          $("input[type='hidden']").val(startDate).change();
 
       });
 
@@ -59,15 +60,15 @@ exports.install = function(Vue, lang){
 
 
     },
-    update: function (val) {
-      var tag_id = "#"+String(this.el.id);
+    update: function (el, binding, vnode) {
+      var tag_id = "#"+String(el.id);
       var ops = ['op-sched-end', 'op-sched-start'];
-      var picker = ops.includes(String(this.el.id)) ? $(tag_id+' .datetimepicker3') : $(tag_id);
+      var picker = ops.includes(String(el.id)) ? $(tag_id+' .datetimepicker3') : $(tag_id);
 
-      picker.datetimepicker('setDate', val);
-      var vm = this.vm;
-      var key = this.expression;
-      vm.$set(key, val);
+      picker.datetimepicker('setDate', binding.val);
+      //var vm = this.vm;
+      var keypath = binding.expression.split('.');
+      vnode.context[keypath[0]][keypath[1]]=binding.val;
     }
   });
 };

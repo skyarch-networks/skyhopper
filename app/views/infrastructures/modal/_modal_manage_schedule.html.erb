@@ -49,7 +49,7 @@
             <div class="col-lg-10">
               <div class="radio" v-for="mode in modes">
                 <label>
-                  <input type="radio" @change="repeat_selector()" id="desc" v-model="sel_instance.repeat_freq" name="sel_instance.repeat_freq" align="bottom" value="{{mode.value}}">
+                  <input type="radio" @change="repeat_selector()" id="desc" v-model="sel_instance.repeat_freq" name="sel_instance.repeat_freq" align="bottom" :value="mode.value">
                   {{mode.desc}}
                 </label>
               </div>

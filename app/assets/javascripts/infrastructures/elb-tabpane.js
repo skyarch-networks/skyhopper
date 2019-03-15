@@ -1,6 +1,7 @@
 var modal          = require('modal');
 var Infrastructure = require('models/infrastructure').default;
 var EC2Instance    = require('models/ec2_instance').default;
+var queryString = require('query-string').parse(location.search);
 
 var helpers = require('infrastructures/helper.js');
 var alert_success        = helpers.alert_success;
@@ -30,10 +31,12 @@ module.exports = Vue.extend({
   data: function () {return {
     ec2_instances: [],
     unregistereds: [],
+    lang: queryString.lang,
     dns_name: "",
     listeners: [],
     selected_ec2: null,
     server_certificates: [],
+    server_certificate_name: '',
     server_certificate_name_items: [],
     loading: false,
     protocol: '',
@@ -46,6 +49,11 @@ module.exports = Vue.extend({
     dispItemSize: 10,
     filteredLength: null,
     filterKey: '',
+    private_key: '',
+    certificate_body: '',
+    certificate_chain: '',
+    loading_s: false,
+    loading_groups: '',
   };},
 
   methods: {
@@ -241,7 +249,13 @@ module.exports = Vue.extend({
       this.$parent.sec_group = this.rules_summary;
       this.$parent.instance_type = 'elb';
     },
-    has_selected: has_selected(this.rules_summary),
+    has_selected: function(arg){
+      if(arg){
+        return arg.some(function(c){
+          return c.checked;
+        });
+      }
+    },
     check_tag: function(r){
       check_tag(r);
     },
@@ -253,7 +267,7 @@ module.exports = Vue.extend({
       if(this.isEndPage) return;
       this.page++;
     },
-
+    roundup: function (val) { return (Math.ceil(val));},
   },
 
   computed: {
@@ -266,28 +280,42 @@ module.exports = Vue.extend({
         return this.rules_summary;
       }
     },
+    filterd_dispitems: function(){
+      var self = this;
+      var items = this.dispItems.filter(function (data) {
+        if(self.filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+        }
+      });
+      self.filteredLength = items.length;
+      return items;
+    },
     isStartPage: function(){ return (this.page === 0); },
     isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); }
   },
 
-  compiled: function () {
-    var self = this;
-    var infra = new Infrastructure(self.infra_id);
-    infra.show_elb(this.physical_id).done(function (data) {
-      self.ec2_instances = data.ec2_instances;
-      self.unregistereds = data.unregistereds;
-      self.dns_name = data.dns_name;
-      self.listeners = data.listeners;
-      self.server_certificates = data.server_certificates;
-      self.rules_summary = data.security_groups;
-      self.server_certificate_name_items = data.server_certificate_name_items;
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
+      var infra = new Infrastructure(self.infra_id);
+      infra.show_elb(this.physical_id).done(function (data) {
+        self.ec2_instances = data.ec2_instances;
+        self.unregistereds = data.unregistereds;
+        self.dns_name = data.dns_name;
+        self.listeners = data.listeners;
+        self.server_certificates = data.server_certificates;
+        self.rules_summary = data.security_groups;
+        self.server_certificate_name_items = data.server_certificate_name_items;
 
-      self.$parent.loading = false;
-      console.log(self);
-    }).fail(alert_and_show_infra(infra.id));
+        self.$parent.loading = false;
+        console.log(self);
+      }).fail(alert_and_show_infra(infra.id));
+    })
   },
   filters: {
-    roundup: function (val) { return (Math.ceil(val));},
+
     count: function (arr) {
       // record length
       this.$set('filteredLength', arr.length);
