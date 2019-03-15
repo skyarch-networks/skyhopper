@@ -8,7 +8,6 @@ var alert_danger         = helpers.alert_danger;
 var alert_and_show_infra = helpers.alert_and_show_infra;
 
 var methods = require('infrastructures/common-methods');
-var has_selected         = methods.has_selected;
 var check_tag            = methods.check_tag;
 
 var queryString = require('query-string').parse(location.search);
@@ -39,6 +38,8 @@ module.exports = Vue.extend({
     filteredLength: null,
     filterKey: '',
     modifying: false,
+    loading_groups: '',
+    loading_s: false,
   };},
 
   methods: {
@@ -106,7 +107,13 @@ module.exports = Vue.extend({
     check_tag: function(r){
       check_tag(r);
     },
-    has_selected: has_selected(this.rules_summary),
+    has_selected: function(arg){
+      if(arg){
+        return arg.some(function(c){
+          return c.checked;
+        });
+      }
+    },
     start_rds: function () {
       if (this.available) { return }
       var self = this;
@@ -143,6 +150,7 @@ module.exports = Vue.extend({
         }).fail(alert_danger());
       });
     },
+    roundup: function (val) { return (Math.ceil(val));},
   },
   computed: {
     gen_serverspec_enable: function () {
@@ -161,6 +169,19 @@ module.exports = Vue.extend({
       }
     },
 
+    filterd_dispitems: function(){
+      var self = this;
+      var items = this.dispItems.filter(function (data) {
+        if(self.filterKey === ""){
+          return true
+        } else {
+          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+        }
+      });
+      self.filteredLength = items.length;
+      return items;
+    },
+
     isStartPage: function(){ return (this.page === 0); },
     isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
     rds_button_class: function () {
@@ -177,28 +198,29 @@ module.exports = Vue.extend({
     },
   },
 
-  created: function () {
-    var self = this;
-    var infra = new Infrastructure(this.infra_id);
-    var rds = new RDSInstance(infra, this.physical_id);
-    rds.show().done(function (data) {
-      self.rds = data.rds;
-      self.address = self.rds.endpoint.address;
-      self.rules_summary = data.security_groups;
-      if (self.rds.pending_modified_values.db_instance_class) {
-        self.rds.db_instance_status = 'modifying';
-      }
-      if(self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting' ){
-        setTimeout(function () {
-          self.reload();
-        }, 15000);
-        self.modifying = true;
-      }
-      self.$parent.loading = false;
-    }).fail(alert_and_show_infra(infra.id));
+  mounted: function () {
+    this.$nextTick(function () {
+      var self = this;
+      var infra = new Infrastructure(this.infra_id);
+      var rds = new RDSInstance(infra, this.physical_id);
+      rds.show().done(function (data) {
+        self.rds = data.rds;
+        self.address = self.rds.endpoint.address;
+        self.rules_summary = data.security_groups;
+        if (self.rds.pending_modified_values.db_instance_class) {
+          self.rds.db_instance_status = 'modifying';
+        }
+        if (self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting') {
+          setTimeout(function () {
+            self.reload();
+          }, 15000);
+          self.modifying = true;
+        }
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra(infra.id));
+    })
   },
   filters: {
-    roundup: function (val) { return (Math.ceil(val));},
     count: function (arr) {
       // record length
       this.$set('filteredLength', arr.length);

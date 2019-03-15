@@ -1,149 +1,155 @@
-<h4 class="page-header">{{physical_id}}</h4>
+<div>
+  <h4 class="page-header">{{physical_id}}</h4>
 
-<table class="table table-condensed table-striped">
-  <thead>
-  <tr>
-    <th><%= t 'infrastructures.genre' %></th>
-    <th colspan="2"><%= t 'common.value' %></th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>Instance Class</td>
-    <td>{{rds.db_instance_class}}</td>
-    <td>
-      <button :disabled="!available" href="#change-scale-modal" role="button" class="btn btn-xs btn-warning" data-toggle="modal">
-        <%= t 'infrastructures.btn.change_scale' %>
-      </button>
-    </td>
-  </tr>
-  <tr>
-    <td>Status</td>
-    <td>
-      <div-loader v-if="modifying" :text="changing_status"></div-loader>
-      <span v-if="!modifying">{{rds.db_instance_status}}</span>
-    </td>
-    <td>
-      <bootstrap-tooltip title="<%= t('common.actions') %>">
-        <template slot="content">
-          <div class="btn-group">
-            <button :class="rds_button_class" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
-              <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-              <li :class="{disabled: !stopped}"><a @click="start_rds()" href="#"><%= glyphicon 'play' %> Start</a></li>
-              <li :class="{disabled: !available}"><a @click="stop_rds()" href="#"><%= glyphicon 'stop' %> Stop</a></li>
-              <li :class="{disabled: !available}"><a @click="reboot_rds()" href="#"><%= fa 'retweet' %> Reboot</a></li>
-            </ul>
-          </div>
-        </template>
-      </bootstrap-tooltip>
-    </td>
-  </tr>
-  <tr>
-    <td>Allocated Storage (GB)</td>
-    <td colspan="2">{{rds.allocated_storage}}</td>
-  </tr>
-  <tr>
-    <td>Endpoint Address</td>
-    <td colspan="2">{{address}}</td>
-  </tr>
-  <tr>
-    <td>Multi AZ</td>
-    <td colspan="2">
-      <span v-if="rds.multi_az">YES</span>
-      <span v-else="rds.multi_az">NO</span>
-    </td>
-  </tr>
-  <tr>
-    <td>Database Engine</td>
-    <td colspan="2">{{rds.engine}}</td>
-  </tr>
-  <tr>
-    <td> <%= t('security_groups.title') %> </td>
-    <td>
-      <button @click="view_rules()" class="btn btn-xs btn-info" class="btn btn-xs dropdown-toggle" data-toggle="modal">
-        <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
-      </button>
-    </td>
-    <td>
-      <button :disabled="!available" href="#change-rules-modal" class="btn btn-xs btn-default" class="btn btn-xs dropdown-toggle" data-toggle="modal">
-        <%= t 'security_groups.btn.change_groups' %>
-      </button>
-    </td>
-  </tbody>
-</table>
+  <table class="table table-condensed table-striped">
+    <thead>
+    <tr>
+      <th><%= t 'infrastructures.genre' %></th>
+      <th colspan="2"><%= t 'common.value' %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Instance Class</td>
+      <td>{{rds.db_instance_class}}</td>
+      <td>
+        <button :disabled="!available" href="#change-scale-modal" role="button" class="btn btn-xs btn-warning" data-toggle="modal">
+          <%= t 'infrastructures.btn.change_scale' %>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>Status</td>
+      <td>
+        <div-loader v-if="modifying" :text="changing_status"></div-loader>
+        <span v-if="!modifying">{{rds.db_instance_status}}</span>
+      </td>
+      <td>
+        <bootstrap-tooltip title="<%= t('common.actions') %>">
+          <template slot="content">
+            <div class="btn-group">
+              <button :class="rds_button_class" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-off"></span>&nbsp;<span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li :class="{disabled: !stopped}"><a @click="start_rds()" href="#"><%= glyphicon 'play' %> Start</a>
+                </li>
+                <li :class="{disabled: !available}"><a @click="stop_rds()" href="#"><%= glyphicon 'stop' %> Stop</a>
+                </li>
+                <li :class="{disabled: !available}"><a @click="reboot_rds()" href="#"><%= fa 'retweet' %> Reboot</a>
+                </li>
+              </ul>
+            </div>
+          </template>
+        </bootstrap-tooltip>
+      </td>
+    </tr>
+    <tr>
+      <td>Allocated Storage (GB)</td>
+      <td colspan="2">{{rds.allocated_storage}}</td>
+    </tr>
+    <tr>
+      <td>Endpoint Address</td>
+      <td colspan="2">{{address}}</td>
+    </tr>
+    <tr>
+      <td>Multi AZ</td>
+      <td colspan="2">
+        <span v-if="rds.multi_az">YES</span>
+        <span v-else="rds.multi_az">NO</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Database Engine</td>
+      <td colspan="2">{{rds.engine}}</td>
+    </tr>
+    <tr>
+      <td> <%= t('security_groups.title') %> </td>
+      <td>
+        <button @click="view_rules()" class="btn btn-xs btn-info dropdown-toggle" data-toggle="modal">
+          <%= glyphicon 'info-sign' %> <%= t 'security_groups.btn.view_rules' %>
+        </button>
+      </td>
+      <td>
+        <button :disabled="!available" href="#change-rules-modal" class="btn btn-xs btn-default dropdown-toggle" data-toggle="modal">
+          <%= t 'security_groups.btn.change_groups' %>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 
-<div class="form-actions-top">
-  <a href="#rds-serverspec-modal" role="button" data-toggle="modal" id="open-rds-serverspec-modal" class="btn btn-sm btn-primary">
-    <%= t 'infrastructures.btn.generate_serverspec' %>
-  </a>
-</div>
+  <div class="form-actions-top">
+    <a href="#rds-serverspec-modal" role="button" data-toggle="modal" id="open-rds-serverspec-modal" class="btn btn-sm btn-primary">
+      <%= t 'infrastructures.btn.generate_serverspec' %>
+    </a>
+  </div>
 
 <%# Modal for generate serverspec %>
-<div id="rds-serverspec-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rds-serverspec-label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 id="rds-serverspec-label"><%= t 'infrastructures.btn.generate_serverspec' %></h4>
-      </div>
-      <div class="modal-body">
-        <p><%= t 'infrastructures.msg.generate_serverspec_confirm' %></p>
+  <div id="rds-serverspec-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rds-serverspec-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 id="rds-serverspec-label"><%= t 'infrastructures.btn.generate_serverspec' %></h4>
+        </div>
+        <div class="modal-body">
+          <p><%= t 'infrastructures.msg.generate_serverspec_confirm' %></p>
 
-        <div class="form-group">
-          <label><%= t 'common.username' %></label>
-          <input type="text" v-model="serverspec.username" placeholder="<%= t('common.required') %>" class="form-control">
+          <div class="form-group">
+            <label><%= t 'common.username' %></label>
+            <input type="text" v-model="serverspec.username" placeholder="<%= t('common.required') %>" class="form-control">
+          </div>
+          <div class="form-group">
+            <label><%= t 'common.password' %></label>
+            <input type="password" v-model="serverspec.password" placeholder="<%= t('common.required') %>" class="form-control">
+          </div>
+          <div class="form-group">
+            <label><%= t 'infrastructures.database' %></label>
+            <input type="text" v-model="serverspec.database" placeholder="<%= t('common.optional') %>" class="form-control">
+          </div>
         </div>
-        <div class="form-group">
-          <label><%= t 'common.password' %></label>
-          <input type="password" v-model="serverspec.password" placeholder="<%= t('common.required') %>" class="form-control">
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t 'helpers.links.cancel' %></button>
+          <button class="btn btn-primary" @click="gen_serverspec()" :disabled="!gen_serverspec_enable"><%= t 'infrastructures.btn.generate_serverspec' %></button>
         </div>
-        <div class="form-group">
-          <label><%= t 'infrastructures.database' %></label>
-          <input type="text" v-model="serverspec.database" placeholder="<%= t('common.optional') %>" class="form-control">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t 'helpers.links.cancel' %></button>
-        <button class="btn btn-primary" @click="gen_serverspec()" :disabled="!gen_serverspec_enable"><%= t 'infrastructures.btn.generate_serverspec' %></button>
       </div>
     </div>
   </div>
-</div>
 
 <%# modal for change rds scale %>
-<div id="change-scale-modal" class="modal fade" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-warning">
-        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title"><%= t('infrastructures.btn.change_scale') %></h4>
-      </div>
-
-      <div class="modal-body">
-        <div class="alert alert-warning">
-          <h4>
-            <span class="glyphicon glyphicon-warning-sign"></span>
-            Warning!
-          </h4>
-          <%= t('infrastructures.msg.change_scale_warning') %>
+  <div id="change-scale-modal" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><%= t('infrastructures.btn.change_scale') %></h4>
         </div>
-        <label class="control-label"><%= t('infrastructures.instance_type') %></label>
-        <select v-model="change_scale_type_to" class="form-control">
-          <% RDS::Types.each do |type| %>
-            <option><%= type %></option>
-          <% end %>
-        </select>
-      </div>
 
-      <div class="modal-footer">
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
-        <button class="btn btn-warning" @click="change_scale()"><%= t('helpers.links.change') %></button>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <h4>
+              <span class="glyphicon glyphicon-warning-sign"></span>
+              Warning!
+            </h4>
+            <%= t('infrastructures.msg.change_scale_warning') %>
+          </div>
+          <label class="control-label"><%= t('infrastructures.instance_type') %></label>
+          <select v-model="change_scale_type_to" class="form-control">
+            <% RDS::Types.each do |type| %>
+              <option><%= type %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.close') %></button>
+          <button class="btn btn-warning" @click="change_scale()"><%= t('helpers.links.change') %></button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 <%# modal for change security groups %>
-<%= render 'infrastructures/modal/modal_change_rules' %>
+  <%= render 'infrastructures/modal/modal_change_rules' %>
+</div>

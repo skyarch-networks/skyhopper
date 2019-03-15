@@ -114,7 +114,8 @@
       showNext: function(){
         if(this.isEndPage) return;
         this.pageNumber++;
-      }
+      },
+      roundup: function (val) { return (Math.ceil(val));},
     },
     computed: {
       isStartPage: function(){
@@ -158,7 +159,7 @@
         }
 
       },
-      roundup: function (val) { return (Math.ceil(val));},
+
     }
   });
 
