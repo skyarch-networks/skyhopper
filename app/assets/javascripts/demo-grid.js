@@ -14,12 +14,12 @@ module.exports = Vue.extend({
     index: String,
     multiSelect: Boolean,
     selections: Array,
-    url:  String,
+    url: String,
     empty: String,
   },
 
-  data: function () {
-    var sortOrders = {};
+  data() {
+    const sortOrders = {};
     this.columns.forEach(function (key) {
       sortOrders[key] = 1;
     });
@@ -36,37 +36,38 @@ module.exports = Vue.extend({
   },
 
   methods: {
-    sortBy: function (key) {
-      if(key !== 'id')
+    sortBy(key) {
+      if (key !== 'id') {
         this.sortKey = key;
+      }
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
-    pop: function(){
-       $('#role').popover('toggle');
+    pop() {
+      $('#role').popover('toggle');
     },
-    showPrev: function(){
-      if(this.pageNumber === 0) return;
-      this.pageNumber--;
+    showPrev() {
+      if (this.pageNumber === 0) return;
+      this.pageNumber -= 1;
     },
 
-    showNext: function(){
-      if(this.isEndPage) return;
-      this.pageNumber++;
+    showNext() {
+      if (this.isEndPage) return;
+      this.pageNumber += 1;
     },
-    select_entry: function(item)  {
+    select_entry(item) {
       this.$parent.picked = item;
       if (this.multiSelect) {
         if (this.selections.includes(item)) {
-          var index = this.selections.indexOf(item);
-          this.selections.splice(index,1);
+          const index = this.selections.indexOf(item);
+          this.selections.splice(index, 1);
         } else {
           this.selections.push(item);
         }
       }
       this.$emit('can_edit');
     },
-    show_entry: function(item){
-      var self = this;
+    show_entry(item) {
+      const self = this;
       switch (self.$parent.index) {
         case 'clients':
           window.location.assign(item.projects_path);
@@ -80,104 +81,97 @@ module.exports = Vue.extend({
         case 'dishes':
           self.$parent.show_dish(item.id);
           break;
-        case  'serverspecs':
+        case 'serverspecs':
           self.$parent.show_serverspec(item.id);
           break;
-        case  'cf_templates':
+        case 'cf_templates':
           self.$parent.show_template(item.id);
           break;
-        case  'user_admin':
+        case 'user_admin':
+        default:
           break;
-
-
       }
-
     },
 
-    coltxt_key: function(key){
-      index = this.$parent.index;
-      return wrap(key,index);
+    coltxt_key(key) {
+      return wrap(key, this.$parent.index);
     },
 
-    table_text: function(value,key,lang){
-       index = this.$parent.index;
-       return listen(value,key,index,lang);
+    table_text(value, key, lang) {
+      return listen(value, key, this.$parent.index, lang);
     },
 
 
-    load_ajax: function (request) {
-      var self = this;
-      console.log(request);
+    load_ajax(request) {
+      const self = this;
       $.ajax({
         cache: false,
         url: request,
-        success: function (data) {
+        success(data) {
           self.tbl_data = data;
           this.pages = data.length;
           self.close_loading();
-        }
+        },
       });
-
     },
 
-    close_loading: function(){
-      var self = this;
+    close_loading() {
+      const self = this;
       self.$parent.loading = false;
-      if(self.tbl_data.length === 0){
+      if (self.tbl_data.length === 0) {
         self.$parent.is_empty = true;
       }
       self.filteredLength = self.tbl_data.length;
-    }
+    },
   },
 
   computed: {
-    isStartPage: function(){
+    isStartPage() {
       return (this.pageNumber === 0);
     },
-    isEndPage: function(){
+    isEndPage() {
       return ((this.pageNumber + 1) * this.pages >= this.tbl_data.length);
     },
-    table_data: function(){
-      var self = this;
-      var data_tbl = self.tbl_data.filter(function (data) {
-        if(self.filterKey === ""){
-          return true
+    table_data() {
+      const self = this;
+      let datatbl = self.tbl_data.filter(function (data) {
+        if (self.filterKey === '') {
+          return true;
         } else {
           return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
         }
       });
-      self.$parent.gridData = data_tbl;
-      self.filteredLength = data_tbl.length;
-      data_tbl = data_tbl.sort(function (data) {
+      self.$parent.gridData = datatbl;
+      self.filteredLength = datatbl.length;
+      datatbl = datatbl.sort(function (data) {
         return data[self.sortKey];
       });
-      if(self.sortOrders[self.sortKey] === -1){
-        data_tbl.reverse();
+      if (self.sortOrders[self.sortKey] === -1) {
+        datatbl.reverse();
       }
-      var index = self.pageNumber * self.pages;
-      return data_tbl.slice(index, index + self.pages);
+      const index = self.pageNumber * self.pages;
+      return datatbl.slice(index, index + self.pages);
     },
-    max_pages: function(){
+    max_pages() {
       return Math.ceil(this.filteredLength / this.pages);
     },
   },
-  mounted: function (){
+  mounted: function () {
     this.$nextTick(function () {
-      var self = this;
-      console.log(self.url);
+      const self = this;
       self.load_ajax(self.url);
     });
   },
 
-  filters:{
+  filters: {
     wrap: wrap,
     listen: listen,
-    paginate: function(list) {
-      var index = this.pageNumber * this.pages;
+    paginate(list) {
+      const index = this.pageNumber * this.pages;
       return list.slice(index, index + this.pages);
     },
-    roundup: function (val) { return (Math.ceil(val));},
-    count: function (arr) {
+    roundup(val) { return (Math.ceil(val));},
+    count(arr) {
       // record length
       this.$set('filteredLength', arr.length);
       // return it intact

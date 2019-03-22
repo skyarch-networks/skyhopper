@@ -19,7 +19,7 @@
   var queryString = require('query-string').parse(location.search);
   //browserify modules for Vue directives
   var Infrastructure = require('models/infrastructure').default;
-  var modal          = require('modal');
+  var modal = require('modal');
 
   Vue.use(require('./modules/datepicker'), queryString.lang);
 
@@ -145,11 +145,11 @@
 
 
 
-    var infrastructure_url = queryString.project_id ? '&project_id=' + queryString.project_id : '';
+    const infrastructure_url = queryString.project_id ? '&project_id=' + queryString.project_id : '';
     var index = {
       template: '#index-template',
       replace: true,
-      data: function () {
+      data() {
         return {
           searchQuery: '',
           gridColumns: [],
@@ -166,43 +166,44 @@
           infra_initial_tab: '',
         };
       },
-      created: function () {
-        if (queryString.project_id > 3)
+      created() {
+        if (queryString.project_id > 3) {
           this.gridColumns = ['stack_name', 'region', 'keypairname', 'created_at', 'status'];
-        else
+        } else {
           this.gridColumns = ['stack_name', 'region', 'keypairname'];
+        }
 
         moment.locale(queryString.lang);
 
       },
       methods: {
-        leave: function (el, done) {
+        leave(el, done) {
           $(el).fadeOut('normal');
         },
-        can_edit: function () {
+        can_edit() {
           return (this.picked.edit_infrastructure_path);
         },
-        can_delete: function () {
+        can_delete() {
           return (this.picked.button_delete_stack);
         },
-        can_detach: function () {
+        can_detach() {
           return (this.picked.button_detach_stack);
         },
-        is_picked: function () {
+        is_picked() {
           return (this.picked.id);
         },
-        delete_stack: function () {
+        delete_stack() {
           delete_stack(this.picked.id);
           this.reload();
         },
-        show_infra: function (item_id) {
+        show_infra(item_id) {
           this.show_infra_and_rewrite_url(item_id, '');
         },
-        show_sched: function () {
+        show_sched() {
           this.show_infra_and_rewrite_url(this.picked.id, 'show_sched');
           this.reload();
         },
-        show_infra_and_rewrite_url: function (infra_id, infra_oepn_tab) {
+        show_infra_and_rewrite_url(infra_id, infra_oepn_tab) {
           var prev_infra_id = this.$route.params.infra_id;
           this.infra_initial_tab = infra_oepn_tab;
           router.push({
@@ -217,50 +218,49 @@
             this.$refs.infrastructure.reset(infra_oepn_tab);
           }
         },
-        detach_infra: function () {
+        detach_infra() {
           detach(this.picked.id);
           this.reload();
         },
-        reload: function () {
+        reload() {
           this.loading = true;
           this.$refs.demogrid.load_ajax(this.url);
         },
       },
-      mounted: function () {
+      mounted() {
         this.$nextTick(function () {
           show_infra_initialize(this.show_infra_and_rewrite_url);
-        })
+        });
       },
     };
 
-    var router = new VueRouter({
+    const router = new VueRouter({
       mode: 'history',
       routes: [{
         path: '/infrastructures',
         component: index,
         children: [{
-          path :'/infrastructures/infra/:infra_id',
+          path: '/infrastructures/infra/:infra_id',
           name: 'infra',
-          component: newVM()
-        }]
-      }]
+          component: newVM(),
+        }],
+      }],
     });
 
     new Vue({
       el: '#infrastructureApp',
-      router: router
-    })
+      router: router,
+    });
   }
 
   if ($('#KeypairFormGroup').length){
     var keypair_form_group = new Vue({
       el: '#KeypairFormGroup',
       data: {
-        input_type: 'input'
+        input_type: 'input',
       },
     });
   }
-
 
 
   $(document).on('click', '.create_ec2_key', function (e) {
