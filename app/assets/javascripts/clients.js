@@ -46,14 +46,14 @@
       },
       methods: {
 
-        delete_entry: function () {
+        delete_entry() {
           var self = this;
           modal.Confirm(t('clients.client'), t('clients.msg.delete_client'), 'danger').done(function () {
             $.ajax({
-              type: "POST",
+              type: 'POST',
               url: self.picked.delete_client_path,
-              dataType: "json",
-              data: {"_method": "delete"},
+              dataType: 'json',
+              data: {'_method': 'delete'},
               success: function (data) {
                 self.gridData = data;
                 self.picked = {};
@@ -63,7 +63,7 @@
             });
           });
         },
-        reload: function () {
+        reload() {
           this.loading = true;
           this.$children[0].load_ajax(this.url);
           this.picked = {};
