@@ -53,8 +53,6 @@ gem "net-ssh"
 gem "net-scp"
 gem "net-http-persistent", '~> 2.9.4'
 
-gem "knife-windows"
-gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
