@@ -48,14 +48,14 @@ module.exports = function () {
     },
     data: data,
     methods:{
-      screen_name: function (res) {
+      screen_name(res) {
         if (res.screen_name) {
           return res.screen_name + ' / ' + this.subsStr(res.physical_id);
         } else {
           return this.subsStr(res.physical_id);
         }
       },
-      subsStr: function(string) {
+      subsStr(string) {
         if(string.length > 10){
           return string.substring(0, string.length/2)+"...";
         }else {
@@ -63,30 +63,30 @@ module.exports = function () {
         }
 
       },
-      show_ec2: function (physical_id) {
+      show_ec2(physical_id) {
         this.show_tabpane('ec2');
         this.loading = true;
         this.tabpaneGroupID = physical_id;
       },
-      show_rds: function (physical_id) {
+      show_rds(physical_id) {
         this.show_tabpane('rds');
         this.tabpaneGroupID = physical_id;
         this.loading = true;
       },
-      show_elb: function (physical_id) {
+      show_elb(physical_id) {
         this.show_tabpane('elb');
         this.tabpaneGroupID = physical_id;
         this.loading = true;
       },
-      show_s3: function (physical_id) {
+      show_s3(physical_id) {
         this.show_tabpane('s3');
         this.tabpaneGroupID = physical_id;
         this.loading = true;
       },
-      show_no_resource: function () {
+      show_no_resource() {
         this.loading = false;
       },
-      show_add_modify: function () {
+      show_add_modify() {
         const self = this;
         self.loading = true;
 
@@ -99,15 +99,15 @@ module.exports = function () {
         })).fail(self.wrapping_into_same_model_check(alert_danger()));
       },
 
-      show_add_ec2: function () { this.show_tabpane('add-ec2'); },
+      show_add_ec2() { this.show_tabpane('add-ec2'); },
 
-      show_cf_history: function () {
+      show_cf_history() {
         const self = this;
         self.show_tabpane('cf_history');
         self.loading = true;
       },
-      show_event_logs: function () {
-        if (this.no_stack) {return;}
+      show_event_logs() {
+        if (this.no_stack) { return; }
         const self = this;
         self.loading = true;
 
@@ -116,36 +116,36 @@ module.exports = function () {
           self.show_tabpane('event_logs');
         }));
       },
-      show_infra_logs: function () {
+      show_infra_logs() {
         const self = this;
         self.show_tabpane('infra_logs');
         self.loading = true;
       },
-      show_sec_groups: function () {
+      show_sec_groups() {
         const self = this;
         self.show_tabpane('security_groups');
         self.loading = true;
       },
-      show_monitoring: function () {
-        if (this.no_stack) {return;}
+      show_monitoring() {
+        if (this.no_stack) { return; }
         var self = this;
         self.show_tabpane('monitoring');
         self.loading = true;
       },
-      show_edit_monitoring: function () {
-        if (this.no_stack) {return;}
+      show_edit_monitoring() {
+        if (this.no_stack) { return; }
         var self = this;
         self.show_tabpane('edit-monitoring');
         self.loading = true;
       },
-      show_update_template: function () {
-        if (this.no_stack) {return;}
+      show_update_template() {
+        if (this.no_stack) { return; }
         var self = this;
         self.show_tabpane('update-template');
         self.loading = true;
       },
-      show_operation_sched: function (resources) {
-        if (this.no_stack) {return;}
+      show_operation_sched(resources) {
+        if (this.no_stack) { return; }
         var self = this;
         self.show_tabpane('operation-sched');
         self.resources = resources;
@@ -153,9 +153,9 @@ module.exports = function () {
       },
 
 
-      tabpane_active: function (id) { return this.tabpaneID === id; },
+      tabpane_active(id) { return this.tabpaneID === id; },
 
-      show_tabpane: function (id) {
+      show_tabpane(id) {
         var self = this;
         self.loading = false;
         self.tabpaneGroupID = null;
@@ -165,7 +165,7 @@ module.exports = function () {
           self.tabpaneID = id;
         });
       },
-      update_serverspec_status: function (physical_id) {
+      update_serverspec_status(physical_id) {
         var self = this;
         var ec2 = new EC2Instance(self.infra_model, physical_id);
         ec2.serverspec_status().done(self.wrapping_into_same_model_check(function (data) {
@@ -176,7 +176,7 @@ module.exports = function () {
         }));
       },
 
-      stack_in_progress: function () {
+      stack_in_progress() {
         var self = this;
         self.infra_model.stack_events().done(self.wrapping_into_same_model_check(function (res) {
           self.$data.current_infra.events = res.stack_events;
@@ -190,10 +190,10 @@ module.exports = function () {
           }
         }));
       },
-      is_progress: function () {
+      is_progress() {
         return (this.current_infra.stack.status.type === 'IN_PROGRESS');
       },
-      back_to_top: function(){
+      back_to_top() {
         var offset = 250;
         var duration = 300;
 
@@ -211,7 +211,7 @@ module.exports = function () {
           return false;
         });
       },
-      reset: function (open_tab) {
+      reset(open_tab) {
         var self = this;
         var infra_id = this.$route.params.infra_id;
         self.$parent.data = data();
@@ -228,7 +228,7 @@ module.exports = function () {
           self.wrapping_into_same_model_check(alert_danger(reload_infra_index_page)(msg));
         });
       },
-      wrapping_into_same_model_check: function(callback) {
+      wrapping_into_same_model_check(callback) {
         var self = this;
         return (function (my_model) {
           return function (arg1) {
@@ -239,7 +239,7 @@ module.exports = function () {
           };
         }(self.infra_model))
       },
-      init_infra: function (current_tab) {
+      init_infra(current_tab) {
         var self = this;
         console.log(self);
         self.back_to_top();
@@ -296,15 +296,15 @@ module.exports = function () {
       toLocaleString: toLocaleString,
     },
     computed: {
-      no_stack:    function () { return this.current_infra.stack.status.type === 'NONE'; },
-      in_progress: function () { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
-      stack_fail:  function () { return this.current_infra.stack.status.type === 'NG'; },
-      no_resource: function () {
+      no_stack() { return this.current_infra.stack.status.type === 'NONE'; },
+      in_progress() { return this.current_infra.stack.status.type === 'IN_PROGRESS'; },
+      stack_fail() { return this.current_infra.stack.status.type === 'NG'; },
+      no_resource() {
         return this.current_infra.stack.status.type === 'OK' &&
           _(this.current_infra.resources).values().flatten().value().length === 0;
       },
 
-      status_label_class: function () {
+      status_label_class() {
         var resp = "label-";
         var type = this.current_infra.stack.status.type;
         if (type === "OK") {
@@ -317,7 +317,7 @@ module.exports = function () {
         return resp;
       },
     },
-    mounted: function (){
+    mounted(){
       this.$nextTick(function () {
         var self = this;
         self.$watch('$route.params.infra_id', function (val) {

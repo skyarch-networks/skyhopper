@@ -156,7 +156,7 @@ module.exports = Vue.extend({
       return Math.ceil(this.filteredLength / this.pages);
     },
   },
-  mounted: function () {
+  mounted() {
     this.$nextTick(function () {
       const self = this;
       self.load_ajax(self.url);
