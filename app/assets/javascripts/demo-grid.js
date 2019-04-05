@@ -1,6 +1,6 @@
-var wrap = require('modules/wrap');
-var listen = require('modules/listen');
-var queryString = require('query-string').parse(location.search);
+const wrap = require('modules/wrap');
+const listen = require('modules/listen');
+const queryString = require('query-string').parse(location.search);
 
 // register the grid component
 module.exports = Vue.extend({
@@ -20,12 +20,12 @@ module.exports = Vue.extend({
 
   data() {
     const sortOrders = {};
-    this.columns.forEach(function (key) {
+    this.columns.forEach((key) => {
       sortOrders[key] = 1;
     });
     return {
       sortKey: '',
-      sortOrders: sortOrders,
+      sortOrders,
       loading: true,
       lang: queryString.lang,
       pages: 10,
@@ -134,18 +134,15 @@ module.exports = Vue.extend({
     },
     table_data() {
       const self = this;
-      let datatbl = self.tbl_data.filter(function (data) {
+      let datatbl = self.tbl_data.filter((data) => {
         if (self.filterKey === '') {
           return true;
-        } else {
-          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
         }
+        return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
       });
       self.$parent.gridData = datatbl;
       self.filteredLength = datatbl.length;
-      datatbl = datatbl.sort(function (data) {
-        return data[self.sortKey];
-      });
+      datatbl = datatbl.sort(data => data[self.sortKey]);
       if (self.sortOrders[self.sortKey] === -1) {
         datatbl.reverse();
       }
@@ -164,13 +161,13 @@ module.exports = Vue.extend({
   },
 
   filters: {
-    wrap: wrap,
-    listen: listen,
+    wrap,
+    listen,
     paginate(list) {
       const index = this.pageNumber * this.pages;
       return list.slice(index, index + this.pages);
     },
-    roundup(val) { return (Math.ceil(val));},
+    roundup(val) { return (Math.ceil(val)); },
     count(arr) {
       // record length
       this.$set('filteredLength', arr.length);

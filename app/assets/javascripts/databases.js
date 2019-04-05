@@ -7,23 +7,21 @@
 //
 
 (function () {
-  'use strict';
-
   Vue.component('div-loader', Loader);
-  var modal = require('modal');
+  const modal = require('modal');
 
-  var vm = new Vue({
+  const vm = new Vue({
     el: '#db-manage',
-    data: function () {
+    data() {
       return {
         loading_export: false,
         loading_import: false,
       };
     },
     computed: {
-      loading: function () { return this.loading_import || this.loading_export; },
+      loading() { return this.loading_import || this.loading_export; },
     },
     methods: {
     },
   });
-})();
+}());

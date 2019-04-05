@@ -1,41 +1,41 @@
-var loadGif = $('<div class="loader"></div>');
-var glyphicon = function (icon_name) {
-    return $("<span>").addClass("glyphicon glyphicon-" + icon_name);
+const loadGif = $('<div class="loader"></div>');
+const glyphicon = function (icon_name) {
+  return $('<span>').addClass(`glyphicon glyphicon-${icon_name}`);
 };
 Vue.component('bootstrap-tooltip', {
-    props: {
-        title: {
-            type: String,
-            required: true,
-        },
-        placement: {
-            type: String,
-            required: false,
-        },
+  props: {
+    title: {
+      type: String,
+      required: true,
     },
-    template: "\n<span data-toggle=\"tooltip\" :data-placement=\"placement\" :data-original-title=\"title\">\n  <content class=\"content\">\n    <slot name=\"content\"></slot>\n  </content>\n</span>",
-    mounted: function () {
-        console.log(this);
-        $(this.$el).tooltip();
+    placement: {
+      type: String,
+      required: false,
     },
+  },
+  template: '\n<span data-toggle="tooltip" :data-placement="placement" :data-original-title="title">\n  <content class="content">\n    <slot name="content"></slot>\n  </content>\n</span>',
+  mounted() {
+    console.log(this);
+    $(this.$el).tooltip();
+  },
 });
 Vue.component('tr-helper', {
-    template: "<tr><slot name=\"content\"></slot><tr>",
+  template: '<tr><slot name="content"></slot><tr>',
 });
-var Loader = Vue.extend({
-    template: '<span><div class="loader"></div> {{text}}</span>',
-    data: function () {
-        return {
-            text: typeof t !== 'undefined' ? t('common.msg.loading') : "",
-        };
-    },
+const Loader = Vue.extend({
+  template: '<span><div class="loader"></div> {{text}}</span>',
+  data() {
+    return {
+      text: typeof t !== 'undefined' ? t('common.msg.loading') : '',
+    };
+  },
 });
 Vue.component('div-loader', {
-    template: '<span><div class="loader"></div> {{text}}</span>',
-    props: {
-        text: {
-            type: String,
-            default: typeof t !== 'undefined' ? t('common.msg.loading') : "",
-        },
+  template: '<span><div class="loader"></div> {{text}}</span>',
+  props: {
+    text: {
+      type: String,
+      default: typeof t !== 'undefined' ? t('common.msg.loading') : '',
     },
+  },
 });
