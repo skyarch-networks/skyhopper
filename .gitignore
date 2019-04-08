@@ -68,3 +68,8 @@ vendor/knife
 
 # ansible
 /ansible/*
+
+# Docker
+/docker-compose.override.yml
+/mysql/
+/phpmyadmin/
