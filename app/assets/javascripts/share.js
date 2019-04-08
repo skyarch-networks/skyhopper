@@ -8,174 +8,172 @@
 
 //    このファイルには、全体で使いたい関数を定義する。
 
-var t = function (scope, options) {
+const t = function (scope, options) {
   return I18n.t(scope, options);
 };
 
 
-//show loading gif when a button is clicked
+// show loading gif when a button is clicked
 
-var bootstrap_alert_div = function (klass, content) {
-    var alertDiv = $("<div>");
-    content = content.replace(/\n/g, "<br />");
-    alertDiv.addClass("alert").addClass(klass);
+const bootstrap_alert_div = function (klass, content) {
+  const alertDiv = $('<div>');
+  content = content.replace(/\n/g, '<br />');
+  alertDiv.addClass('alert').addClass(klass);
 
-    alertDiv.html(content);
-    return alertDiv;
+  alertDiv.html(content);
+  return alertDiv;
 };
 
-var overwrite_by_alert = function (button, extraClass, content) {
-  var target = button.parent();
-  var klass  = "";
-  if (extraClass) {klass += extraClass;}
+const overwrite_by_alert = function (button, extraClass, content) {
+  const target = button.parent();
+  let klass = '';
+  if (extraClass) { klass += extraClass; }
 
-  var alertDiv = bootstrap_alert_div(klass, content);
+  const alertDiv = bootstrap_alert_div(klass, content);
 
   target.empty();
   target.append(alertDiv);
   return alertDiv;
 };
 
-var overwrite_by_loading_alert = function (button, content) {
-  var progress = overwrite_by_alert(button, "", content);
+const overwrite_by_loading_alert = function (button, content) {
+  const progress = overwrite_by_alert(button, '', content);
   progress.prepend(loadGif);
   return progress;
 };
 
-var show_loading = function (target) {
-  var load = $("<span>" + t('common.msg.loading') + "</span>");
+const show_loading = function (target) {
+  const load = $(`<span>${t('common.msg.loading')}</span>`);
   load.prepend(loadGif);
   target.html(load);
 };
 
-var get_query_strings = function () {
-  var query_string = window.location.search;
+const get_query_strings = function () {
+  let query_string = window.location.search;
   query_string = query_string.substr(1, query_string.length);
 
-  var query_string_obj = {};
-  var items = query_string.split('&');
+  const query_string_obj = {};
+  const items = query_string.split('&');
   $.each(items, function () {
-    var item = this;
-    var splited_item = item.split('=');
-    var key = splited_item[0];
-    var val = splited_item[1];
+    const item = this;
+    const splited_item = item.split('=');
+    const key = splited_item[0];
+    const val = splited_item[1];
     query_string_obj[key] = val;
   });
   return query_string_obj;
 };
 
-var get_query_string = function (key) {
+const get_query_string = function (key) {
   return get_query_strings()[key];
 };
 
 
-
 // Disable default behaviors of event
-var cancel_default_event = function (event) {
+const cancel_default_event = function (event) {
   event.preventDefault();
   event.stopPropagation();
   return false;
 };
 
-var add_filename_label = function (filename, before) {
-  $(".filename_label").remove();
-  before.after($("<span>").addClass("label label-default filename_label").text(filename));
+const add_filename_label = function (filename, before) {
+  $('.filename_label').remove();
+  before.after($('<span>').addClass('label label-default filename_label').text(filename));
 };
 
 // TODO: テキストファイル以外が投げられた場合は読み込まないようにしたい
-var file_drop_func = function (id) {
+const file_drop_func = function (id) {
   return function (e) {
     cancel_default_event(e);
-    var file = e.originalEvent.dataTransfer.files[0];
+    const file = e.originalEvent.dataTransfer.files[0];
 
-    var fileReader = new FileReader();
+    const fileReader = new FileReader();
     fileReader.onload = function (e) {
-      $(id).val(e.target.result).trigger("change");
+      $(id).val(e.target.result).trigger('change');
       add_filename_label(file.name, $(id));
     };
     fileReader.readAsText(file);
 
-    if (id === "#keypair_value") {
-      $("#keypair_name").val(file.name.replace(/\.\w+$/, ''));
+    if (id === '#keypair_value') {
+      $('#keypair_name').val(file.name.replace(/\.\w+$/, ''));
     }
   };
 };
 
-$(document).ready(function () {
+$(document).ready(() => {
   // Drag'n'drop
   // TODO: id ではなく class で指定するようにしたい
-  _.each(["#keypair_value", "#cf_template_value", "#add_modify_value"], function (id) {
-    $(document).on("drop", id, file_drop_func(id));
-    $(document).on("dragenter", id, cancel_default_event);
-    $(document).on("dragover", id, cancel_default_event);
-    $(id).change(function () { $(".filename_label").remove(); });
+  _.each(['#keypair_value', '#cf_template_value', '#add_modify_value'], (id) => {
+    $(document).on('drop', id, file_drop_func(id));
+    $(document).on('dragenter', id, cancel_default_event);
+    $(document).on('dragover', id, cancel_default_event);
+    $(id).change(() => { $('.filename_label').remove(); });
   });
 });
 
 
-var masking_input_form = function (btn, target) {
-  target.attr("type", "password");
-  btn.children("span.glyphicon").removeClass("glyphicon-eye-close").addClass("glyphicon-eye-open");
+const masking_input_form = function (btn, target) {
+  target.attr('type', 'password');
+  btn.children('span.glyphicon').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
 };
 
-var unmasking_input_form = function (btn, target) {
-  target.attr("type", "text");
-  btn.children("span.glyphicon").removeClass("glyphicon-eye-open").addClass("glyphicon-eye-close");
+const unmasking_input_form = function (btn, target) {
+  target.attr('type', 'text');
+  btn.children('span.glyphicon').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
 };
 
-var toggle_input_masking = function (btn, target) {
-  if (target.attr("type") === "text") {
+const toggle_input_masking = function (btn, target) {
+  if (target.attr('type') === 'text') {
     masking_input_form(btn, target);
-  }
-  else {
+  } else {
     unmasking_input_form(btn, target);
   }
 };
 
-var create_masked_input = function (input) {
-  var target_id = input.attr("id");
-  var btn_toggle = $("<button>", {
-    class: "btn btn-default toggle-input-masking",
-    for: target_id
-  }).append( glyphicon("eye-open") );
-  var input_group_btn = $("<span>", {class: "input-group-btn"}).append( btn_toggle );
+const create_masked_input = function (input) {
+  const target_id = input.attr('id');
+  const btn_toggle = $('<button>', {
+    class: 'btn btn-default toggle-input-masking',
+    for: target_id,
+  }).append(glyphicon('eye-open'));
+  const input_group_btn = $('<span>', { class: 'input-group-btn' }).append(btn_toggle);
 
-  input.wrap( $("<div>").addClass("input-group") );
+  input.wrap($('<div>').addClass('input-group'));
   input.parent().append(input_group_btn);
 
   masking_input_form(input_group_btn, input);
 };
 
-$(document).ready(function() {
-  create_masked_input( $("input.form-control-masked") );
+$(document).ready(() => {
+  create_masked_input($('input.form-control-masked'));
 
-  $(document).on("click", ".toggle-input-masking", function (e) {
+  $(document).on('click', '.toggle-input-masking', function (e) {
     cancel_default_event(e);
-    toggle_input_masking($(this), $("#" + $(this).attr("for")) );
+    toggle_input_masking($(this), $(`#${$(this).attr('for')}`));
   });
 });
 
 
 // for websocket
-var ws_connector = function (kind, id) {
-  var ws_protocol = (("https:" === document.location.protocol) ? "wss:" : "ws:");
-  return new WebSocket(ws_protocol + '//' + location.hostname + '/ws/' + kind + '/' + id );
+const ws_connector = function (kind, id) {
+  const ws_protocol = ((document.location.protocol === 'https:') ? 'wss:' : 'ws:');
+  return new WebSocket(`${ws_protocol}//${location.hostname}/ws/${kind}/${id}`);
 };
 
 
 /* form-validation */
-$(document).ready(function () {
-  var inputs = $('input').filter("[type=text],[type=password],[type=email]").filter(':not(.allow-empty)');
+$(document).ready(() => {
+  const inputs = $('input').filter('[type=text],[type=password],[type=email]').filter(':not(.allow-empty)');
 
-  var is_input_filled = function() {
-    var is_filled = true;
+  const is_input_filled = function () {
+    let is_filled = true;
 
     inputs.each(function () {
-      if ( $(this).val().length === 0 ) {
+      if ($(this).val().length === 0) {
         is_filled = false;
         return false;
       }
-      if ( $(this).attr("type") === "password" && $(this).val().indexOf(" ") !== -1 ) {
+      if ($(this).attr('type') === 'password' && $(this).val().indexOf(' ') !== -1) {
         is_filled = false;
         return false;
       }
@@ -184,51 +182,50 @@ $(document).ready(function () {
     return is_filled;
   };
 
-  var toggle_input = function () {
-    var submit = $(".create");
+  const toggle_input = function () {
+    const submit = $('.create');
 
-    if ( is_input_filled() ) {
+    if (is_input_filled()) {
       submit.removeAttr('disabled');
-    }
-    else {
+    } else {
       submit.attr('disabled', 'disabled');
     }
   };
 
   toggle_input();
 
-  inputs.bind("keyup change", function () {
+  inputs.bind('keyup change', () => {
     toggle_input();
   });
 });
 
 // allow textfile drop
-$.event.props.push("dataTransfer");
+$.event.props.push('dataTransfer');
 
-$(document).on("dragover", ".allow_textfile_drop", function(e){
+$(document).on('dragover', '.allow_textfile_drop', (e) => {
   e.preventDefault();
 });
 
-$(document).on("drop", ".allow_textfile_drop", function(e){
+$(document).on('drop', '.allow_textfile_drop', function (e) {
   self = this;
   e.preventDefault();
-  var file = e.dataTransfer.files[0];
-  var fileReader = new FileReader();
-  fileReader.onloadend = function(){
-    $(self).val(fileReader.result).trigger("input");
+  const file = e.dataTransfer.files[0];
+  const fileReader = new FileReader();
+  fileReader.onloadend = function () {
+    $(self).val(fileReader.result).trigger('input');
   };
   fileReader.readAsText(file);
 });
 
 // setup clipboard.js
-new Clipboard('[data-clipboard]').on('success', function (e) {
-  var btn = $(e.trigger);
-  var target = btn.find('.copied-hint-target');
-  var hint_text = btn.attr('data-copied-hint');
-  var orig_text = target.text();
+new Clipboard('[data-clipboard]').on('success', (e) => {
+  const btn = $(e.trigger);
+  const target = btn.find('.copied-hint-target');
+  const hint_text = btn.attr('data-copied-hint');
+  const orig_text = target.text();
   btn.attr('disabled', true);
   target.text(hint_text);
-  setTimeout(function () {
+  setTimeout(() => {
     target.text(orig_text);
     btn.attr('disabled', null);
   }, 1000);

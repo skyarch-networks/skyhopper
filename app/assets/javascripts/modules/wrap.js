@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function(value, index){
+module.exports = function (value, index) {
   switch (index) {
     case 'infrastructures':
       return render_infrastructures(value);
@@ -28,10 +28,10 @@ module.exports = function(value, index){
       return render_ops_sched(value);
     default:
       return value;
-    }
+  }
 };
 
-function render_infrastructures(value){
+function render_infrastructures(value) {
   switch (value) {
     case 'stack_name':
       return t('infrastructures.stackname');
@@ -48,71 +48,70 @@ function render_infrastructures(value){
   }
 }
 
-function render_projects(value){
+function render_projects(value) {
   switch (value) {
     case 'code':
-      return t ('projects.code');
+      return t('projects.code');
     case 'name':
-      return t ('projects.name');
+      return t('projects.name');
     case 'cloud_provider':
-      return t ('projects.cloud_provider');
+      return t('projects.cloud_provider');
     case 'access_key':
-      return t ('projects.access_key');
+      return t('projects.access_key');
     default:
       return value;
   }
-
 }
 
-function render_clients(value){
+function render_clients(value) {
   switch (value) {
     case 'code':
-      return t ('clients.code');
+      return t('clients.code');
     case 'name':
-      return t ('clients.name');
+      return t('clients.name');
     default:
       return value;
   }
 }
 
-function render_servertests(value){
+function render_servertests(value) {
   switch (value) {
     case 'description':
-      return t ('servertests.description');
+      return t('servertests.description');
     case 'servertest_name':
-      return t ('servertests.name');
+      return t('servertests.name');
     case 'category':
-      return t ('servertests.category');
+      return t('servertests.category');
     default:
       return value;
   }
 }
 
-function render_dish(value){
+function render_dish(value) {
   switch (value) {
     case 'dish_name':
-      return t ('dishes.name');
+      return t('dishes.name');
     case 'detail':
-      return t ('dishes.detail');
+      return t('dishes.detail');
     case 'status':
-      return t ('dishes.validation_status');
+      return t('dishes.validation_status');
     default:
       return value;
   }
 }
 
-function render_cf_templates(value){
+function render_cf_templates(value) {
   switch (value) {
     case 'cf_subject':
-      return t ('cf_templates.subject');
+      return t('cf_templates.subject');
     case 'details':
-      return t ('cf_templates.details');
+      return t('cf_templates.details');
     default:
       return value;
   }
 }
 
-function render_user_admin(value){
+function render_user_admin(value) {
   switch (value) {
     case 'role':
       return t('users.role');
@@ -125,7 +124,7 @@ function render_user_admin(value){
   }
 }
 
-function render_servertests_results(value){
+function render_servertests_results(value) {
   switch (value) {
     case 'servertest':
       return t('servertests.servertests');
@@ -134,24 +133,23 @@ function render_servertests_results(value){
     case 'message':
       return t('cf_templates.details');
     case 'status':
-      return t ('infrastructures.status');
+      return t('infrastructures.status');
     case 'created_at':
-      return t ('servertests.created_at');
+      return t('servertests.created_at');
     default:
       return value;
   }
 }
 
-function render_ops_sched(value){
+function render_ops_sched(value) {
   switch (value) {
     case 'physical_id':
-      return "Physical ID";
+      return 'Physical ID';
     case 'screen_name':
       return t('operation_scheduler.screen_name');
     case 'id':
-      return t ('common.actions');
+      return t('common.actions');
     default:
       return value;
-
   }
 }

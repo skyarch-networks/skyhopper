@@ -6,56 +6,54 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-(function() {
-
-  //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
-  var queryString = require('query-string').parse(location.search);
-  var ace = require('brace');
+(function () {
+  // browserify functions for vue filters functionality
+  const wrap = require('./modules/wrap');
+  const listen = require('./modules/listen');
+  const queryString = require('query-string').parse(location.search);
+  const ace = require('brace');
   require('brace/theme/github');
   require('brace/mode/json');
   require('brace/mode/yaml');
 
-  var JSZip = require('jszip');
+  const JSZip = require('jszip');
 
-  var modal       = require('modal');
+  const modal = require('modal');
 
-  var app;
+  let app;
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
-  var editor;
-  $(document).ready(function(){
-
+  let editor;
+  $(document).ready(() => {
     if ($('#description').length > 0) {
-      editor = ace.edit("description");
-      var textarea = $('#cf_template_value');
+      editor = ace.edit('description');
+      const textarea = $('#cf_template_value');
       editor.getSession().setValue(textarea.val());
-      editor.getSession().on('change', function(){
+      editor.getSession().on('change', () => {
         textarea.val(editor.getSession().getValue());
       });
       editor.setOptions({
         maxLines: 30,
         minLines: 15,
       });
-      editor.setTheme("ace/theme/github");
+      editor.setTheme('ace/theme/github');
 
-      $('#cf_template_format').change(function() {
-        var format = $(this).val();
+      $('#cf_template_format').change(function () {
+        const format = $(this).val();
         if (format === 'YAML') {
-          editor.getSession().setMode("ace/mode/yaml");
+          editor.getSession().setMode('ace/mode/yaml');
           return;
         }
-        editor.getSession().setMode("ace/mode/json");
+        editor.getSession().setMode('ace/mode/json');
       }).change();
 
-      $("#ace-loading").hide();
+      $('#ace-loading').hide();
     }
   });
 
   if ($('#indexElement').length) {
-    var cf_templatesIndex = new Vue({
+    const cf_templatesIndex = new Vue({
       el: '#indexElement',
       data: {
         searchQuery: '',
@@ -65,134 +63,132 @@
         picked: {
           button_destroy_cft: null,
           button_edit_cft: null,
-          id: null
+          id: null,
         },
         multiSelect: false,
         selections: [],
-        url: 'cf_templates?lang=' + queryString.lang,
+        url: `cf_templates?lang=${queryString.lang}`,
         is_empty: false,
         loading: true,
       },
       computed: {
-        can_export: function () {
+        can_export() {
           return (this.multiSelect === false && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
         },
-        can_edit: function () {
+        can_edit() {
           return (!this.multiSelect && this.picked.button_edit_cft !== null);
         },
-        can_delete: function () {
+        can_delete() {
           return (!this.multiSelect && this.picked.button_destroy_cft !== null);
         },
       },
       methods: {
-        delete_entry: function () {
-          var self = this;
-          modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(function () {
+        delete_entry() {
+          const self = this;
+          modal.Confirm(t('cf_templates.cf_template'), t('cf_templates.msg.delete_cf_template'), 'danger').done(() => {
             $.ajax({
-              type: "POST",
+              type: 'POST',
               url: self.picked.button_destroy_cft,
-              dataType: "json",
-              data: {"_method": "delete"}, success: function (data) {
+              dataType: 'json',
+              data: { _method: 'delete' },
+              success(data) {
                 location.reload();
               },
             }).fail(modal.AlertForAjaxStdError());
           });
         },
-        show_template: function (cf_template_id) {
+        show_template(cf_template_id) {
           $.ajax({
-            url: "/cf_templates/" + cf_template_id,
-            type: "GET",
-            success: function (data) {
-              $("#template-information").html(data);
-            }
-          }).done(function () {
-            var viewer = ace.edit('cf_value');
+            url: `/cf_templates/${cf_template_id}`,
+            type: 'GET',
+            success(data) {
+              $('#template-information').html(data);
+            },
+          }).done(() => {
+            const viewer = ace.edit('cf_value');
             viewer.setOptions({
               maxLines: Infinity,
               minLines: 15,
-              readOnly: true
+              readOnly: true,
             });
-            viewer.setTheme("ace/theme/github");
-            var format = $("#template-information #cf_value").data('format');
+            viewer.setTheme('ace/theme/github');
+            const format = $('#template-information #cf_value').data('format');
             if (format === 'YAML') {
-              viewer.getSession().setMode("ace/mode/yaml");
+              viewer.getSession().setMode('ace/mode/yaml');
             } else {
-              viewer.getSession().setMode("ace/mode/json");
+              viewer.getSession().setMode('ace/mode/json');
             }
           });
         },
-        confirm_export: function () {
-          var self = this;
-          var html = $('<div>', {class: 'panel panel-info', style: 'margin-bottom: 0px'});
+        confirm_export() {
+          const self = this;
+          const html = $('<div>', { class: 'panel panel-info', style: 'margin-bottom: 0px' });
           html.append(
             $('<div>', {
               class: 'panel-heading',
-              text: t('cf_templates.msg.confirm_export')
+              text: t('cf_templates.msg.confirm_export'),
             }).prepend(
-              $('<span>', {class: 'glyphicon glyphicon-info-sign'})
+              $('<span>', { class: 'glyphicon glyphicon-info-sign' }),
             ),
             $('<ul>').append(
-              this.selections.map(function (obj) {
-                return $('<li>', {text: obj.cf_subject});
-              })
-            )
+              this.selections.map(obj => $('<li>', { text: obj.cf_subject })),
+            ),
           );
-          modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(function () {
+          modal.ConfirmHTML(t('cf_templates.cf_templates'), html).done(() => {
             self.export_templates(self.selections);
           });
         },
-        export_templates: function (templates) {
-          var self = this;
-          var zip = new JSZip();
-          templates.forEach(function (obj) {
-            var filename = self.escape_invalid_character(obj.cf_subject) + '.json';
+        export_templates(templates) {
+          const self = this;
+          const zip = new JSZip();
+          templates.forEach((obj) => {
+            const filename = `${self.escape_invalid_character(obj.cf_subject)}.json`;
             zip.file(filename, obj.value);
           });
-          zip.generateAsync({type: 'blob'}).then(function (content) {
+          zip.generateAsync({ type: 'blob' }).then((content) => {
             self.download_blob('cf_templates.zip', content);
           });
         },
-        export_selected: function () {
+        export_selected() {
           if (this.multiSelect) {
             this.confirm_export();
           } else {
-            this.download_blob(this.picked.cf_subject + '.json', this.picked.value);
+            this.download_blob(`${this.picked.cf_subject}.json`, this.picked.value);
           }
         },
-        export_all: function () {
+        export_all() {
           this.export_templates(this.gridData);
         },
-        download_blob: function (filename, value) {
-          var file = new File([value], filename);
-          var event = new MouseEvent("click");
-          var url = window.URL.createObjectURL(file);
-          var a = document.createElement('a');
+        download_blob(filename, value) {
+          const file = new File([value], filename);
+          const event = new MouseEvent('click');
+          const url = window.URL.createObjectURL(file);
+          const a = document.createElement('a');
           a.href = url;
           a.download = file.name;
           a.dispatchEvent(event);
         },
-        escape_invalid_character: function (str) {
+        escape_invalid_character(str) {
           return str.replace(/[\\/:*?<>"|]/g, '-');
         },
-        reload: function () {
+        reload() {
           this.loading = true;
           this.$children[0].load_ajax(this.url, this.empty);
           this.selections = [];
           this.picked = {
             button_destroy_cft: null,
             button_edit_cft: null,
-            id: null
+            id: null,
           };
         },
       },
 
       watch: {
-        'multiSelect': function () {
+        multiSelect() {
           this.selections = [];
         },
       },
 
     });
   }
-
-})();
+}());

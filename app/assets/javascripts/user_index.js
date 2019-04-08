@@ -8,20 +8,20 @@
 (function () {
   'use_strict';
 
-  //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
-  var md5 = require('md5');
-  var queryString = require('query-string').parse(location.search);
-  var modal = require('modal');
+  // browserify functions for vue filters functionality
+  const wrap = require('./modules/wrap');
+  const listen = require('./modules/listen');
+  const md5 = require('md5');
+  const queryString = require('query-string').parse(location.search);
+  const modal = require('modal');
 
-  var app;
+  let app;
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
 
   if ($('#indexElement').length) {
-    var clientIndex = new Vue({
+    const clientIndex = new Vue({
       el: '#indexElement',
       data: {
         searchQuery: '',
@@ -30,44 +30,44 @@
         index: 'user_admin',
         loading: true,
         is_empty: false,
-        url: 'users_admin?lang=' + queryString.lang,
+        url: `users_admin?lang=${queryString.lang}`,
         picked: {
           users_admin_path: null,
-          id: null
-        }
+          id: null,
+        },
       },
       methods: {
-        can_delete: function () {
+        can_delete() {
           return (this.picked.users_admin_path === null);
         },
-        can_edit: function () {
+        can_edit() {
           return (this.picked.id === null);
         },
 
-        delete_entry: function () {
-          var self = this;
-          modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(function () {
+        delete_entry() {
+          const self = this;
+          modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(() => {
             $.ajax({
-              type: "POST",
+              type: 'POST',
               url: self.picked.users_admin_path,
-              dataType: "json",
-              data: {"_method": "delete"},
-              success: function (data) {
+              dataType: 'json',
+              data: { _method: 'delete' },
+              success(data) {
                 self.gridData = data;
                 self.picked = {};
               },
-            }).fail(function () {
+            }).fail(() => {
               location.reload();
             });
           });
         },
-        reload: function () {
+        reload() {
           this.loading = true;
           this.$children[0].load_ajax(this.url);
           this.picked = {};
         },
 
-      }
+      },
     });
   }
-})();
+}());

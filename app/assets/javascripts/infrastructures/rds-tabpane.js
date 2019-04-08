@@ -1,16 +1,18 @@
-var modal          = require('modal');
-var Infrastructure = require('models/infrastructure').default;
-var RDSInstance    = require('models/rds_instance').default;
+const modal = require('modal');
+const Infrastructure = require('models/infrastructure').default;
+const RDSInstance = require('models/rds_instance').default;
 
-var helpers = require('infrastructures/helper.js');
-var alert_success        = helpers.alert_success;
-var alert_danger         = helpers.alert_danger;
-var alert_and_show_infra = helpers.alert_and_show_infra;
+const helpers = require('infrastructures/helper.js');
 
-var methods = require('infrastructures/common-methods');
-var check_tag            = methods.check_tag;
+const alert_success = helpers.alert_success;
+const alert_danger = helpers.alert_danger;
+const alert_and_show_infra = helpers.alert_and_show_infra;
 
-var queryString = require('query-string').parse(location.search);
+const methods = require('infrastructures/common-methods');
+
+const check_tag = methods.check_tag;
+
+const queryString = require('query-string').parse(location.search);
 
 module.exports = Vue.extend({
   template: '#rds-tabpane-template',
@@ -26,165 +28,159 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {
-    rds: {},
-    serverspec: {},
-    rules_summary: null,
-    lang: queryString.lang,
-    address: null,
-    change_scale_type_to: null,
-    page: 0,
-    dispItemSize: 10,
-    filteredLength: null,
-    filterKey: '',
-    modifying: false,
-    loading_groups: '',
-    loading_s: false,
-  };},
+  data() {
+    return {
+      rds: {},
+      serverspec: {},
+      rules_summary: null,
+      lang: queryString.lang,
+      address: null,
+      change_scale_type_to: null,
+      page: 0,
+      dispItemSize: 10,
+      filteredLength: null,
+      filterKey: '',
+      modifying: false,
+      loading_groups: '',
+      loading_s: false,
+    };
+  },
 
   methods: {
-    change_scale: function () {
-      var self = this;
+    change_scale() {
+      const self = this;
 
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
       rds.change_scale(this.change_scale_type_to)
-      .done(self.reload)
-      .fail(alert_danger(self.reload));
+        .done(self.reload)
+        .fail(alert_danger(self.reload));
 
       $('#change-scale-modal').modal('hide');
     },
 
-    gen_serverspec: function () {
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      rds.gen_serverspec(this.serverspec).done(function (msg) {
+    gen_serverspec() {
+      const self = this;
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
+      rds.gen_serverspec(this.serverspec).done((msg) => {
         alert_success(self.reload)(msg);
         $('#rds-serverspec-modal').modal('hide');
-      }).fail(function (msg) {
+      }).fail((msg) => {
         alert_danger(self.reload)(msg);
         $('#rds-serverspec-modal').modal('hide');
       });
     },
 
-    reload: function () { this.$parent.show_rds(this.physical_id); },
+    reload() { this.$parent.show_rds(this.physical_id); },
 
-    view_rules: function () {
+    view_rules() {
       this.$parent.tabpaneID = 'view-rules';
       this.$parent.sec_group = this.rules_summary;
       this.$parent.instance_type = 'rds';
     },
 
-    submit_groups: function(){
-      if (this.modifying) {return;}
+    submit_groups() {
+      if (this.modifying) { return; }
       this.modifying = true;
 
-      var self = this;
-      var rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
-      var group_ids = this.rules_summary.filter(function (t) {
-        return t.checked;
-      }).map(function (t) {
-        return t.group_id;
-      });
+      const self = this;
+      const rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
+      const group_ids = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
 
       rds.rds_submit_groups(group_ids, self.physical_id)
         .done(alert_success(self.reload))
         .fail(alert_danger(self.reload));
     },
 
-    check: function (i) {
-      i.checked= !i.checked;
+    check(i) {
+      i.checked = !i.checked;
     },
-    showPrev: function (){
-      if(this.isStartPage) return;
+    showPrev() {
+      if (this.isStartPage) return;
       this.page--;
     },
-    showNext: function (){
-      if(this.isEndPage) return;
+    showNext() {
+      if (this.isEndPage) return;
       this.page++;
     },
-    check_tag: function(r){
+    check_tag(r) {
       check_tag(r);
     },
-    has_selected: function(arg){
-      if(arg){
-        return arg.some(function(c){
-          return c.checked;
-        });
+    has_selected(arg) {
+      if (arg) {
+        return arg.some(c => c.checked);
       }
     },
-    start_rds: function () {
-      if (this.available) { return }
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(function () {
-        rds.start_rds().done(function (data) {
+    start_rds() {
+      if (this.available) { return; }
+      const self = this;
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(() => {
+        rds.start_rds().done((data) => {
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
       });
     },
-    stop_rds: function () {
-      if (this.stopped) { return }
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(function () {
-        rds.stop_rds().done(function (data) {
+    stop_rds() {
+      if (this.stopped) { return; }
+      const self = this;
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(() => {
+        rds.stop_rds().done((data) => {
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
       });
     },
-    reboot_rds: function () {
-      if (this.stopped) { return }
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(function () {
-        rds.reboot_rds().done(function (data) {
+    reboot_rds() {
+      if (this.stopped) { return; }
+      const self = this;
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
+      modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(() => {
+        rds.reboot_rds().done((data) => {
           self.reload();
           alert_success()(data.message);
         }).fail(alert_danger());
       });
     },
-    roundup: function (val) { return (Math.ceil(val));},
+    roundup(val) { return (Math.ceil(val)); },
   },
   computed: {
-    gen_serverspec_enable: function () {
-      var s = this.serverspec;
+    gen_serverspec_enable() {
+      const s = this.serverspec;
       return !!(s.username && s.password && s.database);
     },
-    available: function () { return this.rds.db_instance_status === 'available'; },
-    stopped: function () { return this.rds.db_instance_status === 'stopped'; },
-    dispItems: function(){
-      var startPage = this.page * this.dispItemSize;
-      if (this.filterKey === ''){
+    available() { return this.rds.db_instance_status === 'available'; },
+    stopped() { return this.rds.db_instance_status === 'stopped'; },
+    dispItems() {
+      const startPage = this.page * this.dispItemSize;
+      if (this.filterKey === '') {
         return this.rules_summary.slice(startPage, startPage + this.dispItemSize);
       }
-      else{
-        return this.rules_summary;
-      }
+
+      return this.rules_summary;
     },
 
-    filterd_dispitems: function(){
-      var self = this;
-      var items = this.dispItems.filter(function (data) {
-        if(self.filterKey === ""){
-          return true
-        } else {
-          return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+    filterd_dispitems() {
+      const self = this;
+      const items = this.dispItems.filter((data) => {
+        if (self.filterKey === '') {
+          return true;
         }
+        return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
       });
       self.filteredLength = items.length;
       return items;
     },
 
-    isStartPage: function(){ return (this.page === 0); },
-    isEndPage: function(){ return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
-    rds_button_class: function () {
+    isStartPage() { return (this.page === 0); },
+    isEndPage() { return ((this.page + 1) * this.dispItemSize >= this.rules_summary.length); },
+    rds_button_class() {
       if (this.modifying) {
         return 'disabled';
       }
@@ -193,17 +189,17 @@ module.exports = Vue.extend({
       }
       return 'btn-default';
     },
-    changing_status: function () {
-      return t('rds.msg.' + this.rds.db_instance_status);
+    changing_status() {
+      return t(`rds.msg.${this.rds.db_instance_status}`);
     },
   },
 
-  mounted: function () {
+  mounted() {
     this.$nextTick(function () {
-      var self = this;
-      var infra = new Infrastructure(this.infra_id);
-      var rds = new RDSInstance(infra, this.physical_id);
-      rds.show().done(function (data) {
+      const self = this;
+      const infra = new Infrastructure(this.infra_id);
+      const rds = new RDSInstance(infra, this.physical_id);
+      rds.show().done((data) => {
         self.rds = data.rds;
         self.address = self.rds.endpoint.address;
         self.rules_summary = data.security_groups;
@@ -211,17 +207,17 @@ module.exports = Vue.extend({
           self.rds.db_instance_status = 'modifying';
         }
         if (self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting') {
-          setTimeout(function () {
+          setTimeout(() => {
             self.reload();
           }, 15000);
           self.modifying = true;
         }
         self.$parent.loading = false;
       }).fail(alert_and_show_infra(infra.id));
-    })
+    });
   },
   filters: {
-    count: function (arr) {
+    count(arr) {
       // record length
       this.$set('filteredLength', arr.length);
       // return it intact
