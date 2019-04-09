@@ -18,4 +18,4 @@ if [ ! -d $PIDS_PATH ]; then
   mkdir -p $PIDS_PATH
 fi
 
-bundle exec foreman start
+bundle exec foreman start -f Procfile.development

@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  app:
+    build:
+      context: ./amazonlinux2
+      dockerfile: ./Dockerfile
+    volumes:
+      - ".:/prj/skyhopper"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_URL=redis://redis:6379/1
+    ports:
+      - 3000:3000
+      - 3210:3210
+
   mysql:
     image: mysql:5.7
     volumes:

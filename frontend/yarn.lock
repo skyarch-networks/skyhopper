@@ -54,9 +54,9 @@
   version "0.7.19"
   resolved "https://codeload.github.com/HubSpot/offline/tar.gz/a17291864212aab9ae9325c7ce5a2e0f541e96bf"
 
-"@bower_components/ws_proxy@skyarch-networks/ws_proxy#*":
+"@bower_components/ws_proxy@skyarch-networks/ws_proxy#master":
   version "0.0.0"
-  resolved "https://codeload.github.com/skyarch-networks/ws_proxy/tar.gz/6025be080e1c97e50b6a6f59e6aa32bfab7b6219"
+  resolved "https://codeload.github.com/skyarch-networks/ws_proxy/tar.gz/f8a610444330241543b77d97ef27ff3acfb9d215"
 
 JSONStream@^0.10.0:
   version "0.10.0"

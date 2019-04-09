@@ -140,3 +140,7 @@ gem 'ffi', '>= 1.9.24'
 gem 'loofah', '>= 2.2.3'
 
 gem 'retryable', '~>2.0.4'
+
+# For Docker
+gem 'bigdecimal'
+gem 'io-console'
