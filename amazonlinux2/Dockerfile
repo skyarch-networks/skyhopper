@@ -1,5 +1,7 @@
 FROM amazonlinux:2
 
+RUN yum update -y
+
 # Systemd
 RUN yum install -y systemd
 
