@@ -8,7 +8,7 @@ RUN yum install -y systemd
 # Ruby
 RUN yum groupinstall -y 'Development tools' 'Development Libraries'
 RUN amazon-linux-extras install ruby2.4
-RUN yum install -y ruby-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel
+RUN yum install -y ruby-devel sqlite-devel zlib-devel readline-devel openssl-devel libxml2-devel libxslt-devel mysql-devel openssl
 RUN gem install --no-document bundler -v 1.17.3
 
 # Nodejs amd Yarn
