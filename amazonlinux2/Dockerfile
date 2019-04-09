@@ -17,5 +17,6 @@ RUN echo 'export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.b
 
 # Ansible
 RUN amazon-linux-extras install ansible2
+RUN sed -i -e 's/^#retry_files_enabled = False$/retry_files_enabled = False/' /etc/ansible/ansible.cfg
 
 CMD ["/sbin/init"]
