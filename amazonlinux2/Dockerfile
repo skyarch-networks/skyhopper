@@ -2,9 +2,6 @@ FROM amazonlinux:2
 
 RUN yum update -y
 
-# Systemd
-RUN yum install -y systemd
-
 # Ruby
 RUN yum groupinstall -y 'Development tools' 'Development Libraries'
 RUN amazon-linux-extras install ruby2.4
@@ -21,4 +18,5 @@ RUN echo 'export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.b
 RUN amazon-linux-extras install ansible2
 RUN sed -i -e 's/^#retry_files_enabled = False$/retry_files_enabled = False/' /etc/ansible/ansible.cfg
 
-CMD ["/sbin/init"]
+WORKDIR /prj/skyhopper
+CMD bundle exec foreman start -f Procfile.docker
