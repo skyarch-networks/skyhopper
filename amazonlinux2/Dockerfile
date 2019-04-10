@@ -19,4 +19,4 @@ RUN amazon-linux-extras install ansible2
 RUN sed -i -e 's/^#retry_files_enabled = False$/retry_files_enabled = False/' /etc/ansible/ansible.cfg
 
 WORKDIR /prj/skyhopper
-CMD bundle exec foreman start -f Procfile.docker
+CMD scripts/app_run.sh
