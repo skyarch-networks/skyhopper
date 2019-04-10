@@ -29,3 +29,11 @@ services:
     image: redis:4
     ports:
       - 6379:6379
+
+  nginx:
+    image: nginx:1.15
+    ports:
+      - 80:80
+    volumes:
+      - "./nginx/conf.d:/etc/nginx/conf.d"
+      - ".:/prj/skyhopper"
