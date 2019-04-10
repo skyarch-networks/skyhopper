@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - 8080:80
+    volumes:
+      - "./phpmyadmin/sessions:/sessions"
