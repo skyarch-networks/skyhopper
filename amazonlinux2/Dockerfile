@@ -23,4 +23,4 @@ RUN amazon-linux-extras install ansible2 && \
 RUN mkdir ~/.ssh && chmod 700 ~/.ssh
 
 WORKDIR /prj/skyhopper
-CMD scripts/app_run.sh
+CMD ["scripts/app_run.sh"]
