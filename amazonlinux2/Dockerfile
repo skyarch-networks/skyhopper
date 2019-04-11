@@ -18,5 +18,7 @@ RUN echo 'export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.b
 RUN amazon-linux-extras install ansible2
 RUN sed -i -e 's/^#retry_files_enabled = False$/retry_files_enabled = False/' /etc/ansible/ansible.cfg
 
+RUN mkdir ~/.ssh ; chmod 700 ~/.ssh
+
 WORKDIR /prj/skyhopper
 CMD scripts/app_run.sh
