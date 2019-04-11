@@ -14,7 +14,7 @@ if [[ ! -e frontend/fonts/fonts_map.js ]]; then
 fi
 
 echo "===== Set up the database ====="
-sleep 10 # Wait for the container to start up
+sleep 30 # Wait for the container to start up
 bundle exec rake db:create
 bundle exec rake db:migrate
 bundle exec rake db:seed
