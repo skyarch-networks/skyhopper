@@ -4,16 +4,16 @@
 Dockerおよびdocker-composeをインストールしておいて下さい。
 
 ## 構築手順
-フォントをビルドします。  
-その後、以下のコマンドを実行します。
 ```
 $ cd <project-root>
 $ cp config/database_docker.yml config/database.yml
 $ touch amazonlinux2/known_hosts
 $ chmod 644 amazonlinux2/known_hosts
 $ docker-compose build
-$ docker-compose run --rm app /prj/skyhopper/scripts/app-setup.sh
+$ docker-compose run --rm app /prj/skyhopper/scripts/app_setup.sh
 ```
+なお、上記手順でフォントのダウンロードとビルドは行われません。  
+フォントのビルドを行っていない場合、PDF出力機能が使用できません。
 
 ## 起動手順
 ```
