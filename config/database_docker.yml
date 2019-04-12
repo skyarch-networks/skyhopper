@@ -27,7 +27,7 @@ development:
   <<: *default
   database: SkyHopperDevelopment
   host: mysql
-  password: password
+  password: please-set-random-password
 
 # development:
 #   <<: *default_sqlite3

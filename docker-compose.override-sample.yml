@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=please-set-random-password
