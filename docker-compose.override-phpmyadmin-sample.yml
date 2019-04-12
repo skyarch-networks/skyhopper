@@ -7,7 +7,7 @@ services:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
       - PMA_USER=root
-      - PMA_PASSWORD=password
+      - PMA_PASSWORD=please-set-random-password
     ports:
       - 8080:80
     volumes:
