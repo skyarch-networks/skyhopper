@@ -68,3 +68,10 @@ vendor/knife
 
 # ansible
 /ansible/*
+
+# Docker
+/docker-compose.override.yml
+/amazonlinux2/known_hosts
+/mysql/
+/redis/
+/phpmyadmin/
