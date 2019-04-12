@@ -7,14 +7,14 @@ Dockerおよびdocker-composeをインストールしておいて下さい。
 ```sh
 $ cd <project-root>
 $ cp config/database_docker.yml config/database.yml
+$ cp docker-compose.override-sample.yml docker-compose.override.yml
+$ # ここでconfig/database.ymlとdocker-compose.override.ymlのmysqlのパスワードを変更してください
 $ touch amazonlinux2/known_hosts
 $ chmod 644 amazonlinux2/known_hosts
 $ docker-compose build
 $ # ここで後述する「フォントのダウンロードとビルド」を行ってください
 $ docker-compose run --rm app scripts/app_setup.sh
 ```
-なお、上記の手順をそのまま実行するとMySQLのrootのパスワードは"password"になります。  
-必要に応じて適切に設定してください。
 
 ### フォントのダウンロードとビルド
 
