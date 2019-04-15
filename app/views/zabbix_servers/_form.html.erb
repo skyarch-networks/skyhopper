@@ -12,11 +12,11 @@
   <% end %>
 
   <div class="form-group">
-    <input type="hidden" v-model="params.id" value="<%= @zabbix_server.id %>" v-if="control_type == 'edit'">
+    <input type="hidden" v-model="params.id" value="" v-if="control_type == 'edit'">
     <%= f.label :fqdn, class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <% if @zabbix_server.id == 1 %>
-        <input type="text" value="<%= @zabbix_server.fqdn %>" class="form-control"  v-model="params.fqdn" pattern="[^\s]+" readonly="true">
+        <input type="text" value="" class="form-control"  v-model="params.fqdn" pattern="[^\s]+" readonly="true">
       <% else %>
         <input type="text" class="form-control"  v-model="params.fqdn" pattern="[^\s]+" required>
       <% end %>
@@ -25,19 +25,19 @@
   <div class="form-group">
     <%= f.label :username, class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <input type="text" value="<%= @zabbix_server.username %>" class="form-control" v-model="params.username" pattern="[^\s]+" required>
+      <input type="text" value="" class="form-control" v-model="params.username" pattern="[^\s]+" required>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :password, class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <input type="password" value="<%= @zabbix_server.password %>" class="form-control" v-model="params.password" pattern="[^\s]+" required>
+      <input type="password" value="" class="form-control" v-model="params.password" pattern="[^\s]+" required>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :details, t('zabbix_servers.details'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <textarea id="details" class="form-control" v-model="params.details" rows="4"><%= @zabbix_server.details %></textarea>
+      <textarea id="details" class="form-control" v-model="params.details" rows="4"></textarea>
     </div>
   </div>
 

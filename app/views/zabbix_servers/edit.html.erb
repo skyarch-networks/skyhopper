@@ -3,7 +3,7 @@
 <div class="page-header">
   <h1><%=t '.title', default: [:'helpers.titles.edit', 'Edit %{model}'], model: model_class.model_name.human.titleize %></h1>
 </div>
-<div id="indexElement" ref="node">
+<div id="editElement" ref="node">
   <div v-if="new_loader" v-cloak>
     <span class="loader"></span>
     Registering Zabbix Server ...
