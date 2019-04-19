@@ -212,7 +212,7 @@ module.exports = function () {
       reset(open_tab) {
         const self = this;
         const infra_id = this.$route.params.infra_id;
-        self.$parent.data = data();
+        self.data = data();
         self.current_infra.id = parseInt(infra_id);
         self.infra_loading = true;
         self.infra_model = new Infrastructure(infra_id);
@@ -239,8 +239,9 @@ module.exports = function () {
       },
       init_infra(current_tab) {
         const self = this;
-        console.log(self);
         self.back_to_top();
+
+        self.current_infra.resources = {};
 
         if (self.current_infra.stack.status.type === 'OK') {
           const res = new Resource(self.infra_model);
@@ -275,6 +276,7 @@ module.exports = function () {
             });
           }));
         } else if (self.current_infra.stack.status.type === 'IN_PROGRESS') {
+          self.tabpaneID = 'default';
           self.stack_in_progress();
           self.$data.loading = false;
         } else if (self.current_infra.stack.status.type === 'NG') {
@@ -284,6 +286,7 @@ module.exports = function () {
           }));
         } else if (self.current_infra.stack.status.type === 'NONE') {
           // no stack info
+          self.tabpaneID = 'default';
           self.$data.loading = false;
         }
       },
