@@ -24,7 +24,7 @@
       el: '#indexElement',
       data: {
         searchQuery: '',
-        gridColumns: ['code', 'name', 'cloud_provider', 'access_key'],
+        gridColumns: ['code', 'name', 'access_key'],
         url: 'projects?lang=' + queryString.lang + project_url,
         gridData: [],
         is_empty: false,

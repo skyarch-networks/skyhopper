@@ -6,11 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-# -------------------- Cloud Providers
-CloudProvider.find_or_create_by(id: 1, name: 'AWS')
-CloudProvider.find_or_create_by(id: 2, name: 'nifty')
-
-
 # -------------------- master-monitoring
 # TODO: keyを埋める
 MasterMonitoring.delete_all
@@ -88,10 +83,9 @@ client_skyhopper = Client.for_system
 if client_skyhopper.blank?
   client_skyhopper = Client.create(name: Client::ForSystemCodeName, code: Client::ForSystemCodeName)
 end
-aws = CloudProvider.aws
-Project.find_or_create_by(client: client_skyhopper, name: Project::ForDishTestCodeName,   code: Project::ForDishTestCodeName,   access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
-Project.find_or_create_by(client: client_skyhopper, name: Project::ChefServerCodeName,    code: Project::ChefServerCodeName,    access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
-Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText, cloud_provider: aws)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ForDishTestCodeName,   code: Project::ForDishTestCodeName,   access_key: DummyText, secret_access_key: DummyText)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ChefServerCodeName,    code: Project::ChefServerCodeName,    access_key: DummyText, secret_access_key: DummyText)
+Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText)
 
 
 # ----------------------- Global CF template

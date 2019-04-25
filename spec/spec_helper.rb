@@ -63,7 +63,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :truncation
 
-    FactoryGirl.create(:cloud_provider, name: 'AWS') unless CloudProvider.find_by(name: 'AWS')
     FactoryGirl.create(:app_setting)
   end
 
