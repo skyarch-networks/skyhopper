@@ -1,5 +1,4 @@
 require File.expand_path('../boot', __FILE__)
-require File.expand_path('../initializers/suppress_hashie_warn', __FILE__)
 
 require 'rails/all'
 
@@ -37,7 +36,7 @@ module SkyHopper
     # for i18n-js assets pipeline
     config.assets.paths << "#{Rails.root}/bundle/ruby/*/gems/*/vendor/assets/javascript"
 
-    config.session_store :redis_store, servers: 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
+    config.session_store :redis_store, servers: ENV['REDIS_URL'] || 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
 
     config.filter_parameters += [:password, :apikey_secret]
     config.active_job.queue_adapter = :sidekiq

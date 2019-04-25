@@ -327,7 +327,7 @@ ja:
     msg:
       before_bootstrap:   'このインスタンスは Chef Server に登録されていません'
       no_dishes:          '検証済みのディッシュがありません'
-      cooking:            'Cook の実行中...'
+      executing:          '実行中...'
       updating:           'yum の実行中...'
       bootstrap_finish:   '%{physical_id} を Chef Server に登録しました'
       not_change_scale:   '%{type} に変更する必要はありません'

@@ -330,7 +330,7 @@ en:
     msg:
       before_bootstrap:   'This instance is not bootstrapped with Chef Server.'
       no_dishes:          'No valid dishes available.'
-      cooking:            'Cook being executed...'
+      executing:          'Executing...'
       updating:           'yum command is in progress...'
       bootstrap_finish:   '%{physical_id} was successfully registered with Chef Server.'
       not_change_scale:   "Unnecessary to change to '%{type}'"
