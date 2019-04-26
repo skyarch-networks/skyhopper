@@ -20,7 +20,7 @@
         <div class="col-sm-8">
           <div class="input-group">
             <select v-model="sel_infra_id" class="form-control" id="infras">
-              <option disabled selected>--- <%=t('servertests.msg.select_infra')%> ---</option>
+              <option disabled value="-1">--- <%=t('servertests.msg.select_infra')%> ---</option>
               <% @infras.each do |infra| %>
                   <option value="<%= infra.id %>"><%=infra.stack_name %></option>
               <% end %>

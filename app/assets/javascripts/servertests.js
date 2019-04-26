@@ -36,7 +36,7 @@ if ($('#indexElement').length) {
         edit_servertest_path: null,
       },
       infra_id: queryString.infrastructure_id ? `&infrastructure_id=${queryString.infrastructure_id}` : '',
-      sel_infra_id: null,
+      sel_infra_id: '-1',
       url: `servertests?${servertest_url}`,
       is_empty: false,
       loading: true,

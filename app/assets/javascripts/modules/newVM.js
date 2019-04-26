@@ -214,6 +214,7 @@ module.exports = function () {
         const infra_id = this.$route.params.infra_id;
         self.data = data();
         self.current_infra.id = parseInt(infra_id);
+        self.$data.current_infra.events = [];
         self.infra_loading = true;
         self.infra_model = new Infrastructure(infra_id);
         self.infra_model.show().done(
@@ -280,6 +281,7 @@ module.exports = function () {
           self.stack_in_progress();
           self.$data.loading = false;
         } else if (self.current_infra.stack.status.type === 'NG') {
+          self.tabpaneID = 'default';
           self.infra_model.stack_events().done(self.wrapping_into_same_model_check((res) => {
             self.$data.current_infra.events = res.stack_events;
             self.$data.loading = false;
