@@ -61,13 +61,11 @@ class ProjectsController < ApplicationController
     end
     session[:form] = nil
 
-    @cloud_providers = CloudProvider.all
     @zabbix_servers = ZabbixServer.all
   end
 
   # GET /projects/1/edit
   def edit
-    @cloud_providers = CloudProvider.all
     @zabbix_servers = ZabbixServer.all
   end
 
@@ -153,7 +151,7 @@ class ProjectsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
-    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :cloud_provider_id, :zabbix_server_id)
+    params.require(:project).permit(:code, :client_id, :name, :access_key, :secret_access_key, :zabbix_server_id)
   end
 
   # redirect to clients#index if specified client does not exist

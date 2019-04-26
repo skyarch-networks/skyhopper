@@ -53,9 +53,7 @@ function render_projects(value) {
     case 'code':
       return t('projects.code');
     case 'name':
-      return t('projects.name');
-    case 'cloud_provider':
-      return t('projects.cloud_provider');
+      return t ('projects.name');
     case 'access_key':
       return t('projects.access_key');
     default:

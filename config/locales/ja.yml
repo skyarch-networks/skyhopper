@@ -131,7 +131,6 @@ ja:
     name:              '案件名'
     access_key:        'アクセスキー'
     secret_access_key: 'シークレットキー'
-    cloud_provider:    'クラウド提供会社'
     infras:            'インフラ'
     btn:
       show_infrastructures: 'インフラ一覧'

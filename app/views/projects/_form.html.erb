@@ -27,12 +27,6 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :cloud_provider_id, t('projects.cloud_provider'), class: 'control-label col-sm-2' %>
-    <div class="col-sm-5">
-      <%= f.select :cloud_provider_id, @cloud_providers.map{|x| [x.name, x.id]}, {}, {class: "form-control"} %>
-    </div>
-  </div>
-  <div class="form-group">
     <%= f.label :zabbix_server_id, t('projects.zabbix_servers'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
       <%= f.select :zabbix_server_id, @zabbix_servers.map{|x| [x.fqdn, x.id]}.unshift([t('common.none'), ""]), {}, {class: "form-control"} %>

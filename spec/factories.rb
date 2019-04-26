@@ -59,7 +59,6 @@ FactoryGirl.define do
     access_key "1234567890"
     secret_access_key "1234567890"
     client
-    cloud_provider_id{CloudProvider.aws.id}
     zabbix_server
   end
 

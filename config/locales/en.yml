@@ -132,7 +132,6 @@ en:
     name:              'Name'
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
-    cloud_provider:    'Cloud Provider'
     infras:            'Infra(s)'
     btn:
       show_infrastructures: 'Show'
