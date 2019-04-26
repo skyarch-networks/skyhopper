@@ -1,9 +1,10 @@
-var CFTemplate     = require('models/cf_template').default;
-var Infrastructure = require('models/infrastructure').default;
-var helpers = require('infrastructures/helper.js');
-var alert_success        = helpers.alert_success;
-var alert_danger         = helpers.alert_danger;
-var queryString = require('query-string').parse(location.search);
+const CFTemplate = require('models/cf_template').default;
+const Infrastructure = require('models/infrastructure').default;
+const helpers = require('infrastructures/helper.js');
+
+const alert_success = helpers.alert_success;
+const alert_danger = helpers.alert_danger;
+const queryString = require('query-string').parse(location.search);
 
 module.exports = Vue.extend({
   template: '#insert-cf-params-template',
@@ -15,49 +16,54 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {
-    params: {},
-    result: {},
-    loading: false,
-  };},
+  data() {
+    return {
+      params: {},
+      result: {},
+      loading: false,
+      key: '',
+    };
+  },
   methods: {
-    submit: function () {
+    submit() {
       this.loading = true;
-      var infra = new Infrastructure(this.infra_id);
-      var cft = new CFTemplate(infra);
-      var self = this;
-      cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(function () {
+      const infra = new Infrastructure(this.infra_id);
+      const cft = new CFTemplate(infra);
+      const self = this;
+      cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(() => {
         require('infrastructures/show_infra').show_infra(infra.id);
-      })).fail(alert_danger(function () {
+      })).fail(alert_danger(() => {
         self.loading = false;
       }));
     },
 
-    back: function () { this.$parent.show_tabpane('add_modify'); },
+    back() { this.$parent.show_tabpane('add_modify'); },
   },
-  ready: function () {
-    var self = this;
-    console.log(self);
+  mounted() {
+    this.$nextTick(function () {
+      const self = this;
+      console.log(self);
 
-    var infra = new Infrastructure(this.infra_id);
-    var cft = new CFTemplate(infra);
-    cft.insert_cf_params(this.$parent.current_infra.add_modify)
-    .fail(alert_danger(function () {
-      self.back();
-    })).then(function (data) {
-      self.params = data;
-      _.each(data, function (val, key) {
-        Vue.set(self.result, key, val.Default);
-      });
-      self.$parent.loading = false;
+      const infra = new Infrastructure(this.infra_id);
+      const cft = new CFTemplate(infra);
+      cft.insert_cf_params(this.$parent.current_infra.add_modify)
+        .fail(alert_danger(() => {
+          self.back();
+        })).then((data) => {
+          self.params = data;
+          _.each(data, (val, key) => {
+            Vue.set(self.result, key, val.Default);
+          });
+          self.$parent.loading = false;
 
-      Vue.nextTick(function () {
-        var inputs = $(self.$el).parent().find('input');
-        var project_id = queryString.project_id;
-        inputs.textcomplete([
-          require('complete_project_parameter').default(project_id),
-        ]);
-      });
+          Vue.nextTick(() => {
+            const inputs = $(self.$el).parent().find('input');
+            const project_id = queryString.project_id;
+            inputs.textcomplete([
+              require('complete_project_parameter').default(project_id),
+            ]);
+          });
+        });
     });
   },
 });

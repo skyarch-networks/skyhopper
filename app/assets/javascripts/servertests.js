@@ -6,23 +6,25 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-//browserify functions for vue filters functionality
-var wrap = require('./modules/wrap');
-var listen = require('./modules/listen');
-var queryString = require('query-string').parse(location.search);
-var modal = require('modal');
+// browserify functions for vue filters functionality
+const queryString = require('query-string').parse(location.search);
+const modal = require('modal');
 
-var Servertest   = require('models/servertest').default;
-var vace = require('vue-ace');
+const Servertest = require('models/servertest').default;
+const listen = require('./modules/listen');
+const wrap = require('./modules/wrap');
+const vace = require('./modules/vue-ace');
 require('brace/mode/ruby');
 require('brace/theme/github');
+
 Vue.use(vace, false, 'ruby', '25');
 
 Vue.component('demo-grid', require('demo-grid.js'));
-var servertest_url = queryString.infrastructure_id ? 'infrastructure_id='+queryString.infrastructure_id: '';
+
+const servertest_url = queryString.infrastructure_id ? `infrastructure_id=${queryString.infrastructure_id}` : '';
 
 if ($('#indexElement').length) {
-  var servertestIndex = new Vue({
+  const servertestIndex = new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
@@ -31,96 +33,97 @@ if ($('#indexElement').length) {
       index: 'servertests',
       picked: {
         servertest_path: null,
-        edit_servertest_path: null
+        edit_servertest_path: null,
       },
-      infra_id: queryString.infrastructure_id ? '&infrastructure_id=' + queryString.infrastructure_id : '',
-      sel_infra_id: null,
-      url: 'servertests?' + servertest_url,
+      infra_id: queryString.infrastructure_id ? `&infrastructure_id=${queryString.infrastructure_id}` : '',
+      sel_infra_id: '-1',
+      url: `servertests?${servertest_url}`,
       is_empty: false,
       loading: true,
       generating: false,
       awspec: {
         value: null,
-        fname: null
-      }
+        fname: null,
+      },
     },
     methods: {
-      can_edit: function () {
-        return this.picked.edit_servertest_path === null ? true : false;
+      can_edit() {
+        return this.picked.edit_servertest_path === null;
       },
-      can_delete: function () {
-        return (this.picked.servertest_path === null) ? true : false;
+      can_delete() {
+        return this.picked.servertest_path === null;
       },
-      delete_entry: function () {
-        var self = this;
-        console.log(self.picked.servertest_path);
-        modal.Confirm(t('servertests.servertest'), t('servertests.msg.delete_servertest'), 'danger').done(function () {
+      delete_entry() {
+        const self = this;
+        modal.Confirm(t('servertests.servertest'), t('servertests.msg.delete_servertest'), 'danger').done(() => {
           $.ajax({
-            type: "POST",
+            type: 'POST',
             url: self.picked.servertest_path,
-            dataType: "json",
-            data: {"_method": "delete"},
-            success: function (data) {
+            dataType: 'json',
+            data: { _method: 'delete' },
+            success(data) {
               location.reload();
             },
           }).fail(modal.AlertForAjaxStdError());
         });
       },
-      reload: function () {
+      reload() {
         this.loading = true;
         this.$children[0].load_ajax(this.url);
-        this.picked = {};
+        this.picked = {
+          servertest_path: null,
+          edit_servertest_path: null,
+        };
       },
-      show_servertest: function (servertest_id) {
+      show_servertest(servertest_id) {
         $.ajax({
-          url: "/servertests/" + servertest_id,
-          type: "GET",
-          success: function (data) {
-            $("#value-information").html(data);
-          }
+          url: `/servertests/${servertest_id}`,
+          type: 'GET',
+          success(data) {
+            $('#value-information').html(data);
+          },
         });
         document.getElementById('value').style.display = '';
       },
-      generate: function () {
-        var self = this;
+      generate() {
+        const self = this;
         self.generating = true;
 
-        var svt = new Servertest(self.sel_infra_id);
-        svt.generate_awspec().done(function (data) {
+        const svt = new Servertest(self.sel_infra_id);
+        svt.generate_awspec().done((data) => {
           self.awspec.value = data.generated;
           self.generating = false;
         }).fail(modal.AlertForAjaxStdError());
       },
-      create_awspec: function () {
-        var self = this;
-        var params = self.awspec;
+      create_awspec() {
+        const self = this;
+        const params = self.awspec;
         self.generating = true;
 
-        var svt = new Servertest(self.sel_infra_id);
-        svt.create(params.fname, params.value, 'awspec').done(function (data) {
-            modal.Alert(t('servertests.servertest'), data, 'success').done(function () {
-              location.href = "/servertests?infrastructure_id=" + self.sel_infra_id + location.search;
-            });
-          }
-        ).fail(function (msg) {
+        const svt = new Servertest(self.sel_infra_id);
+        svt.create(params.fname, params.value, 'awspec').done((data) => {
+          modal.Alert(t('servertests.servertest'), data, 'success').done(() => {
+            location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${location.search}`;
+          });
+        }).fail((msg) => {
           modal.Alert(t('servertests.servertest'), msg, 'danger');
           self.generating = false;
         });
-      }
+      },
     },
     computed: {
-      required_filed: function () {
-        var awspec = this.awspec;
+      required_filed() {
+        const awspec = this.awspec;
         return (awspec.value && awspec.fname);
       },
     },
-    ready: function () {
-      var self = this;
-      self.loading = false;
-    }
+    mounted() {
+      this.$nextTick(function () {
+        const self = this;
+        self.loading = false;
+      });
+    },
   });
 }
 
-
-
-require("serverspec-gen");
+require('serverspec-gen');

@@ -1,105 +1,106 @@
-<div v-if="before_register">
-  <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
-  <div class="alert alert-warning">
-    <%= t 'monitoring.msg.before_create_host' %>
-  </div>
-  <button v-if="!creating"  data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
-  <div-loader v-if="creating"></div-loader>
-  <%= render 'monitorings/modal_trigger_register_description' %>
-</div>
-
-<div v-if="!before_register">
-  <div class="col-md-12 col-sm-12" v-if="before_setting">
-    <h3 class="page-header"><%= I18n.t('monitoring.title')%>
-    <div class="alert alert-warning h5">
-      <%= t 'monitoring.msg.not_selected' %>
+<div>
+  <div v-if="before_register">
+    <h3 class="page-header"><%= I18n.t('monitoring.register_host') %></h3>
+    <div class="alert alert-warning">
+      <%= t 'monitoring.msg.before_create_host' %>
     </div>
-    </h3>
+    <button v-if="!creating" data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
+    <div-loader v-if="creating"></div-loader>
+    <%= render 'monitorings/modal_trigger_register_description' %>
   </div>
 
-  <div v-if="!before_setting">
-    <div style="margin-top:30px">
-      <div class="col-md-3 col-sm-4">
-        <div class="panel-group">
-          <div v-if="uncommons.length !== 0">
-            <div class="panel panel-default" v-for="r in resources">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" href="#monitorings-{{*r.physical_id}}">{{*r.physical_id}}</a>
-                </h4>
-              </div>
-              <div class="panel-collapse collapse" id="monitorings-{{r.physical_id}}">
-                <div class="list-group">
-                  <a href="#" v-for="value in uncommons" class="list-group-item" @click="show_zabbix_graph(r.physical_id, value.item)">{{value.name}}</a>
-                  <a href="#" @click="show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
+  <div v-if="!before_register">
+    <div class="col-md-12 col-sm-12" v-if="before_setting">
+      <h3 class="page-header"><%= I18n.t('monitoring.title') %>
+        <div class="alert alert-warning h5">
+          <%= t 'monitoring.msg.not_selected' %>
+        </div>
+      </h3>
+    </div>
+
+    <div v-if="!before_setting">
+      <div style="margin-top:30px">
+        <div class="col-md-3 col-sm-4">
+          <div class="panel-group">
+            <div v-if="uncommons.length !== 0">
+              <div class="panel panel-default" v-for="r in resources">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" :href="'#monitorings-' + r.physical_id">{{r.physical_id}}</a>
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse" :id="'monitorings-' + r.physical_id">
+                  <div class="list-group">
+                    <a href="#" v-for="value in uncommons" class="list-group-item" @click="show_zabbix_graph(r.physical_id, value.item)">{{value.name}}</a>
+                    <a href="#" @click="show_cloudwatch_graph(r.physical_id)" class="list-group-item">NetworkInOut</a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="panel panel-default" v-if="commons.length !== 0">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" href="#shared">Share</a>
-              </h4>
-            </div>
-            <div class="panel-collapse collapse" id="shared">
-              <div class="list-group">
-                <a v-for="val in commons" href="#" class="list-group-item" @click="show_url()">{{val.name}}</a>
+            <div class="panel panel-default" v-if="commons.length !== 0">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a class="accordion-toggle" data-toggle="collapse" href="#shared">Share</a>
+                </h4>
+              </div>
+              <div class="panel-collapse collapse" id="shared">
+                <div class="list-group">
+                  <a v-for="val in commons" href="#" class="list-group-item" @click="show_url()">{{val.name}}</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div v-if="show_range">
+        <div v-if="show_range">
           <div class='col-md-3'>
-              <div class="form-group">
-                  <div class='input-group date'>
+            <div class="form-group">
+              <div class='input-group date'>
                       <span class="input-group-addon">
                           <span>From: </span>
                       </span>
-                      <input v-datepicker="dt" type='text' class="form-control" placeholder="Start"/>
-                      <input type="hidden">
-                  </div>
+                <input v-datepicker="dt" type='text' class="form-control" placeholder="Start"/>
+                <input type="hidden">
               </div>
+            </div>
           </div>
           <div class='col-md-4'>
-              <div class="form-group">
-                  <div class='input-group date'>
+            <div class="form-group">
+              <div class='input-group date'>
                       <span class="input-group-addon">
                           <span>To: </span>
                       </span>
-                      <input :disabled="isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
-                      <span class="input-group-addon">
+                <input :disabled="isTo" v-datepicker="dt2" type='text' class="form-control" placeholder="End"/>
+                <span class="input-group-addon">
                           <button :disabled="isShow" @click="showDate" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-calendar"></span> Show</button>
                       </span>
-                  </div>
               </div>
+            </div>
           </div>
-      </div>
+        </div>
 
-      <div class="col-md-9 col-sm-8">
-        <div-loader v-if="loading_graph"></div-loader>
-        <div v-if="!loading_graph">
+        <div class="col-md-9 col-sm-8">
+          <div-loader v-if="loading_graph"></div-loader>
+          <div v-if="!loading_graph">
 
-          <%# Graph %>
-          <pre class="alert alert-warning h5" v-if="error_message">{{error_message}}</pre>
+            <%# Graph %>
+            <pre class="alert alert-warning h5" v-if="error_message">{{error_message}}</pre>
 
-          <div id="graph" v-if="!showing_url" style="height: 300px">
-          </div>
-          <%# URL %>
-          <div class="row" v-if="showing_url">
-            <div class="col-md-11 col-sm-12">
-              <blockquote class="h5" v-for="value in url_status">
-                <div class="h5">
-                  <strong><u>{{value.name}}</u>
-                    <span :class="{'text-success': value.status === 'OK', 'text-danger': value.status !== 'OK'}">{{value.status}}</span>
-                  </strong>
-                </div>
+            <div id="graph" v-if="!showing_url" style="height: 300px">
+            </div>
+            <%# URL %>
+            <div class="row" v-if="showing_url">
+              <div class="col-md-11 col-sm-12">
+                <blockquote class="h5" v-for="value in url_status">
+                  <div class="h5">
+                    <strong><u>{{value.name}}</u>
+                      <span :class="{'text-success': value.status === 'OK', 'text-danger': value.status !== 'OK'}">{{value.status}}</span>
+                    </strong>
+                  </div>
 
-                <table class="table">
-                  <thead>
+                  <table class="table">
+                    <thead>
                     <tr>
                       <th class="col-md-3">URL</th>
                       <th class="col-md-3">Response Code</th>
@@ -109,38 +110,42 @@
                       <!-- TODO -->
                       <th class="col-md-1" style="border: none"><a class="btn btn-info btn-xs" href="#">グラフ</a></th>
                     </tr>
-                  </thead>
-                  <tbody>
+                    </thead>
+                    <tbody>
                     <tr v-for="item in value.data">
                       <td>{{item.url}}</td>
                       <td>{{item.response_code}}</td>
                       <td>{{item.download_speed}}</td>
                       <td>{{item.response_time}}</td>
                     </tr>
-                  </tbody>
-                </table>
-              </blockquote>
+                    </tbody>
+                  </table>
+                </blockquote>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
-  <div class="col-md-12 col-sm-12" v-if="!before_setting">
-    <h4 class="page-header">Recent Problems</h4>
-    <div-loader v-if="loading_problems"></div-loader>
+    <div class="col-md-12 col-sm-12" v-if="!before_setting">
+      <h4 class="page-header">Recent Problems</h4>
+      <div-loader v-if="loading_problems"></div-loader>
 
-    <div style="margin-bottom: 50px" v-if="!loading_problems">
-      <span v-if="no_problem">No Recent Errors</span>
-      <table v-if="!no_problem" class="table table-condensed">
-        <thead>
+      <div style="margin-bottom: 50px" v-if="!loading_problems">
+        <span v-if="no_problem">No Recent Errors</span>
+        <table v-if="!no_problem" class="table table-condensed">
+          <thead>
           <tr>
-            <th>hosts</th> <th>triggerid</th> <th>description</th> <th>priority</th> <th>lastchange</th>
+            <th>hosts</th>
+            <th>triggerid</th>
+            <th>description</th>
+            <th>priority</th>
+            <th>lastchange</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr v-for="p in problems" :class="{danger: p.value === '1'}">
             <td v-text="p.hosts"></td>
             <td v-text="p.triggerid"></td>
@@ -148,7 +153,9 @@
             <td v-text="p.priority"></td>
             <td v-text="p.lastchange"></td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+</div>

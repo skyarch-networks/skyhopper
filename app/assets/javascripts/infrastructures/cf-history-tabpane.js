@@ -1,9 +1,10 @@
-var Infrastructure = require('models/infrastructure').default;
-var CFTemplate = require('models/cf_template').default;
+const Infrastructure = require('models/infrastructure').default;
+const CFTemplate = require('models/cf_template').default;
 
-var helpers = require('infrastructures/helper.js');
-var toLocaleString = helpers.toLocaleString;
-var alert_and_show_infra = helpers.alert_and_show_infra;
+const helpers = require('infrastructures/helper.js');
+
+const toLocaleString = helpers.toLocaleString;
+const alert_and_show_infra = helpers.alert_and_show_infra;
 
 module.exports = Vue.extend({
   template: '#cf-history-tabpane-template',
@@ -15,35 +16,37 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {
-    id: -1,
-    current: null,
-    history: [],
-  };},
+  data() {
+    return {
+      id: -1,
+      current: null,
+      history: [],
+    };
+  },
 
   methods: {
-    active: function (id) { return this.id === id; },
-    toLocaleString: toLocaleString,
+    active(id) { return this.id === id; },
+    toLocaleString,
 
-    get: function (id) {
-      var self = this;
+    get(id) {
+      const self = this;
       self.id = id;
 
-      var infra = new Infrastructure(this.infra_id);
-      var cft = new CFTemplate(infra);
-      cft.show(id).done(function (data) {
+      const infra = new Infrastructure(this.infra_id);
+      const cft = new CFTemplate(infra);
+      cft.show(id).done((data) => {
         self.current = data;
       }).fail(alert_and_show_infra(infra.id));
     },
   },
   computed: {
-    currentExists: function () { return !!this.current; },
+    currentExists() { return !!this.current; },
   },
-  created: function () {
-    var self = this;
-    var infra = new Infrastructure(this.infra_id);
-    var cft = new CFTemplate(infra);
-    cft.history().done(function (data) {
+  created() {
+    const self = this;
+    const infra = new Infrastructure(this.infra_id);
+    const cft = new CFTemplate(infra);
+    cft.history().done((data) => {
       self.history = data;
       self.$parent.loading = false;
     }).fail(alert_and_show_infra(infra.id));

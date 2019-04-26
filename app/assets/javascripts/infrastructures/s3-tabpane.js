@@ -1,8 +1,9 @@
-var Infrastructure = require('models/infrastructure').default;
-var S3Bucket       = require('models/s3_bucket').default;
+const Infrastructure = require('models/infrastructure').default;
+const S3Bucket = require('models/s3_bucket').default;
 
-var helpers = require('infrastructures/helper.js');
-var alert_and_show_infra = helpers.alert_and_show_infra;
+const helpers = require('infrastructures/helper.js');
+
+const alert_and_show_infra = helpers.alert_and_show_infra;
 
 module.exports = Vue.extend({
   template: '#s3-tabpane-template',
@@ -18,15 +19,18 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {html: ""};},
+  data() { return { html: '' }; },
 
-  compiled: function () {
-    var self = this;
-    var infra = new Infrastructure(self.infra_id);
-    var s3 = new S3Bucket(infra, this.physical_id);
-    s3.show().done(function (res) {
-      self.html = res;
-      self.$parent.loading = false;
-    }).fail(alert_and_show_infra(infra.id));
+
+  mounted() {
+    this.$nextTick(function () {
+      const self = this;
+      const infra = new Infrastructure(self.infra_id);
+      const s3 = new S3Bucket(infra, this.physical_id);
+      s3.show().done((res) => {
+        self.html = res;
+        self.$parent.loading = false;
+      }).fail(alert_and_show_infra(infra.id));
+    });
   },
 });

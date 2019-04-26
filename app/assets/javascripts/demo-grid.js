@@ -1,6 +1,6 @@
-var wrap = require('modules/wrap');
-var listen = require('modules/listen');
-var queryString = require('query-string').parse(location.search);
+const wrap = require('modules/wrap');
+const listen = require('modules/listen');
+const queryString = require('query-string').parse(location.search);
 
 // register the grid component
 module.exports = Vue.extend({
@@ -14,57 +14,61 @@ module.exports = Vue.extend({
     index: String,
     multiSelect: Boolean,
     selections: Array,
-    url:  String,
+    url: String,
     empty: String,
   },
 
-  data: function () {
-    var sortOrders = {};
-    this.columns.forEach(function (key) {
+  data() {
+    const sortOrders = {};
+    this.columns.forEach((key) => {
       sortOrders[key] = 1;
     });
     return {
       sortKey: '',
-      sortOrders: sortOrders,
+      sortOrders,
       loading: true,
       lang: queryString.lang,
       pages: 10,
       pageNumber: 0,
       filteredLength: null,
+      tbl_data: [],
     };
   },
 
   methods: {
-    sortBy: function (key) {
-      if(key !== 'id')
+    sortBy(key) {
+      if (key !== 'id') {
         this.sortKey = key;
+      }
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
-    pop: function(){
-       $('#role').popover('toggle');
+    pop() {
+      $('#role').popover('toggle');
     },
-    showPrev: function(){
-      if(this.pageNumber === 0) return;
-      this.pageNumber--;
+    showPrev() {
+      if (this.pageNumber === 0) return;
+      this.pageNumber -= 1;
     },
 
-    showNext: function(){
-      if(this.isEndPage) return;
-      this.pageNumber++;
+    showNext() {
+      if (this.isEndPage) return;
+      this.pageNumber += 1;
     },
-    select_entry: function(item)  {
-      this.picked = item;
+    select_entry(item) {
+      this.$parent.picked = item;
       if (this.multiSelect) {
         if (this.selections.includes(item)) {
-          this.selections.$remove(item);
+          const index = this.selections.indexOf(item);
+          this.selections.splice(index, 1);
         } else {
           this.selections.push(item);
         }
       }
+      this.$emit('can_edit');
     },
-    show_entry: function(item){
-      var self = this;
-      switch (self.index) {
+    show_entry(item) {
+      const self = this;
+      switch (self.$parent.index) {
         case 'clients':
           window.location.assign(item.projects_path);
           break;
@@ -77,68 +81,94 @@ module.exports = Vue.extend({
         case 'dishes':
           self.$parent.show_dish(item.id);
           break;
-        case  'serverspecs':
+        case 'serverspecs':
           self.$parent.show_serverspec(item.id);
           break;
-        case  'cf_templates':
+        case 'cf_templates':
           self.$parent.show_template(item.id);
           break;
-        case  'user_admin':
+        case 'user_admin':
+        default:
           break;
-
-
       }
-
     },
 
-    load_ajax: function (request) {
-      var self = this;
-      console.log(request);
+    coltxt_key(key) {
+      return wrap(key, this.$parent.index);
+    },
+
+    table_text(value, key, lang) {
+      return listen(value, key, this.$parent.index, lang);
+    },
+
+
+    load_ajax(request) {
+      const self = this;
       $.ajax({
         cache: false,
         url: request,
-        success: function (data) {
-          self.data = data;
+        success(data) {
+          self.tbl_data = data;
           this.pages = data.length;
           self.close_loading();
-        }
+        },
       });
-
     },
 
-    close_loading: function(){
-      var self = this;
+    close_loading() {
+      const self = this;
       self.$parent.loading = false;
-      if(self.data.length === 0){
+      if (self.tbl_data.length === 0) {
         self.$parent.is_empty = true;
       }
-      self.filteredLength = self.data.length;
-    }
+      self.filteredLength = self.tbl_data.length;
+    },
   },
 
   computed: {
-    isStartPage: function(){
+    isStartPage() {
       return (this.pageNumber === 0);
     },
-    isEndPage: function(){
-      return ((this.pageNumber + 1) * this.pages >= this.data.length);
+    isEndPage() {
+      return ((this.pageNumber + 1) * this.pages >= this.tbl_data.length);
+    },
+    table_data() {
+      const self = this;
+      let datatbl = self.tbl_data.filter((data) => {
+        if (self.filterKey === '') {
+          return true;
+        }
+        return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
+      });
+      self.$parent.gridData = datatbl;
+      self.filteredLength = datatbl.length;
+      datatbl = datatbl.sort(data => data[self.sortKey]);
+      if (self.sortOrders[self.sortKey] === -1) {
+        datatbl.reverse();
+      }
+      const index = self.pageNumber * self.pages;
+      return datatbl.slice(index, index + self.pages);
+    },
+    max_pages() {
+      return Math.ceil(this.filteredLength / this.pages);
     },
   },
-  ready: function (){
-    var self = this;
-    console.log(self.url);
+  mounted() {
+    this.$nextTick(function () {
+      const self = this;
       self.load_ajax(self.url);
+    });
   },
 
-  filters:{
-    wrap: wrap,
-    listen: listen,
-    paginate: function(list) {
-      var index = this.pageNumber * this.pages;
+  filters: {
+    wrap,
+    listen,
+    paginate(list) {
+      const index = this.pageNumber * this.pages;
       return list.slice(index, index + this.pages);
     },
-    roundup: function (val) { return (Math.ceil(val));},
-    count: function (arr) {
+    roundup(val) { return (Math.ceil(val)); },
+    count(arr) {
       // record length
       this.$set('filteredLength', arr.length);
       // return it intact

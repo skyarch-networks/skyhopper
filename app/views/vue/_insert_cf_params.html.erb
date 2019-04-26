@@ -4,16 +4,16 @@
   <%= project_params_usage %>
 
   <form class="form-horizontal">
-    <div v-for="(key , val) in params" class="form-group">
+    <div v-for="(val, key) in params" class="form-group">
       <label class="col-sm-3 control-label" :attr="key" v-text="key"></label>
 
       <div class="col-md-7">
-        <select v-if="val.AllowedValues" id="{{key}}" v-model="result[key]" class="form-control" required="">
+        <select v-if="val.AllowedValues" v-bind:id="key" v-model="result[key]" class="form-control" required="">
           <option v-for="option in val.AllowedValues" v-bind:value="option">
             {{ option }}
           </option>
         </select>
-        <input v-else id="{{key}}" v-model="result[key]" class="form-control" type="text" required="" autocomplete="off">
+        <input v-else v-bind:id="key" v-model="result[key]" class="form-control" type="text" required="" autocomplete="off">
         <span class="help-block" v-text="val.Description"></span>
       </div>
     </div>
@@ -21,7 +21,7 @@
 
   <div v-if="!loading" class="form-actions-top">
     <button @click="submit()" class="btn btn-primary"><%= t 'cf_templates.btn.send' %></button>
-    <button @click="back()"   class="btn btn-default"><%= t 'helpers.links.back' %></button>
+    <button @click="back()" class="btn btn-default"><%= t 'helpers.links.back' %></button>
   </div>
   <div v-if="loading" class="form-actions-top">
     <div-loader></div-loader>

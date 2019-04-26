@@ -1,4 +1,4 @@
-var toLocaleString = require('./helper.js').toLocaleString;
+const toLocaleString = require('./helper.js').toLocaleString;
 
 module.exports = Vue.extend({
   props: {
@@ -6,7 +6,7 @@ module.exports = Vue.extend({
     enable_sort: Boolean,
   },
   template: '#stack-events-table-template',
-  data: function() {
+  data() {
     return {
       sortKey: '',
       sortOrders: {
@@ -16,17 +16,15 @@ module.exports = Vue.extend({
         status: 1,
         reason: 1,
       },
-    }
+    };
   },
   methods: {
-    event_tr_class: function (status) {
-      if      (status === "CREATE_COMPLETE")    { return "success"; }
-      else if (status.indexOf("FAILED") !== -1) { return "danger"; }
-      else if (status.indexOf("DELETE") !== -1) { return "warning"; }
+    event_tr_class(status) {
+      if (status === 'CREATE_COMPLETE') { return 'success'; } if (status.indexOf('FAILED') !== -1) { return 'danger'; } if (status.indexOf('DELETE') !== -1) { return 'warning'; }
       return '';
     },
-    toLocaleString: toLocaleString,
-    sortBy: function (key) {
+    toLocaleString,
+    sortBy(key) {
       if (!this.enable_sort) {
         return;
       }
@@ -34,23 +32,22 @@ module.exports = Vue.extend({
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
   },
-  created: function () {
-    var self = this;
-    console.log(self);
-    this.$watch('events', function () {
-      $(self.$el).hide().fadeIn(800);
-    });
-  },
-  filters: {
-    powerfulOrderBy: function (list, sortKey, order) {
-      if (sortKey === "") {
-        return list;
+  computed: {
+    sorted_events() {
+      if (this.sortKey === '') {
+        return this.events;
       }
-      var listOrderByAsc = _.sortBy(list, sortKey);
-      if (order < 0) {
+      const listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      if (this.sortOrders[this.sortKey] < 0) {
         return listOrderByAsc.reverse();
       }
       return listOrderByAsc;
-    }
+    },
+  },
+  created() {
+    const self = this;
+    this.$watch('events', () => {
+      $(self.$el).hide().fadeIn(800);
+    });
   },
 });

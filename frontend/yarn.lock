@@ -303,6 +303,11 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+brace@0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/brace/-/brace-0.11.1.tgz#4896fcc9d544eef45f4bb7660db320d3b379fe58"
+  integrity sha1-SJb8ydVE7vRfS7dmDbMg07N5/lg=
+
 brace@0.7.0, brace@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/brace/-/brace-0.7.0.tgz#90651da5bd486edbb41888dec78afdcd07375b21"
@@ -2856,7 +2861,7 @@ vm-browserify@~0.0.1:
   dependencies:
     indexof "0.0.1"
 
-vue-ace@0.0.1, vue-ace@^0.0.1:
+vue-ace@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/vue-ace/-/vue-ace-0.0.1.tgz#c3a92629c7a13bc1d5bbda3c3f70b822474aaf24"
   integrity sha1-w6kmKcehO8HVu9o8P3C4IkdKryQ=
@@ -2864,17 +2869,22 @@ vue-ace@0.0.1, vue-ace@^0.0.1:
     brace "0.7.0"
     vue "^1.0.11"
 
-vue-router@~0.7.13:
-  version "0.7.13"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-0.7.13.tgz#e1f0f042ac2561504b27f46f6dcd17b832b1c8d1"
-  integrity sha1-4fDwQqwlYVBLJ/Rvbc0XuDKxyNE=
+vue-router@~3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.2.tgz#dedc67afe6c4e2bc25682c8b1c2a8c0d7c7e56be"
+  integrity sha512-opKtsxjp9eOcFWdp6xLQPLmRGgfM932Tl56U9chYTnoWqKxQ8M20N7AkdEbM5beUh6wICoFGYugAX9vQjyJLFg==
 
-vue@^1.0.11, vue@^1.0.8, vue@~1.0.24:
+vue@^1.0.11, vue@^1.0.8:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/vue/-/vue-1.0.28.tgz#ed2ff07b200bde15c87a90ef8727ceea7d38567d"
   integrity sha1-7S/weyAL3hXIepDvhyfO6n04Vn0=
   dependencies:
     envify "^3.4.0"
+
+vue@~2.5.17:
+  version "2.5.17"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
+  integrity sha512-mFbcWoDIJi0w0Za4emyLiW72Jae0yjANHbCVquMKijcavBGypqlF7zHRgMa5k4sesdv7hv2rB4JPdZfR+TPfhQ==
 
 w3c-blob@0.0.1:
   version "0.0.1"

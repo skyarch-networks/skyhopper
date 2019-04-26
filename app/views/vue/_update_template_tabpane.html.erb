@@ -1,17 +1,19 @@
 <div v-if="before_register">
-  <h3 class="page-header"><%= I18n.t('monitoring.register_host')%></h3>
+  <h3 class="page-header"><%= I18n.t('monitoring.register_host') %></h3>
   <div class="alert alert-warning">
     <%= t 'monitoring.msg.before_create_host' %>
   </div>
-  <button v-if="!creating"  data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
+  <button v-if="!creating" data-toggle="modal" data-target="#register-warning" class="btn btn-primary"><%= t 'monitoring.btn.create' %> </button>
   <div-loader v-if="creating"></div-loader>
   <%= render 'monitorings/modal_trigger_register_description' %>
 </div>
 
 <div class="col-md-12 col-sm-12" v-if="!before_register">
   <div-loader v-if="loading"></div-loader>
-  <h4 class="page-header"><%= t 'monitoring.linked_templates' %> <small>
-    <a href="#" data-toggle="modal" data-target="#edit-templates" class="btn-link"><span class="glyphicon glyphicon-edit"></span><%= t 'monitoring.btn.edit' %></a></small>
+  <h4 class="page-header"><%= t 'monitoring.linked_templates' %>
+    <small>
+      <a href="#" data-toggle="modal" data-target="#edit-templates" class="btn-link"><span class="glyphicon glyphicon-edit"></span><%= t 'monitoring.btn.edit' %>
+      </a></small>
   </h4>
   <ul v-for="l in templates">
     <li v-if="l.checked">{{l.name}}</li>

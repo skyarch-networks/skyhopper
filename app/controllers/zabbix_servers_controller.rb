@@ -27,6 +27,10 @@ class ZabbixServersController < ApplicationController
 
   # GET /zabbix_servers/1/edit
   def edit
+    respond_to do |format|
+      format.json
+      format.html
+    end
   end
 
   # POST /zabbix_servers

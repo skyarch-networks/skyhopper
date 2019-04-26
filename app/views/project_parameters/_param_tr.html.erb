@@ -4,14 +4,14 @@
   </td>
   <td>
 <% if updatable %>
-    <editable-div :text.sync="param.key"></editable-div>
+    <editable-div :text="param.key"></editable-div>
 <% else %>
     {{param.key}}
 <% end %>
   </td>
   <td>
 <% if updatable %>
-    <editable-div :text.sync="param.value"></editable-div>
+    <editable-div :text="param.value"></editable-div>
 <% else %>
     {{param.value}}
 <% end %>

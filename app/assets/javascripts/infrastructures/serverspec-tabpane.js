@@ -1,9 +1,10 @@
-var Infrastructure = require('models/infrastructure').default;
-var EC2Instance    = require('models/ec2_instance').default;
+const Infrastructure = require('models/infrastructure').default;
+const EC2Instance = require('models/ec2_instance').default;
 
-var helpers = require('infrastructures/helper.js');
-var alert_success        = helpers.alert_success;
-var alert_danger         = helpers.alert_danger;
+const helpers = require('infrastructures/helper.js');
+
+const alert_success = helpers.alert_success;
+const alert_danger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#serverspec-tabpane-template',
@@ -15,48 +16,50 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {
-    individuals: null,
-    globals: null,
-    loading: false,
-    loading_s: false,
-    enabled: null,
-    frequency: null,
-    day_of_week: null,
-    time: null,
-    checked_auto_generated: null,
-  };},
+  data() {
+    return {
+      individuals: null,
+      globals: null,
+      loading: false,
+      loading_s: false,
+      enabled: null,
+      frequency: null,
+      day_of_week: null,
+      time: null,
+      checked_auto_generated: null,
+    };
+  },
 
   methods: {
-    show_ec2: function () {
+    show_ec2() {
       this.$parent.show_ec2(this.physical_id);
     },
 
-    run: function () {
-      var self = this;
+    run() {
+      const self = this;
       self.loading = true;
       self.ec2.run_serverspec(
         self.globals.concat(self.individuals),
-        self.checked_auto_generated
-      ).done(function (msg) {
+        self.checked_auto_generated,
+      ).done((msg) => {
         alert_success(self.show_ec2)(msg);
         self.$parent.update_serverspec_status(self.physical_id);
       }).fail(alert_danger(self.show_ec2));
     },
 
-    change_schedule: function () {
-      var self = this;
+    change_schedule() {
+      const self = this;
       self.loading_s = true;
       self.ec2.schedule_serverspec({
         enabled: self.enabled,
         frequency: self.frequency,
         day_of_week: self.day_of_week,
-        time: self.time
-      }).done(function (msg) {
+        time: self.time,
+      }).done((msg) => {
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
         alert_success()(msg);
-      }).fail(function (msg) {
+      }).fail((msg) => {
         self.loading_s = false;
         alert_danger()(msg);
       });
@@ -64,19 +67,19 @@ module.exports = Vue.extend({
   },
 
   computed: {
-    physical_id: function () { return this.$parent.tabpaneGroupID; },
-    ec2:         function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
-    can_run:     function () {
-      if(this.globals || this.individuals ) {
-        var all_spec = this.globals.concat(this.individuals);
-        return all_spec.find(function(s){return s.checked;}) || this.checked_auto_generated;
+    physical_id() { return this.$parent.tabpaneGroupID; },
+    ec2() { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
+    can_run() {
+      if (this.globals || this.individuals) {
+        const all_spec = this.globals.concat(this.individuals);
+        return all_spec.find(s => s.checked) || this.checked_auto_generated;
       }
     },
 
 
-    next_run:    function () { return (new Date().getHours() + parseInt(this.time, 10)) % 24; },
+    next_run() { return (new Date().getHours() + parseInt(this.time, 10)) % 24; },
 
-    all_filled:  function () {
+    all_filled() {
       if (!this.enabled) return true;
       switch (this.frequency) {
         case 'weekly':
@@ -91,10 +94,10 @@ module.exports = Vue.extend({
     },
   },
 
-  created: function () {
-    var self = this;
-    self.ec2.select_serverspec().done(function (data) {
-      var schedule = data.schedule;
+  created() {
+    const self = this;
+    self.ec2.select_serverspec().done((data) => {
+      const schedule = data.schedule;
       self.individuals = data.individuals || [];
       self.globals = data.globals || [];
       self.enabled = schedule.enabled;
@@ -104,5 +107,5 @@ module.exports = Vue.extend({
 
       self.$parent.loading = false;
     }).fail(alert_danger(self.show_ec2));
-  }
+  },
 });
