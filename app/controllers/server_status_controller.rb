@@ -9,8 +9,7 @@
 class ServerStatusController < ApplicationController
   before_action :authenticate_user!
   before_action :set_server
-  after_action :watch_server_state, only: [:start, :stop]
-
+  after_action :watch_server_state, only: %i[start stop]
 
   # POST /server/:kind/start
   # @param [String] kind Server kind. "zabbix"
@@ -38,7 +37,6 @@ class ServerStatusController < ApplicationController
 
     render text: @server.latest_status and return
   end
-
 
   private
 

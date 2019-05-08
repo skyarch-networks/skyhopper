@@ -19,11 +19,11 @@ require_relative '../spec_helper'
 #   end
 # end
 RSpec.describe MonitoringsHelper, type: :helper do
-  describe "#url_settings" do
-    subject{helper.url_settings}
-    let(:url_settings){['test', 'test2']}
+  describe '#url_settings' do
+    subject { helper.url_settings }
+    let(:url_settings) { %w[test test2] }
 
-      it {is_expected.not_to be nil}
+      it { is_expected.not_to be nil }
       it 'should be valid' do
         expect(url_settings).to include('test')
       end

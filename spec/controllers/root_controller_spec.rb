@@ -9,8 +9,8 @@
 require_relative '../spec_helper'
 
 describe RootController, type: :controller do
-  let(:klass){RootController}
-  let(:request){get :root}
+  let(:klass) { RootController }
+  let(:request) { get :root }
 
   describe '#root' do
     context 'when setting is already set' do
@@ -19,7 +19,7 @@ describe RootController, type: :controller do
         request
       end
 
-      it{is_expected.to redirect_to app_settings_path}
+      it { is_expected.to redirect_to app_settings_path }
     end
 
     context 'when setting is not yet set' do
@@ -30,12 +30,12 @@ describe RootController, type: :controller do
       context 'when master user' do
         login_user(master: true)
 
-        it{request; is_expected.to redirect_to clients_path}
+        it { request; is_expected.to redirect_to clients_path }
       end
 
       context 'when not master user' do
         login_user(master: false)
-        it{request; is_expected.to redirect_to projects_path}
+        it { request; is_expected.to redirect_to projects_path }
       end
     end
   end

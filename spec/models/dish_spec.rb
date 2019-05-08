@@ -9,15 +9,15 @@
 require_relative '../spec_helper'
 
 describe Dish, type: :model do
-  let(:klass){Dish}
+  let(:klass) { Dish }
   describe 'Dish::STATUS' do
-    subject{klass::STATUS}
-    it{is_expected.to be_frozen}
+    subject { klass::STATUS }
+    it { is_expected.to be_frozen }
   end
 
   describe '#update_status' do
-    subject{build(:dish)}
-    let(:arg){:success}
+    subject { build(:dish) }
+    let(:arg) { :success }
 
     it 'should update status and save' do
       expect(subject).to receive(:status=).with(klass::STATUS[arg])
@@ -27,7 +27,7 @@ describe Dish, type: :model do
   end
 
   describe '#validating?' do
-    subject{build(:dish)}
+    subject { build(:dish) }
 
     [Dish::STATUS[:creating], Dish::STATUS[:bootstrapping], Dish::STATUS[:applying], Dish::STATUS[:serverspec]].each do |sym|
       context "when #{sym}" do
@@ -55,14 +55,14 @@ describe Dish, type: :model do
   end
 
   describe '.valid_dishes' do
-    let(:valids){  create_list(:dish, 3, project_id: nil, status: 'SUCCESS')}
-    let(:invalids){create_list(:dish, 3, project_id: nil, status: 'FAILURE')}
+    let(:valids) { create_list(:dish, 3, project_id: nil, status: 'SUCCESS') }
+    let(:invalids) { create_list(:dish, 3, project_id: nil, status: 'FAILURE') }
     before do
       valids
       invalids
     end
 
-    subject{klass.valid_dishes}
+    subject { klass.valid_dishes }
     it 'return only valid dishes' do
       expect(subject).to eq valids
     end

@@ -7,7 +7,6 @@
 #
 
 class KeyPairPolicy < ApplicationPolicy
-
   %i[index? retrieve?].each do |action|
     define_method(action) do
       user.allow?(record)

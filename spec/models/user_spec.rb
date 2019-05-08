@@ -9,13 +9,13 @@
 require_relative '../spec_helper'
 
 describe User, type: :model do
-  let(:klass){User}
-  let(:user){build_stubbed(:user, master: false)}
+  let(:klass) { User }
+  let(:user) { build_stubbed(:user, master: false) }
 
   describe '#allow?' do
     context 'when receive project' do
-      let(:project){build_stubbed(:project)}
-      subject{user.allow?(project)}
+      let(:project) { build_stubbed(:project) }
+      subject { user.allow?(project) }
 
       context 'when not allow' do
         it do
@@ -35,8 +35,8 @@ describe User, type: :model do
     end
 
     context 'when receive infra' do
-      let(:infra){build_stubbed(:infrastructure)}
-      subject{user.allow?(infra)}
+      let(:infra) { build_stubbed(:infrastructure) }
+      subject { user.allow?(infra) }
 
       context 'when not allow' do
         it do
@@ -57,9 +57,9 @@ describe User, type: :model do
   end
 
   describe '#create_project' do
-    let(:client){build_stubbed(:client)}
+    let(:client) { build_stubbed(:client) }
 
-    subject{user.create_project(client)}
+    subject { user.create_project(client) }
 
     it do
       expect(subject).to be_a Project
@@ -72,21 +72,21 @@ describe User, type: :model do
   end
 
   describe '#trim_password' do
-    subject{user.trim_password}
-    it {is_expected.not_to be_include(:encrypted_password)}
-    it {is_expected.not_to be_include(:mfa_secret_key)}
-    it {is_expected.to be_a Hash}
-    it {is_expected.to be_all{|key, _|key.is_a? Symbol}}
+    subject { user.trim_password }
+    it { is_expected.not_to be_include(:encrypted_password) }
+    it { is_expected.not_to be_include(:mfa_secret_key) }
+    it { is_expected.to be_a Hash }
+    it { is_expected.to be_all { |key, _| key.is_a? Symbol } }
 
     context 'when mfa use' do
-      let(:user){build_stubbed(:user, mfa_secret_key: 'hoge')}
+      let(:user) { build_stubbed(:user, mfa_secret_key: 'hoge') }
       it 'mfa_use should be true' do
         expect(subject[:mfa_use]).to be true
       end
     end
 
     context 'when not mfa use' do
-      let(:user){build_stubbed(:user, mfa_secret_key: nil)}
+      let(:user) { build_stubbed(:user, mfa_secret_key: nil) }
       it 'mfa_use should not be true' do
         expect(subject[:mfa_use]).to be false
       end

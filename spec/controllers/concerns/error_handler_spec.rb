@@ -18,18 +18,18 @@ describe Concerns::ErrorHandler do
         render nothing: true
       end
     end
-    let(:req){get :index}
+    let(:req) { get :index }
 
     context 'when ajax' do
       request_as_ajax
-      before{req}
+      before { req }
       it do
         expect(assigns[:ajax]).to be true
       end
     end
 
     context 'when not ajax' do
-      before{req}
+      before { req }
       it do
         expect(assigns[:ajax]).to be false
       end
@@ -44,19 +44,19 @@ describe Concerns::ErrorHandler do
       end
     end
 
-    let(:ex){StandardError.new(error_msg)}
-    let(:error_msg){SecureRandom.hex(10)}
+    let(:ex) { StandardError.new(error_msg) }
+    let(:error_msg) { SecureRandom.hex(10) }
     before do
       allow_any_instance_of(ApplicationController).to receive(:ex).and_return(ex)
       allow(ex).to receive(:backtrace).and_return(['foo'])
     end
-    let(:req){get :index}
+    let(:req) { get :index }
 
     context 'when ajax' do
       request_as_ajax
 
-      before{req}
-      let(:err){JSON.parse(response.body, symbolize_names: true)[:error]}
+      before { req }
+      let(:err) { JSON.parse(response.body, symbolize_names: true)[:error] }
 
       should_be_failure
 
@@ -70,8 +70,8 @@ describe Concerns::ErrorHandler do
     end
 
     context 'when not ajax' do
-      before{req}
-      it {is_expected.to redirect_to root_path}
+      before { req }
+      it { is_expected.to redirect_to root_path }
       it 'should set flash.alert' do
         expect(request.flash[:alert]).to eq error_msg
       end

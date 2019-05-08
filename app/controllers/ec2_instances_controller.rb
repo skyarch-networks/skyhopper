@@ -11,13 +11,14 @@
 class Ec2InstancesController < ApplicationController
   include Concerns::InfraLogger
 
-
   # --------------- Auth
   before_action :authenticate_user!
 
   before_action do
     infra = Infrastructure.find(params.require(:infra_id))
-    def infra.policy_class;Ec2InstancePolicy end
+    def infra.policy_class
+      Ec2InstancePolicy
+    end
     authorize infra
   end
 
@@ -35,12 +36,12 @@ class Ec2InstancesController < ApplicationController
     begin
       changed_type = instance.change_scale(type)
     rescue EC2Instance::ChangeScaleError => ex
-      render text: ex.message, status: 400 and return
+      render text: ex.message, status: :bad_request and return
     end
 
     if changed_type == before_type
-      #TODO: status code はこれでいい?
-      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: 200 and return
+      # TODO: status code はこれでいい?
+      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :ok and return
     end
 
     render text: I18n.t('nodes.msg.changed_scale', type: type) and return
@@ -56,7 +57,7 @@ class Ec2InstancesController < ApplicationController
     resp = []
     items.each do |item|
       unless infra.resources.where(physical_id: item[:instance_id]).exists?
-        resp.push({physical_id: item[:instance_id]})
+        resp.push({ physical_id: item[:instance_id] })
       end
     end
 
@@ -100,7 +101,7 @@ class Ec2InstancesController < ApplicationController
     zabbix = params.require(:zabbix)
     resource = Resource.find_by(physical_id: physical_id)
 
-    if zabbix == "true"
+    if zabbix == 'true'
       resource.detach_zabbix
     end
 
@@ -143,18 +144,16 @@ class Ec2InstancesController < ApplicationController
     render nothing: true
   end
 
-
   # GET /ec2_instances/:id/serverspec_status
   # @param [String] id ec2 instance physical_id
   # @param [String] infra_id Infrastructure id
   # @return [String] JSON. {status: Boolean}
   def serverspec_status
     physical_id = params.require(:id)
-    status = ! Resource.find_by(physical_id: physical_id).status.servertest.failed?
+    status = !Resource.find_by(physical_id: physical_id).status.servertest.failed?
 
-    render json: {status: status}
+    render json: { status: status }
   end
-
 
   # POST /ec2_instances/:id/register_to_elb
   # @param [String] id physical_id of ec2 instance
@@ -207,7 +206,6 @@ class Ec2InstancesController < ApplicationController
     render text: I18n.t('security_groups.msg.change_success')
   end
 
-
   def attachable_volumes
     physical_id       = params.require(:id)
     infra_id          = params.require(:infra_id)
@@ -216,7 +214,7 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     volumes = instance.attachable_volumes(availability_zone)
 
-    render json: {attachable_volumes: volumes}
+    render json: { attachable_volumes: volumes }
   end
 
   def attach_volume
@@ -248,10 +246,10 @@ class Ec2InstancesController < ApplicationController
 
     options = {
       availability_zone: params.require(:availability_zone),
-      snapshot_id:       params[:snapshot_id],
-      volume_type:       params[:volume_type],
-      size:              params[:size].to_i,
-      encrypted:         params[:encrypted],
+      snapshot_id: params[:snapshot_id],
+      volume_type: params[:volume_type],
+      size: params[:size].to_i,
+      encrypted: params[:encrypted],
     }
     options[:iops] = params[:iops] if options[:volume_type] == 'io1'
 
@@ -270,7 +268,7 @@ class Ec2InstancesController < ApplicationController
       begin
         instance.wait_status(status)
         ws.push_as_json(error: nil, msg: "#{instance.physical_id} status is #{status}")
-      rescue => ex
+      rescue StandardError => ex
         ws.push_error(ex)
       end
     end

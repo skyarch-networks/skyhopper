@@ -7,15 +7,15 @@
 #
 
 module ClientsHelper
-
   def edit_client_path_url(client)
     return nil unless Pundit.policy(current_user, client).edit?
-    return edit_client_path(client)
+
+    edit_client_path(client)
   end
 
   def delete_client_path(client)
     return nil unless Pundit.policy(current_user, client).destroy?
-    return client_path(client)
-  end
 
+    client_path(client)
+  end
 end

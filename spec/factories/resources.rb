@@ -10,20 +10,20 @@
 
 FactoryGirl.define do
   factory :resource, aliases: [:ec2_resource] do
-    sequence(:physical_id){|n| "i-123#{n}abc" }
-    type_name "AWS::EC2::Instance"
-    screen_name "EC2 Instance"
+    sequence(:physical_id) { |n| "i-123#{n}abc" }
+    type_name 'AWS::EC2::Instance'
+    screen_name 'EC2 Instance'
     register_in_known_hosts true
     infrastructure
 
     factory :rds_resource do
-      type_name   "AWS::RDS::DBInstance"
+      type_name   'AWS::RDS::DBInstance'
       screen_name nil
       register_in_known_hosts nil
     end
 
     factory :s3bucket_resource do
-      type_name   "AWS::S3::Bucket"
+      type_name   'AWS::S3::Bucket'
       screen_name nil
       register_in_known_hosts nil
     end

@@ -16,27 +16,29 @@ describe AppSettingsController, type: :controller do
   end
 
   describe '#show' do
-    let(:req){get :show}
+    let(:req) { get :show }
 
     context 'when success' do
-      before{req}
+      before { req }
       should_be_success
     end
 
     context 'when AppSetting already set' do
-      before{create(:app_setting)}
-      before{req}
-      it {is_expected.to redirect_to root_path}
+      before { create(:app_setting) }
+      before { req }
+      it { is_expected.to redirect_to root_path }
     end
   end
 
   describe '#create' do
-    let(:settings){{
-      aws_region: 'ap-northeast-1',
-      log_directory: '/foo',
-    }}
-    let(:ec2key){create(:ec2_private_key)}
-    let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
+    let(:settings) do
+      {
+        aws_region: 'ap-northeast-1',
+        log_directory: '/foo',
+      }
+    end
+    let(:ec2key) { create(:ec2_private_key) }
+    let(:settings_with_ec2_key_id) { settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value) }
 
     before do
       allow(Thread).to receive(:new_with_db)
@@ -79,12 +81,12 @@ describe AppSettingsController, type: :controller do
   end
 
   describe '#edit_zabbix' do
-    let(:set){create(:app_setting)}
-    before{set}
-    before{get :edit_zabbix}
+    let(:set) { create(:app_setting) }
+    before { set }
+    before { get :edit_zabbix }
 
     should_be_success
-    it {is_expected.to render_template 'zabbix_server'}
+    it { is_expected.to render_template 'zabbix_server' }
     it 'should assign @app_setting' do
       expect(assigns[:app_setting]).to eq set
     end
@@ -127,19 +129,20 @@ describe AppSettingsController, type: :controller do
 
   describe '#check_eip_limit!' do
     controller AppSettingsController do
-      def authorize(*)end #XXX: pundit hack
+      def authorize(*)end # XXX: pundit hack
+
       def test
         set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
         check_eip_limit!(false)
         render text: 'success'
       rescue ::AppSettingsController::EIPLimitError
-        render text: 'failure', status: 400
+        render text: 'failure', status: :bad_request
       end
     end
-    before{routes.draw{resources(:app_settings){collection{get :test}}}}
-    let(:req){get :test}
+    before { routes.draw { resources(:app_settings) { collection { get :test } } } }
+    let(:req) { get :test }
 
-    let(:eip_n){2}
+    let(:eip_n) { 2 }
 
     before do
       res = double('describe_account_attributes response')
@@ -150,7 +153,7 @@ describe AppSettingsController, type: :controller do
     end
 
     context 'when can allocate EIP' do
-      let(:eip_n){2}
+      let(:eip_n) { 2 }
       should_be_success
 
       it 'should be set body' do
@@ -159,7 +162,7 @@ describe AppSettingsController, type: :controller do
     end
 
     context 'when cannot allocate EIP' do
-      let(:eip_n){5}
+      let(:eip_n) { 5 }
       should_be_failure
 
       it 'should be set body' do

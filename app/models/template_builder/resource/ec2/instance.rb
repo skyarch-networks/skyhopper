@@ -7,41 +7,39 @@
 #
 
 class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
-
-  #rubocop:disable Style/MutableConstant
+  # rubocop:disable Style/MutableConstant
   InstanceTypes = {}
   AWS::InstanceTypes[:current].each do |type|
-    InstanceTypes[type.to_s] = {HVM: true}
+    InstanceTypes[type.to_s] = { HVM: true }
 
     group = type.to_s[/^([0-9a-z]+)./, 1].upcase.to_sym
-    if !AWS::InstanceTypes[:features][group][:hvm_only]
+    unless AWS::InstanceTypes[:features][group][:hvm_only]
       InstanceTypes[type.to_s][:PV] = true
     end
   end
   AWS::InstanceTypes[:previous].each do |type|
-    InstanceTypes[type.to_s] = {PV: true}
+    InstanceTypes[type.to_s] = { PV: true }
   end
 
   InstanceTypes.recursive_freeze
 
   @@properties = [
     # API的にはrequiredではないが、requiredとして扱いたい
-    TemplateBuilder::Property.new(:InstanceType, String, required: true, select: true){instance_types},
+    TemplateBuilder::Property.new(:InstanceType, String, required: true, select: true) { instance_types },
     TemplateBuilder::Property.new(:DisableApiTermination, :Boolean),
     TemplateBuilder::Property.new(:Monitoring, :Boolean),
     TemplateBuilder::Property.new(:SecurityGroupIds, Array, data_validator: String),
     TemplateBuilder::Property.new(:Tags, Array, data_validator:
       TemplateBuilder::Property.new(:EC2_Tag, Hash, data_validator: {
-        Key:   TemplateBuilder::Property.new(:Key,   String, required: true),
-        Value: TemplateBuilder::Property.new(:Value, String, required: true),
-      })),
+                                      Key: TemplateBuilder::Property.new(:Key, String, required: true),
+                                      Value: TemplateBuilder::Property.new(:Value, String, required: true),
+                                    },),),
   ].freeze
 
   # @name => @@resource_base
   @@resource_base = duped_resource_base
-  @@resource_base[:Properties][:KeyName] = {Ref: "KeyName"}
+  @@resource_base[:Properties][:KeyName] = { Ref: 'KeyName' }
   @@resource_base.recursive_freeze
-
 
   class << self
     def instance_types
@@ -55,7 +53,7 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
   def virtual_type
     instance_type = @properties[:InstanceType]
     return nil unless instance_type
-    return :HVM if instance_type.kind_of?(Hash) and instance_type.size == 1 and instance_type[:Ref]
+    return :HVM if instance_type.is_a?(Hash) and instance_type.size == 1 and instance_type[:Ref]
 
     if InstanceTypes[instance_type][:HVM]
       return :HVM
@@ -67,9 +65,9 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
   def build
     result = super
     result[@name][:Properties][:ImageId] = {
-      'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", {Ref: "AWS::Region"}, "AMI"],
+      'Fn::FindInMap'.to_sym => ["RegionMap#{virtual_type}", { Ref: 'AWS::Region' }, 'AMI'],
     }
 
-    return result
+    result
   end
 end

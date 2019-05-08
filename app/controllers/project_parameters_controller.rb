@@ -7,13 +7,14 @@
 #
 
 class ProjectParametersController < ApplicationController
-
   # ------------- Auth
   before_action :authenticate_user!
 
   before_action :set_project
   before_action do
-    def @project.policy_class;ProjectParameterPolicy;end
+    def @project.policy_class
+      ProjectParameterPolicy
+    end
     authorize(@project)
   end
 
@@ -29,19 +30,19 @@ class ProjectParametersController < ApplicationController
     parameters = JSON.parse(params.require(:parameters), symbolize_names: true)
 
     # Update すべきな parameters
-    update_parameters = parameters.select{|p| p[:changed] && p[:id]}
+    update_parameters = parameters.select { |p| p[:changed] && p[:id] }
     update_parameters.each do |p|
       param_db = @project.project_parameters.find(p[:id])
       param_db.update!(p.slice(:key, :value))
     end
 
     # Destroy すべきな parameters
-    destroy_parameters = @project.project_parameter_ids - parameters.map{|p|p[:id]}.compact
+    destroy_parameters = @project.project_parameter_ids - parameters.map { |p| p[:id] }.compact
     ProjectParameter.where(id: destroy_parameters).delete_all
 
     # Create すべきな parameters
-    create_parameters = parameters.select{|p| p[:id].nil?}
-    ProjectParameter.import create_parameters.map{|p| ProjectParameter.new(key: p[:key], value: p[:value], project: @project)}
+    create_parameters = parameters.select { |p| p[:id].nil? }
+    ProjectParameter.import create_parameters.map { |p| ProjectParameter.new(key: p[:key], value: p[:value], project: @project) }
 
     # TODO: I18n
     render text: I18n.t('project_parameters.msg.updated')

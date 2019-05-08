@@ -10,19 +10,21 @@ require_relative '../spec_helper'
 
 RSpec.describe ServertestJob, type: :job do
   describe '#perform' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){SecureRandom.base64(10)}
-    let(:servertests){create_list(:servertest, 3)}
-    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra, servertests: servertests)}
-    let(:user){create(:user)}
-    let(:status_text){'success'}
-    let(:resp){{
-      status_text: status_text,
-      message: 'Success!',
-      status: (status_text != 'failed') && (status_text != 'error'),
-      error_servertest_names: [],
-    }}
-    let(:job){ServertestJob.perform_now(physical_id, infra.id, user.id)}
+    let(:infra) { create(:infrastructure) }
+    let(:physical_id) { SecureRandom.base64(10) }
+    let(:servertests) { create_list(:servertest, 3) }
+    let(:resource) { create(:resource, physical_id: physical_id, infrastructure: infra, servertests: servertests) }
+    let(:user) { create(:user) }
+    let(:status_text) { 'success' }
+    let(:resp) do
+      {
+        status_text: status_text,
+        message: 'Success!',
+        status: (status_text != 'failed') && (status_text != 'error'),
+        error_servertest_names: [],
+      }
+    end
+    let(:job) { ServertestJob.perform_now(physical_id, infra.id, user.id) }
 
     before do
       allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, servertests.map(&:id)).and_return(resp)
@@ -34,7 +36,7 @@ RSpec.describe ServertestJob, type: :job do
     end
 
     context 'when received servertest_ids' do
-      let(:altr_serverspecs){create_list(:servertest, 4)}
+      let(:altr_serverspecs) { create_list(:servertest, 4) }
       it 'servertest_ids of resource should be update' do
         ids = altr_serverspecs.map(&:id)
         allow_any_instance_of(Node).to receive(:run_serverspec).with(infra.id, ids).and_return(resp)
@@ -50,24 +52,34 @@ RSpec.describe ServertestJob, type: :job do
       end
 
       it 'should raise error' do
-        expect{job}.to raise_error StandardError
+        expect { job }.to raise_error StandardError
       end
 
       it 'should create infra log' do
-        expect{job rescue nil}.to change(InfrastructureLog, :count).by(2)
+        expect do
+          begin
+                   job
+          rescue StandardError
+            nil
+                 end
+        end .to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be failure' do
-        job rescue nil
+        begin
+          job
+        rescue StandardError
+          nil
+        end
         expect(InfrastructureLog.last.status).to be false
       end
     end
 
     context 'when status success' do
-      let(:status_text){'success'}
+      let(:status_text) { 'success' }
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(2)
+        expect { job }.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be success' do
@@ -77,10 +89,10 @@ RSpec.describe ServertestJob, type: :job do
     end
 
     context 'when status pending' do
-      let(:status_text){'pending'}
+      let(:status_text) { 'pending' }
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(2)
+        expect { job }.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be success' do
@@ -90,10 +102,10 @@ RSpec.describe ServertestJob, type: :job do
     end
 
     context 'when status pending' do
-      let(:status_text){'failed'}
+      let(:status_text) { 'failed' }
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(2)
+        expect { job }.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be failure' do
@@ -103,10 +115,10 @@ RSpec.describe ServertestJob, type: :job do
     end
 
     context 'when status error' do
-      let(:status_text){'error'}
+      let(:status_text) { 'error' }
 
       it 'should create infra log' do
-        expect{job}.to change(InfrastructureLog, :count).by(2)
+        expect { job }.to change(InfrastructureLog, :count).by(2)
       end
 
       it 'should be failure' do

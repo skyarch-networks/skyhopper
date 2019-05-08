@@ -15,7 +15,9 @@ class KeyPairsController < ApplicationController
   before_action :set_project
 
   before_action do
-    def @project.policy_class; KeyPairPolicy; end
+    def @project.policy_class
+      KeyPairPolicy
+    end
     authorize(@project)
   end
 
@@ -33,21 +35,20 @@ class KeyPairsController < ApplicationController
   # DELETE /key_pairs/:fingerprint
   def destroy
     region     = params.require(:region)
-    fingerprint   = params.require(:fingerprint)
+    fingerprint = params.require(:fingerprint)
 
     @ec2 = Aws::EC2::Client.new(
-      access_key_id:     @project.access_key,
+      access_key_id: @project.access_key,
       secret_access_key: @project.secret_access_key,
-      region:            region
+      region: region,
     )
     check_fingerprint(fingerprint)
 
     @ec2.delete_key_pair(key_name: @key_name)
 
     ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(@key_name)), true)
-    render nothing: true, status: 200 and return
+    render nothing: true, status: :ok and return
   end
-
 
   private
 
@@ -56,7 +57,7 @@ class KeyPairsController < ApplicationController
   end
 
   def check_fingerprint(fingerprint)
-    keys = @ec2.describe_key_pairs()
+    keys = @ec2.describe_key_pairs
     keys[:key_pairs].each do |item|
       if item.key_fingerprint.eql? fingerprint
         @key_name = item.key_name
@@ -64,6 +65,4 @@ class KeyPairsController < ApplicationController
       end
     end
   end
-
-
 end

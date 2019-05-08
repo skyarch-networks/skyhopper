@@ -10,7 +10,7 @@ require 'yaml'
 
 class YamlValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    YAML::load(value)
+    YAML::safe_load(value)
   rescue Psych::SyntaxError => ex
     msg = ex.message
     record.errors[attribute] << msg

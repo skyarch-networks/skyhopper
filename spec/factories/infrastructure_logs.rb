@@ -9,7 +9,7 @@
 FactoryGirl.define do
   factory :infrastructure_log do
     infrastructure
-    sequence(:status){|n|n.even?}
+    sequence(:status, &:even?)
     details '------ Sugoi Log ------'
     user
   end

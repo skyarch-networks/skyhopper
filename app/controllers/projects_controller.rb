@@ -13,7 +13,7 @@ class ProjectsController < ApplicationController
 
   # --------------- existence check
   before_action :client_exist, only: [:index]
-  before_action :project_exist, only: [:edit, :update, :destroy]
+  before_action :project_exist, only: %i[edit update destroy]
 
   before_action only: [:index] do
     if current_user.master && !params[:client_id]
@@ -21,9 +21,13 @@ class ProjectsController < ApplicationController
     end
   end
 
-  before_action :set_project, only: [:edit, :update, :destroy]
+  before_action :set_project, only: %i[edit update destroy]
   before_action do
-    client_id = params[:client_id] || params[:project][:client_id] rescue nil
+    client_id = begin
+                  params[:client_id] || params[:project][:client_id]
+                rescue StandardError
+                  nil
+                end
     authorize(@project || Project.new(client_id: client_id))
   end
 
@@ -72,7 +76,7 @@ class ProjectsController < ApplicationController
   # POST /projects
   # POST /projects.json
   def create
-    on_error = -> () {
+    on_error = lambda {
       session[:form] = project_params
       redirect_to new_project_path(client_id: params[:project][:client_id])
     }
@@ -87,20 +91,20 @@ class ProjectsController < ApplicationController
     @project = Project.new(project_params)
     unless @project.save
       flash[:alert] = @project.errors
-      on_error.() and return
+      on_error.call and return
     end
 
     begin
       @project.register_hosts(@zabbix, current_user)
 
       redirect_to projects_path(client_id: @project.client_id),
-        notice: I18n.t('projects.msg.created') and return
-    rescue => ex
+                  notice: I18n.t('projects.msg.created') and return
+    rescue StandardError => ex
       # In many case, create hostgroup was failed.
       # If use Project#destroy, Project detached from zabbix by model hook.
       @project.delete
       flash[:alert] = ex.message
-      on_error.() and return
+      on_error.call and return
     end
   end
 
@@ -116,9 +120,9 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       @project.register_hosts(@zabbix, current_user)
       redirect_to projects_path(client_id: @project.client_id),
-        notice: I18n.t('projects.msg.updated')
+                  notice: I18n.t('projects.msg.updated')
     else
-      flash[:alert] = @project.errors.full_messages.join(" ")
+      flash[:alert] = @project.errors.full_messages.join(' ')
       redirect_to edit_project_path(params) and return
     end
   end
@@ -129,17 +133,17 @@ class ProjectsController < ApplicationController
     if @project.zabbix_server_id.present?
       with_zabbix
     end
-    go = -> (){redirect_to(projects_path(client_id: @project.client_id))}
+    go = -> { redirect_to(projects_path(client_id: @project.client_id)) }
     begin
       @project.destroy!
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = ex.message
       ws_send(t('projects.msg.deleted', name: ex.message), false)
       return 404
     end
 
     ws_send(t('projects.msg.deleted', name: @project.name), true)
-    go.() and return
+    go.call and return
   end
 
   private

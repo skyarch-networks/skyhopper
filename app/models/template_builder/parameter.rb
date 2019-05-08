@@ -39,10 +39,8 @@ class TemplateBuilder::Parameter
       build_for_array(param)
     end
 
-
-    return param
+    param
   end
-
 
   private
 
@@ -64,7 +62,5 @@ class TemplateBuilder::Parameter
     end
   end
 
-  def build_for_array(_param)
-
-  end
+  def build_for_array(_param); end
 end

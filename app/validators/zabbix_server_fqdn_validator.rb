@@ -14,13 +14,13 @@ class ZabbixServerFqdnValidator < ActiveModel::Validator
       return
     end
 
-    if fqdn =~ /-read$/
-      record.errors[:fqdn] << "should not match /-read$/"
+    if /-read$/.match?(fqdn)
+      record.errors[:fqdn] << 'should not match /-read$/'
       return
     end
 
-    if fqdn =~ /-read-write$/
-      record.errors[:fqdn] << "should not match /-read-write$/"
+    if /-read-write$/.match?(fqdn)
+      record.errors[:fqdn] << 'should not match /-read-write$/'
       return
     end
   end

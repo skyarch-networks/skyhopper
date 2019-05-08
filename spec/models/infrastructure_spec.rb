@@ -9,14 +9,16 @@
 require_relative '../spec_helper'
 
 describe Infrastructure, type: :model do
-  let(:klass){Infrastructure}
-  let(:ec2key){build(:ec2_private_key)}
+  let(:klass) { Infrastructure }
+  let(:ec2key) { build(:ec2_private_key) }
 
   describe '.create_with_ec2_private_key!' do
-    let(:params){{
-      keypair_name: ec2key.name,
-      keypair_value: ec2key.value,
-    }}
+    let(:params) do
+      {
+        keypair_name: ec2key.name,
+        keypair_value: ec2key.value,
+      }
+    end
 
     it 'should call create!' do
       expect(klass).to receive(:create!).with(klass.__send__(:create_ec2_private_key, params))
@@ -25,10 +27,12 @@ describe Infrastructure, type: :model do
   end
 
   describe '.create_with_ec2_private_key' do
-    let(:params){{
-      keypair_name: ec2key.name,
-      keypair_value: ec2key.value,
-    }}
+    let(:params) do
+      {
+        keypair_name: ec2key.name,
+        keypair_value: ec2key.value,
+      }
+    end
 
     it 'should call create!' do
       expect(klass).to receive(:create).with(klass.__send__(:create_ec2_private_key, params))
@@ -43,19 +47,21 @@ describe Infrastructure, type: :model do
       AppSetting.clear_cache
     end
 
-    let(:project){build_stubbed(:project)}
-    subject{Infrastructure.create_for_test(project.id, "DISH_NAME")}
+    let(:project) { build_stubbed(:project) }
+    subject { Infrastructure.create_for_test(project.id, 'DISH_NAME') }
 
-    it{is_expected.to be_a Infrastructure}
+    it { is_expected.to be_a Infrastructure }
   end
 
   describe '.create_ec2_private_key' do
-    let(:params){{
-      keypair_name: ec2key.name,
-      keypair_value: ec2key.value,
-    }}
+    let(:params) do
+      {
+        keypair_name: ec2key.name,
+        keypair_value: ec2key.value,
+      }
+    end
 
-    subject{lambda{|params| klass.__send__(:create_ec2_private_key, params)}}
+    subject { ->(params) { klass.__send__(:create_ec2_private_key, params) } }
 
     it do
       expect(subject.call(params)).to be_kind_of Hash
@@ -84,11 +90,13 @@ describe Infrastructure, type: :model do
   end
 
   describe '#update_with_ec2_private_key!' do
-    let(:infra){build(:infrastructure, resources: [])}
-    let(:params){{
-      keypair_name: ec2key.name,
-      keypair_value: ec2key.value,
-    }}
+    let(:infra) { build(:infrastructure, resources: []) }
+    let(:params) do
+      {
+        keypair_name: ec2key.name,
+        keypair_value: ec2key.value,
+      }
+    end
 
     it 'should create ec2_private_key and update attributes' do
       old_ec2_private_key_id = infra.ec2_private_key.id
@@ -99,15 +107,14 @@ describe Infrastructure, type: :model do
     it 'should delete old ec2_private_key' do
       old_ec2_private_key_id = infra.ec2_private_key.id
       infra.update_with_ec2_private_key!(params)
-      expect{Ec2PrivateKey.find(old_ec2_private_key_id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Ec2PrivateKey.find(old_ec2_private_key_id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
-
   end
 
   describe '#resources_or_create' do
-    let(:infra){build(:infrastructure, resources: [])}
-    let(:resources){build_list(:ec2_resource, 3)}
-    subject{infra.resources_or_create}
+    let(:infra) { build(:infrastructure, resources: []) }
+    let(:resources) { build_list(:ec2_resource, 3) }
+    subject { infra.resources_or_create }
 
     context 'when resources already exists' do
       before do
@@ -138,9 +145,9 @@ describe Infrastructure, type: :model do
   end
 
   describe '#resources_updated?' do
-    let(:infra){build(:infrastructure, resources: [])}
-    let(:resources){build_list(:ec2_resource, 3)}
-    subject{infra.resources_updated?}
+    let(:infra) { build(:infrastructure, resources: []) }
+    let(:resources) { build_list(:ec2_resource, 3) }
+    subject { infra.resources_updated? }
 
     before do
       infra.resources = resources
@@ -149,7 +156,7 @@ describe Infrastructure, type: :model do
     end
 
     context 'when there is a difference in physical_id of resources' do
-      let(:instances_for_resources){[]}
+      let(:instances_for_resources) { [] }
 
       it 'shoud return true' do
         is_expected.to eq true
@@ -157,11 +164,13 @@ describe Infrastructure, type: :model do
     end
 
     context 'when there is not a difference in physical_id of resources' do
-      let(:instances_for_resources){resources.map{|resource|
-        resource_mock = double('resource')
-        allow(resource_mock).to receive(:physical_resource_id).and_return(resource.physical_id)
-        resource_mock
-      }}
+      let(:instances_for_resources) do
+        resources.map  do |resource|
+          resource_mock = double('resource')
+       allow(resource_mock).to receive(:physical_resource_id).and_return(resource.physical_id)
+       resource_mock
+        end
+      end
 
       it 'shoud return false' do
         is_expected.to eq false
@@ -170,7 +179,7 @@ describe Infrastructure, type: :model do
   end
 
   describe '#access_key' do
-    subject{build(:infrastructure)}
+    subject { build(:infrastructure) }
 
     it 'should eq Project#access_key' do
       expect(subject.access_key).to eq subject.project.access_key
@@ -188,7 +197,7 @@ describe Infrastructure, type: :model do
   end
 
   describe '#secret_access_key' do
-    subject{build(:infrastructure)}
+    subject { build(:infrastructure) }
 
     it 'should eq Project#secret_access_key' do
       expect(subject.secret_access_key).to eq subject.project.secret_access_key
@@ -206,8 +215,7 @@ describe Infrastructure, type: :model do
   end
 
   describe '#ec2' do
-    subject{build(:infrastructure)}
-
+    subject { build(:infrastructure) }
 
     it 'return Aws::EC2::Client' do
       result = double('result')
@@ -215,7 +223,7 @@ describe Infrastructure, type: :model do
       expect(::Aws::EC2::Client).to receive(:new).with(
         access_key_id: subject.access_key,
         secret_access_key: subject.secret_access_key,
-        region: subject.region
+        region: subject.region,
       ).and_return(result)
 
       expect(subject.ec2).to eq result
@@ -223,8 +231,8 @@ describe Infrastructure, type: :model do
   end
 
   describe '#instance' do
-    subject{build(:infrastructure)}
-    let(:physical_id){'hogehoge'}
+    subject { build(:infrastructure) }
+    let(:physical_id) { 'hogehoge' }
 
     it do
       expect(EC2Instance).to receive(:new).with(subject, physical_id: physical_id)
@@ -233,8 +241,8 @@ describe Infrastructure, type: :model do
   end
 
   describe '#rds' do
-    subject{build(:infrastructure)}
-    let(:physical_id){'foofoooo'}
+    subject { build(:infrastructure) }
+    let(:physical_id) { 'foofoooo' }
 
     it do
       expect(RDS).to receive(:new).with(subject, physical_id)
@@ -243,21 +251,21 @@ describe Infrastructure, type: :model do
   end
 
   describe '#create_complete?' do
-    subject{infra.create_complete?}
+    subject { infra.create_complete? }
     context 'when create complete' do
-      let(:infra){build(:infrastructure, status: 'CREATE_COMPLETE')}
-      it{is_expected.to be true}
+      let(:infra) { build(:infrastructure, status: 'CREATE_COMPLETE') }
+      it { is_expected.to be true }
     end
 
     context 'when not create complete' do
-      let(:infra){build(:infrastructure, status: 'ROLLBACK_COMPLETE')}
-      it{is_expected.to be false}
+      let(:infra) { build(:infrastructure, status: 'ROLLBACK_COMPLETE') }
+      it { is_expected.to be false }
     end
   end
 
   describe '#client' do
-    let(:infra){create(:infrastructure)}
-    subject{infra.client}
-    it {is_expected.to eq infra.project.client}
+    let(:infra) { create(:infrastructure) }
+    subject { infra.client }
+    it { is_expected.to eq infra.project.client }
   end
 end

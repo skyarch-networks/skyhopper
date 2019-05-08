@@ -10,13 +10,13 @@
 # Historyとは別に選択できるようにする。
 class CfTemplate < ActiveRecord::Base
   validates :id,
-    uniqueness: true
+            uniqueness: true
   validates :value, json: true, if: :JSON?
   validates :value, yaml: true, if: :YAML?
 
   belongs_to :infrastructure
   belongs_to :user
-  enum format: [:JSON, :YAML]
+  enum format: %i[JSON YAML]
 
   class ParseError < ::StandardError; end
 
@@ -34,20 +34,19 @@ class CfTemplate < ActiveRecord::Base
   # create parameters set for cloudformation
   def create_cfparams_set(infrastructure, params_inserted = {})
     parameters = []
-    if parse_value['Parameters'].try(:include?, "KeyName")
+    if parse_value['Parameters'].try(:include?, 'KeyName')
       parameters.push(
-        parameter_key:   "KeyName",
-        parameter_value: infrastructure.keypairname
+        parameter_key: 'KeyName',
+        parameter_value: infrastructure.keypairname,
       )
     end
 
-    params_inserted.try!(:each) do |key, val|
+    params_inserted&.each do |key, val|
       parameters.push(
         parameter_key: key,
-        parameter_value: ProjectParameter.exec(val, project_id: infrastructure.project_id)
+        parameter_value: ProjectParameter.exec(val, project_id: infrastructure.project_id),
       )
     end
-
 
     @params_not_json = parameters.compact
   end
@@ -64,14 +63,14 @@ class CfTemplate < ActiveRecord::Base
     cf_client = Aws::CloudFormation::Client.new(
       region: aws_region,
       access_key_id: access_key,
-      secret_access_key: secret_access_key
+      secret_access_key: secret_access_key,
     )
-    cf_client.validate_template(template_body: self.value)
+    cf_client.validate_template(template_body: value)
   end
 
   # @return [Hash<String => String>]
   def parsed_cfparams
-    @params_not_json || JSON::parse(self.params)
+    @params_not_json || JSON::parse(params)
   end
 
   def update_cfparams
@@ -79,16 +78,16 @@ class CfTemplate < ActiveRecord::Base
   end
 
   def parse_value
-    if self.format == 'JSON'
+    if format == 'JSON'
       begin
-        return JSON::parse(self.value)
+        return JSON::parse(value)
       rescue JSON::ParserError => ex
         raise ParseError, ex.message
       end
     end
-    if self.format == 'YAML'
+    if format == 'YAML'
       begin
-        return YAML::load(self.value)
+        return YAML::safe_load(value)
       rescue Psych::SyntaxError => ex
         raise ParseError, ex.message
       end

@@ -14,7 +14,7 @@ class TemplateBuilder
   require_relative 'template_builder/resource'
 
   @@base_template = {
-    AWSTemplateFormatVersion: "2010-09-09",
+    AWSTemplateFormatVersion: '2010-09-09',
     Description: nil,
     Parameters: {
       KeyName: {
@@ -29,24 +29,24 @@ class TemplateBuilder
 
   @@ami_mappings = {
     HVM: {
-      "us-east-1"      => { "AMI" => "ami-b66ed3de" },
-      "us-west-1"      => { "AMI" => "ami-4b6f650e" },
-      "us-west-2"      => { "AMI" => "ami-b5a7ea85" },
-      "eu-west-1"      => { "AMI" => "ami-6e7bd919" },
-      "sa-east-1"      => { "AMI" => "ami-8737829a" },
-      "ap-southeast-1" => { "AMI" => "ami-ac5c7afe" },
-      "ap-southeast-2" => { "AMI" => "ami-63f79559" },
-      "ap-northeast-1" => { "AMI" => "ami-4985b048" },
+      'us-east-1' => { 'AMI' => 'ami-b66ed3de' },
+      'us-west-1' => { 'AMI' => 'ami-4b6f650e' },
+      'us-west-2' => { 'AMI' => 'ami-b5a7ea85' },
+      'eu-west-1' => { 'AMI' => 'ami-6e7bd919' },
+      'sa-east-1' => { 'AMI' => 'ami-8737829a' },
+      'ap-southeast-1' => { 'AMI' => 'ami-ac5c7afe' },
+      'ap-southeast-2' => { 'AMI' => 'ami-63f79559' },
+      'ap-northeast-1' => { 'AMI' => 'ami-4985b048' },
     },
     PV: { # 古くて動かないかも
-      "us-east-1"      => { "AMI" => "ami-35792c5c" },
-      "us-west-1"      => { "AMI" => "ami-687b4f2d" },
-      "us-west-2"      => { "AMI" => "ami-d03ea1e0" },
-      "eu-west-1"      => { "AMI" => "ami-149f7863" },
-      "sa-east-1"      => { "AMI" => "ami-9f6ec982" },
-      "ap-southeast-1" => { "AMI" => "ami-14f2b946" },
-      "ap-southeast-2" => { "AMI" => "ami-a148d59b" },
-      "ap-northeast-1" => { "AMI" => "ami-3561fe34" },
+      'us-east-1' => { 'AMI' => 'ami-35792c5c' },
+      'us-west-1' => { 'AMI' => 'ami-687b4f2d' },
+      'us-west-2' => { 'AMI' => 'ami-d03ea1e0' },
+      'eu-west-1' => { 'AMI' => 'ami-149f7863' },
+      'sa-east-1' => { 'AMI' => 'ami-9f6ec982' },
+      'ap-southeast-1' => { 'AMI' => 'ami-14f2b946' },
+      'ap-southeast-2' => { 'AMI' => 'ami-a148d59b' },
+      'ap-northeast-1' => { 'AMI' => 'ami-3561fe34' },
     },
   }
 
@@ -70,27 +70,27 @@ class TemplateBuilder
   end
 
   def add(resource)
-    raise ArgumentError, "#{resource} isn't resource" unless resource.kind_of? TemplateBuilder::Resource
+    raise ArgumentError, "#{resource} isn't resource" unless resource.is_a? TemplateBuilder::Resource
 
-    names = @resources.map{|x|x.name}
+    names = @resources.map(&:name)
     raise ResourceAlreadyExist, "#{resource.name} already exist" if names.include?(resource.name)
 
     @resources << resource
   end
 
   def add_param(param)
-    raise ArgumentError, "#{param} isn't parameter" unless param.kind_of? TemplateBuilder::Parameter
+    raise ArgumentError, "#{param} isn't parameter" unless param.is_a? TemplateBuilder::Parameter
 
-    param_names = @parameters.map{|p| p.name}
+    param_names = @parameters.map(&:name)
     raise ParameterAlreadyExist, "#{param.name} already exist" if param_names.include?(param.name)
 
     @parameters << param
   end
 
   def add_output(output)
-    raise ArgumentError, "#{output} isn't output" unless output.kind_of? TemplateBuilder::Output
+    raise ArgumentError, "#{output} isn't output" unless output.is_a? TemplateBuilder::Output
 
-    output_names = @outputs.map{|out| out.name}
+    output_names = @outputs.map(&:name)
     raise OutputAlreadyExist, "#{output.name} already exist" if output_names.include?(output.name)
 
     @outputs << output
@@ -101,19 +101,19 @@ class TemplateBuilder
 
     # set Mappings AMI id
     # TODO: 効率悪そう
-    ec2s = @resources.select{|r| r.kind_of? TemplateBuilder::Resource::EC2::Instance}
-    have_hvm = ec2s.any?{|ec2| ec2.virtual_type == :HVM}
-    have_pv  = ec2s.any?{|ec2| ec2.virtual_type == :PV}
+    ec2s = @resources.select { |r| r.is_a? TemplateBuilder::Resource::EC2::Instance }
+    have_hvm = ec2s.any? { |ec2| ec2.virtual_type == :HVM }
+    have_pv  = ec2s.any? { |ec2| ec2.virtual_type == :PV }
 
     if have_hvm
-      result[:Mappings][:RegionMapHVM] =  @@ami_mappings[:HVM]
+      result[:Mappings][:RegionMapHVM] = @@ami_mappings[:HVM]
     end
     if have_pv
       result[:Mappings][:RegionMapPV] = @@ami_mappings[:PV]
     end
 
     # set Description
-    result[:Description] = @resources.map{|r| r.resource_type}.sort.inject(Hash.new(0)){|x, y| x[y] += 1;x}.map{|key, val| "#{key} x #{val}"}.join(', ')
+    result[:Description] = @resources.map(&:resource_type).sort.each_with_object(Hash.new(0)) { |y, x| x[y] += 1; }.map { |key, val| "#{key} x #{val}" }.join(', ')
 
     # set Resources
     @resources.each do |resource|
@@ -132,13 +132,10 @@ class TemplateBuilder
       result[:Outputs].merge!(builded_output)
     end
 
-    return result
+    result
   end
 
-  def to_json
-    build.to_json
-  end
-  # rubocop:enable Rails/Delegate
+  delegate :to_json, to: :build
 
   def to_pretty_json
     JSON::pretty_generate(build)

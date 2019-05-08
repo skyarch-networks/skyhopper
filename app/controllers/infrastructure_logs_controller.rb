@@ -57,6 +57,7 @@ class InfrastructureLogsController < ApplicationController
     if params[:sort_key].nil? && params[:order].nil?
       return 'DESC'
     end
+
     params[:order].to_i >= 0 ? 'ASC' : 'DESC'
   end
 end

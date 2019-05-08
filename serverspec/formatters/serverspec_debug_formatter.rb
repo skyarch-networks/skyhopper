@@ -18,7 +18,6 @@ class ServerspecDebugFormatter < RSpec::Core::Formatters::BaseFormatter
     }
   end
 
-
   def message(notification)
     (@output_hash[:messages] ||= []) << notification.message
   end
@@ -39,7 +38,7 @@ class ServerspecDebugFormatter < RSpec::Core::Formatters::BaseFormatter
       format_example(example).tap do |hash|
         e = example.exception
         if e
-          hash[:exception] =  {
+          hash[:exception] = {
             class: e.class.name,
             message: e.message,
             backtrace: e.backtrace,
@@ -80,7 +79,7 @@ class ServerspecDebugFormatter < RSpec::Core::Formatters::BaseFormatter
     end
   end
 
-private
+  private
 
   def format_example(example)
     {

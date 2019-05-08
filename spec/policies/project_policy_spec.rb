@@ -9,13 +9,13 @@
 require_relative '../spec_helper'
 
 describe ProjectPolicy do
-  subject{described_class}
-  let(:master_user){build(:user, master: true,  admin: false)}
-  let(:admin_user) {build(:user, master: false, admin: true)}
-  let(:normal_user){build(:user, master: false, admin: false)}
-  let(:strong_user){build(:user, master: true,  admin: true)}
+  subject { described_class }
+  let(:master_user) { build(:user, master: true, admin: false) }
+  let(:admin_user) { build(:user, master: false, admin: true) }
+  let(:normal_user) { build(:user, master: false, admin: false) }
+  let(:strong_user) { build(:user, master: true,  admin: true) }
 
-  let(:project){build(:project)}
+  let(:project) { build(:project) }
   permissions :index? do
     it 'grants access any user' do
       is_expected.to permit(master_user, project)

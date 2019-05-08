@@ -7,7 +7,6 @@
 #
 
 class InfrastructureLogPolicy < ApplicationPolicy
-
   %i[index? download_all? download?].each do |action|
     define_method(action) do
       user.allow?(record.infrastructure) ? true : false

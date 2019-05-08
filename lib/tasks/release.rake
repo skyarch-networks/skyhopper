@@ -33,7 +33,6 @@ namespace :release do
     puts '--------'
     puts
 
-
     puts 'Update process'
     puts '--------'
     puts
@@ -46,7 +45,7 @@ namespace :release do
       puts 'bundle install'
     end
 
-    if diff_files.find{|x| %r!^db/migrate/.+\.rb$!.match(x)}
+    if diff_files.find { |x| %r{^db/migrate/.+\.rb$}.match(x) }
       puts 'bundle exec rake db:migrate RAILS_ENV=production'
     end
 

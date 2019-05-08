@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 RSpec.describe OperationDuration, type: :model do
-  it "is valid with valid attributes" do
+  it 'is valid with valid attributes' do
     expect(OperationDuration.new).to be_valid
   end
 end

@@ -10,7 +10,7 @@ class ERB::Builder
 
   # @return [String]
   def build
-    return pretty(ERB.new(@value).result(binding))
+    pretty(ERB.new(@value).result(binding))
   end
 
   # @param [Symbol] name
@@ -18,13 +18,13 @@ class ERB::Builder
   def fragment(name)
     fname = FragmentRoot.join("#{name}.rb")
     # rubocop:disable Lint/Eval
-    return eval(File.read(fname)).to_json
+    eval(File.read(fname)).to_json
     # rubocop:enable Lint/Eval
   end
 
   # @param [String] json
   # @return [String] pretty json.
   def pretty(json)
-    return JSON.pretty_generate(JSON.parse(json))
+    JSON.pretty_generate(JSON.parse(json))
   end
 end

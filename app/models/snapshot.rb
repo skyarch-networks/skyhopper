@@ -21,7 +21,7 @@ class Snapshot < SimpleDelegator
 
       begin
         resp = ec2.create_snapshot(volume_id: volume_id)
-        ec2.create_tags({resources: [resp.snapshot_id], tags: [{key: 'instance-id', value: physical_id}]})
+        ec2.create_tags({ resources: [resp.snapshot_id], tags: [{ key: 'instance-id', value: physical_id }] })
       rescue Aws::EC2::Errors::IncorrectState => e
         raise VolumeRetiredError, e.message if e.message =~ /retired/
       rescue Aws::EC2::Errors::InvalidVolumeNotFound => e
@@ -35,14 +35,14 @@ class Snapshot < SimpleDelegator
       ec2 = infra.ec2
 
       parameters = { owner_ids: ['self'] }
-      parameters[:filters] = [{name: 'volume-id', values: [volume_id]}] if volume_id && !volume_id.empty?
+      parameters[:filters] = [{ name: 'volume-id', values: [volume_id] }] if volume_id.present?
       resp = ec2.describe_snapshots(parameters)
 
-      return resp.snapshots.map { |snapshot|
+      resp.snapshots.map do |snapshot|
         tags_hash = snapshot.tags.map { |tag| [tag.key, tag.value] }.to_h
         snapshot.tags = tags_hash
         snapshot
-      }
+      end
     end
   end
 
@@ -62,8 +62,8 @@ class Snapshot < SimpleDelegator
       snapshot_ids: [snapshot_id],
       filters: [
         { name: 'volume-id', values: [volume_id] },
-        { name: 'snapshot-id', values: [snapshot_id]},
-      ]
+        { name: 'snapshot-id', values: [snapshot_id] },
+      ],
     )
 
     resp.snapshots.first.state
@@ -71,13 +71,13 @@ class Snapshot < SimpleDelegator
 
   def delete
     raise VolumeProtectedError if protected?
+
     __getobj__.delete
   end
 
   def protected?
-    tags.any? { |tag|
+    tags.any? do |tag|
       tag.key == PROTECTION_TAG_NAME && tag.value != 'false'
-    }
+    end
   end
-
 end

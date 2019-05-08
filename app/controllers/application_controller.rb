@@ -19,8 +19,8 @@ class ApplicationController < ActionController::Base
   include Concerns::ControllerUtil
   include Pundit
 
-  def default_url_options(_option={})
-    {lang: I18n.locale}
+  def default_url_options(_option = {})
+    { lang: I18n.locale }
   end
 
   private
@@ -36,10 +36,7 @@ class ApplicationController < ActionController::Base
     I18n.locale =
       if I18n::available_locales.include?(lang.to_sym)
         lang
-      else
-        nil
       end
-
   end
 
   def set_notifications

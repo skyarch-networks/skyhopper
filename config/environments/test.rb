@@ -13,8 +13,8 @@ SkyHopper::Application.configure do
   config.eager_load = false
 
   # Configure static asset server for tests with Cache-Control for performance.
-  config.serve_static_files  = true
-  config.static_cache_control = "public, max-age=3600"
+  config.serve_static_files = true
+  config.static_cache_control = 'public, max-age=3600'
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -36,5 +36,5 @@ SkyHopper::Application.configure do
 
   config.logger = Logger.new('log/test.log', 5, 10.megabyte)
   config.log_level = :error
-  config.cache_store = :memory_store, {size: 64.megabytes}
+  config.cache_store = :memory_store, { size: 64.megabytes }
 end

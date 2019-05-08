@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ZabbixServer, type: :model do
   describe 'with validation' do
     describe 'column fqdn' do
-      let(:zb){build(:zabbix_server)}
+      let(:zb) { build(:zabbix_server) }
 
       it 'should not be "master"' do
         zb.fqdn = 'master'
@@ -24,7 +24,7 @@ RSpec.describe ZabbixServer, type: :model do
 
   describe 'with restrict_with_error' do
     stubize_zabbix
-    let(:zabbix_server){create :zabbix_server}
+    let(:zabbix_server) { create :zabbix_server }
 
     context 'when zabbix_server has some infra' do
       before do
@@ -33,14 +33,14 @@ RSpec.describe ZabbixServer, type: :model do
       end
 
       it 'cant destroy' do
-        expect{zabbix_server.destroy}.to raise_error ActiveRecord::DeleteRestrictionError
+        expect { zabbix_server.destroy }.to raise_error ActiveRecord::DeleteRestrictionError
         expect(ZabbixServer).to be_exists zabbix_server.id
       end
     end
 
     context 'when zabbix_server does not have any inra' do
       it 'can destroy' do
-        expect{zabbix_server.destroy}.not_to raise_error
+        expect { zabbix_server.destroy }.not_to raise_error
         expect(ZabbixServer).not_to be_exists zabbix_server.id
       end
     end

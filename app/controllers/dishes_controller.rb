@@ -6,17 +6,21 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-#TODO: Rails.logger
+# TODO: Rails.logger
 class DishesController < ApplicationController
   include DishesController::Validate
 
   # --------------- Auth
   before_action :authenticate_user!
 
-  before_action :set_dish, only: [:show, :edit, :update, :destroy]
+  before_action :set_dish, only: %i[show edit update destroy]
 
   before_action do
-    project_id = params[:project_id] || (params[:dish][:project_id] rescue nil)
+    project_id = params[:project_id] || (begin
+                                           params[:dish][:project_id]
+                                         rescue StandardError
+                                           nil
+                                         end)
     authorize(@dish || Dish.new(project_id: project_id))
   end
 
@@ -57,7 +61,7 @@ class DishesController < ApplicationController
     # TODO error handling
     @dish.update(
       servertest_ids: servertest_ids,
-      status:      nil
+      status: nil,
     )
 
     render text: I18n.t('dishes.msg.updated')
@@ -78,7 +82,7 @@ class DishesController < ApplicationController
 
     if dish.save
       redirect_to dishes_path(project_id: project_id),
-        notice: I18n.t('dishes.msg.created')
+                  notice: I18n.t('dishes.msg.created')
     else
       # TODO: show error message
       redirect_to new_dish_path(project_id: project_id)
@@ -102,11 +106,9 @@ class DishesController < ApplicationController
   # Projectに紐付いたDishを扱っているか返す。
   # 紐付いていればproject_id, 紐付いていなければ nil を返す。
   def have_project?
-    begin
-      return params[:project_id] || Dish.find(params[:id]).project_id || params[:dish][:id]
-    rescue
-      return nil
-    end
+    params[:project_id] || Dish.find(params[:id]).project_id || params[:dish][:id]
+  rescue StandardError
+    nil
   end
 
   def set_dish

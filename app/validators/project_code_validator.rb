@@ -14,13 +14,13 @@ class ProjectCodeValidator < ActiveModel::Validator
       return
     end
 
-    if code =~ /-read$/
-      record.errors[:code] << "should not match /-read$/"
+    if /-read$/.match?(code)
+      record.errors[:code] << 'should not match /-read$/'
       return
     end
 
-    if code =~ /-read-write$/
-      record.errors[:code] << "should not match /-read-write$/"
+    if /-read-write$/.match?(code)
+      record.errors[:code] << 'should not match /-read-write$/'
       return
     end
   end

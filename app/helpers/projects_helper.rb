@@ -9,13 +9,14 @@
 module ProjectsHelper
   def delete_project_url(project)
     return nil unless Pundit.policy(current_user, project).destroy?
-    return project_path(project)
+
+    project_path(project)
   end
 
   def project_settings(project)
-    return {dishes_path:  dishes_path(project_id: project.id),
+    { dishes_path: dishes_path(project_id: project.id),
       key_pairs_path: key_pairs_path(project_id: project.id),
-      project_parameters_path: project_parameters_path(project_id: project.id)}
+      project_parameters_path: project_parameters_path(project_id: project.id), }
   end
 
   def button_add_project(client)
@@ -23,7 +24,7 @@ module ProjectsHelper
     return nil unless Pundit.policy(current_user, Project.new(client: client)).new?
 
     link_to t('projects.btn.add'),
-      new_project_path(client_id: client.id),
-      class: 'btn btn-primary btn-sm'
+            new_project_path(client_id: client.id),
+            class: 'btn btn-primary btn-sm'
   end
 end

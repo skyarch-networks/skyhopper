@@ -7,7 +7,6 @@
 #
 
 module Concerns::Cryptize
-
   # @param [Symbol] name is an attributes name.
   def cryptize(name)
     # XXX: secrets を変更したときに正しく (en|de)crypt できる？
@@ -24,6 +23,7 @@ module Concerns::Cryptize
   end
 
   private
+
   def crypter
     ::ActiveSupport::MessageEncryptor.new(db_crypt_secret)
   end
@@ -33,6 +33,7 @@ module Concerns::Cryptize
     unless db_crypt_secret.nil?
       return db_crypt_secret
     end
+
     db_crypt_key = ::SkyHopper::Application.secrets[:db_crypt_key]
     db_crypt_salt = ::SkyHopper::Application.secrets[:db_crypt_salt]
     key_len = ::ActiveSupport::MessageEncryptor.key_len

@@ -2,7 +2,7 @@
 json.array!(@clients) do |client|
   json.id client.id
   show_url = link_to client.code, projects_path(client_id: client.id)
-  json.code [show_url , client.projects.count]
+  json.code [show_url, client.projects.count]
   json.name client.name
   json.projects_path projects_path(client_id: client.id)
 

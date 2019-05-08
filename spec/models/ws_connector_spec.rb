@@ -9,15 +9,14 @@
 require_relative '../spec_helper'
 
 describe WSConnector do
-  let(:redis){double('redis')}
+  let(:redis) { double('redis') }
   before do
     allow(Redis).to receive(:new).and_return(redis)
   end
 
-  let(:kind){'kindhogehoge'}
-  let(:id){'idfugafuga'}
-  let(:instance){WSConnector.new(kind, id)}
-
+  let(:kind) { 'kindhogehoge' }
+  let(:id) { 'idfugafuga' }
+  let(:instance) { WSConnector.new(kind, id) }
 
   describe '#new' do
     it 'should assign @kind' do
@@ -38,7 +37,7 @@ describe WSConnector do
   end
 
   describe '#push' do
-    let(:data){'datapiyopiyo'}
+    let(:data) { 'datapiyopiyo' }
     it 'should call Redis#publish' do
       expect(redis).to receive(:publish).with(instance.instance_variable_get(:@endpoint), data)
       instance.push(data)
@@ -46,7 +45,7 @@ describe WSConnector do
   end
 
   describe '#push_as_json' do
-    let(:data){{foo: 'bar'}}
+    let(:data) { { foo: 'bar' } }
     it 'should call Redis#publish' do
       expect(redis).to receive(:publish).with(instance.instance_variable_get(:@endpoint), kind_of(String))
       instance.push_as_json(data)
@@ -54,7 +53,7 @@ describe WSConnector do
   end
 
   describe '#push_error' do
-    let(:ex){StandardError.new('hoge')}
+    let(:ex) { StandardError.new('hoge') }
     it 'should call Redis#publish' do
       expect(redis).to receive(:publish).with(instance.instance_variable_get(:@endpoint), kind_of(String))
       instance.push_error(ex)

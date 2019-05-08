@@ -16,27 +16,28 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
       key_pairs = []
       threads = []
       AWS::Regions.each do |region|
-        threads << Thread.new(key_pairs, region) {
+        threads << Thread.new(key_pairs, region) do
           ec2 = Aws::EC2::Client.new(
-            access_key_id:     project.access_key,
+            access_key_id: project.access_key,
             secret_access_key: project.secret_access_key,
-            region:            region
+            region: region,
           )
           keypairs_resp = ec2.describe_key_pairs.key_pairs
           next if keypairs_resp.empty?
 
           instances_resp = ec2.describe_instances
-          using_keys = instances_resp.reservations.map { |e|
+          using_keys = instances_resp.reservations.map do |e|
             instance = e.instances[0]
             next if instance.state.name == 'terminated'
+
             instance.key_name
-          }
+          end
 
           keypairs_resp.each do |key_pair|
             using = using_keys.include?(key_pair.key_name)
             key_pairs << KeyPair.new(key_pair.key_name, key_pair.key_fingerprint, region, using)
           end
-        }
+        end
       end
       threads.each(&:join)
 
@@ -52,15 +53,16 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
       project = Project.find(project_id)
 
       ec2 = Aws::EC2::Client.new(
-        access_key_id:     project.access_key,
+        access_key_id: project.access_key,
         secret_access_key: project.secret_access_key,
-        region:            region
+        region: region,
       )
 
        keypairs_resp = ec2.describe_key_pairs.key_pairs
 
-       keypair = keypairs_resp.find{|k| k.key_name == keypair_name}
+       keypair = keypairs_resp.find { |k| k.key_name == keypair_name }
        raise MissingKeyPairError, I18n.t('infrastructures.msg.invalid_keypair') unless keypair
+
        fingerprint = keypair.key_fingerprint.delete(':')
 
        if fingerprint.size == 32
@@ -72,12 +74,12 @@ KeyPair = Struct.new(:name, :fingerprint, :region, :using) do
        else # 40
          # Keypair from AWS console
          # XXX: OpenSSL::Digest::SHA1 doesn't work... so, use openssl command instead of it.
-         data = IO.popen("openssl pkcs8 -nocrypt -topk8 -outform DER", 'r+') do |io|
+         data = IO.popen('openssl pkcs8 -nocrypt -topk8 -outform DER', 'r+') do |io|
            io.print(keypair_value)
            io.close_write
            io.read
          end
-         fingerprint_created = OpenSSL::Digest::SHA1.new(data).to_s  # => "7d1816f1c0c961e490419f207c7fae43cd58f5d4"
+         fingerprint_created = OpenSSL::Digest::SHA1.new(data).to_s # => "7d1816f1c0c961e490419f207c7fae43cd58f5d4"
          raise MissingKeyPairError, I18n.t('infrastructures.msg.invalid_keypair') if fingerprint != fingerprint_created
        end
     end
