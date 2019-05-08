@@ -15,10 +15,10 @@ class ServertestSchedule < Schedule
   JOB_CLASS_NAME = PeriodicServerspecJob.to_s.freeze
 
   def delete_enqueued_jobs
-    jobs = Sidekiq::ScheduledSet.new.select { |job|
+    jobs = Sidekiq::ScheduledSet.new.select do |job|
       args = job.args[0]
-      args['job_class'] == JOB_CLASS_NAME && args['arguments'][0] == self.physical_id
-    }
+      args['job_class'] == JOB_CLASS_NAME && args['arguments'][0] == physical_id
+    end
     jobs.each(&:delete)
   end
 end

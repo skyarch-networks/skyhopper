@@ -29,12 +29,12 @@ class Dish < ActiveRecord::Base
   end
 
   def validating?
-    case self.status
+    case status
     when STATUS[:creating], STATUS[:bootstrapping], STATUS[:applying], STATUS[:serverspec]
       return true
     end
 
-    return false
+    false
   end
 
   def self.valid_dishes(project_id = nil)

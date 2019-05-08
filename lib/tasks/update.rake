@@ -1,6 +1,6 @@
 namespace :update do
   desc 'Update the encrypted value of the database from the old type to the current type'
-  task :update_encrypted_value => :environment do
+  task update_encrypted_value: :environment do
     update_from_old_encrypted_attribute_value(User, :mfa_secret_key)
     update_from_old_encrypted_attribute_value(ZabbixServer, :password)
     update_from_old_encrypted_attribute_value(Project, :access_key)
@@ -18,6 +18,7 @@ namespace :update do
         if old_encrypted_value.nil?
           next
         end
+
         record.__send__("#{attribute}=".to_sym, legacy_crypter.decrypt_and_verify(old_encrypted_value))
         record.save!
       end

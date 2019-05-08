@@ -9,5 +9,4 @@
 require_relative '../spec_helper'
 
 describe EC2Instance, type: :model do
-
 end

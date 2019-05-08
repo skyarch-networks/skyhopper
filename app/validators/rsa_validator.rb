@@ -14,7 +14,7 @@ class RsaValidator < ActiveModel::Validator
     begin
       OpenSSL::PKey::RSA.new(v)
     rescue OpenSSL::PKey::RSAError
-      record.errors[:value] << "is invalid as SSH key"
+      record.errors[:value] << 'is invalid as SSH key'
     end
   end
 end

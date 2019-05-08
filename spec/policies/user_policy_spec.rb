@@ -9,12 +9,12 @@
 require_relative '../spec_helper'
 
 describe UserPolicy do
-  subject{described_class}
+  subject { described_class }
 
-  let(:user){build(:user)}
-  let(:master_user){build(:user, master: true,  admin: false)}
-  let(:admin_user) {build(:user, master: false, admin: true)}
-  let(:normal_user){build(:user, master: false, admin: false)}
+  let(:user) { build(:user) }
+  let(:master_user) { build(:user, master: true, admin: false) }
+  let(:admin_user) { build(:user, master: false, admin: true) }
+  let(:normal_user) { build(:user, master: false, admin: false) }
 
   %i[index? create? new? update? edit? destroy? sync_zabbix?].each do |action|
     permissions action do

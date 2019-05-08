@@ -26,9 +26,9 @@ class RDS < SimpleDelegator
     region            = infra.region
 
     @rds = Aws::RDS::Client.new(
-      access_key_id:     access_key_id,
+      access_key_id: access_key_id,
       secret_access_key: secret_access_key,
-      region:            region
+      region: region,
     )
 
     @db_instance = @rds.describe_db_instances(db_instance_identifier: physical_id)[:db_instances][0] # get only 1 instance
@@ -40,11 +40,11 @@ class RDS < SimpleDelegator
   def security_groups
     security_groups = []
     @db_instance[:vpc_security_groups].each do |item|
-      if item.status == "active"
+      if item.status == 'active'
         security_groups.push(item.vpc_security_group_id)
       end
     end
-    return security_groups
+    security_groups
   end
 
   def change_scale(scale)
@@ -54,10 +54,10 @@ class RDS < SimpleDelegator
 
     begin
       res = @rds.modify_db_instance({
-        db_instance_class: scale,
-        db_instance_identifier: @db_instance.db_instance_identifier,
-        apply_immediately: true,
-      })
+                                      db_instance_class: scale,
+                                      db_instance_identifier: @db_instance.db_instance_identifier,
+                                      apply_immediately: true,
+                                    })
       if res.db_instance.pending_modified_values.to_a.none?
         raise ChangeScaleError, 'DB instance is not modified.'
       end
@@ -69,19 +69,17 @@ class RDS < SimpleDelegator
   end
 
   def modify_security_groups(group_ids)
-    begin
-      @rds.modify_db_instance({
-        vpc_security_group_ids: group_ids,
-        db_instance_identifier: @db_instance.db_instance_identifier,
-        apply_immediately: true,
-      })
-    rescue AWS::RDS::Errors::InvalidParameterValue => ex
-      raise ChangeScaleError, ex.message
-    end
+    @rds.modify_db_instance({
+                              vpc_security_group_ids: group_ids,
+                              db_instance_identifier: @db_instance.db_instance_identifier,
+                              apply_immediately: true,
+                            })
+  rescue AWS::RDS::Errors::InvalidParameterValue => ex
+    raise ChangeScaleError, ex.message
   end
 
   def physical_id
-    self.db_instance_identifier
+    db_instance_identifier
   end
 
   def start_db_instance

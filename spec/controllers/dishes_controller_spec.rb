@@ -11,9 +11,9 @@ require 'spec_helper'
 describe DishesController, type: :controller do
   login_user
 
-  let(:klass){Dish}
-  let(:dish){create(:dish)}
-  let(:project){nil}
+  let(:klass) { Dish }
+  let(:dish) { create(:dish) }
+  let(:project) { nil }
 
   describe '#index' do
     before do
@@ -26,7 +26,7 @@ describe DishesController, type: :controller do
     end
 
     context 'when have project' do
-      let(:project){create(:project)}
+      let(:project) { create(:project) }
       before do
         create(:dish, project: project)
       end
@@ -70,7 +70,7 @@ describe DishesController, type: :controller do
   end
 
   describe '#edit' do
-     before do
+    before do
       get :edit, id: dish.id
     end
 
@@ -88,9 +88,9 @@ describe DishesController, type: :controller do
   end
 
   describe '#update' do
-    let(:servertest){create(:servertest)}
-    let(:runlist){['hoge', 'fuga']}
-    let(:update_request){patch :update, id: dish.id, serverspecs: [servertest.id]}
+    let(:servertest) { create(:servertest) }
+    let(:runlist) { %w[hoge fuga] }
+    let(:update_request) { patch :update, id: dish.id, serverspecs: [servertest.id] }
 
     context 'when valid params' do
       before do
@@ -101,7 +101,7 @@ describe DishesController, type: :controller do
         dish.reload
       end
 
-      subject{dish}
+      subject { dish }
 
       it 'should success' do
         expect(response).to be_success
@@ -118,13 +118,13 @@ describe DishesController, type: :controller do
   end
 
   describe '#new' do
-    let(:project){nil}
+    let(:project) { nil }
     before do
       get :new, project_id: project.try(:id)
     end
 
     context 'when have project' do
-      let(:project){create(:project)}
+      let(:project) { create(:project) }
 
       it 'should assign @dish' do
         expect(assigns[:dish]).to be_a_new klass
@@ -141,15 +141,15 @@ describe DishesController, type: :controller do
   end
 
   describe '#create' do
-    let(:project){create(:project)}
-    let(:project_id){project.id}
-    let(:dish_hash){ attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id)}
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
+    let(:dish_hash) { attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id) }
 
-    let(:create_request){post :create, dish: dish_hash}
+    let(:create_request) { post :create, dish: dish_hash }
 
     context 'when valid pamrams' do
       it 'should increase the count of db by 1' do
-        expect{create_request}.to change(Dish, :count).by(1)
+        expect { create_request }.to change(Dish, :count).by(1)
       end
 
       context 'when project_id false' do
@@ -160,7 +160,7 @@ describe DishesController, type: :controller do
       end
 
       context 'when project_id false' do
-        let(:project_id){nil}
+        let(:project_id) { nil }
 
         it 'should redirect without project_id' do
           create_request
@@ -182,7 +182,7 @@ describe DishesController, type: :controller do
       end
 
       context 'when project_id false' do
-        let(:project_id){nil}
+        let(:project_id) { nil }
 
         it 'should render template without project_id' do
           create_request

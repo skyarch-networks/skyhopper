@@ -19,7 +19,7 @@ class ApplicationPolicy
     # @param [Array<Symbol>] actions
     def master(*actions)
       actions.each do |action|
-        define_method(action){user.master?}
+        define_method(action) { user.master? }
       end
     end
 
@@ -27,7 +27,7 @@ class ApplicationPolicy
     # @param [Array<Symbol>] actions
     def admin(*actions)
       actions.each do |action|
-        define_method(action){user.admin?}
+        define_method(action) { user.admin? }
       end
     end
 
@@ -35,7 +35,7 @@ class ApplicationPolicy
     # @param [Array<Symbol>] actions
     def master_admin(*actions)
       actions.each do |action|
-        define_method(action){user.master? and user.admin?}
+        define_method(action) { user.master? and user.admin? }
       end
     end
 

@@ -11,7 +11,7 @@ class Client < ActiveRecord::Base
   has_many :infrastructures, through: :projects
 
   validates :code,
-    uniqueness: true
+            uniqueness: true
 
   ForSystemCodeName = 'SkyHopper'.freeze
 
@@ -22,6 +22,6 @@ class Client < ActiveRecord::Base
 
   # @return [Boolean]
   def is_for_system?
-    self.code == ForSystemCodeName
+    code == ForSystemCodeName
   end
 end

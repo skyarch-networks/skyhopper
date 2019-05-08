@@ -9,15 +9,15 @@
 require_relative '../spec_helper'
 
 describe CfTemplate, type: :model do
-  let(:klass){CfTemplate}
+  let(:klass) { CfTemplate }
 
   describe 'with validation' do
     describe 'column value' do
       context 'when format is "JSON"' do
-        let(:cft){build(:cf_template)}
+        let(:cft) { build(:cf_template) }
 
         it 'should be a JSON' do
-          cft.value = "{Invalid As JSON!}"
+          cft.value = '{Invalid As JSON!}'
           expect(cft.save).to be false
           cft.value = '{"valid": "as JSON"}'
           expect(cft.save).to be true
@@ -25,10 +25,10 @@ describe CfTemplate, type: :model do
       end
 
       context 'when format is "YAML"' do
-        let(:cft){build(:cf_template_yaml)}
+        let(:cft) { build(:cf_template_yaml) }
 
         it 'should be a YAML' do
-          cft.value = "Invalid: As: YAML!"
+          cft.value = 'Invalid: As: YAML!'
           expect(cft.save).to be false
           cft.value = 'valid: "as YAML"'
           expect(cft.save).to be true
@@ -38,42 +38,42 @@ describe CfTemplate, type: :model do
   end
 
   describe '.for_infra' do
-    let(:infra){create(:infrastructure)}
-    subject{klass.for_infra(infra.id)}
+    let(:infra) { create(:infrastructure) }
+    subject { klass.for_infra(infra.id) }
 
     before do
       create(:cf_template, infrastructure: infra)
     end
 
     it 'should return cf_templates for infra' do
-      is_expected.to be_all{|t|t.infrastructure_id == infra.id}
+      is_expected.to be_all { |t| t.infrastructure_id == infra.id }
     end
   end
 
   describe '.global' do
-    subject{klass.global}
+    subject { klass.global }
 
     before do
       create(:cf_template, infrastructure: nil)
     end
 
     it 'should return global cf_templates' do
-      is_expected.to be_all{|t|t.infrastructure_id.nil?}
+      is_expected.to be_all { |t| t.infrastructure_id.nil? }
     end
   end
 
   describe '#create_cfparams_set' do
-    let(:cft){build(:cf_template)}
-    let(:infra){build(:infrastructure)}
-    let(:subject){cft.create_cfparams_set(infra, params_inserted)}
+    let(:cft) { build(:cf_template) }
+    let(:infra) { build(:infrastructure) }
+    let(:subject) { cft.create_cfparams_set(infra, params_inserted) }
 
     context 'when not received params_inserted' do
-      let(:params_inserted){nil}
+      let(:params_inserted) { nil }
       context 'when have KeyName' do
-        it {is_expected.to be_a Array}
-        it {expect(subject.size).to be 1}
-        it {expect(subject.first[:parameter_key]).to eq 'KeyName'}
-        it {expect(subject.first[:parameter_value]).to eq infra.keypairname}
+        it { is_expected.to be_a Array }
+        it { expect(subject.size).to be 1 }
+        it { expect(subject.first[:parameter_key]).to eq 'KeyName' }
+        it { expect(subject.first[:parameter_value]).to eq infra.keypairname }
       end
 
       context 'when not have KeyName' do
@@ -82,7 +82,7 @@ describe CfTemplate, type: :model do
           v['Parameters'].delete('KeyName')
           cft.value = JSON.generate(v)
         end
-        it {is_expected.to eq []}
+        it { is_expected.to eq [] }
       end
 
       context 'when not have Parameters field' do
@@ -91,15 +91,15 @@ describe CfTemplate, type: :model do
           v.delete('Parameters')
           cft.value = JSON.generate(v)
         end
-        it {is_expected.to eq []}
+        it { is_expected.to eq [] }
       end
     end
 
     context 'when received params_inserted' do
-      let(:params_inserted){{'foo' => 'bar', 'hoge' => 'fuga'}}
+      let(:params_inserted) { { 'foo' => 'bar', 'hoge' => 'fuga' } }
 
-      it{is_expected.to be_a Array}
-      it{expect(subject.size).to be 3}
+      it { is_expected.to be_a Array }
+      it { expect(subject.size).to be 3 }
       it 'should be [{parameter_key: String, parameter_value: String}, ...]' do
         subject.each do |val|
           expect(val).to match(parameter_key: kind_of(String), parameter_value: kind_of(String))
@@ -109,11 +109,11 @@ describe CfTemplate, type: :model do
   end
 
   describe '#parsed_cfparams' do
-    subject{cf_template.parsed_cfparams}
+    subject { cf_template.parsed_cfparams }
 
     context 'when assign @params_not_json' do
-      let(:cf_template){build(:cf_template)}
-      let(:params_not_json){{foo: 'bar'}}
+      let(:cf_template) { build(:cf_template) }
+      let(:params_not_json) { { foo: 'bar' } }
 
       before do
         cf_template.instance_variable_set(:@params_not_json, params_not_json)
@@ -125,8 +125,8 @@ describe CfTemplate, type: :model do
     end
 
     context 'when not assign @params_not_json' do
-      let(:params){JSON[{foo: 'hogehoge'}]}
-      let(:cf_template){build(:cf_template, params: params)}
+      let(:params) { JSON[{ foo: 'hogehoge' }] }
+      let(:cf_template) { build(:cf_template, params: params) }
 
       before do
         cf_template.instance_variable_set(:@params_not_json, nil)
@@ -139,9 +139,9 @@ describe CfTemplate, type: :model do
   end
 
   describe '#update_cfparams' do
-    let(:params_not_json){{'foo' => 'hogefuga'}}
-    let(:cf_template){build(:cf_template)}
-    subject{cf_template.update_cfparams}
+    let(:params_not_json) { { 'foo' => 'hogefuga' } }
+    let(:cf_template) { build(:cf_template) }
+    subject { cf_template.update_cfparams }
 
     before do
       cf_template.params = nil
@@ -155,20 +155,20 @@ describe CfTemplate, type: :model do
   end
 
   describe '#parse_value' do
-    subject{cf_template.parse_value}
+    subject { cf_template.parse_value }
 
     context 'when format is nil' do
-      let(:cf_template){build(:cf_template)}
+      let(:cf_template) { build(:cf_template) }
 
       it 'should raise ParseError' do
         cf_template.format = nil
         cf_template.value = '{Invalid As JSON!}'
-        expect{subject}.to raise_error(CfTemplate::ParseError)
+        expect { subject }.to raise_error(CfTemplate::ParseError)
       end
     end
 
     context 'when format is "JSON"' do
-      let(:cf_template){build(:cf_template)}
+      let(:cf_template) { build(:cf_template) }
 
       context 'when value is valid as JSON' do
         it 'should return parsed value' do
@@ -179,24 +179,24 @@ describe CfTemplate, type: :model do
       context 'when value is invalid as JSON' do
         it 'should raise ParseError' do
           cf_template.value = '{Invalid As JSON!}'
-          expect{subject}.to raise_error(CfTemplate::ParseError)
+          expect { subject }.to raise_error(CfTemplate::ParseError)
         end
       end
     end
 
     context 'when format is "YAML"' do
-      let(:cf_template){build(:cf_template_yaml)}
+      let(:cf_template) { build(:cf_template_yaml) }
 
       context 'when value is valid as YAML' do
         it 'should return parsed value' do
-          is_expected.to eq YAML::load(cf_template.value)
+          is_expected.to eq YAML::safe_load(cf_template.value)
         end
       end
 
       context 'when value is invalid as YAML' do
         it 'should raise ParseError' do
           cf_template.value = 'Invalid: As: YAML!'
-          expect{subject}.to raise_error(CfTemplate::ParseError)
+          expect { subject }.to raise_error(CfTemplate::ParseError)
         end
       end
     end

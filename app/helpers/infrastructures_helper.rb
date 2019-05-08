@@ -16,8 +16,7 @@ module InfrastructuresHelper
                  edit_infrastructure_path(infra)
     end
 
-    return editable
-
+    editable
   end
 
   def button_detach_stack(infra, user: current_user)
@@ -27,39 +26,38 @@ module InfrastructuresHelper
       return nil
     end
 
-    return true
-
+    true
   end
 
   def button_delete_stack(infra, user: current_user)
     return nil unless Pundit.policy(user, infra).delete_stack?
-    deletable =  deleting?(infra.status) || infra.status.blank? ? nil : true
-    return deletable
+
+    deletable = deleting?(infra.status) || infra.status.blank? ? nil : true
+    deletable
   end
 
   def button_add_infra(project, user: current_user)
     return nil unless Pundit.policy(user, Infrastructure.new(project: project)).new?
 
     link_to t('infrastructures.btn.add'),
-      new_infrastructure_path(project_id: project.id),
-      class: 'btn btn-primary btn-sm'
+            new_infrastructure_path(project_id: project.id),
+            class: 'btn btn-primary btn-sm'
   end
 
   def project_params_usage
-    <<-EOS.html_safe
-<div class="bs-callout bs-callout-info">
-  #{t('project_parameters.usage')}
-</div>
+    <<~EOS.html_safe
+      <div class="bs-callout bs-callout-info">
+        #{t('project_parameters.usage')}
+      </div>
     EOS
   end
-
 
   private
 
   def deleting?(status)
     return false unless status
-    return false if status == "DELETE_FAILED"
+    return false if status == 'DELETE_FAILED'
 
-    status.include?("DELETE")
+    status.include?('DELETE')
   end
 end

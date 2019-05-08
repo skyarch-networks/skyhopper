@@ -7,14 +7,18 @@
 #
 
 class CfTemplatesController < ApplicationController
-  before_action :set_cf_template, only: [:show, :edit, :update, :destroy]
-  before_action :new_cf_template, only: [:insert_cf_params, :create, :create_and_send]
+  before_action :set_cf_template, only: %i[show edit update destroy]
+  before_action :new_cf_template, only: %i[insert_cf_params create create_and_send]
 
   # --------------- auth
   before_action :authenticate_user!
 
   before_action do
-    infra_id = params[:infra_id] || params[:cf_template][:infrastructure_id] rescue nil
+    infra_id = begin
+                 params[:infra_id] || params[:cf_template][:infrastructure_id]
+               rescue StandardError
+                 nil
+               end
     authorize(@cf_template || CfTemplate.new(infrastructure_id: infra_id))
   end
 
@@ -29,7 +33,7 @@ class CfTemplatesController < ApplicationController
 
     respond_to do |format|
       format.json { @global_jsons = @global_jsons }
-      format.html { @global_jsons = @global_jsons.page(page)}
+      format.html { @global_jsons = @global_jsons.page(page) }
     end
   end
 
@@ -38,7 +42,7 @@ class CfTemplatesController < ApplicationController
   def show
     respond_to do |format|
       format.html { render partial: 'show' }
-      format.json {
+      format.json do
         if @cf_template.user_id
           u = User.find(@cf_template.user_id)
           @operator = { email: u[:email], is_admin: u[:admin] }
@@ -46,7 +50,7 @@ class CfTemplatesController < ApplicationController
           @operator = { email: I18n.t('users.unregistered'), is_admin: 0 }
         end
         render 'show.json'
-      }
+      end
     end
   end
 
@@ -54,7 +58,6 @@ class CfTemplatesController < ApplicationController
   def new
     @cf_template = CfTemplate.new
   end
-
 
   # GET /cf_templates/new_for_creating_stack
   # params: infrastructure_id
@@ -71,10 +74,8 @@ class CfTemplatesController < ApplicationController
     } and return
   end
 
-
   # GET /cf_templates/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /cf_templates/insert_cf_params
   def insert_cf_params
@@ -83,21 +84,21 @@ class CfTemplatesController < ApplicationController
     begin
       @tpl = @cf_template.parse_value
     rescue CfTemplate::ParseError => ex
-      render text: ex.message, status: 400 and return
+      render text: ex.message, status: :bad_request and return
     end
 
     begin
       @cf_template.validate_template
     rescue Aws::CloudFormation::Errors::ValidationError => ex
-      render text: ex.message, status: 400 and return
+      render text: ex.message, status: :bad_request and return
     end
 
     # create EC2 instance ?
-    if @tpl["Parameters"].try(:include?, "KeyName")
+    if @tpl['Parameters'].try(:include?, 'KeyName')
       unless infra.ec2_private_key_id
-        render text: I18n.t('cf_templates.msg.keypair_missing'), status: 400 and return
+        render text: I18n.t('cf_templates.msg.keypair_missing'), status: :bad_request and return
       end
-      @tpl["Parameters"].delete("KeyName")
+      @tpl['Parameters'].delete('KeyName')
     end
 
     render json: @tpl['Parameters']
@@ -108,14 +109,14 @@ class CfTemplatesController < ApplicationController
   def create
     begin
       @cf_template.validate_template
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = ex.message
       render action: 'new' and return
     end
 
     respond_to do |format|
       if @cf_template.save
-        format.html { redirect_to cf_templates_path, notice: I18n.t('cf_templates.msg.created')}
+        format.html { redirect_to cf_templates_path, notice: I18n.t('cf_templates.msg.created') }
         format.json { render action: 'show', status: :created, location: @client }
       else
         format.html do
@@ -137,7 +138,7 @@ class CfTemplatesController < ApplicationController
     if res[:status]
       render text: res[:message] and return
     end
-    render text: res[:message], status: 500
+    render text: res[:message], status: :internal_server_error
   end
 
   # PATCH/PUT /cf_templates/1
@@ -145,7 +146,7 @@ class CfTemplatesController < ApplicationController
   def update
     respond_to do |format|
       if @cf_template.update(cf_template_params)
-        format.html { redirect_to cf_templates_path, notice: I18n.t('cf_templates.msg.updated')}
+        format.html { redirect_to cf_templates_path, notice: I18n.t('cf_templates.msg.updated') }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -168,7 +169,6 @@ class CfTemplatesController < ApplicationController
     infra_id = params.require(:infrastructure_id)
     @histories = CfTemplate.for_infra(infra_id)
   end
-
 
   private
 
@@ -193,15 +193,15 @@ class CfTemplatesController < ApplicationController
     begin
       cf_template.parse_value
     rescue CfTemplate::ParseError => ex
-      return {message: ex.message, status: false}
+      return { message: ex.message, status: false }
     end
 
     cf_template.create_cfparams_set(infrastructure, template_parameters)
 
     begin
       action = stack.apply_template(cf_template.value, cf_template.parsed_cfparams)
-    rescue => ex
-      return {message: ex.message, status: false}
+    rescue StandardError => ex
+      return { message: ex.message, status: false }
     end
 
     infrastructure.status = stack.status[:message]
@@ -213,7 +213,7 @@ class CfTemplatesController < ApplicationController
 
     if cf_template.save
       infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
-      return {message: t("cf_templates.msg.#{action.downcase}"), status: true}
+      return { message: t("cf_templates.msg.#{action.downcase}"), status: true }
     end
   end
 
@@ -241,7 +241,7 @@ class CfTemplatesController < ApplicationController
           ec2_resource.register_in_known_hosts = true
           ec2_resource.save!
         end
-      rescue => ex
+      rescue StandardError => ex
         Rails.logger.error("[add_keys_in_known_hosts] Add keys in known_hosts is failed. infra_id: #{infrastructure.id}")
         Rails.logger.error ex
       else

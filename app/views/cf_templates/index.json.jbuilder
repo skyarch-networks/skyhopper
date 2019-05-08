@@ -4,7 +4,6 @@ json.array!(@global_jsons) do |cf_template|
   json.id cf_template.id
   json.value cf_template.value
 
-
   json.button_edit_cft button_edit_cft(cf_template)
   json.button_destroy_cft button_destroy_cft(cf_template)
 

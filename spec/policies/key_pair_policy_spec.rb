@@ -9,14 +9,14 @@
 require_relative '../spec_helper'
 
 describe KeyPairPolicy do
-  subject{described_class}
+  subject { described_class }
 
-  let(:master_admin){build_stubbed(:user, master: true,  admin: true)}
-  let(:master){      build_stubbed(:user, master: true,  admin: false)}
-  let(:admin){       build_stubbed(:user, master: false, admin: true)}
-  let(:normal){      build_stubbed(:user, master: false, admin: false)}
+  let(:master_admin) { build_stubbed(:user, master: true, admin: true) }
+  let(:master) {      build_stubbed(:user, master: true,  admin: false) }
+  let(:admin) {       build_stubbed(:user, master: false, admin: true) }
+  let(:normal) {      build_stubbed(:user, master: false, admin: false) }
 
-  let(:project){build_stubbed(:project)}
+  let(:project) { build_stubbed(:project) }
 
   %i[index? retrieve?].each do |action|
     permissions action do

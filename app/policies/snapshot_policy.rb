@@ -16,5 +16,4 @@ class SnapshotPolicy < ApplicationPolicy
       user.admin? and user.allow?(record)
     end
   end
-
 end

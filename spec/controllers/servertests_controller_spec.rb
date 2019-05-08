@@ -10,15 +10,15 @@ require_relative '../spec_helper'
 
 describe ServertestsController, type: :controller do
   login_user
-  let(:infrastructure){create(:infrastructure)}
-  let(:svrsp_name){'name'}
-  let(:svrsp_desc){'description'}
-  let(:svrsp_value){'value'}
-  let(:svrsp_category){'category'}
-  let(:servertest){attributes_for(:servertest, name: svrsp_name, description: svrsp_desc, value: svrsp_value, infrastructure_id: infrastructure_id, category: :serverspec)}
+  let(:infrastructure) { create(:infrastructure) }
+  let(:svrsp_name) { 'name' }
+  let(:svrsp_desc) { 'description' }
+  let(:svrsp_value) { 'value' }
+  let(:svrsp_category) { 'category' }
+  let(:servertest) { attributes_for(:servertest, name: svrsp_name, description: svrsp_desc, value: svrsp_value, infrastructure_id: infrastructure_id, category: :serverspec) }
 
   describe '#index' do
-    let(:req){get :index, infrastructure_id: infrastructure.id}
+    let(:req) { get :index, infrastructure_id: infrastructure.id }
 
     before do
       create_list(:servertest, 3, infrastructure_id: infrastructure.id)
@@ -26,11 +26,11 @@ describe ServertestsController, type: :controller do
     end
 
     it 'should assign @servertest' do
-      expect(assigns[:servertests]).to be_all{|servertest|servertest.kind_of?(Servertest)}
+      expect(assigns[:servertests]).to be_all { |servertest| servertest.is_a?(Servertest) }
     end
 
     context 'when accessed index without infrastructure id' do
-      let(:infrastructure){double("dummy", id: nil)}
+      let(:infrastructure) { double('dummy', id: nil) }
 
       it 'should render index' do
         expect(response).to render_template :index
@@ -47,13 +47,13 @@ describe ServertestsController, type: :controller do
       end
 
       it 'should assign @servertests where infra id = infra.id(from url)' do
-        expect(assigns[:servertests]).to be_all{|servertest|servertest.infrastructure_id == infrastructure.id}
+        expect(assigns[:servertests]).to be_all { |servertest| servertest.infrastructure_id == infrastructure.id }
       end
     end
   end # end of describe #index
 
   describe 'Get #new' do
-    let(:get_new){get :new}
+    let(:get_new) { get :new }
 
     before do
       get_new
@@ -76,7 +76,7 @@ describe ServertestsController, type: :controller do
     end
 
     context 'when accessed with infrastracture_id' do
-      let(:get_new){get :new, infrastructure_id: infrastructure.id}
+      let(:get_new) { get :new, infrastructure_id: infrastructure.id }
 
       it 'should assign severspec with infrastracture_id' do
         expect(assigns(:servertest).infrastructure_id).to_not be_nil
@@ -85,7 +85,7 @@ describe ServertestsController, type: :controller do
   end # end of describe #new
 
   describe 'GET #show' do
-    let(:servertest){create(:servertest)}
+    let(:servertest) { create(:servertest) }
 
     before do
       get :show, id: servertest.id
@@ -99,8 +99,8 @@ describe ServertestsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:infrastructure_id){nil}
-    let(:create_request){post :create, servertest: servertest}
+    let(:infrastructure_id) { nil }
+    let(:create_request) { post :create, servertest: servertest }
 
     context 'when valid params' do
       before do
@@ -117,7 +117,7 @@ describe ServertestsController, type: :controller do
       end
 
       context 'when infrastructure_id true' do
-        let(:infrastructure_id){infrastructure.id}
+        let(:infrastructure_id) { infrastructure.id }
 
         it 'serverspec.infra_id should not be nil' do
           expect(assigns(:servertest).infrastructure_id).to eq(infrastructure_id)
@@ -148,9 +148,9 @@ describe ServertestsController, type: :controller do
   end # end of describe post #create
 
   describe 'PATCH #update' do
-    let(:new_serverspec){create(:servertest)}
-    let(:infrastructure_id){nil}
-    let(:update_request){s = servertest.dup; s.delete(:infrastructure_id); patch :update, id: new_serverspec.id, servertest: s}
+    let(:new_serverspec) { create(:servertest) }
+    let(:infrastructure_id) { nil }
+    let(:update_request) { s = servertest.dup; s.delete(:infrastructure_id); patch :update, id: new_serverspec.id, servertest: s }
 
     context 'when valid params' do
       before do
@@ -178,12 +178,12 @@ describe ServertestsController, type: :controller do
   end # end of patch #update
 
   describe 'GET #generator' do
-    let(:req){get :generator}
-    before{req}
+    let(:req) { get :generator }
+    before { req }
 
     context 'when have infra id' do
-      let(:infra){create(:infrastructure)}
-      let(:req){get :generator, infrastructure_id: infra.id}
+      let(:infra) { create(:infrastructure) }
+      let(:req) { get :generator, infrastructure_id: infra.id }
 
       should_be_success
       it 'should assign @infra' do
@@ -200,18 +200,18 @@ describe ServertestsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let(:new_serverspec){create(:servertest)}
-    let(:delete_request){delete :destroy, id: new_serverspec.id}
+    let(:new_serverspec) { create(:servertest) }
+    let(:delete_request) { delete :destroy, id: new_serverspec.id }
 
     before do
       delete_request
     end
 
-    subject{Servertest.find(new_serverspec.id)}
+    subject { Servertest.find(new_serverspec.id) }
 
     context 'when servertest is deleted' do
       it 'should raise an error' do
-        expect{subject}.to raise_error ActiveRecord::RecordNotFound
+        expect { subject }.to raise_error ActiveRecord::RecordNotFound
       end
 
       it 'should redirect' do
@@ -219,15 +219,15 @@ describe ServertestsController, type: :controller do
         expect(response).to redirect_to(servertests_path(infrastructure_id: infra_id))
       end
     end
-  end #end of delete # destroy
+  end # end of delete # destroy
 
   describe '#select' do
     context 'get_page' do
-      let(:infra){create(:infrastructure)}
-      let(:specs){create_list(:servertest, 3, infrastructure: infra, category: 1)}
-      let(:physical_id){SecureRandom.base64(10)}
-      let(:dish){create(:dish, servertests: [create(:servertest)])}
-      let(:resource){create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra, servertests: [create(:servertest)])}
+      let(:infra) { create(:infrastructure) }
+      let(:specs) { create_list(:servertest, 3, infrastructure: infra, category: 1) }
+      let(:physical_id) { SecureRandom.base64(10) }
+      let(:dish) { create(:dish, servertests: [create(:servertest)]) }
+      let(:resource) { create(:resource, physical_id: physical_id, dish: dish, infrastructure: infra, servertests: [create(:servertest)]) }
 
       before do
         specs
@@ -240,7 +240,7 @@ describe ServertestsController, type: :controller do
 
       should_be_success
 
-      subject {response}
+      subject { response }
 
       it 'render servertests/_select' do
         is_expected.to render_template('servertests/select')
@@ -265,9 +265,9 @@ describe ServertestsController, type: :controller do
   end
 
   describe '#results' do
-    let(:specs){create_list(:servertest, 3, infrastructure: infrastructure)}
-    let(:physical_id){SecureRandom.base64(10)}
-    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infrastructure, servertests: specs)}
+    let(:specs) { create_list(:servertest, 3, infrastructure: infrastructure) }
+    let(:physical_id) { SecureRandom.base64(10) }
+    let(:resource) { create(:resource, physical_id: physical_id, infrastructure: infrastructure, servertests: specs) }
 
     before do
       resource # exec create resource
@@ -283,21 +283,23 @@ describe ServertestsController, type: :controller do
   end
 
   describe '#run_serverspec' do
-    let(:infra){create(:infrastructure)}
-    let(:physical_id){SecureRandom.base64(10)}
-    let(:servertests){create_list(:servertest, 3)}
-    let(:resource){create(:resource, physical_id: physical_id, infrastructure: infra)}
-    let(:servertest_ids){servertests.map(&:id)}
-    let(:failure_count){0}
-    let(:pending_count){0}
-    let(:status_text){'success'}
-    let(:resp){{
-      examples: [{status: 'pending', full_description: 'hogefuga'}],
-      status: true,
-      status_text: status_text,
-      error_servertest_names: [],
-    }}
-    let(:req){post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids}
+    let(:infra) { create(:infrastructure) }
+    let(:physical_id) { SecureRandom.base64(10) }
+    let(:servertests) { create_list(:servertest, 3) }
+    let(:resource) { create(:resource, physical_id: physical_id, infrastructure: infra) }
+    let(:servertest_ids) { servertests.map(&:id) }
+    let(:failure_count) { 0 }
+    let(:pending_count) { 0 }
+    let(:status_text) { 'success' }
+    let(:resp) do
+      {
+        examples: [{ status: 'pending', full_description: 'hogefuga' }],
+        status: true,
+        status_text: status_text,
+        error_servertest_names: [],
+      }
+    end
+    let(:req) { post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids }
 
     before do
       resource
@@ -308,24 +310,24 @@ describe ServertestsController, type: :controller do
       it 'should call run_serverspec' do
         expect(ServertestJob).to receive(:perform_now).with(
           physical_id, infra.id.to_param, kind_of(Integer),
-          servertest_ids: servertests.map{|x|x.id.to_s},
+          servertest_ids: servertests.map { |x| x.id.to_s },
         )
         req
       end
 
       it 'should create ServertestResult' do
-        expect{req}.to change{ ServertestResult.last }
-                         .from(nil)
-                         .to(
-                           have_attributes(
-                             auto_generated_servertest: false
-                           )
-                         )
+        expect { req }.to change { ServertestResult.last }
+          .from(nil)
+          .to(
+            have_attributes(
+              auto_generated_servertest: false,
+            ),
+          )
       end
     end
 
     context 'when Servertest command is failed' do
-      let(:err_msg){'This is Error <3'}
+      let(:err_msg) { 'This is Error <3' }
       before do
         allow(ServertestJob).to receive(:perform_now).and_raise(err_msg)
         req
@@ -338,39 +340,39 @@ describe ServertestsController, type: :controller do
     end
 
     context 'when servertest result is fail' do
-      let(:status_text){'failed'}
-      before{req}
+      let(:status_text) { 'failed' }
+      before { req }
       should_be_success
     end
 
     context 'when servertest result is error' do
-      let(:status_text){'error'}
-      before{req}
+      let(:status_text) { 'error' }
+      before { req }
       should_be_success
     end
 
     context 'when servertest result is pending' do
-      let(:status_text){'pending'}
-      before{req}
+      let(:status_text) { 'pending' }
+      before { req }
       should_be_success
     end
 
     context 'when servertest result is success' do
-      let(:status_text){'success'}
-      before{req}
+      let(:status_text) { 'success' }
+      before { req }
       should_be_success
     end
   end
 
-  describe "#create_for_rds" do
-    let(:infra_id){infrastructure.id}
-    let(:physical_id){"i-abcd1234"}
-    let(:username){"username"}
-    let(:password){"password"}
-    let(:database){"MyDatabase"}
-    let(:rds){double(:rds)}
+  describe '#create_for_rds' do
+    let(:infra_id) { infrastructure.id }
+    let(:physical_id) { 'i-abcd1234' }
+    let(:username) { 'username' }
+    let(:password) { 'password' }
+    let(:database) { 'MyDatabase' }
+    let(:rds) { double(:rds) }
 
-    let(:request_createrds){put :create_for_rds, infra_id: infrastructure.id, physical_id: physical_id, username: username, password: password, database: database}
+    let(:request_createrds) { put :create_for_rds, infra_id: infrastructure.id, physical_id: physical_id, username: username, password: password, database: database }
 
     before do
       allow(RDS).to receive(:new).with(infrastructure, physical_id).and_return(rds)
@@ -378,29 +380,29 @@ describe ServertestsController, type: :controller do
       request_createrds
     end
 
-    subject{Infrastructure.find(infra_id) }
+    subject { Infrastructure.find(infra_id) }
 
-    it "should find infra by infra_id" do
+    it 'should find infra by infra_id' do
       expect(subject).to eq(infrastructure)
     end
 
-    it "should be success" do
+    it 'should be success' do
       expect(response).to be_success
     end
   end
 
-  describe "#schedule" do
+  describe '#schedule' do
     let(:servertest_schedule) { create(:servertest_schedule) }
     let(:physical_id) { servertest_schedule.physical_id }
     let(:infra_id) { infrastructure.id }
     let(:schedule) { attributes_for(:servertest_schedule) }
-    let(:req){post(:schedule, {physical_id: physical_id, infra_id: infra_id, schedule: schedule})}
+    let(:req) { post(:schedule, { physical_id: physical_id, infra_id: infra_id, schedule: schedule }) }
 
     before do
       allow(Sidekiq::ScheduledSet).to receive_message_chain(:new, :select).and_return([])
     end
 
-    context "when enabled" do
+    context 'when enabled' do
       before do
         expect(PeriodicServerspecJob).to receive_message_chain(:set, :perform_later)
         req
@@ -409,7 +411,7 @@ describe ServertestsController, type: :controller do
       should_be_success
     end
 
-    context "when disabled" do
+    context 'when disabled' do
       before do
         schedule[:enabled] = false
         req

@@ -13,7 +13,9 @@ class SnapshotsController < ApplicationController
 
   before_action do
     set_infra
-    def @infra.policy_class; SnapshotPolicy; end
+    def @infra.policy_class
+      SnapshotPolicy
+    end
     authorize(@infra)
   end
 
@@ -22,7 +24,7 @@ class SnapshotsController < ApplicationController
     volume_id = params[:volume_id]
 
     snapshots = Snapshot.describe(@infra, volume_id)
-    render json: {snapshots: snapshots}
+    render json: { snapshots: snapshots }
   end
 
   # POST /snapshots
@@ -47,9 +49,9 @@ class SnapshotsController < ApplicationController
     snapshot.delete
     infra_logger_success("Snapshot #{snapshot.snapshot_id} has been deleted.")
 
-    render nothing: true, status: 200
+    render nothing: true, status: :ok
   rescue Snapshot::VolumeProtectedError
-    render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: 403 and return
+    render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: :forbidden and return
   end
 
   # POST /snapshots/schedule
@@ -59,15 +61,15 @@ class SnapshotsController < ApplicationController
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
 
     ss = SnapshotSchedule.find_or_create_by(volume_id: volume_id)
-    ss.update_attributes!(schedule)
+    ss.update!(schedule)
 
     if ss.enabled?
       SnapshotJob.set(
-        wait_until: ss.next_run
+        wait_until: ss.next_run,
       ).perform_later(volume_id, physical_id, @infra, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.snapshot_updated'), status: 200 and return
+    render text: I18n.t('schedules.msg.snapshot_updated'), status: :ok and return
   end
 
   # def restore
@@ -85,12 +87,11 @@ class SnapshotsController < ApplicationController
       policy.save!
     else
       policy = RetentionPolicy.find_by(resource_id: volume_id)
-      policy.try!(:destroy)
+      policy&.destroy
     end
 
-    render text: t('snapshots.msg.policy_saved'), status: 200 and return
+    render text: t('snapshots.msg.policy_saved'), status: :ok and return
   end
-
 
   private
 
@@ -102,7 +103,7 @@ class SnapshotsController < ApplicationController
         until snapshot.latest_status == 'completed'
           sleep(15)
         end
-      rescue => ex
+      rescue StandardError => ex
         infra_logger_fail("Snapshot creation for #{snapshot.volume_id} has failed.\n #{ex.class}: #{ex.message.inspect} \n" + ex.backtrace.join("\n"))
         ws.push(ex.message)
         raise ex

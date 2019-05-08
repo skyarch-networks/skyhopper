@@ -10,73 +10,70 @@
 # TODO: keyを埋める
 MasterMonitoring.delete_all
 [
-  {id: 1,  name: 'CPU',          item: 'system.cpu.util[,total,avg1]', trigger_expression: '{HOSTNAME:system.cpu.util[,total,avg1].last(0)}>', is_common: false},
-  {id: 2,  name: 'RAM',          item: 'vm.memory.size[available]',    trigger_expression: '{HOSTNAME:vm.memory.size[available].last(0)}<',    is_common: false},
-  {id: 3,  name: 'LOAD AVERAGE', item: 'system.cpu.load[percpu,avg1]', trigger_expression: '{HOSTNAME:system.cpu.load[percpu,avg1].avg(5m)}>', is_common: false},
-  {id: 4,  name: 'SWAP',         item: 'system.swap.size[,pfree]',     trigger_expression: '{HOSTNAME:system.swap.size[,pfree].last(0)}<',     is_common: false},
-  {id: 5,  name: 'HTTP',         item: 'net.tcp.service[http]',        trigger_expression: '{HOSTNAME:net.tcp.service[http].max(#3)}=',        is_common: false},
-  {id: 6,  name: 'SMTP',         item: 'net.tcp.service[smtp]',        trigger_expression: '{HOSTNAME:net.tcp.service[smtp].max(#3)}=',        is_common: false},
-  {id: 7,  name: 'URL',          item: nil,                            trigger_expression: nil,                                                is_common: true},
-  {id: 8,  name: 'MySQL',        item: 'mysql.login',                  trigger_expression: nil,                                                is_common: false},
-  {id: 9,  name: 'PostgreSQL',   item: 'postgresql.login',             trigger_expression: nil,                                                is_common: false},
+  { id: 1,  name: 'CPU',          item: 'system.cpu.util[,total,avg1]', trigger_expression: '{HOSTNAME:system.cpu.util[,total,avg1].last(0)}>', is_common: false },
+  { id: 2,  name: 'RAM',          item: 'vm.memory.size[available]',    trigger_expression: '{HOSTNAME:vm.memory.size[available].last(0)}<',    is_common: false },
+  { id: 3,  name: 'LOAD AVERAGE', item: 'system.cpu.load[percpu,avg1]', trigger_expression: '{HOSTNAME:system.cpu.load[percpu,avg1].avg(5m)}>', is_common: false },
+  { id: 4,  name: 'SWAP',         item: 'system.swap.size[,pfree]',     trigger_expression: '{HOSTNAME:system.swap.size[,pfree].last(0)}<',     is_common: false },
+  { id: 5,  name: 'HTTP',         item: 'net.tcp.service[http]',        trigger_expression: '{HOSTNAME:net.tcp.service[http].max(#3)}=',        is_common: false },
+  { id: 6,  name: 'SMTP',         item: 'net.tcp.service[smtp]',        trigger_expression: '{HOSTNAME:net.tcp.service[smtp].max(#3)}=',        is_common: false },
+  { id: 7,  name: 'URL',          item: nil,                            trigger_expression: nil,                                                is_common: true },
+  { id: 8,  name: 'MySQL',        item: 'mysql.login',                  trigger_expression: nil,                                                is_common: false },
+  { id: 9,  name: 'PostgreSQL',   item: 'postgresql.login',             trigger_expression: nil,                                                is_common: false },
 ].each do |x|
   MasterMonitoring.create!(x)
 end
 
 # -------------------- Global Serverspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<-EOS)
-require "serverspec_helper"
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<~EOS)
+  require "serverspec_helper"
 
-describe package('httpd') do
-  it { should be_installed }
-end
+  describe package('httpd') do
+    it { should be_installed }
+  end
 
-describe service('httpd') do
-  it { should be_enabled }
-  it { should be_running }
-end
+  describe service('httpd') do
+    it { should be_enabled }
+    it { should be_running }
+  end
 
-describe port(80) do
-  it { should be_listening }
-end
+  describe port(80) do
+    it { should be_listening }
+  end
 EOS
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<-EOS)
-require "serverspec_helper"
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<~EOS)
+  require "serverspec_helper"
 
-describe package("php") do
-  it { should be_installed }
-end
+  describe package("php") do
+    it { should be_installed }
+  end
 EOS
-
 
 # -------------------- Global AWSspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<-EOS)
-require "awsspec_helper"
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<~EOS)
+  require "awsspec_helper"
 
-describe package('httpd') do
-  it { should be_installed }
-end
+  describe package('httpd') do
+    it { should be_installed }
+  end
 
-describe service('httpd') do
-  it { should be_enabled }
-  it { should be_running }
-end
+  describe service('httpd') do
+    it { should be_enabled }
+    it { should be_running }
+  end
 
-describe port(80) do
-  it { should be_listening }
-end
+  describe port(80) do
+    it { should be_listening }
+  end
 EOS
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<-EOS)
-require "awsspec_helper"
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<~EOS)
+  require "awsspec_helper"
 
-describe package("php") do
-  it { should be_installed }
-end
+  describe package("php") do
+    it { should be_installed }
+  end
 EOS
-
-
 
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system
@@ -87,12 +84,11 @@ Project.find_or_create_by(client: client_skyhopper, name: Project::ForDishTestCo
 Project.find_or_create_by(client: client_skyhopper, name: Project::ChefServerCodeName,    code: Project::ChefServerCodeName,    access_key: DummyText, secret_access_key: DummyText)
 Project.find_or_create_by(client: client_skyhopper, name: Project::ZabbixServerCodeName,  code: Project::ZabbixServerCodeName,  access_key: DummyText, secret_access_key: DummyText)
 
-
 # ----------------------- Global CF template
 template_paths = Dir.glob(Rails.root.join('lib/erb-builder/templates/presets/*')).sort
 template_paths.each do |path|
   n = File.basename(path, '.json.erb')
-  b = ERB::Builder.new('presets/'+n)
+  b = ERB::Builder.new('presets/' + n)
 
   value = b.build
   name = n.tr('_', ' ')

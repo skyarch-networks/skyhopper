@@ -1,5 +1,5 @@
-require "tempfile"
-require "yaml"
+require 'tempfile'
+require 'yaml'
 require 'shellwords'
 require 'open3'
 
@@ -7,17 +7,17 @@ module Ansible
   class CommandNotSuccessError < ::RuntimeError; end
 
   def self.exec_command(command, &block)
-    Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3(command) do |_stdin, stdout, _stderr, wait_thr|
       while line = stdout.gets
         line.chomp!
         block.call(line)
       end
       raise CommandNotSuccessError unless wait_thr.value.success?
     end
-    return true
+    true
   end
 
-  def self.create(ansible_workspace_path, target_hosts, become=true)
+  def self.create(ansible_workspace_path, target_hosts, become = true)
     Tempfile.create('playbook-', ansible_workspace_path) do |playbook_file|
       yield(Client.new(playbook_file, ansible_workspace_path, target_hosts, become))
     end
@@ -25,35 +25,36 @@ module Ansible
 
   def self.get_roles(ansible_workspace_path)
     ansible = Client.new(nil, ansible_workspace_path, nil)
-    return ansible.roles
+    ansible.roles
   end
 
   # 正しければtrue、正しくなければfalseが返る
   def self.verify_roles(roles)
     return false unless roles.is_a?(Array)
+
     roles.each do |role|
       return false unless role.is_a?(String)
     end
-    return true
+    true
   end
 
   class Client
-    ROLE_DIRECTYORY_NAME = 'roles'
-    ROLE_MAIN_FILE_PATH_REGEX = /^[^\/]+\/([^\/]*\/)*tasks\/main.yml$/
+    ROLE_DIRECTYORY_NAME = 'roles'.freeze
+    ROLE_MAIN_FILE_PATH_REGEX = %r{^[^/]+/([^/]*/)*tasks/main.yml$}.freeze
 
-    def initialize(playbook_file, ansible_workspace_path, target_hosts, become=true)
+    def initialize(playbook_file, ansible_workspace_path, target_hosts, become = true)
       @playbook_file = playbook_file
       @ansible_workspace_path = ansible_workspace_path
       @playbook_data = [{
-                          'hosts' => target_hosts,
-                          'become' => become,
-                          'roles' => roles,
-                        }]
+        'hosts' => target_hosts,
+        'become' => become,
+        'roles' => roles,
+      }]
     end
 
     def roles
       roles_path = "#{@ansible_workspace_path}/#{ROLE_DIRECTYORY_NAME}"
-      Dir.glob("#{roles_path}/**/main.yml").map {|path|
+      Dir.glob("#{roles_path}/**/main.yml").map do |path|
         # roles_pathから見た相対パスに変換
         relative_path_length = path.length - roles_path.length - 1
         relative_path = path[-relative_path_length, relative_path_length]
@@ -74,7 +75,7 @@ module Ansible
         role_name_path_array.pop
         role_name_path_array.pop
         role_name_path_array.join('/')
-      }.compact.sort
+      end.compact.sort
     end
 
     def set_roles(roles)

@@ -10,7 +10,7 @@ class ServertestsController < ApplicationController
   include Concerns::InfraLogger
   class ServertestError < ::StandardError; end
 
-  before_action :set_servertest, only: [:update, :show, :edit, :destroy]
+  before_action :set_servertest, only: %i[update show edit destroy]
 
   # --------------- Auth
   before_action :authenticate_user!
@@ -38,7 +38,7 @@ class ServertestsController < ApplicationController
     infra_id = params[:infrastructure_id]
 
     @servertest = Servertest.new(infrastructure_id: infra_id)
-    @servertest.value = %!require '<choice_category>spec_helper'\n\n!
+    @servertest.value = %(require '<choice_category>spec_helper'\n\n)
   end
 
   # GET /servertests/1
@@ -65,8 +65,9 @@ class ServertestsController < ApplicationController
 
     begin
       @servertest.save!
-    rescue => ex
+    rescue StandardError => ex
       raise ex if ajax?
+
       flash.now[:alert] = @servertest.errors[:value] if @servertest.errors[:value]
       render action: 'new', infrastructure_id: infra_id; return
     end
@@ -75,7 +76,7 @@ class ServertestsController < ApplicationController
       render text: I18n.t('servertests.msg.created') and return
     else
       redirect_to servertests_path(infrastructure_id: infra_id),
-        notice: I18n.t('servertests.msg.created')
+                  notice: I18n.t('servertests.msg.created')
     end
   end
 
@@ -97,28 +98,28 @@ class ServertestsController < ApplicationController
     @infra = Infrastructure.find(params[:infrastructure_id]) if params[:infrastructure_id]
 
     ws = WSConnector.new('awspec-generate', @infra.id)
-    ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+    ruby_cmd = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 
     cmd = []
     cmd << "AWS_ACCESS_KEY_ID=#{@infra.access_key}"
     cmd << "AWS_REGION=#{@infra.region}"
     cmd << "AWS_SECRET_ACCESS_KEY=#{@infra.secret_access_key}"
     cmd << ruby_cmd << "-S awspec generate ec2 #{@infra.ec2.describe_vpcs[:vpcs][0].vpc_id}"
-    cmd = cmd.flatten.reject(&:blank?).join(" ")
-    generated = %!require 'awspec_helper'\n\n!
+    cmd = cmd.flatten.reject(&:blank?).join(' ')
+    generated = %(require 'awspec_helper'\n\n)
     Thread.new_with_db do
       begin
         gen, = Node.exec_command(cmd, ServertestError)
         generated += gen
-        ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), generated: generated})
-      rescue => ex
+        ws.push_as_json({ status: true, message: I18n.t('zabbix_servers.msg.created'), generated: generated })
+      rescue StandardError => ex
         generated = ex.to_s
-        ws.push_as_json({status: false, message: ex.message})
-        render status: 404 and return
+        ws.push_as_json({ status: false, message: ex.message })
+        render status: :not_found and return
       end
     end
 
-    render nothing: true, status: 200 and return
+    render nothing: true, status: :ok and return
   end
 
   # DELETE /servertests/1
@@ -138,7 +139,7 @@ class ServertestsController < ApplicationController
     @selected_servertest_ids = resource.all_servertest_ids
 
     servertests = Servertest.for_infra_serverspec(infra_id)
-    @individual_servertests, @global_servertests = servertests.partition{|spec| spec.infrastructure_id }
+    @individual_servertests, @global_servertests = servertests.partition(&:infrastructure_id)
 
     @servertest_schedule = ServertestSchedule.find_or_create_by(physical_id: physical_id)
   end
@@ -149,14 +150,15 @@ class ServertestsController < ApplicationController
     infra_id    = params.require(:infra_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @servertest_results = resource.servertest_results.order("created_at desc")
+    @servertest_results = resource.servertest_results.order('created_at desc')
 
     respond_to do |format|
-      format.json { render json: @servertest_results.as_json(only: [:id, :auto_generated_servertest, :status, :message, :created_at, :category],
-        include: [{servertest_result_details: {only: [:id]}},{servertests: {only: [:name, :category]}}, {resource: {only: [:physical_id]}} ]) }
+      format.json do
+        render json: @servertest_results.as_json(only: %i[id auto_generated_servertest status message created_at category],
+                                                 include: [{ servertest_result_details: { only: [:id] } }, { servertests: { only: %i[name category] } }, { resource: { only: [:physical_id] } }],)
+      end
     end
   end
-
 
   # TODO: refactor
   # POST /servertests/run_serverspec
@@ -171,11 +173,11 @@ class ServertestsController < ApplicationController
     begin
       resp = ServertestJob.perform_now(
         physical_id, infra_id, current_user.id,
-        servertest_ids: servertest_ids
+        servertest_ids: servertest_ids,
       )
-    rescue => ex
+    rescue StandardError => ex
       # serverspec が正常に実行されなかったとき
-      render text: ex.message, status: 500 and return
+      render text: ex.message, status: :internal_server_error and return
     end
 
     case resp[:status_text]
@@ -190,15 +192,14 @@ class ServertestsController < ApplicationController
     end
 
     ServertestResult.create(
-      resource_id:    resource.id,
+      resource_id: resource.id,
       auto_generated_servertest: false,
-      status:         resp[:status_text],
-      message:        resp[:long_message],
-      servertest_ids: servertest_ids
+      status: resp[:status_text],
+      message: resp[:long_message],
+      servertest_ids: servertest_ids,
     )
-    render text: render_msg, status: 200 and return
+    render text: render_msg, status: :ok and return
   end
-
 
   # Generate serverspec to connect to RDS instance
   # PUT /servertests/create_for_rds
@@ -215,7 +216,7 @@ class ServertestsController < ApplicationController
 
     Servertest.create_rds(rds, username, password, infra_id, database)
 
-    render text: I18n.t('servertests.msg.generated'), status: 201 and return
+    render text: I18n.t('servertests.msg.generated'), status: :created and return
   end
 
   # POST /servertests/schedule
@@ -225,17 +226,16 @@ class ServertestsController < ApplicationController
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
 
     ss = ServertestSchedule.find_by(physical_id: physical_id)
-    ss.update_attributes!(schedule)
+    ss.update!(schedule)
 
     if ss.enabled?
       PeriodicServerspecJob.set(
-        wait_until: ss.next_run
+        wait_until: ss.next_run,
       ).perform_later(physical_id, infra_id, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.serverspec_updated'), status: 200 and return
+    render text: I18n.t('schedules.msg.serverspec_updated'), status: :ok and return
   end
-
 
   private
 
@@ -248,8 +248,8 @@ class ServertestsController < ApplicationController
   end
 
   def have_infra?
-    return params[:infra_id] || params[:infrastructure_id] || params[:serverspec][:infrastructure_id]
-  rescue
-    return nil
+    params[:infra_id] || params[:infrastructure_id] || params[:serverspec][:infrastructure_id]
+  rescue StandardError
+    nil
   end
 end

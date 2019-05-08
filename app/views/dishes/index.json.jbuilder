@@ -1,5 +1,4 @@
 json.array!(@dishes) do |dish|
-
   allow_change = @project_id ? current_user.admin? : current_user.master? && current_user.admin?
 
   next unless allow_change or dish.status == Dish::STATUS[:success]

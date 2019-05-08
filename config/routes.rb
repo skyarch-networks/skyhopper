@@ -5,7 +5,6 @@ SkyHopper::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-
   resources :zabbix_servers
   resources :users_admin, except: :show do
     collection do
@@ -22,15 +21,15 @@ SkyHopper::Application.routes.draw do
   resources :clients, except: :show
 
   resources :projects, except: :show
-  resource :project_parameters, only: [:show, :update]
+  resource :project_parameters, only: %i[show update]
 
-  resources :key_pairs, only: [:index, :destroy], param: :fingerprint do
+  resources :key_pairs, only: %i[index destroy], param: :fingerprint do
     collection do
       get  'retrieve'
     end
   end
 
-  resources :snapshots, only: [:index, :create, :destroy], param: :snapshot_id do
+  resources :snapshots, only: %i[index create destroy], param: :snapshot_id do
     collection do
       post 'schedule'
       post 'save_retention_policy'
@@ -59,7 +58,7 @@ SkyHopper::Application.routes.draw do
 
   resources :ec2_private_keys, only: [:create]
 
-  resources :resources, only: [:index, :create]
+  resources :resources, only: %i[index create]
 
   resources :nodes, only: [:show] do
     collection do
@@ -133,7 +132,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :monitorings, only: [:create, :show, :edit, :update] do
+  resources :monitorings, only: %i[create show edit update] do
     member do
       post 'create_host'
       post 'update_templates'
@@ -159,7 +158,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resources :template_builder, only: [:create, :new] do
+  resources :template_builder, only: %i[create new] do
     collection do
       get 'resource_properties'
     end
@@ -171,7 +170,7 @@ SkyHopper::Application.routes.draw do
     end
   end
 
-  resource :app_settings, only: [:create, :show] do
+  resource :app_settings, only: %i[create show] do
     collection do
       post :system_server_create
 

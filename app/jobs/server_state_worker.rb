@@ -7,7 +7,6 @@
 #
 
 class ServerStateWorker < ActiveJob::Base
-
   def perform(*params)
     kinds =
       if params.empty?
@@ -31,7 +30,6 @@ class ServerStateWorker < ActiveJob::Base
     status = server.latest_status
     ws = WSConnector.new('server_status', kind)
     ws.push(status)
-    return status
+    status
   end
-
 end

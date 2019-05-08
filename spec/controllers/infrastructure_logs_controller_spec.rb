@@ -20,8 +20,8 @@ describe InfrastructureLogsController, type: :controller do
   end
 
   describe 'download_all' do
-    let(:infra){create(:infrastructure)}
-    let(:infrastructure_logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+    let(:infra) { create(:infrastructure) }
+    let(:infrastructure_logs) { create_list(:infrastructure_log, 3, infrastructure: infra) }
     before do
       get :download_all, infrastructure_id: infra.id
     end
@@ -35,7 +35,7 @@ describe InfrastructureLogsController, type: :controller do
   end
 
   describe '#download' do
-    let(:infrastructure_log){create(:infrastructure_log)}
+    let(:infrastructure_log) { create(:infrastructure_log) }
     before do
       get :download, id: infrastructure_log.id
     end
@@ -49,8 +49,8 @@ describe InfrastructureLogsController, type: :controller do
   end
 
   describe '#get_infrastructure_logs' do
-    let(:infra){create(:infrastructure)}
-    let(:infrastructure_logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+    let(:infra) { create(:infrastructure) }
+    let(:infrastructure_logs) { create_list(:infrastructure_log, 3, infrastructure: infra) }
 
     controller InfrastructureLogsController do
       def index
@@ -60,7 +60,7 @@ describe InfrastructureLogsController, type: :controller do
     end
 
     it 'should return infrastructure_logs for specified infrastructure' do
-      infrastructure_log_ids = infrastructure_logs.map{|x|x.id}
+      infrastructure_log_ids = infrastructure_logs.map(&:id)
       get :index, infrastructure_id: infra.id
       expect(assigns(:result).first.is_a?(InfrastructureLog)).to be_truthy
       expect(assigns(:result).ids).to eq infrastructure_log_ids
@@ -136,7 +136,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is invalid"' do
       before do
-        get :index, order: "xxx"
+        get :index, order: 'xxx'
       end
 
       it 'return "ASC"' do
@@ -146,7 +146,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is "1"' do
       before do
-        get :index, order: "1"
+        get :index, order: '1'
       end
 
       it 'return "ASC"' do
@@ -156,7 +156,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is "-1"' do
       before do
-        get :index, order: "-1"
+        get :index, order: '-1'
       end
 
       it 'return "DESC"' do

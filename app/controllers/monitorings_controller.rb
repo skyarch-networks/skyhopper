@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
@@ -17,30 +16,30 @@ class MonitoringsController < ApplicationController
   before_action :set_infra
 
   before_action do
-    def @infra.policy_class;MonitoringPolicy;end
+    def @infra.policy_class
+      MonitoringPolicy
+    end
     authorize(@infra)
   end
 
   before_action :with_zabbix, expect: [:show_cloudwatch_graph]
   before_action :set_zabbix, except: [:show_cloudwatch_graph]
 
-
   # GET /monitorings/:id
   def show
     # XXX: 一つでも登録されていたら監視をshowするようになってるけど、いい?
-    if @infra.resources.ec2.none?{|r| @zabbix.host_exists?(r.physical_id)}
+    if @infra.resources.ec2.none? { |r| @zabbix.host_exists?(r.physical_id) }
       # すべてのec2が登録されていなければ
       # Only show those hosts that are registered
       @before_register = true
 
-      #get/load available zabbix templates set to static first.
-      @templates = @zabbix.available_templates.map{|t| {name: t, checked: false}}
+      # get/load available zabbix templates set to static first.
+      @templates = @zabbix.available_templates.map { |t| { name: t, checked: false } }
       return
     end
 
     @monitor_selected_common   = @infra.master_monitorings.where(is_common: true)
     @monitor_selected_uncommon = @infra.master_monitorings.where(is_common: false)
-
 
     linked_resources = []
     resources = @infra.resources.ec2
@@ -51,25 +50,23 @@ class MonitoringsController < ApplicationController
       if linked
         unlinked.each do |link|
           if linked.include?(link)
-            merged.push({name: link, checked: true})
+            merged.push({ name: link, checked: true })
           else
-            merged.push({name: link, checked: false})
+            merged.push({ name: link, checked: false })
           end
         end
-        linked_resources.push({resource: item.physical_id, templates: merged, linked: true})
+        linked_resources.push({ resource: item.physical_id, templates: merged, linked: true })
       else
         unlinked.each do |d|
-          merged.push({name: d, checked: false})
+          merged.push({ name: d, checked: false })
         end
-        linked_resources.push({resource: item.physical_id, templates: merged, linked: false})
+        linked_resources.push({ resource: item.physical_id, templates: merged, linked: false })
       end
     end
-
 
     @linked_resources = linked_resources
 
     @resources = @infra.resources.ec2
-
   end
 
   # POST /monitorings/:id/update_templates
@@ -102,7 +99,7 @@ class MonitoringsController < ApplicationController
           reqs.push z.templates_link_host_build(physical_id, new_templates)
           item_info_cpu   = z.create_cpu_usage_item(physical_id)
           item_info_mysql = z.create_mysql_login_item(physical_id)
-          reqs.push z.create_cpu_usage_trigger_build(  item_info_cpu,   physical_id)
+          reqs.push z.create_cpu_usage_trigger_build(item_info_cpu, physical_id)
           reqs.push z.create_mysql_login_trigger_build(item_info_mysql, physical_id)
           z.batch(*reqs)
         else
@@ -110,13 +107,13 @@ class MonitoringsController < ApplicationController
           z.templates_link_host(physical_id, new_templates)
           item_info_cpu   = z.create_cpu_usage_item(physical_id)
           item_info_mysql = z.create_mysql_login_item(physical_id)
-          z.create_cpu_usage_trigger(  item_info_cpu,   physical_id)
+          z.create_cpu_usage_trigger(item_info_cpu,   physical_id)
           z.create_mysql_login_trigger(item_info_mysql, physical_id)
         end
-      rescue => ex
-        @infra.detach_zabbix()
+      rescue StandardError => ex
+        @infra.detach_zabbix
 
-        render text: ex.message, status: 500 and return
+        render text: ex.message, status: :internal_server_error and return
       end
 
       @zabbix.templates_link_host(physical_id, new_templates)
@@ -124,7 +121,6 @@ class MonitoringsController < ApplicationController
     end
 
       render nothing: true and return
-
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -151,9 +147,9 @@ class MonitoringsController < ApplicationController
 
     z = @zabbix
 
-    if item_key == "mysql.login"
+    if item_key == 'mysql.login'
       item_infos = z.get_item_info(physical_id, item_key, 'search')
-      item_key = item_infos.first["key_"]
+      item_key = item_infos.first['key_']
     end
 
     history_all = z.get_history(physical_id, item_key, date_range)
@@ -175,13 +171,12 @@ class MonitoringsController < ApplicationController
     render json: url_status
   end
 
-
   # GET /monitorings/:id/edit
   def edit
     z = @zabbix
-    if @infra.resources.ec2.none?{|r| z.host_exists?(r.physical_id)}
+    if @infra.resources.ec2.none? { |r| z.host_exists?(r.physical_id) }
       # XXX: workaround?
-      render nothing: true, status: 400 and return
+      render nothing: true, status: :bad_request and return
     end
 
     @master_monitorings = MasterMonitoring.all
@@ -216,30 +211,30 @@ class MonitoringsController < ApplicationController
       # ハッシュのキーを置換えて新しく作成しなおしている
       # {master_monitoring_id: expr_num(数字だけ)} -> {item_key: expressions(式)}
       expr_nums.each do |k, v|
-        if k.to_i == monitoring.id
-          new_k = monitoring.item
-          new_v = monitoring.trigger_expression + v.to_s
-          trigger_exprs[new_k] = new_v
-          break
-        end
+        next unless k.to_i == monitoring.id
+
+        new_k = monitoring.item
+        new_v = monitoring.trigger_expression + v.to_s
+        trigger_exprs[new_k] = new_v
+        break
       end
     end
 
     z = @zabbix
 
-    #TODO infra.eachをここでまとめる
+    # TODO infra.eachをここでまとめる
     z.switch_trigger_status(@infra, monitorings_selected)
     z.create_web_scenario(@infra, web_scenario)
 
     # zabbix側でmysqlに関するitemとtrigger expressionをアップデートする
-    z.update_mysql(@infra, host_mysql["host"])
+    z.update_mysql(@infra, host_mysql['host'])
 
     # if there are any triggers to update then do so
     if expr_nums.present?
       z.update_trigger_expression(@infra, trigger_exprs)
     end
 
-    infra_logger_success("Monitoring Options updated")
+    infra_logger_success('Monitoring Options updated')
 
     # TODO: Zabbix Server側の状態の更新
     render text: I18n.t('monitoring.msg.updated')
@@ -262,7 +257,7 @@ class MonitoringsController < ApplicationController
           reqs.push z.templates_link_host_build(resource.physical_id, templates)
           item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
           item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-          reqs.push z.create_cpu_usage_trigger_build(  item_info_cpu,   resource.physical_id)
+          reqs.push z.create_cpu_usage_trigger_build(item_info_cpu, resource.physical_id)
           reqs.push z.create_mysql_login_trigger_build(item_info_mysql, resource.physical_id)
         end
         reqs.push z.create_elb_host_build(@infra)
@@ -273,18 +268,18 @@ class MonitoringsController < ApplicationController
           z.templates_link_host(resource.physical_id, templates)
           item_info_cpu   = z.create_cpu_usage_item(resource.physical_id)
           item_info_mysql = z.create_mysql_login_item(resource.physical_id)
-          z.create_cpu_usage_trigger(  item_info_cpu,   resource.physical_id)
+          z.create_cpu_usage_trigger(item_info_cpu,   resource.physical_id)
           z.create_mysql_login_trigger(item_info_mysql, resource.physical_id)
         end
         z.create_elb_host(@infra)
       end
-    rescue => ex
-      @infra.detach_zabbix()
+    rescue StandardError => ex
+      @infra.detach_zabbix
 
-      render text: ex.message, status: 500 and return
+      render text: ex.message, status: :internal_server_error and return
     end
 
-    infra_logger_success("Infrastructure is registered to Zabbix")
+    infra_logger_success('Infrastructure is registered to Zabbix')
     render nothing: true and return
   end
 
@@ -295,10 +290,9 @@ class MonitoringsController < ApplicationController
     @infra.project.change_zabbix(zabbix_id, current_user)
     @infra.project.save!
 
-    infra_logger_success("Zabbix Server Changed!")
+    infra_logger_success('Zabbix Server Changed!')
     render nothing: true and return
   end
-
 
   private
 
@@ -309,6 +303,7 @@ class MonitoringsController < ApplicationController
   def set_zabbix
     @zabbix_server = @infra.project.zabbix_server
     raise t('projects.msg.zabbix_not_set') unless @zabbix_server
+
     @zabbix = Zabbix.new(@zabbix_server.fqdn, current_user.email, current_user.encrypted_password)
   end
 end

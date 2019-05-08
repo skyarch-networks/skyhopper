@@ -11,7 +11,7 @@ require_relative '../spec_helper'
 describe Ec2PrivateKey do
   describe 'with validation' do
     describe 'column value' do
-      let(:key){build(:ec2_private_key)}
+      let(:key) { build(:ec2_private_key) }
 
       it 'should be RSA Private Key' do
         key.value = 'invalid as rsa key'
@@ -23,34 +23,34 @@ describe Ec2PrivateKey do
   end
 
   describe '.new_from_aws' do
-    let(:ec2){double('ec2')}
-    let(:key){double('key', key_material: attributes_for(:ec2_private_key)[:value])}
+    let(:ec2) { double('ec2') }
+    let(:key) { double('key', key_material: attributes_for(:ec2_private_key)[:value]) }
 
-    let(:name){'foobar'}
-    let(:project){create(:project)}
-    let(:region){'ap-northeast-1'}
+    let(:name) { 'foobar' }
+    let(:project) { create(:project) }
+    let(:region) { 'ap-northeast-1' }
 
-    subject{Ec2PrivateKey.new_from_aws(name, project.id, region)}
+    subject { Ec2PrivateKey.new_from_aws(name, project.id, region) }
 
     before do
       allow_any_instance_of(Infrastructure).to receive(:ec2).and_return(ec2)
       allow(ec2).to receive(:create_key_pair).and_return(key)
     end
 
-    it{is_expected.to be_a Ec2PrivateKey}
+    it { is_expected.to be_a Ec2PrivateKey }
   end
 
   describe '#path_temp' do
-    let(:key){build(:ec2_private_key)}
-    subject{key.path_temp}
+    let(:key) { build(:ec2_private_key) }
+    subject { key.path_temp }
 
     context 'before output' do
-      it{is_expected.to be nil}
+      it { is_expected.to be nil }
     end
 
     context 'after output' do
-      before{key.output_temp}
-      it{is_expected.to be_a String}
+      before { key.output_temp }
+      it { is_expected.to be_a String }
 
       it 'file should exist' do
         expect(File.exist?(subject)).to be true
@@ -59,15 +59,15 @@ describe Ec2PrivateKey do
   end
 
   describe '#close_temp' do
-    let(:key){build(:ec2_private_key)}
-    subject{key.close_temp}
+    let(:key) { build(:ec2_private_key) }
+    subject { key.close_temp }
 
     context 'before output' do
-      it{is_expected.to be nil}
+      it { is_expected.to be nil }
     end
 
     context 'after output' do
-      before{key.output_temp}
+      before { key.output_temp }
 
       it 'file should not exist' do
         path = key.path_temp

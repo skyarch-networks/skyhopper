@@ -12,17 +12,15 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!
 
   # --------------- existence check
-  before_action :client_exist, only: [:edit, :update, :destroy]
+  before_action :client_exist, only: %i[edit update destroy]
 
-  before_action :set_client, only: [:edit, :update, :destroy]
+  before_action :set_client, only: %i[edit update destroy]
 
   before_action do
     authorize(@client || Client.new)
   end
 
   before_action :with_zabbix, only: :destroy
-
-
 
   # GET /clients
   # GET /clients.json
@@ -41,8 +39,7 @@ class ClientsController < ApplicationController
   end
 
   # GET /clients/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /clients
   # POST /clients.json
@@ -70,19 +67,20 @@ class ClientsController < ApplicationController
   # DELETE /clients/1
   # DELETE /clients/1.json
   def destroy
-    go = -> () { redirect_to clients_path }
+    go = -> { redirect_to clients_path }
     begin
       @client.destroy!
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = ex.message
-      go.() and return
+      go.call and return
     end
 
     ws_send(t('clients.msg.deleted', name: @client.name), true)
-    go.() and return
+    go.call and return
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_client
     @client = Client.find(params[:id])

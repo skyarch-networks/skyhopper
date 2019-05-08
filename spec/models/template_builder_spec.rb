@@ -27,7 +27,7 @@ describe TemplateBuilder, type: :model do
 
   describe 'class methods' do
     describe '.resources' do
-      subject{TemplateBuilder.resources}
+      subject { TemplateBuilder.resources }
       it 'should be Strings in Array' do
         is_expected.to be_kind_of Array
         subject.each do |r|
@@ -37,7 +37,7 @@ describe TemplateBuilder, type: :model do
     end
 
     describe '.resource' do
-      subject{TemplateBuilder.resource('EC2::Instance')}
+      subject { TemplateBuilder.resource('EC2::Instance') }
       it 'should be return Resource class' do
         is_expected.to eq TemplateBuilder::Resource::EC2::Instance
       end
@@ -45,12 +45,12 @@ describe TemplateBuilder, type: :model do
   end
 
   describe 'instance methods' do
-    let(:builder){TemplateBuilder.new}
+    let(:builder) { TemplateBuilder.new }
 
     describe '#add' do
       context 'method success' do
-        let(:res){StubRes.new('foo')}
-        subject{builder.instance_variable_get(:@resources)}
+        let(:res) { StubRes.new('foo') }
+        subject { builder.instance_variable_get(:@resources) }
 
         it '@resources added Resource' do
           is_expected.to be_empty
@@ -60,9 +60,9 @@ describe TemplateBuilder, type: :model do
       end
 
       context 'recieve invalid arg' do
-        subject{builder.add(nil)}
+        subject { builder.add(nil) }
         it do
-          expect{subject}.to raise_error ArgumentError
+          expect { subject }.to raise_error ArgumentError
         end
       end
 
@@ -73,15 +73,15 @@ describe TemplateBuilder, type: :model do
         end
 
         it do
-          expect{builder.add(StubRes.new(res_name))}.to raise_error TemplateBuilder::ResourceAlreadyExist
+          expect { builder.add(StubRes.new(res_name)) }.to raise_error TemplateBuilder::ResourceAlreadyExist
         end
       end
     end
 
     describe '#add_param' do
       context 'method success' do
-        let(:param){double('kind_of?': true, name: 'foo')}
-        subject{builder.instance_variable_get(:@parameters)}
+        let(:param) { double('is_a?': true, name: 'foo') }
+        subject { builder.instance_variable_get(:@parameters) }
 
         it do
           is_expected.to be_empty
@@ -91,29 +91,29 @@ describe TemplateBuilder, type: :model do
       end
 
       context 'recieve invalid arg' do
-        subject{builder.add_param(nil)}
+        subject { builder.add_param(nil) }
         it do
-          expect{subject}.to raise_error ArgumentError
+          expect { subject }.to raise_error ArgumentError
         end
       end
 
       context 'parameter already exist' do
-        let(:param){double('kind_of?': true, name: 'bar')}
-        subject{builder.add_param(param)}
+        let(:param) { double('is_a?': true, name: 'bar') }
+        subject { builder.add_param(param) }
         before do
           builder.add_param(param)
         end
 
         it do
-          expect{subject}.to raise_error TemplateBuilder::ParameterAlreadyExist
+          expect { subject }.to raise_error TemplateBuilder::ParameterAlreadyExist
         end
       end
     end
 
     describe '#add_output' do
       context 'method success' do
-        let(:output){double('kind_of?': true, name: 'foo')}
-        subject{builder.instance_variable_get(:@outputs)}
+        let(:output) { double('is_a?': true, name: 'foo') }
+        subject { builder.instance_variable_get(:@outputs) }
 
         it do
           is_expected.to be_empty
@@ -123,27 +123,27 @@ describe TemplateBuilder, type: :model do
       end
 
       context 'recieve invalid arg' do
-        subject{builder.add_output(nil)}
-        it  do
-          expect{subject}.to raise_error ArgumentError
+        subject { builder.add_output(nil) }
+        it do
+          expect { subject }.to raise_error ArgumentError
         end
       end
 
       context 'output already exist' do
-        let(:output){double('kind_of?': true, name: 'bar')}
-        subject{builder.add_output(output)}
+        let(:output) { double('is_a?': true, name: 'bar') }
+        subject { builder.add_output(output) }
         before do
           builder.add_output(output)
         end
 
-        it  do
-          expect{subject}.to raise_error TemplateBuilder::OutputAlreadyExist
+        it do
+          expect { subject }.to raise_error TemplateBuilder::OutputAlreadyExist
         end
       end
     end
 
     describe '#build' do
-      subject{builder.build}
+      subject { builder.build }
 
       it do
         is_expected.to be_kind_of Hash
@@ -152,9 +152,9 @@ describe TemplateBuilder, type: :model do
 
     describe '#to_json' do
       before do
-        allow(builder).to receive(:build).and_return({foo: 'bar'})
+        allow(builder).to receive(:build).and_return({ foo: 'bar' })
       end
-      subject{builder.to_json}
+      subject { builder.to_json }
 
       it 'return json' do
         JSON::parse(subject)
@@ -163,9 +163,9 @@ describe TemplateBuilder, type: :model do
 
     describe '#to_pretty_json' do
       before do
-        allow(builder).to receive(:build).and_return({foo: 'bar'})
+        allow(builder).to receive(:build).and_return({ foo: 'bar' })
       end
-      subject{builder.to_pretty_json}
+      subject { builder.to_pretty_json }
 
       it 'return json' do
         JSON::parse(subject)

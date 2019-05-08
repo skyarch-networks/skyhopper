@@ -9,10 +9,10 @@
 require_relative '../spec_helper'
 
 describe AppSetting, type: :model do
-  let(:klass){AppSetting}
+  let(:klass) { AppSetting }
 
   describe 'with validation' do
-    let(:set){build(:app_setting)}
+    let(:set) { build(:app_setting) }
 
     describe 'column log_directory' do
       it 'should be pathname' do
@@ -41,7 +41,7 @@ describe AppSetting, type: :model do
       klass.clear_cache
     end
 
-    subject{klass.get}
+    subject { klass.get }
     it 'should return AppSetting.first' do
       is_expected.to eq klass.first
     end
@@ -58,9 +58,9 @@ describe AppSetting, type: :model do
         create(:app_setting)
       end
 
-      subject{klass.set?}
+      subject { klass.set? }
 
-      it{is_expected.to be true}
+      it { is_expected.to be true }
     end
 
     context 'when have not setting' do
@@ -68,9 +68,9 @@ describe AppSetting, type: :model do
         klass.delete_all
       end
 
-      subject{klass.set?}
+      subject { klass.set? }
 
-      it{is_expected.to be_falsey}
+      it { is_expected.to be_falsey }
     end
 
     context 'when have dummy setting' do
@@ -79,9 +79,9 @@ describe AppSetting, type: :model do
         create(:app_setting, dummy: true)
       end
 
-      subject{klass.clear_cache;klass.set?}
+      subject { klass.clear_cache; klass.set? }
 
-      it{is_expected.to be_falsey}
+      it { is_expected.to be_falsey }
     end
   end
 
@@ -101,7 +101,7 @@ describe AppSetting, type: :model do
       Rails.cache.write('app_setting', 'foo')
     end
 
-    subject{klass.clear_cache}
+    subject { klass.clear_cache }
 
     it 'should clear cache' do
       expect(Rails.cache.read('app_setting')).not_to be_nil
@@ -112,7 +112,7 @@ describe AppSetting, type: :model do
 
   describe '#dummy?' do
     context 'when dummy' do
-      subject{build(:app_setting, dummy: true)}
+      subject { build(:app_setting, dummy: true) }
 
       it 'should return true' do
         expect(subject.dummy?).to be true
@@ -120,7 +120,7 @@ describe AppSetting, type: :model do
     end
 
     context 'when not dummy' do
-      subject{build(:app_setting)}
+      subject { build(:app_setting) }
 
       it 'should return false' do
         expect(subject.dummy?).to be false

@@ -13,7 +13,7 @@ module DishesController::Validate
 
     # dishのテスト
     Thread.new_with_db do
-      dish  = Dish.find(id)
+      dish = Dish.find(id)
 
       begin
         @ws = WSConnector.new('dish_validate', dish.id)
@@ -24,15 +24,12 @@ module DishesController::Validate
           create_test_stack(@infrastructure, dish)
         end
 
-
         physical_id = @stack.instances.first.physical_resource_id
         @node = Node.new(physical_id)
-
 
         # インスタンスのsshサービスの立ち上がりを待つ
         # TODO 良い方法を検討する
         sleep(180)
-
 
         # serverspec
         validate_section(:serverspec, dish) do
@@ -44,26 +41,29 @@ module DishesController::Validate
           end
         end
 
-
-
         update_validate_status(dish, :success)
-
-
-
-      rescue => ex
+      rescue StandardError => ex
         # なんらかの理由でValidateできなかった場合
         # status に nil を設定してThreadを抜ける
         Rails.logger.error(ex.message)
 
         dish.update_status(nil)
-        @ws.push("NOT YET")
+        @ws.push('NOT YET')
       ensure
         # 後始末
         # TODO: error handling
         Rails.logger.debug('start destroy test stack')
 
-        @stack.delete               rescue true
-        @infrastructure.destroy     rescue true
+        begin
+          @stack.delete
+        rescue StandardError
+          true
+        end
+        begin
+          @infrastructure.destroy
+        rescue StandardError
+          true
+        end
 
         Rails.logger.debug('complete destroy test stack')
       end
@@ -72,7 +72,6 @@ module DishesController::Validate
     # test 用 render
     render text: 'Validate dish is successfully started.'
   end
-
 
   private
 
@@ -99,11 +98,11 @@ module DishesController::Validate
   def create_test_stack(infrastructure, dish)
     cf_template = CfTemplate.new(
       infrastructure_id: infrastructure.id,
-      name:              "t2.micro for Dish validate",
-      detail:            "Dish: #{dish.name}",
-      value:             ERB::Builder.new('dish_test').build,
-      user_id:           current_user.id,
-      format:             'JSON',
+      name: 't2.micro for Dish validate',
+      detail: "Dish: #{dish.name}",
+      value: ERB::Builder.new('dish_test').build,
+      user_id: current_user.id,
+      format: 'JSON',
     )
 
     @stack = Stack.new(infrastructure)
@@ -112,10 +111,10 @@ module DishesController::Validate
     begin
       @stack.apply_template(cf_template.value, parameters)
       # rubocop:disable Lint/HandleExceptions
-    rescue
+    rescue StandardError
       # rubocop:enable Lint/HandleExceptions
       # Stack Create failed
-      #render text: ex.message, status: 500
+      # render text: ex.message, status: 500
     else
       infrastructure.status = @stack.status[:status]
       infrastructure.save!
@@ -124,22 +123,20 @@ module DishesController::Validate
       cf_template.save
     end
 
-
     # Stackのcreate_completeを確認
     @stack.wait_status('CREATE_COMPLETE')
   end
-
-
 
   # テスト用のインスタンスに対して、Serverspecを実行する。
   # Serverspecに失敗した場合は、 Node::ServerspecError が投げられる
   # serverspecの成功をBoolで返す
   def serverspec_for_test(dish, infrastructure)
-    svrspecs    = dish.servertests
+    svrspecs = dish.servertests
     return true if svrspecs.empty?
+
     @infrastructure.resources_or_create
     svrspec_res = @node.run_serverspec(infrastructure.id, svrspecs.map(&:id))
 
-    return svrspec_res[:summary][:failure_count].zero?
+    svrspec_res[:summary][:failure_count].zero?
   end
 end

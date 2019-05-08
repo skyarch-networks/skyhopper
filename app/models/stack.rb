@@ -18,13 +18,13 @@ class Stack
     region            = infra.region
 
     @cloud_formation = Aws::CloudFormation::Resource.new(
-      access_key_id:     access_key_id,
+      access_key_id: access_key_id,
       secret_access_key: secret_access_key,
-      region:            region
+      region: region,
     )
     @stack = @cloud_formation.stack(@name)
 
-    self.update_status
+    update_status
   end
 
   attr_reader :name, :stack
@@ -35,10 +35,10 @@ class Stack
 
   def create(template, parameters)
     @cloud_formation.create_stack(
-      stack_name:    @name,
+      stack_name: @name,
       template_body: template,
-      parameters:    parameters,
-      capabilities: %w[CAPABILITY_NAMED_IAM]
+      parameters: parameters,
+      capabilities: %w[CAPABILITY_NAMED_IAM],
     )
   end
 
@@ -46,7 +46,7 @@ class Stack
     @stack.update(
       template_body: template,
       parameters: parameters,
-      capabilities: %w[CAPABILITY_NAMED_IAM]
+      capabilities: %w[CAPABILITY_NAMED_IAM],
     )
   end
 
@@ -56,40 +56,36 @@ class Stack
     action = nil
     begin
       action = 'Creating'
-      self.create(template, parameters)
+      create(template, parameters)
     rescue Aws::CloudFormation::Errors::AlreadyExistsException
       action = 'Updating'
-      self.update(template, parameters)
+      update(template, parameters)
     end
     update_status
 
-    return action
+    action
   end
 
   def instances
-    return resource_by_type("AWS::EC2::Instance")
+    resource_by_type('AWS::EC2::Instance')
   end
 
   def instances_for_resources
-    return resource_by_type(
-      "AWS::EC2::Instance", "AWS::RDS::DBInstance", "AWS::S3::Bucket", "AWS::ElasticLoadBalancing::LoadBalancer"
+    resource_by_type(
+      'AWS::EC2::Instance', 'AWS::RDS::DBInstance', 'AWS::S3::Bucket', 'AWS::ElasticLoadBalancing::LoadBalancer',
     )
   end
 
   # return: {available: (true|false), message: String, status: String(ex. CREATE_COMPLETE)}
-  def status
-    @status
-  end
+  attr_reader :status
 
   def update_status
-    begin
-      @stack.reload
-      status = @stack.stack_status
-    rescue => ex
-      @status = {available: false, message: ex.message, status: ""}
-    else
-      @status = {available: true, message: "", status: status}
-    end
+    @stack.reload
+    status = @stack.stack_status
+  rescue StandardError => ex
+    @status = { available: false, message: ex.message, status: '' }
+  else
+    @status = { available: true, message: '', status: status }
   end
 
   def delete
@@ -97,32 +93,32 @@ class Stack
   end
 
   def in_progress?(st = status[:status])
-    st.include?("_IN_PROGRESS")
+    st.include?('_IN_PROGRESS')
   end
 
   def outputs
     @stack.outputs
   end
 
-  %w{
+  %w[
     CREATE_IN_PROGRESS CREATE_FAILED CREATE_COMPLETE ROLLBACK_IN_PROGRESS ROLLBACK_FAILED ROLLBACK_COMPLETE
     DELETE_IN_PROGRESS DELETE_FAILED DELETE_COMPLETE UPDATE_IN_PROGRESS UPDATE_COMPLETE_CLEANUP_IN_PROGRESS
     UPDATE_COMPLETE UPDATE_ROLLBACK_IN_PROGRESS UPDATE_ROLLBACK_FAILED UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS
     UPDATE_ROLLBACK_COMPLETE
-  }.each do |status_to_comp|
+  ].each do |status_to_comp|
     define_method("#{status_to_comp.downcase}?") do |status = @status[:status]|
       status == status_to_comp
     end
   end
 
-  FailedStatus = %w{
+  FailedStatus = %w[
     CREATE_FAILED ROLLBACK_IN_PROGRESS ROLLBACK_FAILED ROLLBACK_COMPLETE DELETE_FAILED UPDATE_ROLLBACK_IN_PROGRESS
     UPDATE_ROLLBACK_FAILED UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS UPDATE_ROLLBACK_COMPLETE
-  }.freeze
+  ].freeze
 
-  CompleteStatus = %w{
+  CompleteStatus = %w[
     CREATE_COMPLETE UPDATE_COMPLETE DELETE_COMPLETE
-  }.freeze
+  ].freeze
 
   def self.failed?(status)
     FailedStatus.include?(status)
@@ -140,29 +136,30 @@ class Stack
     CompleteStatus.include?(st)
   end
 
-  def wait_status(status_to_wait, interval=10)
+  def wait_status(status_to_wait, interval = 10)
     until (current_status = status[:status]) == status_to_wait
       raise CreationError, "stack creation failed (#{current_status})" if failed?(current_status)
+
       sleep interval
       update_status
     end
   end
 
-  def wait_creat_complate_or_update_complete(interval=10)
+  def wait_creat_complate_or_update_complete(interval = 10)
     current_status = status[:status]
-    until ['CREATE_COMPLETE', 'UPDATE_COMPLETE'].include?(current_status)
+    until %w[CREATE_COMPLETE UPDATE_COMPLETE].include?(current_status)
       raise CreationError, "stack creation failed (#{current_status})" if failed?(current_status)
+
       sleep interval
       update_status
       current_status = status[:status]
     end
   end
 
-
   # @param [String] logical_id is logical_resource_id. You defined in CloudFormation template.
   # @param [String] status_to_wait
   # @param [Integer] interval
-  def wait_resource_status(logical_id, status_to_wait, interval=10)
+  def wait_resource_status(logical_id, status_to_wait, interval = 10)
     resource = @stack.resource(logical_id)
     loop do
       sleep interval
@@ -181,11 +178,11 @@ class Stack
   def events
     @stack.events.map do |event|
       {
-        time:    event.timestamp,
-        type:    event.resource_type,
+        time: event.timestamp,
+        type: event.resource_type,
         logical: event.logical_resource_id,
-        status:  event.resource_status,
-        reason:  event.resource_status_reason,
+        status: event.resource_status,
+        reason: event.resource_status_reason,
       }
     end
   end
@@ -193,8 +190,8 @@ class Stack
   # CloudFormationの持つResourceをModelのインスタンスとして取得する。
   def get_resources
     aws_resources = instances_for_resources
-    return aws_resources.map do |aws_resource|
-      if aws_resource.resource_type == "AWS::EC2::Instance"
+    aws_resources.map do |aws_resource|
+      if aws_resource.resource_type == 'AWS::EC2::Instance'
         physical_id = aws_resource.physical_resource_id
         tags = @infra.instance(physical_id).tags_by_hash
         screen_name = tags['Name']
@@ -204,7 +201,7 @@ class Stack
         physical_id: aws_resource.physical_resource_id,
         type_name: aws_resource.resource_type,
         infrastructure_id: @infra.id,
-        screen_name: screen_name
+        screen_name: screen_name,
       )
     end
   end
@@ -224,14 +221,13 @@ class Stack
       type = 'NONE'
     end
 
-    return {name: name, type: type}
+    { name: name, type: type }
   end
-
 
   private
 
   def resource_by_type(*types)
-    return @stack.resource_summaries.select do |summary|
+    @stack.resource_summaries.select do |summary|
       types.include?(summary.resource_type)
     end
   end

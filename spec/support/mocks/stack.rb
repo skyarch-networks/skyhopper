@@ -11,9 +11,9 @@ module StackStub
 
   # opt = {METHOD_NAME: ACTION}
   def stubize_stack(opt = {})
-    let(:_cf){double('@cloud_formation')}
-    let(:_stack){double('@stack')}
-    let(:cf_validate_error){Aws::CloudFormation::Errors::ValidationError.new('CONTEXT', 'MESSAGE')}
+    let(:_cf) { double('@cloud_formation') }
+    let(:_stack) { double('@stack') }
+    let(:cf_validate_error) { Aws::CloudFormation::Errors::ValidationError.new('CONTEXT', 'MESSAGE') }
 
     before do
       allow(Aws::CloudFormation::Resource).to receive(:new).and_return(_cf)
@@ -29,7 +29,7 @@ module StackStub
       end
 
       # status
-      allow(_stack).to receive(:stack_status).and_return("CREATE_COMPLETE")
+      allow(_stack).to receive(:stack_status).and_return('CREATE_COMPLETE')
 
       allow(_stack).to receive(:reload)
 
@@ -38,12 +38,12 @@ module StackStub
         allow(_stack).to receive(:events).and_raise(cf_validate_error)
       else
         allow_any_instance_of(Stack).to receive(:events).and_return([{
-          time:    Time.zone.now,
-          type:    "AWS::CloudFormation::Stack",
-          logical: "stack",
-          status:  "CREAT_COMPLETE",
-          reason:  nil,
-        }])
+                                                                      time: Time.zone.now,
+                                                                      type: 'AWS::CloudFormation::Stack',
+                                                                      logical: 'stack',
+                                                                      status: 'CREAT_COMPLETE',
+                                                                      reason: nil,
+                                                                    }])
       end
     end
   end

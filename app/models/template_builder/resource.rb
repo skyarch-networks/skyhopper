@@ -16,11 +16,11 @@ class TemplateBuilder::Resource
 
   class << self
     def resource_type
-      self.to_s.sub(/^TemplateBuilder::Resource::/, '').freeze
+      to_s.sub(/^TemplateBuilder::Resource::/, '').freeze
     end
 
     def duped_resource_base
-      Marshal.load(Marshal.dump(self.class_variable_get(:@@resource_base)))
+      Marshal.load(Marshal.dump(class_variable_get(:@@resource_base)))
     end
 
     # 継承元のクラスで、@@propertiesを宣言する。
@@ -28,17 +28,17 @@ class TemplateBuilder::Resource
     # 使用できるプロパティを返す。
     # return TemplateBuilder::Property Array
     def properties
-      return self.class_variable_get(:@@properties)
+      class_variable_get(:@@properties)
     end
 
     # 継承された時
     def inherited(klass)
       klass.const_set(:Type, "AWS::#{klass.resource_type}".freeze)
-      klass.class_variable_set(:@@resource_base, {Type: klass.const_get(:Type), Properties: {}}.recursive_freeze)
+      klass.class_variable_set(:@@resource_base, { Type: klass.const_get(:Type), Properties: {} }.recursive_freeze)
     end
 
     def required_properties
-      properties.select{|prop| prop.required?}
+      properties.select(&:required?)
     end
   end
 
@@ -83,9 +83,9 @@ class TemplateBuilder::Resource
   # ref_keyは必須。
   def set_refs(hash)
     each_exist_props(hash) do |prop, val|
-      raise InvalidPropertyError, "Ref-key must be not nil." if val.nil?
+      raise InvalidPropertyError, 'Ref-key must be not nil.' if val.nil?
 
-      @properties[prop.name] = {Ref: val}
+      @properties[prop.name] = { Ref: val }
     end
 
     self
@@ -102,10 +102,10 @@ class TemplateBuilder::Resource
 
     result = {
       @name => self.class.duped_resource_base.deep_merge(
-        Properties: @properties
+        Properties: @properties,
       ),
     }
-    return result
+    result
   end
 
   private
