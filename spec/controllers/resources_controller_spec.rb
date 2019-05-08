@@ -29,7 +29,12 @@ describe ResourcesController do
     let(:ec2_exists){true}
     let(:req){post :create, infra_id: infra.id, physical_id: physical_id, screen_name: screen_name}
 
-    let(:aws_instance){double(:aws_instance, exists?: ec2_exists, describe_keypair: infra.keypairname, status: :running)}
+    let(:aws_instance){double(:aws_instance,
+                              exists?: ec2_exists,
+                              describe_keypair: infra.keypairname,
+                              status: :running,
+                              register_in_known_hosts: nil
+    )}
 
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(aws_instance)

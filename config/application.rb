@@ -1,5 +1,4 @@
 require File.expand_path('../boot', __FILE__)
-require File.expand_path('../initializers/suppress_hashie_warn', __FILE__)
 
 require 'rails/all'
 
@@ -34,23 +33,16 @@ module SkyHopper
       g.fixture_replacement :factory_girl, dir: "spec/factories"
     end
 
-    # XXX: disabling SSL verify to connect chef-server (it has no valid SSL certificate)
-    stderr_back = $stderr.dup
-    $stderr.reopen('/dev/null')
-    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-    $stderr.flush
-    $stderr.reopen stderr_back
-
     # for i18n-js assets pipeline
     config.assets.paths << "#{Rails.root}/bundle/ruby/*/gems/*/vendor/assets/javascript"
 
-    config.session_store :redis_store, servers: 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
+    config.session_store :redis_store, servers: ENV['REDIS_URL'] || 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
 
     config.filter_parameters += [:password, :apikey_secret]
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Version 2.0.0'
+    config.my_version = 'Version 2.1.0'
 
     config.browserify_rails.paths << /frontend\//
   end

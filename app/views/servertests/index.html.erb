@@ -13,14 +13,14 @@
 
 <script id="grid-template" type="text/template"> <%= render 'vue/index' %> </script>
 
-<div id="indexElement" v-el:node>
+<div id="indexElement" ref="node">
 
   <div v-cloak>
     <div class="col-xs-4"><input type="text" class="form-control" v-model="searchQuery" placeholder="<%= t 'infrastructures.search' %>"></div>
 
     <div class="pull-right">
-      <a class="btn btn-danger btn-sm disabled"
-      :class="{disabled: can_delete()}"
+      <a class="btn btn-danger btn-sm"
+      :disabled="can_delete()"
       @click="delete_entry()">
           <%= fa 'times' %>
           <%= t 'common.btn.delete' %>
@@ -28,8 +28,8 @@
     </div>
 
     <div class="pull-right" v-cloak="picked">
-      <a class="btn btn-default btn-sm disabled"
-          :href="picked.edit_servertest_path" :class="{disabled: can_edit()}">
+      <a class="btn btn-default btn-sm"
+          :href="picked.edit_servertest_path" :disabled="can_edit()">
           <span class='glyphicon glyphicon-edit'></span>
           <%= t 'helpers.links.edit' %>
       </a>&nbsp
@@ -45,10 +45,10 @@
 
 
   <demo-grid
-  :data.sync="gridData"
+  :data="gridData"
   :columns="gridColumns"
   :filter-key="searchQuery"
-  :picked.sync="picked"
+  :picked="picked"
   :index="index"
   :url="url">
   </demo-grid>

@@ -205,15 +205,6 @@ describe Infrastructure, type: :model do
     end
   end
 
-  describe '#detach_chef' do
-    subject{build(:infrastructure)}
-
-    it 'should call Stack#detach_chef' do
-      expect(Stack).to receive_message_chain(:new, :detach_chef)
-      subject.detach_chef
-    end
-  end
-
   describe '#ec2' do
     subject{build(:infrastructure)}
 

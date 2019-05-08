@@ -136,15 +136,10 @@ describe ProjectsController, type: :controller do
 
   describe "GET #edit" do
     let(:edit_request){get :edit, id: project.id}
-    let(:cloudprovider_all){CloudProvider.all}
 
     before {edit_request}
 
     context "when edit" do
-      it "should equal" do
-        expect(assigns[:cloud_providers]).to eq cloudprovider_all
-      end
-
       it "should assign project" do
         expect(assigns[:project]).to be_a Project
       end
@@ -155,7 +150,6 @@ describe ProjectsController, type: :controller do
     let(:request){delete :destroy, id: project.id}
 
     stubize_zabbix
-    stubize_infra
     run_zabbix_server
 
     context 'when delete success' do

@@ -50,15 +50,15 @@
                 <!--<th>Range</th>-->
                 <!--<th>Source</th>-->
               <!--</tr>-->
-              <!--<tr v-for="ib in inbound" track-by="$index">-->
+              <!--<tr v-for="ib in inbound" :key="ib.index">-->
                 <!--<td>-->
-                  <!--<select class="form-control" v-model="type[$index]">-->
-                    <!--<option v-for="(k,i) in ib" v-bind:value="k">{{i.type}}</option>-->
+                  <!--<select class="form-control" v-model="type[index]">-->
+                    <!--<option v-for="(i,k) in ib" v-bind:value="k">{{i.type}}</option>-->
                   <!--</select>-->
                 <!--</td>-->
-                <!--<td>{{inbound[$index][type[$index]].protocol}}</td>-->
-                <!--<td>{{inbound[$index][type[$index]].port}}</td>-->
-                <!--<td>{{inbound[$index][type[$index]].source}}</td>-->
+                <!--<td>{{inbound[index][type[index]].protocol}}</td>-->
+                <!--<td>{{inbound[index][type[index]].port}}</td>-->
+                <!--<td>{{inbound[index][type[index]].source}}</td>-->
               <!--</tr>-->
             <!--</table>-->
             <!--<button @click="add_rule('inbound')" class="btn btn-xs btn-default">Add rule</button>-->

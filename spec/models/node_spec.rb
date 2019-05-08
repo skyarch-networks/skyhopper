@@ -10,41 +10,6 @@ require_relative '../spec_helper'
 
 describe Node, type: :model do
 
-  describe ".bootstrap" do
-    before do
-      status = double()
-      expect(status).to receive(:success?).and_return(true)
-      expect(Open3).to receive(:capture3).and_return(['out','err', status])
-      allow_any_instance_of(EC2Instance).to receive(:platform).and_return("platform")
-      allow_any_instance_of(EC2Instance).to receive(:password).and_return("password")
-      expect(ChefAPI).to receive(:server_url).and_return('http://example.com/hoge/fuga')
-    end
-
-    let(:infra){build(:infrastructure)}
-
-    it "returns true if status is success" do
-      expect(Node.bootstrap("hoge", "fuga", infra)).to be_a Node
-    end
-  end
-
-  describe "#cook" do
-    subject { Node.new("test") }
-
-    before do
-      allow(Open3).to receive(:popen3)
-      allow_any_instance_of(EC2Instance).to receive(:platform).and_return("platform")
-      allow_any_instance_of(EC2Instance).to receive(:password).and_return("password")
-      allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return("fqdn")
-    end
-
-    let(:infra){build(:infrastructure)}
-    let(:whyrun){false}
-
-    it "returns true if status is success" do
-      expect(subject.cook(infra, whyrun)).to be_truthy
-    end
-  end
-
   describe "#run_ansible_playbook" do
     subject { Node.new("test") }
     let(:infra){build(:infrastructure)}
@@ -60,20 +25,6 @@ describe Node, type: :model do
       expect(subject.run_ansible_playbook(infra, [], '{}')).to eq true
     end
   end
-
-  describe '#all_recipe' do
-    subject { Node.new("test") }
-
-    before do
-      allow(ChefAPI).to receive_message_chain(:find, :run_list).and_return(%w[recipe[hoge] recipe[fuga] recipe[piyo]])
-    end
-
-    it 'return all run_list' do
-      s = subject.__send__(:all_recipe, %w{role[role1] recipe[bar]})
-      expect(s).to match_array %w{recipe[bar] recipe[hoge] recipe[fuga] recipe[piyo]}
-    end
-  end
-
 
   describe ".exec_command" do
     let(:command){'hoge'}

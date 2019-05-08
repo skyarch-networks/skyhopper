@@ -16,8 +16,6 @@ class ServerState
 
   def initialize(kind)
     case kind
-    when 'chef'
-      infra = Project.for_chef_server.infrastructures.last
     when 'zabbix'
       infra = Project.for_zabbix_server.infrastructures.last
     else

@@ -8,7 +8,6 @@
 
 class Project < ActiveRecord::Base
   belongs_to :client
-  belongs_to :cloud_provider
   belongs_to :zabbix_server
 
   has_many :infrastructures,    dependent: :restrict_with_exception
@@ -33,10 +32,6 @@ class Project < ActiveRecord::Base
 
   def self.for_test
     return Client.for_system.projects.find_by(code: ForDishTestCodeName)
-  end
-
-  def self.for_chef_server
-    return Client.for_system.projects.find_by(code: ChefServerCodeName)
   end
 
   def self.for_zabbix_server

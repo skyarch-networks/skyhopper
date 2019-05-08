@@ -118,7 +118,6 @@ describe ClientsController, type: :controller do
     let(:client) { create(:client) }
     let(:request) {delete :destroy, id: client.id}
 
-    stubize_infra
     stubize_zabbix
     run_zabbix_server
 

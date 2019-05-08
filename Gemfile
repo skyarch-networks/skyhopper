@@ -49,13 +49,10 @@ gem "font-awesome-rails"
 gem 'aws-sdk-v1'
 gem 'aws-sdk', '~> 2'
 gem 'awspec', require: false
-gem 'ridley', '~> 5'
 gem "net-ssh"
 gem "net-scp"
 gem "net-http-persistent", '~> 2.9.4'
 
-gem "knife-windows"
-gem "chef", "~> 12", require: false
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
@@ -103,7 +100,7 @@ group :development, :test do
   gem 'redcarpet'
   gem 'github-markup'
 
-  gem 'rubocop', '~> 0.55.0', require: false
+  gem 'rubocop', '~> 0.65.0', require: false
 
   gem 'spring'
   gem 'sprint'
@@ -141,3 +138,9 @@ gem 'rails-html-sanitizer', '~> 1.0.3'
 gem 'rubyzip', '>= 1.2.2'
 gem 'ffi', '>= 1.9.24'
 gem 'loofah', '>= 2.2.3'
+
+gem 'retryable', '~>2.0.4'
+
+# For Docker
+gem 'bigdecimal'
+gem 'io-console'

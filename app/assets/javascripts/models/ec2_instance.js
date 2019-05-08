@@ -1,464 +1,533 @@
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var base_1 = require('./base');
-var EC2Instance = (function (_super) {
-    __extends(EC2Instance, _super);
-    function EC2Instance(infra, physical_id) {
-        _super.call(this);
-        this.infra = infra;
-        this.physical_id = physical_id;
-        this.params = { id: physical_id, infra_id: infra.id };
+const ModelBase = require('./base').default;
+
+const EC2Instance = class EC2Instance extends ModelBase {
+  constructor(infra, physicalId) {
+    super();
+    this.infra = infra;
+    this.physical_id = physicalId;
+    this.params = { id: physicalId, infra_id: infra.id };
+    this.ajax_node = new AjaxSet.Resources('nodes');
+    this.ajax_ec2 = new AjaxSet.Resources('ec2_instances');
+    this.ajax_servertest = new AjaxSet.Resources('servertests');
+    this.ajax_elb = new AjaxSet.Resources('elb');
+    this.ajax_node.add_member('cook', 'PUT');
+    this.ajax_node.add_member('run_ansible_playbook', 'PUT');
+    this.ajax_node.add_member('yum_update', 'PUT');
+    this.ajax_node.add_member('run_bootstrap', 'GET');
+    this.ajax_node.add_member('get_rules', 'GET');
+    this.ajax_node.add_member('get_security_groups', 'GET');
+    this.ajax_node.add_member('apply_dish', 'POST');
+    this.ajax_node.add_member('submit_groups', 'POST');
+    this.ajax_node.add_member('edit_attributes', 'GET');
+    this.ajax_node.add_member('update_attributes', 'PUT');
+    this.ajax_node.add_member('edit_ansible_playbook', 'GET');
+    this.ajax_node.add_member('update_ansible_playbook', 'PUT');
+    this.ajax_node.add_member('schedule_yum', 'POST');
+    this.ajax_node.add_collection('recipes', 'GET');
+    this.ajax_node.add_collection('create_group', 'POST');
+    this.ajax_ec2.add_member('change_scale', 'POST');
+    this.ajax_ec2.add_member('start', 'POST');
+    this.ajax_ec2.add_member('stop', 'POST');
+    this.ajax_ec2.add_member('reboot', 'POST');
+    this.ajax_ec2.add_member('detach', 'POST');
+    this.ajax_ec2.add_member('terminate', 'POST');
+    this.ajax_ec2.add_member('serverspec_status', 'GET');
+    this.ajax_ec2.add_member('register_to_elb', 'POST');
+    this.ajax_ec2.add_member('deregister_from_elb', 'POST');
+    this.ajax_ec2.add_member('elb_submit_groups', 'POST');
+    this.ajax_ec2.add_member('attachable_volumes', 'GET');
+    this.ajax_ec2.add_member('attach_volume', 'POST');
+    this.ajax_ec2.add_member('detach_volume', 'POST');
+    this.ajax_ec2.add_member('available_resources', 'GET');
+    this.ajax_ec2.add_collection('create_volume', 'POST');
+    this.ajax_servertest.add_collection('select', 'GET');
+    this.ajax_servertest.add_collection('results', 'GET');
+    this.ajax_servertest.add_collection('run_serverspec', 'POST');
+    this.ajax_servertest.add_collection('schedule', 'POST');
+    this.ajax_elb.add_collection('create_listener', 'POST');
+    this.ajax_elb.add_collection('delete_listener', 'POST');
+    this.ajax_elb.add_collection('update_listener', 'POST');
+    this.ajax_elb.add_collection('upload_server_certificate', 'POST');
+    this.ajax_elb.add_collection('delete_server_certificate', 'POST');
+  }
+
+  show() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.show(self.params),
+    );
+  }
+
+  update(runlist) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.update(Object.assign({}, self.params, { runlist })),
+    );
+  }
+
+  bootstrap() {
+    const self = this;
+    const dfd = $.Deferred();
+    self.ajax_node.run_bootstrap(this.params)
+      .done(() => {
+        const ws = ws_connector('bootstrap', self.physical_id);
+        ws.onmessage = (msg) => {
+          ws.close();
+          const wsdata = JSON.parse(msg.data);
+          if (wsdata.status) {
+            dfd.resolve(wsdata.message);
+          } else {
+            dfd.reject(wsdata.message);
+          }
+        };
+      })
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  watch_cook(dfd) {
+    const ws = ws_connector('cooks', this.physical_id);
+    ws.onmessage = (msg) => {
+      const data = JSON.parse(msg.data).v;
+      if (typeof (data) === 'boolean') {
+        ws.close();
+        dfd.resolve(data);
+      } else {
+        dfd.notify('update', data, '\n');
+      }
+    };
+    return dfd;
+  }
+
+  _cook(methodName, params) {
+    const self = this;
+    const dfd = $.Deferred();
+    self.ajax_node[methodName](params)
+      .done((data) => {
+        dfd.notify('start', data);
+        self.watch_cook(dfd);
+      })
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  cook(params) {
+    return this._cook('cook', Object.assign({}, this.params, params));
+  }
+
+  watch_run_ansible_playbook(dfd) {
+    const ws = ws_connector('run-ansible-playbook', this.physical_id);
+    ws.onmessage = (msg) => {
+      const data = JSON.parse(msg.data).v;
+      if (typeof data === 'boolean') {
+        ws.close();
+        dfd.resolve(data);
+      } else {
+        dfd.notify('update', `${data}\n`);
+      }
+    };
+    return dfd;
+  }
+
+  run_ansible_playbook() {
+    const self = this;
+    const dfd = $.Deferred();
+    this.ajax_node.run_ansible_playbook(self.params)
+      .done((data) => {
+        dfd.notify('start', data);
+        self.watch_run_ansible_playbook(dfd);
+      })
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  yum_update(security, exec) {
+    const extraParams = {
+      security: security ? 'security' : 'all',
+      exec: exec ? 'exec' : 'check',
+    };
+    const params = Object.assign({}, this.params, extraParams);
+    return this._cook('yum_update', params);
+  }
+
+  edit_ansible_playbook() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => this.ajax_node.edit_ansible_playbook(self.params),
+    );
+  }
+
+  update_ansible_playbook(playbookRoles, extraVars) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => this.ajax_node.update_ansible_playbook(
+        Object.assign({}, self.params, {
+          playbook_roles: playbookRoles,
+          extra_vars: extraVars,
+        }),
+      ),
+    );
+  }
+
+  apply_dish(dishId) {
+    const self = this;
+    const params = Object.assign({}, this.params, dishId ? { dishId } : {});
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.apply_dish(params),
+    );
+  }
+
+  submit_groups(groupIds) {
+    const self = this;
+    const params = Object.assign({}, this.params, groupIds ? { groupIds } : {});
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.submit_groups(params),
+    );
+  }
+
+  create_group(groupParams) {
+    const self = this;
+    const params = Object.assign({}, this.params, groupParams ? { groupParams } : {});
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.create_group(params),
+    );
+  }
+
+  get_rules(groupIds) {
+    const self = this;
+    const params = Object.assign({}, this.params, groupIds ? { groupIds } : []);
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.get_rules(params),
+    );
+  }
+
+  get_security_groups() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.get_security_groups(self.params),
+    );
+  }
+
+  edit() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.edit(self.params),
+    );
+  }
+
+  edit_attributes() {
+    const self = this;
+    const dfd = $.Deferred();
+    self.ajax_node.edit_attributes(this.params)
+      .done((data) => {
+        Object.entries(data).forEach((keyAndVal) => {
+          const val = keyAndVal[1];
+          val.input_type = val.type === 'Boolean' ? 'checkbox' : 'text';
+        });
+        dfd.resolve(data);
+      })
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  update_attributes() {
+    const self = this;
+    const req = {};
+    Object.entries().forEach((v, key) => {
+      req[key] = v.value;
+    });
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.update_attributes(Object.assign({}, self.params,
+        { attributes: JSON.stringify(req) })),
+    );
+  }
+
+  schedule_yum(schedule) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.schedule_yum(Object.assign({}, self.params, {
+        physical_id: self.physical_id,
+        infra_id: self.infra.id,
+        schedule,
+      })),
+    );
+  }
+
+  attachable_volumes(availabilityZone) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.attachable_volumes(Object.assign({}, self.params, {
+        availability_zone: availabilityZone,
+      })),
+    );
+  }
+
+  attach_volume(volumeId, deviceName) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.attach_volume(Object.assign({}, self.params, {
+        volume_id: volumeId,
+        device_name: deviceName,
+      })),
+    );
+  }
+
+  detach_volume(volumeId) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.detach_volume(Object.assign({}, self.params, {
+        volume_id: volumeId,
+      })),
+    );
+  }
+
+  recipes(cookbook) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_node.recipes({ cookbook }),
+    );
+  }
+
+  select_serverspec() {
+    const self = this;
+    const dfd = $.Deferred();
+    self.ajax_servertest.select({
+      physical_id: this.physical_id,
+      infra_id: this.infra.id,
+    }).done((data) => {
+      data.globals.forEach((s) => {
+        // eslint-disable-next-line no-param-reassign
+        s.checked = data.selected_ids.includes(s.id);
+      });
+      data.individuals.forEach((s) => {
+        // eslint-disable-next-line no-param-reassign
+        s.checked = false;
+      });
+      dfd.resolve(data);
+    }).fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  results_servertest() {
+    const self = this;
+    const dfd = $.Deferred();
+    self.ajax_servertest.results({
+      physical_id: this.physical_id,
+      infra_id: this.infra.id,
+    }).done((data) => {
+      dfd.resolve(data);
+    }).fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  run_serverspec(specs, auto) {
+    const self = this;
+    const ids = specs.filter(
+      v => v.checked,
+    ).map(v => v.id);
+    if (auto) {
+      ids.push(-1);
     }
-    EC2Instance.prototype.show = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.show(_this.params);
-        });
-    };
-    EC2Instance.prototype.update = function (runlist) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.update(_.merge(_this.params, { runlist: runlist }));
-        });
-    };
-    EC2Instance.prototype.bootstrap = function () {
-        var _this = this;
-        var dfd = $.Deferred();
-        EC2Instance.ajax_node.run_bootstrap(this.params)
-            .done(function (data) {
-            var ws = ws_connector('bootstrap', _this.physical_id);
-            ws.onmessage = function (msg) {
-                ws.close();
-                var wsdata = JSON.parse(msg.data);
-                if (wsdata.status) {
-                    dfd.resolve(wsdata.message);
-                }
-                else {
-                    dfd.reject(wsdata.message);
-                }
-            };
-        })
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.watch_cook = function (dfd) {
-        var ws = ws_connector('cooks', this.physical_id);
-        ws.onmessage = function (msg) {
-            var data = JSON.parse(msg.data).v;
-            if (typeof (data) === 'boolean') {
-                ws.close();
-                dfd.resolve(data);
-            }
-            else {
-                dfd.notify('update', data + "\n");
-            }
-        };
-        return dfd;
-    };
-    EC2Instance.prototype._cook = function (method_name, params) {
-        var _this = this;
-        var dfd = $.Deferred();
-        EC2Instance.ajax_node[method_name](params)
-            .done(function (data) {
-            dfd.notify('start', data);
-            _this.watch_cook(dfd);
-        })
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.cook = function (params) {
-        return this._cook('cook', _.merge(this.params, params));
-    };
-    EC2Instance.prototype.watch_run_ansible_playbook = function (dfd) {
-        var ws = ws_connector('run-ansible-playbook', this.physical_id);
-        ws.onmessage = function (msg) {
-            var data = JSON.parse(msg.data).v;
-            if (typeof (data) === 'boolean') {
-                ws.close();
-                dfd.resolve(data);
-            }
-            else {
-                dfd.notify('update', data + "\n");
-            }
-        };
-        return dfd;
-    };
-    EC2Instance.prototype.run_ansible_playbook = function () {
-        var _this = this;
-        var dfd = $.Deferred();
-        EC2Instance.ajax_node['run_ansible_playbook'](_this.params)
-          .done(function (data) {
-            dfd.notify('start', data);
-            _this.watch_run_ansible_playbook(dfd);
-          })
-          .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.yum_update = function (security, exec) {
-        var extra_params = {
-            security: security ? 'security' : 'all',
-            exec: exec ? 'exec' : 'check',
-        };
-        var params = _.merge(this.params, extra_params);
-        return this._cook('yum_update', params);
-    };
-    EC2Instance.prototype.apply_dish = function (dish_id) {
-        var params = _.merge(this.params, dish_id ? { dish_id: dish_id } : {});
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.apply_dish(params);
-        });
-    };
-    EC2Instance.prototype.submit_groups = function (group_ids) {
-        var params = _.merge(this.params, group_ids ? { group_ids: group_ids } : {});
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.submit_groups(params);
-        });
-    };
-    EC2Instance.prototype.create_group = function (group_params) {
-        var params = _.merge(this.params, group_params ? { group_params: group_params } : {});
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.create_group(params);
-        });
-    };
-    EC2Instance.prototype.get_rules = function (group_ids) {
-        var params = _.merge(this.params, group_ids ? { group_ids: group_ids } : []);
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.get_rules(params);
-        });
-    };
-    EC2Instance.prototype.get_security_groups = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.get_security_groups(_this.params);
-        });
-    };
-    EC2Instance.prototype.edit = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.edit(_this.params);
-        });
-    };
-    EC2Instance.prototype.edit_attributes = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_node.edit_attributes(this.params)
-            .done(function (data) {
-            _.forEach(data, function (val) {
-                val.input_type = val.type === 'Boolean' ? 'checkbox' : 'text';
-            });
-            dfd.resolve(data);
-        })
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.update_attributes = function (attributes) {
-        var _this = this;
-        var req = {};
-        _.forEach(attributes, function (v, key) {
-            req[key] = v.value;
-        });
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.update_attributes(_.merge(_this.params, { attributes: JSON.stringify(req) }));
-        });
-    };
-    EC2Instance.prototype.edit_ansible_playbook = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-          return EC2Instance.ajax_node.edit_ansible_playbook(_this.params);
-        });
-    };
-    EC2Instance.prototype.update_ansible_playbook = function (playbook_roles, extra_vars) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-          return EC2Instance.ajax_node.update_ansible_playbook(_.merge(_this.params, {
-            playbook_roles: playbook_roles,
-            extra_vars: extra_vars,
-          }));
-        });
-    };
-    EC2Instance.prototype.schedule_yum = function (schedule) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.schedule_yum(_.merge(_this.params, {
-                physical_id: _this.physical_id,
-                infra_id: _this.infra.id,
-                schedule: schedule,
-            }));
-        });
-    };
-    EC2Instance.prototype.attachable_volumes = function (availability_zone) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.attachable_volumes(_.merge(_this.params, {
-                availability_zone: availability_zone
-            }));
-        });
-    };
-    EC2Instance.prototype.attach_volume = function (volume_id, device_name) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.attach_volume(_.merge(_this.params, {
-                volume_id: volume_id,
-                device_name: device_name
-            }));
-        });
-    };
-    EC2Instance.prototype.detach_volume = function (volume_id) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.detach_volume(_.merge(_this.params, {
-                volume_id: volume_id,
-            }));
-        });
-    };
-    EC2Instance.prototype.recipes = function (cookbook) {
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_node.recipes({ cookbook: cookbook });
-        });
-    };
-    EC2Instance.prototype.select_serverspec = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_servertest.select({
-            physical_id: this.physical_id,
-            infra_id: this.infra.id,
-        }).done(function (data) {
-            _.forEach(data.globals, function (s) {
-                s.checked = _.include(data.selected_ids, s.id);
-            });
-            _.forEach(data.individuals, function (s) {
-                s.checked = false;
-            });
-            dfd.resolve(data);
-        }).fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.results_servertest = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_servertest.results({
-            physical_id: this.physical_id,
-            infra_id: this.infra.id,
-        }).done(function (data) {
-            dfd.resolve(data);
-        }).fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.run_serverspec = function (specs, auto) {
-        var _this = this;
-        var dfd = $.Deferred();
-        var ids = _(specs).filter(function (v) {
-            return v.checked;
-        }).pluck('id').value();
-        if (auto) {
-            ids.push(-1);
+    return this.WrapAndResolveReject(
+      () => self.ajax_servertest.run_serverspec({
+        physical_id: self.physical_id,
+        infra_id: self.infra.id,
+        servertest_ids: ids,
+      }),
+    );
+  }
+
+  schedule_serverspec(schedule) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_servertest.schedule({
+        physical_id: self.physical_id,
+        infra_id: self.infra.id,
+        schedule,
+      }),
+    );
+  }
+
+  change_scale(type) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.change_scale(Object.assign({}, self.params, { instance_type: type })),
+    );
+  }
+
+  wait_change_status_ec2(dfd) {
+    const self = this;
+    return () => {
+      const ws = ws_connector('ec2_status', self.physical_id);
+      ws.onmessage = (msg) => {
+        const d = JSON.parse(msg.data);
+        if (d.error) {
+          dfd.reject(d.error.message);
+        } else {
+          dfd.resolve(d.msg);
         }
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_servertest.run_serverspec({
-                physical_id: _this.physical_id,
-                infra_id: _this.infra.id,
-                servertest_ids: ids,
-            });
-        });
+        ws.close();
+      };
     };
-    EC2Instance.prototype.schedule_serverspec = function (schedule) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_servertest.schedule({
-                physical_id: _this.physical_id,
-                infra_id: _this.infra.id,
-                schedule: schedule,
-            });
-        });
-    };
-    EC2Instance.prototype.change_scale = function (type) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.change_scale(_.merge(_this.params, { instance_type: type }));
-        });
-    };
-    EC2Instance.prototype.wait_change_status_ec2 = function (dfd) {
-        var _this = this;
-        return function () {
-            var ws = ws_connector('ec2_status', _this.physical_id);
-            ws.onmessage = function (msg) {
-                var d = JSON.parse(msg.data);
-                if (d.error) {
-                    dfd.reject(d.error.message);
-                }
-                else {
-                    dfd.resolve(d.msg);
-                }
-                ws.close();
-            };
-        };
-    };
-    EC2Instance.prototype.available_resources = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.available_resources({ infra_id: _this.params.infra_id });
-        });
-    };
-    EC2Instance.prototype.start_ec2 = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_ec2.start(this.params)
-            .done(this.wait_change_status_ec2(dfd))
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.stop_ec2 = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_ec2.stop(this.params)
-            .done(this.wait_change_status_ec2(dfd))
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.detach_ec2 = function (zabbix, chef) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.detach(_.merge({ zabbix: zabbix, chef: chef }, _this.params));
-        });
-    };
-    EC2Instance.prototype.terminate_ec2 = function () {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.terminate(_this.params);
-        });
-    };
-    EC2Instance.prototype.reboot_ec2 = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_ec2.reboot(this.params)
-            .fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.serverspec_status = function () {
-        var dfd = $.Deferred();
-        EC2Instance.ajax_ec2.serverspec_status(this.params)
-            .done(function (data) {
-            dfd.resolve(data.status);
-        }).fail(this.rejectF(dfd));
-        return dfd.promise();
-    };
-    EC2Instance.prototype.register = function (elb_name) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.register_to_elb(_.merge(_this.params, { elb_name: elb_name }));
-        });
-    };
-    EC2Instance.prototype.deregister = function (elb_name) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.deregister_from_elb(_.merge(_this.params, { elb_name: elb_name }));
-        });
-    };
-    EC2Instance.prototype.elb_submit_groups = function (group_ids, elb_name) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.elb_submit_groups(_.merge(_this.params, { group_ids: group_ids, elb_name: elb_name }));
-        });
-    };
-    EC2Instance.prototype.create_listener = function (elb_name, protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_elb.create_listener(_.merge(_this.params, {
-                elb_name: elb_name,
-                elb_listener_protocol: protocol,
-                elb_listener_load_balancer_port: load_balancer_port,
-                elb_listener_instance_protocol: instance_protocol,
-                elb_listener_instance_port: instance_port,
-                elb_listener_ssl_certificate_id: ssl_certificate_id
-            }));
-        });
-    };
-    EC2Instance.prototype.delete_listener = function (elb_name, load_balancer_port) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_elb.delete_listener(_.merge(_this.params, { elb_name: elb_name, elb_listener_load_balancer_port: load_balancer_port }));
-        });
-    };
-    EC2Instance.prototype.update_listener = function (elb_name, protocol, old_load_balancer_port, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_elb.update_listener(_.merge(_this.params, {
-                elb_name: elb_name,
-                elb_listener_protocol: protocol,
-                elb_listener_old_load_balancer_port: old_load_balancer_port,
-                elb_listener_load_balancer_port: load_balancer_port,
-                elb_listener_instance_protocol: instance_protocol,
-                elb_listener_instance_port: instance_port,
-                elb_listener_ssl_certificate_id: ssl_certificate_id
-            }));
-        });
-    };
-    EC2Instance.prototype.upload_server_certificate = function (elb_name, server_certificate_name, certificate_body, private_key, certificate_chain) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_elb.upload_server_certificate(_.merge(_this.params, {
-                elb_name: elb_name,
-                ss_server_certificate_name: server_certificate_name,
-                ss_certificate_body: certificate_body,
-                ss_private_key: private_key,
-                ss_certificate_chain: certificate_chain,
-            }));
-        });
-    };
-    EC2Instance.prototype.delete_server_certificate = function (elb_name, server_certificate_name) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_elb.delete_server_certificate(_.merge(_this.params, { elb_name: elb_name, ss_server_certificate_name: server_certificate_name }));
-        });
-    };
-    EC2Instance.prototype.create_volume = function (options) {
-        var _this = this;
-        return this.WrapAndResolveReject(function () {
-            return EC2Instance.ajax_ec2.create_volume(_.merge(_this.params, options));
-        });
-    };
-    EC2Instance.ajax_node = new AjaxSet.Resources('nodes');
-    EC2Instance.ajax_ec2 = new AjaxSet.Resources('ec2_instances');
-    EC2Instance.ajax_servertest = new AjaxSet.Resources('servertests');
-    EC2Instance.ajax_elb = new AjaxSet.Resources('elb');
-    return EC2Instance;
-}(base_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
+  }
+
+  available_resources() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.available_resources({ infra_id: self.params.infra_id }),
+    );
+  }
+
+  start_ec2() {
+    const dfd = $.Deferred();
+    this.ajax_ec2.start(this.params)
+      .done(this.wait_change_status_ec2(dfd))
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  stop_ec2() {
+    const dfd = $.Deferred();
+    this.ajax_ec2.stop(this.params)
+      .done(this.wait_change_status_ec2(dfd))
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  detach_ec2(zabbix, chef) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.detach(Object.assign({}, { zabbix, chef }, self.params)),
+    );
+  }
+
+  terminate_ec2() {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.terminate(self.params),
+    );
+  }
+
+  reboot_ec2() {
+    const dfd = $.Deferred();
+    this.ajax_ec2.reboot(this.params)
+      .fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  serverspec_status() {
+    const dfd = $.Deferred();
+    this.ajax_ec2.serverspec_status(this.params)
+      .done((data) => {
+        dfd.resolve(data.status);
+      }).fail(this.rejectF(dfd));
+    return dfd.promise();
+  }
+
+  register(elbName) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.register_to_elb(Object.assign({}, self.params, { elb_name: elbName })),
+    );
+  }
+
+  deregister(elbName) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.deregister_from_elb(
+        Object.assign({}, self.params, { elb_name: elbName }),
+      ),
+    );
+  }
+
+  elb_submit_groups(groupIds, elbName) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.elb_submit_groups(
+        Object.assign({}, self.params, { group_ids: groupIds, elb_name: elbName }),
+      ),
+    );
+  }
+
+  create_listener(
+    elbName, protocol, loadBalancerPort, instanceProtocol, instancePort, sslCertificateId,
+  ) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_elb.create_listener(Object.assign({}, self.params, {
+        elb_name: elbName,
+        elb_listener_protocol: protocol,
+        elb_listener_load_balancer_port: loadBalancerPort,
+        elb_listener_instance_protocol: instanceProtocol,
+        elb_listener_instance_port: instancePort,
+        elb_listener_ssl_certificate_id: sslCertificateId,
+      })),
+    );
+  }
+
+  delete_listener(elbName, loadBalancerPort) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_elb.delete_listener(
+        Object.assign({}, self.params, {
+          elb_name: elbName, elb_listener_load_balancer_port: loadBalancerPort,
+        }),
+      ),
+    );
+  }
+
+  update_listener(
+    elbName, protocol, oldLoadBalancerPort, loadBalancerPort,
+    instanceProtocol, instancePort, sslCertificateId,
+  ) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_elb.update_listener(Object.assign({}, self.params, {
+        elb_name: elbName,
+        elb_listener_protocol: protocol,
+        elb_listener_old_load_balancer_port: oldLoadBalancerPort,
+        elb_listener_load_balancer_port: loadBalancerPort,
+        elb_listener_instance_protocol: instanceProtocol,
+        elb_listener_instance_port: instancePort,
+        elb_listener_ssl_certificate_id: sslCertificateId,
+      })),
+    );
+  }
+
+  upload_server_certificate(
+    elbName, serverCertificateName, certificateBody, privateKey, certificateChain,
+  ) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_elb.upload_server_certificate(Object.assign({}, self.params, {
+        elb_name: elbName,
+        ss_server_certificate_name: serverCertificateName,
+        ss_certificate_body: certificateBody,
+        ss_private_key: privateKey,
+        ss_certificate_chain: certificateChain,
+      })),
+    );
+  }
+
+  delete_server_certificate(elbName, serverCertificateName) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_elb.delete_server_certificate(
+        Object.assign(
+          {}, self.params, {
+            elb_name: elbName, ss_server_certificate_name: serverCertificateName,
+          },
+        ),
+      ),
+    );
+  }
+
+  create_volume(options) {
+    const self = this;
+    return this.WrapAndResolveReject(
+      () => self.ajax_ec2.create_volume(Object.assign({}, self.params, options)),
+    );
+  }
+};
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.default = EC2Instance;
-EC2Instance.ajax_node.add_member('cook', 'PUT');
-EC2Instance.ajax_node.add_member('run_ansible_playbook', 'PUT');
-EC2Instance.ajax_node.add_member('yum_update', 'PUT');
-EC2Instance.ajax_node.add_member('run_bootstrap', 'GET');
-EC2Instance.ajax_node.add_member('get_rules', 'GET');
-EC2Instance.ajax_node.add_member('get_security_groups', 'GET');
-EC2Instance.ajax_node.add_member('apply_dish', 'POST');
-EC2Instance.ajax_node.add_member('submit_groups', 'POST');
-EC2Instance.ajax_node.add_member('edit_attributes', 'GET');
-EC2Instance.ajax_node.add_member('update_attributes', 'PUT');
-EC2Instance.ajax_node.add_member('edit_ansible_playbook', 'GET');
-EC2Instance.ajax_node.add_member('update_ansible_playbook', 'PUT');
-EC2Instance.ajax_node.add_member('schedule_yum', 'POST');
-EC2Instance.ajax_node.add_collection('recipes', 'GET');
-EC2Instance.ajax_node.add_collection('create_group', 'POST');
-EC2Instance.ajax_ec2.add_member('change_scale', 'POST');
-EC2Instance.ajax_ec2.add_member("start", "POST");
-EC2Instance.ajax_ec2.add_member("stop", "POST");
-EC2Instance.ajax_ec2.add_member("reboot", "POST");
-EC2Instance.ajax_ec2.add_member("detach", "POST");
-EC2Instance.ajax_ec2.add_member("terminate", "POST");
-EC2Instance.ajax_ec2.add_member('serverspec_status', 'GET');
-EC2Instance.ajax_ec2.add_member('register_to_elb', 'POST');
-EC2Instance.ajax_ec2.add_member('deregister_from_elb', 'POST');
-EC2Instance.ajax_ec2.add_member('elb_submit_groups', 'POST');
-EC2Instance.ajax_ec2.add_member('attachable_volumes', 'GET');
-EC2Instance.ajax_ec2.add_member('attach_volume', 'POST');
-EC2Instance.ajax_ec2.add_member('detach_volume', 'POST');
-EC2Instance.ajax_ec2.add_member('available_resources', 'GET');
-EC2Instance.ajax_ec2.add_collection('create_volume', 'POST');
-EC2Instance.ajax_servertest.add_collection('select', 'GET');
-EC2Instance.ajax_servertest.add_collection('results', 'GET');
-EC2Instance.ajax_servertest.add_collection("run_serverspec", "POST");
-EC2Instance.ajax_servertest.add_collection('schedule', 'POST');
-EC2Instance.ajax_elb.add_collection('create_listener', 'POST');
-EC2Instance.ajax_elb.add_collection('delete_listener', 'POST');
-EC2Instance.ajax_elb.add_collection('update_listener', 'POST');
-EC2Instance.ajax_elb.add_collection('upload_server_certificate', 'POST');
-EC2Instance.ajax_elb.add_collection('delete_server_certificate', 'POST');

@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./amazonlinux2
+      dockerfile: ./Dockerfile
+    volumes:
+      - ".:/prj/skyhopper"
+      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_URL=redis://redis:6379/1
+    ports:
+      - 3000:3000
+      - 3210:3210
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - "./mysql:/var/lib/mysql"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - 3306:3306
+
+  redis:
+    image: redis:4
+    ports:
+      - 6379:6379
+    volumes:
+      - "./redis/data:/data"
+
+  nginx:
+    image: nginx:1.15
+    ports:
+      - 80:80
+    volumes:
+      - "./nginx/conf.d:/etc/nginx/conf.d"
+      - ".:/prj/skyhopper"

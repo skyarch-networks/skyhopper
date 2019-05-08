@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190218035754) do
+ActiveRecord::Schema.define(version: 20190425034250) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -42,12 +42,6 @@ ActiveRecord::Schema.define(version: 20190218035754) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "cloud_providers", force: :cascade do |t|
-    t.string "name", limit: 255
-  end
-
-  add_index "cloud_providers", ["name"], name: "index_cloud_providers_on_name", unique: true, using: :btree
 
   create_table "cloud_watches", force: :cascade do |t|
     t.datetime "created_at"
@@ -140,7 +134,6 @@ ActiveRecord::Schema.define(version: 20190218035754) do
     t.integer  "client_id",         limit: 4
     t.string   "access_key",        limit: 255
     t.string   "secret_access_key", limit: 255
-    t.integer  "cloud_provider_id", limit: 4,   null: false
     t.integer  "zabbix_server_id",  limit: 4
   end
 

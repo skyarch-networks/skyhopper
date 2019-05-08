@@ -1,5 +1,5 @@
 <!-- modal for trigger setting -->
-<div id="edit-templates" class="modal fade",  tabindex="-1" role="dialog" aria-hidden="true">
+<div id="edit-templates" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -18,16 +18,16 @@
           </form>
           <nav>
             <ul class="pager">
-              <li class="{{isStartPage ? 'disabled' : '' }}"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
-              <li class="{{isEndPage ? 'disabled' : '' }}"><a   @click="showNext" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+              <li :class="isStartPage ? 'disabled' : '' "><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></span></a></li>
+              <li :class="isEndPage ? 'disabled' : '' "><a   @click="showNext" :disabled="!isEndPage"><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</span></a></li>
             </ul>
-            <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="templates.length / 10 | roundup"></span>
+            <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="roundup(templates.length / 10)"></span>
           </nav>
         </div>
 
 	<div class="modal-footer">
     <button @click="close()" type="button" class="btn btn-default" data-dismiss="modal"><%= t 'monitoring.btn.close' %></button>
-    <button @click="update_templates()" type="button" :disabled="!has_selected" class="btn btn-primary"  data-dismiss="{{has_selected ? 'modal' : ''}}"><%= t 'monitoring.btn.save' %></button>
+    <button @click="update_templates()" type="button" :disabled="!has_selected" class="btn btn-primary"  :data-dismiss="has_selected ? 'modal' : ''"><%= t 'monitoring.btn.save' %></button>
 	</div>
       </div>
     </div>

@@ -4,29 +4,29 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-# Ignore bundler config.
+# bundler
 /.bundle
+vendor/bundle
 
-# Ignore the default SQLite database.
+# default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
 /tags
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp
 
-# Ignore Vim swap fils
+# Vim swap files
 .sw[a-z]
 .*.sw[a-z]
 
+# application config
 config/database.yml
+/secrets/
 
-
+# Git
 /.gitconfig
-
-vendor/bundle
-vendor/bundler
-vendor/knife
 
 # assets precompile
 /public/assets/
@@ -35,23 +35,27 @@ vendor/knife
 /app/assets/javascripts/i18n/
 /public/javascripts/i18n.js
 
+# Coverage
 /coverage/
 
+# Document
 /doc/app/
 /doc/javascripts/
 /doc/*.svg
 /.yardoc/
-/secrets/
 
+# frontend
 /frontend/node_modules/
 /frontend/fonts/
 
 # MAC system files
 .DS_Store
+
+# IDE and editer
 .idea/
+.vscode/*
 
-
-#emacs backup exclude during commit (clean files)
+# emacs backup exclude during commit (clean files)
 *.rb~
 *.rb#
 *.html.erb#
@@ -63,8 +67,15 @@ vendor/knife
 *.css~
 *.css#
 
-# VSCODE config
-.vscode/*
-
 # ansible
 /ansible/*
+
+# Docker
+/docker-compose.override.yml
+/amazonlinux2/known_hosts
+/mysql/
+/redis/
+/phpmyadmin/
+
+# jQuery map file
+/app/assets/javascripts/jquery.min.map

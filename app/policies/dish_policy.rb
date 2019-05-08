@@ -7,7 +7,7 @@
 #
 
 class DishPolicy < ApplicationPolicy
-  %i[show? index? runlist?].each do |action|
+  %i[show? index? ].each do |action|
     define_method(action) do
       return true unless record.project
 

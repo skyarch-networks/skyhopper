@@ -1,151 +1,153 @@
-<h3 class="page-header"><%= t('users.edit') %></h3>
+<div>
+  <h3 class="page-header"><%= t('users.edit') %></h3>
 
-<div class="col-md-12 col-sm-12">
-  <div class="col-md-2 col-sm-2">
-    <h5 class="page-header"><%= t('users.role') %></h5>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" v-model="user.master"><%= master_label %>
-      </label>
-    </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" v-model="user.admin"><%= admin_label %>
-      </label>
-    </div>
-  </div>
-
-  <div class="col-sm-6 col-md-6">
-    <h5 class="page-header"><%=t('users.change_password')%></h5>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label for="password" class="col-sm-3 control-label"><%=t('users.password')%></label>
-        <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" placeholder="Enter new password if you want to change" autocomplete="off" v-model="user.password">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="password_confirm" class="col-sm-3 control-label"><%=t('users.password_confirm')%></label>
-        <div class="col-sm-9">
-          <input type="password" class="form-control input-sm" v-model="user.password_confirmation" autocomplete="off">
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="col-sm-4 col-md-4">
-    <h5 class="page-header"><%=t('users.mfa')%></h5>
-    <div v-if="user.mfa_use">
-      <p><%=t('users.msg.mfa_used')%></p>
-      <button class="btn btn-sm btn-default" @click="update_mfa()" :disabled="update_mfa_key || remove_mfa_key"><%=t('users.change_mfa_secret')%></button>
-      <button class="btn btn-sm btn-danger"  @click="remove_mfa()" :disabled="update_mfa_key || remove_mfa_key"><%=t('users.use_stop_mfa')%></button>
-    </div>
-    <div v-else>
-      <button class="btn btn-sm btn-primary" @click="update_mfa()"><%=t('users.use_start_mfa')%></button>
-    </div>
-
-    <div v-if="update_mfa_key">
-      <p><%=t('users.mfa_secret')%>: <code>{{mfa_key}}</code></p>
-      <div class="QRCode">
-        {{{mfa_qrcode}}}
-      </div>
-      <p><%=t('users.msg.mfa_start_description')%></p>
-    </div>
-
-    <div v-if="remove_mfa_key">
-      <div class="alert alert-danger" role="alert"><%=t('users.msg.use_stop_mfa')%></div>
-    </div>
-  </div>
-</div>
-
-
-<div class="col-md-7 col-sm-7">
-  <div class="col-md-5 col-sm-5 form-group">
-    <h5 class="page-header"><%= t('clients.client') %></h5>
-    <select size="2" v-model="selected_client" number class="form-control admin-selectbox-height" @click="get_projects()">
-      <option v-for="o in clients" :value="o.value">{{o.text}}</option>
-    </select>
-  </div>
-  <div class="col-sm-7 col-md-7 form-group">
-    <h5 class="page-header"><%= t('projects.project') %></h5>
-    <select multiple="multiple" v-model="selected_projects" number class="form-control admin-selectbox-height" @dblclick="add()">
-      <option v-for="o in projects" :value="o.value">{{o.text}}</option>
-    </select>
-  </div>
-  <div class="col-sm-12 col-md-12">
-    <div class="form-group">
-      <button class="btn btn-default pull-right" @click="add()">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-  </div>
-</div>
-
-
-<div class="col-md-5 col-sm-5">
   <div class="col-md-12 col-sm-12">
-    <h5 class="page-header"><%= t('users.allowed_projects') %></h5>
-
-    <div class="col-sm-12 col-md-12">
-      <div class="form-group">
-        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_projects" number @dblclick="del()">
-          <option v-for="o in allowed_projects" :value="o.value">{{o.text}}</option>
-        </select>
+    <div class="col-md-2 col-sm-2">
+      <h5 class="page-header"><%= t('users.role') %></h5>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" v-model="user.master"><%= master_label %>
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" v-model="user.admin"><%= admin_label %>
+        </label>
       </div>
     </div>
 
+    <div class="col-sm-6 col-md-6">
+      <h5 class="page-header"><%=t('users.change_password')%></h5>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label for="password" class="col-sm-3 control-label"><%=t('users.password')%></label>
+          <div class="col-sm-9">
+            <input type="password" class="form-control input-sm" placeholder="Enter new password if you want to change" autocomplete="off" v-model="user.password">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password_confirm" class="col-sm-3 control-label"><%=t('users.password_confirm')%></label>
+          <div class="col-sm-9">
+            <input type="password" class="form-control input-sm" v-model="user.password_confirmation" autocomplete="off">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-sm-4 col-md-4">
+      <h5 class="page-header"><%=t('users.mfa')%></h5>
+      <div v-if="user.mfa_use">
+        <p><%=t('users.msg.mfa_used')%></p>
+        <button class="btn btn-sm btn-default" @click="update_mfa()" :disabled="update_mfa_key || remove_mfa_key"><%=t('users.change_mfa_secret')%></button>
+        <button class="btn btn-sm btn-danger"  @click="remove_mfa()" :disabled="update_mfa_key || remove_mfa_key"><%=t('users.use_stop_mfa')%></button>
+      </div>
+      <div v-else>
+        <button class="btn btn-sm btn-primary" @click="update_mfa()"><%=t('users.use_start_mfa')%></button>
+      </div>
+
+      <div v-if="update_mfa_key">
+        <p><%=t('users.mfa_secret')%>: <code>{{mfa_key}}</code></p>
+        <div class="QRCode">
+          <div v-html="mfa_qrcode"></div>
+        </div>
+        <p><%=t('users.msg.mfa_start_description')%></p>
+      </div>
+
+      <div v-if="remove_mfa_key">
+        <div class="alert alert-danger" role="alert"><%=t('users.msg.use_stop_mfa')%></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-7 col-sm-7">
+    <div class="col-md-5 col-sm-5 form-group">
+      <h5 class="page-header"><%= t('clients.client') %></h5>
+      <select size="2" v-model.number="selected_client" class="form-control admin-selectbox-height" @click="get_projects()">
+        <option v-for="o in clients" :value="o.value">{{o.text}}</option>
+      </select>
+    </div>
+    <div class="col-sm-7 col-md-7 form-group">
+      <h5 class="page-header"><%= t('projects.project') %></h5>
+      <select multiple="multiple" v-model.number="selected_projects" class="form-control admin-selectbox-height" @dblclick="add()">
+        <option v-for="o in projects" :value="o.value">{{o.text}}</option>
+      </select>
+    </div>
     <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <button class="btn btn-default" @click="del()">
-          <span class="glyphicon glyphicon-trash"></span>
+        <button class="btn btn-default pull-right" @click="add()">
+          <span class="glyphicon glyphicon-plus"></span>
         </button>
       </div>
     </div>
   </div>
-</div>
 
-<div class="col-md-6 col-sm-6">
-  <div class="col-md-12 col-sm-12 form-group">
-    <h5 class="page-header">Zabbix Servers List</h5>
-    <select multiple="multiple" size="2" v-model="selected_zabbix" number class="form-control admin-selectbox-height" @dblclick="add_zabbix()">
-      <option v-for="z in zabbix_servers" :value="z.value">{{z.text}}</option>
-    </select>
-  </div>
-  <div class="col-md-12 col-sm-12">
-    <div class="form-group">
-      <button class="btn btn-default pull-right" @click="add_zabbix()">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-  </div>
-</div>
 
-<div class="col-md-6 col-sm-6">
-  <div class="col-md-12 col-sm-12">
-    <h5 class="page-header">Selected Zabbix Servers</h5>
+  <div class="col-md-5 col-sm-5">
+    <div class="col-md-12 col-sm-12">
+      <h5 class="page-header"><%= t('users.allowed_projects') %></h5>
 
-    <div class="col-sm-12 col-md-12">
-      <div class="form-group">
-        <select multiple="multiple" class="form-control admin-selectbox-height" v-model="selected_allowed_zabbix" number @dblclick="del_zabbix()">
-          <option v-for="z in allowed_zabbix" :value="z.value">{{z.text}}</option>
-        </select>
+      <div class="col-sm-12 col-md-12">
+        <div class="form-group">
+          <select multiple="multiple" class="form-control admin-selectbox-height" v-model.number="selected_allowed_projects" @dblclick="del()">
+            <option v-for="o in allowed_projects" :value="o.value">{{o.text}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-12 col-md-12">
+        <div class="form-group">
+          <button class="btn btn-default" @click="del()">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="col-sm-12 col-md-12">
+  <div class="col-md-6 col-sm-6">
+    <div class="col-md-12 col-sm-12 form-group">
+      <h5 class="page-header">Zabbix Servers List</h5>
+      <select multiple="multiple" size="2" v-model.number="selected_zabbix" class="form-control admin-selectbox-height" @dblclick="add_zabbix()">
+        <option v-for="z in zabbix_servers" :value="z.value">{{z.text}}</option>
+      </select>
+    </div>
+    <div class="col-md-12 col-sm-12">
       <div class="form-group">
-        <button class="btn btn-default" @click="del_zabbix()">
-          <span class="glyphicon glyphicon-trash"></span>
+        <button class="btn btn-default pull-right" @click="add_zabbix()">
+          <span class="glyphicon glyphicon-plus"></span>
         </button>
       </div>
     </div>
   </div>
-</div>
 
-<div class="col-md-12 col-sm-12">
-  <div class="form-actions-top">
-    <button class="btn btn-primary btn-sm" @click="submit()">
-      <%= t('common.btn.save_changes') %>
-    </button>
+  <div class="col-md-6 col-sm-6">
+    <div class="col-md-12 col-sm-12">
+      <h5 class="page-header">Selected Zabbix Servers</h5>
+
+      <div class="col-sm-12 col-md-12">
+        <div class="form-group">
+          <select multiple="multiple" class="form-control admin-selectbox-height" v-model.number="selected_allowed_zabbix" @dblclick="del_zabbix()">
+            <option v-for="z in allowed_zabbix" :value="z.value">{{z.text}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-sm-12 col-md-12">
+        <div class="form-group">
+          <button class="btn btn-default" @click="del_zabbix()">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-sm-12">
+    <div class="form-actions-top">
+      <button class="btn btn-primary btn-sm" @click="submit()">
+        <%= t('common.btn.save_changes') %>
+      </button>
+    </div>
   </div>
 </div>

@@ -8,23 +8,23 @@
 (function () {
   'use_strict';
 
-  //browserify functions for vue filters functionality
-  var wrap = require('./modules/wrap');
-  var listen = require('./modules/listen');
-  var queryString = require('query-string').parse(location.search);
-  var modal = require('modal');
-  var app;
+  // browserify functions for vue filters functionality
+  const wrap = require('./modules/wrap');
+  const listen = require('./modules/listen');
+  const queryString = require('query-string').parse(location.search);
+  const modal = require('modal');
+  let app;
 
   Vue.component('demo-grid', require('demo-grid.js'));
 
-  var project_url = queryString.client_id ? '&client_id='+queryString.client_id: '';
+  const project_url = queryString.client_id ? `&client_id=${queryString.client_id}` : '';
 
   if ($('#indexElement').length) {
-    var projectIndex = new Vue({
+    const projectIndex = new Vue({
       el: '#indexElement',
       data: {
         searchQuery: '',
-        gridColumns: ['code', 'name', 'cloud_provider', 'access_key'],
+        gridColumns: ['code', 'name', 'access_key'],
         url: 'projects?lang=' + queryString.lang + project_url,
         gridData: [],
         is_empty: false,
@@ -34,46 +34,44 @@
           project_settings: {
             dishes_path: null,
             key_pairs_path: null,
-            project_parameters_path: null
-          }
+            project_parameters_path: null,
+          },
         },
-        index: 'projects'
+        index: 'projects',
       },
       methods: {
-        can_edit: function () {
-          if (this.picked)
-            return this.picked.edit_project_url ? true : false;
+        can_edit() {
+          if (this.picked) return !!this.picked.edit_project_url;
         },
-        can_delete: function () {
-          if (this.picked.delete_project_url)
-            return (this.picked.code[1] === 0) ? true : false;
+        can_delete() {
+          if (this.picked.delete_project_url) return (this.picked.code[1] === 0);
         },
-        is_picked: function () {
+        is_picked() {
           return (this.picked.id);
         },
-        delete_entry: function () {
-          var self = this;
-          modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(function () {
+        delete_entry() {
+          const self = this;
+          modal.Confirm(t('projects.project'), t('projects.msg.delete_project'), 'danger').done(() => {
             $.ajax({
-              type: "POST",
+              type: 'POST',
               url: self.picked.delete_project_url,
-              dataType: "json",
-              data: {"_method": "delete"},
-              success: function (data) {
+              dataType: 'json',
+              data: { _method: 'delete' },
+              success(data) {
                 self.gridData = data;
                 self.picked = null;
               },
-            }).fail(function () {
+            }).fail(() => {
               location.reload();
             });
           });
         },
-        reload: function () {
+        reload() {
           this.loading = true;
           this.$children[0].load_ajax(this.url);
-        }
+        },
       },
 
     });
   }
-})();
+}());

@@ -78,7 +78,7 @@ ja:
     private_key:       '秘密鍵'
     access_key:        'APIキー'
     secret_access_key: 'APIシークレット'
-    chef_server:       'Chef Server'
+    system_server:    'System Server'
     vpc_id:            'VPC ID'
     subnet_id:         'サブネット ID'
     skip_zabbix_server: 'Zabbix Serverを作成しない'
@@ -103,10 +103,10 @@ ja:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
       system: 'システムの設定'
-      chef:   'Chef Server の設定'
+      system_server:   'System Server の設定'
       aws:    'AWS の設定'
     btn:
-      create_chefserver: 'Chef Server の構築'
+      create_system_server: 'System Server の構築'
       done:              '完了'
 
   clients:
@@ -131,7 +131,6 @@ ja:
     name:              '案件名'
     access_key:        'アクセスキー'
     secret_access_key: 'シークレットキー'
-    cloud_provider:    'クラウド提供会社'
     infras:            'インフラ'
     btn:
       show_infrastructures: 'インフラ一覧'
@@ -327,7 +326,7 @@ ja:
     msg:
       before_bootstrap:   'このインスタンスは Chef Server に登録されていません'
       no_dishes:          '検証済みのディッシュがありません'
-      cooking:            'Cook の実行中...'
+      executing:          '実行中...'
       updating:           'yum の実行中...'
       bootstrap_finish:   '%{physical_id} を Chef Server に登録しました'
       not_change_scale:   '%{type} に変更する必要はありません'
@@ -582,23 +581,10 @@ ja:
       error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
 
 
-  chef_servers:
+  system_servers:
     msg:
-      creating_infra: 'Chef Server 用のインフラを作成しています...'
-      init_ec2:       'Chef Server 用の EC2 Instance を起動しています...'
-      download_chef:  'Chef Server のパッケージをダウンロードしています...'
-      install_chef:   'Chef Server をインストールしています...'
-      setting_chef:   'Chef Server を設定しています...'
-      wait_for_zabbix_created: 'Zabbix Server の作成完了を待っています...'
-      complete:       'Chef Server の構築が完了しました. cp -r ~/skyhopper/tmp/chef ~/.chef を実行し、 SkyHopper を再起動してください。'
-      confirm_start:  'Chef Server を起動しますか?'
-      confirm_stop:   'Chef Server を停止しますか?'
-      start:          'Chef Server を起動しています...'
-      stop:           'Chef Server を停止しています...'
-      not_running:    'Chef Server が起動していません'
-      chef_instruction: 'Knife の使用可能な環境で、ダウンロードしたファイルを ~/.chef/ に展開することで、knife コマンドを使って Chef Server にアクセスできます'
-    btn:
-      download_keys:  '鍵ファイルのダウンロード'
+      creating_zabbix_server: 'Zabbix Server を作成しています(必要なら)...'
+      complete:       'システムに必要なサーバーの構築が完了しました.'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'

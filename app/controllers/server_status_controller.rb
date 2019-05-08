@@ -13,7 +13,7 @@ class ServerStatusController < ApplicationController
 
 
   # POST /server/:kind/start
-  # @param [String] kind Server kind. "chef" or "zabbix"
+  # @param [String] kind Server kind. "zabbix"
   def start
     @server.start
 
@@ -21,7 +21,7 @@ class ServerStatusController < ApplicationController
   end
 
   # POST /server/:kind/stop
-  # @param [String] kind Server kind. "chef" or "zabbix"
+  # @param [String] kind Server kind. "zabbix"
   def stop
     @server.stop
 
@@ -29,7 +29,7 @@ class ServerStatusController < ApplicationController
   end
 
   # POST /server/:kind/status
-  # @param [String] kind Server kind. "chef" or "zabbix"
+  # @param [String] kind Server kind. "zabbix"
   # @param [Boolean] background If this is true, server status updated background.
   def status
     unless params[:background] || @server.is_in_progress?

@@ -36,7 +36,7 @@ module KnownHosts
 
     def init_ssh_dir
       ssh_dir = File.expand_path('~/.ssh')
-      Dir.mkdir(ssh_dir, perm: 0700) unless Dir.exist?(ssh_dir)
+      Dir.mkdir(ssh_dir, 0700) unless Dir.exist?(ssh_dir)
 
       File.open(known_hosts_path, mode: 'w', perm: 0600).close() unless File.exist?(known_hosts_path)
     end

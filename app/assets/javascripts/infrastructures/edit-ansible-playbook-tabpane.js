@@ -1,9 +1,10 @@
-var Infrastructure = require('models/infrastructure').default;
-var EC2Instance    = require('models/ec2_instance').default;
+const Infrastructure = require('models/infrastructure').default;
+const EC2Instance = require('models/ec2_instance').default;
 
-var helpers = require('infrastructures/helper.js');
-var alert_success        = helpers.alert_success;
-var alert_danger         = helpers.alert_danger;
+const helpers = require('infrastructures/helper.js');
+
+const alert_success = helpers.alert_success;
+const alert_danger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#edit-ansible-playbook-tabpane-template',
@@ -15,23 +16,25 @@ module.exports = Vue.extend({
     },
   },
 
-  data: function () {return {
-    loading:           false,
-    selected_roles:   null,
-    playbook_roles:   null,
-    selected_playbook_roles:   null,
-    roles:             null,
-    extra_vars:       null,
-  };},
+  data() {
+    return {
+      loading: false,
+      selected_roles: [],
+      playbook_roles: null,
+      selected_playbook_roles: [],
+      roles: null,
+      extra_vars: null,
+    };
+  },
 
   methods: {
-    update: function () {
-      var self = this;
+    update() {
+      const self = this;
 
       try {
         JSON.parse(self.extra_vars);
       } catch (ex) {
-        alert_danger()('extra-vars is invalid: ' + ex.message);
+        alert_danger()(`extra-vars is invalid: ${ex.message}`);
         return;
       }
 
@@ -41,66 +44,66 @@ module.exports = Vue.extend({
         .fail(alert_danger(self.show_ec2));
     },
 
-    show_ec2: function () { this.$parent.show_ec2(this.physical_id); },
+    show_ec2() { this.$parent.show_ec2(this.physical_id); },
 
-    add_role: function () {
-      var self = this;
-      _.forEach(self.selected_roles, function (role) {
+    add_role() {
+      const self = this;
+      _.forEach(self.selected_roles, (role) => {
         self._add(role);
       });
     },
 
-    _add: function (run) {
+    _add(run) {
       if (_.include(this.playbook_roles, run)) { return; }
       this.playbook_roles.push(run);
     },
 
-    del: function () {
+    del() {
       this.playbook_roles = _.difference(this.playbook_roles, this.selected_playbook_roles);
     },
 
-    up: function () {
-      var self = this;
-      _.forEach(this.selected_playbook_roles, function (v) {
-        var idx = _.indexOf(self.playbook_roles, v);
-        self._swap(idx, idx-1);
+    up() {
+      const self = this;
+      _.forEach(this.selected_playbook_roles, (v) => {
+        const idx = _.indexOf(self.playbook_roles, v);
+        self._swap(idx, idx - 1);
       });
     },
 
-    down: function () {
-      var self = this;
+    down() {
+      const self = this;
       // XXX: 複数個選択した時にうまく動いてない気がする
-      _(self.selected_playbook_roles).reverse().forEach(function (v) {
-        var idx = _.indexOf(self.playbook_roles, v);
-        self._swap(idx, idx+1);
+      _(self.selected_playbook_roles).reverse().forEach((v) => {
+        const idx = _.indexOf(self.playbook_roles, v);
+        self._swap(idx, idx + 1);
       }).value();
     },
 
-    _swap: function (from, to) {
-      var m = this.playbook_roles.length -1;
+    _swap(from, to) {
+      const m = this.playbook_roles.length - 1;
       if (from < 0 || m < from || to < 0 || m < to) {
         return;
       }
-      var r = _.clone(this.playbook_roles);
-      r[to]   = this.playbook_roles[from];
+      const r = _.clone(this.playbook_roles);
+      r[to] = this.playbook_roles[from];
       r[from] = this.playbook_roles[to];
       this.playbook_roles = r;
-    }
+    },
   },
 
   computed: {
-    physical_id:     function () { return this.$parent.tabpaneGroupID; },
-    ec2:             function () { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
+    physical_id() { return this.$parent.tabpaneGroupID; },
+    ec2() { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
   },
-  created: function () {
-    var self = this;
+  created() {
+    const self = this;
     console.log(self);
 
-    self.ec2.edit_ansible_playbook().done(function (data) {
-      self.playbook_roles   = data.playbook_roles;
-      self.roles     = data.roles;
-      self.extra_vars     = data.extra_vars;
+    self.ec2.edit_ansible_playbook().done((data) => {
+      self.playbook_roles = data.playbook_roles;
+      self.roles = data.roles;
+      self.extra_vars = data.extra_vars;
       self.$parent.loading = false;
     }).fail(alert_danger(self.show_ec2));
-  }
+  },
 });

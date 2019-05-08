@@ -178,7 +178,6 @@ class InfrastructuresController < ApplicationController
   # POST /infrastructures/1/delete_stack
   def delete_stack
     @infrastructure.detach_zabbix
-    @infrastructure.detach_chef
 
     begin
       stack = Stack.new(@infrastructure)

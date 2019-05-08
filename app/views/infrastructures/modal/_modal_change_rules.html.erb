@@ -6,7 +6,7 @@
       <div class="modal-header bg-info">
         <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="panel-title" v-if="lang === 'en'"> <%= t'security_groups.associated' %> {{physical_id}}</h4>
-        <h4 class="panel-title" v-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
+        <h4 class="panel-title" v-else-if="lang === 'ja'">{{physical_id}} <%= t'security_groups.associated' %> </h4>
       </div>
 
       <div class="modal-body" v-if="rules_summary">
@@ -25,9 +25,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="r in dispItems
-          | filterBy filterKey
-          | count" :class="{info: r.checked}" @click="check(r)">
+          <tr v-for="(r) in filterd_dispitems" :class="{info: r.checked}" @click="check(r)">
             <td><input type="checkbox" v-model="r.checked"></td>
             <td>{{r.group_id}}</td>
             <td><div class="truncate"> {{r.group_name}}</div></td>
@@ -37,15 +35,15 @@
           </tr>
           <tr  v-if="filteredLength === 0 && dispItems.length > 0">
             <td v-if="lang === 'en'" colspan="4"><h4> No results for <span class="text text-info">"{{filterKey}}"</span> was found. </h4></td>
-            <td v-if="lang === 'ja'" colspan="4"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
+            <td v-else-if="lang === 'ja'" colspan="4"><h4> <span class="text text-info">"{{filterKey}}"</span> に一致する情報は見つかりませんでした。 </h4></td>
           </tr>
           </tbody>
         </table>
         <nav v-if="filterKey === ''">
           <ul class="pager">
-            <li class="{{isStartPage ? 'disabled' : '' }}"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></a></li>
-            <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="rules_summary.length / 10 | roundup"></span>
-            <li class="{{isEndPage ? 'disabled' : '' }}"><a   @click="showNext" :disabled="!isEndPage"></span><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</a></li>
+            <li :class="isStartPage ? 'disabled' : ''"><a @click="showPrev" ><span aria-hidden="true">&larr; <%= t 'monitoring.btn.prev' %></span></a></li>
+            <label><%= t 'monitoring.msg.page' %> </label><strong v-html="page + 1"></strong> <%= t 'monitoring.msg.of' %><span v-html="roundup(rules_summary.length / 10)"></span>
+            <li :class="isEndPage ? 'disabled' : ''"><a   @click="showNext" :disabled="!isEndPage"><%= t 'monitoring.btn.next' %> <span aria-hidden="true">&rarr;</span></a></li>
           </ul>
         </nav>
 
@@ -57,11 +55,11 @@
       <div class="modal-footer">
         <div v-if="!loading_s">
           <button class="btn btn-default" @click="reload()" data-dismiss="modal" aria-hidden="true"><%= t('helpers.links.cancel') %></button>
-          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" data-dismiss="{{has_selected ? 'modal' : ''}}">
+          <button class="btn btn-primary" @click="submit_groups()" :disabled="!has_selected" data-dismiss="modal" aria-hidden="true" :data-dismiss="has_selected ? 'modal' : ''">
             <%= t 'security_groups.btn.assign' %>
           </button>
         </div>
-        <div-loader v-if="loading_s"></div-loader>
+        <div-loader v-else-if="loading_s"></div-loader>
       </div>
     </div>
   </div>

@@ -1,5 +1,0 @@
-node_name              'skyhopper'
-client_key             '~/.chef/test.pem'
-validation_client_name 'skyarch-validator'
-validation_key         '~/.chef/test.pem'
-chef_server_url        'https://ec2-xx-xx-xx-xx.us-west-2.compute.amazonaws.com/organizations/skyarch'

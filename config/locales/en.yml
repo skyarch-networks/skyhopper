@@ -78,7 +78,7 @@ en:
     private_key:       'Secret SSH Key'
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
-    chef_server:       'Chef Server'
+    system_server:    'System Server'
     vpc_id:            'VPC ID'
     subnet_id:         'Subnet ID'
     skip_zabbix_server: 'Not create Zabbix Server'
@@ -103,10 +103,10 @@ en:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
       system: 'System Settings'
-      chef:   'Chef Server Settings'
+      system_server:   'System Server Settings'
       aws:    'AWS Settings'
     btn:
-      create_chefserver: 'Create Chef Server'
+      create_system_server: 'Create System Server'
       done:              'Done'
 
   clients:
@@ -132,7 +132,6 @@ en:
     name:              'Name'
     access_key:        'Access Key ID'
     secret_access_key: 'Secret Access Key'
-    cloud_provider:    'Cloud Provider'
     infras:            'Infra(s)'
     btn:
       show_infrastructures: 'Show'
@@ -330,7 +329,7 @@ en:
     msg:
       before_bootstrap:   'This instance is not bootstrapped with Chef Server.'
       no_dishes:          'No valid dishes available.'
-      cooking:            'Cook being executed...'
+      executing:          'Executing...'
       updating:           'yum command is in progress...'
       bootstrap_finish:   '%{physical_id} was successfully registered with Chef Server.'
       not_change_scale:   "Unnecessary to change to '%{type}'"
@@ -584,23 +583,10 @@ en:
       error:                 'An error occured while processing Zabbix: "%{msg}"'
 
 
-  chef_servers:
+  system_servers:
     msg:
-      creating_infra: 'Creating Infrastructure...'
-      init_ec2:       'Initializing EC2 Instance...'
-      download_chef:  'Downloading Chef Server packages...'
-      install_chef:   'Installing Chef Server...'
-      setting_chef:   'Setting up Chef Server...'
-      wait_for_zabbix_created: 'Waiting for completion of Zabbix Server creation...'
-      complete:       'Chef Server was successfully constructed. Execute `cp -r ~/skyhopper/tmp/chef ~/.chef` and restart SkyHopper.'
-      confirm_start:  'Do you want to start Chef Server?'
-      confirm_stop:   'Do you want to stop Chef Server?'
-      start:          'Stopping Chef Server...'
-      stop:           'Starting Chef Server...'
-      not_running:    'Chef Server is not running.'
-      chef_instruction:   'The Knife file can be installed in your environment by deploying the downloaded file in `~/.chef/` path. When executing the knife command, this file is neccessary to access the Chef Server.'
-    btn:
-      download_keys:  'Download keys'
+      creating_zabbix_server: 'Creating Zabbix Server(If necessary)...'
+      complete:       'We have completed building the necessary server for the system.'
 
   zabbix_servers:
     zabbix:      'Zabbix Servers'
