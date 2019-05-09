@@ -6,6 +6,7 @@ AllCops:
     - 'db/schema.rb'
     - 'bin/*'
     - 'node_modules/**/*'
+    - 'frontend/**/*'
   DisplayCopNames: true
   TargetRubyVersion: 2.4
 
