@@ -32,30 +32,30 @@ module TemplateBuildersHelper
         'panel-default'
       end
 
-    <<-EOS
+    <<-TEMPLATE
     <div class="panel #{extra_klass}">
       #{accordion_heading(property, accordion_name: accordion_name)}
       #{accordion_body(property)}
     </div>
-    EOS
+    TEMPLATE
   end
 
   #### Accordion Heading
   def accordion_heading(property, accordion_name: nil)
     return nil unless accordion_name
 
-    <<-EOS
+    <<-TEMPLATE
     <div class="panel-heading">
       <h4 class="panel-title">
         <a class=\"accordion-toggle property-heading\" data-toggle=\"collapse\" data-parent=\"##{accordion_name}\" href=\"#collapse-#{property.name}\" property-type=\"#{property.name}\">#{property.name}</a>
       </h4>
     </div>
-    EOS
+    TEMPLATE
   end
 
   #### Parts of Accordion Body
   def accordion_body(property)
-    <<-EOS
+    <<-TEMPLATE
     <div id="collapse-#{property.name}" class="panel-collapse collapse">
       <div class="panel-body">
         #{checkbox_enable_property(property)}
@@ -63,7 +63,7 @@ module TemplateBuildersHelper
         #{input_resource_property(property)}
       </div>
     </div>
-    EOS
+    TEMPLATE
   end
 
   def checkbox_enable_property(property)
@@ -77,14 +77,14 @@ module TemplateBuildersHelper
 
     disabled = property.required? ? '' : 'disabled'
 
-    <<-EOS
+    <<-TEMPLATE
     <div class="checkbox">
       <label>
         <input type="checkbox" class="is_parameter" property-type="#{property.name}" #{disabled}>
         #{t('cf_templates.parameterize')}
       </label>
     </div>
-    EOS
+    TEMPLATE
   end
 
   def input_resource_property(property)
@@ -101,14 +101,14 @@ module TemplateBuildersHelper
 
     case property.data_type
     when :Boolean
-      return <<-EOS
+      return <<-TEMPLATE
       <div class="radio">
         <label class="radio"><input type="radio" name="#{property.name}" class="property-value" value="enable" #{common_attr}>#{t('template_builder.enable')}</label>
       </div>
       <div class="radio">
         <label class="radio"><input type="radio" name="#{property.name}" class="property-value" value="disable" #{common_attr}>#{t('template_builder.disable')}</label>
       </div>
-      EOS
+      TEMPLATE
 
     when Array
       return property_array(property)
@@ -142,7 +142,7 @@ module TemplateBuildersHelper
     cols.each do |col|
       ths << "<th>#{col}</th>"
     end
-    <<-EOS
+    <<-TEMPLATE
     <table class="table table-condensed" property-type="#{property_type}">
       <thead>
         #{ths}
@@ -151,7 +151,7 @@ module TemplateBuildersHelper
       <tbody>
       </tbody>
     </table>
-    EOS
+    TEMPLATE
   end
 
   def form_array_items(property, hash_data_validator: nil)
@@ -194,23 +194,23 @@ module TemplateBuildersHelper
       end
 
     form_parts = "<div>#{form_array_items(property, hash_data_validator: hash_data_validator)}</div>"
-    form_parts << <<-EOF
+    form_parts << <<-TEMPLATE
     <button class="btn btn-default btn-sm add-array-item" property-type="#{property.name}" #{'disabled' unless property.required?}>
       <span class="glyphicon glyphicon-plus"></span>
     </button>
-    EOF
+    TEMPLATE
 
     hidden = parts_input(
       type: 'hidden',
       klass: 'property-value',
       attributes: "property-type=\"#{property.name}\" data-type=\"array\"",
     )
-    <<-EOS
+    <<-TEMPLATE
     #{hidden}
     #{table_for_array(property.name, table_cols)}
     <div class="well">
       #{form_parts}
     </div>
-    EOS
+    TEMPLATE
   end
 end

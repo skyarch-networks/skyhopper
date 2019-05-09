@@ -64,7 +64,7 @@ describe Node, type: :model do
 
     before do
       status = double
-      out = <<~EOS
+      out = <<~OUTPUT
         {
           "examples": [
             {
@@ -83,7 +83,7 @@ describe Node, type: :model do
           },
           "summary_line": "1 example, 0 failures"
         }
-      EOS
+      OUTPUT
       allow(status).to receive(:success?).and_return(true)
       allow(Open3).to receive(:capture3).and_return([out, 'err', status])
       allow_any_instance_of(EC2Instance).to receive(:fqdn).and_return('fqdn')
@@ -134,7 +134,7 @@ describe Node, type: :model do
     end
 
     context 'when result has messages key' do
-      error_message = <<~'EOS'
+      error_message = <<~'MESSAGE'
 
         An error occurred while loading ./tmp/serverspec/1234567890-1234-abc123.
         On host `ec2-XX-XX-XX-XX.ap-northeast-1.compute.amazonaws.com'
@@ -144,7 +144,7 @@ describe Node, type: :model do
 
         # ./tmp/serverspec/1234567890-1234-abc123:4:in `block in <top (required)>'
         # ./tmp/serverspec/1234567890-1234-abc123:3:in `<top (required)>'
-      EOS
+      MESSAGE
       let(:result) { { messages: [error_message] } }
 
       it 'return error_servertest_names' do
@@ -174,10 +174,10 @@ describe Node, type: :model do
     end
 
     it 'return Ansible hosts text' do
-      is_expected.to eq <<~'EOS'
+      is_expected.to eq <<~'HOSTS'
         [ec2]
         test.test ansible_ssh_user=ec2-user
-      EOS
+      HOSTS
     end
   end
 end

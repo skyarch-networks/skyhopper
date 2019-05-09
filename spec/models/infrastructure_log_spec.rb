@@ -21,7 +21,7 @@ describe InfrastructureLog, type: :model do
   describe 'scope security_update' do
     let(:physical_id) { 'i-hogehoge' }
     let(:security_log)  do
-      create(:infrastructure_log, details: <<~EOS, infrastructure: infra)
+      create(:infrastructure_log, details: <<~LOG, infrastructure: infra)
         yum check security update for #{physical_id} is successfully finished.
 
         log:
@@ -61,7 +61,7 @@ describe InfrastructureLog, type: :model do
         rubygem20-psych.x86_64               2.0.0-1.27.amzn1               amzn-updates
         rubygems20.noarch                    2.0.14-1.27.amzn1              amzn-updates
         unzip.x86_64                         6.0-2.9.amzn1                  amzn-updates
-      EOS
+      LOG
     end
     let(:not_security_log) { create(:infrastructure_log, details: "yum check security update for #{physical_id} is started.", infrastructure: infra) }
     before do
@@ -124,22 +124,22 @@ describe InfrastructureLog, type: :model do
 
     context 'when Complete' do
       before do
-        create(:infrastructure_log, details: <<~EOS, infrastructure: infra)
+        create(:infrastructure_log, details: <<~LOG, infrastructure: infra)
           yum check security update for #{physical_id} is successfully finished.
 
           Complete!
-        EOS
+        LOG
       end
       it { is_expected.to eq 0 }
     end
 
     context 'when have needed for security' do
       before do
-        create(:infrastructure_log, details: <<~EOS, infrastructure: infra)
+        create(:infrastructure_log, details: <<~LOG, infrastructure: infra)
           yum check security update for #{physical_id} is successfully finished.
 
           33 package(s) needed for security, out of 66 available
-        EOS
+        LOG
       end
       it { is_expected.to eq 33 }
     end
@@ -166,7 +166,7 @@ describe InfrastructureLog, type: :model do
       let(:status) { true }
 
       it 'should return text' do
-        expect(infrastructure_log.to_text).to eq <<~"EOS"
+        expect(infrastructure_log.to_text).to eq <<~"LOG"
           ===== Information =====
           StackName: test-stack
           at: 2018/01/23 12:34:56
@@ -174,7 +174,7 @@ describe InfrastructureLog, type: :model do
           Status: SUCCESS
           ===== Details =====
           ------ Sugoi Log ------
-        EOS
+        LOG
       end
     end
 
@@ -182,7 +182,7 @@ describe InfrastructureLog, type: :model do
       let(:status) { false }
 
       it 'should return text' do
-        expect(infrastructure_log.to_text).to eq <<~"EOS"
+        expect(infrastructure_log.to_text).to eq <<~"LOG"
           ===== Information =====
           StackName: test-stack
           at: 2018/01/23 12:34:56
@@ -190,7 +190,7 @@ describe InfrastructureLog, type: :model do
           Status: FAILD
           ===== Details =====
           ------ Sugoi Log ------
-        EOS
+        LOG
       end
     end
   end

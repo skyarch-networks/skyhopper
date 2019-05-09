@@ -9,12 +9,12 @@
 module FormHelper
   def parts_select(options: nil, selected_option: nil, klass: nil, attributes: nil)
     selected_empty_option = please_select_option(selected_option) if selected_option
-    <<~EOS.html_safe
+    <<~TEMPLATE.html_safe
       <select class="form-control #{klass}" #{attributes}>
         #{selected_empty_option if selected_option}
         #{options}
       </select>
-    EOS
+    TEMPLATE
   end
 
   def parts_input(type: 'text', klass: nil, placeholder: nil, attributes: nil)
@@ -27,9 +27,9 @@ module FormHelper
         "placeholder=\"#{placeholder}\""
       end
 
-    <<~EOS.html_safe
+    <<~TEMPLATE.html_safe
       <textarea class="form-control #{klass}" #{attributes} #{placeholder}><textarea>
-    EOS
+    TEMPLATE
   end
 
   def please_select_option(msg = I18n.t('common.please_select'))

@@ -54,33 +54,33 @@ module ApplicationHelper
 
     breadcrumb <<
       if client
-        <<~EOF
+        <<~TEMPLATE
           <li><a href="#{clients_path}">#{client.name} (#{client.code})</a></li>
-        EOF
+        TEMPLATE
       else
-        <<~EOF
+        <<~TEMPLATE
           <li><a href="#{clients_path}">#{I18n.t('clients.client')}</a></li>
-        EOF
+        TEMPLATE
       end
 
     if project
-      breadcrumb << <<~EOF
+      breadcrumb << <<~TEMPLATE
         <li><a href="#{projects_path(client_id: client.id)}">#{project.name} (#{project.code})</a></li>
-      EOF
+      TEMPLATE
     elsif client
-      breadcrumb << <<~EOF
+      breadcrumb << <<~TEMPLATE
         <li class="active">#{I18n.t('projects.project')}</li>
-      EOF
+      TEMPLATE
     end
 
     if infrastructure
-      breadcrumb << <<~EOF
+      breadcrumb << <<~TEMPLATE
         <li class="active">#{infrastructure.stack_name}</li>
-      EOF
+      TEMPLATE
     elsif project
-      breadcrumb << <<~EOF
+      breadcrumb << <<~TEMPLATE
         <li class="active">#{I18n.t('infrastructures.infrastructure')}</li>
-      EOF
+      TEMPLATE
     end
 
     breadcrumb << '</ul>'

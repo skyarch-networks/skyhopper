@@ -293,9 +293,9 @@ class Node
   end
 
   def ansible_hosts_text(infra)
-    <<~"EOS"
+    <<~"HOSTS"
       [#{AnsibleTargetHostName}]
       #{infra.instance(@name).fqdn} ansible_ssh_user=#{@user}
-    EOS
+    HOSTS
   end
 end

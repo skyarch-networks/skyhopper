@@ -24,7 +24,7 @@ MasterMonitoring.delete_all
 end
 
 # -------------------- Global Serverspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<~EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<~SERVERTEST)
   require "serverspec_helper"
 
   describe package('httpd') do
@@ -39,18 +39,18 @@ Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', cat
   describe port(80) do
     it { should be_listening }
   end
-EOS
+SERVERTEST
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<~EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<~SERVERTEST)
   require "serverspec_helper"
 
   describe package("php") do
     it { should be_installed }
   end
-EOS
+SERVERTEST
 
 # -------------------- Global AWSspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<~EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<~SERVERTEST)
   require "awsspec_helper"
 
   describe package('httpd') do
@@ -65,15 +65,15 @@ Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', cat
   describe port(80) do
     it { should be_listening }
   end
-EOS
+SERVERTEST
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<~EOS)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<~SERVERTEST)
   require "awsspec_helper"
 
   describe package("php") do
     it { should be_installed }
   end
-EOS
+SERVERTEST
 
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system

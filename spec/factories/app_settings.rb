@@ -11,7 +11,7 @@
 FactoryGirl.define do
   factory :ec2_private_key do
     name 'hoge'
-    value <<~EOS
+    value <<~KEY
       -----BEGIN RSA PRIVATE KEY-----
       MIIEpQIBAAKCAQEAz0oTOf3uZjHX9zPyPoVOYngOO8qqcPX0MPSQSKD5Hz5eVJzI
       1KKZqCztlFgb0u4dmWJLBFqCEMzNWHXk+7eqUDmb84B70+kfI5W0PvrZN4hTRKUk
@@ -39,7 +39,7 @@ FactoryGirl.define do
       udcACU6HXswgYFwYKX2Br+ee7M300pydHb/rQxpp0YVfMVG+Fx+IMlnomRqlU0pS
       VGFyrUuB4RdiyT3WzLYNOcUZiUk5K0wJ67Mg9J5RI4paG3vfgDby2vs=
       -----END RSA PRIVATE KEY-----
-    EOS
+    KEY
   end
 
   factory :app_setting do
