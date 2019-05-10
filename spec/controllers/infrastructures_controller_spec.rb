@@ -289,7 +289,7 @@ describe InfrastructuresController, type: :controller do
         expect(assigns(:infrastructure)).to be_a_new(Infrastructure)
       end
     end
-  end # end of Post #create
+  end
 
   describe 'PATCH #update' do
     let(:params) { { id: infra.id, infrastructure: attributes_for(:infrastructure) } }
@@ -504,7 +504,8 @@ describe InfrastructuresController, type: :controller do
         render text: 'success!!!'
       end
 
-      def authorize(*)end # XXX: pundit hack
+      # XXX: pundit hack
+      def authorize(*)end
 
       def allowed_infrastructure(_); end # skip
     end
@@ -557,7 +558,8 @@ describe InfrastructuresController, type: :controller do
         render text: 'success!!!'
       end
 
-      def authorize(*)end # XXX: pundit hack
+      # XXX: pundit hack
+      def authorize(*)end
 
       def allowed_infrastructure(_); end # skip
     end

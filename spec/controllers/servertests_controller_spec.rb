@@ -50,7 +50,7 @@ describe ServertestsController, type: :controller do
         expect(assigns[:servertests]).to be_all { |servertest| servertest.infrastructure_id == infrastructure.id }
       end
     end
-  end # end of describe #index
+  end
 
   describe 'Get #new' do
     let(:get_new) { get :new }
@@ -82,7 +82,7 @@ describe ServertestsController, type: :controller do
         expect(assigns(:servertest).infrastructure_id).to_not be_nil
       end
     end
-  end # end of describe #new
+  end
 
   describe 'GET #show' do
     let(:servertest) { create(:servertest) }
@@ -145,7 +145,7 @@ describe ServertestsController, type: :controller do
         expect(response).to render_template :new
       end
     end
-  end # end of describe post #create
+  end
 
   describe 'PATCH #update' do
     let(:new_serverspec) { create(:servertest) }
@@ -175,7 +175,7 @@ describe ServertestsController, type: :controller do
         expect(response).to render_template :edit
       end
     end
-  end # end of patch #update
+  end
 
   describe 'GET #generator' do
     let(:req) { get :generator }
@@ -219,7 +219,7 @@ describe ServertestsController, type: :controller do
         expect(response).to redirect_to(servertests_path(infrastructure_id: infra_id))
       end
     end
-  end # end of delete # destroy
+  end
 
   describe '#select' do
     context 'get_page' do

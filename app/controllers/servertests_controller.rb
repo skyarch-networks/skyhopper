@@ -81,7 +81,7 @@ class ServertestsController < ApplicationController
   end
 
   # GET /servertests/1/edit
-  def edit; end # Rubocop fix
+  def edit; end
 
   # GET /servertests/generator
   def generator

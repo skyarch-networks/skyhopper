@@ -264,7 +264,7 @@ describe CfTemplatesController, type: :controller do
         expect(response).to render_template :new
       end
     end
-  end # end of describe Post
+  end
 
   describe '#create_and_send' do
     let(:res) { { status: status, message: 'message' } }
@@ -340,7 +340,7 @@ describe CfTemplatesController, type: :controller do
         let(:format) { 'json' }
       end
     end
-  end # end of describe patch #update
+  end
 
   describe '#destroy' do
     let(:cf_template) { create(:cf_template) }
