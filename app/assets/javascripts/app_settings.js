@@ -12,52 +12,15 @@
   //  ----------------------------- variables
 
 
-  const endpoint_base = '/app_settings';
-  const inputs_selector = '#app-settings-form input[type=text],input[type=password],select,textarea,input[type=checkbox]';
-  const required_inputs = '#app-settings-form input[required],select[required],textarea[required]';
-
-
-  //  -------------------------------- ajax methods
-  const create = function () {
-    let settings = get_settings();
-    settings = remove_empty_optional_params(settings);
-
-    return $.ajax({
-      url: endpoint_base,
-      type: 'POST',
-      data: {
-        settings: JSON.stringify(settings),
-      },
-    }).fail((xhr) => {
-      const res = xhr.responseJSON;
-      const kind = res.error.kind;
-      if (kind.endsWith('VpcIDNotFound')) {
-        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', { id: _.escape(settings.vpc_id) }), 'danger');
-      } else if (kind.endsWith('SubnetIDNotFound')) {
-        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', { id: _.escape(settings.subnet_id) }), 'danger');
-      } else if (kind.endsWith('SystemServerError')) {
-        modal.AlertHTML(kind, res.error.message, 'danger');
-      } else {
-        modal.AlertForAjaxStdError()(xhr);
-      }
-    });
-  };
-
-  // TODO 変数名を直す
-  const chef_create = function () {
-    return $.ajax({
-      url: `${endpoint_base}/system_server_create`,
-      type: 'POST',
-      data: {},
-      dataType: 'json',
-    }).fail(modal.AlertForAjaxStdError());
-  };
+  const EndpointBase = '/app_settings';
+  const InputsSelector = '#app-settings-form input[type=text],input[type=password],select,textarea,input[type=checkbox]';
+  const RequiredInputs = '#app-settings-form input[required],select[required],textarea[required]';
 
 
   //  --------------------------------  utility methods
-  var get_settings = function () {
+  const getSettings = function getSettings() {
     const settings = {};
-    $(inputs_selector).each(function () {
+    $(InputsSelector).each(function () {
       const input = $(this);
       const key = input.attr('name');
       if (input.is(':checkbox')) {
@@ -70,9 +33,9 @@
     return settings;
   };
 
-  var remove_empty_optional_params = function (obj) {
-    const optional_keys = ['vpc_id', 'subnet_id'];
-    optional_keys.forEach((key) => {
+  const RemoveEmptyOptionalParams = function RemoveEmptyOptionalParams(obj) {
+    const OptionalKeys = ['vpc_id', 'subnet_id'];
+    OptionalKeys.forEach((key) => {
       if (obj[key] === '') {
         delete obj[key];
       }
@@ -80,8 +43,8 @@
     return obj;
   };
 
-  const is_fill_required_input = function () {
-    const elements = document.querySelectorAll(required_inputs);
+  const isFillRequiredInput = function isFillRequiredInput() {
+    const elements = document.querySelectorAll(RequiredInputs);
     for (let i = 0; i < elements.length; ++i) {
       if (elements[i].value === '') {
         return false;
@@ -93,8 +56,8 @@
 
   //  inputが全部埋まっていれば btn をenableにする。
   //  全部埋まっていなければdisableにする
-  const switch_btn_enable = function (btn) {
-    if (is_fill_required_input()) {
+  const switchBtnEnable = function switchBtnEnable(btn) {
+    if (isFillRequiredInput()) {
       btn.removeAttr('disabled');
     } else {
       btn.attr('disabled', 'disabled');
@@ -102,22 +65,7 @@
   };
 
 
-  const watch_chef_create_progress = function () {
-    // TODO
-    $('#btn-create-system-server').hide();
-    $('.create-system-server').show();
-
-
-    const ws = ws_connector('chef_server_deployment', 'status');
-    ws.onmessage = function (msg) {
-      const parsed = JSON.parse(msg.data);
-
-      update_creating_chefserver_progress(parsed);
-    };
-  };
-
-
-  var update_creating_chefserver_progress = function (data) {
+  const updateCreatingChefserverProgress = function updateCreatingChefserverProgress(data) {
     const progress = $('#progress-create-system-server');
     const progress_bar = progress.children('.progress-bar');
     const progress_alert = $('#alert-create-system-server');
@@ -143,6 +91,57 @@
   };
 
 
+  const watchChefCreateProgress = function watchChefCreateProgress() {
+    // TODO
+    $('#btn-create-system-server').hide();
+    $('.create-system-server').show();
+
+
+    const ws = ws_connector('chef_server_deployment', 'status');
+    ws.onmessage = function (msg) {
+      const parsed = JSON.parse(msg.data);
+
+      updateCreatingChefserverProgress(parsed);
+    };
+  };
+
+
+  //  -------------------------------- ajax methods
+  const create = function () {
+    let settings = getSettings();
+    settings = RemoveEmptyOptionalParams(settings);
+
+    return $.ajax({
+      url: EndpointBase,
+      type: 'POST',
+      data: {
+        settings: JSON.stringify(settings),
+      },
+    }).fail((xhr) => {
+      const res = xhr.responseJSON;
+      const kind = res.error.kind;
+      if (kind.endsWith('VpcIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', { id: _.escape(settings.vpc_id) }), 'danger');
+      } else if (kind.endsWith('SubnetIDNotFound')) {
+        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', { id: _.escape(settings.subnet_id) }), 'danger');
+      } else if (kind.endsWith('SystemServerError')) {
+        modal.AlertHTML(kind, res.error.message, 'danger');
+      } else {
+        modal.AlertForAjaxStdError()(xhr);
+      }
+    });
+  };
+
+  // TODO 変数名を直す
+  const chefCreate = function chefCreate() {
+    return $.ajax({
+      url: `${EndpointBase}/system_server_create`,
+      type: 'POST',
+      data: {},
+      dataType: 'json',
+    }).fail(modal.AlertForAjaxStdError());
+  };
+
   //  ----------------------------- event binding
 
 
@@ -150,17 +149,17 @@
     e.preventDefault();
 
     create().done((data) => {
-      chef_create().done((data) => {
-        update_creating_chefserver_progress(data);
-        watch_chef_create_progress();
+      chefCreate().done((data) => {
+        updateCreatingChefserverProgress(data);
+        watchChefCreateProgress();
       });
     });
   });
 
 
-  $(document).on('change keyup', required_inputs, () => {
+  $(document).on('change keyup', RequiredInputs, () => {
     const btn = $('#btn-create-system-server');
-    switch_btn_enable(btn);
+    switchBtnEnable(btn);
   });
 
 
