@@ -14,8 +14,9 @@ services:
     ports:
       - 3000:3000
       - 3210:3210
-    links:
+    depends_on:
       - mysql
+      - redis
 
   mysql:
     image: mysql:5.7
@@ -40,3 +41,5 @@ services:
     volumes:
       - "./nginx/conf.d:/etc/nginx/conf.d"
       - ".:/prj/skyhopper"
+    depends_on:
+      - app
