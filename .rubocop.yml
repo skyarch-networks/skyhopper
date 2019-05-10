@@ -25,6 +25,9 @@ Style/AsciiComments:
 Style/BracesAroundHashParameters:
   Enabled: false
 
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 Style/ClassVars:
   Enabled: false
 
