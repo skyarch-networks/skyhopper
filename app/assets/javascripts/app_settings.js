@@ -35,12 +35,13 @@
 
   const RemoveEmptyOptionalParams = function RemoveEmptyOptionalParams(obj) {
     const OptionalKeys = ['vpc_id', 'subnet_id'];
+    const object = obj;
     OptionalKeys.forEach((key) => {
-      if (obj[key] === '') {
-        delete obj[key];
+      if (object[key] === '') {
+        delete object[key];
       }
     });
-    return obj;
+    return object;
   };
 
   const isFillRequiredInput = function isFillRequiredInput() {
@@ -67,26 +68,26 @@
 
   const updateCreatingChefserverProgress = function updateCreatingChefserverProgress(data) {
     const progress = $('#progress-create-system-server');
-    const progress_bar = progress.children('.progress-bar');
-    const progress_alert = $('#alert-create-system-server');
-    const current_percentage = parseInt(progress_bar.attr('area-valuenow'));
+    const progressBar = progress.children('.progress-bar');
+    const progressAlert = $('#alert-create-system-server');
+    const currentPercentage = parseInt(progressBar.attr('area-valuenow'), 10);
 
-    progress_alert.text(data.message);
+    progressAlert.text(data.message);
     // 進捗していればプログレスバーを進める
-    if (data.percentage !== null && parseInt(data.percentage) > current_percentage) {
-      progress_bar.attr('style', `width: ${data.percentage}%`).attr('area-valuenow', data.percentage);
+    if (data.percentage !== null && parseInt(data.percentage, 10) > currentPercentage) {
+      progressBar.attr('style', `width: ${data.percentage}%`).attr('area-valuenow', data.percentage);
     }
 
     if (data.status === 'complete') {
       progress.removeClass('progress-bar-striped active');
-      progress_bar.removeClass('progress-bar-info').addClass('progress-bar-success');
-      progress_alert.removeClass('alert-info').addClass('alert-success');
+      progressBar.removeClass('progress-bar-info').addClass('progress-bar-success');
+      progressAlert.removeClass('alert-info').addClass('alert-success');
 
       $('#done-appsetting').removeClass('disabled').removeAttr('disabled');
     } else if (data.status === 'error') {
       progress.removeClass('progress-bar-striped active');
-      progress_bar.removeClass('progress-bar-info').addClass('progress-bar-danger');
-      progress_alert.removeClass('alert-info').addClass('alert-danger');
+      progressBar.removeClass('progress-bar-info').addClass('progress-bar-danger');
+      progressAlert.removeClass('alert-info').addClass('alert-danger');
     }
   };
 
@@ -107,7 +108,7 @@
 
 
   //  -------------------------------- ajax methods
-  const create = function () {
+  const create = function create() {
     let settings = getSettings();
     settings = RemoveEmptyOptionalParams(settings);
 
@@ -119,7 +120,7 @@
       },
     }).fail((xhr) => {
       const res = xhr.responseJSON;
-      const kind = res.error.kind;
+      const { kind } = res.error;
       if (kind.endsWith('VpcIDNotFound')) {
         modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', { id: _.escape(settings.vpc_id) }), 'danger');
       } else if (kind.endsWith('SubnetIDNotFound')) {
