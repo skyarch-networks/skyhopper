@@ -59,8 +59,8 @@ class User < ActiveRecord::Base
       client: client,
       name: email,
       code: email,
-      access_key: DummyText,
-      secret_access_key: DummyText,
+      access_key: DUMMY_TEXT,
+      secret_access_key: DUMMY_TEXT,
     )
     if prj.save
       UserProject.create(user_id: id, project_id: prj.id)

@@ -66,7 +66,7 @@ describe ProjectsController, type: :controller do
     it '@project should have a client_id' do
       expect(assigns[:project].client_id).to eq client.id
     end
-  end # end of describe #new
+  end
 
   describe 'POST #create' do
     let(:req) { post :create, project: project_hash }
@@ -131,7 +131,7 @@ describe ProjectsController, type: :controller do
         expect(response).to be_redirect
       end
     end
-  end # end of describe patch #update
+  end
 
   describe 'GET #edit' do
     let(:edit_request) { get :edit, id: project.id }
@@ -182,7 +182,9 @@ describe ProjectsController, type: :controller do
   describe '#client_exist' do
     controller ProjectsController do
       before_action :client_exist
-      def authorize(*)end # XXX: pundit hack
+
+      # XXX: pundit hack
+      def authorize(*)end
 
       def test
         render text: 'success!!!'
@@ -214,7 +216,9 @@ describe ProjectsController, type: :controller do
   describe '#project_exist' do
     controller ProjectsController do
       before_action :project_exist
-      def authorize(*)end # XXX: pundit hack
+
+      # XXX: pundit hack
+      def authorize(*)end
 
       def test
         render text: 'success!!!'

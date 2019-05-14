@@ -162,7 +162,8 @@ class UsersAdminController < ApplicationController
       add_create_user(z)
     end
 
-    render text: I18n.t('users.msg.synced'); nil
+    render text: I18n.t('users.msg.synced')
+    nil
   end
 
   # delete acount
@@ -206,23 +207,23 @@ class UsersAdminController < ApplicationController
     end
   end
 
-  def update_user_zabbix(z, user, set_password)
-    z.create_user(user) unless z.user_exists?(user.email)
-    zabbix_user_id = z.get_user_id(user.email)
+  def update_user_zabbix(zabbix, user, set_password)
+    zabbix.create_user(user) unless zabbix.user_exists?(user.email)
+    zabbix_user_id = zabbix.get_user_id(user.email)
 
     if set_password
-      z.update_user(zabbix_user_id, password: user.encrypted_password)
+      zabbix.update_user(zabbix_user_id, password: user.encrypted_password)
     end
 
-    usergroup_ids = [z.get_group_id_by_user(user)]
+    usergroup_ids = [zabbix.get_group_id_by_user(user)]
     if user.master
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
+      zabbix.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: zabbix.get_user_type_by_user(user))
     else
       hostgroup_names = user.projects.pluck(:code).map { |code| code + (user.admin? ? '-read-write' : '-read') }
       if hostgroup_names.present?
-        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
+        usergroup_ids.concat(zabbix.get_usergroup_ids(hostgroup_names))
       end
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
+      zabbix.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
     end
   end
 end

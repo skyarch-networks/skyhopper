@@ -89,23 +89,25 @@ class OperationWorker
     ws = WSConnector.new('notifications', User.find(params[:user]).ws_key)
 
     instance = params[:resource].infrastructure.instance(params[:resource].physical_id)
-    if instance.status == :stopped
-      instance.start
-      log_msg = "Started: #{instance.physical_id}. As Scheduled. on #{params[:repeats]}"
-      log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
-      ws.push_as_json({ message: log.details, status: true, timestamp: Time.zone.now.to_s })
-    end
+
+    return unless instance.status == :stopped
+
+    instance.start
+    log_msg = "Started: #{instance.physical_id}. As Scheduled. on #{params[:repeats]}"
+    log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
+    ws.push_as_json({ message: log.details, status: true, timestamp: Time.zone.now.to_s })
   end
 
   def stop(params)
     ws = WSConnector.new('notifications', User.find(params[:user]).ws_key)
     instance = params[:resource].infrastructure.instance(params[:resource].physical_id)
-    if instance.status == :running
-      instance.stop
-      log_msg = "Stopped: #{instance.physical_id}. As Scheduled on #{params[:repeats]}"
 
-      log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
-      ws.push_as_json({ message: log.details, status: log.status, timestamp: Time.zone.now.to_s })
-    end
+    return unless instance.status == :running
+
+    instance.stop
+    log_msg = "Stopped: #{instance.physical_id}. As Scheduled on #{params[:repeats]}"
+
+    log = InfrastructureLog.create(infrastructure_id: params[:resource].infrastructure_id, user_id: params[:user], details: log_msg, status: true)
+    ws.push_as_json({ message: log.details, status: log.status, timestamp: Time.zone.now.to_s })
   end
 end

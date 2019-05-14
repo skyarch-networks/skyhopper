@@ -93,8 +93,6 @@ class Resource < ActiveRecord::Base
   private
 
   def verify_playbook_roles
-    unless Ansible::verify_roles(get_playbook_roles)
-      errors.add(:playbook_roles, 'structure is incorrect')
-    end
+    errors.add(:playbook_roles, 'structure is incorrect') unless Ansible::verify_roles(get_playbook_roles)
   end
 end

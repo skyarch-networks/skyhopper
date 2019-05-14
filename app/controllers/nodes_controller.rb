@@ -194,7 +194,7 @@ class NodesController < ApplicationController
     resource = @infra.resource(physical_id)
 
     @playbook_roles = resource.get_playbook_roles
-    @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
+    @roles = Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
     @extra_vars = resource.get_extra_vars
   end
 

@@ -7,10 +7,10 @@
 #
 
 class Node
-  OperationDefaultUser = 'ec2-user'.freeze
-  WaitSearchIndexInterval = 5
-  AnsibleWorkspacePath = Rails.root.join('ansible').to_s
-  AnsibleTargetHostName = 'ec2'.freeze
+  OPERATION_DEFAULT_USER = 'ec2-user'.freeze
+  WAIT_SEARCH_INDEX_INTERVAL = 5
+  ANSIBLE_WORKSPACE_PATH = Rails.root.join('ansible').to_s
+  ANSIBLE_TARGET_HOST_NAME = 'ec2'.freeze
 
   class BootstrapError < ::StandardError; end
   class CookError < ::StandardError; end
@@ -25,7 +25,7 @@ class Node
     [out, err, status]
   end
 
-  def initialize(name, user: OperationDefaultUser)
+  def initialize(name, user: OPERATION_DEFAULT_USER)
     @name = name
     @user = user
   end
@@ -42,7 +42,7 @@ class Node
     hosts_file.print(ansible_hosts_text(infra))
     hosts_file.flush
 
-    Ansible::create(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
+    Ansible::create(ANSIBLE_WORKSPACE_PATH, ANSIBLE_TARGET_HOST_NAME) do |ansible|
       ansible.set_roles(playbook_roles)
       begin
         ansible.run(
@@ -230,12 +230,10 @@ class Node
         else
           'pending'
         end
+      elsif result[:summary][:errors_outside_of_examples_count].zero?
+        'failed'
       else
-        if result[:summary][:errors_outside_of_examples_count].zero?
-          'failed'
-        else
-          'error'
-        end
+        'error'
       end
 
     case result[:status_text]
@@ -293,9 +291,9 @@ class Node
   end
 
   def ansible_hosts_text(infra)
-    <<~"EOS"
-      [#{AnsibleTargetHostName}]
+    <<~"HOSTS"
+      [#{ANSIBLE_TARGET_HOST_NAME}]
       #{infra.instance(@name).fqdn} ansible_ssh_user=#{@user}
-    EOS
+    HOSTS
   end
 end

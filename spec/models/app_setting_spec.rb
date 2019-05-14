@@ -79,7 +79,10 @@ describe AppSetting, type: :model do
         create(:app_setting, dummy: true)
       end
 
-      subject { klass.clear_cache; klass.set? }
+      subject do
+        klass.clear_cache
+        klass.set?
+      end
 
       it { is_expected.to be_falsey }
     end

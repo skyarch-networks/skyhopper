@@ -69,7 +69,8 @@ class ServertestsController < ApplicationController
       raise ex if ajax?
 
       flash.now[:alert] = @servertest.errors[:value] if @servertest.errors[:value]
-      render action: 'new', infrastructure_id: infra_id; return
+      render action: 'new', infrastructure_id: infra_id
+      return
     end
 
     if ajax?
@@ -81,7 +82,7 @@ class ServertestsController < ApplicationController
   end
 
   # GET /servertests/1/edit
-  def edit; end # Rubocop fix
+  def edit; end
 
   # GET /servertests/generator
   def generator

@@ -49,9 +49,9 @@ class ApplicationController < ActionController::Base
   end
 
   def appsetting_set?
-    unless AppSetting.set?
-      redirect_to app_settings_path
-    end
+    return if AppSetting.set?
+
+    redirect_to app_settings_path
   end
 
   def appsetting_controller

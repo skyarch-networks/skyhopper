@@ -83,9 +83,7 @@ class Infrastructure < ActiveRecord::Base
   def update_with_ec2_private_key!(infra_params)
     old_ec2_private_key = ec2_private_key
     update!(self.class.create_ec2_private_key(infra_params))
-    if old_ec2_private_key.present?
-      old_ec2_private_key.delete
-    end
+    old_ec2_private_key.delete if old_ec2_private_key.present?
   end
 
   # resourcesを返す。
@@ -137,9 +135,7 @@ class Infrastructure < ActiveRecord::Base
   # keypair を持っていなければ nil を返す。
   # @return [String, NilClass]
   def keypairname
-    if ec2_private_key_id
-      ec2_private_key.name
-    end
+    ec2_private_key.name if ec2_private_key_id
   end
 
   def detach_zabbix

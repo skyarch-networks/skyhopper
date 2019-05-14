@@ -168,7 +168,7 @@ class AppSettingsController < ApplicationController
   #   message:    I18ned String
   # }
   def build_ws_message(status, msg = nil)
-    hash = SystemServer::Deployment::Progress[status].dup
+    hash = SystemServer::Deployment::PROGRESS[status].dup
     I18n.locale = @locale
     hash[:message] = msg || I18n.t("system_servers.msg.#{status}")
     JSON.generate(hash)
@@ -190,9 +190,10 @@ class AppSettingsController < ApplicationController
     a = @ec2.describe_account_attributes
     limit = a.account_attributes.find { |x| x.attribute_name == 'vpc-max-elastic-ips' }.attribute_values.first.attribute_value.to_i
     n = @ec2.describe_addresses.addresses.size
-    if limit - n < 1 # ZabbixServer1個分
-      raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
-    end
+
+    return unless limit - n < 1 # ZabbixServer1個分
+
+    raise EIPLimitError, I18n.t('app_settings.msg.eip_limit_error')
   end
 
   def verify_vpc_id!(vpc_id)

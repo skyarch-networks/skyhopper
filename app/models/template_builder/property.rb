@@ -55,11 +55,11 @@ class TemplateBuilder::Property
 
     valid_data_type_init
 
-    if @select
-      raise SelectError, 'Need receive block for get options' unless block
+    return unless @select
 
-      @get_option_blk = block
-    end
+    raise SelectError, 'Need receive block for get options' unless block
+
+    @get_option_blk = block
   end
 
   # ----------------------------- attributes reader
@@ -85,9 +85,7 @@ class TemplateBuilder::Property
   def validate(val)
     validate_data_type(val)
 
-    if select?
-      raise InvalidValue, "#{val} is invalid as #{name}" unless get_options.include?(val)
-    end
+    raise InvalidValue, "#{val} is invalid as #{name}" if select? && !get_options.include?(val)
   end
 
   # ネストしたプロパティが存在するものかどうかを返す。
@@ -168,11 +166,9 @@ class TemplateBuilder::Property
         @data_validator.each do |key, prop|
           v = val[key]
           if v.nil? # key が存在しない
-            if prop.required?
-              raise InvalidValue, "#{key} is required."
-            else
-              next
-            end
+            raise InvalidValue, "#{key} is required." if prop.required?
+
+            next
           end
 
           prop.validate(v)

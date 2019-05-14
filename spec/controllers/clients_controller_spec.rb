@@ -34,7 +34,7 @@ describe ClientsController, type: :controller do
         expect(response).to render_template :new
       end
     end
-  end # end of describe get #new
+  end
 
   describe 'POST #create' do
     let(:request) { post :create, client: client_codename }
@@ -75,7 +75,7 @@ describe ClientsController, type: :controller do
         expect(request.request.flash[:alert]).to_not be_nil
       end
     end
-  end # end of describe post #create
+  end
 
   describe 'PATCH #update' do
     let(:client) { create(:client) }
@@ -112,7 +112,7 @@ describe ClientsController, type: :controller do
         expect(response).to render_template :edit
       end
     end
-  end # end of describe patch #update
+  end
 
   describe '#destroy' do
     let(:client) { create(:client) }

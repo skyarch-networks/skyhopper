@@ -94,8 +94,8 @@ class ClientsController < ApplicationController
   def client_exist
     return if params[:id].blank?
 
-    unless Client.exists?(id: params[:id])
-      redirect_to clients_path, alert: "Client \##{params[:id]} does not exist."
-    end
+    return if Client.exists?(id: params[:id])
+
+    redirect_to clients_path, alert: "Client \##{params[:id]} does not exist."
   end
 end

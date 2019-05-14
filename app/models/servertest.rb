@@ -55,7 +55,7 @@ class Servertest < ActiveRecord::Base
       db_engine = 'psql' if db_engine == 'postgres'
       host      = rds.endpoint_address
 
-      spec_template = File::open(Rails.root.join('serverspec/rdsspec.rb.erb')).read
+      spec_template = File::open(Rails.root.join('serverspec', 'rdsspec.rb.erb')).read
 
       spec_value = ERB.new(spec_template).result(binding)
 

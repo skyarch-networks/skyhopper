@@ -8,7 +8,7 @@
 
 class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
   # http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
-  InstanceClasses = %w[
+  INSTANCE_CLASSES = %w[
     db.t1.micro
     db.m1.small
     db.m3.medium
@@ -50,7 +50,7 @@ class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
     end
 
     def instance_classes
-      InstanceClasses
+      INSTANCE_CLASSES
     end
   end
 end

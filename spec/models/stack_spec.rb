@@ -80,13 +80,13 @@ describe Stack, type: :model do
   end
 
   describe '.failed?' do
-    Stack::CompleteStatus.each do |status|
+    Stack::COMPLETE_STATUS.each do |status|
       context "when #{status}" do
         it { expect(subject.failed?(status)).to be false }
       end
     end
 
-    Stack::FailedStatus.each do |status|
+    Stack::FAILED_STATUS.each do |status|
       context "when #{status}" do
         it { expect(subject.failed?(status)).to be true }
       end
@@ -94,7 +94,7 @@ describe Stack, type: :model do
   end
 
   describe '.complete?' do
-    Stack::CompleteStatus.each do |status|
+    Stack::COMPLETE_STATUS.each do |status|
       context "when #{status}" do
         it { expect(subject.complete?(status)).to be true }
       end

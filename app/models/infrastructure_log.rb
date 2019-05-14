@@ -87,7 +87,7 @@ class InfrastructureLog < ActiveRecord::Base
     at_text = created_at.strftime('%Y/%m/%d %H:%M:%S')
     operator_text = user.try(:email) || 'Unregistered'
     status_text = status ? 'SUCCESS' : 'FAILD'
-    <<~"EOS"
+    <<~"LOG"
       ===== Information =====
       StackName: #{infrastructure.stack_name}
       at: #{at_text}
@@ -95,7 +95,7 @@ class InfrastructureLog < ActiveRecord::Base
       Status: #{status_text}
       ===== Details =====
       #{details}
-    EOS
+    LOG
   end
 
   def to_filename
