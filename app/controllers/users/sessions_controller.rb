@@ -39,6 +39,6 @@ class Users::SessionsController < Devise::SessionsController
 
     flash[:alert] = I18n.t('users.msg.mfa_failure')
     redirect_to new_user_session_path
-    return
+    nil
   end
 end

@@ -22,6 +22,6 @@ class ProjectCodeValidator < ActiveModel::Validator
     return unless /-read-write$/.match?(code)
 
     record.errors[:code] << 'should not match /-read-write$/'
-    return
+    nil
   end
 end

@@ -85,7 +85,7 @@ class TemplateBuilder::Property
   def validate(val)
     validate_data_type(val)
 
-    raise InvalidValue, "#{val} is invalid as #{name}" unless get_options.include?(val) if select?
+    raise InvalidValue, "#{val} is invalid as #{name}" if select? && !get_options.include?(val)
   end
 
   # ネストしたプロパティが存在するものかどうかを返す。

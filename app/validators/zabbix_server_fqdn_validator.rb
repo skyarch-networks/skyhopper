@@ -22,6 +22,6 @@ class ZabbixServerFqdnValidator < ActiveModel::Validator
     return unless /-read-write$/.match?(fqdn)
 
     record.errors[:fqdn] << 'should not match /-read-write$/'
-    return
+    nil
   end
 end
