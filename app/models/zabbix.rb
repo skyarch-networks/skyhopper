@@ -428,7 +428,7 @@ class Zabbix
   # ==== return
   # usergroup ID (Integer)
   def get_master_usergroup_id
-    @@master_usergroup_id ||= (get_usergroup_ids(MASTER_USERGROUP_NAME).first || create_usergroup(MasterUsergroupName))
+    @@master_usergroup_id ||= (get_usergroup_ids(MASTER_USERGROUP_NAME).first || create_usergroup(MASTER_USERGROUP_NAME))
   end
 
   def get_default_usergroup_id
