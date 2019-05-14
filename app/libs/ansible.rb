@@ -8,7 +8,7 @@ module Ansible
 
   def self.exec_command(command, &block)
     Open3.popen3(command) do |_stdin, stdout, _stderr, wait_thr|
-      while line = stdout.gets
+      while (line = stdout.gets)
         line.chomp!
         block.call(line)
       end

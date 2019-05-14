@@ -202,8 +202,6 @@ class NodesController < ApplicationController
   def run_ansible_playbook
     physical_id = params.require(:id)
 
-    node = Node.new(physical_id)
-
     Thread.new_with_db do
       run_ansible_playbook_node(@infra, physical_id)
     end
