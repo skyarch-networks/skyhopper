@@ -22,17 +22,17 @@ describe Client, type: :model do
     it { is_expected.to eq klass.find_by(code: klass::ForSystemCodeName) }
   end
 
-  describe '#is_for_system?' do
+  describe '#for_system?' do
     context 'when system client' do
       let(:client) { build(:client, code: klass::ForSystemCodeName, name: klass::ForSystemCodeName) }
-      subject { client.is_for_system? }
+      subject { client.for_system? }
 
       it { is_expected.to be true }
     end
 
     context 'when not system client' do
       let(:client) { build(:client) }
-      subject { client.is_for_system? }
+      subject { client.for_system? }
 
       it { is_expected.to be false }
     end

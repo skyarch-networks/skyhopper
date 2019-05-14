@@ -11,7 +11,7 @@ class ClientPolicy < ApplicationPolicy
 
   %i[update? edit? destroy?].each do |action|
     define_method(action) do
-      user.master? and !record.is_for_system?
+      user.master? and !record.for_system?
     end
   end
 end

@@ -21,7 +21,7 @@ class Client < ActiveRecord::Base
   end
 
   # @return [Boolean]
-  def is_for_system?
+  def for_system?
     code == ForSystemCodeName
   end
 end
