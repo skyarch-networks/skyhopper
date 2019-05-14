@@ -14,7 +14,7 @@ module InfrastructuresHelper
                  nil
                else
                  edit_infrastructure_path(infra)
-    end
+               end
 
     editable
   end
