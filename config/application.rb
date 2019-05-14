@@ -32,7 +32,7 @@ module SkyHopper
     end
 
     # for i18n-js assets pipeline
-    config.assets.paths << "#{Rails.root}/bundle/ruby/*/gems/*/vendor/assets/javascript"
+    config.assets.paths << Rails.root.join('bundle', 'ruby', '*', 'gems', '*', 'vendor', 'assets', 'javascript').to_s
 
     config.session_store :redis_store, servers: ENV['REDIS_URL'] || 'redis://localhost:6379/1', expire_in: 60 * 30 * 24 * 30
 

@@ -230,12 +230,10 @@ class Node
         else
           'pending'
         end
+      elsif result[:summary][:errors_outside_of_examples_count].zero?
+        'failed'
       else
-        if result[:summary][:errors_outside_of_examples_count].zero?
-          'failed'
-        else
-          'error'
-        end
+        'error'
       end
 
     case result[:status_text]

@@ -19,7 +19,7 @@ class ServerStateWorker < ActiveJob::Base
 
     kinds.each do |kind|
       status = fetch_and_notify(kind)
-      if status == :pending || status == :stopping
+      if %i[pending stopping].include?(status)
         self.class.set(wait: 8.seconds).perform_later(kind)
       end
     end

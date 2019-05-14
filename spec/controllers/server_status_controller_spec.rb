@@ -39,7 +39,7 @@ describe ServerStatusController, type: :controller do
     let(:status) { 'hogefuga' }
     before do
       allow(server).to receive(:status).and_return(status)
-      allow(server).to receive(:is_in_progress?).and_return(false)
+      allow(server).to receive(:in_progress?).and_return(false)
     end
 
     %w[zabbix].each do |kind|

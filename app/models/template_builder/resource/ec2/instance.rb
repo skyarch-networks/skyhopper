@@ -7,8 +7,7 @@
 #
 
 class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
-  # rubocop:disable Style/MutableConstant
-  InstanceTypes = {}
+  InstanceTypes = {} # rubocop:disable Style/MutableConstant
   AWS::InstanceTypes[:current].each do |type|
     InstanceTypes[type.to_s] = { HVM: true }
 

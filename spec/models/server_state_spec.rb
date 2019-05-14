@@ -125,10 +125,10 @@ describe ServerState, type: :model do
     end
   end
 
-  describe '#is_running?' do
+  describe '#running?' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject { server_status[kind].is_running? }
+        subject { server_status[kind].running? }
 
         context 'when isnot running' do
           it { is_expected.to be false }
@@ -143,10 +143,10 @@ describe ServerState, type: :model do
     end
   end
 
-  describe '#is_in_progress?' do
+  describe '#in_progress??' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject { server_status[kind].is_in_progress? }
+        subject { server_status[kind].in_progress? }
 
         %w[pending stopping].each do |s|
           context "when #{s}" do

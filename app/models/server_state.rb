@@ -49,17 +49,17 @@ class ServerState
     @server.stop
   end
 
-  def is_running?
+  def running?
     status.to_s == 'running'
   end
 
-  def is_in_progress?
+  def in_progress?
     status.to_s == 'pending' || status.to_s == 'stopping'
   end
 
   # @param [String] msg is an Error message.
   # @raise [NotRunning]
   def should_be_running!(msg)
-    raise NotRunning, msg unless is_running?
+    raise NotRunning, msg unless running?
   end
 end

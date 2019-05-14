@@ -4,7 +4,7 @@ require 'highline'
 class CoolLogFormater
   include ActiveSupport::TaggedLogging::Formatter
 
-  Colors = {
+  COLORS = {
     'FATAL' => :red,
     'ERROR' => :red,
     'WARN' => :yellow,
@@ -23,9 +23,9 @@ class CoolLogFormater
                 msg.pretty_inspect
               end
     time  = "[#{timestamp.strftime('%y/%m/%d %H:%M:%S')}.#{format('%06d', timestamp.usec.to_s)}]"
-    level = "[#{@@highline.color(severity, Colors[severity], :bold)}]:"
+    level = "[#{@@highline.color(severity, COLORS[severity], :bold)}]:"
 
-    level << ' ' if severity == 'WARN' or severity == 'INFO'
+    level << ' ' if %w[WARN INFO].include?(severity)
 
     "#{time} #{level} #{message}\n"
   end
