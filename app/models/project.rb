@@ -64,7 +64,7 @@ class Project < ActiveRecord::Base
     # add new hostgroup on zabbix with project code as its name
     if z.get_hostgroup_ids(code).empty?
       hostgroup_id = z.add_hostgroup(code)
-      z.create_usergroup(code + '-read',       hostgroup_id, Zabbix::PERMISSON_READ)
+      z.create_usergroup(code + '-read',       hostgroup_id, Zabbix::PERMISSION_READ)
       z.create_usergroup(code + '-read-write', hostgroup_id, Zabbix::PERMISSION_READ_WRITE)
 
       hostgroup_names = Project.pluck(:code)
