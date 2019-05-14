@@ -507,7 +507,8 @@ describe InfrastructuresController, type: :controller do
       # XXX: pundit hack
       def authorize(*)end
 
-      def allowed_infrastructure(_); end # skip
+      # skip
+      def allowed_infrastructure(___); end
     end
     before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
     let(:prj_id) { project.id }
@@ -564,7 +565,8 @@ describe InfrastructuresController, type: :controller do
       # XXX: pundit hack
       def authorize(*)end
 
-      def allowed_infrastructure(_); end # skip
+      # skip
+      def allowed_infrastructure(___); end
     end
     before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
     let(:infra_id) { infra.id }

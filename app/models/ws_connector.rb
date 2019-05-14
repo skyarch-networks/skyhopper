@@ -24,7 +24,7 @@ class WSConnector
     push(data.to_json)
   end
 
-  def push_error(ex)
-    push_as_json(error: ex.format_error)
+  def push_error(exception)
+    push_as_json(error: exception.format_error)
   end
 end

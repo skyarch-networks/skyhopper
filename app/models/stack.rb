@@ -92,8 +92,8 @@ class Stack
     @stack.delete
   end
 
-  def in_progress?(st = status[:status])
-    st.include?('_IN_PROGRESS')
+  def in_progress?(status_ = status[:status])
+    status_.include?('_IN_PROGRESS')
   end
 
   def outputs
@@ -124,16 +124,16 @@ class Stack
     FailedStatus.include?(status)
   end
 
-  def failed?(st = status[:status])
-    FailedStatus.include?(st)
+  def failed?(status_ = status[:status])
+    FailedStatus.include?(status_)
   end
 
   def self.complete?(status)
     CompleteStatus.include?(status)
   end
 
-  def complete?(st = status[:status])
-    CompleteStatus.include?(st)
+  def complete?(status_ = status[:status])
+    CompleteStatus.include?(status_)
   end
 
   def wait_status(status_to_wait, interval = 10)
