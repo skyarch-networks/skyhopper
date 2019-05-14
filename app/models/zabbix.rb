@@ -104,12 +104,9 @@ class Zabbix
   # @return [Array<String>] list of linked templates
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    if host_id
-      selected_templates = @sky_zabbix.template.get(output: %w[name description], hostids: host_id).map { |x| x['name'] }
-      return selected_templates
-    else
-      return nil
-    end
+    return nil unless host_id
+
+    @sky_zabbix.template.get(output: %w[name description], hostids: host_id).map { |x| x['name'] }
   end
 
   # トリガーのオンオフを切り替える
@@ -399,11 +396,9 @@ class Zabbix
     user_info = @sky_zabbix.user.get(
       filter: { alias: username },
     )
-    if user_info.first.nil?
-      return nil
-    else
-      return user_info.first['userid']
-    end
+    return nil unless  user_info.first.nil?
+
+    user_info.first['userid']
   end
 
   UserTypeDefault    = 1
@@ -424,11 +419,9 @@ class Zabbix
   end
 
   def delete_user(username)
-    if get_user_id(username).nil?
-      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
-    else
-      @sky_zabbix.user.delete([get_user_id(username)])
-    end
+    raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username) if get_user_id(username).nil?
+
+    @sky_zabbix.user.delete([get_user_id(username)])
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。

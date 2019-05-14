@@ -59,16 +59,16 @@ module Concerns::ErrorHandler
 
   # Ajax でのアクセスでなければ、渡された例外を投げる。
   # Ajax のアクセスであれば、例外を JSON に整形して render する
-  # @param [Exception] ex
-  def rescue_exception(ex)
-    Rails.logger.error(ex.inspect + ' from ' + ex.backtrace.first)
-    Rails.logger.debug(ex.backtrace.join("\n"))
-    raise ex if ex.is_a? Sprockets::FileNotFound # prevent redirect loop
+  # @param [Exception] exception
+  def rescue_exception(exception)
+    Rails.logger.error(exception.inspect + ' from ' + exception.backtrace.first)
+    Rails.logger.debug(exception.backtrace.join("\n"))
+    raise exception if exception.is_a? Sprockets::FileNotFound # prevent redirect loop
 
     if ajax?
-      render json: { error: ex.format_error }, status: ex.status_code and return
+      render json: { error: exception.format_error }, status: exception.status_code and return
     else
-      flash[:alert] = ex.format_error[:message]
+      flash[:alert] = exception.format_error[:message]
       redirect_to_back_or_root
     end
   end

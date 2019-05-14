@@ -46,11 +46,9 @@ class EC2Instance < SimpleDelegator
         break
       end
 
-      if %w[ok initializing].include?(s[:instance_status]) && %w[ok initializing].include?(s[:system_status])
-        sleep 5
-      else
-        raise StandardError, 'status check failed'
-      end
+      raise StandardError, 'status check failed' unless %w[ok initializing].include?(s[:instance_status]) && %w[ok initializing].include?(s[:system_status])
+
+      sleep 5
     end
   end
 

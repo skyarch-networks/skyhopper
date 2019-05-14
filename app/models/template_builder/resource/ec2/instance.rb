@@ -55,11 +55,9 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
     return nil unless instance_type
     return :HVM if instance_type.is_a?(Hash) and instance_type.size == 1 and instance_type[:Ref]
 
-    if InstanceTypes[instance_type][:HVM]
-      return :HVM
-    else
-      return :PV
-    end
+    return :HVM if InstanceTypes[instance_type][:HVM]
+
+    :PV
   end
 
   def build

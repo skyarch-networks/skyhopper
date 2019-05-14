@@ -60,8 +60,6 @@ class ServerState
   # @param [String] msg is an Error message.
   # @raise [NotRunning]
   def should_be_running!(msg)
-    unless is_running?
-      raise NotRunning, msg
-    end
+    raise NotRunning, msg unless is_running?
   end
 end

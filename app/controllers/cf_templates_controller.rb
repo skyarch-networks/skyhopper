@@ -211,10 +211,10 @@ class CfTemplatesController < ApplicationController
 
     cf_template.update_cfparams
 
-    if cf_template.save
-      infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
-      return { message: t("cf_templates.msg.#{action.downcase}"), status: true }
-    end
+    return unless cf_template.save # TODO 例外を投げるべきな気がする
+
+    infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
+    { message: t("cf_templates.msg.#{action.downcase}"), status: true }
   end
 
   def add_keys_in_known_hosts(infrastructure)

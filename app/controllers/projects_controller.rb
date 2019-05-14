@@ -163,9 +163,9 @@ class ProjectsController < ApplicationController
   def client_exist
     return if params[:client_id].blank?
 
-    unless Client.exists?(id: params[:client_id])
-      redirect_to clients_path, alert: "Client \##{params[:client_id]} does not exist."
-    end
+    return if Client.exists?(id: params[:client_id])
+
+    redirect_to clients_path, alert: "Client \##{params[:client_id]} does not exist."
   end
 
   # redirect to projects#index if specified project does not exist

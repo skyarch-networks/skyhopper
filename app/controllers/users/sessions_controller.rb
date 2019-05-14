@@ -35,9 +35,10 @@ class Users::SessionsController < Devise::SessionsController
     # Receive email, password and MFA-token
     token = params[:user][:mfa_token]
     totp = ROTP::TOTP.new(user.mfa_secret_key)
-    unless totp.verify(token)
-      flash[:alert] = I18n.t('users.msg.mfa_failure')
-      redirect_to new_user_session_path; return
-    end
+    return if totp.verify(token)
+
+    flash[:alert] = I18n.t('users.msg.mfa_failure')
+    redirect_to new_user_session_path
+    return
   end
 end
