@@ -95,7 +95,7 @@ describe InfrastructurePolicy do
 
       context 'when client is for system' do
         before do
-          allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
+          allow_any_instance_of(Client).to receive(:for_system?).and_return(true)
         end
 
         it 'should deny' do

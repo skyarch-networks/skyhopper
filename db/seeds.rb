@@ -78,7 +78,7 @@ SERVERTEST
 # ----------------------- System Client, Projects
 client_skyhopper = Client.for_system
 if client_skyhopper.blank?
-  client_skyhopper = Client.create(name: Client::ForSystemCodeName, code: Client::ForSystemCodeName)
+  client_skyhopper = Client.create(name: Client::FOR_SYSTEM_CODE_NAME, code: Client::FOR_SYSTEM_CODE_NAME)
 end
 Project.find_or_create_by(client: client_skyhopper, name: Project::FOR_DISH_TEST_CODE_NAME, code: Project::FOR_DISH_TEST_CODE_NAME, access_key: DUMMY_TEXT, secret_access_key: DUMMY_TEXT)
 Project.find_or_create_by(client: client_skyhopper, name: Project::CHEF_SERVER_CODE_NAME,    code: Project::CHEF_SERVER_CODE_NAME,    access_key: DUMMY_TEXT, secret_access_key: DUMMY_TEXT)

@@ -46,7 +46,7 @@ describe Servertest, type: :model do
 
   describe '.global' do
     it 'should return global Serverspecs' do
-      expect(klass.global).to be_all { |s| s.infrastructure_id.nil? }
+      expect(klass.global).to(be_all { |s| s.infrastructure_id.nil? })
     end
   end
 

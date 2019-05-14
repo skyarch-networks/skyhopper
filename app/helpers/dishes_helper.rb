@@ -26,7 +26,7 @@ module DishesHelper
                   else
                     'label-warning'
 
-    end
+                  end
 
     "<span class=\"label #{extra_class}\">#{screen_status}</span>".html_safe
   end

@@ -7,20 +7,21 @@
 #
 
 class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
-  InstanceTypes = {} # rubocop:disable Style/MutableConstant
-  AWS::InstanceTypes[:current].each do |type|
-    InstanceTypes[type.to_s] = { HVM: true }
+  INSTANCE_TYPES = lambda {
+    instance_types = {}
+    AWS::InstanceTypes[:current].each do |type|
+      instance_types[type.to_s] = { HVM: true }
 
-    group = type.to_s[/^([0-9a-z]+)./, 1].upcase.to_sym
-    unless AWS::InstanceTypes[:features][group][:hvm_only]
-      InstanceTypes[type.to_s][:PV] = true
+      group = type.to_s[/^([0-9a-z]+)./, 1].upcase.to_sym
+      unless AWS::InstanceTypes[:features][group][:hvm_only]
+        instance_types[type.to_s][:PV] = true
+      end
     end
-  end
-  AWS::InstanceTypes[:previous].each do |type|
-    InstanceTypes[type.to_s] = { PV: true }
-  end
-
-  InstanceTypes.recursive_freeze
+    AWS::InstanceTypes[:previous].each do |type|
+      instance_types[type.to_s] = { PV: true }
+    end
+    instance_types
+  }.call.recursive_freeze
 
   @@properties = [
     # API的にはrequiredではないが、requiredとして扱いたい
@@ -42,7 +43,7 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
 
   class << self
     def instance_types
-      InstanceTypes.keys
+      INSTANCE_TYPES.keys
     end
   end
 
@@ -54,7 +55,7 @@ class TemplateBuilder::Resource::EC2::Instance < TemplateBuilder::Resource
     return nil unless instance_type
     return :HVM if instance_type.is_a?(Hash) and instance_type.size == 1 and instance_type[:Ref]
 
-    return :HVM if InstanceTypes[instance_type][:HVM]
+    return :HVM if INSTANCE_TYPES[instance_type][:HVM]
 
     :PV
   end

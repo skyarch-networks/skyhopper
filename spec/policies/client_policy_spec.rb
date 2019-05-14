@@ -42,7 +42,7 @@ describe ClientPolicy do
 
       context 'when client is for system' do
         before do
-          allow(client).to receive(:is_for_system?).and_return(true)
+          allow(client).to receive(:for_system?).and_return(true)
         end
         it 'deny all user' do
           is_expected.not_to permit(master_user, client)

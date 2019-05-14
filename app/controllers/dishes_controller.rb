@@ -103,14 +103,6 @@ class DishesController < ApplicationController
     params.require(:dish).permit(:name, :project_id, :detail)
   end
 
-  # Projectに紐付いたDishを扱っているか返す。
-  # 紐付いていればproject_id, 紐付いていなければ nil を返す。
-  def have_project?
-    params[:project_id] || Dish.find(params[:id]).project_id || params[:dish][:id]
-  rescue StandardError
-    nil
-  end
-
   def set_dish
     @dish = Dish.find(params.require(:id))
   end

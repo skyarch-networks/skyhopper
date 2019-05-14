@@ -16,7 +16,7 @@ class ServertestsController < ApplicationController
   before_action :authenticate_user!
 
   before_action do
-    authorize(@serverspec || Servertest.new(infrastructure_id: have_infra?))
+    authorize(@serverspec || Servertest.new(infrastructure_id: infra_id_from_params))
   end
 
   # GET /servertests
@@ -248,7 +248,7 @@ class ServertestsController < ApplicationController
     params.require(:servertest).permit(:name, :description, :value, :infrastructure_id, :category)
   end
 
-  def have_infra?
+  def infra_id_from_params
     params[:infra_id] || params[:infrastructure_id] || params[:serverspec][:infrastructure_id]
   rescue StandardError
     nil

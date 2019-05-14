@@ -12,8 +12,8 @@ require_relative '../../../../spec_helper'
 require Rails.root.join('app', 'models', 'template_builder', 'resource')
 describe TemplateBuilder::Resource::EC2::Instance, type: :model do
   let(:klass) { TemplateBuilder::Resource::EC2::Instance }
-  describe 'InstanceTypes' do
-    subject { klass::InstanceTypes }
+  describe 'INSTANCE_TYPES' do
+    subject { klass::INSTANCE_TYPES }
 
     it { is_expected.to be_kind_of Hash }
     it { is_expected.to be_frozen }
@@ -31,8 +31,8 @@ describe TemplateBuilder::Resource::EC2::Instance, type: :model do
   describe '.instance_types' do
     subject { klass.instance_types }
 
-    it 'should eq InstanceTypes.keys' do
-      is_expected.to eq klass::InstanceTypes.keys
+    it 'should eq INSTANCE_TYPES.keys' do
+      is_expected.to eq klass::INSTANCE_TYPES.keys
     end
   end
 

@@ -43,7 +43,7 @@ module KnownHosts
     end
 
     def exec_command(command)
-      out, err, status = Open3.capture3(command)
+      out, _err, status = Open3.capture3(command)
       raise CommandNotSuccessError unless status.success?
 
       out

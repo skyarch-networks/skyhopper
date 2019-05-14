@@ -47,7 +47,7 @@ describe ProjectPolicy do
 
       context 'when client is for system' do
         before do
-          allow(project.client).to receive(:is_for_system?).and_return(true)
+          allow(project.client).to receive(:for_system?).and_return(true)
         end
 
         it 'should deny' do

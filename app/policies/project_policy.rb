@@ -15,7 +15,7 @@ class ProjectPolicy < ApplicationPolicy
 
   %i[destroy? new? create?].each do |action|
     define_method(action) do
-      user.master? and user.admin? and !record.client.is_for_system?
+      user.master? and user.admin? and !record.client.for_system?
     end
   end
 end

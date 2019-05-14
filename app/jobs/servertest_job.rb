@@ -32,8 +32,8 @@ class ServertestJob < ActiveJob::Base
                node.run_serverspec(infra_id, servertest_ids)
              else
                auto_generated = false # 過去に存在していた機能
-        node.run_awsspec(infra_id, servertest_ids, auto_generated)
-      end
+               node.run_awsspec(infra_id, servertest_ids, auto_generated)
+             end
     rescue StandardError => ex
       log = InfrastructureLog.create(
         infrastructure_id: infra_id, user_id: user_id, status: false,

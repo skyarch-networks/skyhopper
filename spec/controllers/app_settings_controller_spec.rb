@@ -47,7 +47,7 @@ describe AppSettingsController, type: :controller do
 
     context 'when valid settings' do
       before do
-        create(:client, code: Client::ForSystemCodeName)
+        create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
       end
       before do
         allow_any_instance_of(Ec2PrivateKey).to receive(:id).and_return(ec2key.id)

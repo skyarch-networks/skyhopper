@@ -11,28 +11,28 @@ require_relative '../spec_helper'
 describe Client, type: :model do
   let(:klass) { Client }
 
-  describe 'Client::ForSystemCodeName ' do
-    subject { klass::ForSystemCodeName }
+  describe 'Client::FOR_SYSTEM_CODE_NAME ' do
+    subject { klass::FOR_SYSTEM_CODE_NAME }
     it { is_expected.to eq 'SkyHopper' }
     it { is_expected.to be_frozen }
   end
 
   describe '.for_system' do
     subject { klass.for_system }
-    it { is_expected.to eq klass.find_by(code: klass::ForSystemCodeName) }
+    it { is_expected.to eq klass.find_by(code: klass::FOR_SYSTEM_CODE_NAME) }
   end
 
-  describe '#is_for_system?' do
+  describe '#for_system?' do
     context 'when system client' do
-      let(:client) { build(:client, code: klass::ForSystemCodeName, name: klass::ForSystemCodeName) }
-      subject { client.is_for_system? }
+      let(:client) { build(:client, code: klass::FOR_SYSTEM_CODE_NAME, name: klass::FOR_SYSTEM_CODE_NAME) }
+      subject { client.for_system? }
 
       it { is_expected.to be true }
     end
 
     context 'when not system client' do
       let(:client) { build(:client) }
-      subject { client.is_for_system? }
+      subject { client.for_system? }
 
       it { is_expected.to be false }
     end
