@@ -150,7 +150,11 @@ describe ServertestsController, type: :controller do
   describe 'PATCH #update' do
     let(:new_serverspec) { create(:servertest) }
     let(:infrastructure_id) { nil }
-    let(:update_request) { s = servertest.dup; s.delete(:infrastructure_id); patch :update, id: new_serverspec.id, servertest: s }
+    let(:update_request) do
+      s = servertest.dup
+      s.delete(:infrastructure_id)
+      patch :update, id: new_serverspec.id, servertest: s
+    end
 
     context 'when valid params' do
       before do

@@ -546,7 +546,10 @@ describe InfrastructuresController, type: :controller do
 
     context 'when user is not master' do
       login_user(master: false)
-      before { project.delete; req }
+      before do
+        project.delete
+        req
+      end
       it { is_expected.to redirect_to projects_path }
     end
   end
@@ -589,13 +592,19 @@ describe InfrastructuresController, type: :controller do
 
     context 'when project id is blank' do
       context 'when user is master' do
-        before { infra.delete; req }
+        before do
+          infra.delete
+          req
+        end
         it { is_expected.to redirect_to clients_path }
       end
 
       context 'when user isnot master' do
         login_user(master: false)
-        before { infra.delete; req }
+        before do
+          infra.delete
+          req
+        end
 
         it { is_expected.to redirect_to projects_path }
       end

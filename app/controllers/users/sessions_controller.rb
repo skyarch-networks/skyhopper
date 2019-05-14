@@ -14,7 +14,8 @@ class Users::SessionsController < Devise::SessionsController
 
     unless user # User not found
       flash[:alert] = I18n.t('devise.failure.not_found_in_database')
-      redirect_to new_user_session_path; return
+      redirect_to new_user_session_path
+      return
     end
 
     unless user.mfa_secret_key # Not use MFA
@@ -24,12 +25,14 @@ class Users::SessionsController < Devise::SessionsController
     unless params[:user][:mfa_token] # Receive (email && password) only
       unless user.valid_password?(params[:user][:password])
         flash[:alert] = I18n.t('devise.failure.invalid')
-        redirect_to new_user_session_path; return
+        redirect_to new_user_session_path
+        return
       end
 
       @user = User.new(email: user.email)
       @password = params[:user][:password]
-      render action: :mfa; return
+      render action: :mfa
+      return
     end
 
     # Receive email, password and MFA-token

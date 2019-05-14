@@ -162,7 +162,8 @@ class UsersAdminController < ApplicationController
       add_create_user(z)
     end
 
-    render text: I18n.t('users.msg.synced'); nil
+    render text: I18n.t('users.msg.synced')
+    nil
   end
 
   # delete acount
