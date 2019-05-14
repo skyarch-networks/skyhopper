@@ -36,8 +36,8 @@ describe SystemServer::Deployment, type: :model do
       allow(Infrastructure).to receive(:create_with_ec2_private_key).and_return(infra)
 
       # TODO テストが走る順番に影響を受けてしまうため、修正すること
-      unless Client.find_by(code: Client::ForSystemCodeName)
-        client = create(:client, code: Client::ForSystemCodeName)
+      unless Client.find_by(code: Client::FOR_SYSTEM_CODE_NAME)
+        client = create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
         create(:project, code: Project::ZABBIX_SERVER_CODE_NAME, client: client)
       end
     end
