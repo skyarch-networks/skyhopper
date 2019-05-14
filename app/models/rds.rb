@@ -9,7 +9,7 @@
 class RDS < SimpleDelegator
   class ChangeScaleError < StandardError; end
 
-  Types = %w[
+  TYPES = %w[
     db.t1.micro
     db.m3.medium db.m3.large db.m3.xlarge db.m3.2xlarge
     db.m1.small db.m1.medium db.m1.large db.m1.xlarge
@@ -48,7 +48,7 @@ class RDS < SimpleDelegator
   end
 
   def change_scale(scale)
-    unless Types.include?(scale)
+    unless TYPES.include?(scale)
       raise ChangeScaleError, "Invalid type name: #{scale}"
     end
 

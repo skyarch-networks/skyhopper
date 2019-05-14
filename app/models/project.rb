@@ -25,16 +25,16 @@ class Project < ActiveRecord::Base
   cryptize :access_key
   cryptize :secret_access_key
 
-  ForDishTestCodeName  = 'DishTest'.freeze
-  ChefServerCodeName   = 'ChefServer'.freeze
-  ZabbixServerCodeName = 'ZabbixServer'.freeze
+  FOR_DISH_TEST_CODE_NAME = 'DishTest'.freeze
+  CHEF_SERVER_CODE_NAME   = 'ChefServer'.freeze
+  ZABBIX_SERVER_CODE_NAME = 'ZabbixServer'.freeze
 
   def self.for_test
-    Client.for_system.projects.find_by(code: ForDishTestCodeName)
+    Client.for_system.projects.find_by(code: FOR_DISH_TEST_CODE_NAME)
   end
 
   def self.for_zabbix_server
-    Client.for_system.projects.find_by(code: ZabbixServerCodeName)
+    Client.for_system.projects.find_by(code: ZABBIX_SERVER_CODE_NAME)
   end
 
   def self.for_system
@@ -64,8 +64,8 @@ class Project < ActiveRecord::Base
     # add new hostgroup on zabbix with project code as its name
     if z.get_hostgroup_ids(code).empty?
       hostgroup_id = z.add_hostgroup(code)
-      z.create_usergroup(code + '-read',       hostgroup_id, Zabbix::PermissionRead)
-      z.create_usergroup(code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
+      z.create_usergroup(code + '-read',       hostgroup_id, Zabbix::PERMISSON_READ)
+      z.create_usergroup(code + '-read-write', hostgroup_id, Zabbix::PERMISSION_READ_WRITE)
 
       hostgroup_names = Project.pluck(:code)
       hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)

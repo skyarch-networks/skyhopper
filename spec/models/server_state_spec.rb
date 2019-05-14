@@ -18,7 +18,7 @@ describe ServerState, type: :model do
     end
 
     unless Project.for_zabbix_server
-      p = create(:project, code: Project::ZabbixServerCodeName, client: c)
+      p = create(:project, code: Project::ZABBIX_SERVER_CODE_NAME, client: c)
       i = create(:infrastructure, project: p)
       create(:ec2_resource, infrastructure: i)
     end

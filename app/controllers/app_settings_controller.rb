@@ -168,7 +168,7 @@ class AppSettingsController < ApplicationController
   #   message:    I18ned String
   # }
   def build_ws_message(status, msg = nil)
-    hash = SystemServer::Deployment::Progress[status].dup
+    hash = SystemServer::Deployment::PROGRESS[status].dup
     I18n.locale = @locale
     hash[:message] = msg || I18n.t("system_servers.msg.#{status}")
     JSON.generate(hash)

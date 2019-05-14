@@ -111,29 +111,29 @@ class Stack
     end
   end
 
-  FailedStatus = %w[
+  FAILED_STATUS = %w[
     CREATE_FAILED ROLLBACK_IN_PROGRESS ROLLBACK_FAILED ROLLBACK_COMPLETE DELETE_FAILED UPDATE_ROLLBACK_IN_PROGRESS
     UPDATE_ROLLBACK_FAILED UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS UPDATE_ROLLBACK_COMPLETE
   ].freeze
 
-  CompleteStatus = %w[
+  COMPLETE_STATUS = %w[
     CREATE_COMPLETE UPDATE_COMPLETE DELETE_COMPLETE
   ].freeze
 
   def self.failed?(status)
-    FailedStatus.include?(status)
+    FAILED_STATUS.include?(status)
   end
 
   def failed?(status_ = status[:status])
-    FailedStatus.include?(status_)
+    FAILED_STATUS.include?(status_)
   end
 
   def self.complete?(status)
-    CompleteStatus.include?(status)
+    COMPLETE_STATUS.include?(status)
   end
 
   def complete?(status_ = status[:status])
-    CompleteStatus.include?(status_)
+    COMPLETE_STATUS.include?(status_)
   end
 
   def wait_status(status_to_wait, interval = 10)

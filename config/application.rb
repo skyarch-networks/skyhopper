@@ -53,4 +53,4 @@ Sidekiq.configure_server do |config|
   end
 end
 
-DummyText = 'This is dummy!'.freeze
+DUMMY_TEXT = 'This is dummy!'.freeze

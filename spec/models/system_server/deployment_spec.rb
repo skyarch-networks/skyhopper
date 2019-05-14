@@ -38,7 +38,7 @@ describe SystemServer::Deployment, type: :model do
       # TODO テストが走る順番に影響を受けてしまうため、修正すること
       unless Client.find_by(code: Client::ForSystemCodeName)
         client = create(:client, code: Client::ForSystemCodeName)
-        create(:project, code: Project::ZabbixServerCodeName, client: client)
+        create(:project, code: Project::ZABBIX_SERVER_CODE_NAME, client: client)
       end
     end
 
