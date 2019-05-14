@@ -191,7 +191,8 @@ describe Ec2InstancesController, type: :controller do
 
   describe '#notify_ec2_status' do
     controller Ec2InstancesController do
-      def authorize(*)end # XXX: pundit hack
+      # XXX: pundit hack
+      def authorize(*)end
 
       def test
         instance = double_instance

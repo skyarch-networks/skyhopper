@@ -63,11 +63,11 @@ module DishesHelper
 
     end
 
-    ret = <<-EOF.html_safe
+    ret = <<-TEMPLATE.html_safe
     <div class="progress validating-dish" style="margin-bottom: 0px;">
       <div class="progress-bar #{extra_class}" style="width: #{progress}%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="#{progress}">#{screen_status}</div>
     </div>
-    EOF
+    TEMPLATE
 
     ret
   end

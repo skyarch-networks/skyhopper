@@ -19,9 +19,9 @@ class ProjectCodeValidator < ActiveModel::Validator
       return
     end
 
-    if /-read-write$/.match?(code)
-      record.errors[:code] << 'should not match /-read-write$/'
-      return
-    end
+    return unless /-read-write$/.match?(code)
+
+    record.errors[:code] << 'should not match /-read-write$/'
+    nil
   end
 end

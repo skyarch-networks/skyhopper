@@ -31,7 +31,7 @@ class ServerStatusController < ApplicationController
   # @param [String] kind Server kind. "zabbix"
   # @param [Boolean] background If this is true, server status updated background.
   def status
-    unless params[:background] || @server.is_in_progress?
+    unless params[:background] || @server.in_progress?
       render text: @server.status and return
     end
 

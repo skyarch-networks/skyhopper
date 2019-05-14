@@ -11,7 +11,7 @@ FactoryGirl.define do
     infrastructure
     name 'EC2x1'
     detail 'Ec2 ga hitotsu no template.'
-    value <<~EOS
+    value <<~TEMPLATE
       {
           "AWSTemplateFormatVersion": "2010-09-09",
           "Description": "Simple Pattern (EC2x1)",
@@ -146,7 +146,7 @@ FactoryGirl.define do
               }
           }
       }
-    EOS
+    TEMPLATE
     format 'JSON'
     params 'TODO' # TODO: なにが入るべき?
     user
@@ -156,7 +156,7 @@ FactoryGirl.define do
     infrastructure
     name 'EC2x1'
     detail 'Ec2 ga hitotsu no template.'
-    value <<~EOS
+    value <<~TEMPLATE
       AWSTemplateFormatVersion: "2010-09-09"
       Description: "Simple Pattern (EC2x1)"
       Parameters:
@@ -261,7 +261,7 @@ FactoryGirl.define do
           Properties:
             InstanceId:
               Ref: EC2Instance
-    EOS
+    TEMPLATE
     format 'YAML'
     params 'TODO' # TODO: なにが入るべき?
     user

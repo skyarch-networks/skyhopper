@@ -136,7 +136,7 @@
           </div>
           <label class="control-label"><%= t('infrastructures.instance_type') %></label>
           <select v-model="change_scale_type_to" class="form-control">
-            <% RDS::Types.each do |type| %>
+            <% RDS::TYPES.each do |type| %>
               <option><%= type %></option>
             <% end %>
           </select>

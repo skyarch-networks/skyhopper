@@ -5,6 +5,8 @@ AllCops:
     - 'db/migrate/*.rb'
     - 'db/schema.rb'
     - 'bin/*'
+    - 'node_modules/**/*'
+    - 'frontend/**/*'
   DisplayCopNames: true
   TargetRubyVersion: 2.4
 
@@ -21,6 +23,9 @@ Style/AsciiComments:
   Enabled: false
 
 Style/BracesAroundHashParameters:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
   Enabled: false
 
 Style/ClassVars:

@@ -49,17 +49,11 @@ class TemplateBuilder::Parameter
       param[@name][:AllowedValues] = @property.get_options
     end
 
-    if validator = @property.data_validator
-      if reg = validator[:regexp]
-        param[@name][:AllowedPattern] = reg
-      end
-      if max = validator[:max]
-        param[@name][:MaxLength] = max
-      end
-      if min = validator[:min]
-        param[@name][:MinLength] = min
-      end
-    end
+    return unless validator = @property.data_validator
+
+    param[@name][:AllowedPattern] = reg if reg = validator[:regexp]
+    param[@name][:MaxLength] = max if max = validator[:max]
+    param[@name][:MinLength] = min if min = validator[:min]
   end
 
   def build_for_array(_param); end

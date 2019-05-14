@@ -129,7 +129,8 @@ describe AppSettingsController, type: :controller do
 
   describe '#check_eip_limit!' do
     controller AppSettingsController do
-      def authorize(*)end # XXX: pundit hack
+      # XXX: pundit hack
+      def authorize(*)end
 
       def test
         set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')

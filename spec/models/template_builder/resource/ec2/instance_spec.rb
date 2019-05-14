@@ -9,7 +9,7 @@
 require_relative '../../../../spec_helper'
 
 # XXX: require しないと動かない
-require Rails.root.join('app/models/template_builder/resource')
+require Rails.root.join('app', 'models', 'template_builder', 'resource')
 describe TemplateBuilder::Resource::EC2::Instance, type: :model do
   let(:klass) { TemplateBuilder::Resource::EC2::Instance }
   describe 'InstanceTypes' do

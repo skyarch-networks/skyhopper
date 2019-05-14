@@ -10,8 +10,8 @@
 #
 # physical_id を host の名前として扱う。
 class Zabbix
-  DefaultUsergroupName = 'No access to the frontend'.freeze
-  MasterUsergroupName = 'master'.freeze
+  DEFAULT_USERGROUP_NAME = 'No access to the frontend'.freeze
+  MASTER_USERGROUP_NAME = 'master'.freeze
 
   class ZabbixError < ::StandardError; end
 
@@ -104,12 +104,9 @@ class Zabbix
   # @return [Array<String>] list of linked templates
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    if host_id
-      selected_templates = @sky_zabbix.template.get(output: %w[name description], hostids: host_id).map { |x| x['name'] }
-      return selected_templates
-    else
-      return nil
-    end
+    return nil unless host_id
+
+    @sky_zabbix.template.get(output: %w[name description], hostids: host_id).map { |x| x['name'] }
   end
 
   # トリガーのオンオフを切り替える
@@ -308,13 +305,13 @@ class Zabbix
     )['groupids'].first
   end
 
-  PermissionAccessDenied = 0
-  PermissionRead         = 2
-  PermissionReadWrite    = 3
+  PERMISSION_ACCESS_DENIED = 0
+  PERMISSION_READ = 2
+  PERMISSION_READ_WRITE = 3
   # User Group を作成する。
   # @param [String] group_name     作成するUserGroupの名前
   # @param [Integer] host_group_id 権限を与えるホストグループのID
-  # @param [Integer] permission    与える権限の種類。 PermissionRead, PermissionRead or PermissionReadWrite.
+  # @param [Integer] permission    与える権限の種類。 PERMISSION_READ, PERMISSION_READ or PERMISSION_READ_WRITE.
   # @return [String] ID of created usergroup.
   def create_usergroup(group_name, host_group_id = nil, permission = nil)
     q = { name: group_name }
@@ -333,7 +330,7 @@ class Zabbix
   def change_mastergroup_rights(hostgroup_ids)
     @sky_zabbix.usergroup.massupdate(
       usrgrpids: [get_master_usergroup_id],
-      rights: hostgroup_ids.map { |id| { permission: PermissionRead, id: id } },
+      rights: hostgroup_ids.map { |id| { permission: PERMISSION_READ, id: id } },
     )
   end
 
@@ -399,22 +396,20 @@ class Zabbix
     user_info = @sky_zabbix.user.get(
       filter: { alias: username },
     )
-    if user_info.first.nil?
-      return nil
-    else
-      return user_info.first['userid']
-    end
+    return nil unless user_info.first.nil?
+
+    user_info.first['userid']
   end
 
-  UserTypeDefault    = 1
-  UserTypeAdmin      = 2
-  UserTypeSuperAdmin = 3
+  USER_TYPE_DEFAULT    = 1
+  USER_TYPE_ADMIN      = 2
+  USER_TYPE_SUPER_ADMIN = 3
   # Zabbix上のユーザを指定したユーザーグループに移動する。またUserTypeを変更する。
   # @param [String] user_id ID of Zabbix user
   # @param [Array<String>] usergroup_ids
   # @param [Integer] type
   # @param [String] password
-  def update_user(user_id, usergroup_ids: nil, type: UserTypeDefault, password: nil)
+  def update_user(user_id, usergroup_ids: nil, type: USER_TYPE_DEFAULT, password: nil)
     @sky_zabbix.user.update(
       userid: user_id,
       usrgrps: usergroup_ids,
@@ -424,22 +419,20 @@ class Zabbix
   end
 
   def delete_user(username)
-    if get_user_id(username).nil?
-      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
-    else
-      @sky_zabbix.user.delete([get_user_id(username)])
-    end
+    raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username) if get_user_id(username).nil?
+
+    @sky_zabbix.user.delete([get_user_id(username)])
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。
   # ==== return
   # usergroup ID (Integer)
   def get_master_usergroup_id
-    @@master_usergroup_id ||= (get_usergroup_ids(MasterUsergroupName).first || create_usergroup(MasterUsergroupName))
+    @@master_usergroup_id ||= (get_usergroup_ids(MASTER_USERGROUP_NAME).first || create_usergroup(MASTER_USERGROUP_NAME))
   end
 
   def get_default_usergroup_id
-    @@default_usergroup_id ||= get_usergroup_ids(DefaultUsergroupName).first
+    @@default_usergroup_id ||= get_usergroup_ids(DEFAULT_USERGROUP_NAME).first
   end
 
   # @param [User] user is a Skyhopper user.
@@ -454,9 +447,9 @@ class Zabbix
   # @param [User] user is a Skyhopper user.
   def get_user_type_by_user(user)
     if user.master? and user.admin?
-      UserTypeSuperAdmin
+      USER_TYPE_SUPER_ADMIN
     else
-      UserTypeDefault
+      USER_TYPE_DEFAULT
     end
   end
 

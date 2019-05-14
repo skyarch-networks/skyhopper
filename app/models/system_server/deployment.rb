@@ -10,10 +10,10 @@ require 'pathname'
 require 'json'
 
 class SystemServer::Deployment
-  EC2User = 'ec2-user'.freeze
+  EC2_USER = 'ec2-user'.freeze
 
   # TODO: Refactor
-  Progress = {
+  PROGRESS = {
     creating_zabbix_server: { percentage: 50, status: :in_progress },
     complete: { percentage: 100, status: :complete },
     error: { percentage: nil, status: :error },
@@ -115,6 +115,6 @@ class SystemServer::Deployment
   private
 
   def exec_ssh(opt = {}, &block)
-    Net::SSH.start(fqdn, EC2User, { key_data: [@infra.ec2_private_key.value] }.merge(opt), &block)
+    Net::SSH.start(fqdn, EC2_USER, { key_data: [@infra.ec2_private_key.value] }.merge(opt), &block)
   end
 end

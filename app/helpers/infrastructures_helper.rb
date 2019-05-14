@@ -45,11 +45,11 @@ module InfrastructuresHelper
   end
 
   def project_params_usage
-    <<~EOS.html_safe
+    <<~TEMPLATE.html_safe
       <div class="bs-callout bs-callout-info">
         #{t('project_parameters.usage')}
       </div>
-    EOS
+    TEMPLATE
   end
 
   private

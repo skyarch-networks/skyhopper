@@ -17,8 +17,6 @@ class PeriodicYumJob < ActiveJob::Base
     ).perform_later(physical_id, infra, user_id)
 
     status = schedule.resource.infrastructure.instance(physical_id).status
-    if status == :running
-      YumJob.perform_now(physical_id, infra, user_id)
-    end
+    YumJob.perform_now(physical_id, infra, user_id) if status == :running
   end
 end
