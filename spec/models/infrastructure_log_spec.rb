@@ -81,7 +81,7 @@ describe InfrastructureLog, type: :model do
 
     it 'should only infras log' do
       logs
-      expect(subject).to be_all { |x| x.infrastructure_id == infra.id }
+      expect(subject).to(be_all { |x| x.infrastructure_id == infra.id })
     end
   end
 

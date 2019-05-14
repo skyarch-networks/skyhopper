@@ -70,7 +70,7 @@ RSpec.describe ZabbixServersController, type: :controller do
 
     it 'assigns all zabbix_servers as @zabbix_servers' do
       get :index, {}
-      expect(assigns(:zabbix_servers)).to be_all { |zabbix_server| zabbix_server.is_a? ZabbixServer }
+      expect(assigns(:zabbix_servers)).to(be_all { |zabbix_server| zabbix_server.is_a? ZabbixServer })
     end
   end
 

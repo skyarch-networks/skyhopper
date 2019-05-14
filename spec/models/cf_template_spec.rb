@@ -46,7 +46,7 @@ describe CfTemplate, type: :model do
     end
 
     it 'should return cf_templates for infra' do
-      is_expected.to be_all { |t| t.infrastructure_id == infra.id }
+      is_expected.to(be_all { |t| t.infrastructure_id == infra.id })
     end
   end
 
@@ -58,7 +58,7 @@ describe CfTemplate, type: :model do
     end
 
     it 'should return global cf_templates' do
-      is_expected.to be_all { |t| t.infrastructure_id.nil? }
+      is_expected.to(be_all { |t| t.infrastructure_id.nil? })
     end
   end
 

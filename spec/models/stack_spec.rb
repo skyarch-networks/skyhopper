@@ -124,7 +124,7 @@ describe Stack, type: :model do
 
     it 'should return Array of Resource' do
       expect(subject.get_resources).to be_a Array
-      expect(subject.get_resources).to be_all { |r| r.is_a?(Resource) }
+      expect(subject.get_resources).to(be_all { |r| r.is_a?(Resource) })
     end
   end
 end

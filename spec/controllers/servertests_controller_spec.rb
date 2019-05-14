@@ -26,7 +26,7 @@ describe ServertestsController, type: :controller do
     end
 
     it 'should assign @servertest' do
-      expect(assigns[:servertests]).to be_all { |servertest| servertest.is_a?(Servertest) }
+      expect(assigns[:servertests]).to(be_all { |servertest| servertest.is_a?(Servertest) })
     end
 
     context 'when accessed index without infrastructure id' do
@@ -47,7 +47,7 @@ describe ServertestsController, type: :controller do
       end
 
       it 'should assign @servertests where infra id = infra.id(from url)' do
-        expect(assigns[:servertests]).to be_all { |servertest| servertest.infrastructure_id == infrastructure.id }
+        expect(assigns[:servertests]).to(be_all { |servertest| servertest.infrastructure_id == infrastructure.id })
       end
     end
   end
