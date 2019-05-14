@@ -158,7 +158,7 @@ describe Node, type: :model do
     subject { Node.new('test') }
 
     it 'return relative_path' do
-      path = Rails.root.join('a/b/c').to_s
+      path = Rails.root.join('a', 'b', 'c').to_s
       s = subject.__send__(:get_relative_path_string, path)
       expect(s).to eq './a/b/c'
     end

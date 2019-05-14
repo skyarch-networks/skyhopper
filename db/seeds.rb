@@ -85,7 +85,7 @@ Project.find_or_create_by(client: client_skyhopper, name: Project::CHEF_SERVER_C
 Project.find_or_create_by(client: client_skyhopper, name: Project::ZABBIX_SERVER_CODE_NAME,  code: Project::ZABBIX_SERVER_CODE_NAME,  access_key: DUMMY_TEXT, secret_access_key: DUMMY_TEXT)
 
 # ----------------------- Global CF template
-template_paths = Dir.glob(Rails.root.join('lib/erb-builder/templates/presets/*')).sort
+template_paths = Dir.glob(Rails.root.join('lib', 'erb-builder', 'templates', 'presets', '*')).sort
 template_paths.each do |path|
   n = File.basename(path, '.json.erb')
   b = ERB::Builder.new('presets/' + n)
