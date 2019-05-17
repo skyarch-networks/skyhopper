@@ -17,7 +17,7 @@ describe ClientsController, type: :controller do
 
     context 'when index accessed' do
       it 'should assign clients' do
-        expect(assigns(:clients)).to be_all { |client| client.is_a? Client }
+        expect(assigns(:clients)).to(be_all { |client| client.is_a? Client })
       end
     end
   end

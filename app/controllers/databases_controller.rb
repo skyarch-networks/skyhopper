@@ -25,7 +25,7 @@ class DatabasesController < ApplicationController
   def export
     authenticate_user!
 
-    time = Time.now.strftime('%Y%m%d%H%M%S')
+    time = Time.zone.now.strftime('%Y%m%d%H%M%S')
     zipfile = DatabaseManager.export_as_zip
     send_file(zipfile.path, filename: "SkyHopper-db-#{Rails.env}-#{time}.zip")
     zipfile.close

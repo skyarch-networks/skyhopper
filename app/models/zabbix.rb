@@ -127,7 +127,7 @@ class Zabbix
       # データベースにはitemkeyとしてmysql.loginが保存されているので
       # 実際にitemkeyとして設定されている値をzabbixから取ってきて
       # replaceしています
-      if idx = item_keys.index('mysql.login')
+      if (idx = item_keys.index('mysql.login'))
         item_keys[idx] = get_item_info(r.physical_id, 'mysql.login', 'search').first['key_']
       end
 

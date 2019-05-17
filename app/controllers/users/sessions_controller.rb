@@ -7,7 +7,7 @@
 #
 
 class Users::SessionsController < Devise::SessionsController
-  prepend_before_action :check_mfa_key, only: :create
+  prepend_before_action :check_mfa_key, only: :create # rubocop:disable Rails/LexicallyScopedActionFilter
 
   def check_mfa_key
     user = User.find_by(email: params[:user][:email])

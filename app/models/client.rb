@@ -13,15 +13,15 @@ class Client < ActiveRecord::Base
   validates :code,
             uniqueness: true
 
-  ForSystemCodeName = 'SkyHopper'.freeze
+  FOR_SYSTEM_CODE_NAME = 'SkyHopper'.freeze
 
   # @return [Client]
   def self.for_system
-    find_by(code: ForSystemCodeName)
+    find_by(code: FOR_SYSTEM_CODE_NAME)
   end
 
   # @return [Boolean]
-  def is_for_system?
-    code == ForSystemCodeName
+  def for_system?
+    code == FOR_SYSTEM_CODE_NAME
   end
 end

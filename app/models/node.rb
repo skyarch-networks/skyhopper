@@ -178,7 +178,7 @@ class Node
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
-      while line = stdout.gets
+      while (line = stdout.gets)
         line.chomp!
 
         yield line
@@ -202,7 +202,7 @@ class Node
     cmd = "knife winrm #{fqdn} --winrm-user Administrator  --winrm-password '#{password}' #{command} --winrm-transport ssl --winrm-ssl-verify-mode verify_none"
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
-      while line = stdout.gets
+      while (line = stdout.gets)
         line.chomp!
 
         yield line

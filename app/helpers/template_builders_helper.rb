@@ -112,8 +112,8 @@ module TemplateBuildersHelper
 
     when Array
       return property_array(property)
-    when Hash
-      # TODO
+    # when Hash
+    #   # TODO
     when String
       return parts_input(
         klass: 'form-control input-sm property-value',

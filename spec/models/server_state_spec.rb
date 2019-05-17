@@ -14,7 +14,7 @@ describe ServerState, type: :model do
   let(:server) { double('@server') }
   before(:all) do
     unless Client.for_system
-      c = create(:client, code: Client::ForSystemCodeName)
+      c = create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
     end
 
     unless Project.for_zabbix_server

@@ -259,8 +259,9 @@ end
 
 # allow parameter
 Devise::ParameterSanitizer.class_eval do
+  private
+
   def sign_up
     default_params.permit(auth_keys + %i[password password_confirmation admin master])
   end
-  private :sign_up
 end
