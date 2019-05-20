@@ -36,12 +36,12 @@ module ApplicationHelper
       next if message.blank?
 
       type = type.to_sym
-      type = :success if type.to_s == :notice.to_s
-      type = :danger if type.to_s == :alert.to_s
+      type = :success if type == :notice
+      type = :danger if type == :alert
 
       Array(message).each do |msg|
         text = content_tag(:div,
-                           content_tag(:button, raw('&times;'), :class => 'close', 'data-dismiss' => 'alert') + msg,
+                           content_tag(:button, '&times;', { :class => 'close', 'data-dismiss' => 'alert' }, false) + msg,
                            class: "alert fade in alert-#{type} alert-dismissible #{options[:class]}",)
         flash_messages << text if msg
       end
@@ -53,18 +53,16 @@ module ApplicationHelper
     content_tag(:ul, nil, class: 'breadcrumb') do
       breadcrumb = []
 
-      breadcrumb << if client
-                      content_tag(:li, nil) do
-                        content_tag(:a, "#{client.name} (#{client.code})", href: clients_path)
-                      end
-                    else
-                      content_tag(:li, nil) do
-                        content_tag(:a, I18n.t('clients.client').to_s, href: clients_path)
-                      end
-                    end
+      breadcrumb << content_tag(:li) do
+        if client
+          content_tag(:a, "#{client.name} (#{client.code})", href: clients_path)
+        else
+          content_tag(:a, I18n.t('clients.client').to_s, href: clients_path)
+        end
+      end
 
       breadcrumb << if project
-                      content_tag(:li, nil) do
+                      content_tag(:li) do
                         content_tag(:a, "#{project.name} (#{project.code})", href: projects_path(client_id: client.id))
                       end
                     elsif client
