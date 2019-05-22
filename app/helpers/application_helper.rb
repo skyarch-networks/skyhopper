@@ -36,12 +36,12 @@ module ApplicationHelper
       next if message.blank?
 
       type = type.to_sym
-      type = :success if type.to_s == :notice.to_s
-      type = :danger if type.to_s == :alert.to_s
+      type = :success if type == :notice
+      type = :danger if type == :alert
 
       Array(message).each do |msg|
         text = content_tag(:div,
-                           content_tag(:button, raw('&times;'), :class => 'close', 'data-dismiss' => 'alert') + msg,
+                           content_tag(:button, '&times;', { :class => 'close', 'data-dismiss' => 'alert' }, false) + msg,
                            class: "alert fade in alert-#{type} alert-dismissible #{options[:class]}",)
         flash_messages << text if msg
       end
@@ -50,46 +50,37 @@ module ApplicationHelper
   end
 
   def breadcrumbs(client = nil, project = nil, infrastructure = nil)
-    breadcrumb = '<ul class="breadcrumb">'
+    content_tag(:ul, nil, class: 'breadcrumb') do
+      breadcrumb = []
 
-    breadcrumb <<
-      if client
-        <<~TEMPLATE
-          <li><a href="#{clients_path}">#{client.name} (#{client.code})</a></li>
-        TEMPLATE
-      else
-        <<~TEMPLATE
-          <li><a href="#{clients_path}">#{I18n.t('clients.client')}</a></li>
-        TEMPLATE
+      breadcrumb << content_tag(:li) do
+        if client
+          content_tag(:a, "#{client.name} (#{client.code})", href: clients_path)
+        else
+          content_tag(:a, I18n.t('clients.client').to_s, href: clients_path)
+        end
       end
 
-    if project
-      breadcrumb << <<~TEMPLATE
-        <li><a href="#{projects_path(client_id: client.id)}">#{project.name} (#{project.code})</a></li>
-      TEMPLATE
-    elsif client
-      breadcrumb << <<~TEMPLATE
-        <li class="active">#{I18n.t('projects.project')}</li>
-      TEMPLATE
+      breadcrumb << if project
+                      content_tag(:li) do
+                        content_tag(:a, "#{project.name} (#{project.code})", href: projects_path(client_id: client.id))
+                      end
+                    elsif client
+                      content_tag(:li, I18n.t('projects.project'), class: 'active')
+                    end
+
+      breadcrumb << if infrastructure
+                      content_tag(:li, infrastructure.stack_name, class: 'active')
+                    elsif project
+                      content_tag(:li, I18n.t('infrastructures.infrastructure'), class: 'active')
+                    end
+
+      safe_join(breadcrumb)
     end
-
-    if infrastructure
-      breadcrumb << <<~TEMPLATE
-        <li class="active">#{infrastructure.stack_name}</li>
-      TEMPLATE
-    elsif project
-      breadcrumb << <<~TEMPLATE
-        <li class="active">#{I18n.t('infrastructures.infrastructure')}</li>
-      TEMPLATE
-    end
-
-    breadcrumb << '</ul>'
-
-    breadcrumb.html_safe
   end
 
   def loading_with_message(message = nil)
-    loading_tag = '<div class="loader"></div>'.html_safe
+    loading_tag = content_tag(:div, nil, class: 'loader')
 
     loading_tag <<
       if message
@@ -102,15 +93,15 @@ module ApplicationHelper
   end
 
   def uneditable_input(content)
-    "<span class=\"input-large uneditable-input form-control\" readonly>#{content}</span>".html_safe
+    content_tag(:span, content.to_s, class: 'input-large uneditable-input form-control', readonly: true)
   end
 
   def admin_label
-    '<span class="label label-info">admin</span>'.html_safe
+    content_tag(:span, 'admin', class: 'label label-info')
   end
 
   def master_label
-    '<span class="label label-warning">master</span>'.html_safe
+    content_tag(:span, 'master', class: 'label-warning')
   end
 
   def add_option_path(path, options)
@@ -121,12 +112,12 @@ module ApplicationHelper
   def glyphicon(name = nil)
     return false unless name
 
-    "<span class=\"glyphicon glyphicon-#{name}\"></span>".html_safe
+    content_tag(:span, nil, class: "glyphicon glyphicon-#{name}")
   end
 
   def fa(name = nil)
     return false unless name
 
-    "<span class=\"fa fa-#{name}\"></span>".html_safe
+    content_tag(:span, nil, class: "fa fa-#{name}")
   end
 end

@@ -45,11 +45,7 @@ module InfrastructuresHelper
   end
 
   def project_params_usage
-    <<~TEMPLATE.html_safe
-      <div class="bs-callout bs-callout-info">
-        #{t('project_parameters.usage')}
-      </div>
-    TEMPLATE
+    content_tag(:div, t('project_parameters.usage'), class: 'bs-callout bs-callout-info')
   end
 
   private
