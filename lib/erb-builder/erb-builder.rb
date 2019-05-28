@@ -17,9 +17,7 @@ class ERB::Builder
   # @return [String] As a JSON
   def fragment(name)
     fname = FragmentRoot.join("#{name}.rb")
-    # rubocop:disable Lint/Eval
-    eval(File.read(fname)).to_json
-    # rubocop:enable Lint/Eval
+    eval(File.read(fname)).to_json # rubocop:disable Security/Eval
   end
 
   # @param [String] json

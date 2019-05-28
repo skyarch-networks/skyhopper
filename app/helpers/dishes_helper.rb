@@ -28,7 +28,7 @@ module DishesHelper
 
                   end
 
-    "<span class=\"label #{extra_class}\">#{screen_status}</span>".html_safe
+    content_tag(:span, screen_status, class: "label #{extra_class}")
   end
 
   def progressbar_dish_status(dish = nil)
@@ -63,12 +63,16 @@ module DishesHelper
 
     end
 
-    ret = <<-TEMPLATE.html_safe
-    <div class="progress validating-dish" style="margin-bottom: 0px;">
-      <div class="progress-bar #{extra_class}" style="width: #{progress}%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="#{progress}">#{screen_status}</div>
-    </div>
-    TEMPLATE
-
-    ret
+    content_tag(:div, nil, class: 'progress validating-dish', style: 'margin-bottom: 0px;') do
+      content_tag(
+        :div,
+        screen_status,
+        class: "progress-bar #{extra_class}",
+        style: "width: #{progress}%;",
+        'aria-valuemin': '0',
+        'aria-valuemax': '100',
+        'aria-valuenow': progress,
+      )
+    end
   end
 end
