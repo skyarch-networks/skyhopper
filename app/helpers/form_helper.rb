@@ -21,17 +21,6 @@ module FormHelper
     "<input type=\"#{type}\" class=\"form-control #{klass}\" #{"placeholder=\"#{placeholder}\"" if placeholder} #{attributes}>".html_safe
   end
 
-  def parts_textarea(klass: nil, placeholder: nil, attributes: nil)
-    placeholder =
-      if placeholder
-        "placeholder=\"#{placeholder}\""
-      end
-
-    <<~TEMPLATE.html_safe
-      <textarea class="form-control #{klass}" #{attributes} #{placeholder}><textarea>
-    TEMPLATE
-  end
-
   def please_select_option(msg = I18n.t('common.please_select'))
     %(<option value="" selected>#{msg}</option>).html_safe
   end
