@@ -22,6 +22,6 @@ module FormHelper
   end
 
   def please_select_option(msg = I18n.t('common.please_select'))
-    %(<option value="" selected>#{msg}</option>).html_safe
+    content_tag(:option, msg, value: '', selected: true)
   end
 end
