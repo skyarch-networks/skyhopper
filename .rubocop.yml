@@ -118,3 +118,11 @@ Metrics/ParameterLists:
 
 Metrics/PerceivedComplexity:
   Enabled: false
+
+# TODO Temporarily disabled, because there is no time for correction
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+# TODO Temporarily disabled, because there is no time for correction
+Rails/InverseOf:
+  Enabled: false

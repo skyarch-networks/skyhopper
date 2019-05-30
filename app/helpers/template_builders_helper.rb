@@ -10,13 +10,12 @@ module TemplateBuildersHelper
   def accordion_resource_properties(properties)
     accordion_name = 'resource_properies'
 
-    accordion = "<div class=\"panel-group\" id=\"#{accordion_name}\">"
-    properties.each do |property|
-      accordion << accordion_group(property, accordion_name: accordion_name)
-    end
-    accordion << '</div>'
+    content = properties.map do |property|
+      accordion_group(property, accordion_name: accordion_name)
+    end.join
 
-    accordion.html_safe
+    # TODO escapeをfalseにしているのが良くないので直す
+    content_tag(:div, content, { id: accordion_name, class: 'panel-group' }, false)
   end
 
   private

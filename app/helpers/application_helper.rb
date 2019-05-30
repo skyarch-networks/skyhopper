@@ -46,7 +46,7 @@ module ApplicationHelper
         flash_messages << text if msg
       end
     end
-    flash_messages.join("\n").html_safe
+    safe_join(flash_messages)
   end
 
   def breadcrumbs(client = nil, project = nil, infrastructure = nil)
