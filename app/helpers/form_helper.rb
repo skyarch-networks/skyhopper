@@ -9,7 +9,8 @@
 module FormHelper
   def parts_select(options: nil, selected_option: nil, klass: nil, attributes: nil)
     selected_empty_option = please_select_option(selected_option) if selected_option
-    <<~TEMPLATE.html_safe
+    # TODO html_safeは良くないので直す
+    <<~TEMPLATE.html_safe # rubocop:disable Rails/OutputSafety
       <select class="form-control #{klass}" #{attributes}>
         #{selected_empty_option if selected_option}
         #{options}
@@ -18,21 +19,11 @@ module FormHelper
   end
 
   def parts_input(type: 'text', klass: nil, placeholder: nil, attributes: nil)
-    "<input type=\"#{type}\" class=\"form-control #{klass}\" #{"placeholder=\"#{placeholder}\"" if placeholder} #{attributes}>".html_safe
-  end
-
-  def parts_textarea(klass: nil, placeholder: nil, attributes: nil)
-    placeholder =
-      if placeholder
-        "placeholder=\"#{placeholder}\""
-      end
-
-    <<~TEMPLATE.html_safe
-      <textarea class="form-control #{klass}" #{attributes} #{placeholder}><textarea>
-    TEMPLATE
+    # TODO html_safeは良くないので直す
+    "<input type=\"#{type}\" class=\"form-control #{klass}\" #{"placeholder=\"#{placeholder}\"" if placeholder} #{attributes}>".html_safe # rubocop:disable Rails/OutputSafety
   end
 
   def please_select_option(msg = I18n.t('common.please_select'))
-    %(<option value="" selected>#{msg}</option>).html_safe
+    content_tag(:option, msg, value: '', selected: true)
   end
 end
