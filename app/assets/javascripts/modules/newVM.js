@@ -12,8 +12,8 @@ const Resource = require('models/resource').default;
 const EC2Instance = require('models/ec2_instance').default;
 const helpers = require('infrastructures/helper.js');
 
-const alert_danger = helpers.alert_danger;
-const reload_infra_index_page = require('infrastructures/show_infra').reload_infra_index_page;
+const AlertDanger = helpers.alert_danger;
+const ReloadInfraIndexPage = require('infrastructures/show_infra').reload_infra_index_page;
 
 module.exports = function () {
   function data() {
@@ -63,24 +63,24 @@ module.exports = function () {
         }
         return string;
       },
-      show_ec2(physical_id) {
+      show_ec2(PhysicalId) {
         this.show_tabpane('ec2');
         this.loading = true;
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = PhysicalId;
       },
-      show_rds(physical_id) {
+      show_rds(PhysicalId) {
         this.show_tabpane('rds');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = PhysicalId;
         this.loading = true;
       },
-      show_elb(physical_id) {
+      show_elb(PhysicalId) {
         this.show_tabpane('elb');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = PhysicalId;
         this.loading = true;
       },
-      show_s3(physical_id) {
+      show_s3(PhysicalId) {
         this.show_tabpane('s3');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = PhysicalId;
         this.loading = true;
       },
       show_no_resource() {
@@ -96,7 +96,7 @@ module.exports = function () {
           self.current_infra.templates.globals = data.globals;
 
           self.show_tabpane('add_modify');
-        })).fail(self.wrapping_into_same_model_check(alert_danger()));
+        })).fail(self.wrapping_into_same_model_check(AlertDanger()));
       },
 
       show_add_ec2() { this.show_tabpane('add-ec2'); },
@@ -165,11 +165,11 @@ module.exports = function () {
           self.tabpaneID = id;
         });
       },
-      update_serverspec_status(physical_id) {
+      update_serverspec_status(PhysicalId) {
         const self = this;
-        const ec2 = new EC2Instance(self.infra_model, physical_id);
+        const ec2 = new EC2Instance(self.infra_model, PhysicalId);
         ec2.serverspec_status().done(self.wrapping_into_same_model_check((data) => {
-          const r = _.find(self.current_infra.resources.ec2_instances, v => v.physical_id === physical_id);
+          const r = _.find(self.current_infra.resources.ec2_instances, v => v.physical_id === PhysicalId);
           r.serverspec_status = data;
         }));
       },
@@ -209,36 +209,36 @@ module.exports = function () {
           return false;
         });
       },
-      reset(open_tab) {
+      reset(OpenTab) {
         const self = this;
-        const infra_id = this.$route.params.infra_id;
+        const InfraId = this.$route.params.infra_id;
         self.data = data();
-        self.current_infra.id = parseInt(infra_id);
+        self.current_infra.id = parseInt(InfraId, 10);
         self.$data.current_infra.events = [];
         self.infra_loading = true;
-        self.infra_model = new Infrastructure(infra_id);
+        self.infra_model = new Infrastructure(InfraId);
         self.infra_model.show().done(
           self.wrapping_into_same_model_check((stack) => {
             self.infra_loading = false;
             self.current_infra.stack = stack;
-            self.init_infra(open_tab);
+            self.init_infra(OpenTab);
           }),
         ).fail((msg) => {
-          self.wrapping_into_same_model_check(alert_danger(reload_infra_index_page)(msg));
+          self.wrapping_into_same_model_check(AlertDanger(ReloadInfraIndexPage)(msg));
         });
       },
       wrapping_into_same_model_check(callback) {
         const self = this;
-        return (function (my_model) {
+        return (function (MyModel) {
           return function (arg1) {
-            if (my_model !== self.infra_model) {
+            if (MyModel !== self.infra_model) {
               return;
             }
             callback(arg1);
           };
         }(self.infra_model));
       },
-      init_infra(current_tab) {
+      init_infra(CurrentTab) {
         const self = this;
         self.back_to_top();
 
@@ -252,20 +252,20 @@ module.exports = function () {
             });
             self.current_infra.resources = resources;
             // show first tab
-            if (current_tab === 'show_sched') {
+            if (CurrentTab === 'show_sched') {
               self.show_operation_sched(resources);
             } else {
               const instance = _(resources).values().flatten().first();
               if (instance) {
-                const physical_id = instance.physical_id;
+                const PhysicalId = instance.physical_id;
                 if (instance.type_name === 'AWS::EC2::Instance') {
-                  self.show_ec2(physical_id);
+                  self.show_ec2(PhysicalId);
                 } else if (instance.type_name === 'AWS::RDS::DBInstance') {
-                  self.show_rds(physical_id);
+                  self.show_rds(PhysicalId);
                 } else if (instance.type_name === 'AWS::ElasticLoadBalancing::LoadBalancer') {
-                  self.show_elb(physical_id);
+                  self.show_elb(PhysicalId);
                 } else { // S3
-                  self.show_s3(physical_id);
+                  self.show_s3(PhysicalId);
                 }
               } else {
                 self.show_no_resource();
@@ -307,10 +307,10 @@ module.exports = function () {
 
       status_label_class() {
         let resp = 'label-';
-        const type = this.current_infra.stack.status.type;
-        if (type === 'OK') {
+        const StatusType = this.current_infra.stack.status.type;
+        if (StatusType === 'OK') {
           resp += 'success';
-        } else if (type === 'NG') {
+        } else if (StatusType === 'NG') {
           resp += 'danger';
         } else {
           resp += 'default';
