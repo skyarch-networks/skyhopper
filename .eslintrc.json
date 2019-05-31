@@ -8,5 +8,8 @@
     "t": false,
     "ws_connector": false,
     "AjaxSet": false
+  },
+  "rules": {
+    "max-len": ["error", { "code": 160 }]
   }
 }
