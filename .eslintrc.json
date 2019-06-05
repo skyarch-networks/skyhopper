@@ -7,7 +7,10 @@
     "$": false,
     "t": false,
     "ws_connector": false,
-    "AjaxSet": false
+    "AjaxSet": false,
+    "Vue": false,
+    "VueRouter": false,
+    "moment": false
   },
   "rules": {
     "max-len": ["error", { "code": 160 }]
