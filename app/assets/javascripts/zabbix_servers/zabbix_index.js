@@ -46,7 +46,7 @@ module.exports = function () {
             type: 'POST',
             url: self.picked.delete_zabbix_server_path,
             dataType: 'json',
-            data: {_method: 'delete'},
+            data: { _method: 'delete' },
             success(data) {
               self.gridData = data;
               self.picked = {};

@@ -25,7 +25,7 @@
       data: {
         searchQuery: '',
         gridColumns: ['code', 'name', 'access_key'],
-        url: 'projects?lang=' + queryString.lang + project_url,
+        url: `projects?lang=${queryString.lang}${project_url}`,
         gridData: [],
         is_empty: false,
         loading: true,

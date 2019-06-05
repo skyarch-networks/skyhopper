@@ -53,7 +53,7 @@ function render_projects(value) {
     case 'code':
       return t('projects.code');
     case 'name':
-      return t ('projects.name');
+      return t('projects.name');
     case 'access_key':
       return t('projects.access_key');
     default:
