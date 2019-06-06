@@ -5,14 +5,17 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-(function () {
+const zabbixIndex = require('./zabbix_servers/zabbix_index');
+const zabbixEdit = require('./zabbix_servers/zabbix_edit');
+
+(() => {
   'use_strict';
 
 
   if ($('#editElement').length) {
-    require('./zabbix_servers/zabbix_edit')();
+    zabbixEdit();
   }
   if ($('#indexElement').length) {
-    require('./zabbix_servers/zabbix_index')();
+    zabbixIndex();
   }
-}());
+})();
