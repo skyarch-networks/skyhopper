@@ -5,17 +5,18 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-module.exports = function () {
+const queryString = require('query-string');
+const demoGrid = require('../demo-grid.js');
+const modal = require('../modal');
+
+module.exports = () => {
   'use_strict';
 
-  // browserify functions for vue filters functionality
-  const qs = require('query-string').parse(location.search);
-  const modal = require('../modal');
-  const ZabbixServer = require('../models/zabbix_server').default;
+  const qs = queryString.parse(window.location.search);
 
-  Vue.component('demo-grid', require('demo-grid.js'));
+  Vue.component('demo-grid', demoGrid);
 
-  const clientIndex = new Vue({
+  new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
@@ -34,10 +35,16 @@ module.exports = function () {
     },
     methods: {
       can_delete() {
-        if (this.picked.delete_zabbix_server_path) return !!this.picked.delete_zabbix_server_path;
+        if (this.picked.delete_zabbix_server_path) {
+          return !!this.picked.delete_zabbix_server_path;
+        }
+        return undefined;
       },
       can_edit() {
-        if (this.picked.edit_zabbix_server_url) return !!this.picked.edit_zabbix_server_url;
+        if (this.picked.edit_zabbix_server_url) {
+          return !!this.picked.edit_zabbix_server_url;
+        }
+        return undefined;
       },
       delete_entry() {
         const self = this;
@@ -52,18 +59,18 @@ module.exports = function () {
               self.picked = {};
             },
           }).fail(() => {
-            location.reload();
+            window.location.reload();
           });
         });
       },
       reload() {
         this.loading = true;
-        this.$children[0].load_ajax(self.url);
+        this.$children[0].load_ajax(this.url);
         this.picked = {};
       },
     },
     mounted() {
-      this.$nextTick(function () {
+      this.$nextTick(function ready() {
         this.new_loader = false;
       });
     },
