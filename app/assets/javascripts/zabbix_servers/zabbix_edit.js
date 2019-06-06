@@ -5,16 +5,16 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-module.exports = function () {
+const queryString = require('query-string');
+const modal = require('../modal');
+const ZabbixServer = require('../models/zabbix_server').default;
+
+module.exports = () => {
   'use_strict';
 
-  // browserify functions for vue filters functionality
-  const qs = require('query-string').parse(location.search);
-  const modal = require('../modal');
-  const ZabbixServer = require('../models/zabbix_server').default;
+  const qs = queryString.parse(window.location.search);
 
-
-  const clientIndex = new Vue({
+  new Vue({
     el: '#editElement',
     data: {
       url: `/zabbix_servers?lang=${qs.lang}`,
@@ -38,7 +38,7 @@ module.exports = function () {
         zabbix.update(self.params).done((msg) => {
           modal.Alert(t('zabbix_servers.zabbix'), msg, 'success').done(
             () => {
-              location.assign(self.url);
+              window.location.assign(self.url);
             },
           );
         }).fail((msg) => {
@@ -65,7 +65,7 @@ module.exports = function () {
         zabbix.create(self.params).done((data) => {
           self.new_loader = false;
           modal.Alert(t('zabbix_servers.zabbix'), data.message, 'success').done(() => {
-            location.assign(data.url);
+            window.location.assign(data.url);
           });
         }).fail((msg) => {
           modal.Alert(t('zabbix_servers.zabbix'), msg, 'danger');
@@ -75,7 +75,7 @@ module.exports = function () {
     },
     computed: {
       required_filed() {
-        const params = this.params;
+        const { params } = this;
         return (params.fqdn
           && params.username
           && params.password
@@ -83,9 +83,8 @@ module.exports = function () {
       },
     },
     mounted() {
-      this.$nextTick(function () {
-        const self = this;
-        self.load_ajax(location.pathname);
+      this.$nextTick(function ready() {
+        this.load_ajax(window.location.pathname);
       });
     },
   });
