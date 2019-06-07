@@ -1,39 +1,49 @@
-
-
 const __extends = (this && this.__extends) || function (d, b) {
   for (const p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
   function __() { this.constructor = d; }
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-const modal_1 = require('./modal');
+const modal = require('./modal');
 
-const Server = (function () {
-  function Server(kind) {
+const Server = class Server {
+  constructor(kind) {
     this.kind = kind;
     this.params = { kind };
+    this.ajax = new AjaxSet.Resources('server_status');
+    this.ajax.add_member('start', 'POST', 'kind');
+    this.ajax.add_member('stop', 'POST', 'kind');
+    this.ajax.add_member('status', 'POST', 'kind');
   }
-  Server.is_inprogress = function (state) {
+
+  static is_inprogress(state) {
     return !(state === 'running' || state === 'stopped');
-  };
-  Server.prototype.msgs = function () { return t(`js.server_status.${this.kind}`); };
-  Server.prototype.start = function () { Server.ajax.start(this.params); };
-  Server.prototype.stop = function () { Server.ajax.stop(this.params); };
-  Server.prototype.status = function (background) {
-    const p = _.merge({ background }, this.params);
-    return Server.ajax.status(p);
-  };
-  Server.prototype.watch = function (callback) {
+  }
+
+  msgs() {
+    return t(`js.server_status.${this.kind}`);
+  }
+
+  start() {
+    this.ajax.start(this.params);
+  }
+
+  stop() {
+    this.ajax.stop(this.params);
+  }
+
+  status(background) {
+    const p = Object.assign({ background }, this.params);
+    return this.ajax.status(p);
+  }
+
+  watch(callback) {
     const ws = ws_connector('server_status', this.kind);
-    ws.onmessage = function (msg) {
+    ws.onmessage = (msg) => {
       callback(msg.data);
     };
-  };
-  Server.ajax = new AjaxSet.Resources('server_status');
-  return Server;
-}());
-Server.ajax.add_member('start', 'POST', 'kind');
-Server.ajax.add_member('stop', 'POST', 'kind');
-Server.ajax.add_member('status', 'POST', 'kind');
+  }
+};
+
 const App = (function (_super) {
   __extends(App, _super);
   function App(model, el) {
@@ -46,13 +56,13 @@ const App = (function (_super) {
       methods: {
         start() {
           const _this = this;
-          modal_1.Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
+          modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
             _this.model.start();
           });
         },
         stop() {
           const _this = this;
-          modal_1.Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
+          modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
             _this.model.stop();
           });
         },
@@ -121,7 +131,7 @@ function Build(kind) {
   const parent = document.querySelector(App.TEMPLATE_ID).parentElement;
   parent.appendChild(el);
   parent.appendChild(document.createTextNode('\n'));
-  const vm = new App(new Server(kind), el);
+  new App(new Server(kind), el);
 }
 function Available() {
   return !!document.querySelector(App.TEMPLATE_ID);
