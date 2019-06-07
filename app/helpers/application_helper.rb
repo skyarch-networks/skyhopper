@@ -101,7 +101,7 @@ module ApplicationHelper
   end
 
   def master_label
-    content_tag(:span, 'master', class: 'label-warning')
+    content_tag(:span, 'master', class: 'label label-warning')
   end
 
   def add_option_path(path, options)
