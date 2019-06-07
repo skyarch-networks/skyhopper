@@ -5,26 +5,21 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-
-// browserify functions for vue filters functionality
-const queryString = require('query-string').parse(location.search);
-const modal = require('modal');
-
-const Servertest = require('models/servertest').default;
-const listen = require('./modules/listen');
-const wrap = require('./modules/wrap');
+const queryString = require('query-string').parse(window.location.search);
+const modal = require('./modal');
+const Servertest = require('./models/servertest').default;
 const vace = require('./modules/vue-ace');
 require('brace/mode/ruby');
 require('brace/theme/github');
 
 Vue.use(vace, false, 'ruby', '25');
 
-Vue.component('demo-grid', require('demo-grid.js'));
+Vue.component('demo-grid', require('./demo-grid.js'));
 
-const servertest_url = queryString.infrastructure_id ? `infrastructure_id=${queryString.infrastructure_id}` : '';
+const servertestUrl = queryString.infrastructure_id ? `infrastructure_id=${queryString.infrastructure_id}` : '';
 
 if ($('#indexElement').length) {
-  const servertestIndex = new Vue({
+  new Vue({
     el: '#indexElement',
     data: {
       searchQuery: '',
@@ -37,7 +32,7 @@ if ($('#indexElement').length) {
       },
       infra_id: queryString.infrastructure_id ? `&infrastructure_id=${queryString.infrastructure_id}` : '',
       sel_infra_id: '-1',
-      url: `servertests?${servertest_url}`,
+      url: `servertests?${servertestUrl}`,
       is_empty: false,
       loading: true,
       generating: false,
@@ -61,8 +56,8 @@ if ($('#indexElement').length) {
             url: self.picked.servertest_path,
             dataType: 'json',
             data: { _method: 'delete' },
-            success(data) {
-              location.reload();
+            success() {
+              window.location.reload();
             },
           }).fail(modal.AlertForAjaxStdError());
         });
@@ -75,9 +70,9 @@ if ($('#indexElement').length) {
           edit_servertest_path: null,
         };
       },
-      show_servertest(servertest_id) {
+      show_servertest(id) {
         $.ajax({
-          url: `/servertests/${servertest_id}`,
+          url: `/servertests/${id}`,
           type: 'GET',
           success(data) {
             $('#value-information').html(data);
@@ -103,7 +98,7 @@ if ($('#indexElement').length) {
         const svt = new Servertest(self.sel_infra_id);
         svt.create(params.fname, params.value, 'awspec').done((data) => {
           modal.Alert(t('servertests.servertest'), data, 'success').done(() => {
-            location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${location.search}`;
+            window.location.href = `/servertests?infrastructure_id=${self.sel_infra_id}${window.location.search}`;
           });
         }).fail((msg) => {
           modal.Alert(t('servertests.servertest'), msg, 'danger');
@@ -113,12 +108,12 @@ if ($('#indexElement').length) {
     },
     computed: {
       required_filed() {
-        const awspec = this.awspec;
+        const { awspec } = this;
         return (awspec.value && awspec.fname);
       },
     },
     mounted() {
-      this.$nextTick(function () {
+      this.$nextTick(function ready() {
         const self = this;
         self.loading = false;
       });
@@ -126,4 +121,4 @@ if ($('#indexElement').length) {
   });
 }
 
-require('serverspec-gen');
+require('./serverspec-gen');
