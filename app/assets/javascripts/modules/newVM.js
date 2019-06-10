@@ -6,17 +6,17 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-const Infrastructure = require('models/infrastructure').default;
-const CFTemplate = require('models/cf_template').default;
-const Resource = require('models/resource').default;
-const EC2Instance = require('models/ec2_instance').default;
-const helpers = require('infrastructures/helper.js');
+const Infrastructure = require('../models/infrastructure').default;
+const CFTemplate = require('../models/cf_template').default;
+const Resource = require('../models/resource').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const helpers = require('../infrastructures/helper.js');
 
 const AlertDanger = helpers.alert_danger;
-const ReloadInfraIndexPage = require('infrastructures/show_infra').reload_infra_index_page;
+const ReloadInfraIndexPage = require('../infrastructures/show_infra').reload_infra_index_page;
 
-module.exports = function () {
-  function data() {
+module.exports = () => {
+  function makeData() {
     return {
       infra_model: null, // これが別のオブジェクトを指したら、表示系の非同期処理は取り消される
       current_infra: {
@@ -49,7 +49,7 @@ module.exports = function () {
     props: {
       initial_tab: String,
     },
-    data,
+    data: makeData,
     methods: {
       screen_name(res) {
         if (res.screen_name) {
@@ -195,7 +195,7 @@ module.exports = function () {
         const offset = 250;
         const duration = 300;
 
-        $(window).scroll(function () {
+        $(window).scroll(function windowScrollHandler() {
           if ($(this).scrollTop() > offset) {
             $('.back-to-top').fadeIn(duration);
           } else {
@@ -212,7 +212,7 @@ module.exports = function () {
       reset(OpenTab) {
         const self = this;
         const InfraId = this.$route.params.infra_id;
-        self.data = data();
+        self.data = makeData();
         self.current_infra.id = parseInt(InfraId, 10);
         self.$data.current_infra.events = [];
         self.infra_loading = true;
@@ -229,14 +229,12 @@ module.exports = function () {
       },
       wrapping_into_same_model_check(callback) {
         const self = this;
-        return (function (MyModel) {
-          return function (arg1) {
-            if (MyModel !== self.infra_model) {
-              return;
-            }
-            callback(arg1);
-          };
-        }(self.infra_model));
+        return (MyModel => (arg1) => {
+          if (MyModel !== self.infra_model) {
+            return;
+          }
+          callback(arg1);
+        })(self.infra_model);
       },
       init_infra(CurrentTab) {
         const self = this;
@@ -255,7 +253,7 @@ module.exports = function () {
             if (CurrentTab === 'show_sched') {
               self.show_operation_sched(resources);
             } else {
-              const instance = _(resources).values().flatten().first();
+              const instance = Object.values(resources).flat()[0];
               if (instance) {
                 const PhysicalId = instance.physical_id;
                 if (instance.type_name === 'AWS::EC2::Instance') {
@@ -272,7 +270,7 @@ module.exports = function () {
               }
             }
 
-            _.forEach(self.current_infra.resources.ec2_instances, (v) => {
+            self.current_infra.resources.ec2_instances.forEach((v) => {
               self.update_serverspec_status(v.physical_id);
             });
           }));
@@ -319,9 +317,9 @@ module.exports = function () {
       },
     },
     mounted() {
-      this.$nextTick(function () {
+      this.$nextTick(function ready() {
         const self = this;
-        self.$watch('$route.params.infra_id', (val) => {
+        self.$watch('$route.params.infra_id', () => {
           self.reset();
         });
         self.reset(self.initial_tab);
