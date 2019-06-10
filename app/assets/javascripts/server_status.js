@@ -113,6 +113,7 @@ const App = ((_super) => {
           } if (this.is_inprogress) {
             return 'btn-warning';
           }
+          return undefined;
         },
         tooltip() {
           if (this.is_inprogress) {
@@ -122,7 +123,6 @@ const App = ((_super) => {
         },
       },
       created() {
-        console.log(this);
         this.status(true);
       },
     });
