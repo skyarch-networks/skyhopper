@@ -15,7 +15,7 @@ const Server = class Server {
     this.ajax.add_member('status', 'POST', 'kind');
   }
 
-  static is_inprogress(state) {
+  static isInprogress(state) {
     return !(state === 'running' || state === 'stopped');
   }
 
@@ -44,7 +44,7 @@ const Server = class Server {
   }
 };
 
-const App = (function (_super) {
+const App = ((_super) => {
   __extends(App, _super);
   function App(model, el) {
     _super.call(this);
@@ -55,24 +55,24 @@ const App = (function (_super) {
       template: App.TEMPLATE_ID,
       methods: {
         start() {
-          const _this = this;
+          const self = this;
           modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
-            _this.model.start();
+            self.model.start();
           });
         },
         stop() {
-          const _this = this;
+          const self = this;
           modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
-            _this.model.stop();
+            self.model.stop();
           });
         },
         status(background) {
-          const _this = this;
+          const self = this;
           this.model.status(background).done((state) => {
-            _this.state = state;
-            if (background || _this.is_inprogress) {
-              _this.model.watch((w_state) => {
-                _this.state = w_state;
+            self.state = state;
+            if (background || self.is_inprogress) {
+              self.model.watch((wState) => {
+                self.state = wState;
               });
             }
           });
@@ -84,13 +84,17 @@ const App = (function (_super) {
             this.start();
           }
         },
+        serviceName() {
+          const { kind } = this.model;
+          return kind.charAt(0).toUpperCase() + kind.slice(1);
+        },
       },
       computed: {
         running() { return this.state === 'running'; },
         stopped() { return this.state === 'stopped'; },
-        is_inprogress() { return Server.is_inprogress(this.state); },
+        is_inprogress() { return Server.isInprogress(this.state); },
         status_text() {
-          let res = `${_.capitalize(this.model.kind)} Server `;
+          let res = `${this.serviceName()} Server `;
           if (this.running) {
             res += `is ${this.state}.`;
           } else if (this.stopped) {
@@ -125,7 +129,7 @@ const App = (function (_super) {
   }
   App.TEMPLATE_ID = '#toggle-button-template';
   return App;
-}(Vue));
+})(Vue);
 function Build(kind) {
   const el = document.createElement('div');
   const parent = document.querySelector(App.TEMPLATE_ID).parentElement;
