@@ -268,6 +268,7 @@ module.exports = function () {
                   self.show_s3(physical_id);
                 }
               } else {
+                self.tabpaneID = 'default';
                 self.show_no_resource();
               }
             }
