@@ -27,16 +27,16 @@ const modal = require('./modal');
       switch_region(regionName) {
         if (this.number_of_key_pairs(regionName) === 0) { return; }
 
-        const { selected } = this;
-        _.find(this.regions, region => region.name === selected).selected = false;
+        const self = this;
+        this.regions.find(region => region.name === self.selected).selected = false;
 
         this.selected = regionName;
 
-        _.find(this.regions, region => region.name === regionName).selected = true;
+        this.regions.find(region => region.name === regionName).selected = true;
         this.pageNumber = 0;
       },
       key_pairs_by_region(regionName) {
-        return _.select(this.key_pairs, keyPair => keyPair.region === regionName);
+        return this.key_pairs.filter(keyPair => keyPair.region === regionName);
       },
       number_of_key_pairs(regionName) {
         if (regionName === 'All') {
@@ -82,7 +82,7 @@ const modal = require('./modal');
         }).done((data) => {
           self.project_id = data.project_id;
           self.key_pairs = data.key_pairs;
-          _.forEach(data.key_pairs, (keyPair) => {
+          data.key_pairs.forEach((keyPair) => {
             keyPair.using_sign = keyPair.using ? '✔' : '';
           });
           self.selected = 'All';
@@ -90,7 +90,7 @@ const modal = require('./modal');
             name: 'All',
             selected: true,
           }];
-          _.forEach(data.regions, (region) => {
+          data.regions.forEach((region) => {
             self.regions.push({
               name: region,
               selected: false,
