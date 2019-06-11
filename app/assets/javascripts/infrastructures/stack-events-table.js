@@ -1,4 +1,4 @@
-const toLocaleString = require('./helper.js').toLocaleString;
+const { toLocaleString } = require('./helper.js');
 
 module.exports = Vue.extend({
   props: {
@@ -20,7 +20,9 @@ module.exports = Vue.extend({
   },
   methods: {
     event_tr_class(status) {
-      if (status === 'CREATE_COMPLETE') { return 'success'; } if (status.indexOf('FAILED') !== -1) { return 'danger'; } if (status.indexOf('DELETE') !== -1) { return 'warning'; }
+      if (status === 'CREATE_COMPLETE') { return 'success'; }
+      if (status.indexOf('FAILED') !== -1) { return 'danger'; }
+      if (status.indexOf('DELETE') !== -1) { return 'warning'; }
       return '';
     },
     toLocaleString,
