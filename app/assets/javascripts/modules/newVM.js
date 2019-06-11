@@ -169,7 +169,7 @@ module.exports = () => {
         const self = this;
         const ec2 = new EC2Instance(self.infra_model, PhysicalId);
         ec2.serverspec_status().done(self.wrapping_into_same_model_check((data) => {
-          const r = _.find(self.current_infra.resources.ec2_instances, v => v.physical_id === PhysicalId);
+          const r = self.current_infra.resources.ec2_instances.find(v => v.physical_id === PhysicalId);
           r.serverspec_status = data;
         }));
       },
@@ -245,7 +245,7 @@ module.exports = () => {
         if (self.current_infra.stack.status.type === 'OK') {
           const res = new Resource(self.infra_model);
           res.index().done(self.wrapping_into_same_model_check((resources) => {
-            _.forEach(resources.ec2_instances, (v) => {
+            resources.ec2_instances.forEach((v) => {
               v.serverspec_status = true;
             });
             self.current_infra.resources = resources;
@@ -300,7 +300,7 @@ module.exports = () => {
       stack_fail() { return this.current_infra.stack.status.type === 'NG'; },
       no_resource() {
         return this.current_infra.stack.status.type === 'OK'
-          && _(this.current_infra.resources).values().flatten().value().length === 0;
+          && Object.values(this.current_infra.resources).flat().length === 0;
       },
 
       status_label_class() {
