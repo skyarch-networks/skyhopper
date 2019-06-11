@@ -1,6 +1,6 @@
-const wrap = require('modules/wrap');
-const listen = require('modules/listen');
-const queryString = require('query-string').parse(location.search);
+const queryString = require('query-string').parse(window.location.search);
+const wrap = require('./modules/wrap');
+const listen = require('./modules/listen');
 
 // register the grid component
 module.exports = Vue.extend({
@@ -154,9 +154,8 @@ module.exports = Vue.extend({
     },
   },
   mounted() {
-    this.$nextTick(function () {
-      const self = this;
-      self.load_ajax(self.url);
+    this.$nextTick(function ready() {
+      this.load_ajax(this.url);
     });
   },
 
