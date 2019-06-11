@@ -5,12 +5,12 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+const modal = require('./modal');
 
-(function () {
+(() => {
   Vue.component('div-loader', Loader);
-  const modal = require('modal');
 
-  const kpvm = new Vue({
+  new Vue({
     el: '#key-pairs-page',
     data: {
       selected: 'All',
@@ -24,49 +24,49 @@
       selected_key_pairs: null,
     },
     methods: {
-      switch_region(region_name) {
-        if (this.number_of_key_pairs(region_name) === 0) { return; }
+      switch_region(regionName) {
+        if (this.number_of_key_pairs(regionName) === 0) { return; }
 
-        const selected = this.selected;
+        const { selected } = this;
         _.find(this.regions, region => region.name === selected).selected = false;
 
-        this.selected = region_name;
+        this.selected = regionName;
 
-        _.find(this.regions, region => region.name === region_name).selected = true;
+        _.find(this.regions, region => region.name === regionName).selected = true;
         this.pageNumber = 0;
       },
-      key_pairs_by_region(region_name) {
-        return _.select(this.key_pairs, key_pair => key_pair.region === region_name);
+      key_pairs_by_region(regionName) {
+        return _.select(this.key_pairs, keyPair => keyPair.region === regionName);
       },
-      number_of_key_pairs(region_name) {
-        if (region_name === 'All') {
+      number_of_key_pairs(regionName) {
+        if (regionName === 'All') {
           return this.key_pairs.length;
         }
-        return this.key_pairs_by_region(region_name).length;
+        return this.key_pairs_by_region(regionName).length;
       },
-      has_no_key_pairs(region_name) {
-        return this.number_of_key_pairs(region_name) === 0;
+      has_no_key_pairs(regionName) {
+        return this.number_of_key_pairs(regionName) === 0;
       },
-      is_selected(region_name) {
-        return this.selected === 'All' || this.selected === region_name;
+      is_selected(regionName) {
+        return this.selected === 'All' || this.selected === regionName;
       },
-      delete_key_pair(key_pair) {
+      delete_key_pair(keyPair) {
         const self = this;
 
-        modal.Confirm(t('key_pairs.key_pairs'), t('key_pairs.msg.confirm', { name: key_pair.name })).done(() => {
+        modal.Confirm(t('key_pairs.key_pairs'), t('key_pairs.msg.confirm', { name: keyPair.name })).done(() => {
           $.ajax({
             type: 'DELETE',
-            url: `/key_pairs/${key_pair.fingerprint}`,
+            url: `/key_pairs/${keyPair.fingerprint}`,
             data: {
               project_id: self.project_id,
-              region: key_pair.region,
+              region: keyPair.region,
             },
           }).done(() => {
-            const index = self.key_pairs.indexOf(key_pair);
-            $(`.table > tbody > tr:nth-child(${index + 1})`).fadeOut('normal', () => {
-              const index = self.key_pairs.indexOf(key_pair);
+            const keyPairIndex = self.key_pairs.indexOf(keyPair);
+            $(`.table > tbody > tr:nth-child(${keyPairIndex + 1})`).fadeOut('normal', () => {
+              const index = self.key_pairs.indexOf(keyPair);
               self.key_pairs.splice(index, 1);
-              if (self.has_no_key_pairs(key_pair.region)) {
+              if (self.has_no_key_pairs(keyPair.region)) {
                 self.switch_region('All');
               }
             });
@@ -78,12 +78,12 @@
         self.loading = true;
         self.key_pairs = [];
         $.ajax({
-          url: `/key_pairs/retrieve${location.search}`,
+          url: `/key_pairs/retrieve${window.location.search}`,
         }).done((data) => {
           self.project_id = data.project_id;
           self.key_pairs = data.key_pairs;
-          _.forEach(data.key_pairs, (key_pair) => {
-            key_pair.using_sign = key_pair.using ? '✔' : '';
+          _.forEach(data.key_pairs, (keyPair) => {
+            keyPair.using_sign = keyPair.using ? '✔' : '';
           });
           self.selected = 'All';
           self.regions = [{
@@ -101,11 +101,11 @@
       },
       showPrev() {
         if (this.pageNumber === 0) return;
-        this.pageNumber--;
+        this.pageNumber -= 1;
       },
       showNext() {
         if (this.isEndPage) return;
-        this.pageNumber++;
+        this.pageNumber += 1;
       },
       roundup(val) { return (Math.ceil(val)); },
 
@@ -124,6 +124,7 @@
         if (this.selected_key_pairs) {
           return (this.selected_key_pairs.length >= 10);
         }
+        return undefined;
       },
       filterd_keys() {
         const self = this;
@@ -140,18 +141,13 @@
     created() {
       this.reload();
     },
-    mounted() {
-      this.$nextTick(function () {
-        console.log(this.key_pairs);
-      });
-    },
     filters: {
       paginate(list) {
         const self = this;
         const index = this.pageNumber * this.pages;
         const isSelected = [];
         if (self.selected !== 'All') {
-          list.forEach((value, key) => {
+          list.forEach((value) => {
             if (value.region === self.selected) {
               isSelected.push(value);
             }
@@ -162,7 +158,6 @@
         this.selected_key_pairs = list;
         return list.slice(index, index + this.pages);
       },
-
     },
   });
-}());
+})();
