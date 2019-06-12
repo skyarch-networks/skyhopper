@@ -26,4 +26,4 @@
 //= require utils
 //= require notification_center
 
-require('server_status').Do();
+require('./server_status').Do();
