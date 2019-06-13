@@ -5,22 +5,21 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+const modal = require('./modal');
 
-(function () {
-  const modal = require('modal');
-
+{
   //  ----------------------------- variables
 
 
-  const EndpointBase = '/app_settings';
-  const InputsSelector = '#app-settings-form input[type=text],input[type=password],select,textarea,input[type=checkbox]';
-  const RequiredInputs = '#app-settings-form input[required],select[required],textarea[required]';
+  const ENDPOINT_BASE = '/app_settings';
+  const INPUTS_SELECTOR = '#app-settings-form input[type=text],input[type=password],select,textarea,input[type=checkbox]';
+  const REQUIRED_INPUTS = '#app-settings-form input[required],select[required],textarea[required]';
 
 
   //  --------------------------------  utility methods
   const getSettings = function getSettings() {
     const settings = {};
-    $(InputsSelector).each(function () {
+    $(INPUTS_SELECTOR).each(function inputSelectorEachHandler() {
       const input = $(this);
       const key = input.attr('name');
       if (input.is(':checkbox')) {
@@ -45,8 +44,8 @@
   };
 
   const isFillRequiredInput = function isFillRequiredInput() {
-    const elements = document.querySelectorAll(RequiredInputs);
-    for (let i = 0; i < elements.length; ++i) {
+    const elements = document.querySelectorAll(REQUIRED_INPUTS);
+    for (let i = 0; i < elements.length; +i) {
       if (elements[i].value === '') {
         return false;
       }
@@ -99,7 +98,7 @@
 
 
     const ws = ws_connector('chef_server_deployment', 'status');
-    ws.onmessage = function (msg) {
+    ws.onmessage = (msg) => {
       const parsed = JSON.parse(msg.data);
 
       updateCreatingChefserverProgress(parsed);
@@ -113,18 +112,28 @@
     settings = RemoveEmptyOptionalParams(settings);
 
     return $.ajax({
-      url: EndpointBase,
+      url: ENDPOINT_BASE,
       type: 'POST',
       data: {
         settings: JSON.stringify(settings),
       },
     }).fail((xhr) => {
+      function escapeHTML(string) {
+        return string.replace(/[&'"<>]/g, match => ({
+          '&': '&amp;',
+          "'": '&#x;',
+          '"': '&quot;',
+          '<': '&lt;',
+          '>': '&gt;',
+        }[match]));
+      }
+
       const res = xhr.responseJSON;
       const { kind } = res.error;
       if (kind.endsWith('VpcIDNotFound')) {
-        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', { id: _.escape(settings.vpc_id) }), 'danger');
+        modal.AlertHTML(kind, t('app_settings.msg.vpc_id_not_found', { id: escapeHTML(settings.vpc_id) }), 'danger');
       } else if (kind.endsWith('SubnetIDNotFound')) {
-        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', { id: _.escape(settings.subnet_id) }), 'danger');
+        modal.AlertHTML(kind, t('app_settings.msg.subnet_id_not_found', { id: escapeHTML(settings.subnet_id) }), 'danger');
       } else if (kind.endsWith('SystemServerError')) {
         modal.AlertHTML(kind, res.error.message, 'danger');
       } else {
@@ -136,7 +145,7 @@
   // TODO 変数名を直す
   const chefCreate = function chefCreate() {
     return $.ajax({
-      url: `${EndpointBase}/system_server_create`,
+      url: `${ENDPOINT_BASE}/system_server_create`,
       type: 'POST',
       data: {},
       dataType: 'json',
@@ -149,7 +158,7 @@
   $(document).on('click', '#btn-create-system-server', (e) => {
     e.preventDefault();
 
-    create().done((data) => {
+    create().done(() => {
       chefCreate().done((data) => {
         updateCreatingChefserverProgress(data);
         watchChefCreateProgress();
@@ -158,7 +167,7 @@
   });
 
 
-  $(document).on('change keyup', RequiredInputs, () => {
+  $(document).on('change keyup', REQUIRED_INPUTS, () => {
     const btn = $('#btn-create-system-server');
     switchBtnEnable(btn);
   });
@@ -170,4 +179,4 @@
     $('#btn-show-optional-inputs').hide();
     $('#optional-inputs').fadeIn('fast');
   });
-}());
+}
