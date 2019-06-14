@@ -7,30 +7,6 @@
 #
 
 module DishesHelper
-  def label_dish_status(dish = nil)
-    return false unless dish
-
-    screen_status = dish.status || 'NOT YET'
-
-    extra_class = case dish.status
-
-                  when Dish::STATUS[:success]
-                    'label-success'
-
-                  when Dish::STATUS[:failure]
-                    'label-danger'
-
-                  when Dish::STATUS[:creating], Dish::STATUS[:bootstrapping], Dish::STATUS[:applying], Dish::STATUS[:serverspec]
-                    'label-info'
-
-                  else
-                    'label-warning'
-
-                  end
-
-    content_tag(:span, screen_status, class: "label #{extra_class}")
-  end
-
   def progressbar_dish_status(dish = nil)
     return false unless dish
 
