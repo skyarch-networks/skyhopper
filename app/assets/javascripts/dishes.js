@@ -35,7 +35,7 @@ const demoGrid = require('./demo-grid');
       },
       methods: {
         can_delete() {
-          return (this.picked.dish_path === null);
+          return !(this.picked.dish_path);
         },
 
         delete_entry() {
