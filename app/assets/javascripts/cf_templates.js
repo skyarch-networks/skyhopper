@@ -5,24 +5,17 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+const queryString = require('query-string').parse(window.location.search);
+const ace = require('brace');
+require('brace/theme/github');
+require('brace/mode/json');
+require('brace/mode/yaml');
+const JSZip = require('jszip');
+const demoGrid = require('./demo-grid');
+const modal = require('./modal');
 
-(function () {
-  // browserify functions for vue filters functionality
-  const wrap = require('./modules/wrap');
-  const listen = require('./modules/listen');
-  const queryString = require('query-string').parse(location.search);
-  const ace = require('brace');
-  require('brace/theme/github');
-  require('brace/mode/json');
-  require('brace/mode/yaml');
-
-  const JSZip = require('jszip');
-
-  const modal = require('modal');
-
-  let app;
-
-  Vue.component('demo-grid', require('demo-grid.js'));
+{
+  Vue.component('demo-grid', demoGrid);
 
   let editor;
   $(document).ready(() => {
@@ -39,7 +32,7 @@
       });
       editor.setTheme('ace/theme/github');
 
-      $('#cf_template_format').change(function () {
+      $('#cf_template_format').change(function cfTemplateFormatChangeHandler() {
         const format = $(this).val();
         if (format === 'YAML') {
           editor.getSession().setMode('ace/mode/yaml');
@@ -53,7 +46,7 @@
   });
 
   if ($('#indexElement').length) {
-    const cf_templatesIndex = new Vue({
+    new Vue({
       el: '#indexElement',
       data: {
         searchQuery: '',
@@ -73,7 +66,10 @@
       },
       computed: {
         can_export() {
-          return (this.multiSelect === false && this.picked.id !== null || this.multiSelect && this.selections.length !== 0);
+          return (
+            (this.multiSelect === false && this.picked.id !== null)
+            || (this.multiSelect && this.selections.length !== 0)
+          );
         },
         can_edit() {
           return (!this.multiSelect && this.picked.button_edit_cft !== null);
@@ -91,15 +87,15 @@
               url: self.picked.button_destroy_cft,
               dataType: 'json',
               data: { _method: 'delete' },
-              success(data) {
-                location.reload();
+              success() {
+                window.location.reload();
               },
             }).fail(modal.AlertForAjaxStdError());
           });
         },
-        show_template(cf_template_id) {
+        show_template(cfTemplateId) {
           $.ajax({
-            url: `/cf_templates/${cf_template_id}`,
+            url: `/cf_templates/${cfTemplateId}`,
             type: 'GET',
             success(data) {
               $('#template-information').html(data);
@@ -182,13 +178,11 @@
           };
         },
       },
-
       watch: {
         multiSelect() {
           this.selections = [];
         },
       },
-
     });
   }
-}());
+}

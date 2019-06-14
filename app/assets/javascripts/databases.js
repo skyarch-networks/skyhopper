@@ -6,11 +6,9 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-(function () {
+(() => {
   Vue.component('div-loader', Loader);
-  const modal = require('modal');
-
-  const vm = new Vue({
+  new Vue({
     el: '#db-manage',
     data() {
       return {
@@ -24,4 +22,4 @@
     methods: {
     },
   });
-}());
+})();

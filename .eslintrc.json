@@ -4,9 +4,19 @@
     "browser": true
   },
   "globals": {
+    "session_id": false,
     "$": false,
     "t": false,
     "ws_connector": false,
-    "AjaxSet": false
+    "AjaxSet": false,
+    "Vue": false,
+    "VueRouter": false,
+    "moment": false
+  },
+  "rules": {
+    "max-len": ["error", { "code": 160 }],
+    "no-new": ["off"],
+    "import/no-extraneous-dependencies": ["off"],
+    "no-param-reassign": ["error", { "props": false }]
   }
 }
