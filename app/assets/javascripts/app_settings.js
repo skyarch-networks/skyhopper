@@ -45,7 +45,7 @@ const modal = require('./modal');
 
   const isFillRequiredInput = function isFillRequiredInput() {
     const elements = document.querySelectorAll(REQUIRED_INPUTS);
-    for (let i = 0; i < elements.length; +i) {
+    for (let i = 0; i < elements.length; i += 1) {
       if (elements[i].value === '') {
         return false;
       }
