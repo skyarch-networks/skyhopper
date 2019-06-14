@@ -347,10 +347,12 @@
         </span>
 
           <div v-else-if="!dishes_empty" class="input-group">
-            <select class="form-control input-sm" v-model="selected_dish" options="dish_option"></select>
+            <select class="form-control input-sm" v-model="selected_dish" options="dish_option">
+              <option v-for="dish in ec2.dishes" v-bind:value="dish.id">{{ dish.name }}</option>
+            </select>
 
             <div class="input-group-btn">
-              <button class="btn btn-info btn-sm" :class="{disabled: selected_dish === '0'}" @click="apply_dish()">
+              <button class="btn btn-info btn-sm" :disabled="selected_dish === '0'" @click="apply_dish()">
                 <%= t 'nodes.btn.apply_dish' %>
               </button>
             </div>
