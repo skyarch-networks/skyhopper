@@ -10,7 +10,7 @@ const queryString = require('query-string').parse(window.location.search);
 const Infrastructure = require('./models/infrastructure').default;
 const modal = require('./modal');
 const datepicker = require('./modules/datepicker');
-const vace = require('./modules/vue-ace'); // TODO 依存している部分があるため、現時点では削除できない
+require('./modules/vue-ace');
 require('brace/mode/json');
 require('brace/mode/yaml');
 require('brace/theme/github');
