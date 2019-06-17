@@ -8,7 +8,7 @@ const jsonParseErr = function (str) {
   try {
     JSON.parse(str);
   } catch (ex) {
-    return ex;
+    return ex.message;
   }
 };
 
