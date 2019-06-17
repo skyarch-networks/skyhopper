@@ -10,7 +10,7 @@ const queryString = require('query-string').parse(window.location.search);
 const Infrastructure = require('./models/infrastructure').default;
 const modal = require('./modal');
 const datepicker = require('./modules/datepicker');
-const vace = require('./modules/vue-ace');
+const vace = require('./modules/vue-ace'); // TODO 依存している部分があるため、現時点では削除できない
 require('brace/mode/json');
 require('brace/mode/yaml');
 require('brace/theme/github');
@@ -119,7 +119,7 @@ const demoGrid = require('./demo-grid.js');
     ).then((name) => {
       if (!name) {
         modal.Alert(t('infrastructures.infrastructure'), t('ec2_private_keys.msg.please_name'), 'danger');
-        return;
+        return undefined;
       }
 
       nameFile = name;
