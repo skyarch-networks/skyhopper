@@ -1,27 +1,23 @@
-
+const modal = require('./modal');
+require('./user_index');
 
 const __extends = (this && this.__extends) || function (d, b) {
   for (const p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-
   function __() {
     this.constructor = d;
   }
-
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-const modal_1 = require('./modal');
-require('user_index');
 
-let UsersAdmin;
-(function (UsersAdmin) {
+{
   const ajax = new AjaxSet.Resources('users_admin');
   ajax.add_collection('sync_zabbix', 'PUT');
 
-  function sync_zabbix(btn) {
-    const f = function () {
-      const reload = function () {
+  function syncZabbix(btn) {
+    const f = () => {
+      const reload = () => {
         btn.prop('disabled', false);
-        location.reload();
+        window.location.reload();
       };
       btn.prop('disabled', true);
       const frag = $(document.createDocumentFragment());
@@ -30,17 +26,32 @@ let UsersAdmin;
       show_loading(p);
       btn.after(frag);
       ajax.sync_zabbix().done((data) => {
-        modal_1.Alert(t('users.title'), data).done(reload);
-      }).fail(modal_1.AlertForAjaxStdError(reload));
+        modal.Alert(t('users.title'), data).done(reload);
+      }).fail(modal.AlertForAjaxStdError(reload));
     };
-    modal_1.Confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
+    modal.Confirm(t('users.title'), t('users.msg.confirm_sync_zabbix')).done(f);
+  }
+
+  function showEdit(userId) {
+    const l = new Loader();
+    document.getElementById('user-edit').appendChild(l.$mount().$el);
+    if (app) {
+      document.getElementById('user-edit').removeChild(app.$mount().$el);
+    }
+    ajax.edit({ id: userId }).done((data) => {
+      document.getElementById('user-edit').removeChild(l.$mount().$el);
+      app = new App(data);
+      document.getElementById('user-edit').appendChild(app.$mount().$el);
+    }).fail(modal.AlertForAjaxStdError(() => {
+      document.getElementById('user-edit').removeChild(l.$mount().$el);
+    }));
   }
 
   const App = (function (_super) {
     __extends(App, _super);
 
     function App(data) {
-      const _this = this;
+      const self = this;
       _super.call(this);
       this.update_mfa_key = false;
       this.remove_mfa_key = false;
@@ -79,72 +90,71 @@ let UsersAdmin;
         },
         mounted() {
           this.$nextTick(() => {
-            console.log(_this);
-            _this.get_zabbix();
+            self.get_zabbix();
           });
         },
       });
     }
 
     App.prototype.get_projects = function () {
-      const _this = this;
+      const self = this;
       this.projects = [];
       $.ajax({
         url: '/projects.json',
         data: { client_id: this.selected_client },
         dataType: 'json',
       }).done((projects) => {
-        _this.projects = _.map(projects, (project) => {
-          const client_name = _.find(_this.clients, c => c.value === _this.selected_client).text;
+        self.projects = _.map(projects, (project) => {
+          const clientName = _.find(self.clients, c => c.value === self.selected_client).text;
           return {
             value: project.id,
-            text: `${client_name}/${project.name}[${project.code_name}]`,
+            text: `${clientName}/${project.name}[${project.code_name}]`,
           };
         });
-      }).fail(modal_1.AlertForAjaxStdError());
+      }).fail(modal.AlertForAjaxStdError());
     };
     App.prototype.get_zabbix = function () {
-      const _this = this;
+      const self = this;
       this.zabbix_servers = [];
       $.ajax({
         url: '/zabbix_servers.json',
         dataType: 'json',
-      }).done((zabbix_servers) => {
-        _this.zabbix_servers = _.map(zabbix_servers, (zabbix_server) => {
-          const fqdn = zabbix_server.address.split('/zabbix');
+      }).done((zabbixServers) => {
+        self.zabbix_servers = _.map(zabbixServers, (zabbixServer) => {
+          const fqdn = zabbixServer.address.split('/zabbix');
           return {
-            value: zabbix_server.id,
+            value: zabbixServer.id,
             text: `${fqdn[0]}`,
           };
         });
-      }).fail(modal_1.AlertForAjaxStdError());
+      }).fail(modal.AlertForAjaxStdError());
     };
     App.prototype.add = function () {
-      const _this = this;
-      _.forEach(this.selected_projects, (project_id) => {
-        const project = _.find(_this.projects, p => p.value === project_id);
-        _this.allowed_projects.push(project);
-        _this.allowed_projects = _.uniq(_this.allowed_projects, p => p.value);
+      const self = this;
+      _.forEach(this.selected_projects, (projectId) => {
+        const project = _.find(self.projects, p => p.value === projectId);
+        self.allowed_projects.push(project);
+        self.allowed_projects = _.uniq(self.allowed_projects, p => p.value);
       });
     };
     App.prototype.del = function () {
-      const _this = this;
-      _.forEach(this.selected_allowed_projects, (project_id) => {
-        _this.allowed_projects = _.reject(_this.allowed_projects, p => p.value === project_id);
+      const self = this;
+      _.forEach(this.selected_allowed_projects, (projectId) => {
+        self.allowed_projects = _.reject(self.allowed_projects, p => p.value === projectId);
       });
     };
     App.prototype.add_zabbix = function () {
-      const _this = this;
-      _.forEach(this.selected_zabbix, (zabbix_server_id) => {
-        const zabbix_server = _.find(_this.zabbix_servers, p => p.value === zabbix_server_id);
-        _this.allowed_zabbix.push(zabbix_server);
-        _this.allowed_zabbix = _.uniq(_this.allowed_zabbix, p => p.value);
+      const self = this;
+      _.forEach(this.selected_zabbix, (zabbixServerId) => {
+        const zabbixServer = _.find(self.zabbix_servers, p => p.value === zabbixServerId);
+        self.allowed_zabbix.push(zabbixServer);
+        self.allowed_zabbix = _.uniq(self.allowed_zabbix, p => p.value);
       });
     };
     App.prototype.del_zabbix = function () {
-      const _this = this;
-      _.forEach(this.selected_allowed_zabbix, (zabbix_server_id) => {
-        _this.allowed_zabbix = _.reject(_this.allowed_projects, p => p.value === zabbix_server_id);
+      const self = this;
+      _.forEach(this.selected_allowed_zabbix, (zabbixServerId) => {
+        self.allowed_zabbix = _.reject(self.allowed_projects, p => p.value === zabbixServerId);
       });
     };
     App.prototype.update_mfa = function () {
@@ -154,7 +164,7 @@ let UsersAdmin;
       this.remove_mfa_key = true;
     };
     App.prototype.submit = function () {
-      const _this = this;
+      const self = this;
       const body = {};
       body.allowed_projects = _.map(this.allowed_projects, p => p.value);
       body.allowed_zabbix = _.map(this.allowed_zabbix, p => p.value);
@@ -164,14 +174,14 @@ let UsersAdmin;
         body.mfa_secret_key = this.mfa_key;
       }
       body.remove_mfa_key = this.remove_mfa_key;
-      const password = this.user.password;
-      const password_confirmation = this.user.password_confirmation;
-      if (password && password_confirmation) {
-        if (password === password_confirmation) {
+      const { password } = this.user;
+      const passwordConfirmation = this.user.password_confirmation;
+      if (password && passwordConfirmation) {
+        if (password === passwordConfirmation) {
           body.password = password;
-          body.password_confirmation = password_confirmation;
+          body.password_confirmation = passwordConfirmation;
         } else {
-          modal_1.Alert(t('users.title'), 'Password confirmation does not match Password', 'danger');
+          modal.Alert(t('users.title'), 'Password confirmation does not match Password', 'danger');
           return;
         }
       }
@@ -179,38 +189,23 @@ let UsersAdmin;
         id: this.user.id,
         body: JSON.stringify(body),
       }).done((data) => {
-        modal_1.Alert(t('users.title'), data).done(() => {
-          show_edit(_this.user.id);
+        modal.Alert(t('users.title'), data).done(() => {
+          showEdit(self.user.id);
         });
-      }).fail(modal_1.AlertForAjaxStdError(() => {
-        show_edit(_this.user.id);
+      }).fail(modal.AlertForAjaxStdError(() => {
+        showEdit(self.user.id);
       }));
     };
     return App;
   }(Vue));
   let app;
 
-  function show_edit(user_id) {
-    const l = new Loader();
-    document.getElementById('user-edit').appendChild(l.$mount().$el);
-    if (app) {
-      document.getElementById('user-edit').removeChild(app.$mount().$el);
-    }
-    ajax.edit({ id: user_id }).done((data) => {
-      document.getElementById('user-edit').removeChild(l.$mount().$el);
-      app = new App(data);
-      document.getElementById('user-edit').appendChild(app.$mount().$el);
-    }).fail(modal_1.AlertForAjaxStdError(() => {
-      document.getElementById('user-edit').removeChild(l.$mount().$el);
-    }));
-  }
-
-  $(document).on('click', '.edit-user', function (e) {
+  $(document).on('click', '.edit-user', function editUserClickHandler(e) {
     e.preventDefault();
-    const user_id = $(this).attr('user-id');
-    show_edit(parseInt(user_id));
+    const userId = $(this).attr('user-id');
+    showEdit(parseInt(userId, 10));
   });
-  $(document).on('click', '#sync_zabbix', function () {
-    sync_zabbix($(this));
+  $(document).on('click', '#sync_zabbix', function syncZabbixClickHandler() {
+    syncZabbix($(this));
   });
-}(UsersAdmin || (UsersAdmin = {})));
+}
