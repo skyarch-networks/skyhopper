@@ -6,8 +6,8 @@ services:
       context: ./amazonlinux2
       dockerfile: ./Dockerfile
     volumes:
-      - ".:/prj/skyhopper"
-      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts"
+      - ".:/prj/skyhopper:cached"
+      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts:cached"
     environment:
       - REDIS_HOST=redis
       - REDIS_URL=redis://redis:6379/1
@@ -21,7 +21,7 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-      - "./mysql:/var/lib/mysql"
+      - "./mysql:/var/lib/mysql:cached"
     environment:
       - MYSQL_ROOT_PASSWORD=password
     ports:
@@ -39,7 +39,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - "./nginx/conf.d:/etc/nginx/conf.d"
-      - ".:/prj/skyhopper"
+      - "./nginx/conf.d:/etc/nginx/conf.d:cached"
+      - ".:/prj/skyhopper:cached"
     depends_on:
       - app
