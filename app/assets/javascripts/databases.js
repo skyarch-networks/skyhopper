@@ -1,4 +1,5 @@
-//
+/* global Loader:true */
+/* eslint no-undef: 2 */
 // Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 //
 // This software is released under the MIT License.
