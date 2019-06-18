@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  app:
+    volumes:
+      - ".:/prj/skyhopper:cached"
+      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts:cached"
+
+  nginx:
+    volumes:
+      - "./nginx/conf.d:/etc/nginx/conf.d:cached"
+      - ".:/prj/skyhopper:cached"
