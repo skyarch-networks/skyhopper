@@ -6,8 +6,8 @@ services:
       context: ./amazonlinux2
       dockerfile: ./Dockerfile
     volumes:
-      - ".:/prj/skyhopper:cached"
-      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts:cached"
+      - ".:/prj/skyhopper"
+      - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts"
       # exclude
       - /prj/skyhopper/.git
     environment:
@@ -23,7 +23,7 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-      - "./mysql:/var/lib/mysql:cached"
+      - "./mysql:/var/lib/mysql"
     environment:
       - MYSQL_ROOT_PASSWORD=password
     ports:
@@ -41,8 +41,8 @@ services:
     ports:
       - 80:80
     volumes:
-      - "./nginx/conf.d:/etc/nginx/conf.d:cached"
-      - ".:/prj/skyhopper:cached"
+      - "./nginx/conf.d:/etc/nginx/conf.d"
+      - ".:/prj/skyhopper"
       # exclude
       - /prj/skyhopper/.git
     depends_on:
