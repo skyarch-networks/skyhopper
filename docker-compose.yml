@@ -8,6 +8,8 @@ services:
     volumes:
       - ".:/prj/skyhopper"
       - "./amazonlinux2/known_hosts:/root/.ssh/known_hosts"
+      # exclude
+      - /prj/skyhopper/.git
     environment:
       - REDIS_HOST=redis
       - REDIS_URL=redis://redis:6379/1
@@ -41,5 +43,7 @@ services:
     volumes:
       - "./nginx/conf.d:/etc/nginx/conf.d"
       - ".:/prj/skyhopper"
+      # exclude
+      - /prj/skyhopper/.git
     depends_on:
       - app
