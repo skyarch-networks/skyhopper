@@ -5,7 +5,7 @@ function strategyGen(projectId) {
     url: '/project_parameters.json',
     method: 'GET',
     data: {
-      project_id:projectId,
+      project_id: projectId,
     },
   });
   return {
