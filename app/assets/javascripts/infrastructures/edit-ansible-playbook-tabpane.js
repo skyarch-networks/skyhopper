@@ -1,10 +1,9 @@
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const helpers = require('../infrastructures/helper.js');
 
-const helpers = require('infrastructures/helper.js');
-
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#edit-ansible-playbook-tabpane-template',
@@ -34,14 +33,14 @@ module.exports = Vue.extend({
       try {
         JSON.parse(self.extra_vars);
       } catch (ex) {
-        alert_danger()(`extra-vars is invalid: ${ex.message}`);
+        alertDanger()(`extra-vars is invalid: ${ex.message}`);
         return;
       }
 
       self.loading = true;
       self.ec2.update_ansible_playbook(self.playbook_roles, self.extra_vars)
-        .done(alert_success(self.show_ec2))
-        .fail(alert_danger(self.show_ec2));
+        .done(alertSuccess(self.show_ec2))
+        .fail(alertDanger(self.show_ec2));
     },
 
     show_ec2() { this.$parent.show_ec2(this.physical_id); },
@@ -97,13 +96,12 @@ module.exports = Vue.extend({
   },
   created() {
     const self = this;
-    console.log(self);
 
     self.ec2.edit_ansible_playbook().done((data) => {
       self.playbook_roles = data.playbook_roles;
       self.roles = data.roles;
       self.extra_vars = data.extra_vars;
       self.$parent.loading = false;
-    }).fail(alert_danger(self.show_ec2));
+    }).fail(alertDanger(self.show_ec2));
   },
 });
