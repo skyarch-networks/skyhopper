@@ -46,36 +46,31 @@ module.exports = Vue.extend({
     show_ec2() { this.$parent.show_ec2(this.physical_id); },
 
     add_role() {
-      const self = this;
-      _.forEach(self.selected_roles, (role) => {
-        self._add(role);
-      });
+      this.selected_roles.forEach((role) => { this._add(role); });
     },
 
     _add(run) {
-      if (_.include(this.playbook_roles, run)) { return; }
+      if (this.playbook_roles.includes(run)) { return; }
       this.playbook_roles.push(run);
     },
 
     del() {
-      this.playbook_roles = _.difference(this.playbook_roles, this.selected_playbook_roles);
+      this.playbook_roles = this.playbook_roles.filter(role => !this.selected_playbook_roles.includes(role));
     },
 
     up() {
-      const self = this;
-      _.forEach(this.selected_playbook_roles, (v) => {
-        const idx = _.indexOf(self.playbook_roles, v);
-        self._swap(idx, idx - 1);
+      this.selected_playbook_roles.forEach((v) => {
+        const idx = this.playbook_roles.indexOf(v);
+        this._swap(idx, idx - 1);
       });
     },
 
     down() {
-      const self = this;
-      // XXX: 複数個選択した時にうまく動いてない気がする
-      _(self.selected_playbook_roles).reverse().forEach((v) => {
-        const idx = _.indexOf(self.playbook_roles, v);
-        self._swap(idx, idx + 1);
-      }).value();
+      // reverse()は破壊的操作なので、concat()でクローンしている
+      this.selected_playbook_roles.concat().reverse().forEach((v) => {
+        const idx = this.playbook_roles.indexOf(v);
+        this._swap(idx, idx + 1);
+      });
     },
 
     _swap(from, to) {
@@ -83,7 +78,7 @@ module.exports = Vue.extend({
       if (from < 0 || m < from || to < 0 || m < to) {
         return;
       }
-      const r = _.clone(this.playbook_roles);
+      const r = this.playbook_roles.concat();
       r[to] = this.playbook_roles[from];
       r[from] = this.playbook_roles[to];
       this.playbook_roles = r;
