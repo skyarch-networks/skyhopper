@@ -1,14 +1,6 @@
 const modal = require('./modal');
 require('./user_index');
 
-const __extends = (this && this.__extends) || function (d, b) {
-  for (const p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-  function __() {
-    this.constructor = d;
-  }
-  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-
 {
   const ajax = new AjaxSet.Resources('users_admin');
   ajax.add_collection('sync_zabbix', 'PUT');
@@ -47,12 +39,10 @@ const __extends = (this && this.__extends) || function (d, b) {
     }));
   }
 
-  const App = (function (_super) {
-    __extends(App, _super);
-
-    function App(data) {
+  const App = class App extends Vue {
+    constructor(data) {
+      super();
       const self = this;
-      _super.call(this);
       this.update_mfa_key = false;
       this.remove_mfa_key = false;
       this.user = { password: '', password_confirmation: '' };
@@ -96,7 +86,7 @@ const __extends = (this && this.__extends) || function (d, b) {
       });
     }
 
-    App.prototype.get_projects = function () {
+    get_projects() {
       const self = this;
       this.projects = [];
       $.ajax({
@@ -112,8 +102,9 @@ const __extends = (this && this.__extends) || function (d, b) {
           };
         });
       }).fail(modal.AlertForAjaxStdError());
-    };
-    App.prototype.get_zabbix = function () {
+    }
+
+    get_zabbix() {
       const self = this;
       this.zabbix_servers = [];
       $.ajax({
@@ -128,42 +119,49 @@ const __extends = (this && this.__extends) || function (d, b) {
           };
         });
       }).fail(modal.AlertForAjaxStdError());
-    };
-    App.prototype.add = function () {
+    }
+
+    add() {
       const self = this;
       _.forEach(this.selected_projects, (projectId) => {
         const project = _.find(self.projects, p => p.value === projectId);
         self.allowed_projects.push(project);
         self.allowed_projects = _.uniq(self.allowed_projects, p => p.value);
       });
-    };
-    App.prototype.del = function () {
+    }
+
+    del() {
       const self = this;
       _.forEach(this.selected_allowed_projects, (projectId) => {
         self.allowed_projects = _.reject(self.allowed_projects, p => p.value === projectId);
       });
-    };
-    App.prototype.add_zabbix = function () {
+    }
+
+    add_zabbix() {
       const self = this;
       _.forEach(this.selected_zabbix, (zabbixServerId) => {
         const zabbixServer = _.find(self.zabbix_servers, p => p.value === zabbixServerId);
         self.allowed_zabbix.push(zabbixServer);
         self.allowed_zabbix = _.uniq(self.allowed_zabbix, p => p.value);
       });
-    };
-    App.prototype.del_zabbix = function () {
+    }
+
+    del_zabbix() {
       const self = this;
       _.forEach(this.selected_allowed_zabbix, (zabbixServerId) => {
         self.allowed_zabbix = _.reject(self.allowed_projects, p => p.value === zabbixServerId);
       });
-    };
-    App.prototype.update_mfa = function () {
+    }
+
+    update_mfa() {
       this.update_mfa_key = true;
-    };
-    App.prototype.remove_mfa = function () {
+    }
+
+    remove_mfa() {
       this.remove_mfa_key = true;
-    };
-    App.prototype.submit = function () {
+    }
+
+    submit() {
       const self = this;
       const body = {};
       body.allowed_projects = _.map(this.allowed_projects, p => p.value);
@@ -195,9 +193,9 @@ const __extends = (this && this.__extends) || function (d, b) {
       }).fail(modal.AlertForAjaxStdError(() => {
         showEdit(self.user.id);
       }));
-    };
-    return App;
-  }(Vue));
+    }
+  };
+
   let app;
 
   $(document).on('click', '.edit-user', function editUserClickHandler(e) {
