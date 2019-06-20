@@ -121,9 +121,11 @@ require('./user_index');
 
     add() {
       this.selected_projects.forEach((projectId) => {
+        if (this.allowed_projects.map(p => p.value).includes(projectId)) {
+          return;
+        }
         const project = this.projects.find(p => p.value === projectId);
         this.allowed_projects.push(project);
-        this.allowed_projects = _.uniq(this.allowed_projects, p => p.value);
       });
     }
 
@@ -135,9 +137,11 @@ require('./user_index');
 
     addZabbix() {
       this.selected_zabbix.forEach((zabbixServerId) => {
+        if (this.allowed_zabbix.map(p => p.value).includes(zabbixServerId)) {
+          return;
+        }
         const zabbixServer = this.zabbix_servers.find(p => p.value === zabbixServerId);
         this.allowed_zabbix.push(zabbixServer);
-        this.allowed_zabbix = _.uniq(this.allowed_zabbix, p => p.value);
       });
     }
 
