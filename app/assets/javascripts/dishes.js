@@ -1,6 +1,3 @@
-/* global show_loading:true */
-/* eslint no-undef: 2 */
-
 //
 // Copyright (c) 2013-2016 SKYARCH NETWORKS INC.
 //
