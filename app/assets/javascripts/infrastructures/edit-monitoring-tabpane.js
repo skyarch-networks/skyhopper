@@ -1,12 +1,12 @@
-const Infrastructure = require('models/infrastructure').default;
-const Monitoring = require('models/monitoring').default;
+const Infrastructure = require('../models/infrastructure').default;
+const Monitoring = require('../models/monitoring').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
-const alert_and_show_infra = helpers.alert_and_show_infra;
-const modal = require('modal');
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
+const alertAndShowInfra = helpers.alert_and_show_infra;
+const modal = require('../modal');
 
 module.exports = Vue.extend({
   template: '#edit-monitoring-tabpane-template',
@@ -43,13 +43,12 @@ module.exports = Vue.extend({
     type(master) { return Monitoring.type(master); },
 
     edit_temp(resource) {
-      self = this;
-      self.sel_resource = resource;
-      self.templates = resource.templates;
+      this.sel_resource = resource;
+      this.templates = resource.templates;
     },
 
     delete_step(step) {
-      this.web_scenarios = _.filter(this.web_scenarios, s => s[0] !== step[0]);
+      this.web_scenarios = this.web_scenarios.filter(s => s[0] !== step[0]);
     },
 
     add_step_err() {
@@ -64,7 +63,7 @@ module.exports = Vue.extend({
         return 'Timeout は半角数字でお願いします';
       }
       const scenario = [s.scenario_name, s.step_name, s.url, s.required_string, s.status_code, s.timeout];
-      if (!_.every(scenario, x => x && !(x.match(/^\s*$/)))) {
+      if (!scenario.every(x => x && !(x.match(/^\s*$/)))) {
         return 'Please fill in the blanks';
       }
 
@@ -81,9 +80,9 @@ module.exports = Vue.extend({
         this.add_scenario.timeout,
       ];
 
-      const s_array = $.map(scenario, (s, i) => (s.trim()));
+      const sArray = $.map(scenario, s => (s.trim()));
 
-      this.web_scenarios.push(s_array);
+      this.web_scenarios.push(sArray);
       this.add_scenario = {};
     },
 
@@ -96,10 +95,10 @@ module.exports = Vue.extend({
         this.web_scenarios,
         this.mysql_rds_host,
         this.postgresql_rds_host,
-      ).done(alert_success(() => {
+      ).done(alertSuccess(() => {
         self.$parent.show_monitoring();
       }))
-        .fail(alert_danger(() => {
+        .fail(alertDanger(() => {
           self.loading = false;
         }));
     },
@@ -107,34 +106,34 @@ module.exports = Vue.extend({
     update_templates() {
       if (!this.has_selected) { return; }
       const self = this;
-      const templates = _(this.templates).filter(t => t.checked).map(t => t.name).value();
+      const templates = this.templates.filter(t => t.checked).map(t => t.name).value();
       self.temp_loading = true;
       this.monitoring.update_templates(self.sel_resource.resource, templates).done(() => {
         self.temp_loading = false;
         self.$parent.show_edit_monitoring();
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
     roundup(val) { return (Math.ceil(val)); },
 
     showPrev() {
       if (this.isStartPage) return;
-      this.page--;
+      this.page -= 1;
     },
 
     showNext() {
       if (this.isEndPage) return;
-      this.page++;
+      this.page += 1;
     },
     select_server(z) {
       if (z.is_checked) { return; }
       const self = this;
-      modal.Confirm(t('monitoring.title'), t('monitoring.msg.change_zabbix'), 'warning').done(function () {
+      modal.Confirm(t('monitoring.title'), t('monitoring.msg.change_zabbix'), 'warning').done(() => {
         self.zb_loading = true;
         self.monitoring.change_zabbix_server(z.id).done(() => {
           self.temp_loading = false;
           self.$parent.show_edit_monitoring();
-        }).fail(alert_and_show_infra(this.infra_id));
+        }).fail(alertAndShowInfra(this.infra_id));
       });
     },
   },
@@ -143,7 +142,7 @@ module.exports = Vue.extend({
     monitoring() { return new Monitoring(new Infrastructure(this.infra_id)); },
 
     has_selected() {
-      return _.some(this.templates, c => c.checked);
+      return this.templates.some(c => c.checked);
     },
 
     dispItems() {
@@ -158,29 +157,28 @@ module.exports = Vue.extend({
   created() {
     const self = this;
     self.temp_loading = true;
-    this.monitoring.edit().done(function (data) {
+    this.monitoring.edit().done((data) => {
       self.master_monitorings = data.master_monitorings;
       self.selected_monitoring_ids = data.selected_monitoring_ids;
       self.web_scenarios = data.web_scenarios;
       self.mysql_rds_host = null;
       self.postgresql_rds_host = null;
       self.zabbix_servers = data.zabbix_servers;
-      console.log(data.zabbix_servers);
 
       self.$parent.loading = false;
 
       // Call Show only if monitoring edit call is successfull
-      self.monitoring.show().done((data) => {
+      this.monitoring.show().done(() => {
         self.before_register = data.before_register;
         self.linked_resources = data.linked_resources;
         self.$parent.loading = false;
         self.temp_loading = false;
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     }).fail((xhr) => {
       if (xhr.status === 400) { // before register zabbix
         self.$parent.show_monitoring();
       } else {
-        alert_and_show_infra(self.infra_id)(xhr.responseText);
+        alertAndShowInfra(self.infra_id)(xhr.responseText);
       }
     });
   },
