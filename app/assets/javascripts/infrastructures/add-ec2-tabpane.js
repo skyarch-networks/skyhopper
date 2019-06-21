@@ -2,7 +2,7 @@ const Infrastructure = require('../models/infrastructure').default;
 const Resource = require('../models/resource').default;
 const EC2Instance = require('../models/ec2_instance').default;
 const helpers = require('../infrastructures/helper.js');
-const ShowInfra = require('../infrastructures/show_infra').default;
+const showInfra = require('../infrastructures/show_infra').default;
 
 const alertSuccess = helpers.alert_success;
 const alertAndShowInfra = helpers.alert_and_show_infra;
@@ -32,7 +32,7 @@ module.exports = Vue.extend({
       const res = new Resource(infra);
       res.create(this.physical_id, this.screen_name)
         .done(alertSuccess(() => {
-          ShowInfra.show_infra(infra.id);
+          showInfra.show_infra(infra.id);
         }))
         .fail(alertAndShowInfra(infra.id));
     },
