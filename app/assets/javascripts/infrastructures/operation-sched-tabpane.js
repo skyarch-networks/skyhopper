@@ -121,6 +121,16 @@ module.exports = Vue.extend({
       }
     },
 
+    set_default_start_sched() {
+      Vue.set(this.sel_instance, 'start_date', this.default_start);
+      $('#op-sched-start').val(this.default_start);
+    },
+
+    set_default_end_sched() {
+      Vue.set(this.sel_instance, 'end_date', this.default_end);
+      $('#op-sched-end').val(this.default_end);
+    },
+
     pop(e) {
       if (e === 'duration') {
         $('#duration').popover('toggle');
