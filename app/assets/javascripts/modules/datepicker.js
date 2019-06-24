@@ -36,9 +36,9 @@ exports.install = function (Vue, lang) {
         console.log(binding);
         if (e.target.id !== 'op-sched-start' && e.target.id !== 'op-sched-end') {
           dp.data('DateTimePicker').maxDate('now');
-          vnode.context[keypath[0]][keypath[1]] = startDateUnix;
+          Vue.set(vnode.context[keypath[0]], keypath[1], startDateUnix);
         } else {
-          vnode.context[keypath[0]][keypath[1]] = startDate;
+          Vue.set(vnode.context[keypath[0]], keypath[1], startDate);
         }
 
         console.log(vnode.context);
