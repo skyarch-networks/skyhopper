@@ -59,10 +59,10 @@ exports.install = function (Vue, lang) {
       const ops = ['op-sched-end', 'op-sched-start'];
       const picker = ops.includes(String(el.id)) ? $(`${tag_id} .datetimepicker3`) : $(tag_id);
 
-      picker.datetimepicker('setDate', binding.val);
+      picker.datetimepicker('setDate', binding.value);
       // var vm = this.vm;
       const keypath = binding.expression.split('.');
-      vnode.context[keypath[0]][keypath[1]] = binding.val;
+      Vue.set(vnode.context[keypath[0]], keypath[1], binding.value);
     },
   });
 };
