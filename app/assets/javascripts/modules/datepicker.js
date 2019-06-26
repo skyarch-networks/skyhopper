@@ -36,9 +36,9 @@ exports.install = function (Vue, lang) {
         console.log(binding);
         if (e.target.id !== 'op-sched-start' && e.target.id !== 'op-sched-end') {
           dp.data('DateTimePicker').maxDate('now');
-          vnode.context[keypath[0]][keypath[1]] = startDateUnix;
+          Vue.set(vnode.context[keypath[0]], keypath[1], startDateUnix);
         } else {
-          vnode.context[keypath[0]][keypath[1]] = startDate;
+          Vue.set(vnode.context[keypath[0]], keypath[1], startDate);
         }
 
         console.log(vnode.context);
@@ -53,16 +53,26 @@ exports.install = function (Vue, lang) {
           dp.data('DateTimePicker').minDate(minDate);
         }
       });
+
+      dp.on('dp.error', (e) => {
+        const oldDate = moment(e.oldDate._d).format('YYYY/MM/D H:mm');
+        const oldDateUnix = moment(e.oldDate._d).unix();
+        if (e.target.id !== 'op-sched-start' && e.target.id !== 'op-sched-end') {
+          Vue.set(vnode.context[keypath[0]], keypath[1], oldDateUnix);
+        } else {
+          Vue.set(vnode.context[keypath[0]], keypath[1], oldDate);
+        }
+      });
     },
     update(el, binding, vnode) {
       const tag_id = `#${String(el.id)}`;
       const ops = ['op-sched-end', 'op-sched-start'];
       const picker = ops.includes(String(el.id)) ? $(`${tag_id} .datetimepicker3`) : $(tag_id);
 
-      picker.datetimepicker('setDate', binding.val);
+      picker.datetimepicker('setDate', binding.value);
       // var vm = this.vm;
       const keypath = binding.expression.split('.');
-      vnode.context[keypath[0]][keypath[1]] = binding.val;
+      Vue.set(vnode.context[keypath[0]], keypath[1], binding.value);
     },
   });
 };
