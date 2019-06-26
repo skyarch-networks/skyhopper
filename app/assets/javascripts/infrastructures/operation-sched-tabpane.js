@@ -185,8 +185,8 @@ module.exports = Vue.extend({
           }
           return {
             title: item.resource.physical_id,
-            start: moment(item.recurring_date.start_time).utcOffset('Asia/Tokyo').format('HH:mm'),
-            end: moment(item.recurring_date.end_time).utcOffset('Asia/Tokyo').format('HH:mm'),
+            start: moment(item.recurring_date.start_time).utcOffset('+0000').format('HH:mm'),
+            end: moment(item.recurring_date.end_time).utcOffset('+0000').format('HH:mm'),
             dow,
           };
         });
