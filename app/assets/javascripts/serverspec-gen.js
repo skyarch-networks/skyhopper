@@ -11,7 +11,7 @@ $(document).on('click', '.save-serverspec-btn', () => {
     const s = new Servertest(infraId);
     const code = `require "serverspec_helper"\n\n${app.rubyCode}`;
     return s.create(fname, code, 'serverspec');
-  }).then(data => modal.Alert(t('serverspecs.serverspec'), data), modal.AlertForAjaxStdError()).then(() => {
+  }).then(data => modal.Alert(t('servertests.servertests'), data), modal.AlertForAjaxStdError()).then(() => {
     window.location.href = `/servertests${window.location.search}`;
   });
 });
