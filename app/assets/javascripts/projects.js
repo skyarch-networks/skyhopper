@@ -68,9 +68,7 @@ const demoGrid = require('./demo-grid.js');
               self.gridData = data;
               self.picked = null;
             },
-          }).fail(() => {
-            window.location.reload();
-          });
+          }).fail(modal.AlertForAjaxStdError());
         });
       },
       reload() {
