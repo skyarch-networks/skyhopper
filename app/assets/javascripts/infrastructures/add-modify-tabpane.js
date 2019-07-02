@@ -1,4 +1,4 @@
-const jsonParseErr = require('./helper.js').jsonParseErr;
+const { jsonParseErr } = require('./helper.js');
 
 module.exports = Vue.extend({
   props: {
@@ -23,7 +23,7 @@ module.exports = Vue.extend({
   methods: {
     select_cft() {
       const self = this;
-      const cft = _.find(self.templates.histories.concat(self.templates.globals), c => c.id === self.selected_cft_id);
+      const cft = self.find(self.templates.histories.concat(self.templates.globals), c => c.id === self.selected_cft_id);
       self.result.name = cft.name;
       self.result.detail = cft.detail;
       self.result.format = cft.format;
@@ -51,10 +51,10 @@ module.exports = Vue.extend({
   computed: {
     parseErr() {
       if (this.result.format === 'YAML') {
-        if (_.trim(this.result.value) === '') {
+        if (this.result.value.trim() === '') {
           return 'YAML String is empty. Please input YAML.';
         }
-        return;
+        return undefined;
       }
       return jsonParseErr(this.result.value);
     },
