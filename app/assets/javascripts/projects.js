@@ -66,7 +66,10 @@ const demoGrid = require('./demo-grid.js');
             data: { _method: 'delete' },
             success(data) {
               self.gridData = data;
-              self.picked = null;
+              self.picked = { project_settings: {} };
+
+              self.$children[0].tbl_data = data;
+              self.$children[0].pages = data.length;
             },
           }).fail(modal.AlertForAjaxStdError());
         });
