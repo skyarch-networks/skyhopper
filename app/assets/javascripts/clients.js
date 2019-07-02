@@ -64,7 +64,6 @@ const demoGrid = require('./demo-grid.js');
 
               self.$children[0].tbl_data = data;
               self.$children[0].pages = data.length;
-              self.$children[0].close_loading();
             },
           }).fail(() => {
             window.location.reload();
