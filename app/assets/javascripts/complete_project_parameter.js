@@ -1,11 +1,11 @@
 
 
-function strategyGen(project_id) {
+function strategyGen(projectId) {
   const ajax = $.ajax({
     url: '/project_parameters.json',
     method: 'GET',
     data: {
-      project_id,
+      project_id: projectId,
     },
   });
   return {

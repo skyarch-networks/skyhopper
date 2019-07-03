@@ -1,8 +1,3 @@
-const __extends = (this && this.__extends) || function (d, b) {
-  for (const p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-  function __() { this.constructor = d; }
-  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 const modal = require('./modal');
 
 const Server = class Server {
@@ -44,10 +39,9 @@ const Server = class Server {
   }
 };
 
-const App = ((_super) => {
-  __extends(App, _super);
-  function App(model, el) {
-    _super.call(this);
+const App = class App extends Vue {
+  constructor(model, el) {
+    super();
     this.model = model;
     this._init({
       el,
@@ -55,24 +49,21 @@ const App = ((_super) => {
       template: App.TEMPLATE_ID,
       methods: {
         start() {
-          const self = this;
           modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_start).done(() => {
-            self.model.start();
+            this.model.start();
           });
         },
         stop() {
-          const self = this;
           modal.Confirm(this.model.msgs().title, this.model.msgs().confirm_stop).done(() => {
-            self.model.stop();
+            this.model.stop();
           });
         },
         status(background) {
-          const self = this;
           this.model.status(background).done((state) => {
-            self.state = state;
-            if (background || self.is_inprogress) {
-              self.model.watch((wState) => {
-                self.state = wState;
+            this.state = state;
+            if (background || this.is_inprogress) {
+              this.model.watch((wState) => {
+                this.state = wState;
               });
             }
           });
@@ -127,9 +118,9 @@ const App = ((_super) => {
       },
     });
   }
-  App.TEMPLATE_ID = '#toggle-button-template';
-  return App;
-})(Vue);
+};
+App.TEMPLATE_ID = '#toggle-button-template';
+
 function Build(kind) {
   const el = document.createElement('div');
   const parent = document.querySelector(App.TEMPLATE_ID).parentElement;

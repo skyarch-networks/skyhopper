@@ -1,19 +1,19 @@
-const modal = require('modal');
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
-const queryString = require('query-string').parse(location.search);
+const queryString = require('query-string').parse(window.location.search);
+const modal = require('../modal');
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
-const alert_and_show_infra = helpers.alert_and_show_infra;
-const toLocaleString = helpers.toLocaleString;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
+const alertAndShowInfra = helpers.alert_and_show_infra;
+const { toLocaleString } = helpers;
 
-const methods = require('infrastructures/common-methods');
+const methods = require('../infrastructures/common-methods');
 
-const has_selected = methods.has_selected;
-const check_tag = methods.check_tag;
+const hasSelected = methods.has_selected;
+const checkTag = methods.check_tag;
 
 // this.physical_id is a elb_name.
 module.exports = Vue.extend({
@@ -61,19 +61,19 @@ module.exports = Vue.extend({
   },
 
   methods: {
-    show_ec2(physical_id) { this.$parent.show_ec2(physical_id); },
+    show_ec2(physicalId) { this.$parent.show_ec2(physicalId); },
 
-    deregister(physical_id) {
+    deregister(physicalId) {
       const self = this;
       modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.deregister'), 'danger').done(() => {
         const infra = new Infrastructure(self.infra_id);
-        const ec2 = new EC2Instance(infra, physical_id);
-        const reload = function () {
+        const ec2 = new EC2Instance(infra, physicalId);
+        const reload = () => {
           self.$parent.show_elb(self.physical_id);
         };
         ec2.deregister(self.physical_id)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+          .done(alertSuccess(reload))
+          .fail(alertDanger(reload));
       });
     },
 
@@ -82,30 +82,30 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('ec2_instances.confirm.register')).done(() => {
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, self.selected_ec2);
-        const reload = function () {
+        const reload = () => {
           self.$parent.show_elb(self.physical_id);
         };
         ec2.register(self.physical_id)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+          .done(alertSuccess(reload))
+          .fail(alertDanger(reload));
       });
     },
 
     state(s) { return s === 'InService' ? 'success' : 'danger'; },
 
-    ssl_certificate_id_to_name(ssl_certificate_id) {
-      if (!ssl_certificate_id) {
+    ssl_certificate_id_to_name(sslCertificateId) {
+      if (!sslCertificateId) {
         return '';
-      } if (ssl_certificate_id === 'Invalid-Certificate') {
+      } if (sslCertificateId === 'Invalid-Certificate') {
         return 'Invalid-Certificate';
       }
-      return ssl_certificate_id.replace(/arn:aws:iam::[0-9]+:server-certificate\//, '');
+      return sslCertificateId.replace(/arn:aws:iam::[0-9]+:server-certificate\//, '');
     },
 
-    expiration_date(date_str) {
-      if (!date_str) { return ''; }
+    expiration_date(dateStr) {
+      if (!dateStr) { return ''; }
 
-      return toLocaleString(date_str);
+      return toLocaleString(dateStr);
     },
 
     set_create_listener_modal_default_value() {
@@ -117,17 +117,17 @@ module.exports = Vue.extend({
       self.ssl_certificate_id = '';
     },
 
-    set_edit_listener_modal_default_value(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id) {
+    set_edit_listener_modal_default_value(protocol, loadBalancerPort, instanceProtocol, instancePort, sslCertificateId) {
       const self = this;
-      self.old_load_balancer_port = load_balancer_port;
+      self.old_load_balancer_port = loadBalancerPort;
       self.protocol = protocol;
-      self.load_balancer_port = load_balancer_port;
-      self.instance_protocol = instance_protocol;
-      self.instance_port = instance_port;
-      if (ssl_certificate_id === 'Invalid-Certificate') {
+      self.load_balancer_port = loadBalancerPort;
+      self.instance_protocol = instanceProtocol;
+      self.instance_port = instancePort;
+      if (sslCertificateId === 'Invalid-Certificate') {
         self.ssl_certificate_id = '';
       } else {
-        self.ssl_certificate_id = ssl_certificate_id;
+        self.ssl_certificate_id = sslCertificateId;
       }
     },
 
@@ -143,16 +143,16 @@ module.exports = Vue.extend({
       self.loading = true;
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
-      const reload = function () {
+      const reload = () => {
         self.$parent.show_elb(self.physical_id);
       };
       ec2.create_listener(self.physical_id, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
         .done((msg) => {
-          alert_success(reload)(msg);
+          alertSuccess(reload)(msg);
           $('#create-listener-modal').modal('hide');
         })
         .fail((msg) => {
-          alert_danger(reload)(msg);
+          alertDanger(reload)(msg);
           $('#create-listener-modal').modal('hide');
         });
     },
@@ -162,32 +162,33 @@ module.exports = Vue.extend({
       self.loading = true;
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
-      const reload = function () {
+      const reload = () => {
         self.$parent.show_elb(self.physical_id);
       };
-      ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+      ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port,
+        self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
         .done((msg) => {
-          alert_success(reload)(msg);
+          alertSuccess(reload)(msg);
           $('#edit-listener-modal').modal('hide');
         })
         .fail((msg) => {
-          alert_danger(reload)(msg);
+          alertDanger(reload)(msg);
           $('#edit-listener-modal').modal('hide');
         });
     },
 
-    delete_listener(load_balancer_port) {
+    delete_listener(loadBalancerPort) {
       const self = this;
-      self.load_balancer_port = load_balancer_port;
+      self.load_balancer_port = loadBalancerPort;
       modal.Confirm(t('ec2_instances.btn.delete_to_elb_listener'), t('ec2_instances.confirm.delete_listener'), 'danger').done(() => {
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, '');
-        const reload = function () {
+        const reload = () => {
           self.$parent.show_elb(self.physical_id);
         };
         ec2.delete_listener(self.physical_id, self.load_balancer_port)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+          .done(alertSuccess(reload))
+          .fail(alertDanger(reload));
       });
     },
 
@@ -196,32 +197,32 @@ module.exports = Vue.extend({
       self.loading = true;
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
-      const reload = function () {
+      const reload = () => {
         self.$parent.show_elb(self.physical_id);
       };
       ec2.upload_server_certificate(self.physical_id, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
         .done((msg) => {
-          alert_success(reload)(msg);
+          alertSuccess(reload)(msg);
           $('#upload-server-certificate-modal').modal('hide');
         })
         .fail((msg) => {
-          alert_danger(reload)(msg);
+          alertDanger(reload)(msg);
           $('#upload-server-certificate-modal').modal('hide');
         });
     },
 
-    delete_server_certificate(server_certificate_name) {
+    delete_server_certificate(serverCertificateName) {
       const self = this;
-      self.server_certificate_name = server_certificate_name;
+      self.server_certificate_name = serverCertificateName;
       modal.Confirm(t('ec2_instances.btn.delete_certificate'), t('ec2_instances.confirm.delete_certificate'), 'danger').done(() => {
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, '');
-        const reload = function () {
+        const reload = () => {
           self.$parent.show_elb(self.physical_id);
         };
         ec2.delete_server_certificate(self.physical_id, self.server_certificate_name)
-          .done(alert_success(reload))
-          .fail(alert_danger(reload));
+          .done(alertSuccess(reload))
+          .fail(alertDanger(reload));
       });
     },
 
@@ -234,14 +235,14 @@ module.exports = Vue.extend({
       const self = this;
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
-      const group_ids = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
-      const reload = function () {
+      const groupIds = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
+      const reload = () => {
         self.$parent.show_elb(self.physical_id);
       };
 
-      ec2.elb_submit_groups(group_ids, self.physical_id)
-        .done(alert_success(reload))
-        .fail(alert_danger(reload));
+      ec2.elb_submit_groups(groupIds, self.physical_id)
+        .done(alertSuccess(reload))
+        .fail(alertDanger(reload));
     },
     view_rules() {
       this.$parent.tabpaneID = 'view-rules';
@@ -249,20 +250,18 @@ module.exports = Vue.extend({
       this.$parent.instance_type = 'elb';
     },
     has_selected(arg) {
-      if (arg) {
-        return arg.some(c => c.checked);
-      }
+      return hasSelected(arg);
     },
     check_tag(r) {
-      return check_tag(r);
+      return checkTag(r);
     },
     showPrev() {
       if (this.isStartPage) return;
-      this.page--;
+      this.page -= 1;
     },
     showNext() {
       if (this.isEndPage) return;
-      this.page++;
+      this.page += 1;
     },
     roundup(val) { return (Math.ceil(val)); },
   },
@@ -292,7 +291,7 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function ready() {
       const self = this;
       const infra = new Infrastructure(self.infra_id);
       infra.show_elb(this.physical_id).done((data) => {
@@ -305,8 +304,7 @@ module.exports = Vue.extend({
         self.server_certificate_name_items = data.server_certificate_name_items;
 
         self.$parent.loading = false;
-        console.log(self);
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alertAndShowInfra(infra.id));
     });
   },
   filters: {
