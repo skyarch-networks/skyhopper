@@ -22,10 +22,9 @@ class ServertestsController < ApplicationController
   # GET /servertests
   def index
     @infrastructure_id = params[:infrastructure_id]
-    page               = params[:page]
 
     @infrastructure_name = Infrastructure.find(@infrastructure_id).stack_name if @infrastructure_id
-    @servertests = Servertest.where(infrastructure_id: @infrastructure_id).page(page)
+    @servertests = Servertest.where(infrastructure_id: @infrastructure_id)
 
     respond_to do |format|
       format.json
