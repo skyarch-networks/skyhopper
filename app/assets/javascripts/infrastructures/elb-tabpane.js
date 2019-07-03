@@ -253,7 +253,7 @@ module.exports = Vue.extend({
       return hasSelected(arg);
     },
     check_tag(r) {
-      checkTag(r);
+      return checkTag(r);
     },
     showPrev() {
       if (this.isStartPage) return;

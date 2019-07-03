@@ -9,10 +9,9 @@ const Servertest = class Servertest extends ModelBase {
   }
 
   create(fname, value, category) {
-    const self = this;
     return this.WrapAndResolveReject(
       () => this.ajax.create({
-        this: {
+        servertest: {
           name: fname,
           value,
           infrastructure_id: self.infra_id,
