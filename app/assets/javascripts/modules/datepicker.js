@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-exports.install = function (Vue, lang) {
+exports.install = (Vue, lang) => {
   Vue.directive('datepicker', {
 
     bind(el, binding, vnode) {
@@ -31,9 +31,8 @@ exports.install = function (Vue, lang) {
         },
       });
       dp.on('dp.change', (e) => {
-        const startDate = moment(e.date._d).format('YYYY/MM/D H:mm');
-        const startDateUnix = moment(e.date._d).unix();
-        console.log(binding);
+        const startDate = moment(e.date._d).format('YYYY/MM/D H:mm'); // eslint-disable-line no-underscore-dangle
+        const startDateUnix = moment(e.date._d).unix(); // eslint-disable-line no-underscore-dangle
         if (e.target.id !== 'op-sched-start' && e.target.id !== 'op-sched-end') {
           dp.data('DateTimePicker').maxDate('now');
           Vue.set(vnode.context[keypath[0]], keypath[1], startDateUnix);
@@ -41,7 +40,6 @@ exports.install = function (Vue, lang) {
           Vue.set(vnode.context[keypath[0]], keypath[1], startDate);
         }
 
-        console.log(vnode.context);
         // Sets the start vallue into a hidden type form to be able to let end picker to acces it
         if (e.target.placeholder === 'Start' || e.target.id === 'op-sched-start') $("input[type='hidden']").val(startDate).change();
       });
@@ -55,8 +53,8 @@ exports.install = function (Vue, lang) {
       });
 
       dp.on('dp.error', (e) => {
-        const oldDate = moment(e.oldDate._d).format('YYYY/MM/D H:mm');
-        const oldDateUnix = moment(e.oldDate._d).unix();
+        const oldDate = moment(e.oldDate._d).format('YYYY/MM/D H:mm'); // eslint-disable-line no-underscore-dangle
+        const oldDateUnix = moment(e.oldDate._d).unix(); // eslint-disable-line no-underscore-dangle
         if (e.target.id !== 'op-sched-start' && e.target.id !== 'op-sched-end') {
           Vue.set(vnode.context[keypath[0]], keypath[1], oldDateUnix);
         } else {
@@ -65,9 +63,9 @@ exports.install = function (Vue, lang) {
       });
     },
     update(el, binding, vnode) {
-      const tag_id = `#${String(el.id)}`;
+      const tagId = `#${String(el.id)}`;
       const ops = ['op-sched-end', 'op-sched-start'];
-      const picker = ops.includes(String(el.id)) ? $(`${tag_id} .datetimepicker3`) : $(tag_id);
+      const picker = ops.includes(String(el.id)) ? $(`${tagId} .datetimepicker3`) : $(tagId);
 
       picker.datetimepicker('setDate', binding.value);
       // var vm = this.vm;
