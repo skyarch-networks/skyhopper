@@ -23,7 +23,7 @@ module.exports = Vue.extend({
   methods: {
     select_cft() {
       const self = this;
-      const cft = self.find(self.templates.histories.concat(self.templates.globals), c => c.id === self.selected_cft_id);
+      const cft = self.templates.histories.concat(self.templates.globals).find(c => c.id === self.selected_cft_id);
       self.result.name = cft.name;
       self.result.detail = cft.detail;
       self.result.format = cft.format;
@@ -65,7 +65,7 @@ module.exports = Vue.extend({
     },
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function ready() {
       const self = this;
 
       self.editor = ace.edit('add_modify_value_ace');
