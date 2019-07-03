@@ -8,7 +8,7 @@ const helpers = require('../infrastructures/helper.js');
 const alertSuccess = helpers.alert_success;
 const alertDanger = helpers.alert_danger;
 const alertAndShowInfra = helpers.alert_and_show_infra;
-const toLocaleString = helpers.to_locale_string;
+const { toLocaleString } = helpers;
 
 const methods = require('../infrastructures/common-methods');
 
@@ -69,9 +69,9 @@ module.exports = Vue.extend({
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, physicalId);
         const reload = () => {
-          self.$parent.show_elb(self.physicalId);
+          self.$parent.show_elb(self.physical_id);
         };
-        ec2.deregister(self.physicalId)
+        ec2.deregister(self.physical_id)
           .done(alertSuccess(reload))
           .fail(alertDanger(reload));
       });
@@ -83,9 +83,9 @@ module.exports = Vue.extend({
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, self.selected_ec2);
         const reload = () => {
-          self.$parent.show_elb(self.physicalId);
+          self.$parent.show_elb(self.physical_id);
         };
-        ec2.register(self.physicalId)
+        ec2.register(self.physical_id)
           .done(alertSuccess(reload))
           .fail(alertDanger(reload));
       });
@@ -144,9 +144,9 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
       const reload = () => {
-        self.$parent.show_elb(self.physicalId);
+        self.$parent.show_elb(self.physical_id);
       };
-      ec2.create_listener(self.physicalId, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
+      ec2.create_listener(self.physical_id, self.protocol, self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
         .done((msg) => {
           alertSuccess(reload)(msg);
           $('#create-listener-modal').modal('hide');
@@ -163,9 +163,9 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
       const reload = () => {
-        self.$parent.show_elb(self.physicalId);
+        self.$parent.show_elb(self.physical_id);
       };
-      ec2.update_listener(self.physicalId, self.protocol, self.old_load_balancer_port,
+      ec2.update_listener(self.physical_id, self.protocol, self.old_load_balancer_port,
         self.load_balancer_port, self.instance_protocol, self.instance_port, self.ssl_certificate_id)
         .done((msg) => {
           alertSuccess(reload)(msg);
@@ -184,9 +184,9 @@ module.exports = Vue.extend({
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, '');
         const reload = () => {
-          self.$parent.show_elb(self.physicalId);
+          self.$parent.show_elb(self.physical_id);
         };
-        ec2.delete_listener(self.physicalId, self.load_balancer_port)
+        ec2.delete_listener(self.physical_id, self.load_balancer_port)
           .done(alertSuccess(reload))
           .fail(alertDanger(reload));
       });
@@ -198,9 +198,9 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, '');
       const reload = () => {
-        self.$parent.show_elb(self.physicalId);
+        self.$parent.show_elb(self.physical_id);
       };
-      ec2.upload_server_certificate(self.physicalId, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
+      ec2.upload_server_certificate(self.physical_id, self.server_certificate_name, self.certificate_body, self.private_key, self.certificate_chain)
         .done((msg) => {
           alertSuccess(reload)(msg);
           $('#upload-server-certificate-modal').modal('hide');
@@ -218,9 +218,9 @@ module.exports = Vue.extend({
         const infra = new Infrastructure(self.infra_id);
         const ec2 = new EC2Instance(infra, '');
         const reload = () => {
-          self.$parent.show_elb(self.physicalId);
+          self.$parent.show_elb(self.physical_id);
         };
-        ec2.delete_server_certificate(self.physicalId, self.server_certificate_name)
+        ec2.delete_server_certificate(self.physical_id, self.server_certificate_name)
           .done(alertSuccess(reload))
           .fail(alertDanger(reload));
       });
@@ -229,7 +229,7 @@ module.exports = Vue.extend({
     panel_class(state) { return `panel-${this.state(state)}`; },
     label_class(state) { return `label-${this.state(state)}`; },
     check(i) { i.checked = !i.checked; },
-    reload() { this.$parent.show_elb(this.physicalId); },
+    reload() { this.$parent.show_elb(this.physical_id); },
 
     submit_groups() {
       const self = this;
@@ -237,10 +237,10 @@ module.exports = Vue.extend({
       const ec2 = new EC2Instance(infra, '');
       const groupIds = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
       const reload = () => {
-        self.$parent.show_elb(self.physicalId);
+        self.$parent.show_elb(self.physical_id);
       };
 
-      ec2.elb_submit_groups(groupIds, self.physicalId)
+      ec2.elb_submit_groups(groupIds, self.physical_id)
         .done(alertSuccess(reload))
         .fail(alertDanger(reload));
     },
@@ -249,13 +249,10 @@ module.exports = Vue.extend({
       this.$parent.sec_group = this.rules_summary;
       this.$parent.instance_type = 'elb';
     },
-    hasSelected(arg) {
-      if (arg) {
-        return arg.some(c => c.checked);
-      }
-      return undefined;
+    has_selected(arg) {
+      return hasSelected(arg);
     },
-    checkTag(r) {
+    check_tag(r) {
       checkTag(r);
     },
     showPrev() {
@@ -294,10 +291,10 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function ready() {
       const self = this;
       const infra = new Infrastructure(self.infra_id);
-      infra.show_elb(this.physicalId).done((data) => {
+      infra.show_elb(this.physical_id).done((data) => {
         self.ec2_instances = data.ec2_instances;
         self.unregistereds = data.unregistereds;
         self.dns_name = data.dns_name;
