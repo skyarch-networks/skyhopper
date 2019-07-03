@@ -171,7 +171,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
 
   apply_dish(dishId) {
     const self = this;
-    const params = Object.assign({}, this.params, dishId ? { dishId } : {});
+    const params = Object.assign({}, this.params, dishId ? { dish_id: dishId } : {});
     return this.WrapAndResolveReject(
       () => self.ajax_node.apply_dish(params),
     );
@@ -179,7 +179,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
 
   submit_groups(groupIds) {
     const self = this;
-    const params = Object.assign({}, this.params, groupIds ? { groupIds } : {});
+    const params = Object.assign({}, this.params, groupIds ? { group_ids: groupIds } : {});
     return this.WrapAndResolveReject(
       () => self.ajax_node.submit_groups(params),
     );
@@ -187,7 +187,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
 
   create_group(groupParams) {
     const self = this;
-    const params = Object.assign({}, this.params, groupParams ? { groupParams } : {});
+    const params = Object.assign({}, this.params, groupParams ? { group_params: groupParams } : {});
     return this.WrapAndResolveReject(
       () => self.ajax_node.create_group(params),
     );
@@ -195,7 +195,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
 
   get_rules(groupIds) {
     const self = this;
-    const params = Object.assign({}, this.params, groupIds ? { groupIds } : []);
+    const params = Object.assign({}, this.params, groupIds ? { group_ids: groupIds } : []);
     return this.WrapAndResolveReject(
       () => self.ajax_node.get_rules(params),
     );
