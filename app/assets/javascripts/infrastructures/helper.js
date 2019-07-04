@@ -1,8 +1,8 @@
-const modal = require('../modal');
+const modal = require('modal');
 
 // Vueに登録したfilterを、外から見る方法ってないのかな。
-const jsonParseErr = (str) => {
-  if (str.trim() === '') {
+const jsonParseErr = function (str) {
+  if (_.trim(str) === '') {
     return 'JSON String is empty. Please input JSON.';
   }
   try {
@@ -10,42 +10,47 @@ const jsonParseErr = (str) => {
   } catch (ex) {
     return ex.message;
   }
-  return undefined;
 };
 
-const toLocaleString = (datetext) => {
+const toLocaleString = function (datetext) {
   const date = new Date(datetext);
   return date.toLocaleString();
 };
 
 
 // Utilities
-const alertSuccess = callback => (msg, isHtml) => {
-  const func = (isHtml) ? modal.AlertHTML : modal.Alert;
-  const dfd = func(t('infrastructures.infrastructure'), msg);
-  if (callback) {
-    dfd.done(callback);
-  }
+const alert_success = function (callback) {
+  return function (msg, is_html) {
+    const func = (is_html) ? modal.AlertHTML : modal.Alert;
+    const dfd = func(t('infrastructures.infrastructure'), msg);
+    if (callback) {
+      dfd.done(callback);
+    }
+  };
 };
 
-const alertDanger = callback => (msg, isHtml) => {
-  if (!jsonParseErr(msg) && JSON.parse(msg).error) {
-    modal.AlertForAjaxStdError(callback)(msg);
-  } else {
-    const func = (isHtml) ? modal.AlertHTML : modal.Alert;
-    const dfd = func(t('infrastructures.infrastructure'), msg, 'danger');
-    if (callback) { dfd.done(callback); }
-  }
+const alert_danger = function (callback) {
+  return function (msg, is_html) {
+    if (!jsonParseErr(msg) && JSON.parse(msg).error) {
+      modal.AlertForAjaxStdError(callback)(msg);
+    } else {
+      const func = (is_html) ? modal.AlertHTML : modal.Alert;
+      const dfd = func(t('infrastructures.infrastructure'), msg, 'danger');
+      if (callback) { dfd.done(callback); }
+    }
+  };
 };
 
-const alertAndShowInfra = infraId => alertDanger(() => {
-  require('../infrastructures/show_infra').show_infra(infraId);
-});
+const alert_and_show_infra = function (infra_id) {
+  return alert_danger(() => {
+    require('infrastructures/show_infra').show_infra(infra_id);
+  });
+};
 
 module.exports = {
   jsonParseErr,
   toLocaleString,
-  alert_success: alertSuccess,
-  alert_danger: alertDanger,
-  alert_and_show_infra: alertAndShowInfra,
+  alert_success,
+  alert_danger,
+  alert_and_show_infra,
 };
