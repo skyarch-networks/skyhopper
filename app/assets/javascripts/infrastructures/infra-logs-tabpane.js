@@ -54,8 +54,8 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(self.infra_id);
       infra.logs(self.page.current, self.sortKey, self.sortOrders[self.sortKey]).done((data) => {
         self.logs = data.logs;
-        self.page = data.page;
-      }).fail(alertAndShowInfra(infra.id));
+      self.page = data.page;
+    }).fail(alertAndShowInfra(infra.id));
     },
     select_entry(item) {
       this.picked_id = item.id;
@@ -78,22 +78,22 @@ module.exports = Vue.extend({
     const infra = new Infrastructure(self.infra_id);
     infra.logs().done((data) => {
       self.logs = data.logs;
-      self.page = data.page;
-      self.$parent.loading = false;
-    }).fail(alertAndShowInfra(infra.id));
+    self.page = data.page;
+    self.$parent.loading = false;
+  }).fail(alertAndShowInfra(infra.id));
 
     this.$watch('infra_logs', () => {
       $('.popovermore').popover().click((e) => {
-        e.preventDefault();
-      });
-    });
+      e.preventDefault();
+  });
+  });
 
     this.$on('show', (page) => {
       const sortKey = self.sortKey === '' ? undefined : self.sortKey;
-      infra.logs(page, sortKey, self.sortOrders[self.sortKey]).done((data) => {
-        self.logs = data.logs;
-        self.page = data.page;
-      }).fail(alertAndShowInfra(infra.id));
-    });
+    infra.logs(page, sortKey, self.sortOrders[self.sortKey]).done((data) => {
+      self.logs = data.logs;
+    self.page = data.page;
+  }).fail(alertAndShowInfra(infra.id));
+  });
   },
 });
