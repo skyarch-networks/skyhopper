@@ -7,6 +7,8 @@ const Infrastructure = class Infrastructure extends ModelBase {
     this.ajax_infra = new AjaxSet.Resources('infrastructures');
     this.ajax_resource = new AjaxSet.Resources('resources');
     this.ajax_infra.add_member('delete_stack', 'POST');
+    this.ajax_infra.add_member('download_log', 'POST');
+    this.ajax_infra.add_member('download_logs', 'POST');
     this.ajax_infra.add_member('save_schedule', 'POST');
     this.ajax_infra.add_member('stack_events', 'GET');
     this.ajax_infra.add_member('get_schedule', 'GET');
@@ -64,7 +66,7 @@ const Infrastructure = class Infrastructure extends ModelBase {
     );
   }
 
-  static download_log(infrastructureLogId) {
+  download_log(infrastructureLogId) {
     const url = `/infrastructure_logs/${infrastructureLogId}/download`;
     window.open(url, '_blank');
   }
