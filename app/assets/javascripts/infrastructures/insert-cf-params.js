@@ -33,7 +33,7 @@ module.exports = Vue.extend({
       const cft = new CFTemplate(infra);
       const self = this;
       cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alertSuccess(() => {
-        showInfra.show_infra(window.infra.id);
+        showInfra.show_infra(infra.id);
       })).fail(alertDanger(() => {
         self.loading = false;
       }));
