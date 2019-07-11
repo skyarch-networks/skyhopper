@@ -1,4 +1,5 @@
 const modal = require('../modal');
+const showInfra = require('../infrastructures/show_infra');
 
 // Vueに登録したfilterを、外から見る方法ってないのかな。
 const jsonParseErr = (str) => {
@@ -39,7 +40,7 @@ const alertDanger = callback => (msg, isHtml) => {
 };
 
 const alertAndShowInfra = infraId => alertDanger(() => {
-  require('../infrastructures/show_infra').show_infra(infraId);
+  showInfra.show_infra(infraId);
 });
 
 module.exports = {
