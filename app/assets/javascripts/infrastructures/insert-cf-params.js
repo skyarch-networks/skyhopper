@@ -53,7 +53,8 @@ module.exports = Vue.extend({
           self.back();
         })).then((data) => {
           self.params = data;
-          Object.keys(data).forEach((val, key) => {
+
+          Object.entries(data).forEach(([key, val]) => {
             Vue.set(self.result, key, val.Default);
           });
           self.$parent.loading = false;
