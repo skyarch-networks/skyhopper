@@ -170,7 +170,7 @@ module.exports = Vue.extend({
       self.showing_url = false;
       self.loading_graph = true;
       self.physical_id = physicalId;
-      self.itemKey = itemKey;
+      self.item_key = itemKey;
       this.monitoring.show_zabbix_graph(physicalId, itemKey).done((data) => {
         self.loading_graph = false;
         self.show_range = true;
@@ -215,7 +215,7 @@ module.exports = Vue.extend({
   },
   computed: {
     monitoring() { return new Monitoring(new Infrastructure(this.infra_id)); },
-    no_problem() { return this.problems.isEmpty(); },
+    no_problem() { return _.isEmpty(this.problems); },
     before_setting() { return this.commons.length === 0 && this.uncommons.length === 0; },
 
     has_selected() {
