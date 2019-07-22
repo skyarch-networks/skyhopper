@@ -187,7 +187,6 @@ function extractNext(inbound, outbound, body) {
 function buildTableBody(data) {
   const body = [];
 
-  console.log(data);
   body.push([{ rowSpan: 2, text: t('security_groups.description'), style: 'tableHeader' },
     { rowSpan: 2, text: t('security_groups.group_id'), style: 'tableHeader' },
     { colSpan: 4, text: t('security_groups.inbound'), style: 'tableHeader' },
@@ -204,7 +203,7 @@ function buildTableBody(data) {
     { text: t('security_groups.source'), style: 'tableHeader' },
   ]);
 
-  data.forEach((v, index) => {
+  data.forEach((v) => {
     const inbound = v.ip_permissions;
     const outbound = v.ip_permissions_egress;
 
@@ -216,15 +215,13 @@ function buildTableBody(data) {
   return body;
 }
 
-module.exports = function (data) {
-  return {
-    style: 'tableExample',
-    color: '#444',
-    table: {
-      headerRows: 2,
-      dontBreakRows: true,
-      widths: [120, 90, 'auto', 'auto', 'auto', 100, 'auto', 'auto', 'auto', 100],
-      body: buildTableBody(data),
-    },
-  };
-};
+module.exports = data => ({
+  style: 'tableExample',
+  color: '#444',
+  table: {
+    headerRows: 2,
+    dontBreakRows: true,
+    widths: [120, 90, 'auto', 'auto', 'auto', 100, 'auto', 'auto', 'auto', 100],
+    body: buildTableBody(data),
+  },
+});
