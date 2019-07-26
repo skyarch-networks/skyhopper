@@ -1,4 +1,4 @@
-const queryString = require('query-string').parse(location.search);
+const queryString = require('query-string').parse(window.location.search);
 const pdfMake = require('pdfmake/build/pdfmake.js');
 const Infrastructure = require('../models/infrastructure').default;
 const EC2Instance = require('../models/ec2_instance').default;
@@ -184,7 +184,6 @@ module.exports = Vue.extend({
   mounted() {
     this.$nextTick(() => {
       this.getRules();
-      console.log(alertSuccess);
       this.$parent.loading = false;
     });
   },
