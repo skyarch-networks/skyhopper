@@ -215,7 +215,7 @@ module.exports = Vue.extend({
   },
   computed: {
     monitoring() { return new Monitoring(new Infrastructure(this.infra_id)); },
-    no_problem() { return _.isEmpty(this.problems); },
+    no_problem() { return !this.problems.length; },
     before_setting() { return this.commons.length === 0 && this.uncommons.length === 0; },
 
     has_selected() {
