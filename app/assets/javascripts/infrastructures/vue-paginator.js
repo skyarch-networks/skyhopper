@@ -28,11 +28,11 @@ module.exports = Vue.extend({
   computed: {
     visibleNum() {
       const self = this;
-      return _.filter([0, 1, 2, 3, 4, 5, 6, 7, 8], (n) => {
+      return [0, 1, 2, 3, 4, 5, 6, 7, 8].filter((n) => {
         const i = n + self.page.current - 4;
         return i > 0 && i <= self.page.max;
       });
     },
   },
-  created() { console.log(this); },
+  created() {},
 });
