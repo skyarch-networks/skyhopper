@@ -1,18 +1,18 @@
-const modal = require('modal');
-const Infrastructure = require('models/infrastructure').default;
-const RDSInstance = require('models/rds_instance').default;
+const queryString = require('query-string').parse(window.location.search);
+const Infrastructure = require('../models/infrastructure').default;
+const RDSInstance = require('../models/rds_instance').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
-const methods = require('infrastructures/common-methods');
+const methods = require('../infrastructures/common-methods');
 
-const check_tag = methods.check_tag;
+const checkTag = methods.check_tag;
 
-const queryString = require('query-string').parse(location.search);
+const modal = require('../modal');
 
 module.exports = Vue.extend({
   template: '#rds-tabpane-template',
@@ -54,7 +54,7 @@ module.exports = Vue.extend({
       const rds = new RDSInstance(infra, this.physical_id);
       rds.change_scale(this.change_scale_type_to)
         .done(self.reload)
-        .fail(alert_danger(self.reload));
+        .fail(alertDanger(self.reload));
 
       $('#change-scale-modal').modal('hide');
     },
@@ -64,10 +64,10 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const rds = new RDSInstance(infra, this.physical_id);
       rds.gen_serverspec(this.serverspec).done((msg) => {
-        alert_success(self.reload)(msg);
+        alertSuccess(self.reload)(msg);
         $('#rds-serverspec-modal').modal('hide');
       }).fail((msg) => {
-        alert_danger(self.reload)(msg);
+        alertDanger(self.reload)(msg);
         $('#rds-serverspec-modal').modal('hide');
       });
     },
@@ -86,11 +86,11 @@ module.exports = Vue.extend({
 
       const self = this;
       const rds = new RDSInstance(new Infrastructure(this.infra_id), this.physical_id);
-      const group_ids = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
+      const groupIds = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
 
-      rds.rds_submit_groups(group_ids, self.physical_id)
-        .done(alert_success(self.reload))
-        .fail(alert_danger(self.reload));
+      rds.rds_submit_groups(groupIds, self.physical_id)
+        .done(alertSuccess(self.reload))
+        .fail(alertDanger(self.reload));
     },
 
     check(i) {
@@ -98,19 +98,20 @@ module.exports = Vue.extend({
     },
     showPrev() {
       if (this.isStartPage) return;
-      this.page--;
+      this.page -= 1;
     },
     showNext() {
       if (this.isEndPage) return;
-      this.page++;
+      this.page += 1;
     },
-    check_tag(r) {
-      check_tag(r);
+    checkTag(r) {
+      checkTag(r);
     },
     has_selected(arg) {
       if (arg) {
         return arg.some(c => c.checked);
       }
+      return undefined;
     },
     start_rds() {
       if (this.available) { return; }
@@ -120,8 +121,8 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_start_rds')).done(() => {
         rds.start_rds().done((data) => {
           self.reload();
-          alert_success()(data.message);
-        }).fail(alert_danger());
+          alertSuccess()(data.message);
+        }).fail(alertDanger());
       });
     },
     stop_rds() {
@@ -132,8 +133,8 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_stop_rds'), 'warning').done(() => {
         rds.stop_rds().done((data) => {
           self.reload();
-          alert_success()(data.message);
-        }).fail(alert_danger());
+          alertSuccess()(data.message);
+        }).fail(alertDanger());
       });
     },
     reboot_rds() {
@@ -144,8 +145,8 @@ module.exports = Vue.extend({
       modal.Confirm(t('infrastructures.infrastructure'), t('infrastructures.msg.confirm_reboot_rds'), 'warning').done(() => {
         rds.reboot_rds().done((data) => {
           self.reload();
-          alert_success()(data.message);
-        }).fail(alert_danger());
+          alertSuccess()(data.message);
+        }).fail(alertDanger());
       });
     },
     roundup(val) { return (Math.ceil(val)); },
@@ -195,7 +196,7 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       const self = this;
       const infra = new Infrastructure(this.infra_id);
       const rds = new RDSInstance(infra, this.physical_id);
@@ -206,14 +207,14 @@ module.exports = Vue.extend({
         if (self.rds.pending_modified_values.db_instance_class) {
           self.rds.db_instance_status = 'modifying';
         }
-        if (self.rds.db_instance_status == 'modifying' || self.rds.db_instance_status == 'stopping' || self.rds.db_instance_status == 'starting') {
+        if (self.rds.db_instance_status === 'modifying' || self.rds.db_instance_status === 'stopping' || self.rds.db_instance_status === 'starting') {
           setTimeout(() => {
             self.reload();
           }, 15000);
           self.modifying = true;
         }
         self.$parent.loading = false;
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alertAndShowInfra(infra.id));
     });
   },
   filters: {
