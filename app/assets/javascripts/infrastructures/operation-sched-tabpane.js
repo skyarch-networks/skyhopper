@@ -96,20 +96,20 @@ module.exports = Vue.extend({
     },
 
     repeat_selector() {
-      if (parseInt(this.sel_instance.repeat_freq, 0) === 1) {
+      if (parseInt(this.sel_instance.repeat_freq, 10) === 1) {
         $('#days-selector').hide();
         this.dates.forEach((item) => {
           item.checked = true;
         });
-      } else if (parseInt(this.sel_instance.repeat_freq, 0) === 2) {
+      } else if (parseInt(this.sel_instance.repeat_freq, 10) === 2) {
         $('#days-selector').hide();
         this.dates.forEach((item) => {
-          item.checked = !(parseInt(item.value, 0) === 6 || parseInt(item.value, 0) === 0);
+          item.checked = !(parseInt(item.value, 10) === 6 || parseInt(item.value, 10) === 0);
         });
-      } else if (parseInt(this.sel_instance.repeat_freq, 0) === 3) {
+      } else if (parseInt(this.sel_instance.repeat_freq, 10) === 3) {
         $('#days-selector').hide();
         this.dates.forEach((item) => {
-          item.checked = (parseInt(item.value, 0) === 6 || parseInt(item.value, 0) === 0);
+          item.checked = (parseInt(item.value, 10) === 6 || parseInt(item.value, 10) === 0);
         });
       } else {
         this.dates.forEach((item) => {
@@ -173,7 +173,7 @@ module.exports = Vue.extend({
           let dow = [];
           if (item.recurring_date.repeats === 'other') {
             item.recurring_date.dates.forEach((date) => {
-              if (date.checked === 'true') dow.push(parseInt(date.value, 0));
+              if (date.checked === 'true') dow.push(parseInt(date.value, 10));
             });
           } else if (item.recurring_date.repeats === 'everyday') {
             dow = [1, 2, 3, 4, 5, 6, 0];
@@ -237,12 +237,12 @@ module.exports = Vue.extend({
       return undefined;
     },
     coltxt_key(key) {
-      const [index] = this.$parent.index;
+      const { index } = this.$parent;
       return wrap(key, index);
     },
 
     table_text(value, key, lang) {
-      const [index] = this.$parent.index;
+      const { index } = this.$parent;
       return listen(value, key, index, lang);
     },
 
@@ -271,7 +271,7 @@ module.exports = Vue.extend({
     },
 
     is_specific() {
-      return (parseInt(this.sel_instance.repeat_freq, 0) === 4);
+      return (parseInt(this.sel_instance.repeat_freq, 10) === 4);
     },
 
     save_sched_err() {
