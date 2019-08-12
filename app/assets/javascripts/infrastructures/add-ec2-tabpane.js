@@ -1,10 +1,11 @@
-const Infrastructure = require('models/infrastructure').default;
-const Resource = require('models/resource').default;
-const EC2Instance = require('models/ec2_instance').default;
-const helpers = require('infrastructures/helper.js');
+const Infrastructure = require('../models/infrastructure').default;
+const Resource = require('../models/resource').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const helpers = require('../infrastructures/helper.js');
+const showInfra = require('../infrastructures/show_infra').default;
 
-const alert_success = helpers.alert_success;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const alertSuccess = helpers.alert_success;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
 module.exports = Vue.extend({
   template: '#add-ec2-tabpane-template',
@@ -30,10 +31,10 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const res = new Resource(infra);
       res.create(this.physical_id, this.screen_name)
-        .done(alert_success(() => {
-          require('infrastructures/show_infra').show_infra(infra.id);
+        .done(alertSuccess(() => {
+          showInfra.show_infra(infra.id);
         }))
-        .fail(alert_and_show_infra(infra.id));
+        .fail(alertAndShowInfra(infra.id));
     },
   },
 

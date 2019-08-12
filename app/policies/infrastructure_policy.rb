@@ -7,7 +7,6 @@
 #
 
 class InfrastructurePolicy < ApplicationPolicy
-
   %i[index? show? stack_events? get_schedule? show_rds? show_s3? show_elb?].each do |action|
     define_method(action) do
       user.allow?(record)
@@ -22,7 +21,7 @@ class InfrastructurePolicy < ApplicationPolicy
 
   %i[new? create?].each do |action|
     define_method(action) do
-      user.admin? and user.allow?(record) and not record.client.is_for_system?
+      user.admin? and user.allow?(record) and !record.client.for_system?
     end
   end
 end

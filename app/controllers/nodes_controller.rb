@@ -11,19 +11,20 @@
 class NodesController < ApplicationController
   include Concerns::InfraLogger
 
-
   # --------------- Auth
   before_action :authenticate_user!
   before_action :set_infra
 
   # infra
   before_action do
-    def @infra.policy_class; NodePolicy;end
+    def @infra.policy_class
+      NodePolicy
+    end
     authorize(@infra)
     @locale = I18n.locale
   end
 
-  before_action :check_register_in_knwon_hosts, only: [:yum_update, :run_ansible_playbook]
+  before_action :check_register_in_knwon_hosts, only: %i[yum_update run_ansible_playbook]
 
   # GET /nodes/i-0b8e7f12
   def show
@@ -33,7 +34,6 @@ class NodesController < ApplicationController
     instance          = @infra.instance(physical_id)
     @instance_summary = instance.summary
     @platform = @instance_summary[:platform]
-
 
     @security_groups = @instance_summary[:security_groups]
     @snapshot_schedules = {}
@@ -58,8 +58,8 @@ class NodesController < ApplicationController
 
     @info = {}
     status = resource.status
-    @info[:cook_status]       = status.cook
-    @info[:ansible_status]       = status.ansible
+    @info[:cook_status] = status.cook
+    @info[:ansible_status] = status.ansible
     @info[:servertest_status] = status.servertest
     @info[:update_status]     = status.yum
 
@@ -74,9 +74,8 @@ class NodesController < ApplicationController
 
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
-    render text: 'Sorry, not implemented yet.', status: 500
+    render text: 'Sorry, not implemented yet.', status: :internal_server_error
   end
-
 
   # POST /nodes/i-hogehoge/schedule_yum
   def schedule_yum
@@ -84,15 +83,15 @@ class NodesController < ApplicationController
     schedule    = params.require(:schedule).permit(:enabled, :frequency, :day_of_week, :time)
 
     ys = YumSchedule.find_by(physical_id: physical_id)
-    ys.update_attributes!(schedule)
+    ys.update!(schedule)
 
     if ys.enabled?
       PeriodicYumJob.set(
-        wait_until: ys.next_run
+        wait_until: ys.next_run,
       ).perform_later(physical_id, @infra, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.yum_updated'), status: 200 and return
+    render text: I18n.t('schedules.msg.yum_updated'), status: :ok and return
   end
 
   # GET /nodes/:id/get_rules
@@ -101,20 +100,19 @@ class NodesController < ApplicationController
 
     rules_summary =
       if group_ids.empty?
-        @infra.ec2.describe_security_groups()
+        @infra.ec2.describe_security_groups
       else
-        @infra.ec2.describe_security_groups({group_ids: group_ids})
+        @infra.ec2.describe_security_groups({ group_ids: group_ids })
       end
 
-    vpcs = @infra.ec2.describe_vpcs()
-
+    vpcs = @infra.ec2.describe_vpcs
 
     rules_summary[:security_groups].map do |item|
       check_socket(item.ip_permissions)
       check_socket(item.ip_permissions_egress)
     end
 
-    sec_groups = File.read("public/security_groups.json")
+    sec_groups = File.read('public/security_groups.json')
     @rules_summary = rules_summary[:security_groups]
     @vpcs = vpcs[:vpcs]
     @sec_groups = JSON.parse(sec_groups)
@@ -123,10 +121,10 @@ class NodesController < ApplicationController
   # GET /nodes/:id/get_security_groups
   def get_security_groups
     physical_id = params.require(:id)
-    av_g = @infra.ec2.describe_security_groups().to_h # Available groups
+    av_g = @infra.ec2.describe_security_groups.to_h # Available groups
     instance = @infra.instance(physical_id)
-    ex = [] #existing groups array
-    return_params = [] #filtered security groups
+    ex = [] # existing groups array
+    return_params = [] # filtered security groups
     instance.security_groups.each do |sec_group|
       ex.push(sec_group[:group_id])
     end
@@ -144,9 +142,9 @@ class NodesController < ApplicationController
   # POST /nodes/i-0b8e7f12/submit_groups
   def submit_groups
     physical_id = params.require(:id)
-    group_ids     = params.require(:group_ids)
+    group_ids = params.require(:group_ids)
 
-    @infra.ec2.modify_instance_attribute({instance_id: physical_id, groups: group_ids})
+    @infra.ec2.modify_instance_attribute({ instance_id: physical_id, groups: group_ids })
 
     render text: I18n.t('security_groups.msg.change_success')
   end
@@ -154,40 +152,40 @@ class NodesController < ApplicationController
   # POST /nodes/i-0b8e7f12/create_groups
   # POST /nodes/create_group/:group_params
   def create_group
-    group_params     = params.require(:group_params)
+    group_params = params.require(:group_params)
 
-    group_id = @infra.ec2.create_security_group({group_name: group_params[0], description: group_params[1], vpc_id: group_params[3]})
-    @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{key: 'Name', value: group_params[2]}])
+    group_id = @infra.ec2.create_security_group({ group_name: group_params[0], description: group_params[1], vpc_id: group_params[3] })
+    @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{ key: 'Name', value: group_params[2] }])
 
     render text: I18n.t('security_groups.msg.change_success')
   end
 
   def check_socket(field)
     field.map do |set|
-      if set.from_port == -1 || set.from_port == nil || set.from_port.zero?
+      if set.from_port == -1 || set.from_port.nil? || set.from_port.zero?
         set.prefix_list_ids = 'All'
       elsif set.from_port == 5439
         set.prefix_list_ids = 'Redshift'
       else
         begin
           set.prefix_list_ids = Socket.getservbyport(set.from_port, set.ip_protocol)
-        rescue
+        rescue StandardError
           set.prefix_list_ids = 'Unknown'
         end
       end
     end
 
-    return field
+    field
   end
 
   # PUT /nodes/:id/yum_update
   def yum_update
     physical_id = params.require(:id)
-    security    = params.require(:security) == "security"
-    exec        = params.require(:exec) == "exec"
+    security    = params.require(:security) == 'security'
+    exec        = params.require(:exec) == 'exec'
 
     exec_yum_update(@infra, physical_id, security, exec)
-    render text: I18n.t('nodes.msg.yum_update_started'), status: 202
+    render text: I18n.t('nodes.msg.yum_update_started'), status: :accepted
   end
 
   # GET /nodes/:id/edit_ansible_playbook
@@ -196,7 +194,7 @@ class NodesController < ApplicationController
     resource = @infra.resource(physical_id)
 
     @playbook_roles = resource.get_playbook_roles
-    @roles = Ansible::get_roles(Node::AnsibleWorkspacePath)
+    @roles = Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
     @extra_vars = resource.get_extra_vars
   end
 
@@ -204,20 +202,18 @@ class NodesController < ApplicationController
   def run_ansible_playbook
     physical_id = params.require(:id)
 
-    node = Node.new(physical_id)
-
     Thread.new_with_db do
       run_ansible_playbook_node(@infra, physical_id)
     end
 
-    render text: I18n.t('nodes.msg.playbook_applying'), status: 202
+    render text: I18n.t('nodes.msg.playbook_applying'), status: :accepted
   end
 
   # PUT /nodes/:id/update_ansible_playbook
   def update_ansible_playbook
     physical_id = params.require(:id)
-    playbook_roles     = params[:playbook_roles] || []
-    extra_vars     = params[:extra_vars] || '{}'
+    playbook_roles = params[:playbook_roles] || []
+    extra_vars = params[:extra_vars] || '{}'
 
     ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
 
@@ -225,9 +221,8 @@ class NodesController < ApplicationController
       render text: I18n.t('nodes.msg.playbook_updated') and return
     end
 
-    render text: ret[:message], status: 500 and return
+    render text: ret[:message], status: :internal_server_error and return
   end
-
 
   private
 
@@ -239,9 +234,9 @@ class NodesController < ApplicationController
       r.set_playbook_roles(playbook_roles)
       r.extra_vars = extra_vars
       r.save!
-    rescue => ex
+    rescue StandardError => ex
       infra_logger_fail("Updating playbook for #{physical_id} is failed. \n #{ex.message}")
-      return {status: false, message: ex.message}
+      return { status: false, message: ex.message }
     end
 
     # change ansiblestatus to unexected
@@ -249,7 +244,7 @@ class NodesController < ApplicationController
     r.status.servertest.un_executed!
 
     infra_logger_success("Updating playbook for #{physical_id} is successfully updated.")
-    return {status: true, message: nil}
+    { status: true, message: nil }
   end
 
   def run_ansible_playbook_node(infrastructure, physical_id)
@@ -266,31 +261,31 @@ class NodesController < ApplicationController
 
     begin
       node.run_ansible_playbook(infrastructure, r.get_playbook_roles, r.get_extra_vars) do |line|
-        ws.push_as_json({v: line})
+        ws.push_as_json({ v: line })
         Rails.logger.debug "running-ansible-playbook #{physical_id} > #{line}"
         log << line
       end
-    rescue => ex
+    rescue StandardError => ex
       Rails.logger.debug(ex)
       r.status.ansible.failed!
       infra_logger_fail("Run ansible-playbook for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-      ws.push_as_json({v: false})
+      ws.push_as_json({ v: false })
       return
     end
 
     r.status.ansible.success!
 
     infra_logger_success("Run ansible-playbook for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: infrastructure.id, user_id: user_id)
-    ws.push_as_json({v: true})
+    ws.push_as_json({ v: true })
   end
 
   # TODO: DRY
-  def exec_yum_update(infra, physical_id, security=true, exec=false)
+  def exec_yum_update(infra, physical_id, security = true, exec = false)
     Thread.new_with_db(infra, current_user.id) do |this_infra, user_id|
-      yum_screen_name = "yum "
-      yum_screen_name << " check" unless exec
-      yum_screen_name << " security" if security
-      yum_screen_name << " update"
+      yum_screen_name = 'yum '
+      yum_screen_name << ' check' unless exec
+      yum_screen_name << ' security' if security
+      yum_screen_name << ' update'
       infra_logger_success("#{yum_screen_name} for #{physical_id} is started.", infrastructure_id: this_infra.id, user_id: user_id)
 
       r = this_infra.resource(physical_id)
@@ -305,19 +300,19 @@ class NodesController < ApplicationController
 
       begin
         node.yum_update(this_infra, security, exec) do |line|
-          ws.push_as_json({v: line})
+          ws.push_as_json({ v: line })
           Rails.logger.debug "#{yum_screen_name} #{physical_id} > #{line}"
           log << line
         end
-      rescue => ex
+      rescue StandardError => ex
         Rails.logger.debug(ex)
         infra_logger_fail("#{yum_screen_name} for #{physical_id} is failed.\nlog:\n#{log.join("\n")}", infrastructure_id: this_infra.id, user_id: user_id)
         r.status.yum.failed!
-        ws.push_as_json({v: false})
+        ws.push_as_json({ v: false })
       else
         infra_logger_success("#{yum_screen_name} for #{physical_id} is successfully finished.\nlog:\n#{log.join("\n")}", infrastructure_id: this_infra.id, user_id: user_id)
         r.status.yum.success!
-        ws.push_as_json({v: true})
+        ws.push_as_json({ v: true })
       end
     end
   end

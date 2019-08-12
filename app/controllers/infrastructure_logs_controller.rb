@@ -22,7 +22,7 @@ class InfrastructureLogsController < ApplicationController
   # GET /infrastructure_logs/download_all
   def download_all
     infrastructure_logs = get_infrastructure_logs
-    now_text = Time.now.strftime('%Y%m%d%H%M%S')
+    now_text = Time.zone.now.strftime('%Y%m%d%H%M%S')
     filename = "infrastrucure_logs-#{now_text}.zip"
     infrastructure_logs.export_as_zip do |zipfile|
       send_file(zipfile.path, filename: filename)
@@ -57,6 +57,7 @@ class InfrastructureLogsController < ApplicationController
     if params[:sort_key].nil? && params[:order].nil?
       return 'DESC'
     end
+
     params[:order].to_i >= 0 ? 'ASC' : 'DESC'
   end
 end

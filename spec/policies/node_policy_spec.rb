@@ -9,14 +9,14 @@
 require_relative '../spec_helper'
 
 describe NodePolicy do
-  subject{described_class}
+  subject { described_class }
 
-  let(:master_admin){build_stubbed(:user, master: true,  admin: true)}
-  let(:master){      build_stubbed(:user, master: true,  admin: false)}
-  let(:admin){       build_stubbed(:user, master: false, admin: true)}
-  let(:normal){      build_stubbed(:user, master: false, admin: false)}
+  let(:master_admin) { build_stubbed(:user, master: true, admin: true) }
+  let(:master) {      build_stubbed(:user, master: true,  admin: false) }
+  let(:admin) {       build_stubbed(:user, master: false, admin: true) }
+  let(:normal) {      build_stubbed(:user, master: false, admin: false) }
 
-  let(:infra){build_stubbed(:infrastructure)}
+  let(:infra) { build_stubbed(:infrastructure) }
 
   %i[show?].each do |action|
     permissions action do

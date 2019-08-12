@@ -9,14 +9,14 @@
 require_relative '../spec_helper'
 
 describe InfrastructurePolicy do
-  subject{described_class}
+  subject { described_class }
 
-  let(:master_admin){build_stubbed(:user, master: true,  admin: true)}
-  let(:master){      build_stubbed(:user, master: true,  admin: false)}
-  let(:admin){       build_stubbed(:user, master: false, admin: true)}
-  let(:normal){      build_stubbed(:user, master: false, admin: false)}
+  let(:master_admin) { build_stubbed(:user, master: true, admin: true) }
+  let(:master) {      build_stubbed(:user, master: true,  admin: false) }
+  let(:admin) {       build_stubbed(:user, master: false, admin: true) }
+  let(:normal) {      build_stubbed(:user, master: false, admin: false) }
 
-  let(:infra){build_stubbed(:infrastructure)}
+  let(:infra) { build_stubbed(:infrastructure) }
 
   %i[index? show? stack_events? show_rds? show_s3? show_elb?].each do |action|
     permissions action do
@@ -70,7 +70,7 @@ describe InfrastructurePolicy do
 
   %i[new? create?].each do |action|
     permissions action do
-      let(:infra){create(:infrastructure)}
+      let(:infra) { create(:infrastructure) }
 
       context 'when allowed user' do
         before do
@@ -95,7 +95,7 @@ describe InfrastructurePolicy do
 
       context 'when client is for system' do
         before do
-          allow_any_instance_of(Client).to receive(:is_for_system?).and_return(true)
+          allow_any_instance_of(Client).to receive(:for_system?).and_return(true)
         end
 
         it 'should deny' do

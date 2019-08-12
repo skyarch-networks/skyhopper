@@ -1,25 +1,24 @@
 const queryString = require('query-string');
 
 const SHOW_INFRA_ID = '#infra-show';
-var show_infra;
 
-const initialize = function (show_infra_func) {
-  show_infra = show_infra_func;
+const initialize = (showInfraFunc) => {
+  showInfra = showInfraFunc;
 };
 
-var show_infra = function (infra_id, current_tab) {
-  show_infra(infra_id, current_tab);
+let showInfra = (infraId, currentTab) => {
+  showInfra(infraId, currentTab);
 };
 
-const reload_infra_index_page = function () {
-  const parsed_query_string = queryString.parse(location.search);
-  const project_id_query = parsed_query_string.project_id ? `&project_id=${parsed_query_string.project_id}` : '';
-  location.href = `/infrastructures?lang=${parsed_query_string.lang}${project_id_query}`;
+const reloadInfraIndexPage = () => {
+  const parsedQueryString = queryString.parse(window.location.search);
+  const projectIdQuery = parsedQueryString.project_id ? `&project_id=${parsedQueryString.project_id}` : '';
+  window.location.href = `/infrastructures?lang=${parsedQueryString.lang}${projectIdQuery}`;
 };
 
 module.exports = {
   SHOW_INFRA_ID,
   initialize,
-  show_infra,
-  reload_infra_index_page,
+  show_infra: showInfra,
+  reload_infra_index_page: reloadInfraIndexPage,
 };

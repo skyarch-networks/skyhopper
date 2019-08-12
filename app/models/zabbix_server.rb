@@ -9,15 +9,15 @@ class ZabbixServer < ActiveRecord::Base
   cryptize :password
 
   def self.selected_zabbix(zabbix_id)
-    return self.all.map {|z|
+    all.map do |z|
       {
         id: z.id,
         fqdn: z.fqdn,
         version: z.version,
         details: z.details,
-        created_at: z.created_at.strftime("%B %d, %Y at %l:%m %p %Z"),
+        created_at: z.created_at.strftime('%B %d, %Y at %l:%m %p %Z'),
         is_checked: (z.id == zabbix_id),
       }
-    }
+    end
   end
 end

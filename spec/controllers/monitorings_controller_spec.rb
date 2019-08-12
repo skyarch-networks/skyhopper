@@ -13,16 +13,15 @@ RSpec.describe MonitoringsController, type: :controller do
   stubize_zabbix
   run_zabbix_server
 
-  let(:infra){create(:infrastructure)}
-  let(:zabbix_server){create(:zabbix_server)}
-  let(:physical_id){"i-#{SecureRandom.base64(10)}"}
+  let(:infra) { create(:infrastructure) }
+  let(:zabbix_server) { create(:zabbix_server) }
+  let(:physical_id) { "i-#{SecureRandom.base64(10)}" }
 
   describe '#show' do
-    let(:req){get :show, id: infra.id}
-
+    let(:req) { get :show, id: infra.id }
 
     before do
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
       create(:ec2_resource, infrastructure: infra)
     end
 
@@ -65,9 +64,9 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_cloudwatch_graph' do
-    let(:req){get :show_cloudwatch_graph, id: infra.id, physical_id: physical_id}
-    let(:cloud_watch){double(:cloud_watch)}
-    let(:net_data){['foo', 'bar']}
+    let(:req) { get :show_cloudwatch_graph, id: infra.id, physical_id: physical_id }
+    let(:cloud_watch) { double(:cloud_watch) }
+    let(:net_data) { %w[foo bar] }
 
     before do
       allow(CloudWatch).to receive(:new).with(kind_of(Infrastructure)).and_return(cloud_watch)
@@ -84,12 +83,12 @@ RSpec.describe MonitoringsController, type: :controller do
 
   # TODO: context mysql.login
   describe '#show_zabbix_graph' do
-    let(:item_key){SecureRandom.base64(10)}
-    let(:req){get :show_zabbix_graph, physical_id: physical_id, item_key: item_key, id: infra.id}
-    let(:history){['foo', 'bar', 'hoge']}
+    let(:item_key) { SecureRandom.base64(10) }
+    let(:req) { get :show_zabbix_graph, physical_id: physical_id, item_key: item_key, id: infra.id }
+    let(:history) { %w[foo bar hoge] }
     before do
       create(:resource, infrastructure: infra, physical_id: physical_id)
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
       allow(_zabbix).to receive(:get_history).and_return(history)
       req
     end
@@ -102,10 +101,10 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_problems' do
-    let(:req){get :show_problems, id: infra.id}
-    let(:problems){['foo', 'bar', 'nya']}
+    let(:req) { get :show_problems, id: infra.id }
+    let(:problems) { %w[foo bar nya] }
     before do
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
       allow(_zabbix).to receive(:show_recent_problems).and_return(problems).with(kind_of(Infrastructure))
       req
     end
@@ -118,10 +117,10 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_url_status' do
-    let(:req){get :show_url_status, id: infra.id}
-    let(:url_status){{'foo '=> 'bar', 'piyo' => 'poyo'}}
+    let(:req) { get :show_url_status, id: infra.id }
+    let(:url_status) { { 'foo ' => 'bar', 'piyo' => 'poyo' } }
     before do
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
       allow(_zabbix).to receive(:get_url_status_monitoring).and_return(url_status).with(kind_of(Infrastructure))
       req
     end
@@ -134,10 +133,10 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#edit' do
-    let(:req){get :edit, id: infra.id}
+    let(:req) { get :edit, id: infra.id }
     before do
       create(:ec2_resource, infrastructure: infra)
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
     end
 
     context 'before register' do
@@ -150,8 +149,8 @@ RSpec.describe MonitoringsController, type: :controller do
     end
 
     context 'after register' do
-      let(:exprs){double('trigger-expressions')}
-      let(:web_scenarios){double('web-scenarios')}
+      let(:exprs) { double('trigger-expressions') }
+      let(:web_scenarios) { double('web-scenarios') }
       before do
         allow(_zabbix).to receive(:host_exists?).and_return(true)
         allow(_zabbix).to receive(:get_trigger_expressions_by_hostname).with(kind_of(String)).and_return(exprs)
@@ -182,12 +181,12 @@ RSpec.describe MonitoringsController, type: :controller do
   describe '#create_host' do
     before do
       create(:ec2_resource, infrastructure: infra)
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
     end
-    let(:req){post :create_host, id: infra.id, templates: ['Template OS Linux']}
+    let(:req) { post :create_host, id: infra.id, templates: ['Template OS Linux'] }
 
     context 'when success' do
-      before{req}
+      before { req }
       should_be_success
     end
 
@@ -204,18 +203,18 @@ RSpec.describe MonitoringsController, type: :controller do
   describe '#change_zabbix_server' do
     before do
       create(:ec2_resource, infrastructure: infra)
-      allow(ZabbixServer).to receive(:find) {zabbix_server}
+      allow(ZabbixServer).to receive(:find) { zabbix_server }
     end
-    let(:req){post :change_zabbix_server, id: infra.id, zabbix_id: zabbix_server.id}
+    let(:req) { post :change_zabbix_server, id: infra.id, zabbix_id: zabbix_server.id }
 
     context 'when success' do
-      before{req}
+      before { req }
       should_be_success
     end
 
     context 'when failure' do
       before do
-        allow(_zabbix).to receive(:find){''}.and_raise
+        allow(_zabbix).to receive(:find) { '' }.and_raise
         post :change_zabbix_server, id: infra.id, zabbix_id: ''
       end
 

@@ -13,7 +13,9 @@ class DatabasesController < ApplicationController
     authenticate_user!
 
     man = DatabaseManager.new
-    def man.policy_class; DatabasePolicy end
+    def man.policy_class
+      DatabasePolicy
+    end
     authorize man
   end
 
@@ -23,7 +25,7 @@ class DatabasesController < ApplicationController
   def export
     authenticate_user!
 
-    time = Time.now.strftime('%Y%m%d%H%M%S')
+    time = Time.zone.now.strftime('%Y%m%d%H%M%S')
     zipfile = DatabaseManager.export_as_zip
     send_file(zipfile.path, filename: "SkyHopper-db-#{Rails.env}-#{time}.zip")
     zipfile.close
@@ -35,9 +37,9 @@ class DatabasesController < ApplicationController
 
     DatabaseManager.validate_zip_file!(file.path)
 
-    reason = I18n.available_locales.map { |locale|
+    reason = I18n.available_locales.map do |locale|
       I18n.t('databases.msg.under_maintenance', locale: locale)
-    }.join
+    end.join
     MaintenanceMode.activate(reason: reason)
 
     Thread.new do
@@ -48,13 +50,14 @@ class DatabasesController < ApplicationController
   end
 
   private
+
   def app_setting_is_set
     @app_setting_is_set ||= AppSetting.set?
   end
 
   def import_zip(file)
     DatabaseManager.import_from_zip(file.path)
-  rescue => ex
+  rescue StandardError => ex
     Rails.cache.write(:err, "#{ex.inspect}\n#{ex.backtrace.join}")
   ensure
     file.close

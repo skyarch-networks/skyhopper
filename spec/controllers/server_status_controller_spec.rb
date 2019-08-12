@@ -11,7 +11,7 @@ require_relative '../spec_helper'
 describe ServerStatusController, type: :controller do
   login_user
 
-  let(:server){double(:server, start: nil, stop: nil, kind: nil)}
+  let(:server) { double(:server, start: nil, stop: nil, kind: nil) }
   before do
     allow(ServerState).to receive(:new).and_return(server)
     allow(ServerStateWorker).to receive(:perform_now)
@@ -20,7 +20,7 @@ describe ServerStatusController, type: :controller do
   describe '#start' do
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        before{post :start, kind: kind}
+        before { post :start, kind: kind }
         should_be_success
       end
     end
@@ -29,24 +29,24 @@ describe ServerStatusController, type: :controller do
   describe '#stop' do
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        before{post :stop, kind: kind}
+        before { post :stop, kind: kind }
         should_be_success
       end
     end
   end
 
   describe '#status' do
-    let(:status){'hogefuga'}
+    let(:status) { 'hogefuga' }
     before do
       allow(server).to receive(:status).and_return(status)
-      allow(server).to receive(:is_in_progress?).and_return(false)
+      allow(server).to receive(:in_progress?).and_return(false)
     end
 
     %w[zabbix].each do |kind|
       context "when #{kind}" do
         context 'when not work background' do
-          let(:req){post :status, kind: kind}
-          before{req}
+          let(:req) { post :status, kind: kind }
+          before { req }
 
           should_be_success
 
@@ -56,12 +56,12 @@ describe ServerStatusController, type: :controller do
         end
 
         context 'when work background' do
-          let(:req){post :status, kind: kind, background: true}
-          #TODO:
+          let(:req) { post :status, kind: kind, background: true }
+          # TODO:
         end
 
         context 'when server in progress' do
-          #TODO:
+          # TODO:
         end
       end
     end

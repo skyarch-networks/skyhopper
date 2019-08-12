@@ -9,7 +9,7 @@
 require 'rails_helper'
 
 RSpec.describe Monitoring, type: :model do
-  it "is valid with valid attributes" do
+  it 'is valid with valid attributes' do
     expect(Monitoring.new).to be_valid
   end
 end

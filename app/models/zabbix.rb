@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
@@ -11,8 +10,8 @@
 #
 # physical_id を host の名前として扱う。
 class Zabbix
-  DefaultUsergroupName = "No access to the frontend".freeze
-  MasterUsergroupName = "master".freeze
+  DEFAULT_USERGROUP_NAME = 'No access to the frontend'.freeze
+  MASTER_USERGROUP_NAME = 'master'.freeze
 
   class ZabbixError < ::StandardError; end
 
@@ -23,7 +22,7 @@ class Zabbix
   def initialize(fqdn, username, password)
     url = "http://#{fqdn}/zabbix/api_jsonrpc.php"
 
-    opt = {url: url, user: username, password: password}
+    opt = { url: url, user: username, password: password }
     opt[:debug] = true if Rails.env.development?
 
     begin
@@ -37,21 +36,20 @@ class Zabbix
     rescue Errno::ETIMEDOUT => ex
       raise ex, I18n.t('zabbix_servers.msg.connrefused') + "\n #{ex.message}"
     end
-
   end
 
   # ホストが存在するかをbooleanで返す
   # @param [String] physical_id
   # @return [TrueClass|FalseClass]
   def host_exists?(physical_id)
-    return !!get_host_id(physical_id)
+    !!get_host_id(physical_id)
   end
 
   # user が存在するかを返す。
   # @param [String] user_name Email address of SkyHopper user
   # @return [TrueClass|FalseClass]
   def user_exists?(user_name)
-    return !!@sky_zabbix.user.get_id(alias: user_name)
+    !!@sky_zabbix.user.get_id(alias: user_name)
   end
 
   # ホストにテンプレートを追加する
@@ -59,11 +57,11 @@ class Zabbix
   # @param [Array<String>] テンプレートの名前の配列
   def templates_link_host(physical_id, template_names)
     host_id = get_host_id(physical_id)
-    template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
+    template_ids = @sky_zabbix.template.get(filter: { host: template_names }).map { |x| x['templateid'] }
 
-    return @sky_zabbix.template.massadd(
-      hosts: [{hostid: host_id}],
-      templates: template_ids.map{|x| {templateid: x}}
+    @sky_zabbix.template.massadd(
+      hosts: [{ hostid: host_id }],
+      templates: template_ids.map { |x| { templateid: x } },
     )
   end
 
@@ -72,11 +70,11 @@ class Zabbix
   # @param [Array<String>] テンプレートの名前の配列
   def templates_link_host_build(physical_id, template_names)
     host_id = get_host_id(physical_id)
-    template_ids = @sky_zabbix.template.get(filter: {host: template_names}).map{|x|x['templateid']}
+    template_ids = @sky_zabbix.template.get(filter: { host: template_names }).map { |x| x['templateid'] }
 
-    return @sky_zabbix.template.build_massadd(
-      hosts: [{hostid: host_id}],
-      templates: template_ids.map{|x| {templateid: x}}
+    @sky_zabbix.template.build_massadd(
+      hosts: [{ hostid: host_id }],
+      templates: template_ids.map { |x| { templateid: x } },
     )
   end
 
@@ -87,20 +85,18 @@ class Zabbix
   # @return [Array<Object>] Objects containing the IDS of the updated templates
   def templates_update_host(physical_id, new_templates, clear_templates)
     host_id = get_host_id(physical_id)
-    add_ids = @sky_zabbix.template.get(filter: {host: new_templates}).map{|x|x['templateid']}
-    clear_ids = @sky_zabbix.template.get(filter: {host: clear_templates}).map{|x|x['templateid']}
+    add_ids = @sky_zabbix.template.get(filter: { host: new_templates }).map { |x| x['templateid'] }
+    clear_ids = @sky_zabbix.template.get(filter: { host: clear_templates }).map { |x| x['templateid'] }
     @sky_zabbix.template.massremove(hostids: [host_id], templateids: clear_ids)
-    @sky_zabbix.template.massadd(hosts: [{hostid: host_id}],templates: add_ids.map{|x| {templateid: x}})
-
+    @sky_zabbix.template.massadd(hosts: [{ hostid: host_id }], templates: add_ids.map { |x| { templateid: x } })
   end
 
   # get available tempaltes from zabbix
   # @param  request the contents of the return templates from zabbix
   # @return [Array<String>]
   def available_templates
-    templates = @sky_zabbix.template.get(output: ['name']).map{|x|x['name']}
-    return templates
-
+    templates = @sky_zabbix.template.get(output: ['name']).map { |x| x['name'] }
+    templates
   end
 
   # get the seleted/link templates of the seleted host
@@ -108,13 +104,9 @@ class Zabbix
   # @return [Array<String>] list of linked templates
   def get_linked_templates(physical_id)
     host_id = get_host_id(physical_id)
-    if host_id
-      selected_templates = @sky_zabbix.template.get(output: ['name', 'description'], hostids: host_id).map{|x|x['name']}
-      return selected_templates
-    else
-      return nil
-    end
+    return nil unless host_id
 
+    @sky_zabbix.template.get(output: %w[name description], hostids: host_id).map { |x| x['name'] }
   end
 
   # トリガーのオンオフを切り替える
@@ -135,42 +127,40 @@ class Zabbix
       # データベースにはitemkeyとしてmysql.loginが保存されているので
       # 実際にitemkeyとして設定されている値をzabbixから取ってきて
       # replaceしています
-      if idx = item_keys.index('mysql.login')
-        item_keys[idx] = get_item_info(r.physical_id, 'mysql.login', "search").first["key_"]
+      if (idx = item_keys.index('mysql.login'))
+        item_keys[idx] = get_item_info(r.physical_id, 'mysql.login', 'search').first['key_']
       end
 
-      item_infos = get_item_info(r.physical_id, item_keys, "filter")
+      item_infos = get_item_info(r.physical_id, item_keys, 'filter')
       item_infos.each do |item|
         # もしアイテムをZabbixに足したなら必ずそれに紐づくトリガーも作成して下さい
         # ここでエラーを吐きます↓
-        if item["triggers"].any?
-          selected_triggerids.push(item["triggers"].first["triggerid"])
+        if item['triggers'].any?
+          selected_triggerids.push(item['triggers'].first['triggerid'])
         end
-
       end
     end
 
     # すべてのtriggerを一旦Enableにし、選択されていないTriggerをすべてDisableにする。
     # ZabbixとSkyHopperの整合性を保つため。
     enable_trigger(selected_triggerids)
-    unselected_triggerids = all_triggers.reject{|trigger| selected_triggerids.include?(trigger)}
+    unselected_triggerids = all_triggers.reject { |trigger| selected_triggerids.include?(trigger) }
     disable_trigger(unselected_triggerids)
   end
 
   # TODO コメント
   # trigger_exprs => {item_key: expression}
   def update_trigger_expression(infra, trigger_exprs)
-
     triggers = infra.resources.ec2.map do |r|
-      item_infos = get_item_info(r.physical_id, trigger_exprs.keys, "filter")
+      item_infos = get_item_info(r.physical_id, trigger_exprs.keys, 'filter')
       item_infos.map do |item|
-        if item["triggers"].any?
-          updating_expr = trigger_exprs[item["key_"]].sub("HOSTNAME", r.physical_id)
-          {
-            triggerid: item["triggers"].first["triggerid"],
-            expression: updating_expr,
-          }
-        end
+        next unless item['triggers'].any?
+
+        updating_expr = trigger_exprs[item['key_']].sub('HOSTNAME', r.physical_id)
+        {
+          triggerid: item['triggers'].first['triggerid'],
+          expression: updating_expr,
+        }
       end
     end.flatten
 
@@ -185,29 +175,29 @@ class Zabbix
   def update_expression(trigger_id, expression)
     @sky_zabbix.trigger.update(
       expression: expression,
-      triggerid: trigger_id
+      triggerid: trigger_id,
     )
   end
 
   # mysqlのアイテムキーとトリガーをアップデートしています
   def update_mysql(infra, fqdn)
-    key = "mysql.login"
+    key = 'mysql.login'
     infra.resources.ec2.each do |r|
-      item_infos = get_item_info(r.physical_id, key, "search")
+      item_infos = get_item_info(r.physical_id, key, 'search')
       host_key =
         if fqdn
-          "[" + fqdn + "]"
+          '[' + fqdn + ']'
         else
-          ""
+          ''
         end
 
       @sky_zabbix.item.update(
-        itemid: item_infos.first["itemid"],
-        key_: key + host_key
+        itemid: item_infos.first['itemid'],
+        key_: key + host_key,
       )
 
       expression = "{#{r.physical_id}:mysql.login#{host_key}.last(0)}=1"
-      update_expression(item_infos.first["triggers"].first["triggerid"], expression)
+      update_expression(item_infos.first['triggers'].first['triggerid'], expression)
     end
   end
 
@@ -215,15 +205,15 @@ class Zabbix
   # @return [Array<Hash>]  item_key => trigger_expression
   def get_trigger_expressions_by_hostname(hostname)
     datas = @sky_zabbix.trigger.get(
-      output: [
-        "triggeid",
-        "expression",
+      output: %w[
+        triggeid
+        expression
       ],
       filter: {
         host: hostname,
       },
       expandExpression: true,
-      selectItems: [:key_]
+      selectItems: [:key_],
     )
 
     # ホストネームの部分をHOSTNAMEと置換えている
@@ -231,11 +221,11 @@ class Zabbix
     # infra.js edit monitoring component created 参照
     expression_hash = {}
     datas.each do |data|
-      data["expression"][/\{(i-[a-z0-9]+):/, 1] = "HOSTNAME"
-      expression_hash[data["items"].first["key_"]] = data["expression"]
+      data['expression'][/\{(i-[a-z0-9]+):/, 1] = 'HOSTNAME'
+      expression_hash[data['items'].first['key_']] = data['expression']
     end
 
-    return expression_hash
+    expression_hash
   end
 
   # Zabbix Serverにホストを登録する。
@@ -249,16 +239,16 @@ class Zabbix
     @sky_zabbix.host.create(
       host: physical_id,
       interfaces: [{
-        type:  1,
-        main:  1,
-        ip:    ec2.ip_addr,
-        dns:   ec2.fqdn,
-        port:  10050,
+        type: 1,
+        main: 1,
+        ip: ec2.ip_addr,
+        dns: ec2.fqdn,
+        port: 10_050,
         useip: 0,
       }],
       groups: [
         groupid: hostgroup_id,
-      ]
+      ],
     )
   end
 
@@ -268,19 +258,19 @@ class Zabbix
   def create_elb_host(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
-    return @sky_zabbix.host.create(
+    @sky_zabbix.host.create(
       host: infra_to_elb_hostname(infra),
       interfaces: [{
         type: 1,
         main: 1,
         useip: 1,
-        ip: "127.0.0.1",
-        dns: "",
-        port: "10050",
+        ip: '127.0.0.1',
+        dns: '',
+        port: '10050',
       }],
       groups: [
         groupid: hostgroup_id,
-      ]
+      ],
     )
   end
 
@@ -290,19 +280,19 @@ class Zabbix
   def create_elb_host_build(infra)
     hostgroup_id = get_hostgroup_id(infra.project.code)
 
-    return @sky_zabbix.host.build_create(
+    @sky_zabbix.host.build_create(
       host: infra_to_elb_hostname(infra),
       interfaces: [{
         type: 1,
         main: 1,
         useip: 1,
-        ip: "127.0.0.1",
-        dns: "",
-        port: "10050",
+        ip: '127.0.0.1',
+        dns: '',
+        port: '10050',
       }],
       groups: [
         groupid: hostgroup_id,
-      ]
+      ],
     )
   end
 
@@ -310,18 +300,18 @@ class Zabbix
   # @param [String] group_name
   # @return [String] ID of created hostgroup
   def add_hostgroup(group_name)
-    return @sky_zabbix.hostgroup.create(
-      name: group_name
-    )["groupids"].first
+    @sky_zabbix.hostgroup.create(
+      name: group_name,
+    )['groupids'].first
   end
 
-  PermissionAccessDenied = 0
-  PermissionRead         = 2
-  PermissionReadWrite    = 3
+  PERMISSION_ACCESS_DENIED = 0
+  PERMISSION_READ = 2
+  PERMISSION_READ_WRITE = 3
   # User Group を作成する。
   # @param [String] group_name     作成するUserGroupの名前
   # @param [Integer] host_group_id 権限を与えるホストグループのID
-  # @param [Integer] permission    与える権限の種類。 PermissionRead, PermissionRead or PermissionReadWrite.
+  # @param [Integer] permission    与える権限の種類。 PERMISSION_READ, PERMISSION_READ or PERMISSION_READ_WRITE.
   # @return [String] ID of created usergroup.
   def create_usergroup(group_name, host_group_id = nil, permission = nil)
     q = { name: group_name }
@@ -332,7 +322,7 @@ class Zabbix
       }
     end
 
-    return @sky_zabbix.usergroup.create(q)["usrgrpids"].first
+    @sky_zabbix.usergroup.create(q)['usrgrpids'].first
   end
 
   # master usergroup が読み取り権限を持つホストグループを、hostgroup_ids に変更する。
@@ -340,7 +330,7 @@ class Zabbix
   def change_mastergroup_rights(hostgroup_ids)
     @sky_zabbix.usergroup.massupdate(
       usrgrpids: [get_master_usergroup_id],
-      rights: hostgroup_ids.map{|id| {permission: PermissionRead, id: id}}
+      rights: hostgroup_ids.map { |id| { permission: PERMISSION_READ, id: id } },
     )
   end
 
@@ -356,11 +346,11 @@ class Zabbix
     usergroup_info = @sky_zabbix.usergroup.get(
       filter: {
         name: group_name,
-      }
+      },
     )
 
-    usergroup_ids = usergroup_info.map{|info| info["usrgrpid"]}
-    return usergroup_ids
+    usergroup_ids = usergroup_info.map { |info| info['usrgrpid'] }
+    usergroup_ids
   end
 
   # @param [String] group_name
@@ -376,14 +366,14 @@ class Zabbix
       output: 'extend',
       filter: {
         name: hostgroup_names,
-      }
+      },
     )
 
-    return hostgroup_info.map{|i| i["groupid"]}
+    hostgroup_info.map { |i| i['groupid'] }
   end
 
   def get_hostgroup_id(group_name)
-    return get_hostgroup_ids(group_name).first
+    get_hostgroup_ids(group_name).first
   end
 
   # @param [User] User of SkyHopper
@@ -392,94 +382,89 @@ class Zabbix
     type  = get_user_type_by_user(user)
     group = get_group_id_by_user(user)
 
-    return @sky_zabbix.user.create(
-      alias:  user.email,
+    @sky_zabbix.user.create(
+      alias: user.email,
       passwd: user.encrypted_password,
       usrgrps: [
         usrgrpid: group,
       ],
-      type: type
+      type: type,
     )['userids'].first
   end
 
   def get_user_id(username)
     user_info = @sky_zabbix.user.get(
-      filter: { alias: username }
+      filter: { alias: username },
     )
-    unless user_info.first.nil?
-      return user_info.first['userid']
-    else
-      return nil
-    end
+    return nil if user_info.first.nil?
 
+    user_info.first['userid']
   end
 
-  UserTypeDefault    = 1
-  UserTypeAdmin      = 2
-  UserTypeSuperAdmin = 3
+  USER_TYPE_DEFAULT    = 1
+  USER_TYPE_ADMIN      = 2
+  USER_TYPE_SUPER_ADMIN = 3
   # Zabbix上のユーザを指定したユーザーグループに移動する。またUserTypeを変更する。
   # @param [String] user_id ID of Zabbix user
   # @param [Array<String>] usergroup_ids
   # @param [Integer] type
   # @param [String] password
-  def update_user(user_id, usergroup_ids: nil, type: UserTypeDefault, password: nil)
+  def update_user(user_id, usergroup_ids: nil, type: USER_TYPE_DEFAULT, password: nil)
     @sky_zabbix.user.update(
-      userid:  user_id,
+      userid: user_id,
       usrgrps: usergroup_ids,
-      passwd:  password,
-      type:    type
+      passwd: password,
+      type: type,
     )
   end
 
   def delete_user(username)
-    if get_user_id(username).nil?
-      raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username)
-    else
-      @sky_zabbix.user.delete([get_user_id(username)])
-    end
+    raise ZabbixError, I18n.t('monitoring.msg.no_user', user: username) if get_user_id(username).nil?
+
+    @sky_zabbix.user.delete([get_user_id(username)])
   end
 
   # master usergroupのIDを返す。もし master usergroup が存在しなければ usergroup を作成する。
   # ==== return
   # usergroup ID (Integer)
   def get_master_usergroup_id
-    @@master_usergroup_id ||= (get_usergroup_ids(MasterUsergroupName).first || create_usergroup(MasterUsergroupName))
+    @@master_usergroup_id ||= (get_usergroup_ids(MASTER_USERGROUP_NAME).first || create_usergroup(MASTER_USERGROUP_NAME))
   end
 
   def get_default_usergroup_id
-    @@default_usergroup_id ||= get_usergroup_ids(DefaultUsergroupName).first
+    @@default_usergroup_id ||= get_usergroup_ids(DEFAULT_USERGROUP_NAME).first
   end
 
   # @param [User] user is a Skyhopper user.
   def get_group_id_by_user(user)
-    if user.master? and not user.admin?
-      return get_master_usergroup_id
+    if user.master? and !user.admin?
+      get_master_usergroup_id
     else
-      return get_default_usergroup_id
+      get_default_usergroup_id
     end
   end
 
   # @param [User] user is a Skyhopper user.
   def get_user_type_by_user(user)
     if user.master? and user.admin?
-      return UserTypeSuperAdmin
+      USER_TYPE_SUPER_ADMIN
     else
-      return UserTypeDefault
+      USER_TYPE_DEFAULT
     end
   end
 
-  #Item_keyはItemの情報を得る為に使われる
-  #返される値はGoogle Chart用のフォーマットに変更された
-  #アイテムのヒストリー情報
+  # Item_keyはItemの情報を得る為に使われる
+  # 返される値はGoogle Chart用のフォーマットに変更された
+  # アイテムのヒストリー情報
   def get_history(physical_id, item_key, date_range)
-    item_info = get_item_info(physical_id, item_key, "filter")
+    item_info = get_item_info(physical_id, item_key, 'filter')
     raise ZabbixError, item_key.to_s + I18n.t('monitoring.msg.not_set') if item_info.blank?
 
     # データによってオブジェクトのタイプが違う
     # 3 integer, 0 float
     type =
       case item_key
-      when "vm.memory.size[available]", "net.tcp.service[http]", "net.tcp.service[smtp]"
+      when 'vm.memory.size[available]', 'net.tcp.service[http]', 'net.tcp.service[smtp]'
         3
       else
         0
@@ -489,32 +474,32 @@ class Zabbix
       case date_range
       when nil
         @sky_zabbix.history.get(
-          output: "extend",
+          output: 'extend',
           history: type,
-          itemids: item_info.first["itemid"],
+          itemids: item_info.first['itemid'],
           sortfield: 'clock',
           sortorder: 'ASC',
-          limit: 30
+          limit: 30,
         )
       else
         @sky_zabbix.history.get(
-          output: "extend",
+          output: 'extend',
           history: type,
-          itemids: item_info.first["itemid"],
+          itemids: item_info.first['itemid'],
           sortfield: 'clock',
           sortorder: 'ASC',
           time_from: date_range[0],
-          time_till: date_range[1]
+          time_till: date_range[1],
         )
       end
 
     # chart_data: ([time, value], [time, value])
     chart_data = []
     history_all.each do |history|
-      time = Time.zone.at(history["clock"].to_i)
-      chart_data.push([time, history["value"].to_f])
+      time = Time.zone.at(history['clock'].to_i)
+      chart_data.push([time, history['value'].to_f])
     end
-    return chart_data.reverse
+    chart_data.reverse
   end
 
   # 最近の障害を取ってきている
@@ -522,43 +507,43 @@ class Zabbix
   # 値を返している
   def show_recent_problems(infra)
     problems = @sky_zabbix.trigger.get(
-      output: [
-        :triggerid,
-        :description,
-        :priority,
-        :lastchange,
-        :value,
+      output: %i[
+        triggerid
+        description
+        priority
+        lastchange
+        value
       ],
-      sortfield: "lastchange",
-      selectHosts: "refer",
+      sortfield: 'lastchange',
+      selectHosts: 'refer',
       only_true: true,
-      monitored: true
+      monitored: true,
     )
 
-    ids = infra.resources.ec2.map{|ec2| ec2.physical_id }
+    ids = infra.resources.ec2.map(&:physical_id)
 
-    #TODO
-    #ホストネームに基づいたProblemsのみを取得して
-    #フォーマッティングする
+    # TODO
+    # ホストネームに基づいたProblemsのみを取得して
+    # フォーマッティングする
 
     # フォーマッティング
     problems.each do |p|
-      time = Time.zone.at(p["lastchange"].to_i)
-      p["hosts"] = p["hosts"].first["hostid"]
-      p["lastchange"] = time.strftime("%Y-%m-%d %H:%M:%S")
-      hostname = get_host_name(p["hosts"])
-      p["description"] = p["description"].sub(/{HOST.NAME}/, hostname.first["name"])
+      time = Time.zone.at(p['lastchange'].to_i)
+      p['hosts'] = p['hosts'].first['hostid']
+      p['lastchange'] = time.strftime('%Y-%m-%d %H:%M:%S')
+      hostname = get_host_name(p['hosts'])
+      p['description'] = p['description'].sub(/{HOST.NAME}/, hostname.first['name'])
     end
 
     # 関係のある障害のみ表示する
     data_for_table = []
     ids.each do |id|
       problems.each do |p|
-        data_for_table.push(p) if p["description"] =~ /#{id}$/
+        data_for_table.push(p) if p['description'] =~ /#{id}$/
       end
     end
 
-    return data_for_table
+    data_for_table
   end
 
   # web_scenario [[stepname, url, required_string, status_code, timeout]]
@@ -570,7 +555,7 @@ class Zabbix
     # Web Scenario名の重複を防ぐため、ステップの重複を防ぐ為
     delete_all_web_scenario(web_scenario_ids) if web_scenario_ids
 
-    #TODO ウェブシナリオ名が被っている場合の処理
+    # TODO ウェブシナリオ名が被っている場合の処理
     if web_scenario.blank?
       return
     end
@@ -587,7 +572,7 @@ class Zabbix
 
     # wh = {scenario_name => [[steps], [steps]]}
     scenarios = wh.map do |scenario_name, steps|
-      step_category = [:name, :url, :required, :status_codes, :timeout, :no]
+      step_category = %i[name url required status_codes timeout no]
 
       # [{name: "NAME", url: "http://...", ..., no: 1..n}]
       s_array = steps.map.with_index(1) do |step, i|
@@ -596,7 +581,7 @@ class Zabbix
       end
 
       {
-        name:  scenario_name,
+        name: scenario_name,
         hostid: host_id,
         steps: s_array,
       }
@@ -616,9 +601,9 @@ class Zabbix
 
     web_scenario_values = []
     data_all.each do |scenario|
-      scenario["steps"].each do |step|
-        values = [scenario["name"]]
-        ["name", "url", "required", "status_codes", "timeout"].map do |x|
+      scenario['steps'].each do |step|
+        values = [scenario['name']]
+        %w[name url required status_codes timeout].map do |x|
           values.push(step[x])
         end
 
@@ -626,26 +611,26 @@ class Zabbix
       end
     end
 
-    return web_scenario_values
+    web_scenario_values
   end
 
   def get_url_status_monitoring(infra)
     host_id = get_host_id(infra_to_elb_hostname(infra))
     item_req_params = {
       hostids: host_id,
-      output: [
-        "key_",
-        "lastvalue",
+      output: %w[
+        key_
+        lastvalue
       ],
-      webitems: "true",
+      webitems: 'true',
     }
     webscenario_req_params = {
       hostids: host_id,
-      selectSteps: [
-        "name",
-        "url",
+      selectSteps: %w[
+        name
+        url
       ],
-      output: ["name"],
+      output: ['name'],
     }
 
     if @version.start_with?('2')
@@ -659,123 +644,121 @@ class Zabbix
 
     data_for_table = []
     webscenario.each do |scenario|
-
       # アイテム名がシナリオ名にマッチするアイテムを取り出しています
       # また、取り出したアイテム名にFailとErrorを含むアイテムを取り出し、Hashに格納
       h = {}
-      items_for_scenario = items.select{|x| x["key_"][/^web\.test\.\w+\[(\w[\w\s]*(?<!\s)),?.*\]$/, 1] == scenario["name"]}
-      ["error", "fail"].each do |key|
-        h[key] = items_for_scenario.find{|x| x["key_"] =~ /^web\.test\.#{key}\[/}
+      items_for_scenario = items.select { |x| x['key_'][/^web\.test\.\w+\[(\w[\w\s]*(?<!\s)),?.*\]$/, 1] == scenario['name'] }
+      %w[error fail].each do |key|
+        h[key] = items_for_scenario.find { |x| x['key_'] =~ /^web\.test\.#{key}\[/ }
       end
 
       status =
-        case h["fail"]["lastvalue"]
-        when "0"
-          "OK"
+        case h['fail']['lastvalue']
+        when '0'
+          'OK'
         else
-          h["error"]["lastvalue"]
+          h['error']['lastvalue']
         end
 
       # 上で取り出したアイテムにレスポンドコードを含むモノを取り出し、
       # URLとレスポンドコードとダウンロードスピード (bytes/sec) をstep_valuesに格納
       step_values = []
-      scenario["steps"].each do |step|
-
-        rspcode_item, download_speed_item, response_time_item = ["rspcode", "in", "time"].map do |c|
-          items_for_scenario.find{|x| x["key_"][/^web\.test\.#{c}\[\w[\w\s]*(?<!\s),?(\w*),?.*\]$/, 1] == step["name"]}
+      scenario['steps'].each do |step|
+        rspcode_item, download_speed_item, response_time_item = %w[rspcode in time].map do |c|
+          items_for_scenario.find { |x| x['key_'][/^web\.test\.#{c}\[\w[\w\s]*(?<!\s),?(\w*),?.*\]$/, 1] == step['name'] }
         end
 
         # もしデータが存在しない場合は""Unknownに設定する
-        rspcode = rspcode_item.present? ? rspcode_item["lastvalue"] : "Unknown"
-        download_speed = download_speed_item.present? ? download_speed_item["lastvalue"].to_i.round : "Unknown"
-        response_time = response_time_item.present? ? response_time_item["lastvalue"] : "Unknown"
-        step_values.push({url: step["url"], response_code: rspcode, download_speed: download_speed, response_time: response_time})
+        rspcode = rspcode_item.present? ? rspcode_item['lastvalue'] : 'Unknown'
+        download_speed = download_speed_item.present? ? download_speed_item['lastvalue'].to_i.round : 'Unknown'
+        response_time = response_time_item.present? ? response_time_item['lastvalue'] : 'Unknown'
+        step_values.push({ url: step['url'], response_code: rspcode, download_speed: download_speed, response_time: response_time })
       end
 
-      data_for_table.push({name: scenario["name"], status: status, data: step_values})
+      data_for_table.push({ name: scenario['name'], status: status, data: step_values })
     end
 
     # data_for_table = [{name: "hoge",  status: "OK", data: [{url: hoge.com, response_code: "200", download_speed: fuga, response_time: hoge}]}]
-    return data_for_table
+    data_for_table
   end
 
   # MySQL監視の為のベースとなるアイテムを作成します
   def create_mysql_login_item(physical_id)
     host_id = get_host_id(physical_id)
-    application_ids = get_application_ids_by_names(["MySQL"], host_id)
+    application_ids = get_application_ids_by_names(['MySQL'], host_id)
     interfaceid = get_hostinterface_id(host_id)
 
     @sky_zabbix.item.create(
-      name: "Original Item: MySQL Login Check",
-      key_: "mysql.login",
+      name: 'Original Item: MySQL Login Check',
+      key_: 'mysql.login',
       hostid: host_id,
       delay: 60,
       type: 0,
       value_type: 0,
       applications: application_ids,
-      interfaceid: interfaceid
+      interfaceid: interfaceid,
     )
   end
 
   def create_mysql_login_trigger(item_info, physical_id)
-    item_id = item_info["itemids"].first
+    item_id = item_info['itemids'].first
 
     @sky_zabbix.trigger.create(
-      description: "Can not login MySQL on {HOST.NAME}",
+      description: 'Can not login MySQL on {HOST.NAME}',
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
-      itemid: item_id
+      itemid: item_id,
     )
   end
 
   def create_mysql_login_trigger_build(item_info, physical_id)
-    item_id = item_info["itemids"].first
+    item_id = item_info['itemids'].first
 
     @sky_zabbix.trigger.build_create(
-      description: "Can not login MySQL on {HOST.NAME}",
+      description: 'Can not login MySQL on {HOST.NAME}',
       expression: "{#{physical_id}:mysql.login.last(0)}=1",
-      itemid: item_id
+      itemid: item_id,
     )
   end
 
   # ホスト登録時にCPU用に新しいアイテムを作成します
   def create_cpu_usage_item(physical_id)
     host_id = get_host_id(physical_id)
-    application_ids = get_application_ids_by_names(["CPU", "Performance"], host_id)
+    application_ids = get_application_ids_by_names(%w[CPU Performance], host_id)
 
     @sky_zabbix.item.create(
-      name: "Original Item: CPU Total Usage",
-      key_: "system.cpu.util[,total,avg1]",
-      params: %Q[100-last("system.cpu.util[,idle]")],
+      name: 'Original Item: CPU Total Usage',
+      key_: 'system.cpu.util[,total,avg1]',
+      params: %[100-last("system.cpu.util[,idle]")],
       hostid: host_id,
       delay: 30,
       type: 15,
       value_type: 0,
       applications: application_ids,
-      units: "%"
+      units: '%',
     )
   end
 
   # ホスト登録時にCPU用の新しいアイテムを作成したので、
   # それに紐づくトリガーを作成する
   def create_cpu_usage_trigger(item_info, hostname)
-    id = item_info["itemids"].first
+    id = item_info['itemids'].first
 
     @sky_zabbix.trigger.create(
-      description: "Calculated: CPU Usage is too high on {HOST.NAME}",
+      description: 'Calculated: CPU Usage is too high on {HOST.NAME}',
       expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
-      itemid: id
+      itemid: id,
     )
   end
 
   # ホスト登録時にCPU用の新しいアイテムを作成したので、
   # それに紐づくトリガーを作成する
   def create_cpu_usage_trigger_build(item_info, hostname)
-    id = item_info["itemids"].first
+    id = item_info['itemids'].first
 
     @sky_zabbix.trigger.build_create(
-      description: "Calculated: CPU Usage is too high on {HOST.NAME}",
+      description: 'Calculated: CPU Usage is too high on {HOST.NAME}',
       expression: "{#{hostname}:system.cpu.util[,total,avg1].last(0)}>90",
-      itemid: id
+      itemid: id,
     )
   end
 
@@ -788,12 +771,14 @@ class Zabbix
     host_names.push(infra_to_elb_hostname(infra))
     host_ids = get_host_ids(host_names).compact
     return if host_ids.empty?
+
     delete_hosts(host_ids)
   end
 
   def delete_hosts_by_resource(physical_id)
     host_id = get_host_id(physical_id)
-    return if host_id == nil
+    return if host_id.nil?
+
     delete_hosts([host_id])
   end
 
@@ -808,12 +793,12 @@ class Zabbix
       output: [
         :key_,
       ],
-      selectTriggers: 'shorten'
+      selectTriggers: 'shorten',
     )
   end
 
   def infra_to_elb_hostname(infra)
-    return "#{infra.id}-#{infra.stack_name}-elb"
+    "#{infra.id}-#{infra.stack_name}-elb"
   end
 
   def batch(*reqs)
@@ -826,24 +811,24 @@ class Zabbix
   # returns interfaceid integer
   def get_hostinterface_id(host_id)
     interface_info = @sky_zabbix.hostinterface.get(
-      output: "extend",
-      hostids: host_id
+      output: 'extend',
+      hostids: host_id,
     )
 
-    return interface_info.first["interfaceid"]
+    interface_info.first['interfaceid']
   end
 
   def get_application_ids_by_names(names, host_id)
     application_ids = @sky_zabbix.application.get(
-      output: [:applicationid ],
+      output: [:applicationid],
       hostids: host_id,
       filter: {
         name: names,
-      }
+      },
     )
 
     # アプリケーションIDの配列を返す
-    return application_ids.map{|x| x["applicationid"]}
+    application_ids.map { |x| x['applicationid'] }
   end
 
   def delete_all_web_scenario(web_scenario_ids)
@@ -852,53 +837,53 @@ class Zabbix
 
   def get_all_web_scenarios(host_id)
     @sky_zabbix.httptest.get(
-      output: [:httptestid, :name],
-      selectSteps: "extend",
-      selectHosts: "hostid",
-      selectItems: "extend",
-      hostids: host_id.to_s
+      output: %i[httptestid name],
+      selectSteps: 'extend',
+      selectHosts: 'hostid',
+      selectItems: 'extend',
+      hostids: host_id.to_s,
     )
   end
 
   def get_web_scenario_id(host_id)
     data = @sky_zabbix.httptest.get(
       output: [:httptestid],
-      hostids: host_id.to_s
+      hostids: host_id.to_s,
     )
 
-    return data.present? ? data.map{|scenario| scenario["httptestid"]} : nil
+    data.present? ? data.map { |scenario| scenario['httptestid'] } : nil
   end
 
   # infra に紐付いた trigger のID一覧を返す。
   # @param [Infrastructure] infra
   # @return [Array<String>] Array of trigger ID
   def get_triggers_for_infra(infra)
-    host_ids = get_host_ids(infra.resources.ec2.map{|e|e.physical_id})
+    host_ids = get_host_ids(infra.resources.ec2.map(&:physical_id))
 
-    return @sky_zabbix.trigger.get(
-      hostids: host_ids
-    ).map{|t|t[@sky_zabbix.trigger.pk]}
+    @sky_zabbix.trigger.get(
+      hostids: host_ids,
+    ).map { |t| t[@sky_zabbix.trigger.pk] }
   end
 
   # status = 0 はトリガーオン
   def enable_trigger(trigger_ids)
-    trigger_ids_set_status = trigger_ids.map{|id| {triggerid: id, status: 0}}
+    trigger_ids_set_status = trigger_ids.map { |id| { triggerid: id, status: 0 } }
     @sky_zabbix.trigger.update(trigger_ids_set_status)
   end
 
   # status = 0 はトリガーオフ
   def disable_trigger(trigger_ids)
-    trigger_ids_set_status = trigger_ids.map{|id| {triggerid: id, status: 1}}
+    trigger_ids_set_status = trigger_ids.map { |id| { triggerid: id, status: 1 } }
     @sky_zabbix.trigger.update(trigger_ids_set_status)
   end
 
-  #get host name from given hostid
+  # get host name from given hostid
   def get_host_name(hostid)
     @sky_zabbix.host.get(
       hostids: hostid,
       output: [
         :name,
-      ]
+      ],
     )
   end
 
@@ -906,14 +891,13 @@ class Zabbix
   # @param [String] physical_id
   # @return [String] host_id. example: "1"
   def get_host_id(physical_id)
-    return @sky_zabbix.host.get_id(host: physical_id)
+    @sky_zabbix.host.get_id(host: physical_id)
   end
 
   # host id の一覧を返す。
   # @param [Array<String>] host_names
   # @return [Array<String>] host_ids. example: ["1", "2"]
   def get_host_ids(host_names)
-    return @sky_zabbix.host.get_ids(host: host_names)
+    @sky_zabbix.host.get_ids(host: host_names)
   end
-
 end

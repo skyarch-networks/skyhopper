@@ -83,7 +83,7 @@ module.exports = Vue.extend({
               record.push({ text: rule.ip_permissions_egress[i].prefix_list_ids, row: 1 });
               record.push({ text: rule.ip_permissions_egress[i].ip_protocol, row: 1 });
               record.push({ text: rule.ip_permissions_egress[i].to_port, row: 1 });
-              record.push({ text: rule.ip_permissions_egress[i].ip_ranges[0].cidr_ip, row: 1 });
+              record.push({ text: rule.ip_permissions_egress[i].ip_ranges.map(x => x.cidr_ip).join(', '), row: 1 });
             } else {
               record.push({ text: '', row: 1 });
               record.push({ text: '', row: 1 });

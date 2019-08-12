@@ -8,7 +8,7 @@
 
 class ServerState
   class NotRunning < StandardError; end
-  class InfrastructureNotFound < StandardError;
+  class InfrastructureNotFound < StandardError
     def status_code
       404
     end
@@ -32,13 +32,13 @@ class ServerState
   attr_reader :kind
 
   def status
-    return Rails.cache.fetch("serverstate-#{@kind}"){@server.status}
+    Rails.cache.fetch("serverstate-#{@kind}") { @server.status }
   end
 
   def latest_status
     s = @server.status
     Rails.cache.write("serverstate-#{@kind}", s)
-    return s
+    s
   end
 
   def start
@@ -49,19 +49,17 @@ class ServerState
     @server.stop
   end
 
-  def is_running?
-    status.to_s == "running"
+  def running?
+    status.to_s == 'running'
   end
 
-  def is_in_progress?
-    status.to_s == "pending" || status.to_s == "stopping"
+  def in_progress?
+    status.to_s == 'pending' || status.to_s == 'stopping'
   end
 
   # @param [String] msg is an Error message.
   # @raise [NotRunning]
   def should_be_running!(msg)
-    unless self.is_running?
-      raise NotRunning, msg
-    end
+    raise NotRunning, msg unless running?
   end
 end

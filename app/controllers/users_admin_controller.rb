@@ -14,7 +14,7 @@ class UsersAdminController < ApplicationController
     authorize User.new
   end
 
-  before_action :with_zabbix, only: [:new, :create, :destroy, :edit, :update, :sync_zabbix]
+  before_action :with_zabbix, only: %i[new create destroy edit update sync_zabbix]
 
   # user management
   # GET /users_admin
@@ -32,7 +32,7 @@ class UsersAdminController < ApplicationController
   # GET /users_admin/new
   def new
     @user = User.new(session[:form])
-    session[:form] = nil  # remove temporary form data
+    session[:form] = nil # remove temporary form data
 
     @zabbix_servers = ZabbixServer.all
   end
@@ -41,18 +41,18 @@ class UsersAdminController < ApplicationController
   # POST /users_admin
   def create
     @user = User.new(
-      email:                 params[:user][:email],
-      password:              params[:user][:password],
+      email: params[:user][:email],
+      password: params[:user][:password],
       password_confirmation: params[:user][:password_confirmation],
-      admin:                 params[:user][:admin],
-      master:                params[:user][:master]
+      admin: params[:user][:admin],
+      master: params[:user][:master],
     )
 
-    e = -> (ex) {
+    e = lambda { |ex|
       flash[:alert] = ex.message
       session[:form] = {
-        email:  params[:user][:email],
-        admin:  params[:user][:admin],
+        email: params[:user][:email],
+        admin: params[:user][:admin],
         master: params[:user][:master],
       }
       redirect_to(action: :new)
@@ -60,12 +60,12 @@ class UsersAdminController < ApplicationController
 
     begin
       @user.save!
-    rescue => ex
-      e.(ex) and return
+    rescue StandardError => ex
+      e.call(ex) and return
     end
 
     begin
-      #TODO カレントユーザーでZabbixとコネクションを張れるようにする
+      # TODO カレントユーザーでZabbixとコネクションを張れるようにする
       z_params = params[:user][:zabbix_servers]
       z_params.shift
       @user.zabbix_server_ids = z_params
@@ -74,9 +74,9 @@ class UsersAdminController < ApplicationController
         z = Zabbix.new(s.fqdn, s.username, s.password)
         z.create_user(@user)
       end
-    rescue => ex
+    rescue StandardError => ex
       @user.destroy
-      e.(ex) and return
+      e.call(ex) and return
     end
 
     flash[:notice] = I18n.t('users.msg.created')
@@ -87,13 +87,13 @@ class UsersAdminController < ApplicationController
   def edit
     user = User.find(params.require(:id))
     @user = user.trim_password
-    @clients = Client.all.map{|c|{value: c.id, text: c.name}}
+    @clients = Client.all.map { |c| { value: c.id, text: c.name } }
     @allowed_projects = user.projects.includes(:client).map do |project|
       client_name = project.client.name
-      {value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]"}
+      { value: project.id, text: "#{client_name}/#{project.name}[#{project.code}]" }
     end
     @allowed_zabbix = user.zabbix_servers.map do |zabbix|
-      {value: zabbix.id, text: zabbix.fqdn}
+      { value: zabbix.id, text: zabbix.fqdn }
     end
 
     @mfa_key, @mfa_qrcode = user.new_mfa_key
@@ -145,7 +145,7 @@ class UsersAdminController < ApplicationController
           z.delete_user(user.email)
         end
       end
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       raise
     end
@@ -162,7 +162,8 @@ class UsersAdminController < ApplicationController
       add_create_user(z)
     end
 
-    render text: I18n.t('users.msg.synced'); return
+    render text: I18n.t('users.msg.synced')
+    nil
   end
 
   # delete acount
@@ -176,12 +177,12 @@ class UsersAdminController < ApplicationController
         z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
         z.delete_user(@user.email)
       end
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
       raise
     end
 
-    #delete user from SkyHopper
+    # delete user from SkyHopper
     @user.destroy
 
     ws_send(t('users.msg.deleted', name: @user.email), true)
@@ -191,12 +192,10 @@ class UsersAdminController < ApplicationController
   private
 
   def set_zabbix(fqdn)
-    begin
-      @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
-    rescue => ex
-      flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
-      redirect_to users_admin_index_path
-    end
+    @zabbix = Zabbix.new(fqdn, current_user.email, current_user.encrypted_password)
+  rescue StandardError => ex
+    flash[:alert] = I18n.t('users.msg.error', msg: ex.message)
+    redirect_to users_admin_index_path
   end
 
   def add_create_user(zabbix)
@@ -208,24 +207,23 @@ class UsersAdminController < ApplicationController
     end
   end
 
-  def update_user_zabbix(z, user, set_password)
-    z.create_user(user) unless z.user_exists?(user.email)
-    zabbix_user_id = z.get_user_id(user.email)
+  def update_user_zabbix(zabbix, user, set_password)
+    zabbix.create_user(user) unless zabbix.user_exists?(user.email)
+    zabbix_user_id = zabbix.get_user_id(user.email)
 
     if set_password
-      z.update_user(zabbix_user_id, password: user.encrypted_password)
+      zabbix.update_user(zabbix_user_id, password: user.encrypted_password)
     end
 
-    usergroup_ids = [z.get_group_id_by_user(user)]
+    usergroup_ids = [zabbix.get_group_id_by_user(user)]
     if user.master
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: z.get_user_type_by_user(user))
+      zabbix.update_user(zabbix_user_id, usergroup_ids: usergroup_ids, type: zabbix.get_user_type_by_user(user))
     else
-      hostgroup_names = user.projects.pluck(:code).map{|code| code + (user.admin? ? '-read-write' : '-read')}
+      hostgroup_names = user.projects.pluck(:code).map { |code| code + (user.admin? ? '-read-write' : '-read') }
       if hostgroup_names.present?
-        usergroup_ids.concat(z.get_usergroup_ids(hostgroup_names))
+        usergroup_ids.concat(zabbix.get_usergroup_ids(hostgroup_names))
       end
-      z.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
+      zabbix.update_user(zabbix_user_id, usergroup_ids: usergroup_ids)
     end
   end
-
 end

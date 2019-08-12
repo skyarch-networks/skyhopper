@@ -9,12 +9,12 @@
 require_relative '../spec_helper'
 
 describe ClientPolicy do
-  subject{described_class}
+  subject { described_class }
 
-  let(:client){build(:client)}
-  let(:master_user){build(:user, master: true,  admin: false)}
-  let(:admin_user) {build(:user, master: false, admin: true)}
-  let(:normal_user){build(:user, master: false, admin: false)}
+  let(:client) { build(:client) }
+  let(:master_user) { build(:user, master: true, admin: false) }
+  let(:admin_user) { build(:user, master: false, admin: true) }
+  let(:normal_user) { build(:user, master: false, admin: false) }
 
   %i[index? show? create? new?].each do |action|
     permissions action do
@@ -42,7 +42,7 @@ describe ClientPolicy do
 
       context 'when client is for system' do
         before do
-          allow(client).to receive(:is_for_system?).and_return(true)
+          allow(client).to receive(:for_system?).and_return(true)
         end
         it 'deny all user' do
           is_expected.not_to permit(master_user, client)

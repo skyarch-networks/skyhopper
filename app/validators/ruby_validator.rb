@@ -10,12 +10,10 @@ require 'ripper'
 
 class RubyValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    begin
-      RubyParser.parse(value)
-    rescue => ex
-      msg = "#{I18n.t('servertests.msg.parseerr')} (#{ex.message})"
-      record.errors[attribute] << msg
-    end
+    RubyParser.parse(value)
+  rescue StandardError => ex
+    msg = "#{I18n.t('servertests.msg.parseerr')} (#{ex.message})"
+    record.errors[attribute] << msg
   end
 end
 

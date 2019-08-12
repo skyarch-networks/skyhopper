@@ -11,14 +11,14 @@ require_relative '../spec_helper'
 describe ServerState, type: :model do
   servers = %w[zabbix]
 
-  let(:server){double('@server')}
+  let(:server) { double('@server') }
   before(:all) do
     unless Client.for_system
-      c = create(:client, code: Client::ForSystemCodeName)
+      c = create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
     end
 
     unless Project.for_zabbix_server
-      p = create(:project, code: Project::ZabbixServerCodeName, client: c)
+      p = create(:project, code: Project::ZABBIX_SERVER_CODE_NAME, client: c)
       i = create(:infrastructure, project: p)
       create(:ec2_resource, infrastructure: i)
     end
@@ -27,35 +27,34 @@ describe ServerState, type: :model do
     allow_any_instance_of(Infrastructure).to receive(:instance).and_return server
   end
 
-
   describe '.new' do
     servers.each do |kind|
       context "when kind is #{kind}" do
-        subject{ServerState.new(kind)}
-        it{is_expected.to be_a ServerState}
+        subject { ServerState.new(kind) }
+        it { is_expected.to be_a ServerState }
       end
     end
 
     context 'when invalid kind' do
-      subject{ServerState.new('invalid as kind')}
-      it {expect{subject}.to raise_error(ArgumentError)}
+      subject { ServerState.new('invalid as kind') }
+      it { expect { subject }.to raise_error(ArgumentError) }
     end
 
     context 'when infra not found' do
-      subject{ServerState.new('zabbix')}
+      subject { ServerState.new('zabbix') }
       before do
         zabbix_server = Project.for_zabbix_server
         zabbix_server.infrastructures = []
         zabbix_server.save!
       end
-      it {expect{subject}.to raise_error(ServerState::InfrastructureNotFound)}
+      it { expect { subject }.to raise_error(ServerState::InfrastructureNotFound) }
     end
   end
 
-  let(:zabbix){ServerState.new('zabbix')}
-  let(:server_status){{'zabbix' => zabbix}}
+  let(:zabbix) { ServerState.new('zabbix') }
+  let(:server_status) { { 'zabbix' => zabbix } }
 
-  let(:status){SecureRandom.base64(10)}
+  let(:status) { SecureRandom.base64(10) }
   before do
     [server, zabbix].each do |s|
       allow(s).to receive(:status).and_return(status)
@@ -126,40 +125,40 @@ describe ServerState, type: :model do
     end
   end
 
-  describe '#is_running?' do
+  describe '#running?' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject{server_status[kind].is_running?}
+        subject { server_status[kind].running? }
 
         context 'when isnot running' do
-          it{is_expected.to be false}
+          it { is_expected.to be false }
         end
 
         context 'when running' do
-          let(:status){'running'}
+          let(:status) { 'running' }
 
-          it{is_expected.to be true}
+          it { is_expected.to be true }
         end
       end
     end
   end
 
-  describe '#is_in_progress?' do
+  describe '#in_progress??' do
     servers.each do |kind|
       context "when server is #{kind}" do
-        subject{server_status[kind].is_in_progress?}
+        subject { server_status[kind].in_progress? }
 
         %w[pending stopping].each do |s|
           context "when #{s}" do
-            let(:status){s}
-            it {is_expected.to be true}
+            let(:status) { s }
+            it { is_expected.to be true }
           end
         end
 
         %w[running stopped terminated].each do |s|
           context "when #{s}" do
-            let(:status){s}
-            it {is_expected.to be false}
+            let(:status) { s }
+            it { is_expected.to be false }
           end
         end
       end

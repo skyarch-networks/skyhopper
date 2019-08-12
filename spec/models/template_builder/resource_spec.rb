@@ -12,20 +12,20 @@ class TemplateBuilder::Resource::TestResource < TemplateBuilder::Resource
 end
 
 describe TemplateBuilder::Resource, type: :model do
-  let(:klass){TemplateBuilder::Resource::TestResource}
-  let(:klass_name){'TestResource'}
-  let(:required_prop    ){double(:required_prop, required?: true,  name: :required_prop,     validate: true)}
-  let(:not_required_prop){double(:required_prop, required?: false, name: :not_required_prop, validate: true)}
+  let(:klass) { TemplateBuilder::Resource::TestResource }
+  let(:klass_name) { 'TestResource' }
+  let(:required_prop) { double(:required_prop, required?: true, name: :required_prop, validate: true) }
+  let(:not_required_prop) { double(:required_prop, required?: false, name: :not_required_prop, validate: true) }
 
   describe 'class methods' do
     describe '.resource_type' do
-      subject{klass.resource_type}
+      subject { klass.resource_type }
 
-      it{is_expected.to eq klass_name}
+      it { is_expected.to eq klass_name }
     end
 
     describe '.duped_resource_base' do
-      subject{klass.duped_resource_base}
+      subject { klass.duped_resource_base }
 
       it do
         is_expected.to eq klass.class_variable_get(:@@resource_base)
@@ -36,25 +36,25 @@ describe TemplateBuilder::Resource, type: :model do
     end
 
     describe '.properties' do
-      subject{klass.properties}
+      subject { klass.properties }
       before do
-        klass.class_variable_set(:@@properties, ['foo', 'bar'])
+        klass.class_variable_set(:@@properties, %w[foo bar])
       end
 
-      it{is_expected.to eq klass.class_variable_get(:@@properties)}
+      it { is_expected.to eq klass.class_variable_get(:@@properties) }
     end
 
     describe '.inherited' do
       describe 'define Type' do
-        subject{klass::Type}
-        it{is_expected.to eq "AWS::#{klass_name}"}
+        subject { klass::Type }
+        it { is_expected.to eq "AWS::#{klass_name}" }
       end
 
       describe 'define @@resource_base' do
-        subject{klass.class_variable_get(:@@resource_base)}
+        subject { klass.class_variable_get(:@@resource_base) }
 
-        it{is_expected.not_to be_nil}
-        it{is_expected.to be_kind_of Hash}
+        it { is_expected.not_to be_nil }
+        it { is_expected.to be_kind_of Hash }
       end
     end
 
@@ -63,7 +63,7 @@ describe TemplateBuilder::Resource, type: :model do
         klass.class_variable_set(:@@properties, [required_prop, not_required_prop])
       end
 
-      subject{klass.required_properties}
+      subject { klass.required_properties }
 
       it 'should return required properties' do
         is_expected.to eq [required_prop]
@@ -72,8 +72,8 @@ describe TemplateBuilder::Resource, type: :model do
   end
 
   describe '#initialize' do
-    let(:name){'hoge'}
-    subject{klass.new(name)}
+    let(:name) { 'hoge' }
+    subject { klass.new(name) }
 
     it 'should set @name' do
       expect(subject.name).to eq name
@@ -82,13 +82,13 @@ describe TemplateBuilder::Resource, type: :model do
       expect(subject.param_properties).to eq Set.new
     end
     it 'should set @properties' do
-      expect(subject.instance_variable_get(:@properties)).to eq Hash.new
+      expect(subject.instance_variable_get(:@properties)).to eq({})
     end
   end
 
   describe '#set_properties' do
-    subject{klass.new('foo')}
-    let(:prop){{required_prop: 'foo'}}
+    subject { klass.new('foo') }
+    let(:prop) { { required_prop: 'foo' } }
     before do
       klass.class_variable_set(:@@properties, [required_prop, not_required_prop])
     end
@@ -100,30 +100,30 @@ describe TemplateBuilder::Resource, type: :model do
   end
 
   describe '#set_refs_params' do
-    let(:name){'foo'}
-    let(:prop){{required_prop: nil}}
-    subject{klass.new(name)}
+    let(:name) { 'foo' }
+    let(:prop) { { required_prop: nil } }
+    subject { klass.new(name) }
     before do
       klass.class_variable_set(:@@properties, [required_prop, not_required_prop])
     end
 
     it 'should set ref name' do
-      expect(subject).to receive(:set_refs).with({required_prop: "#{name}#{required_prop.name}"})
+      expect(subject).to receive(:set_refs).with({ required_prop: "#{name}#{required_prop.name}" })
       subject.set_refs_params(prop)
     end
   end
 
   describe '#set_refs' do
-    subject{klass.new('foo')}
-    let(:prop){{required_prop: 'foo'}}
-    let(:invalid_prop){{not_required_prop: nil}}
+    subject { klass.new('foo') }
+    let(:prop) { { required_prop: 'foo' } }
+    let(:invalid_prop) { { not_required_prop: nil } }
     before do
       klass.class_variable_set(:@@properties, [required_prop, not_required_prop])
     end
 
     context 'receive invalid properties' do
       it 'raise error' do
-        expect{subject.set_refs(invalid_prop)}.to raise_error TemplateBuilder::Resource::InvalidPropertyError
+        expect { subject.set_refs(invalid_prop) }.to raise_error TemplateBuilder::Resource::InvalidPropertyError
       end
     end
 
@@ -135,7 +135,7 @@ describe TemplateBuilder::Resource, type: :model do
       it 'should set refs' do
         p = subject.instance_variable_get(:@properties)
         key = prop.keys.first
-        expect(p).to eq({key => {Ref: prop[key]}})
+        expect(p).to eq({ key => { Ref: prop[key] } })
       end
     end
   end
@@ -149,7 +149,7 @@ describe TemplateBuilder::Resource, type: :model do
   end
 
   describe '#build' do
-    subject{klass.new('foo')}
+    subject { klass.new('foo') }
 
     context 'when not set required properties' do
       before do
@@ -157,7 +157,7 @@ describe TemplateBuilder::Resource, type: :model do
       end
 
       it 'should raise error' do
-        expect{subject.build}.to raise_error TemplateBuilder::Resource::BuildError
+        expect { subject.build }.to raise_error TemplateBuilder::Resource::BuildError
       end
     end
 

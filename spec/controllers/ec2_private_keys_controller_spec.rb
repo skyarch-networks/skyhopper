@@ -12,11 +12,11 @@ describe Ec2PrivateKeysController do
   login_user
 
   describe '#create' do
-    let(:project){create(:project)}
-    let(:region){'us-east-1'}
-    let(:name){'foobar'}
-    let(:key){{"hoge" => 'fuga'}}
-    let(:req){post :create, project_id: project.id, region: region, name: name}
+    let(:project) { create(:project) }
+    let(:region) { 'us-east-1' }
+    let(:name) { 'foobar' }
+    let(:key) { { 'hoge' => 'fuga' } }
+    let(:req) { post :create, project_id: project.id, region: region, name: name }
 
     context 'when success' do
       before do
@@ -32,7 +32,7 @@ describe Ec2PrivateKeysController do
     end
 
     context 'when failure' do
-      let(:err_msg){'This is error!!!'}
+      let(:err_msg) { 'This is error!!!' }
       before do
         expect(Ec2PrivateKey).to receive(:new_from_aws).with(name, project.id.to_s, region).and_raise(err_msg)
         req

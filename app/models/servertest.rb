@@ -16,14 +16,14 @@ class Servertest < ActiveRecord::Base
   has_many :resource_servertests
   has_many :resources, through: :resource_servertests
   has_many :servertest_results, through: :servertest_result_details
-  enum      category: [:awspec, :serverspec]
+  enum      category: %i[awspec serverspec]
 
   validates :value, ruby: true
 
   TmpDir = Rails.root.join('tmp', 'serverspec')
   FileUtils::mkdir_p(TmpDir) unless Dir::exist?(TmpDir)
 
-  [:name, :value].each do |sym|
+  %i[name value].each do |sym|
     validates sym, presence: true
   end
 
@@ -55,18 +55,18 @@ class Servertest < ActiveRecord::Base
       db_engine = 'psql' if db_engine == 'postgres'
       host      = rds.endpoint_address
 
-      spec_template = File::open(Rails.root.join('serverspec/rdsspec.rb.erb')).read
+      spec_template = File::open(Rails.root.join('serverspec', 'rdsspec.rb.erb')).read
 
       spec_value = ERB.new(spec_template).result(binding)
 
       description = "Check connection to RDS host:#{host[/^([^\.]+)\./, 1]} as user:#{user}"
       description << ", database:#{db_name}" if db_name
 
-      return self.create(
+      create(
         infrastructure_id: infra_id,
-        name:              "RDS connection to #{host[/^([^\.]+)\./, 1]}",
-        value:             spec_value,
-        description:       description
+        name: "RDS connection to #{host[/^([^\.]+)\./, 1]}",
+        value: spec_value,
+        description: description,
       )
     end
   end

@@ -8,7 +8,7 @@
 
 module S3Stub
   def stubize_s3(opt = {})
-    let(:_s3){double('s3')}
+    let(:_s3) { double('s3') }
     before do
       allow(S3).to receive(:new).and_return(_s3)
       [].each do |name|

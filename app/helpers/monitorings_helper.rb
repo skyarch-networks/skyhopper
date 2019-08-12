@@ -8,12 +8,12 @@
 
 module MonitoringsHelper
   @@url_settings = [
-    {name: "Scenario Name",   example: "zabbix webcheck",       sym: :scenario_name},
-    {name: "Step Name",       example: "Home, Home/About",      sym: :step_name},
-    {name: "URL",             example: "http://www.zabbix.com", sym: :url},
-    {name: "Required String", example: "welcome",               sym: :required_string},
-    {name: "Status Code",     example: "200, 201, 202",         sym: :status_code},
-    {name: "Timeout",         example: "15, 60 (sec)",          sym: :timeout},
+    { name: 'Scenario Name',   example: 'zabbix webcheck',       sym: :scenario_name },
+    { name: 'Step Name',       example: 'Home, Home/About',      sym: :step_name },
+    { name: 'URL',             example: 'http://www.zabbix.com', sym: :url },
+    { name: 'Required String', example: 'welcome',               sym: :required_string },
+    { name: 'Status Code',     example: '200, 201, 202',         sym: :status_code },
+    { name: 'Timeout',         example: '15, 60 (sec)',          sym: :timeout },
   ]
 
   def url_settings

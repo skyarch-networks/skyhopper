@@ -9,12 +9,12 @@
 require_relative '../spec_helper'
 
 describe ApplicationPolicy do
-  subject{described_class}
-  let(:master_user){build(:user, master: true,  admin: false)}
-  let(:admin_user) {build(:user, master: false, admin: true)}
-  let(:normal_user){build(:user, master: false, admin: false)}
+  subject { described_class }
+  let(:master_user) { build(:user, master: true, admin: false) }
+  let(:admin_user) { build(:user, master: false, admin: true) }
+  let(:normal_user) { build(:user, master: false, admin: false) }
 
-  let(:obj){''}
+  let(:obj) { '' }
   %i[index? show?].each do |action|
     permissions action do
       it 'grants access if user is a master' do

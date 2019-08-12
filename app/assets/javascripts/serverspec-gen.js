@@ -1,20 +1,18 @@
-
-
 const Gen = require('serverspec-generator');
 const qs = require('query-string');
-const modal_1 = require('./modal');
-const servertest_1 = require('./models/servertest');
+const modal = require('./modal');
+const Servertest = require('./models/servertest').default;
 
 const app = new Gen.App([], Gen.Info.value);
 $(document).on('click', '.save-serverspec-btn', () => {
-  modal_1.Prompt('Save Serverspec', 'filename').then((fname) => {
-    const infra_id_str = qs.parse(location.search).infrastructure_id;
-    const infra_id = infra_id_str ? parseInt(infra_id_str) : null;
-    const s = new servertest_1.default(infra_id);
+  modal.Prompt('Save Serverspec', 'filename').then((fname) => {
+    const infraIdStr = qs.parse(window.location.search).infrastructure_id;
+    const infraId = infraIdStr ? parseInt(infraIdStr, 10) : null;
+    const s = new Servertest(infraId);
     const code = `require "serverspec_helper"\n\n${app.rubyCode}`;
     return s.create(fname, code, 'serverspec');
-  }).then(data => modal_1.Alert(t('serverspecs.serverspec'), data), modal_1.AlertForAjaxStdError()).then(() => {
-    location.href = `/servertests${location.search}`;
+  }).then(data => modal.Alert(t('servertests.servertests'), data), modal.AlertForAjaxStdError()).then(() => {
+    window.location.href = `/servertests${window.location.search}`;
   });
 });
 const vueServerspecGenElement = document.querySelector('#vue-serverspec-gen');

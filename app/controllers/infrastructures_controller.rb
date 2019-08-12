@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
@@ -15,33 +14,33 @@ class InfrastructuresController < ApplicationController
 
   # --------------- existence check
   before_action :project_exist, only: [:index]
-  before_action :infrastructure_exist, only: [:edit, :update, :destroy, :delete_stack, :stack_events, :edit_keypair, :update_keypair]
+  before_action :infrastructure_exist, only: %i[edit update destroy delete_stack stack_events edit_keypair update_keypair]
 
-
-  before_action :set_infrastructure, only: %i(edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair)
+  before_action :set_infrastructure, only: %i[edit update destroy delete_stack stack_events show_rds show_elb start_rds stop_rds reboot_rds edit_keypair update_keypair]
 
   before_action do
     infra = @infrastructure || (
-      project_id = params[:project_id] || params[:infrastructure][:project_id] rescue nil
+      project_id = begin
+                     params[:project_id] || params[:infrastructure][:project_id]
+                   rescue StandardError
+                     nil
+                   end
       Infrastructure.new(project_id: project_id)
     )
 
     authorize(infra)
   end
 
-
-  before_action :with_zabbix, only: [:destroy, :delete_stack]
+  before_action :with_zabbix, only: %i[destroy delete_stack]
 
   @@regions = AWS::Regions
-
-
 
   # GET /infrastructures
   # GET /infrastructures.json
   def index
     project_id = params.require(:project_id)
     session[:project_id] = project_id
-    page       = params[:page] || 1
+    page = params[:page] || 1
 
     @selected_project = Project.find(project_id)
 
@@ -56,20 +55,21 @@ class InfrastructuresController < ApplicationController
 
   # GET /infrastructures/:id
   def show
-    raise "Infrastructure \##{params[:id]} does not exist" if !Infrastructure.exists?(id: params[:id])
+    raise "Infrastructure \##{params[:id]} does not exist" unless Infrastructure.exists?(id: params[:id])
+
     set_infrastructure
 
     stack = Stack.new(@infrastructure)
 
     resp = {
-      status:        stack.status_and_type,
-      name:          @infrastructure.stack_name,
-      token_invalid: stack.status[:message].eql?("The security token included in the request is invalid."),
+      status: stack.status_and_type,
+      name: @infrastructure.stack_name,
+      token_invalid: stack.status[:message].eql?('The security token included in the request is invalid.'),
     }
 
     # When stack does not exist
     unless stack.status[:available] # in many cases, it will be when stack does not exist.
-      @infrastructure.status = ""
+      @infrastructure.status = ''
       @infrastructure.save!
       @infrastructure.resources.destroy_all
 
@@ -107,7 +107,7 @@ class InfrastructuresController < ApplicationController
   def new
     project_id = params.require(:project_id)
     @infrastructure = Infrastructure.new(
-      project_id: project_id
+      project_id: project_id,
     )
     @regions = @@regions
     set_ec2_private_key_list(Project.find(project_id))
@@ -118,7 +118,7 @@ class InfrastructuresController < ApplicationController
   def edit
     if @infrastructure.status.present?
       redirect_to infrastructures_path(project_id: @infrastructure.project_id),
-        alert: I18n.t('infrastructures.msg.not_necessary')
+                  alert: I18n.t('infrastructures.msg.not_necessary')
     end
 
     @regions = @@regions
@@ -134,21 +134,21 @@ class InfrastructuresController < ApplicationController
       current_params[:project_id],
       current_params[:region],
       current_params[:keypair_name],
-      current_params[:keypair_value]
+      current_params[:keypair_value],
     )
 
     infra = Infrastructure.create_with_ec2_private_key!(current_params)
-  rescue => ex
+  rescue StandardError => ex
     flash[:alert] = ex.message
-    @regions        = @@regions
+    @regions = @@regions
     project = Project.find(params[:infrastructure][:project_id])
     set_ec2_private_key_list(project)
     @infrastructure = Infrastructure.new(infrastructure_params(no_keypair: true))
 
-    render action: 'new', status: 400 and return
+    render action: 'new', status: :bad_request and return
   else
     redirect_to infrastructures_path(project_id: infra.project_id),
-      notice: I18n.t('infrastructures.msg.created')
+                notice: I18n.t('infrastructures.msg.created')
   end
 
   # PATCH/PUT /infrastructures/1
@@ -156,14 +156,14 @@ class InfrastructuresController < ApplicationController
   def update
     begin
       @infrastructure.update!(infrastructure_params)
-    rescue => ex
+    rescue StandardError => ex
       @regions = @@regions
       flash[:alert] = ex.message
-      render action: :edit, status: 400 and return
+      render action: :edit, status: :bad_request and return
     end
 
     redirect_to infrastructures_path(project_id: @infrastructure.project_id),
-      notice: I18n.t('infrastructures.msg.updated')
+                notice: I18n.t('infrastructures.msg.updated')
   end
 
   # DELETE /infrastructures/1
@@ -182,7 +182,7 @@ class InfrastructuresController < ApplicationController
     begin
       stack = Stack.new(@infrastructure)
       stack.delete # it returns nil without exception if there is no stack in the region
-    rescue => ex
+    rescue StandardError => ex
       logger.error "#{ex.class}: #{ex.message.inspect}"
       logger.error ex.backtrace.join("\n")
       @infrastructure.status = stack.status[:status]
@@ -192,12 +192,12 @@ class InfrastructuresController < ApplicationController
       raise ex
     end
 
-    infra_logger_success("Deleting stack is successfully started.")
+    infra_logger_success('Deleting stack is successfully started.')
 
     @infrastructure.resources.destroy_all
     @infrastructure.monitorings.delete_all
 
-    render text: I18n.t('infrastructures.msg.delete_stack_started'), status: 202 and return
+    render text: I18n.t('infrastructures.msg.delete_stack_started'), status: :accepted and return
   end
 
   # GET /infrastructures/:id/show_rds
@@ -217,9 +217,8 @@ class InfrastructuresController < ApplicationController
 
     elb = ELB.new(@infrastructure, physical_id)
 
-    sc_g = @infrastructure.ec2.describe_security_groups().to_h
+    sc_g = @infrastructure.ec2.describe_security_groups.to_h
     security_groups = map_security_groups(sc_g, elb.security_groups)
-
 
     @ec2_instances = elb.instances
     @dns_name      = elb.dns_name
@@ -228,18 +227,18 @@ class InfrastructuresController < ApplicationController
     @security_groups = security_groups
 
     ec2 = @infrastructure.resources.ec2
-    @unregistereds = ec2.reject{|e| @ec2_instances.map{|x|x[:instance_id]}.include?(e.physical_id)}
+    @unregistereds = ec2.reject { |e| @ec2_instances.map { |x| x[:instance_id] }.include?(e.physical_id) }
 
     list_server_certificates = elb.list_server_certificates
 
-    @server_certificate_name_items = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
+    @server_certificate_name_items = list_server_certificates[0].reject(&:nil?).map do |crt|
       {
         text: crt['server_certificate_name'],
         value: crt['arn'],
       }
     end
 
-    @server_certificates = list_server_certificates[0].reject{|crt| crt.nil?}.map do |crt|
+    @server_certificates = list_server_certificates[0].reject(&:nil?).map do |crt|
       {
         name: crt['server_certificate_name'],
         expiration: crt['expiration'],
@@ -258,10 +257,10 @@ class InfrastructuresController < ApplicationController
     begin
       result = rds.change_scale(type)
     rescue RDS::ChangeScaleError => ex
-      render text: ex.message, status: 400 and return
+      render text: ex.message, status: :bad_request and return
     end
 
-    render json: {rds: result.db_instance} and return
+    render json: { rds: result.db_instance } and return
   end
 
   # POST /infreastructures/rds_submit_groups
@@ -288,7 +287,6 @@ class InfrastructuresController < ApplicationController
     render partial: 'show_s3'
   end
 
-
   # GET /infreastructures/get_schedule
   # @param [Integer] infra_id
   # @param [String]  physical_id
@@ -297,13 +295,14 @@ class InfrastructuresController < ApplicationController
     physical_id = params.require(:physical_id)
     resource = Resource.where(infrastructure_id: infra_id).find_by(physical_id: physical_id)
 
-    @operation_schedule = resource.operation_durations.order("created_at desc")
+    @operation_schedule = resource.operation_durations.order('created_at desc')
 
     respond_to do |format|
-      format.json { render json: @operation_schedule.as_json(only: [:id, :start_date, :end_date],
-        include: [{recurring_date: {only: [:id, :repeats, :start_time, :end_time, :dates]}},
-                  {resource: {only: [:physical_id]}} ])
-      }
+      format.json do
+        render json: @operation_schedule.as_json(only: %i[id start_date end_date],
+                                                 include: [{ recurring_date: { only: %i[id repeats start_time end_time dates] } },
+                                                           { resource: { only: [:physical_id] } },],)
+      end
     end
   end
 
@@ -312,44 +311,43 @@ class InfrastructuresController < ApplicationController
   # @param [String] physical_id
   # @param [Object] selected_instance
   def save_schedule
-    selected_instance =  params.require(:selected_instance)
+    selected_instance = params.require(:selected_instance)
     ops_exists = OperationDuration.find_by(resource_id: selected_instance[:id])
     start_date = Time.at(selected_instance[:start_date].to_i).in_time_zone
     end_date = Time.at(selected_instance[:end_date].to_i).in_time_zone
 
     if ops_exists
       ops_exists.start_date = start_date
-      ops_exists.end_date =  end_date
+      ops_exists.end_date = end_date
       ops_exists.save
 
       recur_exits = RecurringDate.find_by(operation_duration_id: ops_exists.id)
       recur_exits.repeats = selected_instance[:repeat_freq].to_i
-      recur_exits.start_time = start_date.strftime("%H:%M")
-      recur_exits.end_time = end_date.strftime("%H:%M")
+      recur_exits.start_time = start_date.strftime('%H:%M')
+      recur_exits.end_time = end_date.strftime('%H:%M')
       recur_exits.dates = selected_instance[:dates]
       recur_exits.save
     else
       begin
         ops = OperationDuration.create!(
-          resource_id:  selected_instance[:id],
-          start_date:   start_date,
-          end_date:     end_date,
-          user_id: current_user.id
+          resource_id: selected_instance[:id],
+          start_date: start_date,
+          end_date: end_date,
+          user_id: current_user.id,
         )
         RecurringDate.create!(
           operation_duration_id: ops.id,
           repeats: selected_instance[:repeat_freq].to_i,
-          start_time:  start_date.strftime("%H:%M"),
-          end_time: end_date.strftime("%H:%M"),
-          dates: selected_instance[:dates]
+          start_time: start_date.strftime('%H:%M'),
+          end_time: end_date.strftime('%H:%M'),
+          dates: selected_instance[:dates],
         )
-      rescue => ex
-        render text: ex.message, status: 500 and return
+      rescue StandardError => ex
+        render text: ex.message, status: :internal_server_error and return
       end
     end
 
-
-    render text: I18n.t('operation_scheduler.msg.saved'), status: 200 and return
+    render text: I18n.t('operation_scheduler.msg.saved'), status: :ok and return
   end
 
   # GET /infrastructures/1/edit_keypair
@@ -359,27 +357,25 @@ class InfrastructuresController < ApplicationController
 
   # PATCH /infrastructures/1/update_keypair
   def update_keypair
-    begin
-      keypair_params = insert_selected_ec2_private_key(
-        params.require(:infrastructure).permit(:keypair_name, :keypair_value)
-      )
+    keypair_params = insert_selected_ec2_private_key(
+      params.require(:infrastructure).permit(:keypair_name, :keypair_value),
+    )
 
-      # raise error if uploaded keypair does not exist
-      KeyPair.validate!(
-        @infrastructure.project_id,
-        @infrastructure.region,
-        keypair_params[:keypair_name],
-        keypair_params[:keypair_value]
-      )
+    # raise error if uploaded keypair does not exist
+    KeyPair.validate!(
+      @infrastructure.project_id,
+      @infrastructure.region,
+      keypair_params[:keypair_name],
+      keypair_params[:keypair_value],
+    )
 
-      @infrastructure.update_with_ec2_private_key!(keypair_params)
-    rescue => ex
-      flash[:alert] = ex.message
-      set_ec2_private_key_list(@infrastructure.project)
-      render action: :edit_keypair, status: 400 and return
-    else
-      redirect_to infrastructures_path(project_id: @infrastructure.project_id), notice: I18n.t('infrastructures.msg.updated')
-    end
+    @infrastructure.update_with_ec2_private_key!(keypair_params)
+  rescue StandardError => ex
+    flash[:alert] = ex.message
+    set_ec2_private_key_list(@infrastructure.project)
+    render action: :edit_keypair, status: :bad_request and return
+  else
+    redirect_to infrastructures_path(project_id: @infrastructure.project_id), notice: I18n.t('infrastructures.msg.updated')
   end
 
   def start_rds
@@ -410,6 +406,7 @@ class InfrastructuresController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_infrastructure
     @infrastructure = Infrastructure.find(params.require(:id))
@@ -423,7 +420,7 @@ class InfrastructuresController < ApplicationController
       p.delete(:keypair_name)
       p.delete(:keypair_value)
     end
-    return p
+    p
   end
 
   # mapping of security groups by resource
@@ -433,7 +430,7 @@ class InfrastructuresController < ApplicationController
       a_hash[:checked] = resource.include? a_hash[:group_id]
       security_groups.push(a_hash)
     end
-    return security_groups
+    security_groups
   end
 
   # redirect to projects#index if specified project does not exist
@@ -474,19 +471,19 @@ class InfrastructuresController < ApplicationController
   end
 
   def set_ec2_private_key_list(project)
-    @ec2_private_key_list = project.infrastructures.map{|infrastructure|
+    @ec2_private_key_list = project.infrastructures.map do |infrastructure|
       [
         "#{infrastructure.stack_name}(#{infrastructure.ec2_private_key.name})",
-        infrastructure.ec2_private_key.id
+        infrastructure.ec2_private_key.id,
       ]
-    }
+    end
   end
 
   def insert_selected_ec2_private_key(target_params)
     if params[:infrastructure][:keypair_input_type] == 'select'
       project = @infrastructure.present? ? @infrastructure.project : Project.find(params[:infrastructure][:project_id])
       unless project.infrastructures.pluck(:ec2_private_key_id).include?(params[:infrastructure][:copy_ec2_private_key_id].to_i)
-        raise "Parameter copy_ec2_private_key_id is invalid."
+        raise 'Parameter copy_ec2_private_key_id is invalid.'
       end
 
       ec2_private_key = Ec2PrivateKey.find(params[:infrastructure][:copy_ec2_private_key_id])

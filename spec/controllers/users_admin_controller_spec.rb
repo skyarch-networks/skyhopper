@@ -8,17 +8,16 @@
 
 require_relative '../spec_helper'
 
-
 describe UsersAdminController, type: :controller do
   login_user
   stubize_zabbix
   run_zabbix_server
 
-  let(:klass){User}
-  let(:zabbix_servers){[create(:zabbix_server)]}
-  let(:user){create(:user)}
-  let(:admin_status){false}
-  let(:master_status){false}
+  let(:klass) { User }
+  let(:zabbix_servers) { [create(:zabbix_server)] }
+  let(:user) { create(:user) }
+  let(:admin_status) { false }
+  let(:master_status) { false }
   let(:user_hash) { attributes_for(:user, admin: admin_status, master: master_status, zabbix_servers: zabbix_servers.unshift('')) }
 
   describe '#index' do
@@ -47,10 +46,9 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#create' do
-    let(:master){true}
-    let(:admin){true}
-    let(:req){post :create, user: user_hash}
-
+    let(:master) { true }
+    let(:admin) { true }
+    let(:req) { post :create, user: user_hash }
 
     context 'when User#save! raise error' do
       before do
@@ -58,24 +56,24 @@ describe UsersAdminController, type: :controller do
         req
       end
 
-      it {is_expected.to redirect_to action: :new}
+      it { is_expected.to redirect_to action: :new }
     end
 
     context 'when User#save! success' do
       context 'when master and admin' do
-        let(:master){true}
-        let(:admin){true}
-        before{req}
+        let(:master) { true }
+        let(:admin) { true }
+        before { req }
 
-        it {is_expected.to redirect_to action: :index}
+        it { is_expected.to redirect_to action: :index }
       end
 
       context 'when master only' do
-        let(:master){true}
-        let(:admin){false}
-        before{req}
+        let(:master) { true }
+        let(:admin) { false }
+        before { req }
 
-        it {is_expected.to redirect_to action: :index}
+        it { is_expected.to redirect_to action: :index }
       end
 
       context 'when zabbix error' do
@@ -83,15 +81,15 @@ describe UsersAdminController, type: :controller do
           allow(Zabbix).to receive(:new).and_raise
           req
         end
-        it {is_expected.to redirect_to action: :new}
+        it { is_expected.to redirect_to action: :new }
       end
     end
   end
 
   describe '#create' do
-    let(:create_request){post :create, user: user_hash}
-    let(:admin_user_group){1}
-    let(:user_data){{"userids" => [1]}}
+    let(:create_request) { post :create, user: user_hash }
+    let(:admin_user_group) { 1 }
+    let(:user_data) { { 'userids' => [1] } }
 
     context 'when valid params' do
       it 'should assign @user' do
@@ -128,7 +126,7 @@ describe UsersAdminController, type: :controller do
 
     should_be_success
 
-    it "should assign instance variables" do
+    it 'should assign instance variables' do
       expect(assigns[:user]).to be_a Hash
       expect(assigns[:mfa_key]).to be_a String
       expect(assigns[:mfa_qrcode]).to be_a String
@@ -152,43 +150,43 @@ describe UsersAdminController, type: :controller do
   describe '#update' do
     request_as_ajax
 
-    let(:master){true}
-    let(:admin){true}
-    let(:allowed_projects){nil}
-    let(:allowed_zabbix){nil}
-    let(:password){nil}
-    let(:password_confirm){password}
-    let(:mfa_secret_key){nil}
-    let(:req){
+    let(:master) { true }
+    let(:admin) { true }
+    let(:allowed_projects) { nil }
+    let(:allowed_zabbix) { nil }
+    let(:password) { nil }
+    let(:password_confirm) { password }
+    let(:mfa_secret_key) { nil }
+    let(:req) do
       put :update,
-        id: user.id,
-        body: {master: master,
-          admin: admin,
-          allowed_projects: allowed_projects,
-          allowed_zabbix: allowed_zabbix,
-          password: password,
-          password_confirmation: password_confirm,
-          mfa_secret_key: mfa_secret_key}.to_json
-    }
+          id: user.id,
+          body: { master: master,
+                  admin: admin,
+                  allowed_projects: allowed_projects,
+                  allowed_zabbix: allowed_zabbix,
+                  password: password,
+                  password_confirmation: password_confirm,
+                  mfa_secret_key: mfa_secret_key, }.to_json
+    end
 
     context 'when set password' do
-      let(:password){'hoge'}
+      let(:password) { 'hoge' }
       context 'when password not match' do
-        let(:password_confirm){'fuga'}
-        before{req}
+        let(:password_confirm) { 'fuga' }
+        before { req }
         should_be_failure
         should_be_json
       end
 
       context 'when password match' do
-        before{req}
+        before { req }
         should_be_success
       end
     end
 
     context 'when update mfa secret key' do
-      let(:mfa_secret_key){SecureRandom.hex(16)}
-      before{req}
+      let(:mfa_secret_key) { SecureRandom.hex(16) }
+      before { req }
       should_be_success
 
       it 'should update mfa secret key' do
@@ -198,8 +196,8 @@ describe UsersAdminController, type: :controller do
     end
 
     context 'when update zabbix servers' do
-      let(:allowed_zabbix){create_list(:zabbix_server, 3).map{|zb| zb.id}}
-      before {req}
+      let(:allowed_zabbix) { create_list(:zabbix_server, 3).map(&:id) }
+      before { req }
       should_be_success
 
       it 'should update UserZabbixServer' do
@@ -220,17 +218,17 @@ describe UsersAdminController, type: :controller do
     end
 
     context 'when master only' do
-      let(:master){true}
-      let(:admin){false}
-      before{req}
+      let(:master) { true }
+      let(:admin) { false }
+      before { req }
 
       should_be_success
     end
 
     context 'when not master' do
-      let(:allowed_projects){create_list(:project, 3).map{|prj|prj.id}}
-      let(:master){false}
-      before{req}
+      let(:allowed_projects) { create_list(:project, 3).map(&:id) }
+      let(:master) { false }
+      before { req }
 
       it 'should update UserProject' do
         expect(user.projects.pluck(:id)).to eq allowed_projects
@@ -239,7 +237,7 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#sync_zabbix' do
-    let(:id){1}
+    let(:id) { 1 }
 
     before do
       create(:user, master: true, admin: true)
@@ -248,14 +246,13 @@ describe UsersAdminController, type: :controller do
       create(:user, master: false, admin: false)
       create(:zabbix_server, id: id)
       put :sync_zabbix
-
     end
 
     should_be_success
   end
 
   describe '#destroy' do
-    let(:req){delete :destroy, id: user.id}
+    let(:req) { delete :destroy, id: user.id }
 
     context 'when delete success' do
       it 'should destroy user' do
@@ -272,7 +269,7 @@ describe UsersAdminController, type: :controller do
         req
       end
 
-      it {expect { raise StandardError }.to raise_error(StandardError)}
+      it { expect { raise StandardError }.to raise_error(StandardError) }
 
       it 'should not delete user' do
         expect(User).to be_exists user.id

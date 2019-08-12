@@ -8,7 +8,7 @@
 
 class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
   # http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
-  InstanceClasses = %w[
+  INSTANCE_CLASSES = %w[
     db.t1.micro
     db.m1.small
     db.m3.medium
@@ -31,18 +31,17 @@ class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
 
   @@properties = [
     # XXX: Conditionalなものはrequiredに倒してます。
-    TemplateBuilder::Property.new(:Engine, String, required: true, select: true){engines},
-    TemplateBuilder::Property.new(:DBName, String), #TODO: data_validator
+    TemplateBuilder::Property.new(:Engine, String, required: true, select: true) { engines },
+    TemplateBuilder::Property.new(:DBName, String), # TODO: data_validator
     TemplateBuilder::Property.new(:MultiAZ, :Boolean),
-    TemplateBuilder::Property.new(:MasterUsername, String, required: true, data_validator: {min: 2, max: 16, regexp: /^[a-zA-Z0-9]+$/}),
-    TemplateBuilder::Property.new(:MasterUserPassword, String, required: true, data_validator: {min: 8}),
-    TemplateBuilder::Property.new(:DBInstanceClass, String, required: true, select: true){instance_classes},
-    TemplateBuilder::Property.new(:AllocatedStorage, String, required: true, data_validator: {regexp: /^[0-9]+$/}),
+    TemplateBuilder::Property.new(:MasterUsername, String, required: true, data_validator: { min: 2, max: 16, regexp: /^[a-zA-Z0-9]+$/ }),
+    TemplateBuilder::Property.new(:MasterUserPassword, String, required: true, data_validator: { min: 8 }),
+    TemplateBuilder::Property.new(:DBInstanceClass, String, required: true, select: true) { instance_classes },
+    TemplateBuilder::Property.new(:AllocatedStorage, String, required: true, data_validator: { regexp: /^[0-9]+$/ }),
     TemplateBuilder::Property.new(:DBInstanceIdentifier, String),
     TemplateBuilder::Property.new(:AllowMajorVersionUpgrade, :Boolean),
     TemplateBuilder::Property.new(:AutoMinorVersionUpgrade, :Boolean),
   ].freeze
-
 
   class << self
     # XXX: oracleとか
@@ -51,7 +50,7 @@ class TemplateBuilder::Resource::RDS::DBInstance < TemplateBuilder::Resource
     end
 
     def instance_classes
-      InstanceClasses
+      INSTANCE_CLASSES
     end
   end
 end

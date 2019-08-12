@@ -10,11 +10,11 @@ require_relative '../spec_helper'
 
 # TODO: refactor
 describe Servertest, type: :model do
-  let(:klass){Servertest}
+  let(:klass) { Servertest }
 
   describe 'with validation' do
     describe 'column value' do
-      let(:servertest){build(:servertest)}
+      let(:servertest) { build(:servertest) }
       it 'should be ruby code' do
         servertest.value = 'invalid as ruby code{{{'
         expect(servertest.save).to be false
@@ -30,9 +30,9 @@ describe Servertest, type: :model do
     klass.create(infrastructure_id: 2, name: 'for_infra2', value: 'code piyo', category: :awspec)
   end
 
-  it {is_expected.to respond_to(:name)}
-  it {is_expected.to respond_to(:infrastructure_id)}
-  it {is_expected.to respond_to(:value)}
+  it { is_expected.to respond_to(:name) }
+  it { is_expected.to respond_to(:infrastructure_id) }
+  it { is_expected.to respond_to(:value) }
 
   describe '.for_infra' do
     it 'return array' do
@@ -46,7 +46,7 @@ describe Servertest, type: :model do
 
   describe '.global' do
     it 'should return global Serverspecs' do
-      expect(klass.global).to be_all{|s|s.infrastructure_id.nil?}
+      expect(klass.global).to(be_all { |s| s.infrastructure_id.nil? })
     end
   end
 
@@ -57,7 +57,7 @@ describe Servertest, type: :model do
   end
 
   describe '.create_rds' do
-    let(:rds){double('rds', {engine_type: '', endpoint_address: ''})}
+    let(:rds) { double('rds', { engine_type: '', endpoint_address: '' }) }
     user = 'hoge'
     pass = 'passwd'
     infrastructure_id = 1

@@ -7,10 +7,8 @@
 #
 
 class TemplateBuilder::Resource::EC2::EIP < TemplateBuilder::Resource
-
   @@properties = [
-    TemplateBuilder::Property.new(:InstanceId, String, refs: "EC2::Instance"),
+    TemplateBuilder::Property.new(:InstanceId, String, refs: 'EC2::Instance'),
     TemplateBuilder::Property.new(:Domain, String),
   ].freeze
-
 end

@@ -6,17 +6,17 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-const Infrastructure = require('models/infrastructure').default;
-const CFTemplate = require('models/cf_template').default;
-const Resource = require('models/resource').default;
-const EC2Instance = require('models/ec2_instance').default;
-const helpers = require('infrastructures/helper.js');
+const Infrastructure = require('../models/infrastructure').default;
+const CFTemplate = require('../models/cf_template').default;
+const Resource = require('../models/resource').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const helpers = require('../infrastructures/helper.js');
 
-const alert_danger = helpers.alert_danger;
-const reload_infra_index_page = require('infrastructures/show_infra').reload_infra_index_page;
+const alertDanger = helpers.alert_danger;
+const reloadInfraIndexPage = require('../infrastructures/show_infra').reload_infra_index_page;
 
-module.exports = function () {
-  function data() {
+module.exports = () => {
+  function makeData() {
     return {
       infra_model: null, // これが別のオブジェクトを指したら、表示系の非同期処理は取り消される
       current_infra: {
@@ -49,7 +49,7 @@ module.exports = function () {
     props: {
       initial_tab: String,
     },
-    data,
+    data: makeData,
     methods: {
       screen_name(res) {
         if (res.screen_name) {
@@ -63,24 +63,24 @@ module.exports = function () {
         }
         return string;
       },
-      show_ec2(physical_id) {
+      show_ec2(physicalId) {
         this.show_tabpane('ec2');
         this.loading = true;
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = physicalId;
       },
-      show_rds(physical_id) {
+      show_rds(physicalId) {
         this.show_tabpane('rds');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = physicalId;
         this.loading = true;
       },
-      show_elb(physical_id) {
+      show_elb(physicalId) {
         this.show_tabpane('elb');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = physicalId;
         this.loading = true;
       },
-      show_s3(physical_id) {
+      show_s3(physicalId) {
         this.show_tabpane('s3');
-        this.tabpaneGroupID = physical_id;
+        this.tabpaneGroupID = physicalId;
         this.loading = true;
       },
       show_no_resource() {
@@ -96,7 +96,7 @@ module.exports = function () {
           self.current_infra.templates.globals = data.globals;
 
           self.show_tabpane('add_modify');
-        })).fail(self.wrapping_into_same_model_check(alert_danger()));
+        })).fail(self.wrapping_into_same_model_check(alertDanger()));
       },
 
       show_add_ec2() { this.show_tabpane('add-ec2'); },
@@ -165,11 +165,11 @@ module.exports = function () {
           self.tabpaneID = id;
         });
       },
-      update_serverspec_status(physical_id) {
+      update_serverspec_status(physicalId) {
         const self = this;
-        const ec2 = new EC2Instance(self.infra_model, physical_id);
+        const ec2 = new EC2Instance(self.infra_model, physicalId);
         ec2.serverspec_status().done(self.wrapping_into_same_model_check((data) => {
-          const r = _.find(self.current_infra.resources.ec2_instances, v => v.physical_id === physical_id);
+          const r = self.current_infra.resources.ec2_instances.find(v => v.physical_id === physicalId);
           r.serverspec_status = data;
         }));
       },
@@ -195,7 +195,7 @@ module.exports = function () {
         const offset = 250;
         const duration = 300;
 
-        $(window).scroll(function () {
+        $(window).scroll(function windowScrollHandler() {
           if ($(this).scrollTop() > offset) {
             $('.back-to-top').fadeIn(duration);
           } else {
@@ -209,36 +209,34 @@ module.exports = function () {
           return false;
         });
       },
-      reset(open_tab) {
+      reset(openTab) {
         const self = this;
-        const infra_id = this.$route.params.infra_id;
-        self.data = data();
-        self.current_infra.id = parseInt(infra_id);
+        const infraId = this.$route.params.infra_id;
+        self.data = makeData();
+        self.current_infra.id = parseInt(infraId, 10);
         self.$data.current_infra.events = [];
         self.infra_loading = true;
-        self.infra_model = new Infrastructure(infra_id);
+        self.infra_model = new Infrastructure(infraId);
         self.infra_model.show().done(
           self.wrapping_into_same_model_check((stack) => {
             self.infra_loading = false;
             self.current_infra.stack = stack;
-            self.init_infra(open_tab);
+            self.init_infra(openTab);
           }),
         ).fail((msg) => {
-          self.wrapping_into_same_model_check(alert_danger(reload_infra_index_page)(msg));
+          self.wrapping_into_same_model_check(alertDanger(reloadInfraIndexPage)(msg));
         });
       },
       wrapping_into_same_model_check(callback) {
         const self = this;
-        return (function (my_model) {
-          return function (arg1) {
-            if (my_model !== self.infra_model) {
-              return;
-            }
-            callback(arg1);
-          };
-        }(self.infra_model));
+        return (myModel => (arg1) => {
+          if (myModel !== self.infra_model) {
+            return;
+          }
+          callback(arg1);
+        })(self.infra_model);
       },
-      init_infra(current_tab) {
+      init_infra(currentTab) {
         const self = this;
         self.back_to_top();
 
@@ -247,32 +245,33 @@ module.exports = function () {
         if (self.current_infra.stack.status.type === 'OK') {
           const res = new Resource(self.infra_model);
           res.index().done(self.wrapping_into_same_model_check((resources) => {
-            _.forEach(resources.ec2_instances, (v) => {
+            resources.ec2_instances.forEach((v) => {
               v.serverspec_status = true;
             });
             self.current_infra.resources = resources;
             // show first tab
-            if (current_tab === 'show_sched') {
+            if (currentTab === 'show_sched') {
               self.show_operation_sched(resources);
             } else {
-              const instance = _(resources).values().flatten().first();
+              const instance = Object.values(resources).flat()[0];
               if (instance) {
-                const physical_id = instance.physical_id;
+                const physicalId = instance.physical_id;
                 if (instance.type_name === 'AWS::EC2::Instance') {
-                  self.show_ec2(physical_id);
+                  self.show_ec2(physicalId);
                 } else if (instance.type_name === 'AWS::RDS::DBInstance') {
-                  self.show_rds(physical_id);
+                  self.show_rds(physicalId);
                 } else if (instance.type_name === 'AWS::ElasticLoadBalancing::LoadBalancer') {
-                  self.show_elb(physical_id);
+                  self.show_elb(physicalId);
                 } else { // S3
-                  self.show_s3(physical_id);
+                  self.show_s3(physicalId);
                 }
               } else {
+                self.tabpaneID = 'default';
                 self.show_no_resource();
               }
             }
 
-            _.forEach(self.current_infra.resources.ec2_instances, (v) => {
+            self.current_infra.resources.ec2_instances.forEach((v) => {
               self.update_serverspec_status(v.physical_id);
             });
           }));
@@ -302,15 +301,15 @@ module.exports = function () {
       stack_fail() { return this.current_infra.stack.status.type === 'NG'; },
       no_resource() {
         return this.current_infra.stack.status.type === 'OK'
-          && _(this.current_infra.resources).values().flatten().value().length === 0;
+          && Object.values(this.current_infra.resources).flat().length === 0;
       },
 
       status_label_class() {
         let resp = 'label-';
-        const type = this.current_infra.stack.status.type;
-        if (type === 'OK') {
+        const statusType = this.current_infra.stack.status.type;
+        if (statusType === 'OK') {
           resp += 'success';
-        } else if (type === 'NG') {
+        } else if (statusType === 'NG') {
           resp += 'danger';
         } else {
           resp += 'default';
@@ -319,9 +318,9 @@ module.exports = function () {
       },
     },
     mounted() {
-      this.$nextTick(function () {
+      this.$nextTick(function ready() {
         const self = this;
-        self.$watch('$route.params.infra_id', (val) => {
+        self.$watch('$route.params.infra_id', () => {
           self.reset();
         });
         self.reset(self.initial_tab);

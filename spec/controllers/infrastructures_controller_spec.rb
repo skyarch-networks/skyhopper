@@ -11,49 +11,49 @@ require_relative '../spec_helper'
 describe InfrastructuresController, type: :controller do
   login_user
 
-  let(:infra){create(:infrastructure)}
-  let(:project){infra.project}
-  let(:infra_stknm){'stackname'}
-  let(:infra_region){'region'}
-  let(:infra_hash){ attributes_for(:infrastructure, project_id: project.id, stack_name: infra_stknm, keypair_name: infra_key_name, keypair_value: infra_key_value, region: infra_region) }
-  let(:zabbix_server){create(:zabbix_server)}
+  let(:infra) { create(:infrastructure) }
+  let(:project) { infra.project }
+  let(:infra_stknm) { 'stackname' }
+  let(:infra_region) { 'region' }
+  let(:infra_hash) { attributes_for(:infrastructure, project_id: project.id, stack_name: infra_stknm, keypair_name: infra_key_name, keypair_value: infra_key_value, region: infra_region) }
+  let(:zabbix_server) { create(:zabbix_server) }
 
-  let(:regions) {AWS::Regions}
-  let(:ec2_private_key_list){
-    project.infrastructures.map{|infrastructure|
+  let(:regions) { AWS::Regions }
+  let(:ec2_private_key_list) do
+    project.infrastructures.map do |infrastructure|
       [
         "#{infrastructure.stack_name}(#{infrastructure.ec2_private_key.name})",
-        infrastructure.ec2_private_key.id
+        infrastructure.ec2_private_key.id,
       ]
-    }
-  }
+    end
+  end
 
   describe '#index' do
     before { get :index, project_id: project.id }
 
     should_be_success
 
-    it "assigns @selected_project" do
+    it 'assigns @selected_project' do
       expect(assigns[:selected_project]).to eq project
     end
 
-    it "assigns @selected_client" do
+    it 'assigns @selected_client' do
       expect(assigns[:selected_client]).to eq project.client
     end
 
-    it "assigns @infrastructures" do
+    it 'assigns @infrastructures' do
       assigns[:infrastructures].each do |infrastructure|
         expect(infrastructure).to be_a(Infrastructure)
       end
     end
   end
 
-  describe "GET #show" do
-    let(:infra){create(:infrastructure)}
-    let(:ec2_resource){create(:ec2_resource, infrastructure: infra)}
-    let(:rds_resource){create(:rds_resource, infrastructure: infra)}
-    let(:s3bucket_resource){create(:s3bucket_resource, infrastructure: infra)}
-    let(:stack_status){{available: stack_availability, message: "stack_message", status: ""}}
+  describe 'GET #show' do
+    let(:infra) { create(:infrastructure) }
+    let(:ec2_resource) { create(:ec2_resource, infrastructure: infra) }
+    let(:rds_resource) { create(:rds_resource, infrastructure: infra) }
+    let(:s3bucket_resource) { create(:s3bucket_resource, infrastructure: infra) }
+    let(:stack_status) { { available: stack_availability, message: 'stack_message', status: '' } }
 
     before do
       allow_any_instance_of(Resource).to receive(:detach_zabbix)
@@ -61,36 +61,36 @@ describe InfrastructuresController, type: :controller do
       rds_resource
       s3bucket_resource
     end
-    let(:request_show){get :show, id: infra.id}
+    let(:request_show) { get :show, id: infra.id }
 
     stubize_stack
 
-    context "when status available false" do
-      let(:stack_availability){false}
+    context 'when status available false' do
+      let(:stack_availability) { false }
 
       before do
         allow_any_instance_of(Stack).to receive(:status).and_return(stack_status)
         request_show
       end
 
-      it "should delete resources" do
+      it 'should delete resources' do
         infra.reload
         expect(infra.resources).to be_empty
       end
 
       it "infra.status should be ''" do
-        expect(assigns[:infrastructure].status).to eq ""
+        expect(assigns[:infrastructure].status).to eq ''
       end
 
-      it "infra.status should be saved" do
+      it 'infra.status should be saved' do
         expect(assigns[:infrastructure]).to be_persisted
       end
 
       should_be_success
     end
 
-    context "when status available true" do
-      let(:stack_availability){true}
+    context 'when status available true' do
+      let(:stack_availability) { true }
 
       before do
         allow_any_instance_of(Stack).to receive(:status).and_return(stack_status)
@@ -100,17 +100,17 @@ describe InfrastructuresController, type: :controller do
         allow_any_instance_of(Stack).to receive(:failed?).and_return(failed_status)
       end
 
-      ["create", "update", "progress", "failed"].each do |action|
+      %w[create update progress failed].each do |action|
         context "when #{action}?" do
-          let(:create_status){action == "create"}
-          let(:update_status){action == "update"}
-          let(:progress_status){action == "progress"}
-          let(:failed_status){action == "failed"}
+          let(:create_status) { action == 'create' }
+          let(:update_status) { action == 'update' }
+          let(:progress_status) { action == 'progress' }
+          let(:failed_status) { action == 'failed' }
 
           case action
-          when "create", "update"
-            if action == "update"
-              let(:resources_updated){false}
+          when 'create', 'update'
+            if action == 'update'
+              let(:resources_updated) { false }
 
               before do
                 allow_any_instance_of(Infrastructure).to receive(:resources_or_create).and_return(infra.resources)
@@ -118,18 +118,18 @@ describe InfrastructuresController, type: :controller do
               end
 
               context 'when the resources is updated' do
-                let(:resources_updated){true}
+                let(:resources_updated) { true }
 
-                it "should delete resource" do
+                it 'should delete resource' do
                   infra.reload
                   expect(infra.resources).to be_empty
                 end
               end
 
               context 'when the resources is not updated' do
-                let(:resources_updated){false}
+                let(:resources_updated) { false }
 
-                it "should not delete resource" do
+                it 'should not delete resource' do
                   infra.reload
                   expect(infra.resources).not_to be_empty
                 end
@@ -141,11 +141,11 @@ describe InfrastructuresController, type: :controller do
             request_show
           end
 
-          it "should assign infra.status eq stack.status" do
+          it 'should assign infra.status eq stack.status' do
             expect(assigns[:infrastructure].status).to eq stack_status[:status]
           end
 
-          it "should be persisted" do
+          it 'should be persisted' do
             expect(assigns[:infrastructure]).to be_persisted
           end
 
@@ -156,9 +156,9 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#stack_events' do
-    let(:events){[{foo: 'hoge'}]}
-    let(:status_and_type){{foo: 'bar'}}
-    let(:stack){double('stack', events: events, status_and_type: status_and_type)}
+    let(:events) { [{ foo: 'hoge' }] }
+    let(:status_and_type) { { foo: 'bar' } }
+    let(:stack) { double('stack', events: events, status_and_type: status_and_type) }
     before do
       allow(Stack).to receive(:new).and_return(stack)
       get :stack_events, id: infra.id
@@ -166,7 +166,7 @@ describe InfrastructuresController, type: :controller do
 
     should_be_success
 
-    let(:body){JSON.parse(response.body, symbolize_names: true)}
+    let(:body) { JSON.parse(response.body, symbolize_names: true) }
 
     it 'should assign stack_status' do
       expect(body[:stack_status]).to eq status_and_type
@@ -182,15 +182,15 @@ describe InfrastructuresController, type: :controller do
 
     should_be_success
 
-    it "assigns @regions" do
+    it 'assigns @regions' do
       expect(assigns[:regions]).to eq regions
     end
 
-    it "assigns @infrastructure" do
+    it 'assigns @infrastructure' do
       expect(assigns[:infrastructure]).to be_a(Infrastructure)
     end
 
-    it "assigns @ec2_private_key_list" do
+    it 'assigns @ec2_private_key_list' do
       expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
     end
   end
@@ -211,7 +211,7 @@ describe InfrastructuresController, type: :controller do
     end
 
     context 'when can edit' do
-      let(:infra){create(:infrastructure, status: '')}
+      let(:infra) { create(:infrastructure, status: '') }
 
       should_be_success
 
@@ -226,19 +226,19 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:ec2_key){create(:ec2_private_key)}
-    let(:infra_key_name){ec2_key.name}
-    let(:infra_key_value){ec2_key.value}
-    let(:params){{infrastructure: infra_hash}}
-    let(:create_request){post :create, params}
+    let(:ec2_key) { create(:ec2_private_key) }
+    let(:infra_key_name) { ec2_key.name }
+    let(:infra_key_value) { ec2_key.value }
+    let(:params) { { infrastructure: infra_hash } }
+    let(:create_request) { post :create, params }
     before do
       allow(KeyPair).to receive(:validate!)
     end
 
     context 'when create succees' do
       it 'should increase the total count of database by one' do
-        project #XXX: これがないとコケる
-        expect{create_request}.to change(Infrastructure, :count).by(1)
+        project # XXX: これがないとコケる
+        expect { create_request }.to change(Infrastructure, :count).by(1)
       end
 
       it do
@@ -248,7 +248,7 @@ describe InfrastructuresController, type: :controller do
     end
 
     context 'when select KeyPair and create success' do
-      let(:old_ec2_private_key){infra.ec2_private_key}
+      let(:old_ec2_private_key) { infra.ec2_private_key }
       before do
         params[:infrastructure][:keypair_input_type] = 'select'
         params[:infrastructure][:copy_ec2_private_key_id] = old_ec2_private_key.id
@@ -281,7 +281,7 @@ describe InfrastructuresController, type: :controller do
         expect(assigns(:regions)).to eq regions
       end
 
-      it "should assigns @ec2_private_key_list" do
+      it 'should assigns @ec2_private_key_list' do
         expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
       end
 
@@ -289,16 +289,16 @@ describe InfrastructuresController, type: :controller do
         expect(assigns(:infrastructure)).to be_a_new(Infrastructure)
       end
     end
-  end # end of Post #create
+  end
 
   describe 'PATCH #update' do
-    let(:params){{id: infra.id, infrastructure: attributes_for(:infrastructure)}}
-    let(:req){patch :update, params}
+    let(:params) { { id: infra.id, infrastructure: attributes_for(:infrastructure) } }
+    let(:req) { patch :update, params }
 
     context 'when update success' do
-      before{req}
+      before { req }
 
-      it {is_expected.to redirect_to infrastructures_path(project_id: infra.project_id)}
+      it { is_expected.to redirect_to infrastructures_path(project_id: infra.project_id) }
     end
 
     context 'when update failure' do
@@ -316,7 +316,7 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:req){delete :destroy, id: infra.id}
+    let(:req) { delete :destroy, id: infra.id }
 
     stubize_zabbix
     run_zabbix_server
@@ -324,7 +324,7 @@ describe InfrastructuresController, type: :controller do
 
     context 'when delete successfully' do
       before do
-        allow(ZabbixServer).to receive(:find) {zabbix_server}
+        allow(ZabbixServer).to receive(:find) { zabbix_server }
         req
       end
       should_be_success
@@ -336,7 +336,7 @@ describe InfrastructuresController, type: :controller do
 
     context 'when delete failures' do
       before do
-        allow(ZabbixServer).to receive(:find) {zabbix_server}
+        allow(ZabbixServer).to receive(:find) { zabbix_server }
         allow_any_instance_of(Infrastructure).to receive(:destroy!).and_raise
         req
       end
@@ -354,13 +354,13 @@ describe InfrastructuresController, type: :controller do
     run_zabbix_server
     request_as_ajax
 
-    let(:delete_stack_request){post :delete_stack, id: infra.id}
+    let(:delete_stack_request) { post :delete_stack, id: infra.id }
 
     context 'when delete stack success' do
       stubize_stack
 
       before do
-        allow(ZabbixServer).to receive(:find) {zabbix_server}
+        allow(ZabbixServer).to receive(:find) { zabbix_server }
         delete_stack_request
       end
 
@@ -388,12 +388,12 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#show_s3' do
-    let(:bucket_name){"log_bucket"}
-    let(:request_show_s3){ get :show_s3, id: infra.id, bucket_name: bucket_name }
+    let(:bucket_name) { 'log_bucket' }
+    let(:request_show_s3) { get :show_s3, id: infra.id, bucket_name: bucket_name }
 
     stubize_s3
-    before{request_show_s3}
-    subject{Infrastructure.find(infra.id)}
+    before { request_show_s3 }
+    subject { Infrastructure.find(infra.id) }
 
     should_be_success
 
@@ -412,7 +412,7 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#show_rds' do
-    let(:physical_id){SecureRandom.hex(30)}
+    let(:physical_id) { SecureRandom.hex(30) }
 
     stubize_rds
     before do
@@ -423,13 +423,13 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#show_elb' do
-    let(:physical_id){"hogefugahoge-ElasticL-1P3I4RD6PEUBK"}
-    let(:req){get :show_elb, id: infra.id, physical_id: physical_id}
-    let(:instances){[double('ec2A', :[] => 'hogefaaaaa')]}
-    let(:dns_name){'hoge.example.com'}
-    let(:listeners){['hoge']}
-    let(:security_groups){[]}
-    let(:elb){double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups)}
+    let(:physical_id) { 'hogefugahoge-ElasticL-1P3I4RD6PEUBK' }
+    let(:req) { get :show_elb, id: infra.id, physical_id: physical_id }
+    let(:instances) { [double('ec2A', :[] => 'hogefaaaaa')] }
+    let(:dns_name) { 'hoge.example.com' }
+    let(:listeners) { ['hoge'] }
+    let(:security_groups) { [] }
+    let(:elb) { double('elb', instances: instances, dns_name: dns_name, listeners: listeners, list_server_certificates: [[]], security_groups: security_groups) }
 
     before do
       allow(ELB).to receive(:new).with(infra, physical_id).and_return(elb)
@@ -461,16 +461,16 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#change_rds_scale' do
-    let(:type){'db.m1.small'}
+    let(:type) { 'db.m1.small' }
 
-    subject{
+    subject do
       post(
         :change_rds_scale,
-        physical_id:   'hogehoge',
-        id:            infra.id,
-        instance_type: type
+        physical_id: 'hogehoge',
+        id: infra.id,
+        instance_type: type,
       )
-    }
+    end
 
     before do
       allow_any_instance_of(RDS).to receive(:db_instance_class)
@@ -482,10 +482,10 @@ describe InfrastructuresController, type: :controller do
     end
 
     context 'when ChangeScaleError' do
-      let(:ex_msg){"hoge"}
+      let(:ex_msg) { 'hoge' }
 
       before do
-        allow_any_instance_of(RDS).to receive(:change_scale){raise RDS::ChangeScaleError, ex_msg}
+        allow_any_instance_of(RDS).to receive(:change_scale) { raise RDS::ChangeScaleError, ex_msg }
         subject
       end
 
@@ -503,33 +503,37 @@ describe InfrastructuresController, type: :controller do
       def foo
         render text: 'success!!!'
       end
-      def authorize(*)end #XXX: pundit hack
-      def allowed_infrastructure(_);end #skip
+
+      # XXX: pundit hack
+      def authorize(*)end
+
+      # skip
+      def allowed_infrastructure(___); end
     end
-    before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
-    let(:prj_id){project.id}
-    let(:req){get :foo, project_id: prj_id}
+    before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
+    let(:prj_id) { project.id }
+    let(:req) { get :foo, project_id: prj_id }
 
     context 'when project_id param is blank' do
-      let(:prj_id){nil}
-      before{req}
+      let(:prj_id) { nil }
+      before { req }
       should_be_success
     end
 
     context 'when project exists' do
-      before{req}
+      before { req }
       should_be_success
     end
 
     context 'when user is master' do
       context 'when client_id is present' do
-        let(:client){build_stubbed(:client)}
+        let(:client) { build_stubbed(:client) }
         before do
           session[:client_id] = client.id
           project.delete
           req
         end
-        it {is_expected.to redirect_to projects_path(client_id: client.id)}
+        it { is_expected.to redirect_to projects_path(client_id: client.id) }
       end
 
       context 'when client_id is blank' do
@@ -537,14 +541,17 @@ describe InfrastructuresController, type: :controller do
           project.delete
           req
         end
-        it {is_expected.to redirect_to clients_path}
+        it { is_expected.to redirect_to clients_path }
       end
     end
 
     context 'when user is not master' do
       login_user(master: false)
-      before{project.delete; req}
-      it {is_expected.to redirect_to projects_path}
+      before do
+        project.delete
+        req
+      end
+      it { is_expected.to redirect_to projects_path }
     end
   end
 
@@ -554,21 +561,25 @@ describe InfrastructuresController, type: :controller do
       def foo
         render text: 'success!!!'
       end
-      def authorize(*)end #XXX: pundit hack
-      def allowed_infrastructure(_);end #skip
+
+      # XXX: pundit hack
+      def authorize(*)end
+
+      # skip
+      def allowed_infrastructure(___); end
     end
-    before{routes.draw{resources(:infrastructures){collection{get :foo}}}}
-    let(:infra_id){infra.id}
-    let(:req){get :foo, id: infra_id}
+    before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
+    let(:infra_id) { infra.id }
+    let(:req) { get :foo, id: infra_id }
 
     context 'when id param is blank' do
-      let(:infra_id){nil}
-      before{req}
+      let(:infra_id) { nil }
+      before { req }
       should_be_success
     end
 
     context 'when infra exists' do
-      before{req}
+      before { req }
       should_be_success
     end
 
@@ -578,20 +589,26 @@ describe InfrastructuresController, type: :controller do
         infra.delete
         req
       end
-      it {is_expected.to redirect_to infrastructures_path(project_id: project.id)}
+      it { is_expected.to redirect_to infrastructures_path(project_id: project.id) }
     end
 
     context 'when project id is blank' do
       context 'when user is master' do
-        before{infra.delete; req}
-        it {is_expected.to redirect_to clients_path}
+        before do
+          infra.delete
+          req
+        end
+        it { is_expected.to redirect_to clients_path }
       end
 
       context 'when user isnot master' do
         login_user(master: false)
-        before{infra.delete; req}
+        before do
+          infra.delete
+          req
+        end
 
-        it {is_expected.to redirect_to projects_path}
+        it { is_expected.to redirect_to projects_path }
       end
     end
   end
@@ -601,33 +618,33 @@ describe InfrastructuresController, type: :controller do
       get :edit_keypair, id: infra.id
     end
 
-    let(:infra){create(:infrastructure, status: '')}
+    let(:infra) { create(:infrastructure, status: '') }
 
     should_be_success
 
-    it "assigns @ec2_private_key_list" do
+    it 'assigns @ec2_private_key_list' do
       expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
     end
   end
 
   describe '#update_keypair' do
-    let(:ec2_key){create(:ec2_private_key)}
-    let(:infra_key_name){ec2_key.name}
-    let(:infra_key_value){ec2_key.value}
-    let(:params){{id: infra.id, infrastructure: infra_hash}}
-    let(:req){patch :update_keypair, params}
+    let(:ec2_key) { create(:ec2_private_key) }
+    let(:infra_key_name) { ec2_key.name }
+    let(:infra_key_value) { ec2_key.value }
+    let(:params) { { id: infra.id, infrastructure: infra_hash } }
+    let(:req) { patch :update_keypair, params }
     before do
       allow(KeyPair).to receive(:validate!)
     end
 
     context 'when update success' do
-      before{req}
+      before { req }
 
-      it {is_expected.to redirect_to infrastructures_path(project_id: infra.project_id)}
+      it { is_expected.to redirect_to infrastructures_path(project_id: infra.project_id) }
     end
 
     context 'when select KeyPair and update success' do
-      let(:old_ec2_private_key){infra.ec2_private_key}
+      let(:old_ec2_private_key) { infra.ec2_private_key }
       before do
         params[:infrastructure][:keypair_input_type] = 'select'
         params[:infrastructure][:copy_ec2_private_key_id] = old_ec2_private_key.id
@@ -651,7 +668,7 @@ describe InfrastructuresController, type: :controller do
 
       should_be_failure
 
-      it "assigns @ec2_private_key_list" do
+      it 'assigns @ec2_private_key_list' do
         expect(assigns[:ec2_private_key_list]).to eq(ec2_private_key_list)
       end
     end

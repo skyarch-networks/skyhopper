@@ -20,5 +20,4 @@ module MaintenanceMode
     Turnout::MaintenanceFile.default.delete
     Rails.logger.info('Maintenance mode has deactivated.')
   end
-
 end

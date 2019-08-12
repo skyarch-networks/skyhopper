@@ -10,7 +10,7 @@
 
 FactoryGirl.define do
   factory :dish, class: 'Dish' do
-    name "MyString"
+    name 'MyString'
     runlist 'foo,bar,hoge,fuga'
     project
     status 'SUCCESS'
