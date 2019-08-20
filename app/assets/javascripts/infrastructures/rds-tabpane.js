@@ -104,7 +104,7 @@ module.exports = Vue.extend({
       if (this.isEndPage) return;
       this.page += 1;
     },
-    checkTag(r) {
+    check_tag(r) {
       checkTag(r);
     },
     has_selected(arg) {
