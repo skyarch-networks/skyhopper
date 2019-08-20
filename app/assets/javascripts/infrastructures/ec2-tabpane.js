@@ -403,14 +403,14 @@ module.exports = Vue.extend({
 
     delete_selected_snapshots() {
       const self = this;
-      const snapshots = this.ec2.snapshots.select('selected', true);
-      const snapshotIds = snapshots.pluck('snapshot_id');
+      const snapshots = this.ec2.snapshots.filter(snapshot => snapshot.selected === true);
+      const snapshotIds = snapshots.map(snapshot => snapshot.snapshot_id);
       let confirmBody = t('snapshots.msg.delete_snapshot');
       confirmBody += `<ul><li>${snapshotIds.join('</li><li>')}</li></ul>`;
       modal.ConfirmHTML(t('snapshots.delete_snapshot'), confirmBody, 'danger').done(() => {
         const s = new Snapshot(self.infra_id);
 
-        snapshots.each((snapshot) => {
+        snapshots.forEach((snapshot) => {
           s.destroy(snapshot.snapshot_id)
             .done(() => {
               const index = self.ec2.snapshots.indexOf(snapshot);
@@ -435,7 +435,24 @@ module.exports = Vue.extend({
         this.sort_asc = false;
         this.sort_key = key;
       }
-      this.ec2.snapshots = this.ec2.snapshots.sortByOrder(key, this.sort_asc);
+      if (!this.sort_key) {
+        return;
+      }
+      this.ec2.snapshots = this.ec2.snapshots.sort((a, b) => {
+        if (a[key] < b[key]) {
+          if (this.sort_asc) {
+            return -1;
+          }
+          return 1;
+        }
+        if (a[key] > b[key]) {
+          if (this.sort_asc) {
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      });
     },
 
     sorting_by(key) {
