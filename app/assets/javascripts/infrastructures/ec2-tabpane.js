@@ -294,7 +294,7 @@ module.exports = Vue.extend({
     is_first(idx) { return (idx === 0); },
     runlist_type(run) { return run.replace(/\[.+\]$/, ''); },
     runlist_name(run) { return run.replace(/^.+\[(.+)\]$/, '$1'); },
-    ansiUp(log) { return ansiUp.ansi_to_html(log); },
+    ansi_up(log) { return ansiUp.ansi_to_html(log); },
 
     _loading() { this.$parent.loading = true; },
 
@@ -522,14 +522,21 @@ module.exports = Vue.extend({
     },
 
     latest_snapshot(volumeId) {
-      return this.ec2.snapshots.chain()
-        .select({
-          volumeId,
-          state: 'completed',
+      return this.ec2.snapshots
+        .filter(snapshot => (
+          snapshot.volume_id === volumeId
+          && snapshot.state === 'completed'
+        ))
+        .sort((a, b) => {
+          if (a.start_time < b.start_time) {
+            return -1;
+          }
+          if (a.start_time > b.start_time) {
+            return 1;
+          }
+          return 0;
         })
-        .sortBy('start_time')
-        .last()
-        .value();
+        .slice(-1)[0];
     },
 
     latest_snapshot_date(volumeId) {
@@ -572,7 +579,12 @@ module.exports = Vue.extend({
     },
 
     toLocaleString,
-    capitalize(str) { return str.camelCase().capitalize(); },
+
+    capitalize(str) {
+      // 中身はUpperCamelCaseにする処理
+      const capitalizeStr = str.charAt(0).toUpperCase() + str.slice(1);
+      return capitalizeStr.replace(/[-_ ]+(.)/g, (match, p1) => p1.toUpperCase());
+    },
 
     get_security_groups() {
       const self = this;
@@ -607,7 +619,7 @@ module.exports = Vue.extend({
       if (this.isEndPage) return;
       this.page += 1;
     },
-    checkTag(r) {
+    check_tgg(r) {
       return checkTag(r);
     },
     roundup(val) { return (Math.ceil(val)); },
@@ -623,7 +635,7 @@ module.exports = Vue.extend({
       }
       return 'btn-default';
     },
-    hasSelected() {
+    has_selected() {
       return hasSelected(this.rules_summary);
     },
 
@@ -665,7 +677,7 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_snapshots() { return this.ec2.snapshots.filter('selected', true); },
+    selected_snapshots() { return this.ec2.snapshots.filter(snapshot => snapshot.selected === true); },
 
     suggest_device_name() {
       // TODO: iikanji ni sitai
@@ -742,7 +754,7 @@ module.exports = Vue.extend({
         if (self.volume_selected === '') {
           return true;
         }
-        return JSON.stringify(data.volumeId).indexOf(self.volume_selected) !== -1;
+        return JSON.stringify(data.volume_id).indexOf(self.volume_selected) !== -1;
       });
       this.filteredLength = items.length;
       return items;
