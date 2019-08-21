@@ -1,10 +1,10 @@
-const Infrastructure = require('models/infrastructure').default;
-const CFTemplate = require('models/cf_template').default;
+const Infrastructure = require('../models/infrastructure').default;
+const CFTemplate = require('../models/cf_template').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const toLocaleString = helpers.toLocaleString;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const { toLocaleString } = helpers;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
 module.exports = Vue.extend({
   template: '#cf-history-tabpane-template',
@@ -36,7 +36,7 @@ module.exports = Vue.extend({
       const cft = new CFTemplate(infra);
       cft.show(id).done((data) => {
         self.current = data;
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alertAndShowInfra(infra.id));
     },
   },
   computed: {
@@ -49,6 +49,6 @@ module.exports = Vue.extend({
     cft.history().done((data) => {
       self.history = data;
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra(infra.id));
+    }).fail(alertAndShowInfra(infra.id));
   },
 });
