@@ -8,6 +8,8 @@
 
 //    このファイルには、全体で使いたい関数を定義する。
 
+const loadGif = $('<div class="loader"></div>'); // TODO private
+
 const t = function (scope, options) {
   return I18n.t(scope, options);
 };
@@ -131,6 +133,7 @@ const toggle_input_masking = function (btn, target) {
 };
 
 const create_masked_input = function (input) {
+  const glyphicon = iconName => $('<span>').addClass(`glyphicon glyphicon-${iconName}`);
   const target_id = input.attr('id');
   const btn_toggle = $('<button>', {
     class: 'btn btn-default toggle-input-masking',

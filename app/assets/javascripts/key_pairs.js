@@ -6,6 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 const modal = require('./modal');
+const { Loader } = require('./modules/common-helpers');
 
 (() => {
   Vue.component('div-loader', Loader);

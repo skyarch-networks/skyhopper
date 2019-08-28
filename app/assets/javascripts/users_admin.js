@@ -1,4 +1,5 @@
 const modal = require('./modal');
+const { Loader } = require('./modules/common-helpers');
 require('./user_index');
 
 {
