@@ -1,5 +1,4 @@
-
-
+/* global PROJECT, PROJECT_PARAMETERS */
 const modal_1 = require('./modal');
 
 PROJECT_PARAMETERS.forEach((p) => {
