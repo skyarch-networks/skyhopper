@@ -10,7 +10,7 @@
 
 const loadGif = $('<div class="loader"></div>'); // TODO private
 
-const t = (scope, options) => I18n.t(scope, options); // eslint-disable-line no-undef
+const t = (scope, options) => I18n.t(scope, options);
 
 // show loading gif when a button is clicked
 
