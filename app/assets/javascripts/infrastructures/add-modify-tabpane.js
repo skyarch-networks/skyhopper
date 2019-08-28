@@ -22,15 +22,14 @@ module.exports = Vue.extend({
 
   methods: {
     select_cft() {
-      const self = this;
-      const cft = self.templates.histories.concat(self.templates.globals).find(c => c.id === self.selected_cft_id);
-      self.result.name = cft.name;
-      self.result.detail = cft.detail;
-      self.result.format = cft.format;
-      self.result.value = cft.value;
-      self.select_format();
+      const cft = this.templates.histories.concat(this.templates.globals).find(c => c.id === this.selected_cft_id);
+      this.result.name = cft.name;
+      this.result.detail = cft.detail;
+      this.result.format = cft.format;
+      this.result.value = cft.value;
+      this.select_format();
 
-      self.editor.getSession().setValue(cft.value);
+      this.editor.getSession().setValue(cft.value);
     },
 
     select_format() {
@@ -66,22 +65,20 @@ module.exports = Vue.extend({
   },
   mounted() {
     this.$nextTick(function ready() {
-      const self = this;
-
-      self.editor = ace.edit('add_modify_value_ace');
-      self.editor.getSession().setValue(self.result.value);
-      self.editor.getSession().on('change', () => {
-        self.result.value = self.editor.getSession().getValue();
+      this.editor = ace.edit('add_modify_value_ace'); // eslint-disable-line no-undef
+      this.editor.getSession().setValue(this.result.value);
+      this.editor.getSession().on('change', () => {
+        this.result.value = this.editor.getSession().getValue();
       });
-      self.editor.setOptions({
+      this.editor.setOptions({
         maxLines: 25,
         minLines: 15,
       });
-      self.editor.setTheme('ace/theme/github');
-      self.editor.getSession().setMode('ace/mode/json');
-      self.editor.getSession().setUseWrapMode(true);
-      self.editor.$blockScrolling = Infinity;
-      self.select_format();
+      this.editor.setTheme('ace/theme/github');
+      this.editor.getSession().setMode('ace/mode/json');
+      this.editor.getSession().setUseWrapMode(true);
+      this.editor.$blockScrolling = Infinity;
+      this.select_format();
     });
   },
 });
