@@ -41,7 +41,8 @@ const overwrite_by_loading_alert = function (button, content) {
   return progress;
 };
 
-const show_loading = function (target) {
+// eslint-disable-next-line no-unused-vars
+const show_loading = (target) => {
   const load = $(`<span>${t('common.msg.loading')}</span>`);
   load.prepend(loadGif);
   target.html(load);
@@ -155,7 +156,8 @@ $(document).ready(() => {
 
 
 // for websocket
-const ws_connector = function (kind, id) {
+// eslint-disable-next-line no-unused-vars
+const ws_connector = (kind, id) => {
   const ws_protocol = ((document.location.protocol === 'https:') ? 'wss:' : 'ws:');
   return new WebSocket(`${ws_protocol}//${location.hostname}/ws/${kind}/${id}`);
 };
