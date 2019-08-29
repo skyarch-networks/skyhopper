@@ -3,6 +3,16 @@
   "env": {
     "browser": true
   },
+  "overrides": [
+    {
+      "files": [
+        "app/assets/javascripts/models/*.js"
+      ],
+      "rules": {
+        "camelcase": ["off"]
+      }
+    }
+  ],
   "globals": {
     "session_id": false,
     "$": false,
