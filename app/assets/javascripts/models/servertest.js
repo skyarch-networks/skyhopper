@@ -14,7 +14,7 @@ const Servertest = class Servertest extends ModelBase {
         servertest: {
           name: fname,
           value,
-          infrastructure_id: self.infra_id,
+          infrastructure_id: this.infra_id,
           category,
         },
       }),
