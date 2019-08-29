@@ -64,7 +64,7 @@ const Infrastructure = class Infrastructure extends ModelBase {
     );
   }
 
-  download_log(infrastructureLogId) {
+  static download_log(infrastructureLogId) {
     const url = `/infrastructure_logs/${infrastructureLogId}/download`;
     window.open(url, '_blank');
   }

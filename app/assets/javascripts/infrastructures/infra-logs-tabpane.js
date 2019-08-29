@@ -64,8 +64,7 @@ module.exports = Vue.extend({
       return this.picked_id === item.id;
     },
     download_selected() {
-      const infra = new Infrastructure(this.infra_id);
-      infra.download_log(this.picked_id);
+      Infrastructure.download_log(this.picked_id);
     },
     download_all() {
       const infra = new Infrastructure(this.infra_id);
