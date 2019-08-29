@@ -84,7 +84,7 @@ const demoGrid = require('./demo-grid');
   const showDish = (dishId) => {
     const target = dishBody();
 
-    show_loading(target);
+    showLoading(target);
 
     return $.ajax({
       url: `/dishes/${dishId}`,

@@ -18,7 +18,7 @@
     "noty": false,
     "t": false,
     "ws_connector": false,
-    "show_loading": false
+    "showLoading": false
   },
   "rules": {
     "max-len": ["error", { "code": 160 }],

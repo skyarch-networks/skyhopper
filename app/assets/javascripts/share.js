@@ -10,7 +10,7 @@
 
 const {
   t, // eslint-disable-line no-unused-vars
-  show_loading, // eslint-disable-line no-unused-vars
+  showLoading, // eslint-disable-line no-unused-vars
   ws_connector, // eslint-disable-line no-unused-vars
 } = (() => {
   const loadGif = $('<div class="loader"></div>');
@@ -18,7 +18,7 @@ const {
   return {
     t: (scope, options) => I18n.t(scope, options),
 
-    show_loading: (target) => {
+    showLoading: (target) => {
       const load = $(`<span>${t('common.msg.loading')}</span>`);
       load.prepend(loadGif);
       target.html(load);
