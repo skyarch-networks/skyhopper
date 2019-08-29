@@ -46,7 +46,7 @@ module.exports = Vue.extend({
     status_class(status) { return status ? 'label-success' : 'label-danger'; },
     status_text(status) { return status ? 'SUCCESS' : 'FAILED'; },
     toLocaleString,
-    ansiUp(log) { return ansiUp.ansi_to_html(log); },
+    ansi_up(log) { return ansiUp.ansi_to_html(log); },
     sortBy(key) {
       const self = this;
       self.sortKey = key;
