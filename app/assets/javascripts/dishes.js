@@ -121,7 +121,7 @@ const demoGrid = require('./demo-grid');
   const isValidateFinishStatus = status => (status === 'SUCCESS' || status === 'FAILURE' || status === 'NOT YET');
 
   const getValidateStatus = (dishId, callback) => {
-    const ws = ws_connector('dish_validate', dishId);
+    const ws = wsConnector('dish_validate', dishId);
 
     ws.onmessage = (msg) => {
       const { data } = msg;

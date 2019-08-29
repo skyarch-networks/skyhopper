@@ -17,7 +17,7 @@
     "Clipboard": false,
     "noty": false,
     "t": false,
-    "ws_connector": false,
+    "wsConnector": false,
     "showLoading": false
   },
   "rules": {

@@ -11,7 +11,7 @@
 const {
   t, // eslint-disable-line no-unused-vars
   showLoading, // eslint-disable-line no-unused-vars
-  ws_connector, // eslint-disable-line no-unused-vars
+  wsConnector, // eslint-disable-line no-unused-vars
 } = (() => {
   const loadGif = $('<div class="loader"></div>');
 
@@ -25,7 +25,7 @@ const {
     },
 
     // for websocket
-    ws_connector: (kind, id) => {
+    wsConnector: (kind, id) => {
       const wsProtocol = ((document.location.protocol === 'https:') ? 'wss:' : 'ws:');
       return new WebSocket(`${wsProtocol}//${window.location.hostname}/ws/${kind}/${id}`);
     },

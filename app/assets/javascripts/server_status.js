@@ -32,7 +32,7 @@ const Server = class Server {
   }
 
   watch(callback) {
-    const ws = ws_connector('server_status', this.kind);
+    const ws = wsConnector('server_status', this.kind);
     ws.onmessage = (msg) => {
       callback(msg.data);
     };

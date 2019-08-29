@@ -38,7 +38,7 @@
 
 
   if (session_id) {
-    const ws_conn = ws_connector('notifications', session_id);
+    const ws_conn = wsConnector('notifications', session_id);
 
     ws_conn.onmessage = function (msg) {
       const data = JSON.parse(msg.data);

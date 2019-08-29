@@ -97,7 +97,7 @@ const modal = require('./modal');
     $('.create-system-server').show();
 
 
-    const ws = ws_connector('chef_server_deployment', 'status');
+    const ws = wsConnector('chef_server_deployment', 'status');
     ws.onmessage = (msg) => {
       const parsed = JSON.parse(msg.data);
 

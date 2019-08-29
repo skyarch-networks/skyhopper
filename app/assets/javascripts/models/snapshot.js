@@ -21,7 +21,7 @@ const Snapshot = class Snapshot extends ModelBase {
 
   watch_snapshot_progress(dfd) {
     return (data) => {
-      const ws = ws_connector('snapshot_status', data.snapshot_id);
+      const ws = wsConnector('snapshot_status', data.snapshot_id);
       ws.onmessage = (msg) => {
         switch (msg.data) {
           case 'completed':

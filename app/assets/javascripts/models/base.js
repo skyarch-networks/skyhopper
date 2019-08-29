@@ -23,7 +23,7 @@ const ModelBase = class ModelBase {
 
   wait_change_status(id, dfd, scope) {
     return function wait_change_status() {
-      const ws = ws_connector(scope, id);
+      const ws = wsConnector(scope, id);
       ws.onmessage = function onmessage(msg) {
         const d = JSON.parse(msg.data);
         if (!d.status) {
