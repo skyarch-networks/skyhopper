@@ -70,7 +70,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
     self.ajax_node.run_bootstrap(this.params)
       .done(() => {
-        const ws = ws_connector('bootstrap', self.physical_id);
+        const ws = wsConnector('bootstrap', self.physical_id);
         ws.onmessage = (msg) => {
           ws.close();
           const wsdata = JSON.parse(msg.data);
@@ -81,12 +81,12 @@ const EC2Instance = class EC2Instance extends ModelBase {
           }
         };
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
   watch_cook(dfd) {
-    const ws = ws_connector('cooks', this.physical_id);
+    const ws = wsConnector('cooks', this.physical_id);
     ws.onmessage = (msg) => {
       const data = JSON.parse(msg.data).v;
       if (typeof (data) === 'boolean') {
@@ -107,7 +107,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         dfd.notify('start', data);
         self.watch_cook(dfd);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -116,7 +116,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
   }
 
   watch_run_ansible_playbook(dfd) {
-    const ws = ws_connector('run-ansible-playbook', this.physical_id);
+    const ws = wsConnector('run-ansible-playbook', this.physical_id);
     ws.onmessage = (msg) => {
       const data = JSON.parse(msg.data).v;
       if (typeof data === 'boolean') {
@@ -137,7 +137,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         dfd.notify('start', data);
         self.watch_run_ansible_playbook(dfd);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -226,7 +226,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         });
         dfd.resolve(data);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -304,7 +304,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         s.checked = false;
       });
       dfd.resolve(data);
-    }).fail(this.rejectF(dfd));
+    }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -316,7 +316,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
       infra_id: this.infra.id,
     }).done((data) => {
       dfd.resolve(data);
-    }).fail(this.rejectF(dfd));
+    }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -358,7 +358,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
   wait_change_status_ec2(dfd) {
     const self = this;
     return () => {
-      const ws = ws_connector('ec2_status', self.physical_id);
+      const ws = wsConnector('ec2_status', self.physical_id);
       ws.onmessage = (msg) => {
         const d = JSON.parse(msg.data);
         if (d.error) {
@@ -382,7 +382,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
     this.ajax_ec2.start(this.params)
       .done(this.wait_change_status_ec2(dfd))
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -390,7 +390,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
     this.ajax_ec2.stop(this.params)
       .done(this.wait_change_status_ec2(dfd))
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -411,7 +411,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
   reboot_ec2() {
     const dfd = $.Deferred();
     this.ajax_ec2.reboot(this.params)
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -420,7 +420,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     this.ajax_ec2.serverspec_status(this.params)
       .done((data) => {
         dfd.resolve(data.status);
-      }).fail(this.rejectF(dfd));
+      }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 

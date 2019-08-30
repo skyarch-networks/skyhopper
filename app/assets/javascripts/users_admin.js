@@ -1,4 +1,5 @@
 const modal = require('./modal');
+const { Loader } = require('./modules/common-helpers');
 require('./user_index');
 
 {
@@ -15,7 +16,7 @@ require('./user_index');
       const frag = $(document.createDocumentFragment());
       const p = $('<p>');
       frag.append(p);
-      show_loading(p);
+      showLoading(p);
       btn.after(frag);
       ajax.sync_zabbix().done((data) => {
         modal.Alert(t('users.title'), data).done(reload);

@@ -3,15 +3,32 @@
   "env": {
     "browser": true
   },
+  "overrides": [
+    {
+      "files": [
+        "app/assets/javascripts/models/*.js"
+      ],
+      "rules": {
+        "camelcase": ["off"]
+      }
+    }
+  ],
   "globals": {
     "session_id": false,
     "$": false,
-    "t": false,
-    "ws_connector": false,
+    "jQuery": false,
     "AjaxSet": false,
     "Vue": false,
     "VueRouter": false,
-    "moment": false
+    "moment": false,
+    "google": false,
+    "I18n": false,
+    "Favico": false,
+    "Clipboard": false,
+    "noty": false,
+    "t": false,
+    "wsConnector": false,
+    "showLoading": false
   },
   "rules": {
     "max-len": ["error", { "code": 160 }],

@@ -1,15 +1,14 @@
-const Infrastructure = require('models/infrastructure').default;
-const Resource = require('models/resource').default;
+const queryString = require('query-string').parse(window.location.search);
+const Infrastructure = require('../models/infrastructure').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const alertSuccess = helpers.alert_success;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
-const wrap = require('modules/wrap');
-const listen = require('modules/listen');
+const wrap = require('../modules/wrap');
+const listen = require('../modules/listen');
 
-const queryString = require('query-string').parse(location.search);
 
 module.exports = Vue.extend({
   template: '#operation-sched-tabpane-template',
@@ -88,32 +87,32 @@ module.exports = Vue.extend({
 
     showPrev() {
       if (this.pageNumber === 0) return;
-      this.pageNumber--;
+      this.pageNumber = -1;
     },
 
     showNext() {
       if (this.isEndPage) return;
-      this.pageNumber++;
+      this.pageNumber = +1;
     },
 
     repeat_selector() {
-      if (parseInt(this.sel_instance.repeat_freq) === 1) {
+      if (parseInt(this.sel_instance.repeat_freq, 10) === 1) {
         $('#days-selector').hide();
-        _.forEach(this.dates, (item) => {
+        this.dates.forEach((item) => {
           item.checked = true;
         });
-      } else if (parseInt(this.sel_instance.repeat_freq) === 2) {
+      } else if (parseInt(this.sel_instance.repeat_freq, 10) === 2) {
         $('#days-selector').hide();
-        _.forEach(this.dates, (item) => {
-          item.checked = !(parseInt(item.value) === 6 || parseInt(item.value) === 0);
+        this.dates.forEach((item) => {
+          item.checked = !(parseInt(item.value, 10) === 6 || parseInt(item.value, 10) === 0);
         });
-      } else if (parseInt(this.sel_instance.repeat_freq) === 3) {
+      } else if (parseInt(this.sel_instance.repeat_freq, 10) === 3) {
         $('#days-selector').hide();
-        _.forEach(this.dates, (item) => {
-          item.checked = (parseInt(item.value) === 6 || parseInt(item.value) === 0);
+        this.dates.forEach((item) => {
+          item.checked = (parseInt(item.value, 10) === 6 || parseInt(item.value, 10) === 0);
         });
       } else {
-        _.forEach(this.dates, (item) => {
+        this.dates.forEach((item) => {
           item.checked = false;
           $('#days-selector input').attr('disabled', false);
           $('#days-selector').show();
@@ -143,7 +142,7 @@ module.exports = Vue.extend({
       const self = this;
       self.sel_instance = instance;
       const infra = new Infrastructure(this.infra_id);
-      infra.get_schedule(instance.physical_id).done((data) => {
+      infra.get_schedule(instance.physical_id).done(() => {
         self.sel_instance.physical_id = instance.physical_id;
       });
     },
@@ -151,17 +150,17 @@ module.exports = Vue.extend({
     save_sched() {
       const self = this;
       self.$parent.loading = true;
-      const submit_sel_instance = Object.assign({}, self.sel_instance);
-      submit_sel_instance.dates = self.dates;
-      submit_sel_instance.start_date = moment(self.sel_instance.start_date).unix();
-      submit_sel_instance.end_date = moment(self.sel_instance.end_date).unix();
+      const submitSelInstance = Object.assign({}, self.sel_instance);
+      submitSelInstance.dates = self.dates;
+      submitSelInstance.start_date = moment(self.sel_instance.start_date).unix();
+      submitSelInstance.end_date = moment(self.sel_instance.end_date).unix();
       const infra = new Infrastructure(this.infra_id);
-      infra.save_schedule(self.sel_instance.physical_id, submit_sel_instance).done(() => {
+      infra.save_schedule(self.sel_instance.physical_id, submitSelInstance).done(() => {
         self.loading = false;
-        alert_success(() => {
+        alertSuccess(() => {
         })(t('operation_scheduler.msg.saved'));
         self.get_sched(self.sel_instance);
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alertAndShowInfra(infra.id));
     },
 
     get_sched(ec2) {
@@ -173,8 +172,8 @@ module.exports = Vue.extend({
         events = data.map((item) => {
           let dow = [];
           if (item.recurring_date.repeats === 'other') {
-            _.forEach(item.recurring_date.dates, (date) => {
-              if (date.checked === 'true') dow.push(parseInt(date.value));
+            item.recurring_date.dates.forEach((date) => {
+              if (date.checked === 'true') dow.push(parseInt(date.value, 10));
             });
           } else if (item.recurring_date.repeats === 'everyday') {
             dow = [1, 2, 3, 4, 5, 6, 0];
@@ -235,14 +234,15 @@ module.exports = Vue.extend({
       if (argument) {
         return (argument.length >= 10);
       }
+      return undefined;
     },
     coltxt_key(key) {
-      index = this.$parent.index;
+      const { index } = this.$parent;
       return wrap(key, index);
     },
 
     table_text(value, key, lang) {
-      index = this.$parent.index;
+      const { index } = this.$parent;
       return listen(value, key, index, lang);
     },
 
@@ -250,19 +250,19 @@ module.exports = Vue.extend({
 
   computed: {
     has_selected() {
-      return _.some(this.dates, c => c.checked);
+      return this.dates.some(c => c.checked);
     },
 
     operation_filter() {
       const self = this;
-      let data = self.data.filter((data) => {
+      let data = self.data.filter(() => {
         if (self.filterKey === '') {
           return true;
         }
         return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
       });
       self.filteredLength = data.length;
-      data = data.sort(data => data[self.sortKey]);
+      data = data.sort(() => data[self.sortKey]);
       if (self.sortOrders[self.sortKey] === -1) {
         data.reverse();
       }
@@ -271,7 +271,7 @@ module.exports = Vue.extend({
     },
 
     is_specific() {
-      return (parseInt(this.sel_instance.repeat_freq) === 4);
+      return (parseInt(this.sel_instance.repeat_freq, 10) === 4);
     },
 
     save_sched_err() {
@@ -294,16 +294,14 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       const self = this;
-      console.log(self.resources);
       // TODO: get all assigned dates and print to calendar. :D
       self.data = self.resources.ec2_instances.map(item => ({
         physical_id: item.physical_id,
         screen_name: item.screen_name,
         id: item,
       }));
-      console.log(self.data);
 
       self.$parent.loading = false;
       $('#loading_results').hide();

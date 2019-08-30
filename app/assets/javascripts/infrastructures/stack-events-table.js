@@ -39,7 +39,16 @@ module.exports = Vue.extend({
       if (this.sortKey === '') {
         return this.events;
       }
-      const listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      // const listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      const listOrderByAsc = this.events.slice().sort((a, b) => {
+        if (a[this.sortKey] < b[this.sortKey]) {
+          return -1;
+        }
+        if (a[this.sortKey] > b[this.sortKey]) {
+          return 1;
+        }
+        return 0;
+      });
       if (this.sortOrders[this.sortKey] < 0) {
         return listOrderByAsc.reverse();
       }

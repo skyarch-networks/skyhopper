@@ -1,10 +1,10 @@
-const Infrastructure = require('models/infrastructure').default;
-const Monitoring = require('models/monitoring').default;
+const Infrastructure = require('../models/infrastructure').default;
+const Monitoring = require('../models/monitoring').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const alertSuccess = helpers.alert_success;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
 google.load('visualization', '1.0', { packages: ['corechart'] });
 
@@ -60,13 +60,13 @@ module.exports = Vue.extend({
 
       const self = this;
       self.creating = true;
-      const templates = _(this.templates).filter(t => t.checked).map(t => t.name).value();
+      const templates = this.templates.filter(t => t.checked).map(t => t.name);
 
       this.monitoring.create_host(templates).done(() => {
-        alert_success(() => {
+        alertSuccess(() => {
           self.$parent.show_edit_monitoring();
         })(t('monitoring.msg.created'));
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
     show_url() {
@@ -79,7 +79,7 @@ module.exports = Vue.extend({
         self.error_message = null;
         self.loading_graph = false;
         self.showing_url = true;
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
     showDate() {
@@ -98,34 +98,34 @@ module.exports = Vue.extend({
             self.drawChart(data, self.physical_id, self.item_key, ['value']);
           }
         });
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
-    drawChart(data, physical_id, title_name, columns) {
-      const resizable_data = new google.visualization.DataTable();
+    drawChart(data, physicalId, titleName, columns) {
+      const resizableData = new google.visualization.DataTable();
       let direction;
       if (columns.length === 1) {
-        resizable_data.addColumn('datetime', 'DateTime');
-        _.forEach(columns, (col) => {
-          resizable_data.addColumn('number', col);
+        resizableData.addColumn('datetime', 'DateTime');
+        columns.forEach((col) => {
+          resizableData.addColumn('number', col);
         });
-        const zabbix_data = data.map((obj, i) => {
-          const format_date = new Date(obj[0]);
-          return [format_date, obj[1]];
+        const zabbixData = data.map((obj) => {
+          const formatDate = new Date(obj[0]);
+          return [formatDate, obj[1]];
         });
-        resizable_data.addRows(zabbix_data);
-        resizable_data.sort([{ column: 0, asc: true }]);
+        resizableData.addRows(zabbixData);
+        resizableData.sort([{ column: 0, asc: true }]);
         direction = 1;
       } else {
-        resizable_data.addColumn('string', 'clock');
-        _.forEach(columns, (col) => {
-          resizable_data.addColumn('number', col);
+        resizableData.addColumn('string', 'clock');
+        columns.forEach((col) => {
+          resizableData.addColumn('number', col);
         });
-        resizable_data.addRows(data);
+        resizableData.addRows(data);
         direction = -1;
       }
-      const resizable_options = {
-        title: `${physical_id} ${title_name}`,
+      const resizableOptions = {
+        title: `${physicalId} ${titleName}`,
         titleTextStyle: {
           fontSize: 15,
           fontName: 'Meiryo',
@@ -153,25 +153,25 @@ module.exports = Vue.extend({
         },
       };
       if (columns.length === 1) {
-        resizable_options.legend = { position: 'none' };
+        resizableOptions.legend = { position: 'none' };
       } else {
-        resizable_options.legend = {
+        resizableOptions.legend = {
           position: 'top',
           alignment: 'center',
         };
       }
 
-      const resizable_chart = new google.visualization.LineChart(document.getElementById('graph'));
-      resizable_chart.draw(resizable_data, resizable_options);
+      const resizableChart = new google.visualization.LineChart(document.getElementById('graph'));
+      resizableChart.draw(resizableData, resizableOptions);
     },
 
-    show_zabbix_graph(physical_id, item_key) {
+    show_zabbix_graph(physicalId, itemKey) {
       const self = this;
       self.showing_url = false;
       self.loading_graph = true;
-      self.physical_id = physical_id;
-      self.item_key = item_key;
-      this.monitoring.show_zabbix_graph(physical_id, item_key).done((data) => {
+      self.physical_id = physicalId;
+      self.item_key = itemKey;
+      this.monitoring.show_zabbix_graph(physicalId, itemKey).done((data) => {
         self.loading_graph = false;
         self.show_range = true;
         Vue.nextTick(() => {
@@ -179,34 +179,34 @@ module.exports = Vue.extend({
             self.error_message = t('monitoring.msg.no_data');
           } else {
             self.error_message = null;
-            self.drawChart(data, physical_id, item_key, ['value']);
+            self.drawChart(data, physicalId, itemKey, ['value']);
           }
         });
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
-    show_cloudwatch_graph(physical_id) {
+    show_cloudwatch_graph(physicalId) {
       const self = this;
       self.showing_url = false;
       self.show_range = false;
       self.loading_graph = true;
-      this.monitoring.show_cloudwatch_graph(physical_id).done((data) => {
+      this.monitoring.show_cloudwatch_graph(physicalId).done((data) => {
         self.error_message = null;
         self.loading_graph = false;
         Vue.nextTick(() => {
-          self.drawChart(data, physical_id, 'NetworkInOut', ['NetworkIn', 'NetworkOut', 'Sum']);
+          self.drawChart(data, physicalId, 'NetworkInOut', ['NetworkIn', 'NetworkOut', 'Sum']);
         });
-      }).fail(alert_and_show_infra(this.infra_id));
+      }).fail(alertAndShowInfra(this.infra_id));
     },
 
     showPrev() {
       if (this.isStartPage) return;
-      this.page--;
+      this.page -= 1;
     },
 
     showNext() {
       if (this.isEndPage) return;
-      this.page++;
+      this.page += 1;
     },
 
     close() {
@@ -215,11 +215,11 @@ module.exports = Vue.extend({
   },
   computed: {
     monitoring() { return new Monitoring(new Infrastructure(this.infra_id)); },
-    no_problem() { return _.isEmpty(this.problems); },
+    no_problem() { return !this.problems.length; },
     before_setting() { return this.commons.length === 0 && this.uncommons.length === 0; },
 
     has_selected() {
-      return _.some(this.templates, c => c.checked);
+      return this.templates.some(c => c.checked);
     },
 
     dispItems() {
@@ -236,7 +236,7 @@ module.exports = Vue.extend({
     const self = this;
     const infra = new Infrastructure(this.infra_id);
     const monitoring = new Monitoring(infra);
-    monitoring.show().done(function (data) {
+    monitoring.show().done((data) => {
       self.before_register = data.before_register;
       self.commons = data.monitor_selected_common;
       self.uncommons = data.monitor_selected_uncommon;
@@ -247,7 +247,7 @@ module.exports = Vue.extend({
         self.show_problems();
       }
       self.$parent.loading = false;
-    }).fail(alert_and_show_infra(this.infra_id));
+    }).fail(alertAndShowInfra(this.infra_id));
   },
 
   filters: {

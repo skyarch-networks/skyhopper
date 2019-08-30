@@ -16,6 +16,7 @@ require('brace/mode/yaml');
 require('brace/theme/github');
 const show = require('./infrastructures/show_infra.js');
 const newVM = require('./modules/newVM');
+const { Loader } = require('./modules/common-helpers');
 
 // Vue component
 const stackEventsTable = require('./infrastructures/stack-events-table.js');
