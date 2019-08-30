@@ -25,7 +25,7 @@ const Servertest = class Servertest extends ModelBase {
     const dfd = $.Deferred();
     this.ajax.generate_awspec({ infrastructure_id: this.infra_id })
       .done(this.wait_change_status(this.infra_id, dfd, 'awspec-generate'))
-      .fail(this.rejectF(dfd));
+      .fail(Servertest.rejectF(dfd));
     return dfd.promise();
   }
 };

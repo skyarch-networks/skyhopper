@@ -81,7 +81,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
           }
         };
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -107,7 +107,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         dfd.notify('start', data);
         self.watch_cook(dfd);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -137,7 +137,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         dfd.notify('start', data);
         self.watch_run_ansible_playbook(dfd);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -226,7 +226,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         });
         dfd.resolve(data);
       })
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -304,7 +304,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
         s.checked = false;
       });
       dfd.resolve(data);
-    }).fail(this.rejectF(dfd));
+    }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -316,7 +316,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
       infra_id: this.infra.id,
     }).done((data) => {
       dfd.resolve(data);
-    }).fail(this.rejectF(dfd));
+    }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -382,7 +382,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
     this.ajax_ec2.start(this.params)
       .done(this.wait_change_status_ec2(dfd))
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -390,7 +390,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     const dfd = $.Deferred();
     this.ajax_ec2.stop(this.params)
       .done(this.wait_change_status_ec2(dfd))
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -411,7 +411,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
   reboot_ec2() {
     const dfd = $.Deferred();
     this.ajax_ec2.reboot(this.params)
-      .fail(this.rejectF(dfd));
+      .fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 
@@ -420,7 +420,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     this.ajax_ec2.serverspec_status(this.params)
       .done((data) => {
         dfd.resolve(data.status);
-      }).fail(this.rejectF(dfd));
+      }).fail(EC2Instance.rejectF(dfd));
     return dfd.promise();
   }
 

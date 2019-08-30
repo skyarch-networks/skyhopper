@@ -2,22 +2,16 @@ const ModelBase = class ModelBase {
   WrapAndResolveReject(fn) {
     const dfd = $.Deferred();
     const d = fn(dfd);
-    d.done(this.resolveF(dfd));
-    d.fail(this.rejectF(dfd));
+    d.done(ModelBase.resolveF(dfd));
+    d.fail(ModelBase.rejectF(dfd));
     return dfd.promise();
   }
 
-  Wrap(fn) {
-    const dfd = $.Deferred();
-    fn(dfd);
-    return dfd.promise();
-  }
-
-  resolveF(dfd) {
+  static resolveF(dfd) {
     return function resolve(data) { return dfd.resolve(data); };
   }
 
-  rejectF(dfd) {
+  static rejectF(dfd) {
     return function reject(xhr) { return dfd.reject(xhr.responseText); };
   }
 

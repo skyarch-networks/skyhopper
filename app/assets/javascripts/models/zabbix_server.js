@@ -15,7 +15,7 @@ const ZabbixServer = class ZabbixServer extends ModelBase {
       commit: 'Create Zabbix Server',
     })
       .done(this.wait_change_status(this.session_id, dfd, 'notifications'))
-      .fail(this.rejectF(dfd));
+      .fail(ZabbixServer.rejectF(dfd));
     return dfd.promise();
   }
 

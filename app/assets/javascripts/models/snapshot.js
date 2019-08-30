@@ -46,7 +46,7 @@ const Snapshot = class Snapshot extends ModelBase {
     }).done((data) => {
       dfd.notify(data);
       Snapshot.watch_snapshot_progress(dfd)(data);
-    }).fail(this.rejectF(dfd));
+    }).fail(Snapshot.rejectF(dfd));
     return dfd.promise();
   }
 
