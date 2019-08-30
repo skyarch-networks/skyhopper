@@ -361,7 +361,9 @@ module.exports = Vue.extend({
 
     create_snapshot(volumeId) {
       const self = this;
-      modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', { volumeId })).done(() => {
+      modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {
+        volume_id: volumeId,
+      })).done(() => {
         const snapshot = new Snapshot(self.infra_id);
 
         snapshot.create(volumeId, self.physical_id).progress(() => {
