@@ -95,6 +95,6 @@ template_paths.each do |path|
   parsed = JSON.parse(value)
   detail = parsed['Description']
 
-  CfTemplate.where(name: name, format: 'JSON', infrastructure_id: nil).delete_all
+  CfTemplate.where(name: name, format: CfTemplate.formats[:JSON], infrastructure_id: nil).delete_all
   CfTemplate.create(name: name, format: 'JSON', detail: detail, value: value)
 end
