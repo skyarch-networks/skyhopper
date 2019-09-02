@@ -24,7 +24,7 @@ MasterMonitoring.delete_all
 end
 
 # -------------------- Global Serverspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :serverspec, value: <<~SERVERTEST)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: Servertest.categories[:serverspec], value: <<~SERVERTEST)
   require "serverspec_helper"
 
   describe package('httpd') do
@@ -41,7 +41,7 @@ Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', cat
   end
 SERVERTEST
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :serverspec, value: <<~SERVERTEST)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: Servertest.categories[:serverspec], value: <<~SERVERTEST)
   require "serverspec_helper"
 
   describe package("php") do
@@ -50,7 +50,7 @@ Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', categor
 SERVERTEST
 
 # -------------------- Global AWSspecs
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: :awspec, value: <<~SERVERTEST)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', category: Servertest.categories[:awspec], value: <<~SERVERTEST)
   require "awsspec_helper"
 
   describe package('httpd') do
@@ -67,7 +67,7 @@ Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_apache2', cat
   end
 SERVERTEST
 
-Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: :awspec, value: <<~SERVERTEST)
+Servertest.find_or_create_by(infrastructure_id: nil, name: 'recipe_php', category: Servertest.categories[:awspec], value: <<~SERVERTEST)
   require "awsspec_helper"
 
   describe package("php") do
@@ -95,6 +95,6 @@ template_paths.each do |path|
   parsed = JSON.parse(value)
   detail = parsed['Description']
 
-  CfTemplate.where(name: name, format: 'JSON', infrastructure_id: nil).delete_all
+  CfTemplate.where(name: name, format: CfTemplate.formats[:JSON], infrastructure_id: nil).delete_all
   CfTemplate.create(name: name, format: 'JSON', detail: detail, value: value)
 end
