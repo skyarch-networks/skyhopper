@@ -25,10 +25,10 @@
       <td v-for="(key,index) in columns" @click="select_entry(entry)" @dblclick="show_entry(entry)">
         <input v-if="multiSelect && index == 0" type="checkbox" v-model="selections" :value="entry"/>
         <input v-else-if="!multiSelect && index == 0" type="radio" v-model="picked" v-bind:value="entry"/>
-        <span v-show="key === 'stack_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
-        <span v-show="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
-        <span v-show="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
-        <span v-show="key === 'cf_subject'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+        <span v-if="key === 'stack_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+        <span v-else-if="key === 'dish_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+        <span v-else-if="key === 'serverspec_name'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
+        <span v-else-if="key === 'cf_subject'"> <a href="#" @click="show_entry(entry)" v-html="entry[key]"></a></span>
         <span :id="key" v-html="table_text(entry[key],key,lang)"></span>
       </td>
     </tr>
