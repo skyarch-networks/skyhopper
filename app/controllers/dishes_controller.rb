@@ -41,6 +41,7 @@ class DishesController < ApplicationController
   # GET /dishes/1
   def show
     @selected_serverspecs = @dish.servertests
+    @selected_playbook_roles = @dish.selected_playbook_roles
 
     render partial: 'show'
   end
