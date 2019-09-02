@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190425034250) do
+ActiveRecord::Schema.define(version: 20190902023030) do
 
   create_table "app_settings", force: :cascade do |t|
     t.string   "aws_region",         limit: 255, null: false
@@ -56,13 +56,15 @@ ActiveRecord::Schema.define(version: 20190425034250) do
   end
 
   create_table "dishes", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.text     "runlist",    limit: 65535
-    t.integer  "project_id", limit: 4
-    t.string   "status",     limit: 255
+    t.string   "name",           limit: 255
+    t.text     "runlist",        limit: 65535
+    t.text     "playbook_roles", limit: 65535
+    t.text     "extra_vars",     limit: 65535
+    t.integer  "project_id",     limit: 4
+    t.string   "status",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "detail",     limit: 65535
+    t.text     "detail",         limit: 65535
   end
 
   create_table "ec2_private_keys", force: :cascade do |t|
