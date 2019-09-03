@@ -189,6 +189,10 @@ const demoGrid = require('./demo-grid');
 
   $(document).on('click', '#update-dish', () => {
     const dishId = currentDishId();
+
+    const playbookRoles = editPlaybookForm.playbook_roles;
+    const extraVars = editPlaybookForm.extra_vars;
+
     let runlist;
 
     if ($('#runlist').children().size() > 0) {
@@ -212,6 +216,8 @@ const demoGrid = require('./demo-grid');
       type: 'PUT',
       data: {
         runlist,
+        playbook_roles: JSON.stringify(playbookRoles),
+        extra_vars: extraVars,
         serverspecs: serverspecIds,
       },
     }).done((data) => {

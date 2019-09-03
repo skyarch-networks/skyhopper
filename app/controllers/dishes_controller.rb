@@ -60,13 +60,21 @@ class DishesController < ApplicationController
 
   # PUT /dishes/1
   def update
+    playbook_roles = params[:playbook_roles]
+    extra_vars = params[:extra_vars]
     servertest_ids = params[:serverspecs] || []
 
     # TODO error handling
-    @dish.update(
-      servertest_ids: servertest_ids,
-      status: nil,
-    )
+    begin
+      @dish.update!(
+        playbook_roles: playbook_roles,
+        extra_vars: extra_vars,
+        servertest_ids: servertest_ids,
+        status: nil,
+      )
+    rescue StandardError => ex
+      render text: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
+    end
 
     render text: I18n.t('dishes.msg.updated')
   end

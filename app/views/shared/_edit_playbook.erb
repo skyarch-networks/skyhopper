@@ -59,7 +59,7 @@ args:
 <%= javascript_include_tag 'edit_playbook' %>
 <script>
   // TODO html_safeを使用するリスクを確認
-  viewEditPlaybookForm({
+  var editPlaybookForm = viewEditPlaybookForm({
     roles: <%= JSON.generate(roles).html_safe %>,
     playbookRoles: <%= JSON.generate(playbook_roles).html_safe %>,
     extraVars: <%= JSON.generate([extra_vars]).html_safe %>[0],

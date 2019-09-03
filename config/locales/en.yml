@@ -369,6 +369,7 @@ en:
       no_serverspec_selected: 'No serverspecs selected.'
       empty-list:             'No dishes found.'
       delete_dish:            'Are you sure you want to delete this Dish?'
+      save_failed:            'Dish was failed saved.'
 
 
   servertests:

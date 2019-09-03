@@ -367,6 +367,7 @@ ja:
       no_serverspec_selected: 'Serverspec が選択されていません'
       delete_dish:            'このディッシュを削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
+      save_failed:            'ディッシュの保存に失敗しました'
 
 
   servertests:
