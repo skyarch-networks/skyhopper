@@ -37,9 +37,16 @@ class Dish < ActiveRecord::Base
     false
   end
 
-  def selected_playbook_roles
+  def playbook_roles_safe
     return [] if playbook_roles.nil?
     JSON.parse(playbook_roles)
+  end
+
+  def extra_vars_safe
+    if extra_vars.nil?
+      return '{}'
+    end
+    extra_vars
   end
 
   def self.valid_dishes(project_id = nil)

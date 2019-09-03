@@ -1,0 +1,67 @@
+<%#
+args:
+  roles
+  playbook_roles
+  extra_vars
+%>
+
+<div id="editPlaybookForm"></div>
+
+<script id="edit-playbook-form-template" type="text/template">
+<div>
+  <%# ansible_role %>
+  <div class="col-md-6 col-sm-6">
+    <div class="col-md-12 col-sm-12">
+      <h5 class="page-header"><%= t 'nodes.ansible_role' %></h5>
+      <div class="form-group">
+        <select v-model="selected_roles" @dblclick="add()" multiple="multiple" class="form-control playbook-selectbox-height">
+          <option v-for="r in roles">{{r}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button @click="add()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <%# playbook_roles %>
+  <div class="col-md-6 col-sm-6">
+    <div class="col-md-12 col-sm-12">
+      <h5 class="page-header"><%= t 'nodes.playbook_roles' %></h5>
+      <div class="form-group">
+        <select v-model="selected_playbook_roles" @dblclick="del()" multiple="multiple" class="form-control playbook-selectbox-height">
+          <option v-for="r in playbook_roles">{{r}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+      <div class="form-group">
+        <button @click="up()" class="btn btn-default"><span class="glyphicon glyphicon-arrow-up"></span></button>
+        <button @click="down()" class="btn btn-default"><span class="glyphicon glyphicon-arrow-down"></span></button>
+        &nbsp;
+        <button @click="del()" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <%# extra_vars %>
+  <div class="col-md-12 col-sm-12">
+    <h5 class="page-header"><%= t 'nodes.extra_vars' %></h5>
+    <div class="form-group">
+      <input type="text" v-model="extra_vars" class="form-control"/>
+    </div>
+  </div>
+</div>
+</script>
+
+<%= javascript_include_tag 'edit_playbook' %>
+<script>
+  // TODO html_safeを使用するリスクを確認
+  viewEditPlaybookForm({
+    roles: <%= JSON.generate(roles).html_safe %>,
+    playbookRoles: <%= JSON.generate(playbook_roles).html_safe %>,
+    extraVars: <%= JSON.generate([extra_vars]).html_safe %>[0],
+  });
+</script>

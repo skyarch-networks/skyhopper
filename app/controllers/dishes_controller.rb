@@ -41,15 +41,18 @@ class DishesController < ApplicationController
   # GET /dishes/1
   def show
     @selected_serverspecs = @dish.servertests
-    @selected_playbook_roles = @dish.selected_playbook_roles
+    @selected_playbook_roles = @dish.playbook_roles_safe
 
     render partial: 'show'
   end
 
   # GET /dishes/1/edit
   def edit
-    @global_serverspecs = Servertest.global
+    @playbook_roles = Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
+    @selected_playbook_roles = @dish.playbook_roles_safe
+    @extra_vars = @dish.extra_vars_safe
 
+    @global_serverspecs = Servertest.global
     @selected_serverspecs = @dish.servertests
 
     render partial: 'edit'
