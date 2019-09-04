@@ -189,29 +189,16 @@ const demoGrid = require('./demo-grid');
 
   $(document).on('click', '#update-dish', () => {
     const dishId = currentDishId();
-    let runlist;
-
-    if ($('#runlist').children().size() > 0) {
-      runlist = $('#runlist').children();
-
-      runlist = runlist.map(function runlistMapHandler() {
-        return $(this).val();
-      });
-    } else {
-      runlist = [];
-    }
 
     const serverspecIds = [];
     $('input[name=serverspecs]:checked').each(function serverspecsCheckedEachHandler() {
       serverspecIds.push($(this).val());
     });
 
-    runlist = $.makeArray(runlist);
     $.ajax({
       url: `/dishes/${dishId}`,
       type: 'PUT',
       data: {
-        runlist,
         serverspecs: serverspecIds,
       },
     }).done((data) => {

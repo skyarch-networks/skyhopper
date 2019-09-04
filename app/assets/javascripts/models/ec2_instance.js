@@ -58,13 +58,6 @@ const EC2Instance = class EC2Instance extends ModelBase {
     );
   }
 
-  update(runlist) {
-    const self = this;
-    return this.WrapAndResolveReject(
-      () => self.ajax_node.update(Object.assign({}, self.params, { runlist })),
-    );
-  }
-
   bootstrap() {
     const self = this;
     const dfd = $.Deferred();

@@ -16,7 +16,6 @@ const checkTag = commonMethods.check_tag;
 
 const Snapshot = require('../models/snapshot').default;
 const EC2Instance = require('../models/ec2_instance').default;
-const Dish = require('../models/dish').default;
 const Infrastructure = require('../models/infrastructure').default;
 
 module.exports = Vue.extend({
@@ -292,8 +291,6 @@ module.exports = Vue.extend({
 
     is_role(run) { return run.indexOf('role') !== -1; },
     is_first(idx) { return (idx === 0); },
-    runlist_type(run) { return run.replace(/\[.+\]$/, ''); },
-    runlist_name(run) { return run.replace(/^.+\[(.+)\]$/, '$1'); },
     ansi_up(log) { return ansiUp.ansi_to_html(log); },
 
     _loading() { this.$parent.loading = true; },
@@ -670,7 +667,6 @@ module.exports = Vue.extend({
     serverspec_time() { return this.servertest_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.servertest_status.updated_at); },
     update_time() { return this.update_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at); },
 
-    runlist_empty() { return !this.ec2.runlist.length; },
     dishes_empty() { return !this.ec2.dishes.length; },
 
     running() { return this.ec2.status === 'running'; },
@@ -803,13 +799,6 @@ module.exports = Vue.extend({
           dishId = self.ec2.selected_dish.id;
         }
         self.selected_dish = dishId;
-
-        self.$watch('selected_dish', () => {
-          const dish = new Dish();
-          dish.runlist(dishId).done((runlist) => {
-            self.ec2.runlist = runlist;
-          });
-        });
 
         if (self.ec2.info.cook_status === 'InProgress' || self.ec2.info.update_status === 'InProgress') {
           const dfd = $.Deferred();
