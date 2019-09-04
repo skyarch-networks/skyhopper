@@ -57,11 +57,18 @@ args:
 </script>
 
 <%= javascript_include_tag 'edit_playbook' %>
+<%
+  playbook_params_base64 = Base64.strict_encode64(JSON.generate({
+    roles: roles,
+    playbook_roles: playbook_roles,
+    extra_vars: extra_vars,
+  }))
+%>
 <script>
-  // TODO html_safeを使用するリスクを確認
-  var editPlaybookForm = viewEditPlaybookForm({
-    roles: <%= JSON.generate(roles).html_safe %>,
-    playbookRoles: <%= JSON.generate(playbook_roles).html_safe %>,
-    extraVars: <%= JSON.generate([extra_vars]).html_safe %>[0],
+  const params = JSON.parse(decodeURIComponent(escape(atob("<%= playbook_params_base64 %>"))));
+  var editPlaybookForm = viewEditPlaybookForm({ // varなのはglobalで使用するため
+    roles: params.roles,
+    playbookRoles: params.playbook_roles,
+    extraVars: params.extra_vars,
   });
 </script>
