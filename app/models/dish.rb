@@ -24,6 +24,7 @@ class Dish < ActiveRecord::Base
     creating: 'CREATING',
     bootstrapping: 'BOOTSTRAPPING',
     applying: 'APPLYING',
+    ansible: 'ANSIBLE',
     serverspec: 'SERVERSPEC',
   }.recursive_freeze
 
