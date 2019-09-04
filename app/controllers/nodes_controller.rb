@@ -74,7 +74,28 @@ class NodesController < ApplicationController
 
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
-    render text: 'Sorry, not implemented yet.', status: :internal_server_error
+    physical_id = params.require(:id)
+    dish_id = params.require(:dish_id)
+
+    dish = Dish.find(dish_id)
+
+    playbook_roles = dish.playbook_roles_safe
+    if playbook_roles.blank?
+      render text: I18n.t('nodes.msg.playbook_empty') and return
+    end
+
+    ret = update_playbook(
+      physical_id: physical_id,
+      infrastructure: @infra,
+      playbook_roles: playbook_roles,
+      extra_vars: dish.extra_vars_safe
+    )
+
+    unless ret[:status]
+      render text: ret[:message], status: 500 and return
+    end
+
+    render text: I18n.t('nodes.msg.dish_applied')
   end
 
   # POST /nodes/i-hogehoge/schedule_yum
