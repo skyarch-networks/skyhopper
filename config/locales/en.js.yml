@@ -13,18 +13,12 @@ en:
         ask_validate: 'Do you validate dish?'
 
 
-    edit_runlist:
-      msg:
-        recipe_not_select: 'Any recipes are not selected.'
-
-
     infrastructures:
       msg:
         invalid_json:          'Please insert well-formatted JSON Template.'
         empty_subject:         'Please insert subject.'
         sending_cf:            ' Now sending template to CloudFormation... (Please wait a moment, Hold on.)'
         run_bootstrap:         ' Bootstrap is in progress... (Please wait a moment hold on.)'
-        apply_runlist:         ' Applying runlist... (Please wait a moment, Hold on.)'
         exec_yum_update:       ' yum update is to be started... (Please wait a moment, hold on.)'
         serverspec_not_select: 'You must select one or more serverspecs.'
         run_serverspec:        ' serverspec is in progress...(Please wait a moment, hold on.)'
