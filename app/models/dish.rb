@@ -44,11 +44,13 @@ class Dish < ActiveRecord::Base
 
   def playbook_roles_safe
     return [] if playbook_roles.nil?
+
     JSON.parse(playbook_roles)
   end
 
   def extra_vars_safe
     return '{}' if extra_vars.nil?
+
     extra_vars
   end
 

@@ -72,7 +72,7 @@ class DishesController < ApplicationController
         servertest_ids: servertest_ids,
         status: nil,
       )
-    rescue StandardError => ex
+    rescue StandardError
       render text: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
     end
 

@@ -88,11 +88,11 @@ class NodesController < ApplicationController
       physical_id: physical_id,
       infrastructure: @infra,
       playbook_roles: playbook_roles,
-      extra_vars: dish.extra_vars_safe
+      extra_vars: dish.extra_vars_safe,
     )
 
     unless ret[:status]
-      render text: ret[:message], status: 500 and return
+      render text: ret[:message], status: :internal_server_error and return
     end
 
     render text: I18n.t('nodes.msg.dish_applied')
