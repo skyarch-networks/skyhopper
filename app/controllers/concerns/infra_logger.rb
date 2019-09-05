@@ -44,18 +44,6 @@ module Concerns::InfraLogger
 
   # ------- メソッド固有のもの
 
-  def infra_logger_update_runlist(node)
-    physical_id = params[:id]
-    runlist     = params[:runlist] || []
-
-    old_runlist    = node.details['run_list']
-    add_runlist    = runlist - old_runlist
-    del_runlist    = old_runlist - runlist
-    screen_runlist = add_runlist.map { |x| '+ ' << x } + del_runlist.map { |x| '- ' << x } + (runlist & old_runlist)
-
-    infra_logger_success("Updating runlist for #{physical_id} is started. \nrun_list:\n #{screen_runlist.join("\n ")}")
-  end
-
   def ws_send(details, status)
     ws = WSConnector.new('notifications', current_user.ws_key)
     ws.push_as_json({ message: details.truncate(100), status: status, timestamp: Time.zone.now.to_s })

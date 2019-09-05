@@ -193,29 +193,15 @@ const demoGrid = require('./demo-grid');
     const playbookRoles = editPlaybookForm.playbook_roles;
     const extraVars = editPlaybookForm.extra_vars;
 
-    let runlist;
-
-    if ($('#runlist').children().size() > 0) {
-      runlist = $('#runlist').children();
-
-      runlist = runlist.map(function runlistMapHandler() {
-        return $(this).val();
-      });
-    } else {
-      runlist = [];
-    }
-
     const serverspecIds = [];
     $('input[name=serverspecs]:checked').each(function serverspecsCheckedEachHandler() {
       serverspecIds.push($(this).val());
     });
 
-    runlist = $.makeArray(runlist);
     $.ajax({
       url: `/dishes/${dishId}`,
       type: 'PUT',
       data: {
-        runlist,
         playbook_roles: JSON.stringify(playbookRoles),
         extra_vars: extraVars,
         serverspecs: serverspecIds,

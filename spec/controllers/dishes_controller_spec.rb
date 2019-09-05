@@ -89,7 +89,6 @@ describe DishesController, type: :controller do
 
   describe '#update' do
     let(:servertest) { create(:servertest) }
-    let(:runlist) { %w[hoge fuga] }
     let(:update_request) { patch :update, id: dish.id, serverspecs: [servertest.id] }
 
     context 'when valid params' do

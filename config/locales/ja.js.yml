@@ -13,18 +13,12 @@ ja:
         ask_validate: 'ディッシュを検証しますか?'
 
 
-    edit_runlist:
-      msg:
-        recipe_not_select: 'レシピが選択されていません'
-
-
     infrastructures:
       msg:
         invalid_json:          '正しい JSON 形式でテンプレートを入力してください'
         empty_subject:         'タイトルを入力してください'
         sending_cf:            ' CloudFormation にテンプレートを送信しています。しばらくお待ちください...'
         run_bootstrap:         ' Chef Server に登録しています。 しばらくお待ちください...'
-        apply_runlist:         ' Runlist を適用しています。しばらくお待ちください...'
         exec_yum_update:       ' yum update を開始しています。しばらくお待ちください...'
         serverspec_not_select: '１つ以上の Serverspec を選択してください'
         run_serverspec:        ' Serverspec を実行しています。しばらくお待ちください...'
