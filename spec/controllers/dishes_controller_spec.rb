@@ -74,6 +74,18 @@ describe DishesController, type: :controller do
       get :edit, id: dish.id
     end
 
+    it 'should assign @playbook_roles' do
+      expect(assigns[:playbook_roles]).to eq Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
+    end
+
+    it 'should assign @selected_playbook_roles' do
+      expect(assigns[:selected_playbook_roles]).to eq dish.playbook_roles_safe
+    end
+
+    it 'should assign @extra_vars' do
+      expect(assigns[:extra_vars]).to eq dish.extra_vars_safe
+    end
+
     it 'should assign @global_serverspecs' do
       expect(assigns[:global_serverspecs]).to eq Servertest.global
     end
@@ -88,8 +100,17 @@ describe DishesController, type: :controller do
   end
 
   describe '#update' do
+    let(:playbook_roles) { ['role-aaa', 'role-bbb'] }
+    let(:extra_vars) { '{"test": "aaa"}' }
     let(:servertest) { create(:servertest) }
-    let(:update_request) { patch :update, id: dish.id, serverspecs: [servertest.id] }
+    let(:update_request) do
+      patch :update, {
+        id: dish.id,
+        playbook_roles: playbook_roles,
+        extra_vars: extra_vars,
+        serverspecs: [servertest.id],
+      }
+    end
 
     context 'when valid params' do
       before do
@@ -104,6 +125,14 @@ describe DishesController, type: :controller do
 
       it 'should success' do
         expect(response).to be_success
+      end
+
+      it 'playbook_roles should be equaled' do
+        expect(subject.playbook_roles_safe).to eq playbook_roles
+      end
+
+      it 'extra_vars should be equaled' do
+        expect(subject.extra_vars).to eq extra_vars
       end
 
       it 'servertest should be equaled' do
