@@ -71,17 +71,34 @@ describe NodesController, type: :controller do
   end
 
   describe '#apply_dish' do
-    let(:dish) { create(:dish) }
-    let(:req) { post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id }
+    let(:resource) { create(:resource, infrastructure: infra) }
+    let(:req) { post :apply_dish, id: resource.physical_id, infra_id: infra.id, dish_id: dish.id }
 
-    context "when dish's runlist is empty" do
-      let(:dish) { create(:dish, runlist: []) }
+    context "when dish's playbook_roles is empty" do
+      let(:dish) { create(:dish, playbook_roles: '[]') }
       before { req }
 
-      should_be_failure
+      should_be_success
 
       it 'should render message' do
-        expect(response.body).to eq 'Sorry, not implemented yet.'
+        expect(response.body).to eq I18n.t('nodes.msg.playbook_empty')
+      end
+    end
+
+    context "when dish's playbook_roles is not empty" do
+      let(:dish) { create(:dish, playbook_roles: '["aaa", "bbb"]', extra_vars: '{"aaa": "bbb"}') }
+      before { req }
+
+      should_be_success
+
+      it 'apply dish parameter' do
+        resource.reload
+        expect(resource.get_playbook_roles).to eq %w[aaa bbb]
+        expect(resource.extra_vars).to eq '{"aaa": "bbb"}'
+      end
+
+      it 'should render message' do
+        expect(response.body).to eq I18n.t('nodes.msg.dish_applied')
       end
     end
   end
