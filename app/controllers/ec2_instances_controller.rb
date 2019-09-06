@@ -40,8 +40,7 @@ class Ec2InstancesController < ApplicationController
     end
 
     if changed_type == before_type
-      # TODO: status code はこれでいい?
-      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :ok and return
+      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :internal_server_error and return
     end
 
     render text: I18n.t('nodes.msg.changed_scale', type: type) and return
