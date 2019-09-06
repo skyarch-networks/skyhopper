@@ -160,7 +160,6 @@ class ServertestsController < ApplicationController
     end
   end
 
-  # TODO: refactor
   # POST /servertests/run_serverspec
   def run_serverspec
     physical_id    = params.require(:physical_id)
