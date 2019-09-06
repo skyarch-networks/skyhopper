@@ -635,7 +635,7 @@ module.exports = Vue.extend({
       if (this.isEndPage) return;
       this.page += 1;
     },
-    check_tgg(r) {
+    check_tag(r) {
       return checkTag(r);
     },
     roundup(val) { return (Math.ceil(val)); },
