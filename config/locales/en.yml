@@ -514,6 +514,7 @@ en:
       not_set:                 ': was not selected in zabbix Templates. Please select template in the configuration tab.'
       trigger_setting_warning: 'Threshold will be updated only if you have selected items.'
       change_zabbix:            'Are you sure you want to change the Zabbix Server for this Infrastructure?'
+      invalid_access:          'Invalid access!'
       page:                    'Page'
       of:                      'of'
       no_data: |

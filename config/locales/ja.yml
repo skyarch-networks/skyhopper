@@ -512,6 +512,7 @@ ja:
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
       change_zabbix:            'このインフラストラクチャのZabbixサーバを変更してもよろしいですか？'
+      invalid_access:          '無効なアクセスです'
       page:                    'ページ'
       of:                      'の'
       no_data: |
