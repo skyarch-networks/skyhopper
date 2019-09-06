@@ -211,7 +211,7 @@ class CfTemplatesController < ApplicationController
 
     cf_template.update_cfparams
 
-    return unless cf_template.save # TODO 例外を投げるべきな気がする
+    cf_template.save!
 
     infra_logger_success("#{action} stack is being started.", infrastructure_id: infrastructure.id)
     { message: t("cf_templates.msg.#{action.downcase}"), status: true }
