@@ -466,6 +466,8 @@ en:
       creating:        'Creating stack'
       delete_cf_template: 'Are you sure you want to delete this Cf_template?'
       confirm_export:  ' Are you sure you want to export the following templates?'
+      create_failure:  'Template was failure created.'
+
 
 
   template_builder:

@@ -70,8 +70,7 @@ class TemplateBuilderController < ApplicationController
     elsif @cf_template.errors[:json]
       render text: @cf_template.errors[:json], status: :internal_server_error
     else
-      # TODO: error message
-      render text: '', status: :internal_server_error
+      render text: I18n.t('cf_templates.msg.create_failure'), status: :internal_server_error
     end
   end
 end
