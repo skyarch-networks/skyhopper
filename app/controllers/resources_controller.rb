@@ -39,27 +39,23 @@ class ResourcesController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     unless infra.create_complete?
-      # TODO: I18n
-      render text: "Infrastructure isn't create complete.", status: :bad_request
+      render text: I18n.t('resources.msg.infrastructure_not_created'), status: :bad_request
       return
     end
 
     # Infraが所属するRegionにphysical_idのインスタンスが存在しない場合
     unless infra.instance(physical_id).exists?
-      # TODO: I18n
-      render text: "Cannot find #{physical_id}", status: :bad_request
+      render text: I18n.t('resources.msg.cannot_find', physical_id: physical_id), status: :bad_request
       return
     end
 
     unless infra.instance(physical_id).describe_keypair == infra.keypairname
-      # TODO: I18n
-      render text: "#{physical_id}: Keypair does not matched to this Infrastructure!", status: :bad_request
+      render text: I18n.t('resources.msg.keypair_dose_not_match', physical_id: physical_id), status: :bad_request
       return
     end
 
     unless infra.instance(physical_id).status != :terminated
-      # TODO: I18n
-      render text: "Cannot add #{physical_id}. if status is terminated.", status: :bad_request
+      render text: I18n.t('resources.msg.if_status_is_terminated', physical_id: physical_id), status: :bad_request
       return
     end
 

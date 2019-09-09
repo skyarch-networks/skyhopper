@@ -702,6 +702,10 @@ en:
     screen_name: 'Screen Name'
     msg:
       created: 'Resource was successfully created.'
+      infrastructure_not_created: "Infrastructure isn't create complete."
+      cannot_find: 'Cannot find %{physical_id}'
+      keypair_dose_not_match: '%{physical_id}: Keypair does not matched to this Infrastructure!'
+      if_status_is_terminated: 'Cannot add %{physical_id}. if status is terminated.'
 
 
   key_pairs:

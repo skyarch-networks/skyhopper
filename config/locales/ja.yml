@@ -700,6 +700,10 @@ ja:
     screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'
+      infrastructure_not_created: 'インフラストラクチャの作成が完了しませんでした'
+      cannot_find: '%{physical_id}が見つかりませんでした'
+      keypair_dose_not_match: '%{physical_id}: キーペアがインフラストラクチャと一致しませんでした!'
+      if_status_is_terminated: 'ステータスがterminatedの場合、%{physical_id}を追加できません'
 
 
   key_pairs:
