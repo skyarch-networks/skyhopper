@@ -19,19 +19,21 @@ describe Ec2InstancesController, type: :controller do
   end
 
   describe '#change_scale' do
-    let(:type) { 't2.micro' }
-    let(:req) { post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type }
+    let(:type_before) { 't2.micro' }
+    let(:type_after) { 't2.nano' }
+    let(:req) { post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type_after }
 
     let(:instance) do
       double(:instance,
              stop: nil,
              status: :stopped,
-             instance_type: type,
+             instance_type: type_before,
              start: nil,)
     end
     before do
       allow(Aws::EC2::Instance).to receive(:new).and_return(instance)
       allow(instance).to receive(:wait_until).and_return(nil)
+      allow(instance).to receive(:modify_attribute).and_return(nil)
     end
 
     before { req }
@@ -39,11 +41,11 @@ describe Ec2InstancesController, type: :controller do
     should_be_success
 
     it 'response should include instance_type' do
-      expect(response.body).to be_include type
+      expect(response.body).to be_include type_after
     end
 
     context 'when invalid instance_type' do
-      let(:type) { 'hoge' }
+      let(:type_after) { 'hoge' }
 
       should_be_failure
     end

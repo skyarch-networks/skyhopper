@@ -464,6 +464,7 @@ ja:
       creating:        'スタックの作成を開始しました'
       delete_cf_template: 'このテンプレートを削除してもよろしいですか？'
       confirm_export:  ' 以下の CloudFormation テンプレートをエクスポートします'
+      create_failure:  ' テンプレートの作成に失敗しました'
 
 
   template_builder:
@@ -512,6 +513,7 @@ ja:
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
       change_zabbix:            'このインフラストラクチャのZabbixサーバを変更してもよろしいですか？'
+      invalid_access:          '無効なアクセスです'
       page:                    'ページ'
       of:                      'の'
       no_data: |
@@ -699,6 +701,10 @@ ja:
     screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'
+      infrastructure_not_created: 'インフラストラクチャの作成が完了しませんでした'
+      cannot_find: '%{physical_id}が見つかりませんでした'
+      keypair_dose_not_match: '%{physical_id}: キーペアがインフラストラクチャと一致しませんでした!'
+      if_status_is_terminated: 'ステータスがterminatedの場合、%{physical_id}を追加できません'
 
 
   key_pairs:

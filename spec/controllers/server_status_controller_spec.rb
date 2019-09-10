@@ -37,17 +37,20 @@ describe ServerStatusController, type: :controller do
 
   describe '#status' do
     let(:status) { 'hogefuga' }
+    let(:latest_status) { 'foobar' }
+    let(:in_progress?) { false }
     before do
       allow(server).to receive(:status).and_return(status)
-      allow(server).to receive(:in_progress?).and_return(false)
+      allow(server).to receive(:latest_status).and_return(latest_status)
+      allow(server).to receive(:in_progress?).and_return(in_progress?)
     end
 
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        context 'when not work background' do
-          let(:req) { post :status, kind: kind }
-          before { req }
+        let(:req) { post :status, kind: kind }
+        before { req }
 
+        context 'when not work background' do
           should_be_success
 
           it 'should render status' do
@@ -57,11 +60,22 @@ describe ServerStatusController, type: :controller do
 
         context 'when work background' do
           let(:req) { post :status, kind: kind, background: true }
-          # TODO:
+
+          should_be_success
+
+          it 'should render status' do
+            expect(response.body).to eq latest_status
+          end
         end
 
         context 'when server in progress' do
-          # TODO:
+          let(:in_progress?) { true }
+
+          should_be_success
+
+          it 'should render status' do
+            expect(response.body).to eq latest_status
+          end
         end
       end
     end

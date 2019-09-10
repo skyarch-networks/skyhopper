@@ -140,9 +140,8 @@ class MonitoringsController < ApplicationController
     item_key    = params.require(:item_key)
     date_range  = params[:date_range]
 
-    # TODO: I18n
     unless @infra.resources.pluck(:physical_id).include?(physical_id)
-      raise 'Invalid access!'
+      raise I18n.t('monitoring.msg.invalid_access')
     end
 
     z = @zabbix

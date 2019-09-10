@@ -33,15 +33,14 @@ class Ec2InstancesController < ApplicationController
     instance = infra.instance(physical_id)
     before_type = instance.instance_type
 
-    begin
-      changed_type = instance.change_scale(type)
-    rescue EC2Instance::ChangeScaleError => ex
-      render text: ex.message, status: :bad_request and return
+    if before_type == type
+      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :internal_server_error and return
     end
 
-    if changed_type == before_type
-      # TODO: status code はこれでいい?
-      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :ok and return
+    begin
+      instance.change_scale(type)
+    rescue EC2Instance::ChangeScaleError => ex
+      render text: ex.message, status: :bad_request and return
     end
 
     render text: I18n.t('nodes.msg.changed_scale', type: type) and return

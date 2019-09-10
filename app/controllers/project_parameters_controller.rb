@@ -44,7 +44,6 @@ class ProjectParametersController < ApplicationController
     create_parameters = parameters.select { |p| p[:id].nil? }
     ProjectParameter.import(create_parameters.map { |p| ProjectParameter.new(key: p[:key], value: p[:value], project: @project) })
 
-    # TODO: I18n
     render text: I18n.t('project_parameters.msg.updated')
   end
 

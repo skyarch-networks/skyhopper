@@ -14,6 +14,10 @@ class NodesController < ApplicationController
   # --------------- Auth
   before_action :authenticate_user!
   before_action :set_infra
+  before_action :set_physical_id, only: %i[
+    show get_security_groups submit_groups yum_update
+    edit_ansible_playbook run_ansible_playbook update_ansible_playbook
+  ]
 
   # infra
   before_action do
@@ -28,10 +32,7 @@ class NodesController < ApplicationController
 
   # GET /nodes/i-0b8e7f12
   def show
-    # TODO: before_action
-    physical_id = params.require(:id)
-
-    instance          = @infra.instance(physical_id)
+    instance          = @infra.instance(@physical_id)
     @instance_summary = instance.summary
     @platform = @instance_summary[:platform]
 
@@ -52,7 +53,7 @@ class NodesController < ApplicationController
       return
     end
 
-    resource = @infra.resource(physical_id)
+    resource = @infra.resource(@physical_id)
 
     @playbook_roles = resource.get_playbook_roles
 
@@ -65,9 +66,9 @@ class NodesController < ApplicationController
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 
-    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, physical_id)
+    @number_of_security_updates = InfrastructureLog.number_of_security_updates(@infra.id, @physical_id)
 
-    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: physical_id)
+    @yum_schedule = YumSchedule.essentials.find_or_create_by(physical_id: @physical_id)
 
     @selected_dish = resource.dish
   end
@@ -120,9 +121,8 @@ class NodesController < ApplicationController
 
   # GET /nodes/:id/get_security_groups
   def get_security_groups
-    physical_id = params.require(:id)
     av_g = @infra.ec2.describe_security_groups.to_h # Available groups
-    instance = @infra.instance(physical_id)
+    instance = @infra.instance(@physical_id)
     ex = [] # existing groups array
     return_params = [] # filtered security groups
     instance.security_groups.each do |sec_group|
@@ -141,10 +141,9 @@ class NodesController < ApplicationController
 
   # POST /nodes/i-0b8e7f12/submit_groups
   def submit_groups
-    physical_id = params.require(:id)
     group_ids = params.require(:group_ids)
 
-    @infra.ec2.modify_instance_attribute({ instance_id: physical_id, groups: group_ids })
+    @infra.ec2.modify_instance_attribute({ instance_id: @physical_id, groups: group_ids })
 
     render text: I18n.t('security_groups.msg.change_success')
   end
@@ -180,18 +179,16 @@ class NodesController < ApplicationController
 
   # PUT /nodes/:id/yum_update
   def yum_update
-    physical_id = params.require(:id)
     security    = params.require(:security) == 'security'
     exec        = params.require(:exec) == 'exec'
 
-    exec_yum_update(@infra, physical_id, security, exec)
+    exec_yum_update(@infra, @physical_id, security, exec)
     render text: I18n.t('nodes.msg.yum_update_started'), status: :accepted
   end
 
   # GET /nodes/:id/edit_ansible_playbook
   def edit_ansible_playbook
-    physical_id = params.require(:id)
-    resource = @infra.resource(physical_id)
+    resource = @infra.resource(@physical_id)
 
     @playbook_roles = resource.get_playbook_roles
     @roles = Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
@@ -200,10 +197,8 @@ class NodesController < ApplicationController
 
   # PUT /nodes/i-0b8e7f12/run_ansible_playbook
   def run_ansible_playbook
-    physical_id = params.require(:id)
-
     Thread.new_with_db do
-      run_ansible_playbook_node(@infra, physical_id)
+      run_ansible_playbook_node(@infra, @physical_id)
     end
 
     render text: I18n.t('nodes.msg.playbook_applying'), status: :accepted
@@ -211,11 +206,10 @@ class NodesController < ApplicationController
 
   # PUT /nodes/:id/update_ansible_playbook
   def update_ansible_playbook
-    physical_id = params.require(:id)
     playbook_roles = params[:playbook_roles] || []
     extra_vars = params[:extra_vars] || '{}'
 
-    ret = update_playbook(physical_id: physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
+    ret = update_playbook(physical_id: @physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
 
     if ret[:status]
       render text: I18n.t('nodes.msg.playbook_updated') and return
@@ -319,6 +313,10 @@ class NodesController < ApplicationController
 
   def set_infra
     @infra = Infrastructure.find(params.require(:infra_id))
+  end
+
+  def set_physical_id
+    @physical_id = params.require(:id)
   end
 
   def check_register_in_knwon_hosts
