@@ -5,18 +5,22 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
+const modal = require('./modal');
 
-// eslint-disable-next-line no-var, no-unused-vars
-var viewEditPlaybookForm = (() => (({ roles, playbookRoles, extraVars }) => new Vue({
+// ほかのコードから参照するため、変数をグローバルにしています
+// eslint-disable-next-line no-var, no-undef
+viewEditPlaybookForm = (() => (({ id }) => new Vue({
   el: '#editPlaybookForm',
   template: '#edit-playbook-form-template',
 
   data: {
-    roles,
+    id,
+    is_loading: true,
+    roles: [],
     selected_roles: [],
-    playbook_roles: playbookRoles,
+    playbook_roles: [],
     selected_playbook_roles: [],
-    extra_vars: extraVars,
+    extra_vars: '',
   },
 
   methods: {
@@ -56,5 +60,30 @@ var viewEditPlaybookForm = (() => (({ roles, playbookRoles, extraVars }) => new 
       r[from] = this.playbook_roles[to];
       this.playbook_roles = r;
     },
+
+    load_with_ajax() {
+      this.is_loading = true;
+      $.ajax({
+        url: `/dishes/${this.id}/edit`,
+        method: 'GET',
+        dataType: 'json',
+        data: {
+        },
+      }).then(
+        (params) => {
+          this.roles = params.roles;
+          this.playbook_roles = params.playbook_roles;
+          this.extra_vars = params.extra_vars;
+          this.is_loading = false;
+        },
+        modal.AlertForAjaxStdError(),
+      );
+    },
+  },
+
+  mounted() {
+    this.$nextTick(function ready() {
+      this.load_with_ajax();
+    });
   },
 })))();

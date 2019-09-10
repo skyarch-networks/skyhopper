@@ -55,7 +55,10 @@ class DishesController < ApplicationController
     @global_serverspecs = Servertest.global
     @selected_serverspecs = @dish.servertests
 
-    render partial: 'edit'
+    respond_to do |format|
+      format.html { render partial: 'edit' }
+      format.json { render }
+    end
   end
 
   # PUT /dishes/1
