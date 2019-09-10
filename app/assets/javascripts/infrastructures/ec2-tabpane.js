@@ -491,7 +491,7 @@ module.exports = Vue.extend({
       const ec2 = new EC2Instance(infra, this.physical_id);
       modal.Confirm(
         t('ec2_instances.detach_volume'),
-        t('ec2_instances.msg.detach_volume', { volumeId: this.volume_selected, physical_id: this.physical_id }),
+        t('ec2_instances.msg.detach_volume', { volume_id: this.volume_selected, physical_id: this.physical_id }),
         'danger',
       ).done(() => {
         ec2.detach_volume(self.volume_selected).done((data) => {
@@ -701,21 +701,8 @@ module.exports = Vue.extend({
     suggest_device_name() {
       // TODO: iikanji ni sitai
       let suggestedDeviceLetterCode = 102; // same as aws default 'f'
-      const deviceLetterCodes = this.ec2.block_devices.chain()
-        .pluck('device_name')
-        .map((name) => {
-          if (/sd([a-z])$/.test(name)) {
-            const letter = name.slice(-1);
-            if (letter >= 'a' && letter <= 'z') {
-              return letter.charCodeAt(0);
-            }
-            return false;
-          }
-          return false;
-        })
-        .filter()
-        .sort()
-        .value();
+
+      const deviceLetterCodes = this.ec2.block_devices.map(x => x.device_name.slice(-1).charCodeAt());
 
       while (deviceLetterCodes.indexOf(suggestedDeviceLetterCode) !== -1) {
         if (suggestedDeviceLetterCode === 122) { // 'z'
