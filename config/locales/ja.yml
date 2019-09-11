@@ -335,6 +335,7 @@ ja:
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
+      playbook_empty:     'playbook は空です'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
       yum_update_success: |
@@ -360,6 +361,7 @@ ja:
       no_serverspec_selected: 'Serverspec が選択されていません'
       delete_dish:            'このディッシュを削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
+      save_failed:            'ディッシュの保存に失敗しました'
 
 
   servertests:

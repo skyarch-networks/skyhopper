@@ -12,6 +12,10 @@ class Dish < ActiveRecord::Base
   has_many :dish_servertests
   has_many :servertests, through: :dish_servertests
 
+  validates :playbook_roles, json: true, unless: proc { |a| a.playbook_roles.nil? }
+  validate :verify_playbook_roles
+  validates :extra_vars, json: true, unless: proc { |a| a.extra_vars.nil? }
+
   serialize :runlist
 
   STATUS = {
@@ -20,6 +24,7 @@ class Dish < ActiveRecord::Base
     creating: 'CREATING',
     bootstrapping: 'BOOTSTRAPPING',
     applying: 'APPLYING',
+    ansible: 'ANSIBLE',
     serverspec: 'SERVERSPEC',
   }.recursive_freeze
 
@@ -37,7 +42,25 @@ class Dish < ActiveRecord::Base
     false
   end
 
+  def playbook_roles_safe
+    return [] if playbook_roles.nil?
+
+    JSON.parse(playbook_roles)
+  end
+
+  def extra_vars_safe
+    return '{}' if extra_vars.nil?
+
+    extra_vars
+  end
+
   def self.valid_dishes(project_id = nil)
     where(project_id: [nil, project_id]).where(status: STATUS[:success])
+  end
+
+  private
+
+  def verify_playbook_roles
+    errors.add(:playbook_roles, 'structure is incorrect') unless Ansible::verify_roles(playbook_roles_safe)
   end
 end

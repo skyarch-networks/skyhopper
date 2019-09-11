@@ -31,6 +31,18 @@ module DishesController::Validate
         # TODO 良い方法を検討する
         sleep(180)
 
+        @infrastructure.instance(physical_id).register_in_known_hosts
+
+        # ansible
+        validate_section(:ansible, dish) do
+          validate = ansible_for_test(dish, @infrastructure)
+
+          unless validate
+            update_validate_status(dish, :failure)
+            Thread.current.exit
+          end
+        end
+
         # serverspec
         validate_section(:serverspec, dish) do
           validate = serverspec_for_test(dish, @infrastructure)
@@ -125,6 +137,18 @@ module DishesController::Validate
 
     # Stackのcreate_completeを確認
     @stack.wait_status('CREATE_COMPLETE')
+  end
+
+  def ansible_for_test(dish, infrastructure)
+    return true if dish.playbook_roles_safe.empty?
+
+    @infrastructure.resources_or_create
+    begin
+      @node.run_ansible_playbook(infrastructure, dish.playbook_roles_safe, dish.extra_vars_safe) {}
+    rescue Ansible::CommandNotSuccessError => ex
+      Rails.logger.error("ansible_for_test error: #{ex.message}")
+      return false
+    end
   end
 
   # テスト用のインスタンスに対して、Serverspecを実行する。

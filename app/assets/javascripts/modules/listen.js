@@ -68,7 +68,7 @@
         label = 'label-success';
       } else if (value === 'FAILURE') {
         label = 'label-danger';
-      } else if (value === 'CREATING' || value === 'BOOTSTRAPPING' || value === 'APPLYING' || value === 'SERVERSPEC') {
+      } else if (value === 'CREATING' || value === 'BOOTSTRAPPING' || value === 'APPLYING' || value === 'ANSIBLE' || value === 'SERVERSPEC') {
         label = 'label-info';
       } else {
         label = 'label-warning';
