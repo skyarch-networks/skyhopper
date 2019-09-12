@@ -1,38 +1,42 @@
 
 
-const modal = function (title, message, modal_type, status, resolve_func) {
-  const modal_footer = $('<div>', { class: 'modal-footer' });
-  const modal_body = $('<div>', { class: 'modal-body' });
+const modal = (title, message, modalType, status, resolveFunc) => {
+  const modalFooter = $('<div>', { class: 'modal-footer' });
+  const modalBody = $('<div>', { class: 'modal-body' });
   const dfd = $.Deferred();
   let resolve;
-  if (resolve_func) {
-    resolve = resolve_func(dfd);
+  if (resolveFunc) {
+    resolve = resolveFunc(dfd);
   } else {
-    resolve = function () { dfd.resolve(); };
+    resolve = () => { dfd.resolve(); };
   }
-  if (modal_type === 0 || modal_type === 1) {
-    modal_footer.append($('<button>', { class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel' }));
+  if (modalType === 0 || modalType === 1) {
+    modalFooter.append($('<button>', { class: 'btn btn-default', 'data-dismiss': 'modal', text: 'Cancel' }));
   }
-  if (message instanceof jQuery || modal_type === 1 || modal_type === 3) {
-    modal_body.append($('<div>', { html: message }));
+  if (message instanceof jQuery || modalType === 1 || modalType === 3) {
+    modalBody.append($('<div>', { html: message }));
   } else {
-    modal_body.append($('<div>', { text: message }));
+    modalBody.append($('<div>', { text: message }));
   }
-  modal_footer.append($('<button>', {
+  modalFooter.append($('<button>', {
     class: 'btn btn-primary', 'data-dismiss': 'modal', text: 'OK', click: resolve,
   }));
-  let additional_class = '';
+  let additionalClass = '';
   if (status === 'warning') {
-    additional_class = 'bg-warning';
+    additionalClass = 'bg-warning';
   } else if (status === 'danger') {
-    additional_class = 'bg-danger';
+    additionalClass = 'bg-danger';
   }
-  const modal_base = $('<div>', { class: 'modal fade', 'data-backdrop': 'static' }).append($('<div>', { class: 'modal-dialog' }).append($('<div>', { class: 'modal-content' }).append($('<div>', { class: `modal-header ${additional_class}` }).append($('<button>', { class: 'close', 'data-dismiss': 'modal' }).append($('<span>', { 'aria-hidden': 'true', html: '&times;' })).append($('<span>', { class: 'sr-only', text: 'Close' }))).append($('<h4>', { class: 'modal-title', text: title }))).append(modal_body).append(modal_footer)));
-  modal_base.on('hidden.bs.modal', (e) => {
-    modal_base.remove();
+  const modalBase = $('<div>', { class: 'modal fade', 'data-backdrop': 'static' }).append($('<div>', { class: 'modal-dialog' })
+    .append($('<div>', { class: 'modal-content' }).append($('<div>', { class: `modal-header ${additionalClass}` })
+      .append($('<button>', { class: 'close', 'data-dismiss': 'modal' }).append($('<span>', { 'aria-hidden': 'true', html: '&times;' }))
+        .append($('<span>', { class: 'sr-only', text: 'Close' })))
+      .append($('<h4>', { class: 'modal-title', text: title }))).append(modalBody).append(modalFooter)));
+  modalBase.on('hidden.bs.modal', () => {
+    modalBase.remove();
   });
-  modal_base.appendTo('body').modal('show');
-  modal_base.children().draggable({
+  modalBase.appendTo('body').modal('show');
+  modalBase.children().draggable({
     cursor: 'move',
     containment: '.modal-backdrop',
     handle: '.modal-header',
@@ -59,21 +63,23 @@ function AlertHTML(title, message, status) {
 }
 exports.AlertHTML = AlertHTML;
 
+let idCount = 1;
 function Prompt(title, label, status) {
-  const input_id = _.uniqueId('bootstrap_prompt_');
-  const input = $('<form>', { class: 'form-horizontal' }).append($('<div>', { class: 'form-group' }).append($('<label>', { class: 'control-label col-sm-2', for: input_id, text: label })).append($('<div>', { class: 'col-sm-5' }).append($('<input>', { class: 'form-control', type: 'text', id: input_id }))));
-  const resolve_func = function (dfd) {
-    return function () {
-      const text = document.getElementById(input_id).value;
-      dfd.resolve(text);
-    };
+  const inputId = `bootstrap_prompt_${idCount}`;
+  idCount += 1;
+  const input = $('<form>', { class: 'form-horizontal' }).append($('<div>', { class: 'form-group' })
+    .append($('<label>', { class: 'control-label col-sm-2', for: inputId, text: label }))
+    .append($('<div>', { class: 'col-sm-5' }).append($('<input>', { class: 'form-control', type: 'text', id: inputId }))));
+  const resolveFunc = dfd => () => {
+    const text = document.getElementById(inputId).value;
+    dfd.resolve(text);
   };
-  const dfd = modal(title, input, 1, status, resolve_func);
+  const dfd = modal(title, input, 1, status, resolveFunc);
   input.on('keypress', (e) => {
     const ENTER = 13;
     if ((e.which && e.which === ENTER) || (e.keyCode && e.keyCode === ENTER)) {
       input.closest('.modal').modal('hide');
-      resolve_func(dfd)();
+      resolveFunc(dfd)();
       return false;
     }
     return true;
@@ -83,10 +89,10 @@ function Prompt(title, label, status) {
 exports.Prompt = Prompt;
 
 function AlertForAjaxStdError(callback) {
-  return function (xhr) {
+  return (xhr) => {
     const t = typeof xhr === 'string' ? xhr : xhr.responseText;
     const ex = JSON.parse(t).error;
-    const dfd = Alert(ex.kind, _.escape(ex.message), 'danger');
+    const dfd = Alert(ex.kind, ex.message, 'danger');
     if (callback) {
       dfd.done(callback);
     }
