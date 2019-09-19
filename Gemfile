@@ -79,6 +79,7 @@ group :development, :test do
 
   # test
   gem 'rspec-rails'
+  gem 'rails-controller-testing'
 
   # Test seems to be failing because of this issue:
   # https://github.com/thoughtbot/factory_girl/issues/981
