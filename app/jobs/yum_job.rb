@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class YumJob < ActiveJob::Base
+class YumJob < ApplicationJob
   queue_as :default
 
   def perform(physical_id, infra, user_id, cook = false, security = true, exec = false)

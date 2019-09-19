@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class PeriodicServerspecJob < ActiveJob::Base
+class PeriodicServerspecJob < ApplicationJob
   queue_as :default
 
   def perform(physical_id, infra_id, user_id)

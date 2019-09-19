@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServerStateWorker < ActiveJob::Base
+class ServerStateWorker < ApplicationJob
   def perform(*params)
     kinds =
       if params.empty?

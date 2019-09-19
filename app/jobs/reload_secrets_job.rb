@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ReloadSecretsJob < ActiveJob::Base
+class ReloadSecretsJob < ApplicationJob
   queue_as :default
 
   # Ref: https://github.com/rails/rails/blob/634741d9721eb938c8bce38c109023178268e43d/railties/lib/rails/application.rb#L385
