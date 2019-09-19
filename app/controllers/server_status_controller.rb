@@ -16,7 +16,7 @@ class ServerStatusController < ApplicationController
   def start
     @server.start
 
-    render nothing: true
+    render body: nil
   end
 
   # POST /server/:kind/stop
@@ -24,7 +24,7 @@ class ServerStatusController < ApplicationController
   def stop
     @server.stop
 
-    render nothing: true
+    render body: nil
   end
 
   # POST /server/:kind/status

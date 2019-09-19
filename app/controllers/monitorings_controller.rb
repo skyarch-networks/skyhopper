@@ -120,7 +120,7 @@ class MonitoringsController < ApplicationController
       infra_logger_success("#{physical_id} is linked to Zabbix!")
     end
 
-      render nothing: true and return
+      render body: nil and return
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -175,7 +175,7 @@ class MonitoringsController < ApplicationController
     z = @zabbix
     if @infra.resources.ec2.none? { |r| z.host_exists?(r.physical_id) }
       # XXX: workaround?
-      render nothing: true, status: :bad_request and return
+      render body: nil, status: :bad_request and return
     end
 
     @master_monitorings = MasterMonitoring.all
@@ -279,7 +279,7 @@ class MonitoringsController < ApplicationController
     end
 
     infra_logger_success('Infrastructure is registered to Zabbix')
-    render nothing: true and return
+    render body: nil and return
   end
 
   # POST /monitorings/:id/change_zabbix_server
@@ -290,7 +290,7 @@ class MonitoringsController < ApplicationController
     @infra.project.save!
 
     infra_logger_success('Zabbix Server Changed!')
-    render nothing: true and return
+    render body: nil and return
   end
 
   private

@@ -268,7 +268,7 @@ describe NodesController, type: :controller do
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
         run_ansible_playbook_node(infra, physical_id)
-        render nothing: true
+        render body: nil
       end
     end
     let(:resource) { create(:resource, infrastructure: infra) }

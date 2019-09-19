@@ -55,7 +55,7 @@ describe InfrastructureLogsController, type: :controller do
     controller InfrastructureLogsController do
       def index
         @result = get_infrastructure_logs
-        render nothing: true
+        render body: nil
       end
     end
 
@@ -71,7 +71,7 @@ describe InfrastructureLogsController, type: :controller do
     controller InfrastructureLogsController do
       def index
         @result = sort_key
-        render nothing: true
+        render body: nil
       end
     end
 
@@ -110,7 +110,7 @@ describe InfrastructureLogsController, type: :controller do
     controller InfrastructureLogsController do
       def index
         @result = order
-        render nothing: true
+        render body: nil
       end
     end
 

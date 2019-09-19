@@ -49,7 +49,7 @@ class SnapshotsController < ApplicationController
     snapshot.delete
     infra_logger_success("Snapshot #{snapshot.snapshot_id} has been deleted.")
 
-    render nothing: true, status: :ok
+    render body: nil, status: :ok
   rescue Snapshot::VolumeProtectedError
     render plain: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: :forbidden and return
   end

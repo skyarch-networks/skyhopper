@@ -119,7 +119,7 @@ class ServertestsController < ApplicationController
       end
     end
 
-    render nothing: true, status: :ok and return
+    render body: nil, status: :ok and return
   end
 
   # DELETE /servertests/1

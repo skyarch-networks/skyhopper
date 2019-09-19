@@ -140,7 +140,7 @@ class Ec2InstancesController < ApplicationController
     Infrastructure.find(infra_id).instance(physical_id).reboot
     infra_logger_success("#{physical_id} start reboot.")
 
-    render nothing: true
+    render body: nil
   end
 
   # GET /ec2_instances/:id/serverspec_status
