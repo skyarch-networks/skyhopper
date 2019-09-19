@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class MasterMonitoring < ActiveRecord::Base
+class MasterMonitoring < ApplicationRecord
   validates :name, uniqueness: true
   validates :item, uniqueness: true, allow_nil: true
 

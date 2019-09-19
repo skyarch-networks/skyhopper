@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   belongs_to :client
   belongs_to :zabbix_server
 

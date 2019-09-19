@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Schedule < ActiveRecord::Base
+class Schedule < ApplicationRecord
   enum frequency:   %i[daily weekly intervals]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 

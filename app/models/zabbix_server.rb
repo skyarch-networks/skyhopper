@@ -1,4 +1,4 @@
-class ZabbixServer < ActiveRecord::Base
+class ZabbixServer < ApplicationRecord
   has_many :projects, dependent: :restrict_with_exception
   validates :fqdn, uniqueness: true, zabbix_server_fqdn: true
 

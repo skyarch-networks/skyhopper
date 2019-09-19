@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class InfrastructureLog < ActiveRecord::Base
+class InfrastructureLog < ApplicationRecord
   belongs_to :infrastructure
   belongs_to :user
 

@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Monitoring < ActiveRecord::Base
+class Monitoring < ApplicationRecord
   belongs_to :master_monitoring
   belongs_to :infrastructure
 

@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Dish < ActiveRecord::Base
+class Dish < ApplicationRecord
   belongs_to :project
   has_many :resources
   has_many :dish_servertests

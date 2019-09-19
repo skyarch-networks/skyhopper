@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Infrastructure < ActiveRecord::Base
+class Infrastructure < ApplicationRecord
   before_destroy :detach_zabbix
 
   belongs_to :project
