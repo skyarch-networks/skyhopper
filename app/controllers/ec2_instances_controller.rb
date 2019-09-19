@@ -34,16 +34,16 @@ class Ec2InstancesController < ApplicationController
     before_type = instance.instance_type
 
     if before_type == type
-      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: :internal_server_error and return
+      render plain: I18n.t('nodes.msg.not_change_scale', type: type), status: :internal_server_error and return
     end
 
     begin
       instance.change_scale(type)
     rescue EC2Instance::ChangeScaleError => ex
-      render text: ex.message, status: :bad_request and return
+      render plain: ex.message, status: :bad_request and return
     end
 
-    render text: I18n.t('nodes.msg.changed_scale', type: type) and return
+    render plain: I18n.t('nodes.msg.changed_scale', type: type) and return
   end
 
   # GET /ec2_instances/available_resources
@@ -77,7 +77,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :running)
 
-    render text: I18n.t('ec2_instances.msg.start_ec2')
+    render plain: I18n.t('ec2_instances.msg.start_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/stop
@@ -91,7 +91,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :stopped)
 
-    render text: I18n.t('ec2_instances.msg.stop_ec2')
+    render plain: I18n.t('ec2_instances.msg.stop_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/detach
@@ -110,7 +110,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(resource, :detached)
 
-    render text: I18n.t('ec2_instances.msg.detach_ec2')
+    render plain: I18n.t('ec2_instances.msg.detach_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/terminate
@@ -128,7 +128,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :terminated)
 
-    render text: I18n.t('ec2_instances.msg.terminate_ec2')
+    render plain: I18n.t('ec2_instances.msg.terminate_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/reboot
@@ -168,7 +168,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.register(physical_id)
 
-    render text: I18n.t('ec2_instances.msg.registered_to_elb')
+    render plain: I18n.t('ec2_instances.msg.registered_to_elb')
   end
 
   # POST /ec2_instances/:id/deregister_to_elb
@@ -185,7 +185,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.deregister(physical_id)
 
-    render text: I18n.t('ec2_instances.msg.deregistered_from_elb')
+    render plain: I18n.t('ec2_instances.msg.deregistered_from_elb')
   end
 
   # POST /ec2_instances/:id/elb_submit_groups
@@ -202,7 +202,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.elb_submit_groups(group_ids)
 
-    render text: I18n.t('security_groups.msg.change_success')
+    render plain: I18n.t('security_groups.msg.change_success')
   end
 
   def attachable_volumes
@@ -236,7 +236,7 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     resp = instance.detach_volume(volume_id)
 
-    render text: t('ec2_instances.msg.volume_detached', resp.to_h)
+    render plain: t('ec2_instances.msg.volume_detached', resp.to_h)
   end
 
   def create_volume
@@ -256,7 +256,7 @@ class Ec2InstancesController < ApplicationController
     instance = infra.instance(physical_id)
     resp = instance.create_volume(options)
 
-    render text: t('ec2_instances.msg.creating_volume', resp.to_h)
+    render plain: t('ec2_instances.msg.creating_volume', resp.to_h)
   end
 
   private

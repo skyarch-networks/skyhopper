@@ -51,7 +51,7 @@ class SnapshotsController < ApplicationController
 
     render nothing: true, status: :ok
   rescue Snapshot::VolumeProtectedError
-    render text: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: :forbidden and return
+    render plain: I18n.t('snapshots.msg.snapshot_is_protected', snapshot_id: snapshot_id), status: :forbidden and return
   end
 
   # POST /snapshots/schedule
@@ -69,7 +69,7 @@ class SnapshotsController < ApplicationController
       ).perform_later(volume_id, physical_id, @infra, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.snapshot_updated'), status: :ok and return
+    render plain: I18n.t('schedules.msg.snapshot_updated'), status: :ok and return
   end
 
   # def restore
@@ -90,7 +90,7 @@ class SnapshotsController < ApplicationController
       policy&.destroy
     end
 
-    render text: t('snapshots.msg.policy_saved'), status: :ok and return
+    render plain: t('snapshots.msg.policy_saved'), status: :ok and return
   end
 
   private

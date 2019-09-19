@@ -200,7 +200,7 @@ describe Ec2InstancesController, type: :controller do
         instance = double_instance
         status   = params.require(:status)
         notify_ec2_status(instance, status)
-        render text: 'success!'
+        render plain: 'success!'
       end
     end
     before { routes.draw { resources(:ec2_instances) { collection { get :test } } } }

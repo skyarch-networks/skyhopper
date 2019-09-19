@@ -27,7 +27,7 @@ class ElbController < ApplicationController
 
     elb.create_listener(protocol, load_balancer_port, instance_protocol, instance_port, ssl_certificate_id)
 
-    render text: I18n.t('ec2_instances.msg.created_listener_to_elb')
+    render plain: I18n.t('ec2_instances.msg.created_listener_to_elb')
   end
 
   # POST /elb/delete_listener
@@ -41,7 +41,7 @@ class ElbController < ApplicationController
 
     elb.delete_listener(load_balancer_port)
 
-    render text: I18n.t('ec2_instances.msg.deleted_listener_to_elb')
+    render plain: I18n.t('ec2_instances.msg.deleted_listener_to_elb')
   end
 
   # POST /elb/update_listener
@@ -95,7 +95,7 @@ class ElbController < ApplicationController
       raise error
     end
 
-    render text: I18n.t('ec2_instances.msg.deleted_listener_to_elb') + '<br />' + I18n.t('ec2_instances.msg.created_listener_to_elb')
+    render plain: I18n.t('ec2_instances.msg.deleted_listener_to_elb') + '<br />' + I18n.t('ec2_instances.msg.created_listener_to_elb')
   end
 
   # POST /elb/upload_server_certificate
@@ -112,7 +112,7 @@ class ElbController < ApplicationController
 
     elb.upload_server_certificate(server_certificate_name, certificate_body, private_key, certificate_chain)
 
-    render text: I18n.t('ec2_instances.msg.uploaded_certificate')
+    render plain: I18n.t('ec2_instances.msg.uploaded_certificate')
   end
 
   # POST /elb/delete_server_certificate
@@ -126,6 +126,6 @@ class ElbController < ApplicationController
 
     elb.delete_server_certificate(server_certificate_name)
 
-    render text: I18n.t('ec2_instances.msg.deleted_certificate')
+    render plain: I18n.t('ec2_instances.msg.deleted_certificate')
   end
 end

@@ -501,7 +501,7 @@ describe InfrastructuresController, type: :controller do
     controller InfrastructuresController do
       before_action :project_exist
       def foo
-        render text: 'success!!!'
+        render plain: 'success!!!'
       end
 
       # XXX: pundit hack
@@ -559,7 +559,7 @@ describe InfrastructuresController, type: :controller do
     controller InfrastructuresController do
       before_action :infrastructure_exist
       def foo
-        render text: 'success!!!'
+        render plain: 'success!!!'
       end
 
       # XXX: pundit hack

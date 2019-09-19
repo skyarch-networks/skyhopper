@@ -76,10 +76,10 @@ class DishesController < ApplicationController
         status: nil,
       )
     rescue StandardError
-      render text: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
+      render plain: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
     end
 
-    render text: I18n.t('dishes.msg.updated')
+    render plain: I18n.t('dishes.msg.updated')
   end
 
   # GET /dishes/new

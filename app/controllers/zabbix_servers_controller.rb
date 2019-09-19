@@ -65,10 +65,10 @@ class ZabbixServersController < ApplicationController
       Zabbix.new(params[:fqdn], params[:username], params[:password])
       @zabbix_server.update(params)
     rescue StandardError => ex
-      render text: ex.message, status: :internal_server_error and return
+      render plain: ex.message, status: :internal_server_error and return
     end
 
-    render text: I18n.t('zabbix_servers.msg.updated') and return
+    render plain: I18n.t('zabbix_servers.msg.updated') and return
   end
 
   # DELETE /zabbix_servers/1

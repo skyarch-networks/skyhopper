@@ -187,7 +187,7 @@ describe ProjectsController, type: :controller do
       def authorize(*)end
 
       def test
-        render text: 'success!!!'
+        render plain: 'success!!!'
       end
     end
     before { routes.draw { resources(:projects) { collection { get :test } } } }
@@ -221,7 +221,7 @@ describe ProjectsController, type: :controller do
       def authorize(*)end
 
       def test
-        render text: 'success!!!'
+        render plain: 'success!!!'
       end
     end
     before { routes.draw { resources(:projects) { collection { get :test } } } }

@@ -42,7 +42,7 @@ class ServertestsController < ApplicationController
 
   # GET /servertests/1
   def show
-    render text: @servertest.value
+    render plain: @servertest.value
   end
 
   # POST /servertests/1
@@ -73,7 +73,7 @@ class ServertestsController < ApplicationController
     end
 
     if ajax?
-      render text: I18n.t('servertests.msg.created') and return
+      render plain: I18n.t('servertests.msg.created') and return
     else
       redirect_to servertests_path(infrastructure_id: infra_id),
                   notice: I18n.t('servertests.msg.created')
@@ -176,7 +176,7 @@ class ServertestsController < ApplicationController
       )
     rescue StandardError => ex
       # serverspec が正常に実行されなかったとき
-      render text: ex.message, status: :internal_server_error and return
+      render plain: ex.message, status: :internal_server_error and return
     end
 
     case resp[:status_text]
@@ -197,7 +197,7 @@ class ServertestsController < ApplicationController
       message: resp[:long_message],
       servertest_ids: servertest_ids,
     )
-    render text: render_msg, status: :ok and return
+    render plain: render_msg, status: :ok and return
   end
 
   # Generate serverspec to connect to RDS instance
@@ -215,7 +215,7 @@ class ServertestsController < ApplicationController
 
     Servertest.create_rds(rds, username, password, infra_id, database)
 
-    render text: I18n.t('servertests.msg.generated'), status: :created and return
+    render plain: I18n.t('servertests.msg.generated'), status: :created and return
   end
 
   # POST /servertests/schedule
@@ -233,7 +233,7 @@ class ServertestsController < ApplicationController
       ).perform_later(physical_id, infra_id, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.serverspec_updated'), status: :ok and return
+    render plain: I18n.t('schedules.msg.serverspec_updated'), status: :ok and return
   end
 
   private

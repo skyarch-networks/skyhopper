@@ -84,19 +84,19 @@ class CfTemplatesController < ApplicationController
     begin
       @tpl = @cf_template.parse_value
     rescue CfTemplate::ParseError => ex
-      render text: ex.message, status: :bad_request and return
+      render plain: ex.message, status: :bad_request and return
     end
 
     begin
       @cf_template.validate_template
     rescue Aws::CloudFormation::Errors::ValidationError => ex
-      render text: ex.message, status: :bad_request and return
+      render plain: ex.message, status: :bad_request and return
     end
 
     # create EC2 instance ?
     if @tpl['Parameters'].try(:include?, 'KeyName')
       unless infra.ec2_private_key_id
-        render text: I18n.t('cf_templates.msg.keypair_missing'), status: :bad_request and return
+        render plain: I18n.t('cf_templates.msg.keypair_missing'), status: :bad_request and return
       end
       @tpl['Parameters'].delete('KeyName')
     end
@@ -136,9 +136,9 @@ class CfTemplatesController < ApplicationController
     res = send_cloudformation_template(@cf_template, params[:cf_template][:cfparams])
 
     if res[:status]
-      render text: res[:message] and return
+      render plain: res[:message] and return
     end
-    render text: res[:message], status: :internal_server_error
+    render plain: res[:message], status: :internal_server_error
   end
 
   # PATCH/PUT /cf_templates/1

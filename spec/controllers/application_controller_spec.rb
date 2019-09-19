@@ -12,7 +12,7 @@ describe ApplicationController do
   describe '#restore_locale' do
     controller do
       def index
-        render text: 'success'
+        render plain: 'success'
       end
     end
     let(:req) { get :index, lang: lang }

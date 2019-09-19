@@ -23,7 +23,7 @@ describe Users::SessionsController do
     # Mock
     controller Users::SessionsController do
       def create
-        render text: 'success create'
+        render plain: 'success create'
       end
     end
 

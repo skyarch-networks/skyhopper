@@ -135,9 +135,9 @@ describe AppSettingsController, type: :controller do
       def test
         set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
         check_eip_limit!(false)
-        render text: 'success'
+        render plain: 'success'
       rescue ::AppSettingsController::EIPLimitError
-        render text: 'failure', status: :bad_request
+        render plain: 'failure', status: :bad_request
       end
     end
     before { routes.draw { resources(:app_settings) { collection { get :test } } } }

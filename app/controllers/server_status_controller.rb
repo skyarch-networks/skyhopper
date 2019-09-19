@@ -32,10 +32,10 @@ class ServerStatusController < ApplicationController
   # @param [Boolean] background If this is true, server status updated background.
   def status
     unless params[:background] || @server.in_progress?
-      render text: @server.status and return
+      render plain: @server.status and return
     end
 
-    render text: @server.latest_status and return
+    render plain: @server.latest_status and return
   end
 
   private

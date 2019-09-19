@@ -82,7 +82,7 @@ module DishesController::Validate
     end
 
     # test 用 render
-    render text: 'Validate dish is successfully started.'
+    render plain: 'Validate dish is successfully started.'
   end
 
   private
@@ -126,7 +126,7 @@ module DishesController::Validate
     rescue StandardError
       # rubocop:enable Lint/HandleExceptions
       # Stack Create failed
-      # render text: ex.message, status: 500
+      # render plain: ex.message, status: 500
     else
       infrastructure.status = @stack.status[:status]
       infrastructure.save!

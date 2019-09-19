@@ -156,7 +156,7 @@ describe ClientsController, type: :controller do
     controller ClientsController do
       before_action :client_exist
       def index
-        render text: 'success!'
+        render plain: 'success!'
       end
     end
     let(:req) { get :index, id: client.id }
