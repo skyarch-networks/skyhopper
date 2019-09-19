@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-(function () {
+(() => {
   $.noty.defaults = {
     layout: 'topRight',
     theme: 'relax', // or 'relax'
@@ -34,46 +34,47 @@
       onCloseClick() {},
     },
     buttons: false, // an array of buttons
+
   };
 
 
   if (session_id) {
     const ws_conn = wsConnector('notifications', session_id);
 
-    ws_conn.onmessage = function (msg) {
+    ws_conn.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
       const status = data.status ? 'success' : 'danger';
-      const status_noty = data.status ? 'success' : 'error';
+      const statusNoty = data.status ? 'success' : 'error';
 
-      display_notification(data.message, status, data.timestamp, status_noty);
+      displayNotification(data.message, status, data.timestamp, statusNoty);
     };
   }
 
 
-  let favicon_badge_count = 0;
+  let faviconBadgeCount = 0;
   const favicon = new Favico();
 
-  var display_notification = function (message, status, timestamp, status_noty) {
-    const notification_status = `notification-panel bs-callout bs-callout-${status}`;
+  const displayNotification = (message, status, timestamp, statusNoty) => {
+    const notificationStatus = `notification-panel bs-callout bs-callout-${status}`;
 
     const header = $('<h5>', { text: timestamp });
     const content = $('<div>', { text: message.replace(/[\n\r]/g, '<br />') });
 
-    $('div#notification').prepend($('<div>', { class: notification_status, role: 'alert' }).append(header).append(content));
+    $('div#notification').prepend($('<div>', { class: notificationStatus, role: 'alert' }).append(header).append(content));
 
     // 10個以上なら消す
     while ($('.notification-panel').length > 10) {
       $('.notification-panel:last').remove();
     }
 
-    favicon.badge(++favicon_badge_count);
-    const notification_noty = noty({
+    favicon.badge(faviconBadgeCount += 1);
+    noty({
       text: message,
-      type: status_noty,
+      type: statusNoty,
       callback: {
         onClose() {
-          if (favicon_badge_count !== 0) {
-            favicon.badge(--favicon_badge_count);
+          if (faviconBadgeCount !== 0) {
+            favicon.badge(faviconBadgeCount -= 1);
           }
         },
       },
@@ -81,16 +82,16 @@
   };
 
 
-  const refresh_notifications = function () {
-    favicon_badge_count = 0;
-    favicon.badge(favicon_badge_count);
+  const refreshNotifications = () => {
+    faviconBadgeCount = 0;
+    favicon.badge(faviconBadgeCount);
     $.noty.closeAll();
   };
 
   $(document).on('click', '#close-notification-center', () => {
-    refresh_notifications();
+    refreshNotifications();
   });
 
 
-  $(window).on('focus', refresh_notifications);
-}());
+  $(window).on('focus', refreshNotifications);
+})();
