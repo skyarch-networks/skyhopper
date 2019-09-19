@@ -15,7 +15,7 @@ describe ApplicationController do
         render plain: 'success'
       end
     end
-    let(:req) { get :index, lang: lang }
+    let(:req) { get :index, params: { lang: lang } }
     before { I18n.locale = I18n.default_locale }
 
     context 'when lang is nil' do

@@ -16,7 +16,7 @@ describe Ec2PrivateKeysController do
     let(:region) { 'us-east-1' }
     let(:name) { 'foobar' }
     let(:key) { { 'hoge' => 'fuga' } }
-    let(:req) { post :create, project_id: project.id, region: region, name: name }
+    let(:req) { post :create, params: { project_id: project.id, region: region, name: name } }
 
     context 'when success' do
       before do

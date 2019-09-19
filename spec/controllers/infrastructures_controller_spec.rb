@@ -29,7 +29,7 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#index' do
-    before { get :index, project_id: project.id }
+    before { get :index, params: { project_id: project.id } }
 
     should_be_success
 
@@ -61,7 +61,7 @@ describe InfrastructuresController, type: :controller do
       rds_resource
       s3bucket_resource
     end
-    let(:request_show) { get :show, id: infra.id }
+    let(:request_show) { get :show, params: { id: infra.id } }
 
     stubize_stack
 
@@ -161,7 +161,7 @@ describe InfrastructuresController, type: :controller do
     let(:stack) { double('stack', events: events, status_and_type: status_and_type) }
     before do
       allow(Stack).to receive(:new).and_return(stack)
-      get :stack_events, id: infra.id
+      get :stack_events, params: { id: infra.id }
     end
 
     should_be_success
@@ -178,7 +178,7 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#new' do
-    before { get :new, project_id: project.id }
+    before { get :new, params: { project_id: project.id } }
 
     should_be_success
 
@@ -197,7 +197,7 @@ describe InfrastructuresController, type: :controller do
 
   describe '#edit' do
     before do
-      get :edit, id: infra.id
+      get :edit, params: { id: infra.id }
     end
 
     context 'when cant edit' do
@@ -230,7 +230,7 @@ describe InfrastructuresController, type: :controller do
     let(:infra_key_name) { ec2_key.name }
     let(:infra_key_value) { ec2_key.value }
     let(:params) { { infrastructure: infra_hash } }
-    let(:create_request) { post :create, params }
+    let(:create_request) { post :create, params: params }
     before do
       allow(KeyPair).to receive(:validate!)
     end
@@ -293,7 +293,7 @@ describe InfrastructuresController, type: :controller do
 
   describe 'PATCH #update' do
     let(:params) { { id: infra.id, infrastructure: attributes_for(:infrastructure) } }
-    let(:req) { patch :update, params }
+    let(:req) { patch :update, params: params }
 
     context 'when update success' do
       before { req }
@@ -316,7 +316,7 @@ describe InfrastructuresController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:req) { delete :destroy, id: infra.id }
+    let(:req) { delete :destroy, params: { id: infra.id } }
 
     stubize_zabbix
     run_zabbix_server
@@ -354,7 +354,7 @@ describe InfrastructuresController, type: :controller do
     run_zabbix_server
     request_as_ajax
 
-    let(:delete_stack_request) { post :delete_stack, id: infra.id }
+    let(:delete_stack_request) { post :delete_stack, params: { id: infra.id } }
 
     context 'when delete stack success' do
       stubize_stack
@@ -389,7 +389,7 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_s3' do
     let(:bucket_name) { 'log_bucket' }
-    let(:request_show_s3) { get :show_s3, id: infra.id, bucket_name: bucket_name }
+    let(:request_show_s3) { get :show_s3, params: { id: infra.id, bucket_name: bucket_name } }
 
     stubize_s3
     before { request_show_s3 }
@@ -416,7 +416,7 @@ describe InfrastructuresController, type: :controller do
 
     stubize_rds
     before do
-      get :show_rds, id: infra.id, physical_id: physical_id
+      get :show_rds, params: { id: infra.id, physical_id: physical_id }
     end
 
     should_be_success
@@ -424,7 +424,7 @@ describe InfrastructuresController, type: :controller do
 
   describe '#show_elb' do
     let(:physical_id) { 'hogefugahoge-ElasticL-1P3I4RD6PEUBK' }
-    let(:req) { get :show_elb, id: infra.id, physical_id: physical_id }
+    let(:req) { get :show_elb, params: { id: infra.id, physical_id: physical_id } }
     let(:instances) { [double('ec2A', :[] => 'hogefaaaaa')] }
     let(:dns_name) { 'hoge.example.com' }
     let(:listeners) { ['hoge'] }
@@ -464,12 +464,11 @@ describe InfrastructuresController, type: :controller do
     let(:type) { 'db.m1.small' }
 
     subject do
-      post(
-        :change_rds_scale,
+      post :change_rds_scale, params: {
         physical_id: 'hogehoge',
         id: infra.id,
         instance_type: type,
-      )
+      }
     end
 
     before do
@@ -512,7 +511,7 @@ describe InfrastructuresController, type: :controller do
     end
     before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
     let(:prj_id) { project.id }
-    let(:req) { get :foo, project_id: prj_id }
+    let(:req) { get :foo, params: { project_id: prj_id } }
 
     context 'when project_id param is blank' do
       let(:prj_id) { nil }
@@ -570,7 +569,7 @@ describe InfrastructuresController, type: :controller do
     end
     before { routes.draw { resources(:infrastructures) { collection { get :foo } } } }
     let(:infra_id) { infra.id }
-    let(:req) { get :foo, id: infra_id }
+    let(:req) { get :foo, params: { id: infra_id } }
 
     context 'when id param is blank' do
       let(:infra_id) { nil }
@@ -615,7 +614,7 @@ describe InfrastructuresController, type: :controller do
 
   describe '#edit_keypair' do
     before do
-      get :edit_keypair, id: infra.id
+      get :edit_keypair, params: { id: infra.id }
     end
 
     let(:infra) { create(:infrastructure, status: '') }
@@ -632,7 +631,7 @@ describe InfrastructuresController, type: :controller do
     let(:infra_key_name) { ec2_key.name }
     let(:infra_key_value) { ec2_key.value }
     let(:params) { { id: infra.id, infrastructure: infra_hash } }
-    let(:req) { patch :update_keypair, params }
+    let(:req) { patch :update_keypair, params: params }
     before do
       allow(KeyPair).to receive(:validate!)
     end

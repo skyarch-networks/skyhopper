@@ -15,7 +15,7 @@ describe ProjectParametersController, type: :controller do
 
   describe '#show' do
     let(:parameters) { create_list(:project_parameter, 3, project: project) }
-    let(:req) { get :show, project_id: project.id }
+    let(:req) { get :show, params: { project_id: project.id } }
 
     before do
       parameters
@@ -36,7 +36,7 @@ describe ProjectParametersController, type: :controller do
       let(:req) { nil } # override request for re-login
       login_user(admin: false)
       before do
-        get :show, project_id: project.id
+        get :show, params: { project_id: project.id }
       end
 
       should_be_success
@@ -48,7 +48,7 @@ describe ProjectParametersController, type: :controller do
   end
 
   describe '#update' do
-    let(:req) { put :update, project_id: project.id, parameters: JSON.generate(parameters) }
+    let(:req) { put :update, params: { project_id: project.id, parameters: JSON.generate(parameters) } }
     before do
       req
     end
@@ -92,7 +92,7 @@ describe ProjectParametersController, type: :controller do
       it 'should destroy parameters' do
         expect(ProjectParameter).to be_exists exist_param.id
 
-        put :update, project_id: project.id, parameters: JSON.generate(parameters)
+        put :update, params: { project_id: project.id, parameters: JSON.generate(parameters) }
 
         expect(ProjectParameter).not_to be_exists exist_param.id
       end

@@ -17,7 +17,7 @@ describe DishesController, type: :controller do
 
   describe '#index' do
     before do
-      get :index, project_id: project.try(:id)
+      get :index, params: { project_id: project.try(:id) }
     end
 
     it 'should assign @dishes' do
@@ -57,7 +57,7 @@ describe DishesController, type: :controller do
 
   describe '#show' do
     before do
-      get :show, id: dish.id
+      get :show, params: { id: dish.id }
     end
 
     it 'should assign @dish' do
@@ -71,7 +71,7 @@ describe DishesController, type: :controller do
 
   describe '#edit' do
     before do
-      get :edit, id: dish.id
+      get :edit, params: { id: dish.id }
     end
 
     it 'should assign @playbook_roles' do
@@ -104,7 +104,7 @@ describe DishesController, type: :controller do
     let(:extra_vars) { '{"test": "aaa"}' }
     let(:servertest) { create(:servertest) }
     let(:update_request) do
-      patch :update, {
+      patch :update, params: {
         id: dish.id,
         playbook_roles: playbook_roles,
         extra_vars: extra_vars,
@@ -148,7 +148,7 @@ describe DishesController, type: :controller do
   describe '#new' do
     let(:project) { nil }
     before do
-      get :new, project_id: project.try(:id)
+      get :new, params: { project_id: project.try(:id) }
     end
 
     context 'when have project' do
@@ -173,7 +173,7 @@ describe DishesController, type: :controller do
     let(:project_id) { project.id }
     let(:dish_hash) { attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id) }
 
-    let(:create_request) { post :create, dish: dish_hash }
+    let(:create_request) { post :create, params: { dish: dish_hash } }
 
     context 'when valid pamrams' do
       it 'should increase the count of db by 1' do
@@ -222,7 +222,7 @@ describe DishesController, type: :controller do
 
   describe '#destroy' do
     before do
-      delete :destroy, id: dish.id
+      delete :destroy, params: { id: dish.id }
     end
 
     it 'record should not exist' do

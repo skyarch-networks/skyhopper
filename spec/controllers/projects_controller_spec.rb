@@ -17,7 +17,7 @@ describe ProjectsController, type: :controller do
   let(:project_hash) { attributes_for(:project, client_id: client.id, zabbix_server_id: zabbix_server.id) }
 
   describe '#index' do
-    let(:req) { get :index, client_id: client.id }
+    let(:req) { get :index, params: { client_id: client.id } }
 
     context 'when not have client_id' do
       let(:client) { double('client', id: nil) }
@@ -54,7 +54,7 @@ describe ProjectsController, type: :controller do
     run_zabbix_server
 
     before do
-      get :new, client_id: client.id
+      get :new, params: { client_id: client.id }
     end
 
     should_be_success
@@ -69,7 +69,7 @@ describe ProjectsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:req) { post :create, project: project_hash }
+    let(:req) { post :create, params: { project: project_hash } }
     run_zabbix_server
     stubize_zabbix
 
@@ -97,7 +97,7 @@ describe ProjectsController, type: :controller do
 
   describe 'PATCH #update' do
     let(:new_name) { 'foobarhogehoge' }
-    let(:update_request) { patch :update, id: project.id, project: project_hash.merge(name: new_name) }
+    let(:update_request) { patch :update, params: { id: project.id, project: project_hash.merge(name: new_name) } }
     run_zabbix_server
     stubize_zabbix
 
@@ -134,7 +134,7 @@ describe ProjectsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let(:edit_request) { get :edit, id: project.id }
+    let(:edit_request) { get :edit, params: { id: project.id } }
 
     before { edit_request }
 
@@ -146,7 +146,7 @@ describe ProjectsController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:request) { delete :destroy, id: project.id }
+    let(:request) { delete :destroy, params: { id: project.id } }
 
     stubize_zabbix
     run_zabbix_server
@@ -191,7 +191,7 @@ describe ProjectsController, type: :controller do
       end
     end
     before { routes.draw { resources(:projects) { collection { get :test } } } }
-    let(:req) { get :test, client_id: client.id }
+    let(:req) { get :test, params: { client_id: client.id } }
 
     context 'when client_id is blank' do
       let(:client) { double('client', id: nil) }
@@ -225,7 +225,7 @@ describe ProjectsController, type: :controller do
       end
     end
     before { routes.draw { resources(:projects) { collection { get :test } } } }
-    let(:req) { get :test, id: project.id }
+    let(:req) { get :test, params: { id: project.id } }
 
     context 'when id is blank' do
       let(:project) { double('project', id: nil) }

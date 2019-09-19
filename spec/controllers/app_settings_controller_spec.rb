@@ -56,7 +56,7 @@ describe AppSettingsController, type: :controller do
       it 'should create AppSetting' do
         expect(AppSetting).to receive(:clear_cache).with(no_args)
         expect(AppSetting).to receive(:clear_dummy).with(no_args)
-        post :create, settings: settings_with_ec2_key_id.to_json
+        post :create, params: { settings: settings_with_ec2_key_id.to_json }
 
         expect(response).to be_success
       end
@@ -64,7 +64,7 @@ describe AppSettingsController, type: :controller do
 
     context 'when without ec2 key' do
       before do
-        post :create, settings: settings.to_json
+        post :create, params: { settings: settings.to_json }
       end
 
       should_be_failure
@@ -73,7 +73,7 @@ describe AppSettingsController, type: :controller do
     context 'when invalid setting' do
       before do
         settings_with_ec2_key_id[:log_directory] = 'hogehoge'
-        post :create, settings: settings_with_ec2_key_id.to_json
+        post :create, params: { settings: settings_with_ec2_key_id.to_json }
       end
 
       should_be_failure
@@ -98,7 +98,7 @@ describe AppSettingsController, type: :controller do
   #   before{set}
   #   let(:zabbix_user){SecureRandom.hex(20)}
   #   let(:zabbix_pass){SecureRandom.hex(20)}
-  #   let(:req){post :update_zabbix, zabbix_user: zabbix_user, zabbix_pass: zabbix_pass}
+  #   let(:req){post :update_zabbix, params: { zabbix_user: zabbix_user, zabbix_pass: zabbix_pass} }
   #
   #   context 'when success' do
   #     before{req}

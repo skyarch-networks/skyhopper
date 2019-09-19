@@ -28,7 +28,7 @@ describe UsersAdminController, type: :controller do
     should_be_success
 
     it 'should assign @users' do
-      get :index, format: 'json'
+      get :index, params: { format: 'json' }
       expect(assigns[:users]).to eq klass.all.page(1)
     end
   end
@@ -48,7 +48,7 @@ describe UsersAdminController, type: :controller do
   describe '#create' do
     let(:master) { true }
     let(:admin) { true }
-    let(:req) { post :create, user: user_hash }
+    let(:req) { post :create, params: { user: user_hash } }
 
     context 'when User#save! raise error' do
       before do
@@ -87,7 +87,7 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#create' do
-    let(:create_request) { post :create, user: user_hash }
+    let(:create_request) { post :create, params: { user: user_hash } }
     let(:admin_user_group) { 1 }
     let(:user_data) { { 'userids' => [1] } }
 
@@ -121,7 +121,7 @@ describe UsersAdminController, type: :controller do
     end
 
     before do
-      post :edit, id: user.id
+      post :edit, params: { id: user.id }
     end
 
     should_be_success
@@ -252,7 +252,7 @@ describe UsersAdminController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:req) { delete :destroy, id: user.id }
+    let(:req) { delete :destroy, params: { id: user.id } }
 
     context 'when delete success' do
       it 'should destroy user' do

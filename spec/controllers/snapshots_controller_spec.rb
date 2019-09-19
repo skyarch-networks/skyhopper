@@ -15,7 +15,7 @@ describe SnapshotsController, type: :controller do
   let(:volume_id) { 'any_id-test-123' }
 
   describe '#index' do
-    before { get :index, infra_id: infra.id, volume_id: volume_id }
+    before { get :index, params: { infra_id: infra.id, volume_id: volume_id } }
 
     should_be_success
 

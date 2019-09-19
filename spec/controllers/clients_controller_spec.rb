@@ -37,7 +37,7 @@ describe ClientsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:request) { post :create, client: client_codename }
+    let(:request) { post :create, params: { client: client_codename } }
 
     context 'when valid params' do
       it 'should create a new client and save' do
@@ -79,7 +79,7 @@ describe ClientsController, type: :controller do
 
   describe 'PATCH #update' do
     let(:client) { create(:client) }
-    let(:update_request) { patch :update, id: client.id, client: client_codename }
+    let(:update_request) { patch :update, params: { id: client.id, client: client_codename } }
 
     context 'when valid params' do
       it 'should update code and name' do
@@ -116,7 +116,7 @@ describe ClientsController, type: :controller do
 
   describe '#destroy' do
     let(:client) { create(:client) }
-    let(:request) { delete :destroy, id: client.id }
+    let(:request) { delete :destroy, params: { id: client.id } }
 
     stubize_zabbix
     run_zabbix_server
@@ -159,7 +159,7 @@ describe ClientsController, type: :controller do
         render plain: 'success!'
       end
     end
-    let(:req) { get :index, id: client.id }
+    let(:req) { get :index, params: { id: client.id } }
     let(:client) { create(:client) }
 
     context 'when not have id' do
