@@ -1,4 +1,4 @@
-require File.expand_path('boot', __dir__)
+Bundler.require(*Rails.groups)
 
 require 'rails/all'
 
