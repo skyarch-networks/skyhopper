@@ -21,7 +21,7 @@ RSpec.describe ServertestSchedule, type: :model do
     end
 
     it 'should be same day of week' do
-      expect(schedule.next_run.wday).to eq schedule[:day_of_week]
+      expect(schedule.next_run.wday).to eq schedule.day_of_week_before_type_cast
     end
   end
 end
