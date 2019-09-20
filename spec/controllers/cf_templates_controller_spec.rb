@@ -139,7 +139,7 @@ describe CfTemplatesController, type: :controller do
         cf_template: {
           infrastructure_id: infra.id,
           name: 'foo',
-          details: 'hogehoge',
+          details: 'hogehoge', # TODO detailのスペルミスな気がする
           value: value,
           format: 'JSON',
           params: nil,
@@ -148,7 +148,7 @@ describe CfTemplatesController, type: :controller do
       }
     end
     let(:value) { JSON[{ Parameters: {} }] }
-    let(:req) { post :insert_cf_params, params: { params: http_params } }
+    let(:req) { post :insert_cf_params, params: http_params }
     before do
       allow_any_instance_of(CfTemplate).to receive(:validate_template)
     end
