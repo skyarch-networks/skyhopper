@@ -158,15 +158,18 @@ describe UsersAdminController, type: :controller do
     let(:password_confirm) { password }
     let(:mfa_secret_key) { nil }
     let(:req) do
-      put :update,
-          id: user.id,
-          body: { master: master,
-                  admin: admin,
-                  allowed_projects: allowed_projects,
-                  allowed_zabbix: allowed_zabbix,
-                  password: password,
-                  password_confirmation: password_confirm,
-                  mfa_secret_key: mfa_secret_key, }.to_json
+      put :update, params: {
+        id: user.id,
+        body: {
+          master: master,
+          admin: admin,
+          allowed_projects: allowed_projects,
+          allowed_zabbix: allowed_zabbix,
+          password: password,
+          password_confirmation: password_confirm,
+          mfa_secret_key: mfa_secret_key,
+        }.to_json,
+      }
     end
 
     context 'when set password' do
