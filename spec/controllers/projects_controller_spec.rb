@@ -17,7 +17,7 @@ describe ProjectsController, type: :controller do
   let(:project_hash) { attributes_for(:project, client_id: client.id, zabbix_server_id: zabbix_server.id) }
 
   describe '#index' do
-    let(:req) { get :index, params: { client_id: client.id } }
+    let(:req) { get :index, params: { client_id: client.id }.compact }
 
     context 'when not have client_id' do
       let(:client) { double('client', id: nil) }

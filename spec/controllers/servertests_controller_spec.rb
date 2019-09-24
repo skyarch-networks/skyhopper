@@ -18,7 +18,7 @@ describe ServertestsController, type: :controller do
   let(:servertest) { attributes_for(:servertest, name: svrsp_name, description: svrsp_desc, value: svrsp_value, infrastructure_id: infrastructure_id, category: :serverspec) }
 
   describe '#index' do
-    let(:req) { get :index, params: { infrastructure_id: infrastructure.id } }
+    let(:req) { get :index, params: { infrastructure_id: infrastructure.id }.compact }
 
     before do
       create_list(:servertest, 3, infrastructure_id: infrastructure.id)

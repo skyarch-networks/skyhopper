@@ -17,7 +17,7 @@ describe DishesController, type: :controller do
 
   describe '#index' do
     before do
-      get :index, params: { project_id: project.try(:id) }
+      get :index, params: { project_id: project.try(:id) }.compact
     end
 
     it 'should assign @dishes' do
@@ -171,7 +171,7 @@ describe DishesController, type: :controller do
   describe '#create' do
     let(:project) { create(:project) }
     let(:project_id) { project.id }
-    let(:dish_hash) { attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id) }
+    let(:dish_hash) { attributes_for(:dish, { name: 'name', detail: 'detail', project_id: project_id }.compact) }
 
     let(:create_request) { post :create, params: { dish: dish_hash } }
 
