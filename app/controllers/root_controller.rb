@@ -11,7 +11,7 @@ class RootController < ApplicationController
     if AppSetting.set?
       authenticate_user!
 
-      redirect_params = params.permit(:lang)
+      redirect_params = params.permit(*default_url_options.keys)
       redirect_params[:action] = :index
       redirect_params[:controller] =
         if current_user.master?
