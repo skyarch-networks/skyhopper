@@ -8,6 +8,7 @@ gem 'activerecord-import'
 
 # Use SCSS as CSS compressor
 gem 'sass-rails'
+gem 'sassc', '~> 2.1.0' # for AmazonLinux ver1
 
 # https://github.com/skyarch-networks/skyhopper/pull/165
 # sprockets-rails has some problems. we fix version until it's stable.
