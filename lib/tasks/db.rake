@@ -6,12 +6,12 @@ namespace :db do
 
     desc 'Dump the database to tmp/dbname.sql (path is optional)'
     task :dump, [:path] => %i[environment load_config] do |_, args|
-      set_config
+      set_config_and_cmd_host_part
 
       path =
         args[:path] || "tmp/#{@config['database']}.sql"
 
-      cmd = "mysqldump -u#{@config['username']} -p#{@config['password']} #{@config['database']} --compatible=ansi > '#{path}'"
+      cmd = "mysqldump #{@cmd_host_part} -u#{@config['username']} -p#{@config['password']} #{@config['database']} --compatible=ansi > '#{path}'"
       system(cmd)
     end
 
@@ -19,14 +19,20 @@ namespace :db do
     task :load, [:path] => %i[environment load_config] do |_, args|
       abort error_msg if args.to_h.empty?
 
-      set_config
-      cmd = "mysql -u#{@config['username']} -p#{@config['password']} #{@config['database']} < '#{args[:path]}'"
+      set_config_and_cmd_host_part
+      cmd = "mysql #{@cmd_host_part} -u#{@config['username']} -p#{@config['password']} #{@config['database']} < '#{args[:path]}'"
       system(cmd)
     end
 
-    def set_config
+    def set_config_and_cmd_host_part
       env = Rails.env
       @config = ActiveRecord::Base.configurations[env]
+
+      @cmd_host_part = if @config['host']
+                         "-h #{@config['host']}"
+                       else
+                         ''
+                       end
     end
   end
 end
