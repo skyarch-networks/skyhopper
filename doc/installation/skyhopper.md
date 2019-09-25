@@ -257,27 +257,27 @@ production:
 
 ```sh
 # development
-$ bundle exec rake db:create
+$ bundle exec rails db:create
 # production
-$ bundle exec rake db:create RAILS_ENV=production
+$ bundle exec rails db:create RAILS_ENV=production
 ```
 
 ### テーブルの作成
 
 ```sh
 # development
-$ bundle exec rake db:migrate
+$ bundle exec rails db:migrate
 # production
-$ bundle exec rake db:migrate RAILS_ENV=production
+$ bundle exec rails db:migrate RAILS_ENV=production
 ```
 
 ### 初期データの挿入
 
 ```sh
 # development
-$ bundle exec rake db:seed
+$ bundle exec rails db:seed
 # production
-$ bundle exec rake db:seed RAILS_ENV=production
+$ bundle exec rails db:seed RAILS_ENV=production
 ```
 
 ## ホームディレクトリのパーミッションを変更
@@ -289,9 +289,9 @@ $ chmod 711 ~
 ### [注意]開発中のSkyhopperを起動する前に、このスクリプトを実行してください
 ```sh
 # i18n-js辞書を生成する
-$ bundle exec rake i18n:js:export
+$ bundle exec rails i18n:js:export
 # アセットのプリコンパイル用
-$ bundle exec rake assets:precompile
+$ bundle exec rails assets:precompile
 ```
 
 ## 起動

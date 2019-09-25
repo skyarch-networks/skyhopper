@@ -35,7 +35,7 @@ gem 'browserify-rails'
 gem 'multi_json', '1.7.8'
 
 group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
+  # bundle exec rails doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
 
