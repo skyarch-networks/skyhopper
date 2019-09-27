@@ -47,7 +47,7 @@ class KeyPairsController < ApplicationController
     @ec2.delete_key_pair(key_name: @key_name)
 
     ws_send(t('key_pairs.msg.deleted', name: ERB::Util.html_escape(@key_name)), true)
-    render nothing: true, status: :ok and return
+    render body: nil, status: :ok and return
   end
 
   private

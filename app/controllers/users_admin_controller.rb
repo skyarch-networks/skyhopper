@@ -150,7 +150,7 @@ class UsersAdminController < ApplicationController
       raise
     end
 
-    render text: I18n.t('users.msg.updated')
+    render plain: I18n.t('users.msg.updated')
   end
 
   # PUT /users_admin/sync_zabbix
@@ -162,7 +162,7 @@ class UsersAdminController < ApplicationController
       add_create_user(z)
     end
 
-    render text: I18n.t('users.msg.synced')
+    render plain: I18n.t('users.msg.synced')
     nil
   end
 

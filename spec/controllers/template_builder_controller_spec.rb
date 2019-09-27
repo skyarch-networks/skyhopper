@@ -26,7 +26,7 @@ describe TemplateBuilderController, type: :controller do
   describe '#resource_properties' do
     let(:resource_type) { 'EC2::Instance' }
     before do
-      get :resource_properties, resource_type: resource_type
+      get :resource_properties, params: { resource_type: resource_type }
     end
 
     it 'should assign @properties' do

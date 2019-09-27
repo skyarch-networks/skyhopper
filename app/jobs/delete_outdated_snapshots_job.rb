@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class DeleteOutdatedSnapshotsJob < ActiveJob::Base
+class DeleteOutdatedSnapshotsJob < ApplicationJob
   queue_as :default
 
   def perform(volume_id, infra)

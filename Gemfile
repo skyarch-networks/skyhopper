@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.11'
+gem 'rails', '~> 5.0.7.2'
 
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.3.20'
@@ -8,6 +8,7 @@ gem 'activerecord-import'
 
 # Use SCSS as CSS compressor
 gem 'sass-rails'
+gem 'sassc', '~> 2.1.0' # for AmazonLinux ver1
 
 # https://github.com/skyarch-networks/skyhopper/pull/165
 # sprockets-rails has some problems. we fix version until it's stable.
@@ -15,9 +16,6 @@ gem 'sprockets-rails'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier' # , '>= 1.3.0'
-
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
@@ -37,7 +35,7 @@ gem 'browserify-rails'
 gem 'multi_json', '1.7.8'
 
 group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
+  # bundle exec rails doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
 
@@ -47,7 +45,7 @@ gem 'unicorn-rails'
 gem 'font-awesome-rails'
 
 gem 'aws-sdk-v1'
-gem 'aws-sdk', '~> 2'
+gem 'aws-sdk', '~> 2.11.355'
 gem 'awspec', require: false
 gem 'net-ssh'
 gem 'net-scp'
@@ -82,6 +80,7 @@ group :development, :test do
 
   # test
   gem 'rspec-rails'
+  gem 'rails-controller-testing'
 
   # Test seems to be failing because of this issue:
   # https://github.com/thoughtbot/factory_girl/issues/981
@@ -91,7 +90,7 @@ group :development, :test do
   gem 'coveralls', require: false
   gem 'named_let'
 
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.3.13'
 
   # document
   gem 'railroady'
@@ -109,7 +108,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3'
+gem 'devise', '~> 4.0.3'
 gem 'pundit'
 
 # pagination

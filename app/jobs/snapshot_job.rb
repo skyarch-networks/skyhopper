@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class SnapshotJob < ActiveJob::Base
+class SnapshotJob < ApplicationJob
   queue_as :default
 
   def perform(volume_id, physical_id, infra, user_id)

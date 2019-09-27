@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ProjectParameter < ActiveRecord::Base
+class ProjectParameter < ApplicationRecord
   belongs_to :project
   validates :project_id, uniqueness: { scope: [:key] }
   validates :key, format: { with: /\A[a-zA-Z_][a-zA-Z0-9_]*\Z/ }

@@ -172,7 +172,7 @@ class InfrastructuresController < ApplicationController
   def destroy
     @infrastructure.destroy!
 
-    render text: I18n.t('infrastructures.msg.detached')
+    render plain: I18n.t('infrastructures.msg.detached')
   end
 
   # POST /infrastructures/1/delete_stack
@@ -197,7 +197,7 @@ class InfrastructuresController < ApplicationController
     @infrastructure.resources.destroy_all
     @infrastructure.monitorings.delete_all
 
-    render text: I18n.t('infrastructures.msg.delete_stack_started'), status: :accepted and return
+    render plain: I18n.t('infrastructures.msg.delete_stack_started'), status: :accepted and return
   end
 
   # GET /infrastructures/:id/show_rds
@@ -257,7 +257,7 @@ class InfrastructuresController < ApplicationController
     begin
       result = rds.change_scale(type)
     rescue RDS::ChangeScaleError => ex
-      render text: ex.message, status: :bad_request and return
+      render plain: ex.message, status: :bad_request and return
     end
 
     render json: { rds: result.db_instance } and return
@@ -274,7 +274,7 @@ class InfrastructuresController < ApplicationController
 
     infra_logger_success("#{physical_id} security groups has been modified.")
 
-    render text: I18n.t('security_groups.msg.change_success')
+    render plain: I18n.t('security_groups.msg.change_success')
   end
 
   def show_s3
@@ -343,11 +343,11 @@ class InfrastructuresController < ApplicationController
           dates: selected_instance[:dates],
         )
       rescue StandardError => ex
-        render text: ex.message, status: :internal_server_error and return
+        render plain: ex.message, status: :internal_server_error and return
       end
     end
 
-    render text: I18n.t('operation_scheduler.msg.saved'), status: :ok and return
+    render plain: I18n.t('operation_scheduler.msg.saved'), status: :ok and return
   end
 
   # GET /infrastructures/1/edit_keypair

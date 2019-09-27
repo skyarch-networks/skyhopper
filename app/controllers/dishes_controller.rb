@@ -30,6 +30,7 @@ class DishesController < ApplicationController
     page        = params[:page] || 1
 
     @project_name = Project.find(@project_id).name if @project_id
+
     @dishes = Dish.where(project_id: @project_id).page(page)
 
     respond_to do |format|
@@ -76,10 +77,10 @@ class DishesController < ApplicationController
         status: nil,
       )
     rescue StandardError
-      render text: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
+      render plain: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
     end
 
-    render text: I18n.t('dishes.msg.updated')
+    render plain: I18n.t('dishes.msg.updated')
   end
 
   # GET /dishes/new

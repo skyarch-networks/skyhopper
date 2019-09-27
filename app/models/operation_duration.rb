@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class OperationDuration < ActiveRecord::Base
+class OperationDuration < ApplicationRecord
   belongs_to :resource
   belongs_to :user
   has_one :recurring_date

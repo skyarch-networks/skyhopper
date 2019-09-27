@@ -21,7 +21,7 @@ describe Ec2InstancesController, type: :controller do
   describe '#change_scale' do
     let(:type_before) { 't2.micro' }
     let(:type_after) { 't2.nano' }
-    let(:req) { post :change_scale, id: physical_id, infra_id: infra.id, instance_type: type_after }
+    let(:req) { post :change_scale, params: { id: physical_id, infra_id: infra.id, instance_type: type_after } }
 
     let(:instance) do
       double(:instance,
@@ -52,7 +52,7 @@ describe Ec2InstancesController, type: :controller do
   end
 
   describe '#start' do
-    let(:req) { post :start, id: physical_id, infra_id: infra.id }
+    let(:req) { post :start, params: { id: physical_id, infra_id: infra.id } }
 
     let(:instance) { double('instance', start: nil) }
     before do
@@ -65,7 +65,7 @@ describe Ec2InstancesController, type: :controller do
   end
 
   describe '#stop' do
-    let(:req) { post :stop, id: physical_id, infra_id: infra.id }
+    let(:req) { post :stop, params: { id: physical_id, infra_id: infra.id } }
 
     let(:instance) { double('instance', stop: nil) }
     before do
@@ -78,7 +78,7 @@ describe Ec2InstancesController, type: :controller do
   end
 
   describe '#reboot' do
-    let(:req) { post :reboot, id: physical_id, infra_id: infra.id }
+    let(:req) { post :reboot, params: { id: physical_id, infra_id: infra.id } }
 
     let(:instance) { double('instance', reboot: nil) }
     before do
@@ -91,7 +91,7 @@ describe Ec2InstancesController, type: :controller do
 
   describe '#serverspec_status' do
     let(:resource) { create(:resource) }
-    let(:req) { get :serverspec_status, id: resource.physical_id, infra_id: infra.id }
+    let(:req) { get :serverspec_status, params: { id: resource.physical_id, infra_id: infra.id } }
     subject { JSON.parse(response.body)['status'] }
 
     context 'when status failed' do
@@ -122,7 +122,7 @@ describe Ec2InstancesController, type: :controller do
 
   describe '#register_to_elb' do
     let(:elb_name) { 'foo-ElasticL-bar' }
-    let(:req) { post :register_to_elb, id: physical_id, elb_name: elb_name, infra_id: infra.id }
+    let(:req) { post :register_to_elb, params: { id: physical_id, elb_name: elb_name, infra_id: infra.id } }
 
     let(:elb) { double('elb') }
     before do
@@ -140,7 +140,7 @@ describe Ec2InstancesController, type: :controller do
 
   describe '#deregister_from_elb' do
     let(:elb_name) { 'fuga-ElasticL-hoge' }
-    let(:req) { post :deregister_from_elb, id: physical_id, elb_name: elb_name, infra_id: infra.id }
+    let(:req) { post :deregister_from_elb, params: { id: physical_id, elb_name: elb_name, infra_id: infra.id } }
 
     let(:elb) { double('elb') }
     before do
@@ -160,7 +160,7 @@ describe Ec2InstancesController, type: :controller do
     let(:availability_zone) { 'us-east-1' }
     let(:resp) { [{ hoge: :fuga }] }
     let(:instance) { double('instance', attachable_volumes: resp) }
-    let(:req) { get :attachable_volumes, id: physical_id, infra_id: infra.id, availability_zone: availability_zone }
+    let(:req) { get :attachable_volumes, params: { id: physical_id, infra_id: infra.id, availability_zone: availability_zone } }
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
       req
@@ -178,7 +178,7 @@ describe Ec2InstancesController, type: :controller do
     let(:device_name) { '/dev/sdf' }
     let(:resp) { { hoge: :fuga } }
     let(:instance) { double('instance', attach_volume: resp) }
-    let(:req) { post :attach_volume, id: physical_id, infra_id: infra.id, volume_id: volume_id, device_name: device_name }
+    let(:req) { post :attach_volume, params: { id: physical_id, infra_id: infra.id, volume_id: volume_id, device_name: device_name } }
     before do
       allow_any_instance_of(Infrastructure).to receive(:instance).with(physical_id).and_return(instance)
       req
@@ -200,11 +200,11 @@ describe Ec2InstancesController, type: :controller do
         instance = double_instance
         status   = params.require(:status)
         notify_ec2_status(instance, status)
-        render text: 'success!'
+        render plain: 'success!'
       end
     end
     before { routes.draw { resources(:ec2_instances) { collection { get :test } } } }
-    let(:req) { get :test, status: status, infra_id: infra.id }
+    let(:req) { get :test, params: { status: status, infra_id: infra.id } }
     let(:status) { 'running' }
 
     before do

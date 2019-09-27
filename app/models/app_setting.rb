@@ -8,7 +8,7 @@
 
 require 'uri'
 
-class AppSetting < ActiveRecord::Base
+class AppSetting < ApplicationRecord
   belongs_to :ec2_private_key, dependent: :delete
 
   validates :log_directory, format: { with: %r{\A(~?/)} }

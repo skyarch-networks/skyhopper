@@ -2,7 +2,7 @@ require 'active_record'
 
 namespace :db do
   namespace :data do
-    error_msg = 'Please specify the path. (e.g. rake db:data:load[./db/hoge.sql]'
+    error_msg = 'Please specify the path. (e.g. rails db:data:load[./db/hoge.sql]'
 
     desc 'Dump the database to tmp/dbname.sql (path is optional)'
     task :dump, [:path] => %i[environment load_config] do |_, args|

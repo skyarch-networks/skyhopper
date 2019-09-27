@@ -98,7 +98,7 @@ en:
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
       vpc_id_not_found:  'The vpc ID <b> "%{id}" </b> does not exist.'
       subnet_id_not_found: 'The subnet ID <b> "%{id}" </b> does not exist.'
-      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rake db:seed`"'
+      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rails db:seed`"'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'

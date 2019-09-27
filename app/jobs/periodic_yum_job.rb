@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class PeriodicYumJob < ActiveJob::Base
+class PeriodicYumJob < ApplicationJob
   queue_as :default
 
   def perform(physical_id, infra, user_id)

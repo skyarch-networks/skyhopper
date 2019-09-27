@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServertestJob < ActiveJob::Base
+class ServertestJob < ApplicationJob
   queue_as :default
 
   # Serverspec を実行し、結果をインフラログに書き出す。

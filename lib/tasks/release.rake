@@ -46,7 +46,7 @@ namespace :release do
     end
 
     if diff_files.find { |x| %r{^db/migrate/.+\.rb$}.match(x) }
-      puts 'bundle exec rake db:migrate RAILS_ENV=production'
+      puts 'bundle exec rails db:migrate RAILS_ENV=production'
     end
 
     yarn = diff_files.include?('frontend/package.json')

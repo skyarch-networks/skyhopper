@@ -254,31 +254,31 @@ production:
 
 ## Database Setup
 
-### Creating database using rake
+### Creating database using rails
 
 ```sh
 # development
-$ bundle exec rake db:create
+$ bundle exec rails db:create
 # production
-$ bundle exec rake db:create RAILS_ENV=production
+$ bundle exec rails db:create RAILS_ENV=production
 ```
 
-### Creating tables using rake
+### Creating tables using rails
 
 ```sh
 # development
-$ bundle exec rake db:migrate
+$ bundle exec rails db:migrate
 # production
-$ bundle exec rake db:migrate RAILS_ENV=production
+$ bundle exec rails db:migrate RAILS_ENV=production
 ```
 
-### creating initial data using rake
+### creating initial data using rails
 
 ```sh
 # development
-$ bundle exec rake db:seed
+$ bundle exec rails db:seed
 # production
-$ bundle exec rake db:seed RAILS_ENV=production
+$ bundle exec rails db:seed RAILS_ENV=production
 ```
 
 ## Change permission of home directory
@@ -302,9 +302,9 @@ $ ./scripts/skyhopper_daemon.sh start
 ### [Note] Make sure to run this script first before starting Skyhopper in Development
 ```sh
 # for generating i18n-js dictionary
-$ bundle exec rake i18n:js:export
+$ bundle exec rails i18n:js:export
 # for Precompiling assets
-$ bundle exec rake assets:precompile
+$ bundle exec rails assets:precompile
 ```
 
 

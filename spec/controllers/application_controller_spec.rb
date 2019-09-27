@@ -12,10 +12,10 @@ describe ApplicationController do
   describe '#restore_locale' do
     controller do
       def index
-        render text: 'success'
+        render plain: 'success'
       end
     end
-    let(:req) { get :index, lang: lang }
+    let(:req) { get :index, params: { lang: lang } }
     before { I18n.locale = I18n.default_locale }
 
     context 'when lang is nil' do

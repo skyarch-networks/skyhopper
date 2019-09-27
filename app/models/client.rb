@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Client < ActiveRecord::Base
+class Client < ApplicationRecord
   has_many :projects, dependent: :restrict_with_exception
   has_many :infrastructures, through: :projects
 

@@ -79,7 +79,7 @@ class AppSettingsController < ApplicationController
       project.update!(access_key: access_key, secret_access_key: secret_access_key)
     end
 
-    render text: I18n.t('app_settings.msg.created') and return
+    render plain: I18n.t('app_settings.msg.created') and return
   end
 
   # GET /app_settings/edit_zabbix
@@ -156,7 +156,7 @@ class AppSettingsController < ApplicationController
       end
     end
 
-    render text: build_ws_message(:creating_zabbix_server)
+    render plain: build_ws_message(:creating_zabbix_server)
   end
 
   private

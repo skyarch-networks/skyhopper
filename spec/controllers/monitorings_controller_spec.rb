@@ -18,7 +18,7 @@ RSpec.describe MonitoringsController, type: :controller do
   let(:physical_id) { "i-#{SecureRandom.base64(10)}" }
 
   describe '#show' do
-    let(:req) { get :show, id: infra.id }
+    let(:req) { get :show, params: { id: infra.id } }
 
     before do
       allow(ZabbixServer).to receive(:find) { zabbix_server }
@@ -64,7 +64,7 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_cloudwatch_graph' do
-    let(:req) { get :show_cloudwatch_graph, id: infra.id, physical_id: physical_id }
+    let(:req) { get :show_cloudwatch_graph, params: { id: infra.id, physical_id: physical_id } }
     let(:cloud_watch) { double(:cloud_watch) }
     let(:net_data) { %w[foo bar] }
 
@@ -84,7 +84,7 @@ RSpec.describe MonitoringsController, type: :controller do
   # TODO: context mysql.login
   describe '#show_zabbix_graph' do
     let(:item_key) { SecureRandom.base64(10) }
-    let(:req) { get :show_zabbix_graph, physical_id: physical_id, item_key: item_key, id: infra.id }
+    let(:req) { get :show_zabbix_graph, params: { physical_id: physical_id, item_key: item_key, id: infra.id } }
     let(:history) { %w[foo bar hoge] }
     before do
       create(:resource, infrastructure: infra, physical_id: physical_id)
@@ -101,7 +101,7 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_problems' do
-    let(:req) { get :show_problems, id: infra.id }
+    let(:req) { get :show_problems, params: { id: infra.id } }
     let(:problems) { %w[foo bar nya] }
     before do
       allow(ZabbixServer).to receive(:find) { zabbix_server }
@@ -117,7 +117,7 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#show_url_status' do
-    let(:req) { get :show_url_status, id: infra.id }
+    let(:req) { get :show_url_status, params: { id: infra.id } }
     let(:url_status) { { 'foo ' => 'bar', 'piyo' => 'poyo' } }
     before do
       allow(ZabbixServer).to receive(:find) { zabbix_server }
@@ -133,7 +133,7 @@ RSpec.describe MonitoringsController, type: :controller do
   end
 
   describe '#edit' do
-    let(:req) { get :edit, id: infra.id }
+    let(:req) { get :edit, params: { id: infra.id } }
     before do
       create(:ec2_resource, infrastructure: infra)
       allow(ZabbixServer).to receive(:find) { zabbix_server }
@@ -183,7 +183,7 @@ RSpec.describe MonitoringsController, type: :controller do
       create(:ec2_resource, infrastructure: infra)
       allow(ZabbixServer).to receive(:find) { zabbix_server }
     end
-    let(:req) { post :create_host, id: infra.id, templates: ['Template OS Linux'] }
+    let(:req) { post :create_host, params: { id: infra.id, templates: ['Template OS Linux'] } }
 
     context 'when success' do
       before { req }
@@ -205,7 +205,7 @@ RSpec.describe MonitoringsController, type: :controller do
       create(:ec2_resource, infrastructure: infra)
       allow(ZabbixServer).to receive(:find) { zabbix_server }
     end
-    let(:req) { post :change_zabbix_server, id: infra.id, zabbix_id: zabbix_server.id }
+    let(:req) { post :change_zabbix_server, params: { id: infra.id, zabbix_id: zabbix_server.id } }
 
     context 'when success' do
       before { req }
@@ -215,7 +215,7 @@ RSpec.describe MonitoringsController, type: :controller do
     context 'when failure' do
       before do
         allow(_zabbix).to receive(:find) { '' }.and_raise
-        post :change_zabbix_server, id: infra.id, zabbix_id: ''
+        post :change_zabbix_server, params: { id: infra.id, zabbix_id: '' }
       end
 
       should_be_failure

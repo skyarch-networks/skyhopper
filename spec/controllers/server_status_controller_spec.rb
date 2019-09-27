@@ -20,7 +20,7 @@ describe ServerStatusController, type: :controller do
   describe '#start' do
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        before { post :start, kind: kind }
+        before { post :start, params: { kind: kind } }
         should_be_success
       end
     end
@@ -29,7 +29,7 @@ describe ServerStatusController, type: :controller do
   describe '#stop' do
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        before { post :stop, kind: kind }
+        before { post :stop, params: { kind: kind } }
         should_be_success
       end
     end
@@ -47,7 +47,7 @@ describe ServerStatusController, type: :controller do
 
     %w[zabbix].each do |kind|
       context "when #{kind}" do
-        let(:req) { post :status, kind: kind }
+        let(:req) { post :status, params: { kind: kind } }
         before { req }
 
         context 'when not work background' do
@@ -59,7 +59,7 @@ describe ServerStatusController, type: :controller do
         end
 
         context 'when work background' do
-          let(:req) { post :status, kind: kind, background: true }
+          let(:req) { post :status, params: { kind: kind, background: true } }
 
           should_be_success
 
