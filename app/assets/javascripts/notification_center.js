@@ -37,11 +37,13 @@
 
   };
 
+  // if条件式にsession_idを直接入れると怒られるのでBooleanに変換
+  const existSessionId = Boolean(session_id);
 
-  if (session_id) {
-    const ws_conn = wsConnector('notifications', session_id);
+  if (existSessionId) {
+    const wsConn = wsConnector('notifications', session_id);
 
-    ws_conn.onmessage = (msg) => {
+    wsConn.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
       const status = data.status ? 'success' : 'danger';
       const statusNoty = data.status ? 'success' : 'error';
