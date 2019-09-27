@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class UserProject < ActiveRecord::Base
+class UserProject < ApplicationRecord
   belongs_to :project, dependent: :destroy
   belongs_to :user,    dependent: :destroy
 end

@@ -21,7 +21,7 @@ class DatabaseManager
       filename = "#{dbname}.sql"
       path     = Rails.root.join("tmp/#{filename}")
 
-      system('rake db:data:dump')
+      system('rails db:data:dump')
 
       zipfile = Tempfile.open('skyhopper')
       ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
@@ -51,7 +51,7 @@ class DatabaseManager
       ReloadSecretsJob.perform_now   # runs in Rails process
       ReloadSecretsJob.perform_later # runs in Sidekiq process
 
-      system("rake db:data:load[#{sqlpath}]")
+      system("rails db:data:load[#{sqlpath}]")
       Rails.cache.clear
     end
 

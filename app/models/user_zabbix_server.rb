@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class UserZabbixServer < ActiveRecord::Base
+class UserZabbixServer < ApplicationRecord
   belongs_to :zabbix_server, dependent: :destroy
   belongs_to :user,          dependent: :destroy
 end

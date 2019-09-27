@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ResourceServertest < ActiveRecord::Base
+class ResourceServertest < ApplicationRecord
   belongs_to :resource,   dependent: :destroy
   belongs_to :servertest, dependent: :destroy
 end

@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :appsetting_set?, unless: :appsetting_controller
   before_action :restore_locale
   before_action :set_notifications
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   include Concerns::ErrorHandler
   include Concerns::ControllerUtil
@@ -21,6 +22,12 @@ class ApplicationController < ActionController::Base
 
   def default_url_options(_option = {})
     { lang: I18n.locale }
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[password password_confirmation admin master])
   end
 
   private

@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Ec2PrivateKey < ActiveRecord::Base
+class Ec2PrivateKey < ApplicationRecord
   has_many :infrastructures
   has_many :app_settings
   validates :value, rsa: true

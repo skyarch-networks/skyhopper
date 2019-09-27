@@ -69,7 +69,7 @@ RSpec.describe ZabbixServersController, type: :controller do
     end
 
     it 'assigns all zabbix_servers as @zabbix_servers' do
-      get :index, {}
+      get :index
       expect(assigns(:zabbix_servers)).to(be_all { |zabbix_server| zabbix_server.is_a? ZabbixServer })
     end
   end
@@ -77,14 +77,14 @@ RSpec.describe ZabbixServersController, type: :controller do
   describe 'GET #show' do
     it 'assigns the requested zabbix_server as @zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :show, { id: zabbix_server.id }, valid_session
+      get :show, params: { id: zabbix_server.id }, session: valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
 
   describe 'GET #new' do
     it 'assigns a new zabbix_server as @zabbix_server' do
-      get :new, {}, valid_session
+      get :new, params: {}, session: valid_session
       expect(assigns(:zabbix_server)).to be_a_new(ZabbixServer)
     end
   end
@@ -92,13 +92,13 @@ RSpec.describe ZabbixServersController, type: :controller do
   describe 'GET #edit' do
     it 'assigns the requested zabbix_server as @zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :edit, { id: zabbix_server.to_param }, valid_session
+      get :edit, params: { id: zabbix_server.to_param }, session: valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
 
   describe 'POST #create' do
-    let(:request) { post :create, zabbix_server: zabbix_server_hash }
+    let(:request) { post :create, params: { zabbix_server: zabbix_server_hash } }
     before do
       expect(Thread).to receive(:new_with_db).and_yield
       allow(Zabbix).to receive(:new).and_return(_zabbix)
@@ -125,7 +125,7 @@ RSpec.describe ZabbixServersController, type: :controller do
 
     context 'with invalid params' do
       it 'renders status 302' do
-        post :create, { zabbix_server: invalid_attributes }, valid_session
+        post :create, params: { zabbix_server: invalid_attributes }, session: valid_session
         expect(response.status).to eq(302)
       end
     end
@@ -133,7 +133,7 @@ RSpec.describe ZabbixServersController, type: :controller do
 
   describe 'PUT #update' do
     let(:new_name) { 'Joepergwapotalagatotoo' }
-    let(:update_request) { patch :update, id: zabbix_server.id, zabbix_server: zabbix_server_hash.merge(username: new_name) }
+    let(:update_request) { patch :update, params: { id: zabbix_server.id, zabbix_server: zabbix_server_hash.merge(username: new_name) } }
     before do
       update_request
     end
@@ -156,13 +156,13 @@ RSpec.describe ZabbixServersController, type: :controller do
     context 'with invalid params' do
       it 'assigns the zabbix_server as @zabbix_server' do
         zabbix_server = ZabbixServer.create!
-        put :update, { id: zabbix_server.to_param, zabbix_server: invalid_attributes }, valid_session
+        put :update, params: { id: zabbix_server.to_param, zabbix_server: invalid_attributes }, session: valid_session
         expect(assigns(:zabbix_server)).not_to eq(ZabbixServer)
       end
 
       it 'renders status error' do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, { id: zabbix_server.to_param, zabbix_server: !zabbix_server }, valid_session
+        put :update, params: { id: zabbix_server.to_param, zabbix_server: !zabbix_server }, session: valid_session
         expect(response.status).to eq(302)
       end
     end
@@ -172,13 +172,13 @@ RSpec.describe ZabbixServersController, type: :controller do
     it 'destroys the requested zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
       expect do
-        delete :destroy, { id: zabbix_server.to_param }, valid_session
+        delete :destroy, params: { id: zabbix_server.to_param }, session: valid_session
       end.to change(ZabbixServer, :count).by(-1)
     end
 
     it 'redirects to the zabbix_servers list' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      delete :destroy, { id: zabbix_server.to_param }, valid_session
+      delete :destroy, params: { id: zabbix_server.to_param }, session: valid_session
       expect(response).to redirect_to(zabbix_servers_url)
     end
   end

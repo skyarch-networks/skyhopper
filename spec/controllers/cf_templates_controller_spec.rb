@@ -23,7 +23,7 @@ describe CfTemplatesController, type: :controller do
       let(:global_jsons) { klass.global }
 
       it 'should assign @global_jsons' do
-        get :index, format: 'json'
+        get :index, params: { format: 'json' }
         expect(assigns[:global_jsons]).to eq global_jsons
       end
     end
@@ -32,7 +32,7 @@ describe CfTemplatesController, type: :controller do
       let(:global_jsons) { klass.global.page(1) }
 
       it 'should assign @global_jsons' do
-        get :index, format: 'html'
+        get :index, params: { format: 'html' }
         expect(assigns[:global_jsons]).to eq global_jsons
       end
     end
@@ -42,21 +42,21 @@ describe CfTemplatesController, type: :controller do
     let(:cf_template) { create(:cf_template) }
 
     it 'should assign @cf_template' do
-      get :show, id: cf_template.id
+      get :show, params: { id: cf_template.id }
 
       expect(assigns[:cf_template]).to eq cf_template
     end
 
     context 'format html' do
       it do
-        get :show, id: cf_template.id, format: 'html'
+        get :show, params: { id: cf_template.id, format: 'html' }
         expect(response).to render_template '_show'
       end
     end
 
     context 'format json' do
       it 'should render json' do
-        get :show, id: cf_template.id, format: 'json'
+        get :show, params: { id: cf_template.id, format: 'json' }
         expect(response).to render_template 'show.json'
       end
 
@@ -65,7 +65,7 @@ describe CfTemplatesController, type: :controller do
         let(:cf_template_with_user) { create(:cf_template, user: user) }
 
         before do
-          get :show, id: cf_template_with_user.id, format: 'json'
+          get :show, params: { id: cf_template_with_user.id, format: 'json' }
         end
 
         it 'should assign @operator' do
@@ -78,7 +78,7 @@ describe CfTemplatesController, type: :controller do
         let(:cf_template_without_user) { create(:cf_template, user: nil) }
 
         before do
-          get :show, id: cf_template_without_user.id, format: 'json'
+          get :show, params: { id: cf_template_without_user.id, format: 'json' }
         end
 
         it 'should assign @operator' do
@@ -103,7 +103,7 @@ describe CfTemplatesController, type: :controller do
     end
 
     before do
-      get :new_for_creating_stack, infrastructure_id: infra.id
+      get :new_for_creating_stack, params: { infrastructure_id: infra.id }
     end
 
     let(:resp_body) { JSON.parse(response.body, symbolize_names: true) }
@@ -121,7 +121,7 @@ describe CfTemplatesController, type: :controller do
     let(:cf_template) { create(:cf_template) }
 
     before do
-      get :edit, id: cf_template.id
+      get :edit, params: { id: cf_template.id }
     end
 
     it do
@@ -139,7 +139,7 @@ describe CfTemplatesController, type: :controller do
         cf_template: {
           infrastructure_id: infra.id,
           name: 'foo',
-          details: 'hogehoge',
+          details: 'hogehoge', # TODO detailのスペルミスな気がする
           value: value,
           format: 'JSON',
           params: nil,
@@ -148,7 +148,7 @@ describe CfTemplatesController, type: :controller do
       }
     end
     let(:value) { JSON[{ Parameters: {} }] }
-    let(:req) { post :insert_cf_params, http_params }
+    let(:req) { post :insert_cf_params, params: http_params }
     before do
       allow_any_instance_of(CfTemplate).to receive(:validate_template)
     end
@@ -201,7 +201,7 @@ describe CfTemplatesController, type: :controller do
   end
 
   describe '#create' do
-    let(:create_request) { post :create, cf_template: cftemplate_hash, format: format }
+    let(:create_request) { post :create, params: { cf_template: cftemplate_hash, format: format } }
     let(:format) { 'html' }
 
     context 'when no validtion errors' do
@@ -270,7 +270,7 @@ describe CfTemplatesController, type: :controller do
     let(:res) { { status: status, message: 'message' } }
     let(:cfparams) { 'cfparams' }
     let(:data) { cftemplate_hash.merge(cfparams: cfparams) }
-    let(:create_send_request) { post :create_and_send, cf_template: data }
+    let(:create_send_request) { post :create_and_send, params: { cf_template: data } }
 
     before do
       expect_any_instance_of(CfTemplatesController).to receive(:send_cloudformation_template).with(kind_of(CfTemplate), cfparams).and_return(res)
@@ -295,7 +295,7 @@ describe CfTemplatesController, type: :controller do
 
   describe 'PATCH #update' do
     let(:update_cftemplate) { create(:cf_template) }
-    let(:update_request) { patch :update, id: update_cftemplate.id, cf_template: cftemplate_hash, format: format }
+    let(:update_request) { patch :update, params: { id: update_cftemplate.id, cf_template: cftemplate_hash, format: format } }
     let(:format) { 'html' }
 
     context 'when valid params' do
@@ -347,7 +347,7 @@ describe CfTemplatesController, type: :controller do
     subject { klass.find(cf_template.id) }
 
     before do
-      delete :destroy, id: cf_template.id
+      delete :destroy, params: { id: cf_template.id }
     end
 
     it 'should delete cf_template' do
@@ -357,7 +357,7 @@ describe CfTemplatesController, type: :controller do
 
   describe '#history' do
     before do
-      get :history, infrastructure_id: infra.id
+      get :history, params: { infrastructure_id: infra.id }
     end
 
     it 'should assign @histories' do

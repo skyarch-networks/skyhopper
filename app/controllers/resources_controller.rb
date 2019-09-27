@@ -39,23 +39,23 @@ class ResourcesController < ApplicationController
 
     infra = Infrastructure.find(infra_id)
     unless infra.create_complete?
-      render text: I18n.t('resources.msg.infrastructure_not_created'), status: :bad_request
+      render plain: I18n.t('resources.msg.infrastructure_not_created'), status: :bad_request
       return
     end
 
     # Infraが所属するRegionにphysical_idのインスタンスが存在しない場合
     unless infra.instance(physical_id).exists?
-      render text: I18n.t('resources.msg.cannot_find', physical_id: physical_id), status: :bad_request
+      render plain: I18n.t('resources.msg.cannot_find', physical_id: physical_id), status: :bad_request
       return
     end
 
     unless infra.instance(physical_id).describe_keypair == infra.keypairname
-      render text: I18n.t('resources.msg.keypair_dose_not_match', physical_id: physical_id), status: :bad_request
+      render plain: I18n.t('resources.msg.keypair_dose_not_match', physical_id: physical_id), status: :bad_request
       return
     end
 
     unless infra.instance(physical_id).status != :terminated
-      render text: I18n.t('resources.msg.if_status_is_terminated', physical_id: physical_id), status: :bad_request
+      render plain: I18n.t('resources.msg.if_status_is_terminated', physical_id: physical_id), status: :bad_request
       return
     end
 
@@ -71,9 +71,9 @@ class ResourcesController < ApplicationController
         register_in_known_hosts: true,
       )
     rescue StandardError => ex
-      render text: ex.message, status: :internal_server_error and return
+      render plain: ex.message, status: :internal_server_error and return
     end
 
-    render text: I18n.t('resources.msg.created') and return
+    render plain: I18n.t('resources.msg.created') and return
   end
 end

@@ -15,7 +15,7 @@ describe NodesController, type: :controller do
 
   describe '#show' do
     let(:resource) { create(:resource, infrastructure: infra, dish: dish) }
-    let(:request) { get :show, infra_id: infra.id, id: resource.physical_id, format: 'json' }
+    let(:request) { get :show, params: { infra_id: infra.id, id: resource.physical_id, format: 'json' } }
 
     # mocks
     let(:instance) { double('instance') }
@@ -71,17 +71,34 @@ describe NodesController, type: :controller do
   end
 
   describe '#apply_dish' do
-    let(:dish) { create(:dish) }
-    let(:req) { post :apply_dish, id: physical_id, infra_id: infra.id, dish_id: dish.id }
+    let(:resource) { create(:resource, infrastructure: infra) }
+    let(:req) { post :apply_dish, params: { id: resource.physical_id, infra_id: infra.id, dish_id: dish.id } }
 
-    context "when dish's runlist is empty" do
-      let(:dish) { create(:dish, runlist: []) }
+    context "when dish's playbook_roles is empty" do
+      let(:dish) { create(:dish, playbook_roles: '[]') }
       before { req }
 
-      should_be_failure
+      should_be_success
 
       it 'should render message' do
-        expect(response.body).to eq 'Sorry, not implemented yet.'
+        expect(response.body).to eq I18n.t('nodes.msg.playbook_empty')
+      end
+    end
+
+    context "when dish's playbook_roles is not empty" do
+      let(:dish) { create(:dish, playbook_roles: '["aaa", "bbb"]', extra_vars: '{"aaa": "bbb"}') }
+      before { req }
+
+      should_be_success
+
+      it 'apply dish parameter' do
+        resource.reload
+        expect(resource.get_playbook_roles).to eq %w[aaa bbb]
+        expect(resource.extra_vars).to eq '{"aaa": "bbb"}'
+      end
+
+      it 'should render message' do
+        expect(response.body).to eq I18n.t('nodes.msg.dish_applied')
       end
     end
   end
@@ -90,7 +107,7 @@ describe NodesController, type: :controller do
     let(:security) { 'security' }
     let(:exec) { 'exec' }
     let(:resource) { create(:resource) }
-    let(:req) { put :yum_update, id: resource.physical_id, infra_id: resource.infrastructure.id, security: security, exec: exec }
+    let(:req) { put :yum_update, params: { id: resource.physical_id, infra_id: resource.infrastructure.id, security: security, exec: exec } }
 
     before do
       allow_any_instance_of(NodesController).to receive(:exec_yum_update)
@@ -108,7 +125,7 @@ describe NodesController, type: :controller do
   end
 
   describe '#edit_ansible_playbook' do
-    let(:req) { get :edit_ansible_playbook, id: resource.physical_id, infra_id: infra.id }
+    let(:req) { get :edit_ansible_playbook, params: { id: resource.physical_id, infra_id: infra.id } }
     let(:resource) { create(:resource, infrastructure: infra) }
 
     before do
@@ -134,7 +151,7 @@ describe NodesController, type: :controller do
   describe '#update_ansible_playbook' do
     let(:playbook_roles) { %w[aaa bbb] }
     let(:extra_vars) { '{"aaa":"abc"}' }
-    let(:req) { put :update_ansible_playbook, id: resource.physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars }
+    let(:req) { put :update_ansible_playbook, params: { id: resource.physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars } }
     let(:resource) { create(:resource, infrastructure: infra) }
     let(:status) { true }
     let(:message) { 'hogefuga piyoyo' }
@@ -164,7 +181,7 @@ describe NodesController, type: :controller do
 
   describe '#run_ansible_playbook' do
     let(:resource) { create(:resource) }
-    let(:run_ansible_playbook_request) { put :run_ansible_playbook, id: resource.physical_id, infra_id: resource.infrastructure.id }
+    let(:run_ansible_playbook_request) { put :run_ansible_playbook, params: { id: resource.physical_id, infra_id: resource.infrastructure.id } }
 
     before do
       allow(Thread).to receive(:new_with_db).and_yield
@@ -195,7 +212,7 @@ describe NodesController, type: :controller do
     let(:playbook_roles) { %w[aaa bbb] }
     let(:extra_vars) { '{"aaa":"abc"}' }
     let(:resource) { create(:resource, physical_id: physical_id, infrastructure: infra) }
-    let(:req) { get :show, id: physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars }
+    let(:req) { get :show, params: { id: physical_id, infra_id: infra.id, playbook_roles: playbook_roles, extra_vars: extra_vars } }
     before do
       resource
     end
@@ -251,11 +268,11 @@ describe NodesController, type: :controller do
         infra_id = params.require(:infra_id)
         infra = Infrastructure.find(infra_id)
         run_ansible_playbook_node(infra, physical_id)
-        render nothing: true
+        render body: nil
       end
     end
     let(:resource) { create(:resource, infrastructure: infra) }
-    let(:req) { get :show, id: resource.physical_id, infra_id: infra.id }
+    let(:req) { get :show, params: { id: resource.physical_id, infra_id: infra.id } }
 
     context 'when success' do
       before do

@@ -8,7 +8,7 @@
 
 require 'digest/sha2'
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :cf_templates,         dependent: :nullify
   has_many :infrastructure_logs,  dependent: :nullify
 

@@ -15,7 +15,7 @@ describe Concerns::ErrorHandler do
 
       def index
         @ajax = ajax?
-        render nothing: true
+        render body: nil
       end
     end
     let(:req) { get :index }

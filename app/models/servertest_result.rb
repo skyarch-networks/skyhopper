@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServertestResult < ActiveRecord::Base
+class ServertestResult < ApplicationRecord
   belongs_to :resource
   has_many :servertest_result_details
   has_many :servertests, through: :servertest_result_details

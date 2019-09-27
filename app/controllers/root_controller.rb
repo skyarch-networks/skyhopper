@@ -11,16 +11,16 @@ class RootController < ApplicationController
     if AppSetting.set?
       authenticate_user!
 
-      params[:action] = :index
-
-      params[:controller] =
+      redirect_params = params.permit(*default_url_options.keys)
+      redirect_params[:action] = :index
+      redirect_params[:controller] =
         if current_user.master?
           :clients
         else
           :projects
         end
 
-      redirect_to params.to_hash and return
+      redirect_to redirect_params and return
     else
       redirect_to app_settings_path and return
     end

@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Schedule < ActiveRecord::Base
+class Schedule < ApplicationRecord
   enum frequency:   %i[daily weekly intervals]
   enum day_of_week: %i[sunday monday tuesday wednesday thursday friday saturday]
 
@@ -18,7 +18,7 @@ class Schedule < ActiveRecord::Base
   def next_run
     case frequency
     when 'weekly'
-      ntime = Time.current.beginning_of_week(:sunday) + self[:day_of_week].days + time.hours
+      ntime = Time.current.beginning_of_week(:sunday) + day_of_week_before_type_cast.days + time.hours
       ntime += 1.week if ntime.past?
     when 'daily'
       ntime = Time.current.beginning_of_day + time.hours

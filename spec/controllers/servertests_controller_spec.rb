@@ -18,7 +18,7 @@ describe ServertestsController, type: :controller do
   let(:servertest) { attributes_for(:servertest, name: svrsp_name, description: svrsp_desc, value: svrsp_value, infrastructure_id: infrastructure_id, category: :serverspec) }
 
   describe '#index' do
-    let(:req) { get :index, infrastructure_id: infrastructure.id }
+    let(:req) { get :index, params: { infrastructure_id: infrastructure.id }.compact }
 
     before do
       create_list(:servertest, 3, infrastructure_id: infrastructure.id)
@@ -76,7 +76,7 @@ describe ServertestsController, type: :controller do
     end
 
     context 'when accessed with infrastracture_id' do
-      let(:get_new) { get :new, infrastructure_id: infrastructure.id }
+      let(:get_new) { get :new, params: { infrastructure_id: infrastructure.id } }
 
       it 'should assign severspec with infrastracture_id' do
         expect(assigns(:servertest).infrastructure_id).to_not be_nil
@@ -88,7 +88,7 @@ describe ServertestsController, type: :controller do
     let(:servertest) { create(:servertest) }
 
     before do
-      get :show, id: servertest.id
+      get :show, params: { id: servertest.id }
     end
 
     context 'when accessed show' do
@@ -100,7 +100,7 @@ describe ServertestsController, type: :controller do
 
   describe 'POST #create' do
     let(:infrastructure_id) { nil }
-    let(:create_request) { post :create, servertest: servertest }
+    let(:create_request) { post :create, params: { servertest: servertest } }
 
     context 'when valid params' do
       before do
@@ -153,7 +153,7 @@ describe ServertestsController, type: :controller do
     let(:update_request) do
       s = servertest.dup
       s.delete(:infrastructure_id)
-      patch :update, id: new_serverspec.id, servertest: s
+      patch :update, params: { id: new_serverspec.id, servertest: s }
     end
 
     context 'when valid params' do
@@ -187,7 +187,7 @@ describe ServertestsController, type: :controller do
 
     context 'when have infra id' do
       let(:infra) { create(:infrastructure) }
-      let(:req) { get :generator, infrastructure_id: infra.id }
+      let(:req) { get :generator, params: { infrastructure_id: infra.id } }
 
       should_be_success
       it 'should assign @infra' do
@@ -205,7 +205,7 @@ describe ServertestsController, type: :controller do
 
   describe 'DELETE #destroy' do
     let(:new_serverspec) { create(:servertest) }
-    let(:delete_request) { delete :destroy, id: new_serverspec.id }
+    let(:delete_request) { delete :destroy, params: { id: new_serverspec.id } }
 
     before do
       delete_request
@@ -239,7 +239,7 @@ describe ServertestsController, type: :controller do
       end
 
       before do
-        get :select, physical_id: physical_id, infra_id: infra.id
+        get :select, params: { physical_id: physical_id, infra_id: infra.id }
       end
 
       should_be_success
@@ -276,7 +276,7 @@ describe ServertestsController, type: :controller do
     before do
       resource # exec create resource
       create(:servertest_result, servertests: specs, resource: resource)
-      get :results, physical_id: physical_id, infra_id: infrastructure.id, format: 'json' # send HTTP request
+      get :results, params: { physical_id: physical_id, infra_id: infrastructure.id, format: 'json' } # send HTTP request
     end
 
     should_be_success
@@ -303,7 +303,7 @@ describe ServertestsController, type: :controller do
         error_servertest_names: [],
       }
     end
-    let(:req) { post :run_serverspec, physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids }
+    let(:req) { post :run_serverspec, params: { physical_id: physical_id, infra_id: infra.id, servertest_ids: servertest_ids } }
 
     before do
       resource
@@ -376,7 +376,7 @@ describe ServertestsController, type: :controller do
     let(:database) { 'MyDatabase' }
     let(:rds) { double(:rds) }
 
-    let(:request_createrds) { put :create_for_rds, infra_id: infrastructure.id, physical_id: physical_id, username: username, password: password, database: database }
+    let(:request_createrds) { put :create_for_rds, params: { infra_id: infrastructure.id, physical_id: physical_id, username: username, password: password, database: database } }
 
     before do
       allow(RDS).to receive(:new).with(infrastructure, physical_id).and_return(rds)
@@ -400,7 +400,7 @@ describe ServertestsController, type: :controller do
     let(:physical_id) { servertest_schedule.physical_id }
     let(:infra_id) { infrastructure.id }
     let(:schedule) { attributes_for(:servertest_schedule) }
-    let(:req) { post(:schedule, { physical_id: physical_id, infra_id: infra_id, schedule: schedule }) }
+    let(:req) { post :schedule, params: { physical_id: physical_id, infra_id: infra_id, schedule: schedule } }
 
     before do
       allow(Sidekiq::ScheduledSet).to receive_message_chain(:new, :select).and_return([])

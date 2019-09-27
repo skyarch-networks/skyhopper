@@ -8,7 +8,7 @@
 
 # infrastructure_id が nil のものは、グローバルなテンプレート
 # Historyとは別に選択できるようにする。
-class CfTemplate < ActiveRecord::Base
+class CfTemplate < ApplicationRecord
   validates :id,
             uniqueness: true
   validates :value, json: true, if: :JSON?

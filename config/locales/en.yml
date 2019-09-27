@@ -98,7 +98,7 @@ en:
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
       vpc_id_not_found:  'The vpc ID <b> "%{id}" </b> does not exist.'
       subnet_id_not_found: 'The subnet ID <b> "%{id}" </b> does not exist.'
-      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rake db:seed`"'
+      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rails db:seed`"'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -338,6 +338,7 @@ en:
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
+      playbook_empty:     'playbook is empty'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
       yum_update_success: |
@@ -362,6 +363,7 @@ en:
       no_serverspec_selected: 'No serverspecs selected.'
       empty-list:             'No dishes found.'
       delete_dish:            'Are you sure you want to delete this Dish?'
+      save_failed:            'Dish was failed saved.'
 
 
   servertests:

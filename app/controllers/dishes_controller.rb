@@ -30,6 +30,7 @@ class DishesController < ApplicationController
     page        = params[:page] || 1
 
     @project_name = Project.find(@project_id).name if @project_id
+
     @dishes = Dish.where(project_id: @project_id).page(page)
 
     respond_to do |format|
@@ -41,30 +42,45 @@ class DishesController < ApplicationController
   # GET /dishes/1
   def show
     @selected_serverspecs = @dish.servertests
+    @selected_playbook_roles = @dish.playbook_roles_safe
 
     render partial: 'show'
   end
 
   # GET /dishes/1/edit
   def edit
-    @global_serverspecs = Servertest.global
+    @playbook_roles = Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
+    @selected_playbook_roles = @dish.playbook_roles_safe
+    @extra_vars = @dish.extra_vars_safe
 
+    @global_serverspecs = Servertest.global
     @selected_serverspecs = @dish.servertests
 
-    render partial: 'edit'
+    respond_to do |format|
+      format.html { render partial: 'edit' }
+      format.json { render }
+    end
   end
 
   # PUT /dishes/1
   def update
+    playbook_roles = params[:playbook_roles]
+    extra_vars = params[:extra_vars]
     servertest_ids = params[:serverspecs] || []
 
     # TODO error handling
-    @dish.update(
-      servertest_ids: servertest_ids,
-      status: nil,
-    )
+    begin
+      @dish.update!(
+        playbook_roles: playbook_roles,
+        extra_vars: extra_vars,
+        servertest_ids: servertest_ids,
+        status: nil,
+      )
+    rescue StandardError
+      render plain: I18n.t('dishes.msg.save_failed'), status: :internal_server_error and return
+    end
 
-    render text: I18n.t('dishes.msg.updated')
+    render plain: I18n.t('dishes.msg.updated')
   end
 
   # GET /dishes/new

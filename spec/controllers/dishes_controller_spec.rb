@@ -17,7 +17,7 @@ describe DishesController, type: :controller do
 
   describe '#index' do
     before do
-      get :index, project_id: project.try(:id)
+      get :index, params: { project_id: project.try(:id) }.compact
     end
 
     it 'should assign @dishes' do
@@ -57,7 +57,7 @@ describe DishesController, type: :controller do
 
   describe '#show' do
     before do
-      get :show, id: dish.id
+      get :show, params: { id: dish.id }
     end
 
     it 'should assign @dish' do
@@ -71,7 +71,19 @@ describe DishesController, type: :controller do
 
   describe '#edit' do
     before do
-      get :edit, id: dish.id
+      get :edit, params: { id: dish.id }
+    end
+
+    it 'should assign @playbook_roles' do
+      expect(assigns[:playbook_roles]).to eq Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
+    end
+
+    it 'should assign @selected_playbook_roles' do
+      expect(assigns[:selected_playbook_roles]).to eq dish.playbook_roles_safe
+    end
+
+    it 'should assign @extra_vars' do
+      expect(assigns[:extra_vars]).to eq dish.extra_vars_safe
     end
 
     it 'should assign @global_serverspecs' do
@@ -88,8 +100,17 @@ describe DishesController, type: :controller do
   end
 
   describe '#update' do
+    let(:playbook_roles) { ['role-aaa', 'role-bbb'] }
+    let(:extra_vars) { '{"test": "aaa"}' }
     let(:servertest) { create(:servertest) }
-    let(:update_request) { patch :update, id: dish.id, serverspecs: [servertest.id] }
+    let(:update_request) do
+      patch :update, params: {
+        id: dish.id,
+        playbook_roles: playbook_roles,
+        extra_vars: extra_vars,
+        serverspecs: [servertest.id],
+      }
+    end
 
     context 'when valid params' do
       before do
@@ -106,6 +127,14 @@ describe DishesController, type: :controller do
         expect(response).to be_success
       end
 
+      it 'playbook_roles should be equaled' do
+        expect(subject.playbook_roles_safe).to eq playbook_roles
+      end
+
+      it 'extra_vars should be equaled' do
+        expect(subject.extra_vars).to eq extra_vars
+      end
+
       it 'servertest should be equaled' do
         expect(subject.servertests).to eq [servertest]
       end
@@ -119,7 +148,7 @@ describe DishesController, type: :controller do
   describe '#new' do
     let(:project) { nil }
     before do
-      get :new, project_id: project.try(:id)
+      get :new, params: { project_id: project.try(:id) }
     end
 
     context 'when have project' do
@@ -142,9 +171,9 @@ describe DishesController, type: :controller do
   describe '#create' do
     let(:project) { create(:project) }
     let(:project_id) { project.id }
-    let(:dish_hash) { attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id) }
+    let(:dish_hash) { attributes_for(:dish, { name: 'name', detail: 'detail', project_id: project_id }.compact) }
 
-    let(:create_request) { post :create, dish: dish_hash }
+    let(:create_request) { post :create, params: { dish: dish_hash } }
 
     context 'when valid pamrams' do
       it 'should increase the count of db by 1' do
@@ -193,7 +222,7 @@ describe DishesController, type: :controller do
 
   describe '#destroy' do
     before do
-      delete :destroy, id: dish.id
+      delete :destroy, params: { id: dish.id }
     end
 
     it 'record should not exist' do

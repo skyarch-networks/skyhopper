@@ -8,7 +8,7 @@
 
 require 'fileutils'
 
-class Servertest < ActiveRecord::Base
+class Servertest < ApplicationRecord
   belongs_to :infrastructure
 
   has_many :dish_servertests

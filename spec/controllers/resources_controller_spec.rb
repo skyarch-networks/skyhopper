@@ -14,7 +14,7 @@ describe ResourcesController do
   before { resources }
 
   describe '#index' do
-    before { get :index, infra_id: infra.id }
+    before { get :index, params: { infra_id: infra.id } }
 
     should_be_success
 
@@ -27,7 +27,7 @@ describe ResourcesController do
     let(:physical_id) { 'i-hogehoge' }
     let(:screen_name) { 'hogefuga' }
     let(:ec2_exists) { true }
-    let(:req) { post :create, infra_id: infra.id, physical_id: physical_id, screen_name: screen_name }
+    let(:req) { post :create, params: { infra_id: infra.id, physical_id: physical_id, screen_name: screen_name } }
 
     let(:aws_instance) do
       double(:aws_instance,

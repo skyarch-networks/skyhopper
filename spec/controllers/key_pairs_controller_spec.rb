@@ -14,7 +14,7 @@ describe KeyPairsController do
   let(:project) { create(:project) }
 
   describe '#index' do
-    before { get :index, project_id: project.id }
+    before { get :index, params: { project_id: project.id } }
 
     should_be_success
 
@@ -27,7 +27,7 @@ describe KeyPairsController do
     let(:keypairs) { double(:keypairs) }
     before do
       expect(KeyPair).to receive(:all).and_return(keypairs)
-      get :retrieve, project_id: project.id
+      get :retrieve, params: { project_id: project.id }
     end
 
     should_be_success
@@ -49,7 +49,7 @@ describe KeyPairsController do
     before do
       allow_any_instance_of(KeyPairsController).to receive(:check_fingerprint).with(fingerprint).and_return('key_name')
       expect_any_instance_of(Aws::EC2::Client).to receive(:delete_key_pair).with(key_name: key_name)
-      delete :destroy, region: region, fingerprint: fingerprint, project_id: project.id
+      delete :destroy, params: { region: region, fingerprint: fingerprint, project_id: project.id }
     end
 
     should_be_success

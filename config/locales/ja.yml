@@ -98,7 +98,7 @@ ja:
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       vpc_id_not_found:  'VPC ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
       subnet_id_not_found: 'サブネット ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
-      db_seed_not_found:  '<b>%{server}</b>サーバーのプロジェクトが見つかりません。 db:seedを実行しましたか？ そうでない場合は、 `bundle exec rake db：seed`を実行してください。'
+      db_seed_not_found:  '<b>%{server}</b>サーバーのプロジェクトが見つかりません。 db:seedを実行しましたか？ そうでない場合は、 `bundle exec rails db：seed`を実行してください。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -335,6 +335,7 @@ ja:
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
+      playbook_empty:     'playbook は空です'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
       yum_update_success: |
@@ -360,6 +361,7 @@ ja:
       no_serverspec_selected: 'Serverspec が選択されていません'
       delete_dish:            'このディッシュを削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
+      save_failed:            'ディッシュの保存に失敗しました'
 
 
   servertests:

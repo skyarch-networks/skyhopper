@@ -75,7 +75,28 @@ class NodesController < ApplicationController
 
   # POST /nodes/i-0b8e7f12/apply_dish
   def apply_dish
-    render text: 'Sorry, not implemented yet.', status: :internal_server_error
+    physical_id = params.require(:id)
+    dish_id = params.require(:dish_id)
+
+    dish = Dish.find(dish_id)
+
+    playbook_roles = dish.playbook_roles_safe
+    if playbook_roles.blank?
+      render plain: I18n.t('nodes.msg.playbook_empty') and return
+    end
+
+    ret = update_playbook(
+      physical_id: physical_id,
+      infrastructure: @infra,
+      playbook_roles: playbook_roles,
+      extra_vars: dish.extra_vars_safe,
+    )
+
+    unless ret[:status]
+      render plain: ret[:message], status: :internal_server_error and return
+    end
+
+    render plain: I18n.t('nodes.msg.dish_applied')
   end
 
   # POST /nodes/i-hogehoge/schedule_yum
@@ -92,7 +113,7 @@ class NodesController < ApplicationController
       ).perform_later(physical_id, @infra, current_user.id)
     end
 
-    render text: I18n.t('schedules.msg.yum_updated'), status: :ok and return
+    render plain: I18n.t('schedules.msg.yum_updated'), status: :ok and return
   end
 
   # GET /nodes/:id/get_rules
@@ -145,7 +166,7 @@ class NodesController < ApplicationController
 
     @infra.ec2.modify_instance_attribute({ instance_id: @physical_id, groups: group_ids })
 
-    render text: I18n.t('security_groups.msg.change_success')
+    render plain: I18n.t('security_groups.msg.change_success')
   end
 
   # POST /nodes/i-0b8e7f12/create_groups
@@ -156,7 +177,7 @@ class NodesController < ApplicationController
     group_id = @infra.ec2.create_security_group({ group_name: group_params[0], description: group_params[1], vpc_id: group_params[3] })
     @infra.ec2.create_tags(resources: [group_id[:group_id]], tags: [{ key: 'Name', value: group_params[2] }])
 
-    render text: I18n.t('security_groups.msg.change_success')
+    render plain: I18n.t('security_groups.msg.change_success')
   end
 
   def check_socket(field)
@@ -183,7 +204,7 @@ class NodesController < ApplicationController
     exec        = params.require(:exec) == 'exec'
 
     exec_yum_update(@infra, @physical_id, security, exec)
-    render text: I18n.t('nodes.msg.yum_update_started'), status: :accepted
+    render plain: I18n.t('nodes.msg.yum_update_started'), status: :accepted
   end
 
   # GET /nodes/:id/edit_ansible_playbook
@@ -201,7 +222,7 @@ class NodesController < ApplicationController
       run_ansible_playbook_node(@infra, @physical_id)
     end
 
-    render text: I18n.t('nodes.msg.playbook_applying'), status: :accepted
+    render plain: I18n.t('nodes.msg.playbook_applying'), status: :accepted
   end
 
   # PUT /nodes/:id/update_ansible_playbook
@@ -212,10 +233,10 @@ class NodesController < ApplicationController
     ret = update_playbook(physical_id: @physical_id, infrastructure: @infra, playbook_roles: playbook_roles, extra_vars: extra_vars)
 
     if ret[:status]
-      render text: I18n.t('nodes.msg.playbook_updated') and return
+      render plain: I18n.t('nodes.msg.playbook_updated') and return
     end
 
-    render text: ret[:message], status: :internal_server_error and return
+    render plain: ret[:message], status: :internal_server_error and return
   end
 
   private

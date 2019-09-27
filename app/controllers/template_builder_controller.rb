@@ -66,11 +66,11 @@ class TemplateBuilderController < ApplicationController
     )
 
     if @cf_template.save
-      render text: I18n.t('cf_templates.msg.created')
+      render plain: I18n.t('cf_templates.msg.created')
     elsif @cf_template.errors[:json]
-      render text: @cf_template.errors[:json], status: :internal_server_error
+      render plain: @cf_template.errors[:json], status: :internal_server_error
     else
-      render text: I18n.t('cf_templates.msg.create_failure'), status: :internal_server_error
+      render plain: I18n.t('cf_templates.msg.create_failure'), status: :internal_server_error
     end
   end
 end

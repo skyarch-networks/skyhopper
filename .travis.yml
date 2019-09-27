@@ -17,7 +17,7 @@ branches:
 before_script:
   - cp .travis/database.yml config/database.yml
   - touch log/test.log
-  - bundle exec rake db:migrate:reset
+  - bundle exec rails db:migrate:reset
 
 
 script:

@@ -54,6 +54,54 @@ describe Dish, type: :model do
     end
   end
 
+  describe '#playbook_roles_safe' do
+    subject { dish.playbook_roles_safe }
+
+    context 'when playbook_roles is nil' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.playbook_roles = nil
+      end
+
+      it { is_expected.to eq [] }
+    end
+
+    context 'when playbook_roles is \'["aaa", "bbb"]\'(JSON string)' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.playbook_roles = '["aaa", "bbb"]'
+      end
+
+      it { is_expected.to eq %w[aaa bbb] }
+    end
+  end
+
+  describe '#extra_vars_safe' do
+    subject { dish.extra_vars_safe }
+
+    context 'when extra_vars is nil' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.extra_vars = nil
+      end
+
+      it { is_expected.to eq '{}' }
+    end
+
+    context 'when extra_vars is not nil' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.extra_vars = '{"aaa":"abc"}'
+      end
+
+      it { is_expected.to eq '{"aaa":"abc"}' }
+    end
+  end
+
   describe '.valid_dishes' do
     let(:valids) { create_list(:dish, 3, project_id: nil, status: 'SUCCESS') }
     let(:invalids) { create_list(:dish, 3, project_id: nil, status: 'FAILURE') }
@@ -65,6 +113,36 @@ describe Dish, type: :model do
     subject { klass.valid_dishes }
     it 'return only valid dishes' do
       expect(subject).to eq valids
+    end
+  end
+
+  describe '#verify_playbook_roles' do
+    subject { dish.__send__(:verify_playbook_roles) }
+
+    context 'when playbook_roles is valid' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.playbook_roles = '["aaa", "bbb"]'
+        subject
+      end
+
+      it 'should number of errors[:playbook_roles] is 0' do
+        expect(dish.errors[:playbook_roles].length).to eq 0
+      end
+    end
+
+    context 'when playbook_roles is invalid' do
+      let(:dish) { build(:dish) }
+
+      before do
+        dish.playbook_roles = '["aaa", 123]'
+        subject
+      end
+
+      it 'should number of error[:playbook_roles] is not 0' do
+        expect(dish.errors[:playbook_roles].length).not_to eq 0
+      end
     end
   end
 end

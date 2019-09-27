@@ -113,14 +113,14 @@ class MonitoringsController < ApplicationController
       rescue StandardError => ex
         @infra.detach_zabbix
 
-        render text: ex.message, status: :internal_server_error and return
+        render plain: ex.message, status: :internal_server_error and return
       end
 
       @zabbix.templates_link_host(physical_id, new_templates)
       infra_logger_success("#{physical_id} is linked to Zabbix!")
     end
 
-      render nothing: true and return
+      render body: nil and return
   end
 
   # GET /monitorings/:id/show_cloudwatch_graph
@@ -175,7 +175,7 @@ class MonitoringsController < ApplicationController
     z = @zabbix
     if @infra.resources.ec2.none? { |r| z.host_exists?(r.physical_id) }
       # XXX: workaround?
-      render nothing: true, status: :bad_request and return
+      render body: nil, status: :bad_request and return
     end
 
     @master_monitorings = MasterMonitoring.all
@@ -236,7 +236,7 @@ class MonitoringsController < ApplicationController
     infra_logger_success('Monitoring Options updated')
 
     # TODO: Zabbix Server側の状態の更新
-    render text: I18n.t('monitoring.msg.updated')
+    render plain: I18n.t('monitoring.msg.updated')
   end
 
   # POST /monitorings/:id/create_host
@@ -275,11 +275,11 @@ class MonitoringsController < ApplicationController
     rescue StandardError => ex
       @infra.detach_zabbix
 
-      render text: ex.message, status: :internal_server_error and return
+      render plain: ex.message, status: :internal_server_error and return
     end
 
     infra_logger_success('Infrastructure is registered to Zabbix')
-    render nothing: true and return
+    render body: nil and return
   end
 
   # POST /monitorings/:id/change_zabbix_server
@@ -290,7 +290,7 @@ class MonitoringsController < ApplicationController
     @infra.project.save!
 
     infra_logger_success('Zabbix Server Changed!')
-    render nothing: true and return
+    render body: nil and return
   end
 
   private

@@ -190,6 +190,9 @@ const demoGrid = require('./demo-grid');
   $(document).on('click', '#update-dish', () => {
     const dishId = currentDishId();
 
+    const playbookRoles = editPlaybookForm.playbook_roles;
+    const extraVars = editPlaybookForm.extra_vars;
+
     const serverspecIds = [];
     $('input[name=serverspecs]:checked').each(function serverspecsCheckedEachHandler() {
       serverspecIds.push($(this).val());
@@ -199,6 +202,8 @@ const demoGrid = require('./demo-grid');
       url: `/dishes/${dishId}`,
       type: 'PUT',
       data: {
+        playbook_roles: JSON.stringify(playbookRoles),
+        extra_vars: extraVars,
         serverspecs: serverspecIds,
       },
     }).done((data) => {

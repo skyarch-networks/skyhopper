@@ -14,7 +14,7 @@ describe Users::SessionsController do
     let(:email) { user.email }
     let(:password) { user.password }
     let(:mfa_token) { nil }
-    let(:req) { post :create, user: { email: email, password: password, mfa_token: mfa_token } }
+    let(:req) { post :create, params: { user: { email: email, password: password, mfa_token: mfa_token }.compact } }
 
     before do
       @request.env['devise.mapping'] = Devise.mappings[:user]
@@ -23,7 +23,7 @@ describe Users::SessionsController do
     # Mock
     controller Users::SessionsController do
       def create
-        render text: 'success create'
+        render plain: 'success create'
       end
     end
 

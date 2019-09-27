@@ -15,10 +15,10 @@ fi
 
 echo "===== Set up the database ====="
 sleep 30 # Wait for the container to start up
-bundle exec rake db:create
-bundle exec rake db:migrate
-bundle exec rake db:seed
+bundle exec rails db:create
+bundle exec rails db:migrate
+bundle exec rails db:seed
 
 echo "===== Configure the application ====="
-bundle exec rake i18n:js:export
-bundle exec rake assets:precompile
+bundle exec rails i18n:js:export
+bundle exec rails assets:precompile

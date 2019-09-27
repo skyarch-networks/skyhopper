@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ResourceStatus < ActiveRecord::Base
+class ResourceStatus < ApplicationRecord
   belongs_to :resource
 
   enum value:  %i[success failed pending un_executed inprogress]
