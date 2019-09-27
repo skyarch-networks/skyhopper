@@ -1,4 +1,4 @@
-class AddColumnToMasterMonitoring < ActiveRecord::Migration
+class AddColumnToMasterMonitoring < ActiveRecord::Migration[4.2]
   def up
     add_column :master_monitorings, :is_common, :boolean
   end

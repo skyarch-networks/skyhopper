@@ -1,4 +1,4 @@
-class DishServerspecsSetup < ActiveRecord::Migration
+class DishServerspecsSetup < ActiveRecord::Migration[4.2]
   def up
     Dish.all.each do |dish|
       dish.serverspecs.each do |serverspec_id|

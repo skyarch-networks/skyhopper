@@ -1,4 +1,4 @@
-class CryptizeApiKeyOfProjectAndAppSetting < ActiveRecord::Migration
+class CryptizeApiKeyOfProjectAndAppSetting < ActiveRecord::Migration[4.2]
   def change
     Project.all.each do |x|
       k = x.read_attribute(:access_key)

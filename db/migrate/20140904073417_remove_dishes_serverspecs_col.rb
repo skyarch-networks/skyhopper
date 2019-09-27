@@ -1,4 +1,4 @@
-class RemoveDishesServerspecsCol < ActiveRecord::Migration
+class RemoveDishesServerspecsCol < ActiveRecord::Migration[4.2]
   def up
     remove_column :dishes, :serverspecs
   end

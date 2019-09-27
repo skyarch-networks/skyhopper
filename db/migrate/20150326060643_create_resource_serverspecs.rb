@@ -1,4 +1,4 @@
-class CreateResourceServerspecs < ActiveRecord::Migration
+class CreateResourceServerspecs < ActiveRecord::Migration[4.2]
   def change
     create_table :resource_serverspecs do |t|
       t.integer :resource_id, null: false

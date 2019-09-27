@@ -1,4 +1,4 @@
-class CreateZabbixServers < ActiveRecord::Migration
+class CreateZabbixServers < ActiveRecord::Migration[4.2]
   def change
     create_table :zabbix_servers do |t|
       t.string :fqdn

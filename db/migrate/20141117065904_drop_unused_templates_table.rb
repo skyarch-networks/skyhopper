@@ -1,4 +1,4 @@
-class DropUnusedTemplatesTable < ActiveRecord::Migration
+class DropUnusedTemplatesTable < ActiveRecord::Migration[4.2]
   def up
     drop_table :templates
   end

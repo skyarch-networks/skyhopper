@@ -1,4 +1,4 @@
-class CreateRecurringDates < ActiveRecord::Migration
+class CreateRecurringDates < ActiveRecord::Migration[4.2]
   def change
     create_table :recurring_dates do |t|
       t.string :operation_duration_id

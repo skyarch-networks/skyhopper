@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,267 +12,257 @@
 
 ActiveRecord::Schema.define(version: 20190902023030) do
 
-  create_table "app_settings", force: :cascade do |t|
-    t.string   "aws_region",         limit: 255, null: false
+  create_table "app_settings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "aws_region", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "log_directory",      limit: 255, null: false
-    t.integer  "ec2_private_key_id", limit: 4
-    t.boolean  "dummy"
+    t.string "log_directory", null: false
+    t.integer "ec2_private_key_id"
+    t.boolean "dummy"
   end
 
-  create_table "cf_templates", force: :cascade do |t|
-    t.integer  "infrastructure_id", limit: 4
-    t.string   "name",              limit: 255
-    t.text     "detail",            limit: 65535
-    t.text     "value",             limit: 65535
-    t.integer  "format",            limit: 4,     null: false
+  create_table "cf_templates", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "infrastructure_id"
+    t.string "name"
+    t.text "detail"
+    t.text "value"
+    t.integer "format", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "params",            limit: 65535
-    t.integer  "user_id",           limit: 4
+    t.text "params"
+    t.integer "user_id"
+    t.index ["infrastructure_id"], name: "manage_jsons_infrastructure_id_fk"
   end
 
-  add_index "cf_templates", ["infrastructure_id"], name: "manage_jsons_infrastructure_id_fk", using: :btree
-
-  create_table "clients", force: :cascade do |t|
-    t.string   "code",       limit: 255
-    t.string   "name",       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "cloud_watches", force: :cascade do |t|
+  create_table "clients", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "code"
+    t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "dish_servertests", force: :cascade do |t|
-    t.integer  "dish_id",       limit: 4, null: false
-    t.integer  "servertest_id", limit: 4, null: false
+  create_table "cloud_watches", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "dishes", force: :cascade do |t|
-    t.string   "name",           limit: 255
-    t.text     "runlist",        limit: 65535
-    t.text     "playbook_roles", limit: 65535
-    t.text     "extra_vars",     limit: 65535
-    t.integer  "project_id",     limit: 4
-    t.string   "status",         limit: 255
+  create_table "dish_servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "dish_id", null: false
+    t.integer "servertest_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "detail",         limit: 65535
   end
 
-  create_table "ec2_private_keys", force: :cascade do |t|
-    t.string "name",  limit: 255
-    t.text   "value", limit: 65535
-  end
-
-  create_table "infrastructure_logs", force: :cascade do |t|
-    t.integer  "infrastructure_id", limit: 4
-    t.boolean  "status"
-    t.text     "details",           limit: 16777215
+  create_table "dishes", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "name"
+    t.text "runlist"
+    t.text "playbook_roles"
+    t.text "extra_vars"
+    t.integer "project_id"
+    t.string "status"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id",           limit: 4
+    t.text "detail"
   end
 
-  create_table "infrastructures", force: :cascade do |t|
+  create_table "ec2_private_keys", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "name"
+    t.text "value"
+  end
+
+  create_table "infrastructure_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "infrastructure_id"
+    t.boolean "status"
+    t.text "details", limit: 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "region",             limit: 255
-    t.string   "status",             limit: 255
-    t.string   "stack_name",         limit: 255
-    t.integer  "project_id",         limit: 4
-    t.integer  "ec2_private_key_id", limit: 4
+    t.integer "user_id"
   end
 
-  add_index "infrastructures", ["project_id"], name: "infrastructures_project_id_fk", using: :btree
-  add_index "infrastructures", ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true, using: :btree
+  create_table "infrastructures", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "region"
+    t.string "status"
+    t.string "stack_name"
+    t.integer "project_id"
+    t.integer "ec2_private_key_id"
+    t.index ["project_id"], name: "infrastructures_project_id_fk"
+    t.index ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true
+  end
 
-  create_table "master_monitorings", force: :cascade do |t|
-    t.string  "name",               limit: 255
-    t.string  "item",               limit: 255
-    t.string  "trigger_expression", limit: 255
+  create_table "master_monitorings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "name"
+    t.string "item"
+    t.string "trigger_expression"
     t.boolean "is_common"
+    t.index ["name"], name: "index_master_monitorings_on_name", unique: true
   end
 
-  add_index "master_monitorings", ["name"], name: "index_master_monitorings_on_name", unique: true, using: :btree
-
-  create_table "monitorings", force: :cascade do |t|
-    t.integer "infrastructure_id",    limit: 4
-    t.integer "master_monitoring_id", limit: 4
+  create_table "monitorings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "infrastructure_id"
+    t.integer "master_monitoring_id"
   end
 
-  create_table "operation_durations", force: :cascade do |t|
-    t.integer  "resource_id", limit: 4
+  create_table "operation_durations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "resource_id"
     t.datetime "start_date"
     t.datetime "end_date"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.integer  "user_id",     limit: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
-  create_table "project_parameters", force: :cascade do |t|
-    t.integer  "project_id", limit: 4,   null: false
-    t.string   "key",        limit: 255, null: false
-    t.string   "value",      limit: 255, null: false
+  create_table "project_parameters", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "project_id", null: false
+    t.string "key", null: false
+    t.string "value", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["project_id", "key"], name: "index_project_parameters_on_project_id_and_key", unique: true
+    t.index ["project_id"], name: "index_project_parameters_on_project_id"
   end
 
-  add_index "project_parameters", ["project_id", "key"], name: "index_project_parameters_on_project_id_and_key", unique: true, using: :btree
-  add_index "project_parameters", ["project_id"], name: "index_project_parameters_on_project_id", using: :btree
-
-  create_table "projects", force: :cascade do |t|
-    t.string   "code",              limit: 255
+  create_table "projects", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "code"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name",              limit: 255
-    t.integer  "client_id",         limit: 4
-    t.string   "access_key",        limit: 255
-    t.string   "secret_access_key", limit: 255
-    t.integer  "zabbix_server_id",  limit: 4
+    t.string "name"
+    t.integer "client_id"
+    t.string "access_key"
+    t.string "secret_access_key"
+    t.integer "zabbix_server_id"
+    t.index ["client_id"], name: "projects_client_id_fk"
+    t.index ["zabbix_server_id"], name: "index_projects_on_zabbix_server_id"
   end
 
-  add_index "projects", ["client_id"], name: "projects_client_id_fk", using: :btree
-  add_index "projects", ["zabbix_server_id"], name: "index_projects_on_zabbix_server_id", using: :btree
-
-  create_table "recurring_dates", force: :cascade do |t|
-    t.string   "operation_duration_id", limit: 255
-    t.integer  "repeats",               limit: 4
-    t.time     "start_time"
-    t.time     "end_time"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.text     "dates",                 limit: 65535
+  create_table "recurring_dates", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "operation_duration_id"
+    t.integer "repeats"
+    t.time "start_time"
+    t.time "end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "dates"
   end
 
-  create_table "resource_servertests", force: :cascade do |t|
-    t.integer  "resource_id",   limit: 4, null: false
-    t.integer  "servertest_id", limit: 4, null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+  create_table "resource_servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "resource_id", null: false
+    t.integer "servertest_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "resource_statuses", force: :cascade do |t|
-    t.integer  "resource_id", limit: 4
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.integer  "value",       limit: 4, null: false
-    t.integer  "kind",        limit: 4, null: false
+  create_table "resource_statuses", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "resource_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", null: false
+    t.integer "kind", null: false
   end
 
-  create_table "resources", force: :cascade do |t|
-    t.string   "physical_id",             limit: 255,   null: false
-    t.string   "type_name",               limit: 255,   null: false
-    t.integer  "infrastructure_id",       limit: 4,     null: false
+  create_table "resources", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "physical_id", null: false
+    t.string "type_name", null: false
+    t.integer "infrastructure_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "screen_name",             limit: 255
-    t.boolean  "register_in_known_hosts"
-    t.integer  "dish_id",                 limit: 4
-    t.text     "playbook_roles",          limit: 65535
-    t.text     "extra_vars",              limit: 65535
+    t.string "screen_name"
+    t.boolean "register_in_known_hosts"
+    t.integer "dish_id"
+    t.text "playbook_roles"
+    t.text "extra_vars"
+    t.index ["physical_id"], name: "index_resources_on_physical_id", unique: true
   end
 
-  add_index "resources", ["physical_id"], name: "index_resources_on_physical_id", unique: true, using: :btree
-
-  create_table "retention_policies", force: :cascade do |t|
-    t.string   "resource_id", limit: 255, null: false
-    t.integer  "max_amount",  limit: 4
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+  create_table "retention_policies", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "resource_id", null: false
+    t.integer "max_amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id"], name: "index_retention_policies_on_resource_id", unique: true
   end
 
-  add_index "retention_policies", ["resource_id"], name: "index_retention_policies_on_resource_id", unique: true, using: :btree
-
-  create_table "schedules", force: :cascade do |t|
-    t.boolean  "enabled",                 default: false, null: false
-    t.integer  "frequency",   limit: 4
-    t.integer  "day_of_week", limit: 4
-    t.integer  "time",        limit: 4
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.string   "physical_id", limit: 255
-    t.string   "type",        limit: 255,                 null: false
-    t.string   "volume_id",   limit: 255
+  create_table "schedules", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.boolean "enabled", default: false, null: false
+    t.integer "frequency"
+    t.integer "day_of_week"
+    t.integer "time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "physical_id"
+    t.string "type", null: false
+    t.string "volume_id"
   end
 
-  create_table "servertest_result_details", force: :cascade do |t|
-    t.integer  "servertest_id",        limit: 4
-    t.integer  "servertest_result_id", limit: 4
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+  create_table "servertest_result_details", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "servertest_id"
+    t.integer "servertest_result_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "servertest_results", force: :cascade do |t|
-    t.integer  "resource_id",               limit: 4
-    t.boolean  "auto_generated_servertest"
-    t.integer  "status",                    limit: 4
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.text     "message",                   limit: 65535
+  create_table "servertest_results", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "resource_id"
+    t.boolean "auto_generated_servertest"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "message"
   end
 
-  create_table "servertests", force: :cascade do |t|
-    t.integer  "infrastructure_id", limit: 4
-    t.string   "name",              limit: 255,   null: false
-    t.text     "value",             limit: 65535, null: false
+  create_table "servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "infrastructure_id"
+    t.string "name", null: false
+    t.text "value", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "description",       limit: 65535
-    t.integer  "category",          limit: 4
+    t.text "description"
+    t.integer "category"
   end
 
-  create_table "user_projects", id: false, force: :cascade do |t|
-    t.integer "user_id",    limit: 4, null: false
-    t.integer "project_id", limit: 4, null: false
+  create_table "user_projects", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "user_id", null: false
+    t.integer "project_id", null: false
+    t.index ["project_id"], name: "user_projects_project_id_fk"
+    t.index ["user_id", "project_id"], name: "index_user_projects_on_user_id_and_project_id", unique: true
   end
 
-  add_index "user_projects", ["project_id"], name: "user_projects_project_id_fk", using: :btree
-  add_index "user_projects", ["user_id", "project_id"], name: "index_user_projects_on_user_id_and_project_id", unique: true, using: :btree
-
-  create_table "user_zabbix_servers", id: false, force: :cascade do |t|
-    t.integer "user_id",          limit: 4, null: false
-    t.integer "zabbix_server_id", limit: 4, null: false
+  create_table "user_zabbix_servers", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.integer "user_id", null: false
+    t.integer "zabbix_server_id", null: false
+    t.index ["user_id"], name: "user_zabbix_servers_zabbix_server_id_fk"
+    t.index ["zabbix_server_id", "user_id"], name: "index_user_zabbix_servers_on_user_id_and_zabbix_server_id", unique: true
   end
 
-  add_index "user_zabbix_servers", ["user_id"], name: "user_zabbix_servers_zabbix_server_id_fk", using: :btree
-  add_index "user_zabbix_servers", ["zabbix_server_id", "user_id"], name: "index_user_zabbix_servers_on_user_id_and_zabbix_server_id", unique: true, using: :btree
-
-  create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "", null: false
-    t.string   "encrypted_password",     limit: 255, default: "", null: false
-    t.string   "reset_password_token",   limit: 255
+  create_table "users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0,  null: false
+    t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin"
-    t.boolean  "master"
-    t.string   "mfa_secret_key",         limit: 255
+    t.boolean "admin"
+    t.boolean "master"
+    t.string "mfa_secret_key"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-
-  create_table "zabbix_servers", force: :cascade do |t|
-    t.string   "fqdn",       limit: 255
-    t.string   "username",   limit: 255
-    t.string   "password",   limit: 255
-    t.string   "version",    limit: 255
-    t.string   "details",    limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "zabbix_servers", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+    t.string "fqdn"
+    t.string "username"
+    t.string "password"
+    t.string "version"
+    t.string "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

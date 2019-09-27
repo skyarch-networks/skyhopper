@@ -1,4 +1,4 @@
-class AppSettingChangeColType < ActiveRecord::Migration
+class AppSettingChangeColType < ActiveRecord::Migration[4.2]
   def up
     change_column :app_settings, :chef_key, :text
   end

@@ -1,4 +1,4 @@
-class CreateRetentionPolicies < ActiveRecord::Migration
+class CreateRetentionPolicies < ActiveRecord::Migration[4.2]
   def change
     create_table :retention_policies do |t|
       t.string :resource_id, null: false

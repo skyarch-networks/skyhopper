@@ -1,4 +1,4 @@
-class AddZabbixInfoToAppSetting < ActiveRecord::Migration
+class AddZabbixInfoToAppSetting < ActiveRecord::Migration[4.2]
   def change
     add_column :app_settings, :zabbix_fqdn, :string
     add_column :app_settings, :zabbix_user, :string

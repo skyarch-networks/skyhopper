@@ -1,4 +1,4 @@
-class RenameColumnToMasterMonitorings < ActiveRecord::Migration
+class RenameColumnToMasterMonitorings < ActiveRecord::Migration[4.2]
   def up
     rename_column :master_monitorings, :key, :item
   end
