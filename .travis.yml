@@ -23,6 +23,7 @@ before_script:
   - nvm use --lts
   - bundle install --path vendor/bundle
   - cd frontend/ && yarn && cd ..
+  - echo 'module.exports = {"dummy":{"normal":"dummy","bold":"dummy","italics":"dummy","bolditalics":"dummy"}};' > frontend/fonts/fonts_map.js
   - cp .travis/database.yml config/database.yml
   - touch log/test.log
   - bundle exec rails db:migrate:reset
