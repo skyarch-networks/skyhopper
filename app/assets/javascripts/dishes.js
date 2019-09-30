@@ -190,8 +190,10 @@ const demoGrid = require('./demo-grid');
   $(document).on('click', '#update-dish', () => {
     const dishId = currentDishId();
 
+    /* eslint-disable no-undef */
     const playbookRoles = editPlaybookForm.playbook_roles;
     const extraVars = editPlaybookForm.extra_vars;
+    /* eslint-enable no-undef */
 
     const serverspecIds = [];
     $('input[name=serverspecs]:checked').each(function serverspecsCheckedEachHandler() {
