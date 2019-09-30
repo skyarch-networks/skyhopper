@@ -1,5 +1,5 @@
 const ModelBase = class ModelBase {
-  WrapAndResolveReject(fn) { // eslint-disable-line
+  WrapAndResolveReject(fn) { // eslint-disable-line class-methods-use-this
     const dfd = $.Deferred();
     const d = fn(dfd);
     d.done(ModelBase.resolveF(dfd));
