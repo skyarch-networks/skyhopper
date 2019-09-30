@@ -31,6 +31,7 @@ before_script:
 script:
   - bundle exec rubocop
   - bundle exec rspec
+  - ./node_modules/.bin/eslint app/assets/javascripts
 
 notifications:
   slack: skyarch:RrGXgQVUmTe0r565gbHYMnmQ
