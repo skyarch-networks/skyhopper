@@ -1,5 +1,5 @@
 const ModelBase = class ModelBase {
-  WrapAndResolveReject(fn) {
+  WrapAndResolveReject(fn) { // eslint-disable-line class-methods-use-this
     const dfd = $.Deferred();
     const d = fn(dfd);
     d.done(ModelBase.resolveF(dfd));
@@ -15,7 +15,7 @@ const ModelBase = class ModelBase {
     return function reject(xhr) { return dfd.reject(xhr.responseText); };
   }
 
-  wait_change_status(id, dfd, scope) {
+  static wait_change_status(id, dfd, scope) {
     return function wait_change_status() {
       const ws = wsConnector(scope, id);
       ws.onmessage = function onmessage(msg) {
