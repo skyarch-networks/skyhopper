@@ -47,4 +47,6 @@ SkyHopper::Application.configure do
   config.logger = Logger.new('log/test.log', 5, 10.megabyte)
   config.log_level = :error
   config.cache_store = :memory_store, { size: 64.megabytes }
+
+  config.active_record.sqlite3.represent_boolean_as_integer = true
 end

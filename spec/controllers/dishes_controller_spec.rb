@@ -124,7 +124,7 @@ describe DishesController, type: :controller do
       subject { dish }
 
       it 'should success' do
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'playbook_roles should be equaled' do

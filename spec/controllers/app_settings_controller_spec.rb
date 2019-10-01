@@ -58,7 +58,7 @@ describe AppSettingsController, type: :controller do
         expect(AppSetting).to receive(:clear_dummy).with(no_args)
         post :create, params: { settings: settings_with_ec2_key_id.to_json }
 
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
