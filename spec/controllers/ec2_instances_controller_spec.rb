@@ -109,7 +109,7 @@ describe Ec2InstancesController, type: :controller do
       context "when status #{status}" do
         before do
           st = resource.status.servertest
-          st.value = status
+          st.content = status
           st.save!
           req
         end

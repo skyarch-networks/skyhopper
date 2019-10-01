@@ -9,7 +9,7 @@
 class ResourceStatus < ApplicationRecord
   belongs_to :resource
 
-  enum value:  %i[success failed pending un_executed inprogress]
+  enum content:  %i[success failed pending un_executed inprogress]
   enum kind:   %i[servertest cook yum ansible]
 
   kinds.each do |k, v|

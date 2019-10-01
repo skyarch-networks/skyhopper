@@ -48,7 +48,7 @@ class Resource < ApplicationRecord
       ResourceStatus.create(
         resource: self,
         kind: k,
-        value: 'un_executed',
+        content: 'un_executed',
       )
     end
   end

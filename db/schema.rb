@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190902023030) do
+ActiveRecord::Schema.define(version: 2019_10_01_021016) do
 
-  create_table "app_settings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "app_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "aws_region", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.boolean "dummy"
   end
 
-  create_table "cf_templates", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "cf_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "infrastructure_id"
     t.string "name"
     t.text "detail"
@@ -34,26 +34,26 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["infrastructure_id"], name: "manage_jsons_infrastructure_id_fk"
   end
 
-  create_table "clients", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "clients", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "code"
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "cloud_watches", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "cloud_watches", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "dish_servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "dish_servertests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "dish_id", null: false
     t.integer "servertest_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "dishes", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "dishes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "runlist"
     t.text "playbook_roles"
@@ -65,12 +65,12 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.text "detail"
   end
 
-  create_table "ec2_private_keys", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "ec2_private_keys", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "value"
   end
 
-  create_table "infrastructure_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "infrastructure_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "infrastructure_id"
     t.boolean "status"
     t.text "details", limit: 16777215
@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.integer "user_id"
   end
 
-  create_table "infrastructures", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "infrastructures", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "region"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true
   end
 
-  create_table "master_monitorings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "master_monitorings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "item"
     t.string "trigger_expression"
@@ -99,12 +99,12 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["name"], name: "index_master_monitorings_on_name", unique: true
   end
 
-  create_table "monitorings", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "monitorings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "infrastructure_id"
     t.integer "master_monitoring_id"
   end
 
-  create_table "operation_durations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "operation_durations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "resource_id"
     t.datetime "start_date"
     t.datetime "end_date"
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.integer "user_id"
   end
 
-  create_table "project_parameters", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "project_parameters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "project_id", null: false
     t.string "key", null: false
     t.string "value", null: false
@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["project_id"], name: "index_project_parameters_on_project_id"
   end
 
-  create_table "projects", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "projects", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["zabbix_server_id"], name: "index_projects_on_zabbix_server_id"
   end
 
-  create_table "recurring_dates", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "recurring_dates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "operation_duration_id"
     t.integer "repeats"
     t.time "start_time"
@@ -146,22 +146,22 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.text "dates"
   end
 
-  create_table "resource_servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "resource_servertests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "resource_id", null: false
     t.integer "servertest_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "resource_statuses", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "resource_statuses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "resource_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "value", null: false
+    t.integer "content", null: false
     t.integer "kind", null: false
   end
 
-  create_table "resources", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "resources", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "physical_id", null: false
     t.string "type_name", null: false
     t.integer "infrastructure_id", null: false
@@ -175,7 +175,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["physical_id"], name: "index_resources_on_physical_id", unique: true
   end
 
-  create_table "retention_policies", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "retention_policies", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "resource_id", null: false
     t.integer "max_amount"
     t.datetime "created_at", null: false
@@ -183,7 +183,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["resource_id"], name: "index_retention_policies_on_resource_id", unique: true
   end
 
-  create_table "schedules", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "schedules", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.boolean "enabled", default: false, null: false
     t.integer "frequency"
     t.integer "day_of_week"
@@ -195,14 +195,14 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.string "volume_id"
   end
 
-  create_table "servertest_result_details", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "servertest_result_details", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "servertest_id"
     t.integer "servertest_result_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "servertest_results", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "servertest_results", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "resource_id"
     t.boolean "auto_generated_servertest"
     t.integer "status"
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.text "message"
   end
 
-  create_table "servertests", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "servertests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "infrastructure_id"
     t.string "name", null: false
     t.text "value", null: false
@@ -221,21 +221,21 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.integer "category"
   end
 
-  create_table "user_projects", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "user_projects", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "project_id", null: false
     t.index ["project_id"], name: "user_projects_project_id_fk"
     t.index ["user_id", "project_id"], name: "index_user_projects_on_user_id_and_project_id", unique: true
   end
 
-  create_table "user_zabbix_servers", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "user_zabbix_servers", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "zabbix_server_id", null: false
     t.index ["user_id"], name: "user_zabbix_servers_zabbix_server_id_fk"
     t.index ["zabbix_server_id", "user_id"], name: "index_user_zabbix_servers_on_user_id_and_zabbix_server_id", unique: true
   end
 
-  create_table "users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -255,7 +255,7 @@ ActiveRecord::Schema.define(version: 20190902023030) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "zabbix_servers", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
+  create_table "zabbix_servers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "fqdn"
     t.string "username"
     t.string "password"

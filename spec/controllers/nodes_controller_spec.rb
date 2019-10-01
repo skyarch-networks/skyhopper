@@ -230,8 +230,8 @@ describe NodesController, type: :controller do
       end
 
       it 'should update ansible and servertest status' do
-        expect(resource.status.ansible.value).to eq 'un_executed'
-        expect(resource.status.servertest.value).to eq 'un_executed'
+        expect(resource.status.ansible.content).to eq 'un_executed'
+        expect(resource.status.servertest.content).to eq 'un_executed'
       end
 
       it 'resource should have playbook_roles JSON' do
