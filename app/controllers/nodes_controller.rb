@@ -59,10 +59,9 @@ class NodesController < ApplicationController
 
     @info = {}
     status = resource.status
-    @info[:cook_status] = status.cook
-    @info[:ansible_status] = status.ansible
-    @info[:servertest_status] = status.servertest
-    @info[:update_status]     = status.yum
+    @info[:ansible_status] = status.ansible.to_hash_for_api
+    @info[:servertest_status] = status.servertest.to_hash_for_api
+    @info[:update_status]     = status.yum.to_hash_for_api
 
     @dishes = Dish.valid_dishes(@infra.project_id)
 

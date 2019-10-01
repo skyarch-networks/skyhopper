@@ -59,9 +59,9 @@ describe NodesController, type: :controller do
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:ansible_status]).to eq ansible_status
-        expect(assigns[:info][:servertest_status]).to eq servertest_status
-        expect(assigns[:info][:update_status]).to eq yum_status
+        expect(assigns[:info][:ansible_status]).to eq ansible_status.to_hash_for_api
+        expect(assigns[:info][:servertest_status]).to eq servertest_status.to_hash_for_api
+        expect(assigns[:info][:update_status]).to eq yum_status.to_hash_for_api
       end
 
       it 'should assigns @dishes' do

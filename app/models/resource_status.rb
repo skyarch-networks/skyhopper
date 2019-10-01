@@ -15,4 +15,8 @@ class ResourceStatus < ApplicationRecord
   kinds.each do |k, v|
     scope k, -> { find_by(kind: v) }
   end
+
+  def to_hash_for_api
+    attributes.transform_keys { |k| if k == 'content' then 'value' else k end }
+  end
 end
