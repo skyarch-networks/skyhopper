@@ -1,5 +1,5 @@
 # Ansible機能の使い方
-<project-root>/ansible/roles配下にお好きなAnsibleロールを配置してください。  
+`<project-root>/ansible/roles`配下にお好きなAnsibleロールを配置してください。  
 ロールは入れ子にすることができます。  
 ここでは、`sky-touch`という名前のロールを作成して、EC2インスタンスに適用する例を説明します。  
 `sky-touch`ロールの中身は、パラメータで渡されたパスにtouchをするという内容になります。  
@@ -28,7 +28,7 @@
             └── main.yml
     ```
 
-## Ansibleロールの選択
+## playbookにAnsibleロールを選択
 1. インフラストラクチャ一覧画面から、スタックを選択し、Ansibleを適用したいEC2インスタンスを表示します。  
     EC2インスタンスが起動していない場合は、起動させてください。
 
@@ -40,7 +40,7 @@
     `Ansible role`に表示されているロールを選択し`+`ボタンを押下することで、`playbook roles`に追加することができます。  
     例では`playbook roles`に`sky-touch`を設定します。
 
-1. `extra-vars`に渡したいパラメータをJSONで指定します。
+1. `extra-vars`に渡したいパラメータをJSONで指定します。  
     例では、下記を設定してください。(`touch_file_path`に`/hello-world.txt`を設定する内容となります。)
     ```json
     {"touch_file_path": "/hello-world.txt"}
