@@ -253,31 +253,11 @@ production:
 
 ## DB のセットアップ
 
-### データベースの作成
-
 ```sh
 # development
-$ bundle exec rails db:create
+$ bundle exec rails db:setup
 # production
-$ bundle exec rails db:create RAILS_ENV=production
-```
-
-### テーブルの作成
-
-```sh
-# development
-$ bundle exec rails db:migrate
-# production
-$ bundle exec rails db:migrate RAILS_ENV=production
-```
-
-### 初期データの挿入
-
-```sh
-# development
-$ bundle exec rails db:seed
-# production
-$ bundle exec rails db:seed RAILS_ENV=production
+$ bundle exec rails db:setup RAILS_ENV=production
 ```
 
 ## ホームディレクトリのパーミッションを変更

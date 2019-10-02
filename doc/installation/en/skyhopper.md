@@ -254,31 +254,11 @@ production:
 
 ## Database Setup
 
-### Creating database using rails
-
 ```sh
 # development
-$ bundle exec rails db:create
+$ bundle exec rails db:setup
 # production
-$ bundle exec rails db:create RAILS_ENV=production
-```
-
-### Creating tables using rails
-
-```sh
-# development
-$ bundle exec rails db:migrate
-# production
-$ bundle exec rails db:migrate RAILS_ENV=production
-```
-
-### creating initial data using rails
-
-```sh
-# development
-$ bundle exec rails db:seed
-# production
-$ bundle exec rails db:seed RAILS_ENV=production
+$ bundle exec rails db:setup RAILS_ENV=production
 ```
 
 ## Change permission of home directory
