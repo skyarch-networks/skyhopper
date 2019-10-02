@@ -1,4 +1,4 @@
-class CreateProjectParameterTable < ActiveRecord::Migration
+class CreateProjectParameterTable < ActiveRecord::Migration[4.2]
   def change
     create_table :project_parameters do |t|
       t.references :project, index: true, foreign_key: true, null: false

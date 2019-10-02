@@ -15,7 +15,7 @@ SkyHopper::Application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => 'public, max-age=3600',
+    'Cache-Control' => "public, max-age=#{1.hour.to_i}"
   }
 
   # Show full error reports and disable caching.
@@ -27,6 +27,10 @@ SkyHopper::Application.configure do
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+
+  # Store uploaded files on the local file system in a temporary directory
+  config.active_storage.service = :test
+
   config.action_mailer.perform_caching = false
 
   # Tell Action Mailer not to deliver emails to the real world.
@@ -43,4 +47,6 @@ SkyHopper::Application.configure do
   config.logger = Logger.new('log/test.log', 5, 10.megabyte)
   config.log_level = :error
   config.cache_store = :memory_store, { size: 64.megabytes }
+
+  config.active_record.sqlite3.represent_boolean_as_integer = true
 end

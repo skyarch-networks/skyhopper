@@ -1,4 +1,4 @@
-class ResourceStatusKindEnum < ActiveRecord::Migration
+class ResourceStatusKindEnum < ActiveRecord::Migration[4.2]
   StatusTable = {
     'Success'    => 0,
     'Failed'     => 1,

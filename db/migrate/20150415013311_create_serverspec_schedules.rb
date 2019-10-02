@@ -1,4 +1,4 @@
-class CreateServerspecSchedules < ActiveRecord::Migration
+class CreateServerspecSchedules < ActiveRecord::Migration[4.2]
   def change
     create_table :serverspec_schedules do |t|
       t.boolean :enabled     , null: false, default: false

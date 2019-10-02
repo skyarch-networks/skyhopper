@@ -1,4 +1,4 @@
-class CreateSystemSettings < ActiveRecord::Migration
+class CreateSystemSettings < ActiveRecord::Migration[4.2]
   def change
     create_table :system_settings do |t|
       t.string :chef_url

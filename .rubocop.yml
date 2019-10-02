@@ -1,5 +1,6 @@
 AllCops:
   Exclude:
+    - 'config/environments/*.rb'
     - 'vendor/**/*'
     - 'spec/factories.rb'
     - 'db/migrate/*.rb'

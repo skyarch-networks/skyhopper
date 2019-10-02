@@ -1,4 +1,4 @@
-class CreateOperationDurations < ActiveRecord::Migration
+class CreateOperationDurations < ActiveRecord::Migration[4.2]
   def change
     create_table :operation_durations do |t|
       t.integer :resource_id

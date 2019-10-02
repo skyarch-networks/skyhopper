@@ -1,4 +1,4 @@
-class SetEc2PrivateKeys < ActiveRecord::Migration
+class SetEc2PrivateKeys < ActiveRecord::Migration[4.2]
   def change
     return nil if AppSetting.count.zero?
 

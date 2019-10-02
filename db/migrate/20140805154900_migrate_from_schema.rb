@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-class MigrateFromSchema < ActiveRecord::Migration
+class MigrateFromSchema < ActiveRecord::Migration[4.2]
 
   create_table "clients", force: true do |t|
     t.string   "code"

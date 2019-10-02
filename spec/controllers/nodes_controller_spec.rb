@@ -59,9 +59,9 @@ describe NodesController, type: :controller do
 
       it 'should assigns @info' do
         expect(assigns[:info]).to be_a Hash
-        expect(assigns[:info][:ansible_status]).to eq ansible_status
-        expect(assigns[:info][:servertest_status]).to eq servertest_status
-        expect(assigns[:info][:update_status]).to eq yum_status
+        expect(assigns[:info][:ansible_status]).to eq ansible_status.to_hash_for_api
+        expect(assigns[:info][:servertest_status]).to eq servertest_status.to_hash_for_api
+        expect(assigns[:info][:update_status]).to eq yum_status.to_hash_for_api
       end
 
       it 'should assigns @dishes' do
@@ -230,8 +230,8 @@ describe NodesController, type: :controller do
       end
 
       it 'should update ansible and servertest status' do
-        expect(resource.status.ansible.value).to eq 'un_executed'
-        expect(resource.status.servertest.value).to eq 'un_executed'
+        expect(resource.status.ansible.content).to eq 'un_executed'
+        expect(resource.status.servertest.content).to eq 'un_executed'
       end
 
       it 'resource should have playbook_roles JSON' do

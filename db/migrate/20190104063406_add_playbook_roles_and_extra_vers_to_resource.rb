@@ -1,4 +1,4 @@
-class AddPlaybookRolesAndExtraVersToResource < ActiveRecord::Migration
+class AddPlaybookRolesAndExtraVersToResource < ActiveRecord::Migration[4.2]
   def change
     add_column :resources, :playbook_roles, :text, after: :dish_id
     add_column :resources, :extra_vars, :text, after: :playbook_roles

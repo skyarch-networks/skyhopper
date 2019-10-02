@@ -101,7 +101,7 @@ class Node
     # create result
     result = generate_result(out)
     resource_status = result[:status_text] == 'error' ? 'failed' : result[:status_text]
-    Resource.find_by(physical_id: @name).status.servertest.update(value: resource_status)
+    Resource.find_by(physical_id: @name).status.servertest.update(content: resource_status)
 
     result[:error_servertest_names] = get_error_servertest_names(result, run_spec_list)
 

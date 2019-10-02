@@ -1,4 +1,4 @@
-class AppSettingNullFalse < ActiveRecord::Migration
+class AppSettingNullFalse < ActiveRecord::Migration[4.2]
   def up
     _change_null(false)
   end

@@ -1,4 +1,4 @@
-class CreateResourceStatuses < ActiveRecord::Migration
+class CreateResourceStatuses < ActiveRecord::Migration[4.2]
   def change
     create_table :resource_statuses do |t|
       t.integer :resource_id

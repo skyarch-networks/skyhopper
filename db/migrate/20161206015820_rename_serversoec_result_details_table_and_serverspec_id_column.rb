@@ -1,4 +1,4 @@
-class RenameServersoecResultDetailsTableAndServerspecIdColumn < ActiveRecord::Migration
+class RenameServersoecResultDetailsTableAndServerspecIdColumn < ActiveRecord::Migration[4.2]
   def change
     rename_column :serverspec_result_details, :serverspec_id, :servertest_id
     rename_column :serverspec_result_details, :serverspec_result_id, :servertest_result_id

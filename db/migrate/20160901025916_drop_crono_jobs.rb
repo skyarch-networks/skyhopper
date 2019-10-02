@@ -1,4 +1,4 @@
-class DropCronoJobs < ActiveRecord::Migration
+class DropCronoJobs < ActiveRecord::Migration[4.2]
   def change
     drop_table :crono_jobs do |t|
       t.string    :job_id, null: false

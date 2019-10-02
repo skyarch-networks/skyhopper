@@ -281,14 +281,14 @@ describe CfTemplatesController, type: :controller do
     context 'when status true' do
       let(:status) { 'status' }
       it 'should be success' do
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     context 'when status false' do
       let(:status) { nil }
       it 'should not be success' do
-        expect(response).not_to be_success
+        expect(response).not_to be_successful
       end
     end
   end
