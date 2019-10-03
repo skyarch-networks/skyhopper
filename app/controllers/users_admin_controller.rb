@@ -191,7 +191,7 @@ class UsersAdminController < ApplicationController
     # delete user from SkyHopper
     @user.destroy
 
-    ws_send(t('users.msg.deleted', name: @user.email), true)
+    flash[:notice] = t('users.msg.deleted', name: @user.email)
     redirect_to(action: :index)
   end
 

@@ -39,17 +39,14 @@ const demoGrid = require('./demo-grid.js');
         },
 
         delete_entry() {
-          const self = this;
-          modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(() => {
+          modal.Confirm(t('users.user'), t('users.msg.delete_user', this.email), 'danger').done(() => {
             $.ajax({
               type: 'POST',
-              url: self.picked.users_admin_path,
+              url: this.picked.users_admin_path,
               dataType: 'json',
               data: { _method: 'delete' },
-              success(data) {
-                self.gridData = data;
-                self.picked = {};
-              },
+            }).done(() => {
+              window.location.reload();
             }).fail(() => {
               window.location.reload();
             });
