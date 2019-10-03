@@ -170,6 +170,12 @@ class UsersAdminController < ApplicationController
   # DELETE /users_admin/1
   def destroy
     @user = User.find(params.require(:id))
+
+    if @user == current_user
+      flash[:alert] = t('users.msg.cannot_delete_yourself')
+      raise 'Cannot delete yourself'
+    end
+
     # delete user from zabbix
     servers = ZabbixServer.all
     begin

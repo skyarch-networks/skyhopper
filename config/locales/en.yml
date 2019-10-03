@@ -579,6 +579,7 @@ en:
       use_stop_mfa:          'If save changes, use stop MFA.'
       delete_user:           'Are you sure you want to delete this User?'
       error:                 'An error occured while processing Zabbix: "%{msg}"'
+      cannot_delete_yourself: 'Cannot delete yourself'
 
 
   system_servers:
