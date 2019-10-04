@@ -177,9 +177,8 @@ class UsersAdminController < ApplicationController
     end
 
     # delete user from zabbix
-    servers = ZabbixServer.all
     begin
-      servers.each do |s|
+      @user.zabbix_servers.each do |s|
         z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
         z.delete_user(@user.email)
       end
