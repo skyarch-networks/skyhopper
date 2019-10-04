@@ -170,10 +170,15 @@ class UsersAdminController < ApplicationController
   # DELETE /users_admin/1
   def destroy
     @user = User.find(params.require(:id))
+
+    if @user == current_user
+      flash[:alert] = t('users.msg.cannot_delete_yourself')
+      raise 'Cannot delete yourself'
+    end
+
     # delete user from zabbix
-    servers = ZabbixServer.all
     begin
-      servers.each do |s|
+      @user.zabbix_servers.each do |s|
         z = Zabbix.new(s.fqdn, current_user.email, current_user.encrypted_password)
         z.delete_user(@user.email)
       end
@@ -185,7 +190,7 @@ class UsersAdminController < ApplicationController
     # delete user from SkyHopper
     @user.destroy
 
-    ws_send(t('users.msg.deleted', name: @user.email), true)
+    flash[:notice] = t('users.msg.deleted', name: @user.email)
     redirect_to(action: :index)
   end
 
