@@ -12,7 +12,7 @@ describe ServerState, type: :model do
   servers = %w[zabbix]
 
   let(:server) { double('@server') }
-  before(:all) do
+  before do
     unless Client.for_system
       c = create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
     end
@@ -22,8 +22,7 @@ describe ServerState, type: :model do
       i = create(:infrastructure, project: p)
       create(:ec2_resource, infrastructure: i)
     end
-  end
-  before do
+
     allow_any_instance_of(Infrastructure).to receive(:instance).and_return server
   end
 
