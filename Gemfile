@@ -92,8 +92,6 @@ group :development, :test do
   gem 'coveralls', require: false
   gem 'named_let'
 
-  gem 'sqlite3', '~> 1.3.13'
-
   # document
   gem 'railroady'
   gem 'autodoc'
