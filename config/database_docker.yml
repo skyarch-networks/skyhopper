@@ -17,21 +17,11 @@ default: &default
   password:
   socket: /var/lib/mysql/mysql.sock
 
-default_sqlite3: &default_sqlite3
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  encoding: utf-8
-
 development:
   <<: *default
   database: SkyHopperDevelopment
   host: mysql
   password: please-set-random-password
-
-# development:
-#   <<: *default_sqlite3
-#   database: db/development.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -41,8 +31,10 @@ development:
 #   database: SkyHopperTest
 
 test:
-  <<: *default_sqlite3
-  database: db/test.sqlite3
+  <<: *default
+  database: SkyHopperTest
+  host: mysql
+  password: please-set-random-password
 
 
 # As with config/secrets.yml, you never want to store sensitive information,
