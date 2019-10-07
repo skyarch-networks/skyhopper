@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "karma start --single-run",
-    "postinstall": "npm run build-jquery-ui",
+    "postinstall": "yarn run build-jquery-ui",
     "build-jquery-ui": "cd node_modules/jquery-ui ; npm i && npx grunt concat ; cd ../.."
   },
   "dependencies": {
@@ -33,7 +33,6 @@
     "jquery-ui": "jquery/jquery-ui#~1.11.4",
     "jquery-ujs": "~1.0.4",
     "jszip": "^3.0.0",
-    "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "moment": "~2.22.2",
     "noty": "~2.3.5",
