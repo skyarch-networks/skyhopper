@@ -14,6 +14,8 @@ cache:
 bundler_args: --jobs=4 --retry=3 --deployment
 sudo: false
 
+services:
+  - mysql
 
 branches:
   except: /^no-ci-.*$/
@@ -27,7 +29,7 @@ before_script:
   - echo 'module.exports = {"dummy":{"normal":"dummy","bold":"dummy","italics":"dummy","bolditalics":"dummy"}};' > frontend/fonts/fonts_map.js
   - cp .travis/database.yml config/database.yml
   - touch log/test.log
-  - bundle exec rails db:migrate:reset
+  - bundle exec rails db:setup
 
 
 script:
