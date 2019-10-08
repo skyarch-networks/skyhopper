@@ -19,7 +19,6 @@
 //= require jquery.noty.packaged.min
 //= require vue
 //= require vue-router.min
-//= require lodash
 //= require moment-with-locales.min
 //= require bootstrap-datetimepicker
 //= require fullcalendar
