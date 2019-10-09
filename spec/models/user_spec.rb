@@ -10,11 +10,11 @@ require_relative '../spec_helper'
 
 describe User, type: :model do
   let(:klass) { User }
-  let(:user) { build_stubbed(:user, master: false) }
+  let(:user) { create(:user, master: false) }
 
   describe '#allow?' do
     context 'when receive project' do
-      let(:project) { build_stubbed(:project) }
+      let(:project) { create(:project) }
       subject { user.allow?(project) }
 
       context 'when not allow' do
@@ -35,7 +35,7 @@ describe User, type: :model do
     end
 
     context 'when receive infra' do
-      let(:infra) { build_stubbed(:infrastructure) }
+      let(:infra) { create(:infrastructure) }
       subject { user.allow?(infra) }
 
       context 'when not allow' do
@@ -57,7 +57,7 @@ describe User, type: :model do
   end
 
   describe '#create_project' do
-    let(:client) { build_stubbed(:client) }
+    let(:client) { create(:client) }
 
     subject { user.create_project(client) }
 
