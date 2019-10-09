@@ -11,10 +11,10 @@ require_relative '../spec_helper'
 describe DishPolicy do
   subject { described_class }
 
-  let(:master_admin) { build_stubbed(:user, master: true, admin: true) }
-  let(:master) {      build_stubbed(:user, master: true,  admin: false) }
-  let(:admin) {       build_stubbed(:user, master: false, admin: true) }
-  let(:normal) {      build_stubbed(:user, master: false, admin: false) }
+  let(:master_admin) { create(:user, master: true, admin: true) }
+  let(:master) { create(:user, master: true,  admin: false) }
+  let(:admin) { create(:user, master: false, admin: true) }
+  let(:normal) { create(:user, master: false, admin: false) }
 
   let(:dish_without_project) { create(:dish, project: nil) }
   let(:dish_with_project) { create(:dish, project: create(:project)) }
