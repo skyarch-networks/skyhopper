@@ -47,7 +47,7 @@ describe Infrastructure, type: :model do
       AppSetting.clear_cache
     end
 
-    let(:project) { build_stubbed(:project) }
+    let(:project) { create(:project) }
     subject { Infrastructure.create_for_test(project.id, 'DISH_NAME') }
 
     it { is_expected.to be_a Infrastructure }

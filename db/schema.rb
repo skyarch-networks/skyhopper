@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2019_10_01_021016) do
     t.string "log_directory", null: false
     t.integer "ec2_private_key_id"
     t.boolean "dummy"
+    t.index ["ec2_private_key_id"], name: "fk_rails_cab00b44e4"
   end
 
   create_table "cf_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -87,6 +88,7 @@ ActiveRecord::Schema.define(version: 2019_10_01_021016) do
     t.string "stack_name"
     t.integer "project_id"
     t.integer "ec2_private_key_id"
+    t.index ["ec2_private_key_id"], name: "fk_rails_0e13016c7c"
     t.index ["project_id"], name: "infrastructures_project_id_fk"
     t.index ["stack_name", "region"], name: "index_infrastructures_on_stack_name_and_region_and_apikey", unique: true
   end
@@ -265,4 +267,15 @@ ActiveRecord::Schema.define(version: 2019_10_01_021016) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "app_settings", "ec2_private_keys", on_delete: :cascade
+  add_foreign_key "cf_templates", "infrastructures", on_delete: :cascade
+  add_foreign_key "infrastructures", "ec2_private_keys", on_delete: :cascade
+  add_foreign_key "infrastructures", "projects", on_delete: :cascade
+  add_foreign_key "project_parameters", "projects"
+  add_foreign_key "projects", "clients", on_delete: :cascade
+  add_foreign_key "projects", "zabbix_servers"
+  add_foreign_key "user_projects", "projects", on_delete: :cascade
+  add_foreign_key "user_projects", "users", on_delete: :cascade
+  add_foreign_key "user_zabbix_servers", "users", on_delete: :cascade
+  add_foreign_key "user_zabbix_servers", "zabbix_servers", on_delete: :cascade
 end
