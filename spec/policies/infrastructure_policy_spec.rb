@@ -12,7 +12,7 @@ describe InfrastructurePolicy do
   subject { described_class }
 
   let(:master_admin) { create(:user, master: true, admin: true) }
-  let(:master) { create(:user, master: true,  admin: false) }
+  let(:master) { create(:user, master: true, admin: false) }
   let(:admin) { create(:user, master: false, admin: true) }
   let(:normal) { create(:user, master: false, admin: false) }
 
