@@ -10,28 +10,28 @@ require_relative '../../spec_helper.rb'
 
 describe Users::SessionsController do
   describe '#check_mfa_key' do
-    let(:user){create(:user, mfa_secret_key: ROTP::Base32.random_base32)}
-    let(:email){user.email}
-    let(:password){user.password}
-    let(:mfa_token){nil}
-    let(:req){post :create, user: {email: email, password: password, mfa_token: mfa_token}}
+    let(:user) { create(:user, mfa_secret_key: ROTP::Base32.random_base32) }
+    let(:email) { user.email }
+    let(:password) { user.password }
+    let(:mfa_token) { nil }
+    let(:req) { post :create, params: { user: { email: email, password: password, mfa_token: mfa_token }.compact } }
 
     before do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
     # Mock
     controller Users::SessionsController do
       def create
-        render text: 'success create'
+        render plain: 'success create'
       end
     end
 
     context 'when user not found' do
-      let(:email){"#{SecureRandom.hex(20)}@example.com"}
-      before{req}
+      let(:email) { "#{SecureRandom.hex(20)}@example.com" }
+      before { req }
 
-      it {is_expected.to redirect_to new_user_session_path}
+      it { is_expected.to redirect_to new_user_session_path }
 
       it 'should set alert' do
         expect(request.flash[:alert]).to eq I18n.t('devise.failure.not_found_in_database')
@@ -53,10 +53,10 @@ describe Users::SessionsController do
 
     context 'when not receive MFA token' do
       context 'when password is invalid' do
-        let(:password){SecureRandom.hex(20)}
-        before{req}
+        let(:password) { SecureRandom.hex(20) }
+        before { req }
 
-        it {is_expected.to redirect_to new_user_session_path}
+        it { is_expected.to redirect_to new_user_session_path }
 
         it 'should set alert' do
           expect(request.flash[:alert]).to eq I18n.t('devise.failure.invalid')
@@ -64,7 +64,7 @@ describe Users::SessionsController do
       end
 
       context 'when password is valid' do
-        before{req}
+        before { req }
 
         should_be_success
 
@@ -77,14 +77,14 @@ describe Users::SessionsController do
           expect(assigns[:password]).to eq password
         end
 
-        it {is_expected.to render_template :mfa}
+        it { is_expected.to render_template :mfa }
       end
     end
 
     context 'when receive email, password and MFA-token' do
       context 'when verify success' do
-        let(:mfa_token){ROTP::TOTP.new(user.mfa_secret_key).now}
-        before{req}
+        let(:mfa_token) { ROTP::TOTP.new(user.mfa_secret_key).now }
+        before { req }
 
         should_be_success
         it 'should do action create' do
@@ -93,10 +93,10 @@ describe Users::SessionsController do
       end
 
       context 'when verify failure' do
-        let(:mfa_token){rand(1000000).to_s}
-        before{req}
+        let(:mfa_token) { rand(1_000_000).to_s }
+        before { req }
 
-        it {is_expected.to redirect_to new_user_session_path}
+        it { is_expected.to redirect_to new_user_session_path }
         it 'should set alert' do
           expect(request.flash[:alert]).to eq I18n.t('users.msg.mfa_failure')
         end

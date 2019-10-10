@@ -28,11 +28,11 @@ $ sudo gem install bundler
 ```sh
 $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 $ . ~/.nvm/nvm.sh
-$ nvm install stable
+$ nvm install --lts=dubnium
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v10.12.0 # any current stable version release
+v10.X.X # any current stable version release
 ```
 
 ## Installing Yarn
@@ -170,6 +170,7 @@ $ mysql -uroot
 mysql> CREATE USER 'skyhopper_dev'@'localhost' IDENTIFIED BY 'hogehoge';
 mysql> GRANT CREATE, SHOW DATABASES ON *.* TO 'skyhopper_dev'@'localhost';
 mysql> GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `SkyHopperDevelopment`.* TO 'skyhopper_dev'@'localhost';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `SkyHopperTest`.* TO 'skyhopper_dev'@'localhost';
 mysql> exit
 ```
 
@@ -254,31 +255,11 @@ production:
 
 ## Database Setup
 
-### Creating database using rake
-
 ```sh
 # development
-$ bundle exec rake db:create
+$ bundle exec rails db:setup
 # production
-$ bundle exec rake db:create RAILS_ENV=production
-```
-
-### Creating tables using rake
-
-```sh
-# development
-$ bundle exec rake db:migrate
-# production
-$ bundle exec rake db:migrate RAILS_ENV=production
-```
-
-### creating initial data using rake
-
-```sh
-# development
-$ bundle exec rake db:seed
-# production
-$ bundle exec rake db:seed RAILS_ENV=production
+$ bundle exec rails db:setup RAILS_ENV=production
 ```
 
 ## Change permission of home directory
@@ -302,9 +283,9 @@ $ ./scripts/skyhopper_daemon.sh start
 ### [Note] Make sure to run this script first before starting Skyhopper in Development
 ```sh
 # for generating i18n-js dictionary
-$ bundle exec rake i18n:js:export
+$ bundle exec rails i18n:js:export
 # for Precompiling assets
-$ bundle exec rake assets:precompile
+$ bundle exec rails assets:precompile
 ```
 
 

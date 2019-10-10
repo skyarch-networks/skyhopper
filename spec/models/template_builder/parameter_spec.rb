@@ -9,22 +9,22 @@
 require_relative '../../spec_helper'
 
 describe TemplateBuilder::Parameter, type: :model do
-  let(:string_prop){double(:string_prop, can_parameterize?: true, data_type: String)}
-  let(:array_prop) {double(:array_prop,  can_parameterize?: true, data_type: Array)}
-  let(:cannt_parameterize_prop){double(:cannt_parameterize_prop, can_parameterize?: false)}
+  let(:string_prop) { double(:string_prop, can_parameterize?: true, data_type: String) }
+  let(:array_prop) { double(:array_prop,  can_parameterize?: true, data_type: Array) }
+  let(:cannt_parameterize_prop) { double(:cannt_parameterize_prop, can_parameterize?: false) }
 
-  let(:klass){TemplateBuilder::Parameter}
+  let(:klass) { TemplateBuilder::Parameter }
 
   describe '#initialize' do
     context 'when invalid arg' do
       it do
-        expect{klass.new('foo', cannt_parameterize_prop)}.to raise_error TemplateBuilder::Parameter::InvalidDataType
+        expect { klass.new('foo', cannt_parameterize_prop) }.to raise_error TemplateBuilder::Parameter::InvalidDataType
       end
     end
 
     context 'when data_type is String' do
-      let(:name){'foo'}
-      subject{klass.new(name, string_prop)}
+      let(:name) { 'foo' }
+      subject { klass.new(name, string_prop) }
       it 'should set @type' do
         expect(subject.instance_variable_get(:@type)).to eq 'String'
       end
@@ -37,8 +37,8 @@ describe TemplateBuilder::Parameter, type: :model do
     end
 
     context 'when data_type is Array' do
-      let(:name){'bar'}
-      subject{klass.new(name, array_prop)}
+      let(:name) { 'bar' }
+      subject { klass.new(name, array_prop) }
       it 'should set @type' do
         expect(subject.instance_variable_get(:@type)).to eq 'CommaDelimitedList'
       end
@@ -52,9 +52,9 @@ describe TemplateBuilder::Parameter, type: :model do
   end
 
   describe '#build' do
-    let(:name){'hoge'}
+    let(:name) { 'hoge' }
     context 'when data_type is String' do
-      subject{klass.new(name, string_prop)}
+      subject { klass.new(name, string_prop) }
 
       it 'should return Hash' do
         expect(subject).to receive(:build_for_string).with(any_args)
@@ -63,7 +63,7 @@ describe TemplateBuilder::Parameter, type: :model do
     end
 
     context 'when data_type is Array' do
-      subject{klass.new(name, array_prop)}
+      subject { klass.new(name, array_prop) }
 
       it 'should return Hash' do
         expect(subject).to receive(:build_for_array).with(any_args)

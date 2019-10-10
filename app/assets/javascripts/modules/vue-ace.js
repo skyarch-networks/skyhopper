@@ -1,5 +1,3 @@
-const ace = require('brace');
-
 // `install` function is copied and modified from github.com/skyarch-networks/skyhopper
 //
 // Copyright (c) 2015 SKYARCH NETWORKS INC.
@@ -8,6 +6,8 @@ const ace = require('brace');
 //
 // http://opensource.org/licenses/mit-license.php
 //
+const ace = require('brace');
+
 exports.install = (Vue, options, mode, lines) => {
   Vue.directive('ace', {
     twoWay: true,
@@ -18,12 +18,10 @@ exports.install = (Vue, options, mode, lines) => {
       this.editor.getSession().setUseWrapMode(true);
       this.editor.$blockScrolling = Infinity;
 
-      if (!lines) {
-        lines = Infinity;
-      }
+      const setLine = lines || Infinity;
 
       this.editor.setOptions({
-        maxLines: lines,
+        maxLines: setLine,
         minLines: 15,
       });
 
@@ -44,7 +42,7 @@ exports.install = (Vue, options, mode, lines) => {
       };
       this.editor.on('change', this.handler);
     },
-    update(value, oldValue) {
+    update(value) {
       this.silent = true;
       this.editor.getSession().setValue(value);
       this.silent = false;

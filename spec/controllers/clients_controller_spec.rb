@@ -13,18 +13,18 @@ describe ClientsController, type: :controller do
   let(:client_codename) { attributes_for(:client, code: 'hoge', name: 'fuga') }
 
   describe '#index' do
-    before {get :index}
+    before { get :index }
 
     context 'when index accessed' do
       it 'should assign clients' do
-        expect(assigns(:clients)).to be_all{|client|client.kind_of? Client}
+        expect(assigns(:clients)).to(be_all { |client| client.is_a? Client })
       end
     end
   end
 
   describe 'GET #new' do
     context 'when accessed' do
-      before {get :new}
+      before { get :new }
 
       it '@client should have a new object' do
         expect(assigns(:client)).to be_a_new(Client)
@@ -34,10 +34,10 @@ describe ClientsController, type: :controller do
         expect(response).to render_template :new
       end
     end
-  end # end of describe get #new
+  end
 
   describe 'POST #create' do
-    let(:request) {post :create, client: client_codename}
+    let(:request) { post :create, params: { client: client_codename } }
 
     context 'when valid params' do
       it 'should create a new client and save' do
@@ -75,11 +75,11 @@ describe ClientsController, type: :controller do
         expect(request.request.flash[:alert]).to_not be_nil
       end
     end
-  end # end of describe post #create
+  end
 
   describe 'PATCH #update' do
     let(:client) { create(:client) }
-    let(:update_request) {patch :update, id: client.id, client: client_codename}
+    let(:update_request) { patch :update, params: { id: client.id, client: client_codename } }
 
     context 'when valid params' do
       it 'should update code and name' do
@@ -103,8 +103,8 @@ describe ClientsController, type: :controller do
       it 'code and name should not have been changed' do
         update_request
         c = Client.find(client.id)
-        expect(c.code).not_to eq("hoge")
-        expect(c.name).not_to eq("fuga")
+        expect(c.code).not_to eq('hoge')
+        expect(c.name).not_to eq('fuga')
       end
 
       it 'should render edit' do
@@ -112,17 +112,17 @@ describe ClientsController, type: :controller do
         expect(response).to render_template :edit
       end
     end
-  end # end of describe patch #update
+  end
 
   describe '#destroy' do
     let(:client) { create(:client) }
-    let(:request) {delete :destroy, id: client.id}
+    let(:request) { delete :destroy, params: { id: client.id } }
 
     stubize_zabbix
     run_zabbix_server
 
     context 'when destroy success' do
-      before{request}
+      before { request }
 
       it 'client should be deleted' do
         expect(Client).not_to be_exists(id: client.id)
@@ -134,9 +134,9 @@ describe ClientsController, type: :controller do
     end
 
     context 'when destroy fail' do
-      let(:err_msg){'errorerrorerror'}
-      before{allow_any_instance_of(Client).to receive(:destroy!).and_raise(StandardError, err_msg)}
-      before{request}
+      let(:err_msg) { 'errorerrorerror' }
+      before { allow_any_instance_of(Client).to receive(:destroy!).and_raise(StandardError, err_msg) }
+      before { request }
 
       it 'client should be exist' do
         expect(Client).to be_exists(id: client.id)
@@ -156,15 +156,15 @@ describe ClientsController, type: :controller do
     controller ClientsController do
       before_action :client_exist
       def index
-        render text: 'success!'
+        render plain: 'success!'
       end
     end
-    let(:req){get :index, id: client.id}
-    let(:client){create(:client)}
+    let(:req) { get :index, params: { id: client.id } }
+    let(:client) { create(:client) }
 
     context 'when not have id' do
-      let(:client){double('client', id: nil)}
-      before{req}
+      let(:client) { double('client', id: nil) }
+      before { req }
       should_be_success
     end
 
@@ -173,11 +173,11 @@ describe ClientsController, type: :controller do
         client.delete
         req
       end
-      it {is_expected.to redirect_to clients_path}
+      it { is_expected.to redirect_to clients_path }
     end
 
     context 'when client is exists' do
-      before{req}
+      before { req }
       should_be_success
     end
   end

@@ -23,10 +23,10 @@ class TemplateBuilder::Output
     raise BuildError, 'Description required.' unless @description
     raise BuildError, 'Value required.' unless @value
 
-    return {
+    {
       @name => {
         Description: @description,
-        Value:       @value,
+        Value: @value,
       },
     }
   end

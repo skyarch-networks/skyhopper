@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   belongs_to :client
   belongs_to :zabbix_server
 
@@ -25,46 +25,47 @@ class Project < ActiveRecord::Base
   cryptize :access_key
   cryptize :secret_access_key
 
-  ForDishTestCodeName  = 'DishTest'.freeze
-  ChefServerCodeName   = 'ChefServer'.freeze
-  ZabbixServerCodeName = 'ZabbixServer'.freeze
-
+  FOR_DISH_TEST_CODE_NAME = 'DishTest'.freeze
+  CHEF_SERVER_CODE_NAME   = 'ChefServer'.freeze
+  ZABBIX_SERVER_CODE_NAME = 'ZabbixServer'.freeze
 
   def self.for_test
-    return Client.for_system.projects.find_by(code: ForDishTestCodeName)
+    Client.for_system.projects.find_by(code: FOR_DISH_TEST_CODE_NAME)
   end
 
   def self.for_zabbix_server
-    return Client.for_system.projects.find_by(code: ZabbixServerCodeName)
+    Client.for_system.projects.find_by(code: ZABBIX_SERVER_CODE_NAME)
   end
 
   def self.for_system
-    return Client.for_system.projects
+    Client.for_system.projects
   end
 
   def detach_zabbix
-    if self.zabbix_server_id.nil?
+    if zabbix_server_id.nil?
       return
     end
-    s = ZabbixServer.find(self.zabbix_server_id)
+
+    s = ZabbixServer.find(zabbix_server_id)
     # delete associated host and user group from Zabbix
     z = Zabbix.new(s.fqdn, s.username, s.password)
-    z.delete_hostgroup(self.code)
-    z.delete_usergroup(self.code + '-read')
-    z.delete_usergroup(self.code + '-read-write')
-    return self
+    z.delete_hostgroup(code)
+    z.delete_usergroup(code + '-read')
+    z.delete_usergroup(code + '-read-write')
+    self
   end
 
   def register_hosts(zabbix, user)
     if zabbix.nil?
       return
     end
+
     z = Zabbix.new(zabbix.fqdn, zabbix.username, zabbix.password)
     # add new hostgroup on zabbix with project code as its name
-    if z.get_hostgroup_ids(self.code).empty?
-      hostgroup_id = z.add_hostgroup(self.code)
-      z.create_usergroup(self.code + '-read',       hostgroup_id, Zabbix::PermissionRead)
-      z.create_usergroup(self.code + '-read-write', hostgroup_id, Zabbix::PermissionReadWrite)
+    if z.get_hostgroup_ids(code).empty?
+      hostgroup_id = z.add_hostgroup(code)
+      z.create_usergroup(code + '-read',       hostgroup_id, Zabbix::PERMISSION_READ)
+      z.create_usergroup(code + '-read-write', hostgroup_id, Zabbix::PERMISSION_READ_WRITE)
 
       hostgroup_names = Project.pluck(:code)
       hostgroup_ids = z.get_hostgroup_ids(hostgroup_names)
@@ -77,8 +78,8 @@ class Project < ActiveRecord::Base
 
   def change_zabbix(zabbix_id, user)
     zabbix = ZabbixServer.find(zabbix_id)
-    self.register_hosts(zabbix, user)
+    register_hosts(zabbix, user)
     self.zabbix_server_id = zabbix_id
-    self.save!
+    save!
   end
 end

@@ -20,6 +20,10 @@ RUN amazon-linux-extras install ansible2 && \
   yum clean all && \
   sed -i -e 's/^#retry_files_enabled = False$/retry_files_enabled = False/' /etc/ansible/ansible.cfg
 
+# mysqldump
+RUN yum install -y mysql && \
+  yum clean all
+
 RUN mkdir ~/.ssh && chmod 700 ~/.ssh
 
 WORKDIR /prj/skyhopper

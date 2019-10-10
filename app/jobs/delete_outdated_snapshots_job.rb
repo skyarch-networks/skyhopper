@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class DeleteOutdatedSnapshotsJob < ActiveJob::Base
+class DeleteOutdatedSnapshotsJob < ApplicationJob
   queue_as :default
 
   def perform(volume_id, infra)
@@ -16,13 +16,14 @@ class DeleteOutdatedSnapshotsJob < ActiveJob::Base
 
   def delete_outdated_snapshots(infra, volume_id, policy)
     snapshots = Snapshot.describe(infra, volume_id)
-    snapshots.delete_if { |snapshot|
+    snapshots.delete_if do |snapshot|
       snapshot.tags.key?(Snapshot::PROTECTION_TAG_NAME) &&
         snapshot.tags[Snapshot::PROTECTION_TAG_NAME] != 'false'
-    }
-    snapshots.sort_by! { |snapshot| snapshot.start_time }.reverse!
+    end
+    snapshots.sort_by!(&:start_time).reverse!
     outdated = snapshots[(policy.max_amount)..-1]
     return if outdated.nil?
+
     outdated.each do |snapshot|
       infra.ec2.delete_snapshot(snapshot_id: snapshot.snapshot_id)
     end

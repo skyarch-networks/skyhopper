@@ -1,14 +1,14 @@
-const queryString = require('query-string').parse(location.search);
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
+const queryString = require('query-string').parse(window.location.search);
 const pdfMake = require('pdfmake/build/pdfmake.js');
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const helpers = require('../infrastructures/helper.js');
 const fontsMap = require('../modules/fonts_map.js');
 
 pdfMake.fonts = fontsMap;
 const tableRender = require('../modules/table_render');
-const helpers = require('infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
+const alertSuccess = helpers.alert_success;
 
 module.exports = Vue.extend({
   template: '#view-rules-tabpane-template',
@@ -43,30 +43,30 @@ module.exports = Vue.extend({
   },
 
   methods: {
-    get_rules() {
+    getRules() {
       const self = this;
-      const group_ids = [];
+      const groupIds = [];
       const infra = new Infrastructure(self.infra_id);
       const ec2 = new EC2Instance(infra, this.physical_id);
-      self.security_groups.forEach((value, key) => {
+      self.security_groups.forEach((value) => {
         if (self.instance_type === 'elb' || self.instance_type === 'rds') {
-          if (value.checked) group_ids.push(value.group_id);
+          if (value.checked) groupIds.push(value.group_id);
         } else {
-          group_ids.push(value.group_id);
+          groupIds.push(value.group_id);
         }
       });
 
-      ec2.get_rules(group_ids).done((data) => {
+      ec2.get_rules(groupIds).done((data) => {
         self.rules_summary = data.rules_summary;
         const records = [];
 
         self.rules_summary.forEach((rule) => {
-          const row_length = Math.max(rule.ip_permissions.length, rule.ip_permissions_egress.length, 1);
-          for (let i = 0; i < row_length; i++) {
+          const rowLength = Math.max(rule.ip_permissions.length, rule.ip_permissions_egress.length, 1);
+          for (let i = 0; i < rowLength; i += 1) {
             const record = [];
             if (i === 0) {
-              record.push({ text: rule.description, row: row_length, th: true });
-              record.push({ text: rule.group_id, row: row_length, th: true });
+              record.push({ text: rule.description, row: rowLength, th: true });
+              record.push({ text: rule.group_id, row: rowLength, th: true });
             }
             if (rule.ip_permissions[i]) {
               record.push({ text: rule.ip_permissions[i].prefix_list_ids, row: 1 });
@@ -83,7 +83,7 @@ module.exports = Vue.extend({
               record.push({ text: rule.ip_permissions_egress[i].prefix_list_ids, row: 1 });
               record.push({ text: rule.ip_permissions_egress[i].ip_protocol, row: 1 });
               record.push({ text: rule.ip_permissions_egress[i].to_port, row: 1 });
-              record.push({ text: rule.ip_permissions_egress[i].ip_ranges[0].cidr_ip, row: 1 });
+              record.push({ text: rule.ip_permissions_egress[i].ip_ranges.map(x => x.cidr_ip).join(', '), row: 1 });
             } else {
               record.push({ text: '', row: 1 });
               record.push({ text: '', row: 1 });
@@ -108,7 +108,7 @@ module.exports = Vue.extend({
     },
     print_pdf() {
       if (!pdfMake.vfs) {
-        alert_success()(t('js.infrastructures.msg.fonts_loading_in_progress'));
+        alertSuccess()(t('js.infrastructures.msg.fonts_loading_in_progress'));
         return;
       }
 
@@ -175,15 +175,15 @@ module.exports = Vue.extend({
 
       pdfMake.createPdf(docDefinition).open();
 
-      this.get_rules();
+      this.getRules();
     },
     check_length(args) {
       return args.length > 0;
     },
   },
   mounted() {
-    this.$nextTick(function () {
-      this.get_rules();
+    this.$nextTick(() => {
+      this.getRules();
       this.$parent.loading = false;
     });
   },

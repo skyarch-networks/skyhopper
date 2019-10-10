@@ -49,10 +49,10 @@ start() {
 
   cd $SKYHOPPER_PATH
   echo -e "\e[1m=====\e[32m Generating i18n-js dictionary\e[m"
-  bundle exec rake i18n:js:export
+  bundle exec rails i18n:js:export
 
   echo -e "\e[1m=====\e[32m Precompile assets\e[m"
-  bundle exec rake assets:precompile
+  bundle exec rails assets:precompile
 
 
   echo -e "\e[1m=====\e[32m Start Rails/Sidekiq/Websocket servers\e[m"

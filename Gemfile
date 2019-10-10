@@ -1,23 +1,23 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.11'
+gem 'rails', '~> 5.2.3'
+
+gem 'bootsnap', require: false
 
 # Use mysql as the database for Active Record
-gem 'mysql2', '~> 0.3.20'
+gem 'mysql2', '~> 0.4.10'
 gem 'activerecord-import'
 
 # Use SCSS as CSS compressor
 gem 'sass-rails'
+gem 'sassc', '~> 2.1.0' # for AmazonLinux ver1
 
 # https://github.com/skyarch-networks/skyhopper/pull/165
 # sprockets-rails has some problems. we fix version until it's stable.
 gem 'sprockets-rails'
 
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier'#, '>= 1.3.0'
-
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails'
+gem 'uglifier' # , '>= 1.3.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
@@ -37,61 +37,60 @@ gem 'browserify-rails'
 gem 'multi_json', '1.7.8'
 
 group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
+  # bundle exec rails doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
 
 # Use unicorn as the app server
 gem 'unicorn-rails'
 
-gem "font-awesome-rails"
+gem 'font-awesome-rails'
 
 gem 'aws-sdk-v1'
-gem 'aws-sdk', '~> 2'
+gem 'aws-sdk', '~> 2.11.355'
 gem 'awspec', require: false
-gem "net-ssh"
-gem "net-scp"
-gem "net-http-persistent", '~> 2.9.4'
+gem 'net-ssh'
+gem 'net-scp'
+gem 'net-http-persistent', '~> 2.9.4'
 
 gem 'serverspec', require: false # serverspec is used only by rake serverspec
 gem 'specinfra', require: false
 gem 'highline'
-gem 'sidekiq', "~> 5" # for Active Job
-gem "sidekiq-cron", "~> 0.4.0" # for Scheduled Job
+gem 'sidekiq', '~> 5' # for Active Job
+gem 'sidekiq-cron', '~> 0.4.0' # for Scheduled Job
 gem 'foreman', require: false
 
 gem 'turnout' # for maintenance mode
 
 # Temporarily set ruby_dep version to 1.3.1 because it requires ruby 2.2.5 that is not yet available on amazon linux
-gem "ruby_dep", "~> 1.3.1"
+gem 'ruby_dep', '~> 1.3.1'
 
 group :development, :test do
   # debug
-  gem "tapp"
-  gem "better_errors"
+  gem 'tapp'
+  gem 'better_errors'
   gem 'binding_of_caller'
   gem 'bullet'
   gem 'pry'
-  gem "pry-rails"
-  gem "pry-doc"
+  gem 'pry-rails'
+  gem 'pry-doc'
   gem 'pry-remote'
-  gem "awesome_print"
+  gem 'awesome_print'
   gem 'rack-contrib'
   gem 'ruby-prof'
   gem 'sinatra', require: false
 
   # test
-  gem "rspec-rails"
+  gem 'rspec-rails'
+  gem 'rails-controller-testing'
 
   # Test seems to be failing because of this issue:
   # https://github.com/thoughtbot/factory_girl/issues/981
-  gem "factory_girl_rails", "~> 4.7.0"
-  gem "database_cleaner"
+  gem 'factory_girl_rails', '~> 4.7.0'
+  gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'coveralls', require: false
   gem 'named_let'
-
-  gem 'sqlite3'
 
   # document
   gem 'railroady'
@@ -109,7 +108,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 3.5.3'
+gem 'devise', '~> 4.4.3'
 gem 'pundit'
 
 # pagination

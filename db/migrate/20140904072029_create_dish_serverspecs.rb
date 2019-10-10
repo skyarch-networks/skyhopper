@@ -1,4 +1,4 @@
-class CreateDishServerspecs < ActiveRecord::Migration
+class CreateDishServerspecs < ActiveRecord::Migration[4.2]
   def change
     create_table :dish_serverspecs do |t|
       t.integer "dish_id",       null: false

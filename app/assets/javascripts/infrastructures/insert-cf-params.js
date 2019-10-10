@@ -1,10 +1,12 @@
-const CFTemplate = require('models/cf_template').default;
-const Infrastructure = require('models/infrastructure').default;
-const helpers = require('infrastructures/helper.js');
+const queryString = require('query-string').parse(window.location.search);
+const CFTemplate = require('../models/cf_template').default;
+const Infrastructure = require('../models/infrastructure').default;
+const helpers = require('../infrastructures/helper.js');
+const showInfra = require('../infrastructures/show_infra');
+const completeProjectParameter = require('../complete_project_parameter');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
-const queryString = require('query-string').parse(location.search);
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#insert-cf-params-template',
@@ -30,9 +32,9 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const cft = new CFTemplate(infra);
       const self = this;
-      cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alert_success(() => {
-        require('infrastructures/show_infra').show_infra(infra.id);
-      })).fail(alert_danger(() => {
+      cft.create_and_send(this.$parent.$data.current_infra.add_modify, this.result).done(alertSuccess(() => {
+        showInfra.show_infra(infra.id);
+      })).fail(alertDanger(() => {
         self.loading = false;
       }));
     },
@@ -40,27 +42,28 @@ module.exports = Vue.extend({
     back() { this.$parent.show_tabpane('add_modify'); },
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       const self = this;
-      console.log(self);
+      // console.log(self);
 
       const infra = new Infrastructure(this.infra_id);
       const cft = new CFTemplate(infra);
       cft.insert_cf_params(this.$parent.current_infra.add_modify)
-        .fail(alert_danger(() => {
+        .fail(alertDanger(() => {
           self.back();
         })).then((data) => {
           self.params = data;
-          _.each(data, (val, key) => {
+
+          Object.entries(data).forEach(([key, val]) => {
             Vue.set(self.result, key, val.Default);
           });
           self.$parent.loading = false;
 
           Vue.nextTick(() => {
             const inputs = $(self.$el).parent().find('input');
-            const project_id = queryString.project_id;
+            const projectId = queryString.project_id;
             inputs.textcomplete([
-              require('complete_project_parameter').default(project_id),
+              completeProjectParameter.default(projectId),
             ]);
           });
         });

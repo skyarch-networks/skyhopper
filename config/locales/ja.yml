@@ -98,7 +98,7 @@ ja:
       eip_limit_error:   'EIP を確保することが出来ません。EIP の個数制限を確認して下さい。'
       vpc_id_not_found:  'VPC ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
       subnet_id_not_found: 'サブネット ID <b> "%{id}" </b> は存在しません。入力内容をご確認ください。'
-      db_seed_not_found:  '<b>%{server}</b>サーバーのプロジェクトが見つかりません。 db:seedを実行しましたか？ そうでない場合は、 `bundle exec rake db：seed`を実行してください。'
+      db_seed_not_found:  '<b>%{server}</b>サーバーのプロジェクトが見つかりません。 db:seedを実行しましたか？ そうでない場合は、 `bundle exec rails db：seed`を実行してください。'
     title:
       show:   'SkyHopper へようこそ'
       setup:  'SkyHopper のセットアップ'
@@ -176,8 +176,6 @@ ja:
     no_stack_info:      '情報なし'
     in_progress:        '実行中...'
     database:           'データベース'
-    runlist:            'Runlist'
-    failed_to_get_runlist: 'Runlistの取得に失敗しました'
     instance_type:      'インスタンスの種類'
     add_ec2:            'EC2の追加'
     serverspec_failed:  'Serverspec が失敗しています'
@@ -301,7 +299,6 @@ ja:
   nodes:
     bootstrap:   'Bootstrap'
     cook:        'Cook'
-    runlist:     'Runlist'
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
@@ -318,7 +315,6 @@ ja:
     latest_serverspec_status: 'Serverspec'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
-      edit_runlist:               'Runlist の編集'
       edit_playbook:              'playbook の編集'
       apply_dish:                 'ディッシュの適用'
       bootstrap_with_chef_server: 'Chef Server に登録'
@@ -331,8 +327,6 @@ ja:
       bootstrap_finish:   '%{physical_id} を Chef Server に登録しました'
       not_change_scale:   '%{type} に変更する必要はありません'
       changed_scale:      '%{type} のスケールが変更されました'
-      runlist_updated:    'Runlist は正常に更新されました'
-      runlist_applying:   'Runlist を適用中です...'
       playbook_updated:    'playbook は正常に更新されました'
       playbook_applying:    'playbook を適用中です...'
       cook_started:       'Cook が正常に開始されました'
@@ -341,7 +335,7 @@ ja:
       yum_update_confirm: 'yum を実行しますか?'
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
-      runlist_empty:      'Runlist は空です'
+      playbook_empty:     'playbook は空です'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
       yum_update_success: |
@@ -367,6 +361,7 @@ ja:
       no_serverspec_selected: 'Serverspec が選択されていません'
       delete_dish:            'このディッシュを削除してもよろしいですか？'
       empty-list:             'ディッシュのリストが空です'
+      save_failed:            'ディッシュの保存に失敗しました'
 
 
   servertests:
@@ -471,6 +466,7 @@ ja:
       creating:        'スタックの作成を開始しました'
       delete_cf_template: 'このテンプレートを削除してもよろしいですか？'
       confirm_export:  ' 以下の CloudFormation テンプレートをエクスポートします'
+      create_failure:  ' テンプレートの作成に失敗しました'
 
 
   template_builder:
@@ -519,6 +515,7 @@ ja:
       trigger_setting_warning: '閾値は監視項目で選択された項目のみ更新されます'
       not_set:                 'Zabbixテンプレートが選択されていませんでした。 [監視項目の設定]タブでテンプレートを選択してください。'
       change_zabbix:            'このインフラストラクチャのZabbixサーバを変更してもよろしいですか？'
+      invalid_access:          '無効なアクセスです'
       page:                    'ページ'
       of:                      'の'
       no_data: |
@@ -579,6 +576,7 @@ ja:
       use_stop_mfa:          '変更を保存すると、MFA の使用を停止します。'
       delete_user:           'このユーザーを削除してもよろしいですか？'
       error:                 'Zabbix 処理中にエラーが発生しました "%{msg}"'
+      cannot_delete_yourself: '自分自身を削除することはできません'
 
 
   system_servers:
@@ -706,6 +704,10 @@ ja:
     screen_name: '表示名'
     msg:
       created: 'リソースは正常に追加されました'
+      infrastructure_not_created: 'インフラストラクチャの作成が完了しませんでした'
+      cannot_find: '%{physical_id}が見つかりませんでした'
+      keypair_dose_not_match: '%{physical_id}: キーペアがインフラストラクチャと一致しませんでした!'
+      if_status_is_terminated: 'ステータスがterminatedの場合、%{physical_id}を追加できません'
 
 
   key_pairs:

@@ -1,4 +1,4 @@
-const toLocaleString = require('./helper.js').toLocaleString;
+const { toLocaleString } = require('./helper.js');
 
 module.exports = Vue.extend({
   props: {
@@ -20,7 +20,9 @@ module.exports = Vue.extend({
   },
   methods: {
     event_tr_class(status) {
-      if (status === 'CREATE_COMPLETE') { return 'success'; } if (status.indexOf('FAILED') !== -1) { return 'danger'; } if (status.indexOf('DELETE') !== -1) { return 'warning'; }
+      if (status === 'CREATE_COMPLETE') { return 'success'; }
+      if (status.indexOf('FAILED') !== -1) { return 'danger'; }
+      if (status.indexOf('DELETE') !== -1) { return 'warning'; }
       return '';
     },
     toLocaleString,
@@ -37,7 +39,16 @@ module.exports = Vue.extend({
       if (this.sortKey === '') {
         return this.events;
       }
-      const listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      // const listOrderByAsc = _.sortBy(this.events, this.sortKey);
+      const listOrderByAsc = this.events.slice().sort((a, b) => {
+        if (a[this.sortKey] < b[this.sortKey]) {
+          return -1;
+        }
+        if (a[this.sortKey] > b[this.sortKey]) {
+          return 1;
+        }
+        return 0;
+      });
       if (this.sortOrders[this.sortKey] < 0) {
         return listOrderByAsc.reverse();
       }

@@ -12,40 +12,40 @@ require_relative '../spec_helper'
 # end
 
 describe ZabbixServersHelper do
-  let(:zabbix){build_stubbed(:zabbix_server)}
-  let(:user){build_stubbed(:user)}
-  let(:normal_user){build_stubbed(:user, master: nil, admin: nil)}
+  let(:zabbix) { build_stubbed(:zabbix_server) }
+  let(:user) { build_stubbed(:user) }
+  let(:normal_user) { build_stubbed(:user, master: nil, admin: nil) }
 
-  describe "#edit_zabbix_server_path_url" do
-    subject{helper.edit_zabbix_server_path_url(zabbix, user: user)}
+  describe '#edit_zabbix_server_path_url' do
+    subject { helper.edit_zabbix_server_path_url(zabbix, user: user) }
 
     context 'when editable user' do
-      let(:zabbix){build_stubbed(:zabbix_server)}
-      it {is_expected.not_to be nil}
+      let(:zabbix) { build_stubbed(:zabbix_server) }
+      it { is_expected.not_to be nil }
     end
 
     context 'when not editable user' do
-      let(:user){normal_user}
+      let(:user) { normal_user }
 
-      it {is_expected.to be nil}
+      it { is_expected.to be nil }
     end
   end
 
-  describe "#delete_zabbix_server_path" do
-    subject{helper.delete_zabbix_server_path(zabbix, user: user)}
+  describe '#delete_zabbix_server_path' do
+    subject { helper.delete_zabbix_server_path(zabbix, user: user) }
 
     context 'when editable user' do
-      let(:zabbix){build_stubbed(:zabbix_server)}
+      let(:zabbix) { build_stubbed(:zabbix_server) }
 
-      it {is_expected.not_to be nil}
+      it { is_expected.not_to be nil }
       it 'zabbix id should not be equal to 1' do
         expect(zabbix.id).not_to eq(1)
       end
     end
 
     context 'when not editable user' do
-      let(:user){normal_user}
-      it {is_expected.to be nil}
+      let(:user) { normal_user }
+      it { is_expected.to be nil }
     end
   end
 end

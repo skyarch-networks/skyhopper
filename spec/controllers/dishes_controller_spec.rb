@@ -11,13 +11,13 @@ require 'spec_helper'
 describe DishesController, type: :controller do
   login_user
 
-  let(:klass){Dish}
-  let(:dish){create(:dish)}
-  let(:project){nil}
+  let(:klass) { Dish }
+  let(:dish) { create(:dish) }
+  let(:project) { nil }
 
   describe '#index' do
     before do
-      get :index, project_id: project.try(:id)
+      get :index, params: { project_id: project.try(:id) }.compact
     end
 
     it 'should assign @dishes' do
@@ -26,7 +26,7 @@ describe DishesController, type: :controller do
     end
 
     context 'when have project' do
-      let(:project){create(:project)}
+      let(:project) { create(:project) }
       before do
         create(:dish, project: project)
       end
@@ -57,7 +57,7 @@ describe DishesController, type: :controller do
 
   describe '#show' do
     before do
-      get :show, id: dish.id
+      get :show, params: { id: dish.id }
     end
 
     it 'should assign @dish' do
@@ -70,8 +70,20 @@ describe DishesController, type: :controller do
   end
 
   describe '#edit' do
-     before do
-      get :edit, id: dish.id
+    before do
+      get :edit, params: { id: dish.id }
+    end
+
+    it 'should assign @playbook_roles' do
+      expect(assigns[:playbook_roles]).to eq Ansible::get_roles(Node::ANSIBLE_WORKSPACE_PATH)
+    end
+
+    it 'should assign @selected_playbook_roles' do
+      expect(assigns[:selected_playbook_roles]).to eq dish.playbook_roles_safe
+    end
+
+    it 'should assign @extra_vars' do
+      expect(assigns[:extra_vars]).to eq dish.extra_vars_safe
     end
 
     it 'should assign @global_serverspecs' do
@@ -88,9 +100,17 @@ describe DishesController, type: :controller do
   end
 
   describe '#update' do
-    let(:servertest){create(:servertest)}
-    let(:runlist){['hoge', 'fuga']}
-    let(:update_request){patch :update, id: dish.id, serverspecs: [servertest.id]}
+    let(:playbook_roles) { ['role-aaa', 'role-bbb'] }
+    let(:extra_vars) { '{"test": "aaa"}' }
+    let(:servertest) { create(:servertest) }
+    let(:update_request) do
+      patch :update, params: {
+        id: dish.id,
+        playbook_roles: playbook_roles,
+        extra_vars: extra_vars,
+        serverspecs: [servertest.id],
+      }
+    end
 
     context 'when valid params' do
       before do
@@ -101,10 +121,18 @@ describe DishesController, type: :controller do
         dish.reload
       end
 
-      subject{dish}
+      subject { dish }
 
       it 'should success' do
-        expect(response).to be_success
+        expect(response).to be_successful
+      end
+
+      it 'playbook_roles should be equaled' do
+        expect(subject.playbook_roles_safe).to eq playbook_roles
+      end
+
+      it 'extra_vars should be equaled' do
+        expect(subject.extra_vars).to eq extra_vars
       end
 
       it 'servertest should be equaled' do
@@ -118,13 +146,13 @@ describe DishesController, type: :controller do
   end
 
   describe '#new' do
-    let(:project){nil}
+    let(:project) { nil }
     before do
-      get :new, project_id: project.try(:id)
+      get :new, params: { project_id: project.try(:id) }
     end
 
     context 'when have project' do
-      let(:project){create(:project)}
+      let(:project) { create(:project) }
 
       it 'should assign @dish' do
         expect(assigns[:dish]).to be_a_new klass
@@ -141,15 +169,15 @@ describe DishesController, type: :controller do
   end
 
   describe '#create' do
-    let(:project){create(:project)}
-    let(:project_id){project.id}
-    let(:dish_hash){ attributes_for(:dish, name: 'name', detail: 'detail', project_id: project_id)}
+    let(:project) { create(:project) }
+    let(:project_id) { project.id }
+    let(:dish_hash) { attributes_for(:dish, { name: 'name', detail: 'detail', project_id: project_id }.compact) }
 
-    let(:create_request){post :create, dish: dish_hash}
+    let(:create_request) { post :create, params: { dish: dish_hash } }
 
     context 'when valid pamrams' do
       it 'should increase the count of db by 1' do
-        expect{create_request}.to change(Dish, :count).by(1)
+        expect { create_request }.to change(Dish, :count).by(1)
       end
 
       context 'when project_id false' do
@@ -160,7 +188,7 @@ describe DishesController, type: :controller do
       end
 
       context 'when project_id false' do
-        let(:project_id){nil}
+        let(:project_id) { nil }
 
         it 'should redirect without project_id' do
           create_request
@@ -182,7 +210,7 @@ describe DishesController, type: :controller do
       end
 
       context 'when project_id false' do
-        let(:project_id){nil}
+        let(:project_id) { nil }
 
         it 'should render template without project_id' do
           create_request
@@ -194,7 +222,7 @@ describe DishesController, type: :controller do
 
   describe '#destroy' do
     before do
-      delete :destroy, id: dish.id
+      delete :destroy, params: { id: dish.id }
     end
 
     it 'record should not exist' do

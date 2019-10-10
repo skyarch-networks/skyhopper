@@ -1,23 +1,22 @@
-const Infrastructure = require('models/infrastructure').default;
-const Dish = require('models/dish').default;
-const EC2Instance = require('models/ec2_instance').default;
-const Snapshot = require('models/snapshot').default;
-const queryString = require('query-string').parse(location.search);
-const ansi_up = require('ansi_up');
+const queryString = require('query-string').parse(window.location.search);
+const ansiUp = require('ansi_up');
 
-const helpers = require('infrastructures/helper.js');
+const modal = require('../modal');
+const commonMethods = require('../infrastructures/common-methods');
+const helpers = require('../infrastructures/helper.js');
+const showInfra = require('../infrastructures/show_infra');
 
-const toLocaleString = helpers.toLocaleString;
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
-const alert_and_show_infra = helpers.alert_and_show_infra;
+const { toLocaleString } = helpers;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
+const alertAndShowInfra = helpers.alert_and_show_infra;
 
-const common_methods = require('infrastructures/common-methods');
+const hasSelected = commonMethods.has_selected;
+const checkTag = commonMethods.check_tag;
 
-const has_selected = common_methods.has_selected;
-const check_tag = common_methods.check_tag;
-
-const modal = require('modal');
+const Snapshot = require('../models/snapshot').default;
+const EC2Instance = require('../models/ec2_instance').default;
+const Infrastructure = require('../models/infrastructure').default;
 
 module.exports = Vue.extend({
   template: '#ec2-tabpane-template',
@@ -83,8 +82,8 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
       ec2.start_ec2()
-        .done(alert_success(self._show_ec2))
-        .fail(alert_danger(self._show_ec2));
+        .done(alertSuccess(this._show_ec2))
+        .fail(alertDanger(this._show_ec2));
     },
 
     stop_ec2() {
@@ -96,8 +95,8 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
       ec2.stop_ec2()
-        .done(alert_success(self._show_ec2))
-        .fail(alert_danger(self._show_ec2));
+        .done(alertSuccess(this._show_ec2))
+        .fail(alertDanger(this._show_ec2));
     },
 
     reboot_ec2() {
@@ -109,7 +108,7 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
       ec2.reboot_ec2()
-        .fail(alert_danger(self._show_ec2));
+        .fail(alertDanger(this._show_ec2));
     },
 
     detach_ec2() {
@@ -118,10 +117,10 @@ module.exports = Vue.extend({
       const ec2 = new EC2Instance(infra, self.physical_id);
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.detach'), 'danger').done(() => {
         ec2.detach_ec2(self.x_zabbix, self.x_chef)
-          .done(alert_success(() => {
-            require('infrastructures/show_infra').show_infra(infra.id);
+          .done(alertSuccess(() => {
+            showInfra(infra.id);
           }))
-          .fail(alert_danger(self._show_ec2));
+          .fail(alertDanger(this._show_ec2));
       });
     },
 
@@ -131,27 +130,27 @@ module.exports = Vue.extend({
       const ec2 = new EC2Instance(infra, self.physical_id);
       modal.Confirm(t('ec2_instances.ec2_instance'), t('ec2_instances.confirm.terminate'), 'danger').done(() => {
         ec2.terminate_ec2()
-          .done(alert_success(() => {
-            require('infrastructures/show_infra').show_infra(infra.id);
+          .done(alertSuccess(() => {
+            showInfra(infra.id);
           }))
-          .fail(alert_danger(self._show_ec2));
+          .fail(alertDanger(this._show_ec2));
       });
     },
 
-    _cook(method_name, params) {
+    _cook(methodName, params) {
       const self = this;
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
 
-      const dfd = ec2[method_name](params);
+      const dfd = ec2[methodName](params);
       dfd.fail(
         // cook start fail
-        alert_danger(self._show_ec2),
+        alertDanger(this._show_ec2),
       ).progress((state, msg) => {
         // cook start success
         if (state !== 'start') { return; }
 
-        alert_success(() => {
+        alertSuccess(() => {
           self.inprogress = true;
           Vue.nextTick(() => {
             self.watch_cook(dfd);
@@ -166,24 +165,24 @@ module.exports = Vue.extend({
 
       // 更新されるたびにスクロールすると、scrollHeight 等が重い処理なのでブラウザが固まってしまう。
       // そのため、100msに1回スクロールするようにしている。
-      (function () {
-        var scroll = function () {
+      {
+        const scroll = () => {
           Vue.nextTick(() => {
             el.scrollTop = el.scrollHeight;
             if (self.inprogress) { setTimeout(scroll, 100); }
           });
         };
         scroll();
-      }());
+      }
 
       dfd.done(() => {
         // cook end
         self.chef_console_text = '';
         self.inprogress = false;
         if (self.is_yum_update) {
-          self._prompt_yum_log();
+          this._prompt_yum_log();
         } else {
-          self._show_ec2();
+          this._show_ec2();
         }
       }).progress((state, msg) => {
         if (state !== 'update') { return; }
@@ -196,8 +195,8 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, this.physical_id);
       ec2.apply_dish(this.selected_dish)
-        .done(alert_success(this._show_ec2))
-        .fail(alert_danger(this._show_ec2));
+        .done(alertSuccess(this._show_ec2))
+        .fail(alertDanger(this._show_ec2));
     },
 
     run_ansible_playbook() {
@@ -208,12 +207,12 @@ module.exports = Vue.extend({
       const dfd = ec2.run_ansible_playbook();
       dfd.fail(
         // run_ansible start fail
-        alert_danger(self._show_ec2),
+        alertDanger(this._show_ec2),
       ).progress((state, msg) => {
         // run_ansible start success
         if (state !== 'start') { return; }
 
-        alert_success(() => {
+        alertSuccess(() => {
           self.inprogress = true;
           Vue.nextTick(() => {
             self.watch_cook(dfd);
@@ -228,14 +227,14 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
 
-      const security_bool = (security === 'security');
-      const exec_bool = (exec === 'exec');
+      const securityBool = (security === 'security');
+      const execBool = (exec === 'exec');
 
       modal.Confirm(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_confirm'), 'danger').done(() => {
-        var dfd = ec2.yum_update(security_bool, exec_bool).fail(
+        const dfd = ec2.yum_update(securityBool, execBool).fail(
           // cook start fail
-          alert_danger(self._show_ec2),
-        ).progress((state, msg) => {
+          alertDanger(this._show_ec2),
+        ).progress((state) => {
           // cook start success
           if (state !== 'start') { return; }
           self.inprogress = true;
@@ -252,9 +251,9 @@ module.exports = Vue.extend({
 
       modal.ConfirmHTML(t('infrastructures.infrastructure'), t('nodes.msg.yum_update_success', { physical_id: self.physical_id }), 'success').done(() => {
         self.$parent.tabpaneID = 'infra_logs';
-        self._loading();
+        this._loading();
       }).fail(() => {
-        self._show_ec2();
+        this._show_ec2();
       });
     },
 
@@ -292,9 +291,7 @@ module.exports = Vue.extend({
 
     is_role(run) { return run.indexOf('role') !== -1; },
     is_first(idx) { return (idx === 0); },
-    runlist_type(run) { return run.replace(/\[.+\]$/, ''); },
-    runlist_name(run) { return run.replace(/^.+\[(.+)\]$/, '$1'); },
-    ansi_up(log) { return ansi_up.ansi_to_html(log); },
+    ansi_up(log) { return ansiUp.ansi_to_html(log); },
 
     _loading() { this.$parent.loading = true; },
 
@@ -304,10 +301,10 @@ module.exports = Vue.extend({
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
       ec2.change_scale(self.change_scale_type_to).done((msg) => {
-        alert_success(self._show_ec2)(msg);
+        alertSuccess(this._show_ec2)(msg);
         $('#change-scale-modal').modal('hide');
       }).fail((msg) => {
-        alert_danger(self._show_ec2)(msg);
+        alertDanger(this._show_ec2)(msg);
         $('#change-scale-modal').modal('hide');
       });
     },
@@ -320,6 +317,8 @@ module.exports = Vue.extend({
         case 'snapshot':
           this.change_snapshot_schedule();
           break;
+
+        // no default
       }
     },
 
@@ -331,10 +330,10 @@ module.exports = Vue.extend({
       ec2.schedule_yum(self.schedule).done((msg) => {
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
-        alert_success()(msg);
+        alertSuccess()(msg);
       }).fail((msg) => {
         self.loading_s = false;
-        alert_danger()(msg);
+        alertDanger()(msg);
       });
     },
 
@@ -346,26 +345,28 @@ module.exports = Vue.extend({
         self.ec2.snapshot_schedules[self.volume_selected] = self.schedule;
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
-        alert_success()(msg);
+        alertSuccess()(msg);
       }).fail((msg) => {
         self.loading_s = false;
-        alert_danger()(msg);
+        alertDanger()(msg);
       });
     },
 
-    is_root_device(device_name) {
-      return this.ec2.root_device_name === device_name;
+    is_root_device(deviceName) {
+      return this.ec2.root_device_name === deviceName;
     },
 
-    create_snapshot(volume_id) {
+    create_snapshot(volumeId) {
       const self = this;
-      modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', { volume_id })).done(() => {
+      modal.Confirm(t('snapshots.create_snapshot'), t('snapshots.msg.create_snapshot', {
+        volume_id: volumeId,
+      })).done(() => {
         const snapshot = new Snapshot(self.infra_id);
 
-        snapshot.create(volume_id, self.physical_id).progress((data) => {
+        snapshot.create(volumeId, self.physical_id).progress(() => {
           modal.Alert(t('snapshots.snapshots'), t('snapshots.msg.creation_started'));
         }).done(self.load_snapshots)
-          .fail(alert_danger());
+          .fail(alertDanger());
 
         self.load_snapshots();
       });
@@ -378,9 +379,9 @@ module.exports = Vue.extend({
       this.schedule = this.ec2.yum_schedule;
       this.open_schedule_modal();
     },
-    open_snapshot_schedule_modal(volume_id) {
+    open_snapshot_schedule_modal(volumeId) {
       this.schedule_type = 'snapshot';
-      this.schedule = Object.assign({}, this.ec2.snapshot_schedules[volume_id]);
+      this.schedule = Object.assign({}, this.ec2.snapshot_schedules[volumeId]);
       this.open_schedule_modal();
     },
 
@@ -389,32 +390,32 @@ module.exports = Vue.extend({
       const snapshot = new Snapshot(this.infra_id);
       this.loading_snapshots = true;
       snapshot.index(null).done((data) => {
-        self.ec2.snapshots = _.map(data.snapshots, (s) => {
+        self.ec2.snapshots = data.snapshots.map((s) => {
           s.selected = false;
           return s;
         });
         self.sort_key = '';
         self.sort_by('start_time');
         self.loading_snapshots = false;
-      }).fail(alert_danger());
+      }).fail(alertDanger());
     },
 
     delete_selected_snapshots() {
       const self = this;
-      const snapshots = _.select(this.ec2.snapshots, 'selected', true);
-      const snapshot_ids = _.pluck(snapshots, 'snapshot_id');
-      let confirm_body = t('snapshots.msg.delete_snapshot');
-      confirm_body += `<ul><li>${snapshot_ids.join('</li><li>')}</li></ul>`;
-      modal.ConfirmHTML(t('snapshots.delete_snapshot'), confirm_body, 'danger').done(() => {
+      const snapshots = this.ec2.snapshots.filter(snapshot => snapshot.selected === true);
+      const snapshotIds = snapshots.map(snapshot => snapshot.snapshot_id);
+      let confirmBody = t('snapshots.msg.delete_snapshot');
+      confirmBody += `<ul><li>${snapshotIds.join('</li><li>')}</li></ul>`;
+      modal.ConfirmHTML(t('snapshots.delete_snapshot'), confirmBody, 'danger').done(() => {
         const s = new Snapshot(self.infra_id);
 
-        _.each(snapshots, (snapshot) => {
+        snapshots.forEach((snapshot) => {
           s.destroy(snapshot.snapshot_id)
-            .done((msg) => {
+            .done(() => {
               const index = self.ec2.snapshots.indexOf(snapshot);
               self.ec2.snapshots.splice(index, 1);
             })
-            .fail(alert_danger());
+            .fail(alertDanger());
         });
       });
     },
@@ -433,7 +434,24 @@ module.exports = Vue.extend({
         this.sort_asc = false;
         this.sort_key = key;
       }
-      this.ec2.snapshots = _.sortByOrder(this.ec2.snapshots, key, this.sort_asc);
+      if (!this.sort_key) {
+        return;
+      }
+      this.ec2.snapshots = this.ec2.snapshots.sort((a, b) => {
+        if (a[key] < b[key]) {
+          if (this.sort_asc) {
+            return -1;
+          }
+          return 1;
+        }
+        if (a[key] > b[key]) {
+          if (this.sort_asc) {
+            return 1;
+          }
+          return -1;
+        }
+        return 0;
+      });
     },
 
     sorting_by(key) {
@@ -452,14 +470,14 @@ module.exports = Vue.extend({
       });
     },
 
-    attach_volume(volume_id) {
+    attach_volume(volumeId) {
       const self = this;
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, self.physical_id);
-      modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done((device_name) => {
-        ec2.attach_volume(volume_id, device_name).done((data) => {
-          modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(self._show_ec2);
-        }).fail(alert_danger());
+      modal.Prompt(t('ec2_instances.set_device_name'), t('ec2_instances.device_name')).done((deviceName) => {
+        ec2.attach_volume(volumeId, deviceName).done((data) => {
+          modal.Alert(t('infrastructures.infrastructure'), t('ec2_instances.msg.volume_attached', data)).done(this._show_ec2);
+        }).fail(alertDanger());
       });
       $('[id^=bootstrap_prompt_]').val(this.suggest_device_name);
     },
@@ -474,8 +492,8 @@ module.exports = Vue.extend({
         'danger',
       ).done(() => {
         ec2.detach_volume(self.volume_selected).done((data) => {
-          modal.Alert(t('ec2_instances.detach_volume'), data).done(self._show_ec2);
-        }).fail(alert_danger());
+          modal.Alert(t('ec2_instances.detach_volume'), data).done(this._show_ec2);
+        }).fail(alertDanger());
       });
     },
 
@@ -488,54 +506,62 @@ module.exports = Vue.extend({
       }
     },
 
-    save_retention_policy(volume_id, policy) {
+    save_retention_policy(volumeId, policy) {
       const self = this;
-      const retention_policies = this.ec2.retention_policies;
-      const infra = new Infrastructure(this.infra_id);
+      const retentionPolicies = self.ec2.retention_policies;
+      const infra = new Infrastructure(self.infra_id);
       const snapshot = new Snapshot(infra.id);
-      snapshot.save_retention_policy(volume_id, policy.enabled, policy.max_amount)
+      snapshot.save_retention_policy(volumeId, policy.enabled, policy.max_amount)
         .done((msg) => {
-          retention_policies[volume_id] = policy;
+          retentionPolicies[volumeId] = policy;
 
           $('#retention-policy-modal').modal('hide');
-          alert_success()(msg);
-        }).fail(alert_danger());
+          alertSuccess()(msg);
+        }).fail(alertDanger());
     },
 
-    on_click_volume(volume_id) {
+    on_click_volume(volumeId) {
       const self = this;
-      const panel_opened = document.getElementById('ebs_panel').classList.contains('in');
-      const same = this.volume_selected == volume_id;
-      if (panel_opened && same) {
+      const panelOpened = document.getElementById('ebs_panel').classList.contains('in');
+      const same = this.volume_selected === volumeId;
+      if (panelOpened && same) {
         $('#ebs_panel').collapse('hide');
         setTimeout(() => {
           self.volume_selected = '';
         }, 300);
       } else {
-        this.volume_selected = volume_id;
+        this.volume_selected = volumeId;
         this.$nextTick(() => {
           $('#ebs_panel').collapse('show');
         });
       }
     },
 
-    latest_snapshot(volume_id) {
-      return _(this.ec2.snapshots).chain()
-        .select({
-          volume_id,
-          state: 'completed',
+    latest_snapshot(volumeId) {
+      return this.ec2.snapshots
+        .filter(snapshot => (
+          snapshot.volume_id === volumeId
+          && snapshot.state === 'completed'
+        ))
+        .sort((a, b) => {
+          if (a.start_time < b.start_time) {
+            return -1;
+          }
+          if (a.start_time > b.start_time) {
+            return 1;
+          }
+          return 0;
         })
-        .sortBy('start_time')
-        .last()
-        .value();
+        .slice(-1)[0];
     },
 
-    latest_snapshot_date(volume_id) {
-      const snapshot = this.latest_snapshot(volume_id);
+    latest_snapshot_date(volumeId) {
+      const snapshot = this.latest_snapshot(volumeId);
       if (snapshot) {
         const date = new Date(snapshot.start_time);
         return date.toLocaleString();
       }
+      return undefined;
     },
 
     create_volume() {
@@ -547,11 +573,11 @@ module.exports = Vue.extend({
         .done((msg) => {
           self.loading_s = false;
           $('#create_volume_modal').modal('hide');
-          alert_success()(msg, true);
+          alertSuccess()(msg, true);
         })
         .fail((data) => {
           self.loading_s = false;
-          alert_danger()(data);
+          alertDanger()(data);
         });
     },
 
@@ -569,7 +595,12 @@ module.exports = Vue.extend({
     },
 
     toLocaleString,
-    capitalize(str) { return _.capitalize(_.camelCase(str)); },
+
+    capitalize(str) {
+      // 中身はUpperCamelCaseにする処理
+      const capitalizeStr = str.charAt(0).toUpperCase() + str.slice(1);
+      return capitalizeStr.replace(/[-_ ]+(.)/g, (match, p1) => p1.toUpperCase());
+    },
 
     get_security_groups() {
       const self = this;
@@ -587,30 +618,29 @@ module.exports = Vue.extend({
     reload() { this.$parent.show_ec2(this.physical_id); },
 
     submit_groups() {
-      const self = this;
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, this.physical_id);
-      const group_ids = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
+      const groupIds = this.rules_summary.filter(t => t.checked).map(t => t.group_id);
 
-      ec2.submit_groups(group_ids)
-        .done(alert_success(self._show_ec2))
-        .fail(alert_danger(self._show_ec2));
+      ec2.submit_groups(groupIds)
+        .done(alertSuccess(this._show_ec2))
+        .fail(alertDanger(this._show_ec2));
     },
 
     showPrev() {
       if (this.isStartPage) return;
-      this.page--;
+      this.page -= 1;
     },
     showNext() {
       if (this.isEndPage) return;
-      this.page++;
+      this.page += 1;
     },
     check_tag(r) {
-      return check_tag(r);
+      return checkTag(r);
     },
     roundup(val) { return (Math.ceil(val)); },
-    suffix_current_az(zone_name) {
-      return (this.ec2.availability_zone === zone_name) ? (`${zone_name}(current)`) : zone_name;
+    suffix_current_az(zoneName) {
+      return (this.ec2.availability_zone === zoneName) ? (`${zoneName}(current)`) : zoneName;
     },
   },
 
@@ -622,7 +652,7 @@ module.exports = Vue.extend({
       return 'btn-default';
     },
     has_selected() {
-      return has_selected(this.rules_summary);
+      return hasSelected(this.rules_summary);
     },
 
     ansible_status_class() { return this._label_class(this.ansible_status); },
@@ -637,8 +667,7 @@ module.exports = Vue.extend({
     serverspec_time() { return this.servertest_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.servertest_status.updated_at); },
     update_time() { return this.update_status === 'UnExecuted' ? '' : toLocaleString(this.ec2.info.update_status.updated_at); },
 
-    runlist_empty() { return _.isEmpty(this.ec2.runlist); },
-    dishes_empty() { return _.isEmpty(this.ec2.dishes); },
+    dishes_empty() { return !this.ec2.dishes.length; },
 
     running() { return this.ec2.status === 'running'; },
     stopped() { return this.ec2.status === 'stopped'; },
@@ -663,36 +692,23 @@ module.exports = Vue.extend({
       }
     },
 
-    selected_snapshots() { return _.filter(this.ec2.snapshots, 'selected', true); },
+    selected_snapshots() { return this.ec2.snapshots.filter(snapshot => snapshot.selected === true); },
 
     suggest_device_name() {
       // TODO: iikanji ni sitai
-      let suggested_device_letter_code = 102; // same as aws default 'f'
-      const device_letter_codes = _(this.ec2.block_devices).chain()
-        .pluck('device_name')
-        .map((name) => {
-          if (/sd([a-z])$/.test(name)) {
-            const letter = name.slice(-1);
-            if (letter >= 'a' && letter <= 'z') {
-              return letter.charCodeAt(0);
-            }
-            return false;
-          }
-          return false;
-        })
-        .filter()
-        .sort()
-        .value();
+      let suggestedDeviceLetterCode = 102; // same as aws default 'f'
 
-      while (device_letter_codes.indexOf(suggested_device_letter_code) !== -1) {
-        if (suggested_device_letter_code === 122) { // 'z'
-          suggested_device_letter_code = 63; // '?'
+      const deviceLetterCodes = this.ec2.block_devices.map(x => x.device_name.slice(-1).charCodeAt());
+
+      while (deviceLetterCodes.indexOf(suggestedDeviceLetterCode) !== -1) {
+        if (suggestedDeviceLetterCode === 122) { // 'z'
+          suggestedDeviceLetterCode = 63; // '?'
           break;
         }
-        suggested_device_letter_code++;
+        suggestedDeviceLetterCode += 1;
       }
 
-      return `/dev/sd${String.fromCharCode(suggested_device_letter_code)}`;
+      return `/dev/sd${String.fromCharCode(suggestedDeviceLetterCode)}`;
     },
 
     is_valid_amount() { return this.editing_policy.max_amount >= 3 && this.editing_policy.max_amount < 1000; },
@@ -708,6 +724,8 @@ module.exports = Vue.extend({
           return t('schedules.label.daily', { n: schedule.time });
         case 'weekly':
           return t('schedules.label.weekly', { n: schedule.time, w: t(`schedules.day_of_week.${schedule.day_of_week}`) });
+        default:
+          return undefined;
       }
     },
 
@@ -755,7 +773,7 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       const self = this;
 
       const infra = new Infrastructure(this.infra_id);
@@ -763,18 +781,11 @@ module.exports = Vue.extend({
       ec2.show().done((data) => {
         self.ec2 = data;
         self.max_sec_group = data.security_groups.length - 1;
-        let dish_id = '0';
+        let dishId = '0';
         if (self.ec2.selected_dish) {
-          dish_id = self.ec2.selected_dish.id;
+          dishId = self.ec2.selected_dish.id;
         }
-        self.selected_dish = dish_id;
-
-        self.$watch('selected_dish', (dish_id) => {
-          const dish = new Dish();
-          dish.runlist(dish_id).done((runlist) => {
-            self.ec2.runlist = runlist;
-          });
-        });
+        self.selected_dish = dishId;
 
         if (self.ec2.info.cook_status === 'InProgress' || self.ec2.info.update_status === 'InProgress') {
           const dfd = $.Deferred();
@@ -783,7 +794,7 @@ module.exports = Vue.extend({
           self.inprogress = true;
         }
         self.$parent.loading = false;
-      }).fail(alert_and_show_infra(infra.id));
+      }).fail(alertAndShowInfra(infra.id));
     });
   },
 

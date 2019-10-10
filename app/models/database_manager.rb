@@ -8,11 +8,11 @@
 
 class DatabaseManager
   SQLPATH = 'tmp/import.sql'.freeze
-  SECRETS = [:secret_key_base, :db_crypt_key, :db_crypt_salt].freeze
+  SECRETS = %i[secret_key_base db_crypt_key db_crypt_salt].freeze
   SUFFIX = {
     'development' => 'dev',
-    'test'        => 'test',
-    'production'  => 'prod',
+    'test' => 'test',
+    'production' => 'prod',
   }.freeze
 
   class << self
@@ -21,16 +21,17 @@ class DatabaseManager
       filename = "#{dbname}.sql"
       path     = Rails.root.join("tmp/#{filename}")
 
-      system('rake db:data:dump')
+      system('rails db:data:dump')
 
-      zipfile = Tempfile.open("skyhopper")
+      zipfile = Tempfile.open('skyhopper')
       ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
         zip.add(filename, path)
 
-        Rails.application.secrets.select do |key, value|
+        Rails.application.secrets.select do |key, _value|
           SECRETS.include?(key)
         end.slice(*SECRETS).each do |key, value|
           next if value.nil?
+
           zip.get_output_stream(key) { |io| io.write(value) }
         end
       end
@@ -50,10 +51,9 @@ class DatabaseManager
       ReloadSecretsJob.perform_now   # runs in Rails process
       ReloadSecretsJob.perform_later # runs in Sidekiq process
 
-      system("rake db:data:load[#{sqlpath}]")
+      system("rails db:data:load[#{sqlpath}]")
       Rails.cache.clear
     end
-
 
     def import_from_zip(path)
       zip = ::Zip::File.open(path)
@@ -73,6 +73,7 @@ class DatabaseManager
     end
 
     private
+
     def validate_zip!(zip)
       SECRETS.each do |filename|
         raise "#{filename} is not found in zip." unless zip.find_entry(filename)

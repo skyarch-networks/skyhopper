@@ -1,10 +1,10 @@
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('./helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#serverspec-tabpane-template',
@@ -42,9 +42,9 @@ module.exports = Vue.extend({
         self.globals.concat(self.individuals),
         self.checked_auto_generated,
       ).done((msg) => {
-        alert_success(self.show_ec2)(msg);
+        alertSuccess(self.show_ec2)(msg);
         self.$parent.update_serverspec_status(self.physical_id);
-      }).fail(alert_danger(self.show_ec2));
+      }).fail(alertDanger(self.show_ec2));
     },
 
     change_schedule() {
@@ -58,10 +58,10 @@ module.exports = Vue.extend({
       }).done((msg) => {
         self.loading_s = false;
         $('#change-schedule-modal').modal('hide');
-        alert_success()(msg);
+        alertSuccess()(msg);
       }).fail((msg) => {
         self.loading_s = false;
-        alert_danger()(msg);
+        alertDanger()(msg);
       });
     },
   },
@@ -71,9 +71,10 @@ module.exports = Vue.extend({
     ec2() { return new EC2Instance(new Infrastructure(this.infra_id), this.physical_id); },
     can_run() {
       if (this.globals || this.individuals) {
-        const all_spec = this.globals.concat(this.individuals);
-        return all_spec.find(s => s.checked) || this.checked_auto_generated;
+        const allSpec = this.globals.concat(this.individuals);
+        return allSpec.find(s => s.checked) || this.checked_auto_generated;
       }
+      return false;
     },
 
 
@@ -97,7 +98,7 @@ module.exports = Vue.extend({
   created() {
     const self = this;
     self.ec2.select_serverspec().done((data) => {
-      const schedule = data.schedule;
+      const { schedule } = data;
       self.individuals = data.individuals || [];
       self.globals = data.globals || [];
       self.enabled = schedule.enabled;
@@ -106,6 +107,6 @@ module.exports = Vue.extend({
       self.time = schedule.time;
 
       self.$parent.loading = false;
-    }).fail(alert_danger(self.show_ec2));
+    }).fail(alertDanger(self.show_ec2));
   },
 });

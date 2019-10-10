@@ -37,7 +37,7 @@
   <div class="form-group">
     <%= f.label t('zabbix_servers.zabbix'), class: 'col-sm-2 control-label' %>
     <div class="col-sm-5">
-      <%= f.select(:zabbix_servers, options_from_collection_for_select(@zabbix_servers, 'id', 'fqdn'), {}, {:multiple => true, :size => 10, :required => true}) %>
+      <%= f.select(:zabbix_servers, options_from_collection_for_select(@zabbix_servers, 'id', 'fqdn'), {}, {:multiple => true, :size => 10}) %>
     </div>
   </div>
 

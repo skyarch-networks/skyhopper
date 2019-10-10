@@ -7,25 +7,25 @@
 #
 
 class Node
-
-  OperationDefaultUser = "ec2-user".freeze
-  WaitSearchIndexInterval = 5
-  AnsibleWorkspacePath = Rails.root.join('ansible').to_s
-  AnsibleTargetHostName = 'ec2'.freeze
+  OPERATION_DEFAULT_USER = 'ec2-user'.freeze
+  WAIT_SEARCH_INDEX_INTERVAL = 5
+  ANSIBLE_WORKSPACE_PATH = Rails.root.join('ansible').to_s
+  ANSIBLE_TARGET_HOST_NAME = 'ec2'.freeze
 
   class BootstrapError < ::StandardError; end
   class CookError < ::StandardError; end
   class ServerspecError < ::StandardError; end
 
-  def self.exec_command(command, ex_class=RuntimeError)
+  def self.exec_command(command, ex_class = RuntimeError)
     out, err, status = Open3.capture3(command)
     unless status.success?
       raise ex_class, out + err
     end
-    return out, err, status
+
+    [out, err, status]
   end
 
-  def initialize(name, user: OperationDefaultUser)
+  def initialize(name, user: OPERATION_DEFAULT_USER)
     @name = name
     @user = user
   end
@@ -34,7 +34,7 @@ class Node
   # node.run_ansible_playbook do |line|
   #   # line is ansible-playbook log
   # end
-  def run_ansible_playbook(infra, playbook_roles, extra_vars, &block)
+  def run_ansible_playbook(infra, playbook_roles, extra_vars)
     ec2key = infra.ec2_private_key
     ec2key.output_temp(prefix: @name)
 
@@ -42,21 +42,21 @@ class Node
     hosts_file.print(ansible_hosts_text(infra))
     hosts_file.flush
 
-    Ansible::create(AnsibleWorkspacePath, AnsibleTargetHostName) do |ansible|
+    Ansible::create(ANSIBLE_WORKSPACE_PATH, ANSIBLE_TARGET_HOST_NAME) do |ansible|
       ansible.set_roles(playbook_roles)
       begin
         ansible.run(
           hosts_path: hosts_file.path,
           private_key_path: ec2key.path_temp,
-          extra_vars: extra_vars
+          extra_vars: extra_vars,
         ) do |line|
-          block.call(line)
+          yield(line)
         end
       end
     end
   ensure
     ec2key.close_temp
-    hosts_file.close! if hosts_file
+    hosts_file&.close!
   end
 
   # serverspec_ids => ServerspecのidのArray
@@ -70,27 +70,27 @@ class Node
 
     fqdn = infra.instance(@name).fqdn
 
-    run_spec_list = Servertest.where(id: servertest_ids).map{|servertest|
+    run_spec_list = Servertest.where(id: servertest_ids).map do |servertest|
       screen_name = servertest.name
       screen_name << " (#{servertest.description})" if servertest.description.present?
       path = ::Servertest.to_file(servertest.id)
       {
         name: screen_name,
         path: path,
-        file: get_relative_path_string(path)
+        file: get_relative_path_string(path),
       }
-    }
+    end
 
-    ruby_cmd = File.join(RbConfig::CONFIG['bindir'],  RbConfig::CONFIG['ruby_install_name'])
+    ruby_cmd = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 
     cmd = []
     cmd << "SSHKeyPath=#{ec2key.path_temp}"
     cmd << "User=#{@user}"
     cmd << "FQDN=#{fqdn}"
     cmd << ruby_cmd << '-S rspec' << "-I #{Rails.root.join('serverspec', 'spec')}"
-    cmd << run_spec_list.map{|run_spec|run_spec[:path]}.join(' ').to_s
+    cmd << run_spec_list.map { |run_spec| run_spec[:path] }.join(' ').to_s
     cmd << '--format ServerspecDebugFormatter --require ./serverspec/formatters/serverspec_debug_formatter.rb'
-    cmd = cmd.flatten.reject(&:blank?).join(" ")
+    cmd = cmd.flatten.reject(&:blank?).join(' ')
 
     begin
       out, = self.class.exec_command(cmd, ServerspecError)
@@ -99,37 +99,34 @@ class Node
     end
 
     # create result
-    result =  generate_result(out)
-    resource_status = (result[:status_text] == 'error') ? 'failed' : result[:status_text]
-    Resource.find_by(physical_id: @name).status.servertest.update(value: resource_status)
+    result = generate_result(out)
+    resource_status = result[:status_text] == 'error' ? 'failed' : result[:status_text]
+    Resource.find_by(physical_id: @name).status.servertest.update(content: resource_status)
 
     result[:error_servertest_names] = get_error_servertest_names(result, run_spec_list)
 
-    return result
-  rescue => ex
+    result
+  rescue StandardError => ex
     Resource.find_by(physical_id: @name).status.servertest.failed!
     raise ex
   ensure
     ec2key.close_temp
 
-    FileUtils::rm_rf(run_spec_list.map{|run_spec|run_spec[:path]})
+    FileUtils::rm_rf(run_spec_list.map { |run_spec| run_spec[:path] })
   end
 
+  def yum_update(infra, security = false, exec = false, &block)
+    cmd = 'sudo yum '
 
-  def yum_update(infra, security=false, exec=false, &block)
-    cmd = "sudo yum "
+    cmd << '-y update ' if exec
+    cmd << 'check-update ' unless exec
 
-    cmd << "-y update " if exec
-    cmd << "check-update " unless exec
+    cmd << '--security ' if security
 
-    cmd << "--security " if security
-
-    cmd << "| cat" unless exec
+    cmd << '| cat' unless exec
 
     exec_knife_ssh(cmd, infra, &block)
   end
-
-
 
   private
 
@@ -181,7 +178,7 @@ class Node
     cmd = "ssh #{@user}@#{fqdn} -t -t -i #{ec2key.path_temp} #{command}"
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
-      while line = stdout.gets
+      while (line = stdout.gets)
         line.chomp!
 
         yield line
@@ -191,7 +188,7 @@ class Node
       raise CookError unless w.value.success?
     end
 
-    return true
+    true
   ensure
     ec2key.close_temp
   end
@@ -205,7 +202,7 @@ class Node
     cmd = "knife winrm #{fqdn} --winrm-user Administrator  --winrm-password '#{password}' #{command} --winrm-transport ssl --winrm-ssl-verify-mode verify_none"
 
     Open3.popen3(cmd) do |_stdin, stdout, stderr, w|
-      while line = stdout.gets
+      while (line = stdout.gets)
         line.chomp!
 
         yield line
@@ -215,15 +212,15 @@ class Node
       raise CookError unless w.value.success?
     end
 
-    return true
-  # ensure
-  #   ec2key.close_temp
+    true
+    # ensure
+    #   ec2key.close_temp
   end
 
   def generate_result(out)
     result = JSON::parse(out, symbolize_names: true)
     result[:examples].each do |e|
-      e[:exception].delete(:backtrace) if e[:exception]
+      e[:exception]&.delete(:backtrace)
     end
     result[:status] = result[:summary][:failure_count].zero? && result[:summary][:errors_outside_of_examples_count].zero?
     result[:status_text] =
@@ -233,25 +230,22 @@ class Node
         else
           'pending'
         end
+      elsif result[:summary][:errors_outside_of_examples_count].zero?
+        'failed'
       else
-        if result[:summary][:errors_outside_of_examples_count].zero?
-          'failed'
-        else
-          'error'
-        end
+        'error'
       end
 
-
     case result[:status_text]
-      when 'pending'
-        result[:message] = result[:examples].select{|x| x[:status] == 'pending'}.map{|x| "#{x[:full_description]}\n#{x[:pending_message]}"}.join("\n")
-        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
-      when 'failed'
-        result[:message] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| "#{x[:full_description]}\n#{x[:command]}¥n#{x[:exception][:message]}"}.join("\n")
-        result[:short_msg] = result[:examples].select{|x| x[:status] == 'failed'}.map{|x| x[:full_description]}.join("\n")
+    when 'pending'
+      result[:message] = result[:examples].select { |x| x[:status] == 'pending' }.map { |x| "#{x[:full_description]}\n#{x[:pending_message]}" }.join("\n")
+        result[:short_msg] = result[:examples].select { |x| x[:status] == 'failed' }.map { |x| x[:full_description] }.join("\n")
+    when 'failed'
+      result[:message] = result[:examples].select { |x| x[:status] == 'failed' }.map { |x| "#{x[:full_description]}\n#{x[:command]}¥n#{x[:exception][:message]}" }.join("\n")
+        result[:short_msg] = result[:examples].select { |x| x[:status] == 'failed' }.map { |x| x[:full_description] }.join("\n")
     end
 
-    result[:long_message] = result[:examples].map{|example|
+    result[:long_message] = result[:examples].map do |example|
       message = example[:status] + "\n"
       message += example[:full_description] + "\n"
       unless example[:command].nil?
@@ -263,27 +257,29 @@ class Node
         message += example[:exception][:message] + "\n"
       end
       message
-    }.join("\n")
+    end.join("\n")
     result[:long_message] += "\n" + result[:summary_line]
 
-    return result
+    result
   end
 
   def get_error_servertest_names(result, run_spec_list)
     if result[:messages].nil?
       return []
     end
+
     error_servertest_names = []
     result[:messages].each do |message|
       match = /^An error occurred while loading (.+)\.$/.match(message)
       unless match
         next
       end
-      error_servertest_names.concat(run_spec_list.select{|run_spec|
+
+      error_servertest_names.concat(run_spec_list.select do |run_spec|
         run_spec[:file] == match[1]
-      }.map{|run_spec|
+      end.map do |run_spec|
         run_spec[:name]
-      })
+      end)
     end
     error_servertest_names
   end
@@ -295,10 +291,9 @@ class Node
   end
 
   def ansible_hosts_text(infra)
-    <<"EOS"
-[#{AnsibleTargetHostName}]
-#{infra.instance(@name).fqdn} ansible_ssh_user=#{@user}
-EOS
+    <<~"HOSTS"
+      [#{ANSIBLE_TARGET_HOST_NAME}]
+      #{infra.instance(@name).fqdn} ansible_ssh_user=#{@user}
+    HOSTS
   end
-
 end

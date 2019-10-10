@@ -19,9 +19,9 @@ const Snapshot = class Snapshot extends ModelBase {
     );
   }
 
-  watch_snapshot_progress(dfd) {
+  static watch_snapshot_progress(dfd) {
     return (data) => {
-      const ws = ws_connector('snapshot_status', data.snapshot_id);
+      const ws = wsConnector('snapshot_status', data.snapshot_id);
       ws.onmessage = (msg) => {
         switch (msg.data) {
           case 'completed':
@@ -38,7 +38,6 @@ const Snapshot = class Snapshot extends ModelBase {
   }
 
   create(volumeId, physicalId) {
-    const self = this;
     const dfd = $.Deferred();
     Snapshot.ajax.create({
       infra_id: this.infra_id,
@@ -46,8 +45,8 @@ const Snapshot = class Snapshot extends ModelBase {
       physical_id: physicalId,
     }).done((data) => {
       dfd.notify(data);
-      self.watch_snapshot_progress(dfd)(data);
-    }).fail(this.rejectF(dfd));
+      Snapshot.watch_snapshot_progress(dfd)(data);
+    }).fail(Snapshot.rejectF(dfd));
     return dfd.promise();
   }
 

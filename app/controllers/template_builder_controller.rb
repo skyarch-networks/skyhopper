@@ -7,8 +7,7 @@
 #
 
 class TemplateBuilderController < ApplicationController
-
-# --------------- auth
+  # --------------- auth
   before_action :authenticate_user!
 
   before_action do
@@ -45,7 +44,7 @@ class TemplateBuilderController < ApplicationController
       resource.set_properties(resource_summary)
 
       if parameters[resource_name]
-        hash = parameters[resource_name].inject({}){|h, name| h[name.to_sym] = nil;h}
+        hash = parameters[resource_name].each_with_object({}) { |name, h| h[name.to_sym] = nil; }
         resource.set_refs_params(hash)
       end
 
@@ -59,21 +58,19 @@ class TemplateBuilderController < ApplicationController
 
     @cf_template = CfTemplate.new(
       infrastructure_id: nil,
-      name:              params.require(:subject),
-      detail:            params[:detail],
-      value:             template_builder.to_pretty_json,
-      format:            'JSON',
-      user_id:           current_user.id
+      name: params.require(:subject),
+      detail: params[:detail],
+      value: template_builder.to_pretty_json,
+      format: 'JSON',
+      user_id: current_user.id,
     )
 
     if @cf_template.save
-      render text: I18n.t('cf_templates.msg.created')
+      render plain: I18n.t('cf_templates.msg.created')
     elsif @cf_template.errors[:json]
-      render text: @cf_template.errors[:json], status: 500
+      render plain: @cf_template.errors[:json], status: :internal_server_error
     else
-      #TODO: error message
-      render text: "", status: 500
+      render plain: I18n.t('cf_templates.msg.create_failure'), status: :internal_server_error
     end
   end
-
 end

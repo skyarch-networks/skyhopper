@@ -1,4 +1,4 @@
-class RenameSkywalkerToSkyhopper < ActiveRecord::Migration
+class RenameSkywalkerToSkyhopper < ActiveRecord::Migration[4.2]
   def up
     client = Client.find_by(code: "Skywalker")
     if client.present?

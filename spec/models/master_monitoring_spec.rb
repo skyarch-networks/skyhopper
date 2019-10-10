@@ -9,7 +9,7 @@
 require_relative '../spec_helper'
 
 RSpec.describe MasterMonitoring, type: :model do
-  it "is valid with valid attributes" do
+  it 'is valid with valid attributes' do
     expect(MasterMonitoring.new).to be_valid
   end
 end

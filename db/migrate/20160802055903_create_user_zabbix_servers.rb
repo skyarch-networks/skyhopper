@@ -1,4 +1,4 @@
-class CreateUserZabbixServers < ActiveRecord::Migration
+class CreateUserZabbixServers < ActiveRecord::Migration[4.2]
   def change
     create_table :user_zabbix_servers, id: false, force: true do |t|
       t.references :user,  null: false

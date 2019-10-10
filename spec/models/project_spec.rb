@@ -11,7 +11,7 @@ require_relative '../spec_helper'
 describe Project, type: :model do
   describe 'with validation' do
     describe 'column code' do
-      let(:prj){build(:project)}
+      let(:prj) { build(:project) }
 
       it 'should not be "master"' do
         prj.code = 'master'
@@ -32,8 +32,8 @@ describe Project, type: :model do
 
   describe 'with restrict_with_error' do
     stubize_zabbix
-    let(:zabbix_server){create :zabbix_server}
-    let(:project){create :project, zabbix_server_id: zabbix_server.id }
+    let(:zabbix_server) { create :zabbix_server }
+    let(:project) { create :project, zabbix_server_id: zabbix_server.id }
 
     context 'when project has some infra' do
       before do
@@ -42,14 +42,14 @@ describe Project, type: :model do
       end
 
       it 'cant destroy' do
-        expect{project.destroy}.to raise_error ActiveRecord::DeleteRestrictionError
+        expect { project.destroy }.to raise_error ActiveRecord::DeleteRestrictionError
         expect(Project).to be_exists project.id
       end
     end
 
     context 'when project does not have any inra' do
       it 'can destroy' do
-        expect{project.destroy}.not_to raise_error
+        expect { project.destroy }.not_to raise_error
         expect(Project).not_to be_exists project.id
       end
     end

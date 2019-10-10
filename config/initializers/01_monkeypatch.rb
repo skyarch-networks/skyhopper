@@ -1,6 +1,6 @@
 class Hash
   def symbolize_keys_recursive
-    result = self.symbolize_keys
+    result = symbolize_keys
     result.each_pair do |_, val|
       val.symbolize_keys! if val.is_a?(Hash)
     end
@@ -8,7 +8,7 @@ class Hash
 
   def recursive_freeze
     freeze
-    self.each do |_, val|
+    each do |_, val|
       if defined? val.recursive_freeze
         val.recursive_freeze
       else
@@ -21,7 +21,7 @@ end
 class Array
   def recursive_freeze
     freeze
-    self.each do |x|
+    each do |x|
       if defined? x.recursive_freeze
         x.recursive_freeze
       else
@@ -47,23 +47,23 @@ end
 module ErrorHandlize
   refine StandardError do
     def format_error
-      return {
-        message: self.message,
-        kind:    self.class.to_s,
+      {
+        message: message,
+        kind: self.class.to_s,
       }
     end
 
     def status_code
-      return 500
+      500
     end
   end
 
   refine Pundit::NotAuthorizedError do
     def format_error
-      return {
+      {
         # TODO: I18n
-        message: "not allowed to #{self.query} for this #{self.record.class.to_s.downcase}",
-        kind:    self.class.to_s,
+        message: "not allowed to #{query} for this #{record.class.to_s.downcase}",
+        kind: self.class.to_s,
       }
     end
 

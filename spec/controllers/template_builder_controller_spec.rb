@@ -11,7 +11,7 @@ require_relative '../spec_helper'
 describe TemplateBuilderController, type: :controller do
   login_user
 
-  let(:klass){TemplateBuilder}
+  let(:klass) { TemplateBuilder }
 
   describe '#new' do
     before do
@@ -24,9 +24,9 @@ describe TemplateBuilderController, type: :controller do
   end
 
   describe '#resource_properties' do
-    let(:resource_type){'EC2::Instance'}
+    let(:resource_type) { 'EC2::Instance' }
     before do
-      get :resource_properties, resource_type: resource_type
+      get :resource_properties, params: { resource_type: resource_type }
     end
 
     it 'should assign @properties' do

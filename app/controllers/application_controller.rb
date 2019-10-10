@@ -14,13 +14,20 @@ class ApplicationController < ActionController::Base
   before_action :appsetting_set?, unless: :appsetting_controller
   before_action :restore_locale
   before_action :set_notifications
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   include Concerns::ErrorHandler
   include Concerns::ControllerUtil
   include Pundit
 
-  def default_url_options(_option={})
-    {lang: I18n.locale}
+  def default_url_options(_option = {})
+    { lang: I18n.locale }
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[password password_confirmation admin master])
   end
 
   private
@@ -36,10 +43,7 @@ class ApplicationController < ActionController::Base
     I18n.locale =
       if I18n::available_locales.include?(lang.to_sym)
         lang
-      else
-        nil
       end
-
   end
 
   def set_notifications
@@ -52,9 +56,9 @@ class ApplicationController < ActionController::Base
   end
 
   def appsetting_set?
-    unless AppSetting.set?
-      redirect_to app_settings_path
-    end
+    return if AppSetting.set?
+
+    redirect_to app_settings_path
   end
 
   def appsetting_controller

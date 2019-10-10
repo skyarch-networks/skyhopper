@@ -5,23 +5,17 @@
 //
 // http://opensource.org/licenses/mit-license.php
 //
-(function () {
+const queryString = require('query-string').parse(window.location.search);
+const modal = require('./modal');
+const demoGrid = require('./demo-grid.js');
+
+(() => {
   'use_strict';
 
-  // browserify functions for vue filters functionality
-  const wrap = require('./modules/wrap');
-  const listen = require('./modules/listen');
-  const md5 = require('md5');
-  const queryString = require('query-string').parse(location.search);
-  const modal = require('modal');
-
-  let app;
-
-  Vue.component('demo-grid', require('demo-grid.js'));
-
+  Vue.component('demo-grid', demoGrid);
 
   if ($('#indexElement').length) {
-    const clientIndex = new Vue({
+    new Vue({
       el: '#indexElement',
       data: {
         searchQuery: '',
@@ -45,19 +39,16 @@
         },
 
         delete_entry() {
-          const self = this;
-          modal.Confirm(t('users.user'), t('users.msg.delete_user', self.email), 'danger').done(() => {
+          modal.Confirm(t('users.user'), t('users.msg.delete_user', this.email), 'danger').done(() => {
             $.ajax({
               type: 'POST',
-              url: self.picked.users_admin_path,
+              url: this.picked.users_admin_path,
               dataType: 'json',
               data: { _method: 'delete' },
-              success(data) {
-                self.gridData = data;
-                self.picked = {};
-              },
+            }).done(() => {
+              window.location.reload();
             }).fail(() => {
-              location.reload();
+              window.location.reload();
             });
           });
         },
@@ -70,4 +61,4 @@
       },
     });
   }
-}());
+})();

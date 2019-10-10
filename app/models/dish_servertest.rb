@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class DishServertest < ActiveRecord::Base
+class DishServertest < ApplicationRecord
   belongs_to :dish,       dependent: :destroy
   belongs_to :servertest, dependent: :destroy
 end

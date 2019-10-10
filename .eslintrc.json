@@ -3,10 +3,40 @@
   "env": {
     "browser": true
   },
+  "overrides": [
+    {
+      "files": [
+        "app/assets/javascripts/models/*.js"
+      ],
+      "rules": {
+        "camelcase": ["off"]
+      }
+    }
+  ],
   "globals": {
+    "session_id": false,
     "$": false,
+    "jQuery": false,
+    "AjaxSet": false,
+    "Vue": false,
+    "VueRouter": false,
+    "moment": false,
+    "google": false,
+    "I18n": false,
+    "Favico": false,
+    "Clipboard": false,
+    "noty": false,
     "t": false,
-    "ws_connector": false,
-    "AjaxSet": false
+    "wsConnector": false,
+    "showLoading": false
+  },
+  "rules": {
+    "max-len": ["error", { "code": 160 }],
+    "no-new": ["off"],
+    "react/no-this-in-sfc": ["off"],
+    "import/no-extraneous-dependencies": ["off"],
+    "no-param-reassign": ["error", { "props": false }],
+    "no-use-before-define": ["error", { "variables": false }],
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }]
   }
 }

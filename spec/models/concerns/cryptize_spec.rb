@@ -9,17 +9,20 @@
 require_relative '../../spec_helper'
 
 describe Concerns::Cryptize do
-  let(:klass){Class.new{
-    extend Concerns::Cryptize
-    cryptize :value
-    def [](name)
-      instance_variable_get(:"@#{name}")
+  let(:klass) do
+    Class.new do
+      extend Concerns::Cryptize
+   cryptize :value
+   def [](name)
+     instance_variable_get(:"@#{name}")
+   end
+
+   def []=(name, value)
+     instance_variable_set(:"@#{name}", value)
+   end
     end
-    def []=(name, value)
-      instance_variable_set(:"@#{name}", value)
-    end
-  }}
-  let(:instance){klass.new}
+  end
+  let(:instance) { klass.new }
 
   describe 'encrypt and decrypt' do
     before do

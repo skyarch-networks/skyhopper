@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class SnapshotJob < ActiveJob::Base
+class SnapshotJob < ApplicationJob
   queue_as :default
 
   def perform(volume_id, physical_id, infra, user_id)
@@ -14,7 +14,7 @@ class SnapshotJob < ActiveJob::Base
 
     if @schedule.try(:enabled)
       self.class.set(
-        wait_until: @schedule.next_run
+        wait_until: @schedule.next_run,
       ).perform_later(volume_id, physical_id, infra, user_id)
     end
 
@@ -42,8 +42,8 @@ class SnapshotJob < ActiveJob::Base
   def infra_log(infra_id, user_id, status, details)
     log = InfrastructureLog.create(
       infrastructure_id: infra_id, user_id: user_id, status: status,
-      details: details
+      details: details,
     )
-    @ws.push_as_json({message: log.details, status: log.status, timestamp: Time.zone.now.to_s})
+    @ws.push_as_json({ message: log.details, status: log.status, timestamp: Time.zone.now.to_s })
   end
 end

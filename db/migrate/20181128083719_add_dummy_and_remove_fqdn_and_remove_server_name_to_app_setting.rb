@@ -1,4 +1,4 @@
-class AddDummyAndRemoveFqdnAndRemoveServerNameToAppSetting < ActiveRecord::Migration
+class AddDummyAndRemoveFqdnAndRemoveServerNameToAppSetting < ActiveRecord::Migration[4.2]
   def change
     add_column :app_settings, :dummy, :boolean, after: :ec2_private_key_id
     sql = <<'EOS'

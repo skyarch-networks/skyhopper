@@ -25,7 +25,7 @@ http://www.skyarch.net/blog/?p=2709
 
 
 ### Ansible
-`<project-root>/ansible/roles`配下にお好きなAnsibleロールを配置してください。
+[doc/ansible.md](doc/ansible.md)
 
 ### アップデート手順
 

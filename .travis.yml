@@ -6,22 +6,36 @@ rvm:
   - 2.4.4
 #  - ruby-head  # because can't build ruby-head
 
-cache: bundler
+cache:
+  bundler: true
+  yarn: true
+  directories:
+    - node_modules
 bundler_args: --jobs=4 --retry=3 --deployment
 sudo: false
 
+services:
+  - mysql
 
 branches:
   except: /^no-ci-.*$/
 
 before_script:
+  - nvm install --lts
+  - nvm use --lts
+  - bundle install --path vendor/bundle
+  - bundle clean
+  - cd frontend/ && yarn && cd ..
+  - echo 'module.exports = {"dummy":{"normal":"dummy","bold":"dummy","italics":"dummy","bolditalics":"dummy"}};' > frontend/fonts/fonts_map.js
   - cp .travis/database.yml config/database.yml
   - touch log/test.log
-  - bundle exec rake db:migrate:reset
+  - bundle exec rails db:setup
 
 
 script:
+  - bundle exec rubocop
   - bundle exec rspec
+  - ./node_modules/.bin/eslint app/assets/javascripts
 
 notifications:
   slack: skyarch:RrGXgQVUmTe0r565gbHYMnmQ

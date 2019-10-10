@@ -11,11 +11,11 @@ require_relative '../spec_helper'
 describe ProjectParametersController, type: :controller do
   login_user
 
-  let(:project){create(:project)}
+  let(:project) { create(:project) }
 
   describe '#show' do
-    let(:parameters){create_list(:project_parameter, 3, project: project)}
-    let(:req){get :show, project_id: project.id}
+    let(:parameters) { create_list(:project_parameter, 3, project: project) }
+    let(:req) { get :show, params: { project_id: project.id } }
 
     before do
       parameters
@@ -33,10 +33,10 @@ describe ProjectParametersController, type: :controller do
     end
 
     context 'when can not update user' do
-      let(:req){nil} # override request for re-login
+      let(:req) { nil } # override request for re-login
       login_user(admin: false)
       before do
-        get :show, project_id: project.id
+        get :show, params: { project_id: project.id }
       end
 
       should_be_success
@@ -48,15 +48,15 @@ describe ProjectParametersController, type: :controller do
   end
 
   describe '#update' do
-    let(:req){put :update, project_id: project.id, parameters: JSON.generate(parameters)}
+    let(:req) { put :update, params: { project_id: project.id, parameters: JSON.generate(parameters) } }
     before do
       req
     end
 
     context 'create parameters' do
-      let(:key){"hoge"}
-      let(:value){SecureRandom.hex(10)}
-      let(:parameters){[{id: nil, key: key, value: value}]}
+      let(:key) { 'hoge' }
+      let(:value) { SecureRandom.hex(10) }
+      let(:parameters) { [{ id: nil, key: key, value: value }] }
 
       should_be_success
 
@@ -68,9 +68,9 @@ describe ProjectParametersController, type: :controller do
     end
 
     context 'update parameters' do
-      let(:exist_param){create(:project_parameter, project: project)}
-      let(:value){SecureRandom.hex(10)}
-      let(:parameters){[{id: exist_param.id, changed: true, value: value}]}
+      let(:exist_param) { create(:project_parameter, project: project) }
+      let(:value) { SecureRandom.hex(10) }
+      let(:parameters) { [{ id: exist_param.id, changed: true, value: value }] }
 
       should_be_success
 
@@ -81,9 +81,9 @@ describe ProjectParametersController, type: :controller do
     end
 
     context 'destroy parameters' do
-      let(:exist_param){create(:project_parameter, project: project)}
-      let(:parameters){[]}
-      let(:req){nil} # override request
+      let(:exist_param) { create(:project_parameter, project: project) }
+      let(:parameters) { [] }
+      let(:req) { nil } # override request
 
       before do
         exist_param
@@ -92,7 +92,7 @@ describe ProjectParametersController, type: :controller do
       it 'should destroy parameters' do
         expect(ProjectParameter).to be_exists exist_param.id
 
-        put :update, project_id: project.id, parameters: JSON.generate(parameters)
+        put :update, params: { project_id: project.id, parameters: JSON.generate(parameters) }
 
         expect(ProjectParameter).not_to be_exists exist_param.id
       end

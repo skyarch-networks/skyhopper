@@ -13,7 +13,6 @@ class EC2Instance < SimpleDelegator
   class ChangeScaleError < StandardError; end
   class RegisterNotSuccessError < StandardError; end
 
-
   attr_reader :physical_id
 
   def initialize(infra, physical_id:)
@@ -42,24 +41,24 @@ class EC2Instance < SimpleDelegator
 
   def wait_status_check_ok
     loop do
-      s = self.status_check_info
+      s = status_check_info
       if s[:instance_status] == 'ok' && s[:system_status] == 'ok'
         break
       end
-      if ['ok', 'initializing'].include?(s[:instance_status]) && ['ok', 'initializing'].include?(s[:system_status])
-          sleep 5
-      else
-        raise StandardError, 'status check failed'
-      end
+
+      raise StandardError, 'status check failed' unless %w[ok initializing].include?(s[:instance_status]) && %w[ok initializing].include?(s[:system_status])
+
+      sleep 5
     end
   end
 
   def status_check_info
     response = @infra.ec2.describe_instance_status(
-      instance_ids: [self.physical_id]
+      instance_ids: [physical_id],
     )
     raise 'acquisition of instance status failed' if response.instance_statuses.length != 1
-    return {
+
+    {
       instance_status: response.instance_statuses[0].instance_status.status,
       system_status: response.instance_statuses[0].system_status.status,
     }
@@ -94,12 +93,12 @@ class EC2Instance < SimpleDelegator
 
   def summary
     reload
-    return {
-      status:        state.name,
+    {
+      status: state.name,
       instance_type: instance_type,
-      public_dns:    public_dns_name,
-      elastic_ip:    elastic_ip,
-      public_ip:     public_ip_address,
+      public_dns: public_dns_name,
+      elastic_ip: elastic_ip,
+      public_ip: public_ip_address,
       block_devices: block_device_mappings,
       root_device_name: root_device_name,
       platform: platform,
@@ -111,7 +110,7 @@ class EC2Instance < SimpleDelegator
 
   def describe_keypair
     reload
-    return key_name
+    key_name
   end
 
   # for compatibility
@@ -121,7 +120,7 @@ class EC2Instance < SimpleDelegator
   end
 
   def elastic_ip
-    resp = client.describe_addresses(filters: [{name: 'instance-id', values: [instance_id]}])
+    resp = client.describe_addresses(filters: [{ name: 'instance-id', values: [instance_id] }])
     resp.addresses.first.public_ip unless resp.addresses.empty?
   end
 
@@ -130,22 +129,22 @@ class EC2Instance < SimpleDelegator
   end
 
   def fqdn
-    return self.public_dns_name.presence ||
-           self.elastic_ip.presence ||
-           self.private_dns_name
+    public_dns_name.presence ||
+      elastic_ip.presence ||
+      private_dns_name
   end
 
   def ip_addr
-    return self.elastic_ip.presence ||
-           self.public_ip_address.presence ||
-           self.private_ip_address
+    elastic_ip.presence ||
+      public_ip_address.presence ||
+      private_ip_address
   end
 
-  def register_in_known_hosts(tries:1, sleep: 5)
-    fqdn_memo = self.fqdn
+  def register_in_known_hosts(tries: 1, sleep: 5)
+    fqdn_memo = fqdn
     raise RegisterNotSuccessError, 'failed to get fqdn' if fqdn_memo.blank?
 
-    private_ip_address_memo = self.private_ip_address
+    private_ip_address_memo = private_ip_address
     raise RegisterNotSuccessError, 'failed to get private_ip_address' if private_ip_address_memo.blank?
 
     Retryable.retryable(tries: tries, on: RegisterNotSuccessError, sleep: sleep) do
@@ -155,34 +154,33 @@ class EC2Instance < SimpleDelegator
   end
 
   def platform
-    return @instance.platform
+    @instance.platform
   end
 
   def password(ec2key)
-    return @instance.decrypt_windows_password(ec2key.path_temp)
+    @instance.decrypt_windows_password(ec2key.path_temp)
   end
-
 
   def attachable_volumes(availability_zone)
     client.describe_volumes(
       filters: [{
-        name: "availability-zone",
+        name: 'availability-zone',
         values: [availability_zone],
-      }]
+      }],
     ) .volumes
-      .select { |volume| volume.state == 'available' }
-      .map { |volume|
-        tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
+          .select { |volume| volume.state == 'available' }
+          .map do |volume|
+      tags_hash = volume.tags.map { |h| [h.key, h.value] }.to_h
         volume.tags = tags_hash
         volume
-      }
+    end
   end
 
   def attach_volume(volume_id, device_name)
     client.attach_volume(
       volume_id: volume_id,
       instance_id: @physical_id,
-      device: device_name
+      device: device_name,
     )
   end
 
@@ -192,29 +190,27 @@ class EC2Instance < SimpleDelegator
 
   def retention_policies
     volume_ids = block_device_mappings.map { |e| e.ebs.volume_id }
-    policies = RetentionPolicy.where(resource_id: volume_ids).map { |policy|
+    policies = RetentionPolicy.where(resource_id: volume_ids).map do |policy|
       [
         policy.resource_id,
         {
-          enabled:    true,
+          enabled: true,
           max_amount: policy.max_amount,
         },
       ]
-    }.to_h  # e.g. #=> { 'vol-123456': { max_amount: 3 } }
+    end.to_h # e.g. #=> { 'vol-123456': { max_amount: 3 } }
     volume_ids.each do |id|
       policies[id] = { enabled: false } unless policies.include?(id)
     end
     policies
   end
 
-  def create_volume(options)
-    client.create_volume(options)
-  end
+  delegate :create_volume, to: :client
 
   # 現在のリージョンの Availability Zones を取得します。値は一定期間キャッシュされます。
   # @return [Hash{String => Array<Aws::EC2::Types::AvailabilityZone>}] Stateでグループ化したHash
   def availability_zones
-    Rails.cache.fetch("az-#{client.config.region}", expires_in: 2.hour) do
+    Rails.cache.fetch("az-#{client.config.region}", expires_in: 2.hours) do
       resp = client.describe_availability_zones
       resp.availability_zones.group_by(&:state)
     end

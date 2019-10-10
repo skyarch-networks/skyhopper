@@ -9,15 +9,14 @@
 class ServerStatusController < ApplicationController
   before_action :authenticate_user!
   before_action :set_server
-  after_action :watch_server_state, only: [:start, :stop]
-
+  after_action :watch_server_state, only: %i[start stop]
 
   # POST /server/:kind/start
   # @param [String] kind Server kind. "zabbix"
   def start
     @server.start
 
-    render nothing: true
+    render body: nil
   end
 
   # POST /server/:kind/stop
@@ -25,20 +24,19 @@ class ServerStatusController < ApplicationController
   def stop
     @server.stop
 
-    render nothing: true
+    render body: nil
   end
 
   # POST /server/:kind/status
   # @param [String] kind Server kind. "zabbix"
   # @param [Boolean] background If this is true, server status updated background.
   def status
-    unless params[:background] || @server.is_in_progress?
-      render text: @server.status and return
+    unless params[:background] || @server.in_progress?
+      render plain: @server.status and return
     end
 
-    render text: @server.latest_status and return
+    render plain: @server.latest_status and return
   end
-
 
   private
 

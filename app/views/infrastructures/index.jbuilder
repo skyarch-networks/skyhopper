@@ -5,8 +5,7 @@ json.array!(@infrastructures) do |infra|
   json.project_id infra.project_id
   json.stack_name infra.stack_name
 
-  json.created_at infra.created_at.strftime("%B %d, %Y at %l:%m %p %Z")
-
+  json.created_at infra.created_at.strftime('%B %d, %Y at %l:%m %p %Z')
 
   json.region infra.region
   json.ec2_private_key_id infra.ec2_private_key_id
@@ -18,7 +17,6 @@ json.array!(@infrastructures) do |infra|
   json.button_delete_stack button_delete_stack(infra)
   json.servertests_path servertests_path(infrastructure_id: infra.id)
   json.edit_keypair_infrastructure_path edit_keypair_infrastructure_path(infra)
-
 
   json.url infrastructure_url(infra, format: :json)
 end

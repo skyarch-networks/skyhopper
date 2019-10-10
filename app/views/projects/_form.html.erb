@@ -9,7 +9,7 @@
   <div class="form-group">
     <%= f.label :code, t('projects.code'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <% if @project.client.is_for_system? %>
+      <% if @project.client.for_system? %>
         <%= f.text_field :code, class: 'form-control', readonly: true %>
       <% else %>
         <%= f.text_field :code, class: 'form-control', required: true %>
@@ -19,7 +19,7 @@
   <div class="form-group">
     <%= f.label :name, t('projects.name'), class: 'control-label col-sm-2' %>
     <div class="col-sm-5">
-      <% if @project.client.is_for_system? %>
+      <% if @project.client.for_system? %>
         <%= f.text_field :name, class: 'form-control', readonly: true %>
       <% else %>
         <%= f.text_field :name, class: 'form-control', required: true %>

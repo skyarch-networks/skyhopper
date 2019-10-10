@@ -25,7 +25,7 @@ http://www.skyarch.net/blog/?p=2709
 
 
 ### Ansible
-Lease place your favorite Ansible role under `<project-root>/ansible/roles`.
+[doc/ansible.md](doc/ansible.md)(Japanese)
 
 ### Update procedure
 

@@ -1,12 +1,11 @@
-
-
-const modal_1 = require('./modal');
+/* global PROJECT, PROJECT_PARAMETERS */
+const modal1 = require('./modal');
 
 PROJECT_PARAMETERS.forEach((p) => {
   p.remove = false;
   p.changed = false;
 });
-const editable_div = Vue.extend({
+const editableDiv = Vue.extend({
   template: '<div contenteditable @blur="on_blur">{{text}}</div>',
   data() { return {}; },
   props: {
@@ -22,7 +21,7 @@ const editable_div = Vue.extend({
 Vue.component('param-tr', {
   template: '#param-tr-template',
   components: {
-    'editable-div': editable_div,
+    'editable-div': editableDiv,
   },
   data() { return {}; },
   props: {
@@ -62,11 +61,11 @@ Vue.component('param-tr', {
     },
   },
   watch: {
-    'param.key': function () { this.change(); },
-    'param.value': function () { this.change(); },
+    'param.key': () => { this.change(); },
+    'param.value': () => { this.change(); },
   },
 });
-const ProjectParamApp = new Vue({
+new Vue({
   el: '#project-parameter-index',
   data: {
     params: PROJECT_PARAMETERS,
@@ -84,7 +83,6 @@ const ProjectParamApp = new Vue({
       });
     },
     save() {
-      const _this = this;
       const params = this.params.filter(p => !p.remove);
       this.saving = true;
       $.ajax({
@@ -94,14 +92,13 @@ const ProjectParamApp = new Vue({
           project_id: this.project.id,
           parameters: JSON.stringify(params),
         },
-      }).fail(modal_1.AlertForAjaxStdError(() => { location.reload(); }))
+      }).fail(modal1.AlertForAjaxStdError(() => { window.location.reload(); }))
         .then((data) => {
-          _this.saving = false;
-          return modal_1.Alert(t('project_parameters.title'), data);
+          this.saving = false;
+          return modal1.Alert(t('project_parameters.title'), data);
         }).then(() => {
-          location.reload();
+          window.location.reload();
         });
     },
   },
 });
-console.log(ProjectParamApp);

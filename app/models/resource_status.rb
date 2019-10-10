@@ -6,13 +6,17 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ResourceStatus < ActiveRecord::Base
+class ResourceStatus < ApplicationRecord
   belongs_to :resource
 
-  enum value:  %i(success failed pending un_executed inprogress)
-  enum kind:   %i(servertest cook yum ansible)
+  enum content: %i[success failed pending un_executed inprogress]
+  enum kind: %i[servertest cook yum ansible]
 
   kinds.each do |k, v|
     scope k, -> { find_by(kind: v) }
+  end
+
+  def to_hash_for_api
+    attributes.transform_keys { |k| if k == 'content' then 'value' else k end }
   end
 end

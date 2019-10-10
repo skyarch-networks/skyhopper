@@ -13,17 +13,17 @@ describe InfrastructureLogsController, type: :controller do
 
   describe '#index' do
     before do
-      get :index, infrastructure_id: 1
+      get :index, params: { infrastructure_id: 1 }
     end
 
     should_be_success
   end
 
   describe 'download_all' do
-    let(:infra){create(:infrastructure)}
-    let(:infrastructure_logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+    let(:infra) { create(:infrastructure) }
+    let(:infrastructure_logs) { create_list(:infrastructure_log, 3, infrastructure: infra) }
     before do
-      get :download_all, infrastructure_id: infra.id
+      get :download_all, params: { infrastructure_id: infra.id }
     end
 
     should_be_success
@@ -35,9 +35,9 @@ describe InfrastructureLogsController, type: :controller do
   end
 
   describe '#download' do
-    let(:infrastructure_log){create(:infrastructure_log)}
+    let(:infrastructure_log) { create(:infrastructure_log) }
     before do
-      get :download, id: infrastructure_log.id
+      get :download, params: { id: infrastructure_log.id }
     end
 
     should_be_success
@@ -49,19 +49,19 @@ describe InfrastructureLogsController, type: :controller do
   end
 
   describe '#get_infrastructure_logs' do
-    let(:infra){create(:infrastructure)}
-    let(:infrastructure_logs){create_list(:infrastructure_log, 3, infrastructure: infra)}
+    let(:infra) { create(:infrastructure) }
+    let(:infrastructure_logs) { create_list(:infrastructure_log, 3, infrastructure: infra) }
 
     controller InfrastructureLogsController do
       def index
         @result = get_infrastructure_logs
-        render nothing: true
+        render body: nil
       end
     end
 
     it 'should return infrastructure_logs for specified infrastructure' do
-      infrastructure_log_ids = infrastructure_logs.map{|x|x.id}
-      get :index, infrastructure_id: infra.id
+      infrastructure_log_ids = infrastructure_logs.map(&:id)
+      get :index, params: { infrastructure_id: infra.id }
       expect(assigns(:result).first.is_a?(InfrastructureLog)).to be_truthy
       expect(assigns(:result).ids).to eq infrastructure_log_ids
     end
@@ -71,7 +71,7 @@ describe InfrastructureLogsController, type: :controller do
     controller InfrastructureLogsController do
       def index
         @result = sort_key
-        render nothing: true
+        render body: nil
       end
     end
 
@@ -87,7 +87,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:sort_key] is invalid' do
       before do
-        get :index, sort_key: 'xxx'
+        get :index, params: { sort_key: 'xxx' }
       end
 
       it 'return default sort_key' do
@@ -97,7 +97,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:sort_key] is valid' do
       before do
-        get :index, sort_key: 'users.email'
+        get :index, params: { sort_key: 'users.email' }
       end
 
       it 'return params[:sort_key]' do
@@ -110,7 +110,7 @@ describe InfrastructureLogsController, type: :controller do
     controller InfrastructureLogsController do
       def index
         @result = order
-        render nothing: true
+        render body: nil
       end
     end
 
@@ -126,7 +126,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:sort_key] is not nil and params[:order] is nil' do
       before do
-        get :index, sort_key: 'users.email'
+        get :index, params: { sort_key: 'users.email' }
       end
 
       it 'return "ASC"' do
@@ -136,7 +136,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is invalid"' do
       before do
-        get :index, order: "xxx"
+        get :index, params: { order: 'xxx' }
       end
 
       it 'return "ASC"' do
@@ -146,7 +146,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is "1"' do
       before do
-        get :index, order: "1"
+        get :index, params: { order: '1' }
       end
 
       it 'return "ASC"' do
@@ -156,7 +156,7 @@ describe InfrastructureLogsController, type: :controller do
 
     context 'params[:order] is "-1"' do
       before do
-        get :index, order: "-1"
+        get :index, params: { order: '-1' }
       end
 
       it 'return "DESC"' do

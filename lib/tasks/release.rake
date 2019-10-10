@@ -7,7 +7,7 @@ namespace :release do
 
     # get PRs
     log = `git log origin/master..origin/develop --oneline --merges`.split("\n")
-    re = %r!^[a-f0-9]{7} Merge pull request (?<num>#\d+) from [\-a-zA-Z0-9_]+/(?<name>.+)$!
+    re = %r!^[a-f0-9]{8} Merge pull request (?<num>#\d+) from [\-a-zA-Z0-9_]+/(?<name>.+)$!
     log.each do |line|
       ma = re.match(line)
       next unless ma
@@ -33,15 +33,11 @@ namespace :release do
     puts '--------'
     puts
 
-
     puts 'Update process'
     puts '--------'
     puts
     puts '```sh'
     puts 'cd YOUR_SKYHOPPER_DIRECTORY'
-    puts "export RAILS_ENV=production  # This command isn't needed if you use develop environment."
-    puts 'git pull'
-    puts 'git checkout <VERSION>'
 
     diff_files = `git diff --name-only origin/master..origin/develop`.split("\n")
 
@@ -49,8 +45,8 @@ namespace :release do
       puts 'bundle install'
     end
 
-    if diff_files.find{|x| %r!^db/migrate/.+\.rb$!.match(x)}
-      puts 'bundle exec rake db:migrate'
+    if diff_files.find { |x| %r{^db/migrate/.+\.rb$}.match(x) }
+      puts 'bundle exec rails db:migrate RAILS_ENV=production'
     end
 
     yarn = diff_files.include?('frontend/package.json')

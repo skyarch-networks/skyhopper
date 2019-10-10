@@ -1,4 +1,3 @@
-
 #
 # Copyright (c) 2013-2017 SKYARCH NETWORKS INC.
 #
@@ -35,111 +34,111 @@ RSpec.describe ZabbixServersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # ZabbixServer. As you add validations to ZabbixServer, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_attributes) do
     {
       id: ZabbixServer.maximum(:id).to_i + 1 + SecureRandom.random_number(20),
       fqdn: SecureRandom.hex(20),
-      username: "test",
-      password: "ilsdseeetest",
-      version:  "3.0.1",
-      details: "Default Server",
+      username: 'test',
+      password: 'ilsdseeetest',
+      version: '3.0.1',
+      details: 'Default Server',
     }
-  }
+  end
 
-  let(:invalid_attributes) {
+  let(:invalid_attributes) do
     {
       id: 1,
       fqdn: 'master',
-      username: "test",
-      password: "ilsdseeetest",
-      version:  "3.0.1",
-      details: "Default Server",
+      username: 'test',
+      password: 'ilsdseeetest',
+      version: '3.0.1',
+      details: 'Default Server',
     }
-  }
+  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ZabbixServersController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:zabbix_server){create(:zabbix_server)}
-  let(:zabbix_server_hash){attributes_for(:zabbix_server)}
+  let(:zabbix_server) { create(:zabbix_server) }
+  let(:zabbix_server_hash) { attributes_for(:zabbix_server) }
 
-  describe "GET #index" do
+  describe 'GET #index' do
     before do
       get :index
     end
 
-    it "assigns all zabbix_servers as @zabbix_servers" do
-      get :index, {}
-      expect(assigns(:zabbix_servers)).to be_all{|zabbix_server|zabbix_server.kind_of? ZabbixServer}
+    it 'assigns all zabbix_servers as @zabbix_servers' do
+      get :index
+      expect(assigns(:zabbix_servers)).to(be_all { |zabbix_server| zabbix_server.is_a? ZabbixServer })
     end
   end
 
-  describe "GET #show" do
-    it "assigns the requested zabbix_server as @zabbix_server" do
+  describe 'GET #show' do
+    it 'assigns the requested zabbix_server as @zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :show, {id: zabbix_server.id}, valid_session
+      get :show, params: { id: zabbix_server.id }, session: valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
 
-  describe "GET #new" do
-    it "assigns a new zabbix_server as @zabbix_server" do
-      get :new, {}, valid_session
+  describe 'GET #new' do
+    it 'assigns a new zabbix_server as @zabbix_server' do
+      get :new, params: {}, session: valid_session
       expect(assigns(:zabbix_server)).to be_a_new(ZabbixServer)
     end
   end
 
-  describe "GET #edit" do
-    it "assigns the requested zabbix_server as @zabbix_server" do
+  describe 'GET #edit' do
+    it 'assigns the requested zabbix_server as @zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      get :edit, {id: zabbix_server.to_param}, valid_session
+      get :edit, params: { id: zabbix_server.to_param }, session: valid_session
       expect(assigns(:zabbix_server)).to eq(zabbix_server)
     end
   end
 
-  describe "POST #create" do
-    let(:request){post :create, zabbix_server: zabbix_server_hash}
+  describe 'POST #create' do
+    let(:request) { post :create, params: { zabbix_server: zabbix_server_hash } }
     before do
       expect(Thread).to receive(:new_with_db).and_yield
       allow(Zabbix).to receive(:new).and_return(_zabbix)
     end
 
-    context "with valid params" do
-      it "creates a new ZabbixServer" do
-        expect {
+    context 'with valid params' do
+      it 'creates a new ZabbixServer' do
+        expect do
           request
-        }.to change(ZabbixServer, :count).by(1)
+        end.to change(ZabbixServer, :count).by(1)
       end
 
-      it "assigns a newly created zabbix_server as @zabbix_server" do
+      it 'assigns a newly created zabbix_server as @zabbix_server' do
         request
         expect(assigns(:zabbix_server)).to be_a(ZabbixServer)
         expect(assigns(:zabbix_server)).to be_persisted
       end
 
-      it "should render status ok" do
+      it 'should render status ok' do
         request
         expect(response.status).to eq(200)
       end
     end
 
-    context "with invalid params" do
-      it "renders status 302" do
-        post :create, {zabbix_server: invalid_attributes}, valid_session
+    context 'with invalid params' do
+      it 'renders status 302' do
+        post :create, params: { zabbix_server: invalid_attributes }, session: valid_session
         expect(response.status).to eq(302)
       end
     end
   end
 
-  describe "PUT #update" do
-    let(:new_name){'Joepergwapotalagatotoo'}
-    let(:update_request) {patch :update, id: zabbix_server.id, zabbix_server: zabbix_server_hash.merge(username: new_name)}
+  describe 'PUT #update' do
+    let(:new_name) { 'Joepergwapotalagatotoo' }
+    let(:update_request) { patch :update, params: { id: zabbix_server.id, zabbix_server: zabbix_server_hash.merge(username: new_name) } }
     before do
       update_request
     end
 
-    context "with valid params" do
+    context 'with valid params' do
       it 'should assign @zabbix_server' do
         expect(assigns[:zabbix_server]).to be_a ZabbixServer
       end
@@ -154,34 +153,33 @@ RSpec.describe ZabbixServersController, type: :controller do
       end
     end
 
-    context "with invalid params" do
-      it "assigns the zabbix_server as @zabbix_server" do
+    context 'with invalid params' do
+      it 'assigns the zabbix_server as @zabbix_server' do
         zabbix_server = ZabbixServer.create!
-        put :update, {id: zabbix_server.to_param, zabbix_server: invalid_attributes}, valid_session
+        put :update, params: { id: zabbix_server.to_param, zabbix_server: invalid_attributes }, session: valid_session
         expect(assigns(:zabbix_server)).not_to eq(ZabbixServer)
       end
 
-      it "renders status error" do
+      it 'renders status error' do
         zabbix_server = ZabbixServer.create! valid_attributes
-        put :update, {id: zabbix_server.to_param, zabbix_server: !zabbix_server}, valid_session
+        put :update, params: { id: zabbix_server.to_param, zabbix_server: !zabbix_server }, session: valid_session
         expect(response.status).to eq(302)
       end
     end
   end
 
-  describe "DELETE #destroy" do
-    it "destroys the requested zabbix_server" do
+  describe 'DELETE #destroy' do
+    it 'destroys the requested zabbix_server' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      expect {
-        delete :destroy, {id: zabbix_server.to_param}, valid_session
-      }.to change(ZabbixServer, :count).by(-1)
+      expect do
+        delete :destroy, params: { id: zabbix_server.to_param }, session: valid_session
+      end.to change(ZabbixServer, :count).by(-1)
     end
 
-    it "redirects to the zabbix_servers list" do
+    it 'redirects to the zabbix_servers list' do
       zabbix_server = ZabbixServer.create! valid_attributes
-      delete :destroy, {id: zabbix_server.to_param}, valid_session
+      delete :destroy, params: { id: zabbix_server.to_param }, session: valid_session
       expect(response).to redirect_to(zabbix_servers_url)
     end
   end
-
 end

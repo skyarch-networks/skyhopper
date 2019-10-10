@@ -3,7 +3,26 @@
 
   <div class="col-md-6 col-sm-6">
     <h4 class="page-header">playbook</h4>
-    <p>Sorry, not implemented yet.</p>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @selected_playbook_roles.length != 0 %>
+          <% @selected_playbook_roles.each do |role| %>
+            <tr>
+              <td v-text="r"><%= role %></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td><%= t 'common.msg.empty', name: t('nodes.playbook') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 
   <div class="col-md-6 col-sm-6">

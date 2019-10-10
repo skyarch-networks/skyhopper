@@ -6,7 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class Ec2PrivateKey < ActiveRecord::Base
+class Ec2PrivateKey < ApplicationRecord
   has_many :infrastructures
   has_many :app_settings
   validates :value, rsa: true
@@ -26,26 +26,27 @@ class Ec2PrivateKey < ActiveRecord::Base
       infra = Infrastructure.new(project: prj, region: region)
       ec2   = infra.ec2
       key   = ec2.create_key_pair(key_name: name)
-      return self.new(name: name, value: key.key_material)
+      new(name: name, value: key.key_material)
     end
   end
 
-
   ## テンポラリに鍵を書き出す
-  def output_temp(prefix: "ec2key")
+  def output_temp(prefix: 'ec2key')
     @tmp = Tempfile.open(prefix)
-    @tmp.print(self.value)
+    @tmp.print(value)
     @tmp.flush
   end
 
   def path_temp
     return nil unless @tmp
+
     @tmp.path
   end
 
   ## テンポラリの鍵を消す
   def close_temp
     return nil unless @tmp
+
     @tmp.close!
   end
 end

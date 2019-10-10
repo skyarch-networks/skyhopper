@@ -13,7 +13,7 @@ trap_TERM() {
 }
 trap 'trap_TERM' TERM
 
-while :
+while kill -0 $foreman_pid
 do
   sleep 1
 done

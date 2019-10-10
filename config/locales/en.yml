@@ -98,7 +98,7 @@ en:
       eip_limit_error:   'Cannot allocate EIP. Please check the limit of EIP.'
       vpc_id_not_found:  'The vpc ID <b> "%{id}" </b> does not exist.'
       subnet_id_not_found: 'The subnet ID <b> "%{id}" </b> does not exist.'
-      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rake db:seed`"'
+      db_seed_not_found:  'Project for %{server}  Server not found. Did you run db:seed? If not, please execute `bundle exec rails db:seed`"'
     title:
       show:   'Welcome to SkyHopper!'
       setup:  'Setup'
@@ -177,8 +177,6 @@ en:
     no_stack_info:      'No stack information.'
     in_progress:        'In progress...'
     database:           'Database'
-    runlist:            'Runlist'
-    failed_to_get_runlist: 'Failed to get Runlist'
     instance_type:      'Instance type'
     add_ec2:            'Add EC2'
     serverspec_failed:  'Serverspec failed'
@@ -304,7 +302,6 @@ en:
   nodes:
     bootstrap:   'Bootstrap'
     cook:        'Cook'
-    runlist:     'Runlist'
     recipe:      'Recipe'
     cookbook:    'CookBook'
     role:        'Role'
@@ -321,7 +318,6 @@ en:
     latest_serverspec_status: 'Latest Serverspec Status'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
-      edit_runlist:               'Edit Runlist'
       edit_playbook:    'Edit playbook'
       apply_dish:                 'Apply Dish'
       bootstrap_with_chef_server: 'Bootstrap with Chef Server'
@@ -334,8 +330,6 @@ en:
       bootstrap_finish:   '%{physical_id} was successfully registered with Chef Server.'
       not_change_scale:   "Unnecessary to change to '%{type}'"
       changed_scale:      'Change scale to %{type}'
-      runlist_updated:    'Runlist was successfully updated.'
-      runlist_applying:   'Runlist is being applied...'
       playbook_updated:    'playbook was successfully updated.'
       playbook_applying:   'playbook is being applied...'
       cook_started:       'Cook was successfully started'
@@ -344,7 +338,7 @@ en:
       yum_update_confirm: 'Are you sure you want to execute yum command?'
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
-      runlist_empty:      'Runlist is empty'
+      playbook_empty:     'playbook is empty'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
       yum_update_success: |
@@ -369,6 +363,7 @@ en:
       no_serverspec_selected: 'No serverspecs selected.'
       empty-list:             'No dishes found.'
       delete_dish:            'Are you sure you want to delete this Dish?'
+      save_failed:            'Dish was failed saved.'
 
 
   servertests:
@@ -473,6 +468,8 @@ en:
       creating:        'Creating stack'
       delete_cf_template: 'Are you sure you want to delete this Cf_template?'
       confirm_export:  ' Are you sure you want to export the following templates?'
+      create_failure:  'Template was failure created.'
+
 
 
   template_builder:
@@ -521,6 +518,7 @@ en:
       not_set:                 ': was not selected in zabbix Templates. Please select template in the configuration tab.'
       trigger_setting_warning: 'Threshold will be updated only if you have selected items.'
       change_zabbix:            'Are you sure you want to change the Zabbix Server for this Infrastructure?'
+      invalid_access:          'Invalid access!'
       page:                    'Page'
       of:                      'of'
       no_data: |
@@ -581,6 +579,7 @@ en:
       use_stop_mfa:          'If save changes, use stop MFA.'
       delete_user:           'Are you sure you want to delete this User?'
       error:                 'An error occured while processing Zabbix: "%{msg}"'
+      cannot_delete_yourself: 'Cannot delete yourself'
 
 
   system_servers:
@@ -708,6 +707,10 @@ en:
     screen_name: 'Screen Name'
     msg:
       created: 'Resource was successfully created.'
+      infrastructure_not_created: "Infrastructure isn't create complete."
+      cannot_find: 'Cannot find %{physical_id}'
+      keypair_dose_not_match: '%{physical_id}: Keypair does not matched to this Infrastructure!'
+      if_status_is_terminated: 'Cannot add %{physical_id}. if status is terminated.'
 
 
   key_pairs:

@@ -16,27 +16,29 @@ describe AppSettingsController, type: :controller do
   end
 
   describe '#show' do
-    let(:req){get :show}
+    let(:req) { get :show }
 
     context 'when success' do
-      before{req}
+      before { req }
       should_be_success
     end
 
     context 'when AppSetting already set' do
-      before{create(:app_setting)}
-      before{req}
-      it {is_expected.to redirect_to root_path}
+      before { create(:app_setting) }
+      before { req }
+      it { is_expected.to redirect_to root_path }
     end
   end
 
   describe '#create' do
-    let(:settings){{
-      aws_region: 'ap-northeast-1',
-      log_directory: '/foo',
-    }}
-    let(:ec2key){create(:ec2_private_key)}
-    let(:settings_with_ec2_key_id){settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value)}
+    let(:settings) do
+      {
+        aws_region: 'ap-northeast-1',
+        log_directory: '/foo',
+      }
+    end
+    let(:ec2key) { create(:ec2_private_key) }
+    let(:settings_with_ec2_key_id) { settings.merge(keypair_name: ec2key.name, keypair_value: ec2key.value) }
 
     before do
       allow(Thread).to receive(:new_with_db)
@@ -45,7 +47,7 @@ describe AppSettingsController, type: :controller do
 
     context 'when valid settings' do
       before do
-        create(:client, code: Client::ForSystemCodeName)
+        create(:client, code: Client::FOR_SYSTEM_CODE_NAME)
       end
       before do
         allow_any_instance_of(Ec2PrivateKey).to receive(:id).and_return(ec2key.id)
@@ -54,15 +56,15 @@ describe AppSettingsController, type: :controller do
       it 'should create AppSetting' do
         expect(AppSetting).to receive(:clear_cache).with(no_args)
         expect(AppSetting).to receive(:clear_dummy).with(no_args)
-        post :create, settings: settings_with_ec2_key_id.to_json
+        post :create, params: { settings: settings_with_ec2_key_id.to_json }
 
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     context 'when without ec2 key' do
       before do
-        post :create, settings: settings.to_json
+        post :create, params: { settings: settings.to_json }
       end
 
       should_be_failure
@@ -71,7 +73,7 @@ describe AppSettingsController, type: :controller do
     context 'when invalid setting' do
       before do
         settings_with_ec2_key_id[:log_directory] = 'hogehoge'
-        post :create, settings: settings_with_ec2_key_id.to_json
+        post :create, params: { settings: settings_with_ec2_key_id.to_json }
       end
 
       should_be_failure
@@ -79,12 +81,12 @@ describe AppSettingsController, type: :controller do
   end
 
   describe '#edit_zabbix' do
-    let(:set){create(:app_setting)}
-    before{set}
-    before{get :edit_zabbix}
+    let(:set) { create(:app_setting) }
+    before { set }
+    before { get :edit_zabbix }
 
     should_be_success
-    it {is_expected.to render_template 'zabbix_server'}
+    it { is_expected.to render_template 'zabbix_server' }
     it 'should assign @app_setting' do
       expect(assigns[:app_setting]).to eq set
     end
@@ -96,7 +98,7 @@ describe AppSettingsController, type: :controller do
   #   before{set}
   #   let(:zabbix_user){SecureRandom.hex(20)}
   #   let(:zabbix_pass){SecureRandom.hex(20)}
-  #   let(:req){post :update_zabbix, zabbix_user: zabbix_user, zabbix_pass: zabbix_pass}
+  #   let(:req){post :update_zabbix, params: { zabbix_user: zabbix_user, zabbix_pass: zabbix_pass} }
   #
   #   context 'when success' do
   #     before{req}
@@ -127,19 +129,21 @@ describe AppSettingsController, type: :controller do
 
   describe '#check_eip_limit!' do
     controller AppSettingsController do
-      def authorize(*)end #XXX: pundit hack
+      # XXX: pundit hack
+      def authorize(*)end
+
       def test
         set_ec2('ap-northeast-1', 'ACCESS_KEY', 'SECRET')
         check_eip_limit!(false)
-        render text: 'success'
+        render plain: 'success'
       rescue ::AppSettingsController::EIPLimitError
-        render text: 'failure', status: 400
+        render plain: 'failure', status: :bad_request
       end
     end
-    before{routes.draw{resources(:app_settings){collection{get :test}}}}
-    let(:req){get :test}
+    before { routes.draw { resources(:app_settings) { collection { get :test } } } }
+    let(:req) { get :test }
 
-    let(:eip_n){2}
+    let(:eip_n) { 2 }
 
     before do
       res = double('describe_account_attributes response')
@@ -150,7 +154,7 @@ describe AppSettingsController, type: :controller do
     end
 
     context 'when can allocate EIP' do
-      let(:eip_n){2}
+      let(:eip_n) { 2 }
       should_be_success
 
       it 'should be set body' do
@@ -159,7 +163,7 @@ describe AppSettingsController, type: :controller do
     end
 
     context 'when cannot allocate EIP' do
-      let(:eip_n){5}
+      let(:eip_n) { 5 }
       should_be_failure
 
       it 'should be set body' do

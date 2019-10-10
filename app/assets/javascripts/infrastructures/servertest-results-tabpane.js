@@ -1,13 +1,13 @@
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
-const queryString = require('query-string').parse(location.search);
+const queryString = require('query-string').parse(window.location.search);
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
 
-const wrap = require('modules/wrap');
-const listen = require('modules/listen');
+const wrap = require('../modules/wrap');
+const listen = require('../modules/listen');
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('./helper.js');
 
-const alert_danger = helpers.alert_danger;
+const alertDanger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#servertest-results-tabpane-template',
@@ -53,18 +53,18 @@ module.exports = Vue.extend({
     },
     showPrev() {
       if (this.pageNumber === 0) return;
-      this.pageNumber--;
+      this.pageNumber -= 1;
     },
     showNext() {
       if (this.isEndPage) return;
-      this.pageNumber++;
+      this.pageNumber += 1;
     },
     coltxt_key(key) {
-      index = this.index;
+      const { index } = this;
       return wrap(key, index);
     },
     table_text(value, key, lang) {
-      index = this.index;
+      const { index } = this;
       return listen(value, key, index, lang);
     },
 
@@ -77,14 +77,14 @@ module.exports = Vue.extend({
 
     servertest_filter() {
       const self = this;
-      let data = self.data.filter((data) => {
+      let data = self.data.filter(() => {
         if (self.filterKey === '') {
           return true;
         }
         return JSON.stringify(data).toLowerCase().indexOf(self.filterKey.toLowerCase()) !== -1;
       });
       self.filteredLength = data.length;
-      data = data.sort(data => data[self.sortKey]);
+      data = data.sort(() => data[self.sortKey]);
       if (self.sortOrders[self.sortKey] === -1) {
         data.reverse();
       }
@@ -110,7 +110,7 @@ module.exports = Vue.extend({
     const self = this;
     self.ec2.results_servertest().done((data) => {
       self.data = data.map((item) => {
-        const last_log = (item.created_at ? new Date(item.created_at) : '');
+        const lastLog = (item.created_at ? new Date(item.created_at) : '');
         return {
           servertest: {
             servertests: item.servertests,
@@ -125,12 +125,12 @@ module.exports = Vue.extend({
             auto_generated_servertest: item.auto_generated_servertest,
           },
           status: item.status,
-          created_at: last_log.toLocaleString(),
+          created_at: lastLog.toLocaleString(),
           category: item.servertests,
         };
       });
       self.$parent.loading = false;
       if (self.data.length === 0) { self.is_empty = true; }
-    }).fail(alert_danger(self.show_ec2));
+    }).fail(alertDanger(self.show_ec2));
   },
 });

@@ -1,4 +1,4 @@
-class SetDefaultCloudProvider < ActiveRecord::Migration
+class SetDefaultCloudProvider < ActiveRecord::Migration[4.2]
   def up
     Project.all.each do |prj|
       prj.cloud_provider_id = 1

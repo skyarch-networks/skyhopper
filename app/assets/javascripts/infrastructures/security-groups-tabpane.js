@@ -1,11 +1,11 @@
-const Infrastructure = require('models/infrastructure').default;
-const EC2Instance = require('models/ec2_instance').default;
-const queryString = require('query-string').parse(location.search);
+const queryString = require('query-string').parse(window.location.search);
+const Infrastructure = require('../models/infrastructure').default;
+const EC2Instance = require('../models/ec2_instance').default;
 
-const helpers = require('infrastructures/helper.js');
+const helpers = require('../infrastructures/helper.js');
 
-const alert_success = helpers.alert_success;
-const alert_danger = helpers.alert_danger;
+const alertSuccess = helpers.alert_success;
+const alertDanger = helpers.alert_danger;
 
 module.exports = Vue.extend({
   template: '#security-groups-tabpane-template',
@@ -51,12 +51,12 @@ module.exports = Vue.extend({
         const records = [];
 
         self.rules_summary.forEach((rule) => {
-          const row_length = Math.max(rule.ip_permissions.length, rule.ip_permissions_egress.length, 1);
-          for (let i = 0; i < row_length; i++) {
+          const rowLength = Math.max(rule.ip_permissions.length, rule.ip_permissions_egress.length, 1);
+          for (let i = 0; i < rowLength; i += 1) {
             const record = [];
             if (i === 0) {
-              record.push({ text: rule.description, row: row_length, th: true });
-              record.push({ text: rule.group_id, row: row_length, th: true });
+              record.push({ text: rule.description, row: rowLength, th: true });
+              record.push({ text: rule.group_id, row: rowLength, th: true });
             }
             if (rule.ip_permissions[i]) {
               record.push({ text: rule.ip_permissions[i].prefix_list_ids, row: 1 });
@@ -86,7 +86,7 @@ module.exports = Vue.extend({
         self.table_data = records;
         self.sec_group = data.sec_groups;
         const vpcs = [];
-        _.forEach(data.vpcs, (vpc) => {
+        data.vpcs.forEach((vpc) => {
           let name = null;
           if (vpc.is_default) {
             if (vpc.tags[0]) {
@@ -109,7 +109,6 @@ module.exports = Vue.extend({
       if (target === 'inbound') {
         self.inbound.push(self.sec_group);
       }
-      console.log(self.inbound);
     },
 
     show_ec2() {
@@ -127,9 +126,9 @@ module.exports = Vue.extend({
           this.name,
           this.vpc],
       ).done(
-        alert_success(this.get_rules()),
+        alertSuccess(this.get_rules()),
       )
-        .fail(alert_danger(this._show_ec2));
+        .fail(alertDanger(this._show_ec2));
       this.group_name = null;
       this.description = null;
       this.name = null;
@@ -149,7 +148,7 @@ module.exports = Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       this.get_rules();
       this.$parent.loading = false;
     });

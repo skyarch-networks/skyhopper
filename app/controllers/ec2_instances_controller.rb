@@ -11,13 +11,14 @@
 class Ec2InstancesController < ApplicationController
   include Concerns::InfraLogger
 
-
   # --------------- Auth
   before_action :authenticate_user!
 
   before_action do
     infra = Infrastructure.find(params.require(:infra_id))
-    def infra.policy_class;Ec2InstancePolicy end
+    def infra.policy_class
+      Ec2InstancePolicy
+    end
     authorize infra
   end
 
@@ -32,18 +33,17 @@ class Ec2InstancesController < ApplicationController
     instance = infra.instance(physical_id)
     before_type = instance.instance_type
 
+    if before_type == type
+      render plain: I18n.t('nodes.msg.not_change_scale', type: type), status: :internal_server_error and return
+    end
+
     begin
-      changed_type = instance.change_scale(type)
+      instance.change_scale(type)
     rescue EC2Instance::ChangeScaleError => ex
-      render text: ex.message, status: 400 and return
+      render plain: ex.message, status: :bad_request and return
     end
 
-    if changed_type == before_type
-      #TODO: status code はこれでいい?
-      render text: I18n.t('nodes.msg.not_change_scale', type: type), status: 200 and return
-    end
-
-    render text: I18n.t('nodes.msg.changed_scale', type: type) and return
+    render plain: I18n.t('nodes.msg.changed_scale', type: type) and return
   end
 
   # GET /ec2_instances/available_resources
@@ -56,7 +56,7 @@ class Ec2InstancesController < ApplicationController
     resp = []
     items.each do |item|
       unless infra.resources.where(physical_id: item[:instance_id]).exists?
-        resp.push({physical_id: item[:instance_id]})
+        resp.push({ physical_id: item[:instance_id] })
       end
     end
 
@@ -77,7 +77,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :running)
 
-    render text: I18n.t('ec2_instances.msg.start_ec2')
+    render plain: I18n.t('ec2_instances.msg.start_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/stop
@@ -91,7 +91,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :stopped)
 
-    render text: I18n.t('ec2_instances.msg.stop_ec2')
+    render plain: I18n.t('ec2_instances.msg.stop_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/detach
@@ -100,7 +100,7 @@ class Ec2InstancesController < ApplicationController
     zabbix = params.require(:zabbix)
     resource = Resource.find_by(physical_id: physical_id)
 
-    if zabbix == "true"
+    if zabbix == 'true'
       resource.detach_zabbix
     end
 
@@ -110,7 +110,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(resource, :detached)
 
-    render text: I18n.t('ec2_instances.msg.detach_ec2')
+    render plain: I18n.t('ec2_instances.msg.detach_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/terminate
@@ -128,7 +128,7 @@ class Ec2InstancesController < ApplicationController
 
     notify_ec2_status(instance, :terminated)
 
-    render text: I18n.t('ec2_instances.msg.terminate_ec2')
+    render plain: I18n.t('ec2_instances.msg.terminate_ec2')
   end
 
   # POST /ec2_instances/i-hogehoge/reboot
@@ -140,9 +140,8 @@ class Ec2InstancesController < ApplicationController
     Infrastructure.find(infra_id).instance(physical_id).reboot
     infra_logger_success("#{physical_id} start reboot.")
 
-    render nothing: true
+    render body: nil
   end
-
 
   # GET /ec2_instances/:id/serverspec_status
   # @param [String] id ec2 instance physical_id
@@ -150,11 +149,10 @@ class Ec2InstancesController < ApplicationController
   # @return [String] JSON. {status: Boolean}
   def serverspec_status
     physical_id = params.require(:id)
-    status = ! Resource.find_by(physical_id: physical_id).status.servertest.failed?
+    status = !Resource.find_by(physical_id: physical_id).status.servertest.failed?
 
-    render json: {status: status}
+    render json: { status: status }
   end
-
 
   # POST /ec2_instances/:id/register_to_elb
   # @param [String] id physical_id of ec2 instance
@@ -170,7 +168,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.register(physical_id)
 
-    render text: I18n.t('ec2_instances.msg.registered_to_elb')
+    render plain: I18n.t('ec2_instances.msg.registered_to_elb')
   end
 
   # POST /ec2_instances/:id/deregister_to_elb
@@ -187,7 +185,7 @@ class Ec2InstancesController < ApplicationController
 
     elb.deregister(physical_id)
 
-    render text: I18n.t('ec2_instances.msg.deregistered_from_elb')
+    render plain: I18n.t('ec2_instances.msg.deregistered_from_elb')
   end
 
   # POST /ec2_instances/:id/elb_submit_groups
@@ -204,9 +202,8 @@ class Ec2InstancesController < ApplicationController
 
     elb.elb_submit_groups(group_ids)
 
-    render text: I18n.t('security_groups.msg.change_success')
+    render plain: I18n.t('security_groups.msg.change_success')
   end
-
 
   def attachable_volumes
     physical_id       = params.require(:id)
@@ -216,7 +213,7 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     volumes = instance.attachable_volumes(availability_zone)
 
-    render json: {attachable_volumes: volumes}
+    render json: { attachable_volumes: volumes }
   end
 
   def attach_volume
@@ -239,7 +236,7 @@ class Ec2InstancesController < ApplicationController
     instance = Infrastructure.find(infra_id).instance(physical_id)
     resp = instance.detach_volume(volume_id)
 
-    render text: t('ec2_instances.msg.volume_detached', resp.to_h)
+    render plain: t('ec2_instances.msg.volume_detached', resp.to_h)
   end
 
   def create_volume
@@ -248,10 +245,10 @@ class Ec2InstancesController < ApplicationController
 
     options = {
       availability_zone: params.require(:availability_zone),
-      snapshot_id:       params[:snapshot_id],
-      volume_type:       params[:volume_type],
-      size:              params[:size].to_i,
-      encrypted:         params[:encrypted],
+      snapshot_id: params[:snapshot_id],
+      volume_type: params[:volume_type],
+      size: params[:size].to_i,
+      encrypted: params[:encrypted],
     }
     options[:iops] = params[:iops] if options[:volume_type] == 'io1'
 
@@ -259,7 +256,7 @@ class Ec2InstancesController < ApplicationController
     instance = infra.instance(physical_id)
     resp = instance.create_volume(options)
 
-    render text: t('ec2_instances.msg.creating_volume', resp.to_h)
+    render plain: t('ec2_instances.msg.creating_volume', resp.to_h)
   end
 
   private
@@ -270,7 +267,7 @@ class Ec2InstancesController < ApplicationController
       begin
         instance.wait_status(status)
         ws.push_as_json(error: nil, msg: "#{instance.physical_id} status is #{status}")
-      rescue => ex
+      rescue StandardError => ex
         ws.push_error(ex)
       end
     end

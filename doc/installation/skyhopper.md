@@ -28,11 +28,11 @@ $ sudo gem install bundler
 ```sh
 $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 $ . ~/.nvm/nvm.sh
-$ nvm install stable
+$ nvm install --lts=dubnium
 # update npm to lastest version
 $ npm update -g npm
 $ node -v
-v10.12.0 # any current stable version release
+v10.X.X # any current stable version release
 ```
 
 ## Yarn のインストール
@@ -170,6 +170,7 @@ $ mysql -uroot
 mysql> CREATE USER 'skyhopper_dev'@'localhost' IDENTIFIED BY 'hogehoge';
 mysql> GRANT CREATE, SHOW DATABASES ON *.* TO 'skyhopper_dev'@'localhost';
 mysql> GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `SkyHopperDevelopment`.* TO 'skyhopper_dev'@'localhost';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, LOCK TABLES ON `SkyHopperTest`.* TO 'skyhopper_dev'@'localhost';
 mysql> exit
 ```
 
@@ -253,31 +254,11 @@ production:
 
 ## DB のセットアップ
 
-### データベースの作成
-
 ```sh
 # development
-$ bundle exec rake db:create
+$ bundle exec rails db:setup
 # production
-$ bundle exec rake db:create RAILS_ENV=production
-```
-
-### テーブルの作成
-
-```sh
-# development
-$ bundle exec rake db:migrate
-# production
-$ bundle exec rake db:migrate RAILS_ENV=production
-```
-
-### 初期データの挿入
-
-```sh
-# development
-$ bundle exec rake db:seed
-# production
-$ bundle exec rake db:seed RAILS_ENV=production
+$ bundle exec rails db:setup RAILS_ENV=production
 ```
 
 ## ホームディレクトリのパーミッションを変更
@@ -289,9 +270,9 @@ $ chmod 711 ~
 ### [注意]開発中のSkyhopperを起動する前に、このスクリプトを実行してください
 ```sh
 # i18n-js辞書を生成する
-$ bundle exec rake i18n:js:export
+$ bundle exec rails i18n:js:export
 # アセットのプリコンパイル用
-$ bundle exec rake assets:precompile
+$ bundle exec rails assets:precompile
 ```
 
 ## 起動

@@ -10,7 +10,7 @@ module ControllerMacros
   def login_user(master: true, admin: true)
     before(:each) do
       sign_out User
-      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @request.env['devise.mapping'] = Devise.mappings[:user]
       sign_in FactoryGirl.create(:user, master: master, admin: admin)
     end
   end
@@ -32,27 +32,27 @@ module ControllerMacros
 
   def should_be_success
     it do
-      expect(response).to be_success,
-        -> () { "expected success, but response code is #{response.code}. #{request.flash.alert}" }
+      expect(response).to be_successful,
+                          -> { "expected success, but response code is #{response.code}. #{request.flash.alert}" }
     end
   end
 
   def should_be_failure
     it do
-      expect(response).not_to be_success,
-        -> () { "expected failure, but response code is #{response.code}, response body is #{response.body.inspect}" }
+      expect(response).not_to be_successful,
+                              -> { "expected failure, but response code is #{response.code}, response body is #{response.body.inspect}" }
     end
   end
 
   def should_be_json
     it 'response body should be json' do
-      expect{JSON.parse(response.body)}.not_to raise_error
+      expect { JSON.parse(response.body) }.not_to raise_error
     end
   end
 end
 
 module ControllerMacrosInclude
   def current_user
-    return User.find(session['warden.user.user.key'][0][0])
+    User.find(session['warden.user.user.key'][0][0])
   end
 end

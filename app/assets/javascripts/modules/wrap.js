@@ -6,32 +6,7 @@
 // http://opensource.org/licenses/mit-license.php
 //
 
-module.exports = function (value, index) {
-  switch (index) {
-    case 'infrastructures':
-      return render_infrastructures(value);
-    case 'projects':
-      return render_projects(value);
-    case 'clients':
-      return render_clients(value);
-    case 'servertests':
-      return render_servertests(value);
-    case 'dishes':
-      return render_dish(value);
-    case 'cf_templates':
-      return render_cf_templates(value);
-    case 'user_admin':
-      return render_user_admin(value);
-    case 'servertest_results':
-      return render_servertests_results(value);
-    case 'operation_sched':
-      return render_ops_sched(value);
-    default:
-      return value;
-  }
-};
-
-function render_infrastructures(value) {
+function renderInfrastructures(value) {
   switch (value) {
     case 'stack_name':
       return t('infrastructures.stackname');
@@ -48,12 +23,12 @@ function render_infrastructures(value) {
   }
 }
 
-function render_projects(value) {
+function renderProjects(value) {
   switch (value) {
     case 'code':
       return t('projects.code');
     case 'name':
-      return t ('projects.name');
+      return t('projects.name');
     case 'access_key':
       return t('projects.access_key');
     default:
@@ -61,7 +36,7 @@ function render_projects(value) {
   }
 }
 
-function render_clients(value) {
+function renderClients(value) {
   switch (value) {
     case 'code':
       return t('clients.code');
@@ -72,7 +47,7 @@ function render_clients(value) {
   }
 }
 
-function render_servertests(value) {
+function renderServertests(value) {
   switch (value) {
     case 'description':
       return t('servertests.description');
@@ -85,7 +60,7 @@ function render_servertests(value) {
   }
 }
 
-function render_dish(value) {
+function renderDish(value) {
   switch (value) {
     case 'dish_name':
       return t('dishes.name');
@@ -98,7 +73,7 @@ function render_dish(value) {
   }
 }
 
-function render_cf_templates(value) {
+function renderCfTemplates(value) {
   switch (value) {
     case 'cf_subject':
       return t('cf_templates.subject');
@@ -109,7 +84,7 @@ function render_cf_templates(value) {
   }
 }
 
-function render_user_admin(value) {
+function renderUserAdmin(value) {
   switch (value) {
     case 'role':
       return t('users.role');
@@ -122,7 +97,7 @@ function render_user_admin(value) {
   }
 }
 
-function render_servertests_results(value) {
+function renderServertestsResults(value) {
   switch (value) {
     case 'servertest':
       return t('servertests.servertests');
@@ -139,7 +114,7 @@ function render_servertests_results(value) {
   }
 }
 
-function render_ops_sched(value) {
+function renderOpsSched(value) {
   switch (value) {
     case 'physical_id':
       return 'Physical ID';
@@ -151,3 +126,28 @@ function render_ops_sched(value) {
       return value;
   }
 }
+
+module.exports = (value, index) => {
+  switch (index) {
+    case 'infrastructures':
+      return renderInfrastructures(value);
+    case 'projects':
+      return renderProjects(value);
+    case 'clients':
+      return renderClients(value);
+    case 'servertests':
+      return renderServertests(value);
+    case 'dishes':
+      return renderDish(value);
+    case 'cf_templates':
+      return renderCfTemplates(value);
+    case 'user_admin':
+      return renderUserAdmin(value);
+    case 'servertest_results':
+      return renderServertestsResults(value);
+    case 'operation_sched':
+      return renderOpsSched(value);
+    default:
+      return value;
+  }
+};

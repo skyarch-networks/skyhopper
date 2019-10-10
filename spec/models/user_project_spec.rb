@@ -9,5 +9,5 @@
 require_relative '../spec_helper'
 
 describe UserProject, type: :model do
-  let(:klass){UserProject}
+  let(:klass) { UserProject }
 end

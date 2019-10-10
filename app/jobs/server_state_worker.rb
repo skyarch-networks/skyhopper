@@ -6,8 +6,7 @@
 # http://opensource.org/licenses/mit-license.php
 #
 
-class ServerStateWorker < ActiveJob::Base
-
+class ServerStateWorker < ApplicationJob
   def perform(*params)
     kinds =
       if params.empty?
@@ -16,12 +15,12 @@ class ServerStateWorker < ActiveJob::Base
         [params.first]
       end
 
-    if AppSetting.set?
-      kinds.each do |kind|
-        status = fetch_and_notify(kind)
-        if status == :pending || status == :stopping
-          self.class.set(wait: 8.seconds).perform_later(kind)
-        end
+    return unless AppSetting.set?
+
+    kinds.each do |kind|
+      status = fetch_and_notify(kind)
+      if %i[pending stopping].include?(status)
+        self.class.set(wait: 8.seconds).perform_later(kind)
       end
     end
   end
@@ -31,7 +30,6 @@ class ServerStateWorker < ActiveJob::Base
     status = server.latest_status
     ws = WSConnector.new('server_status', kind)
     ws.push(status)
-    return status
+    status
   end
-
 end

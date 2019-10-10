@@ -2,7 +2,7 @@ class ZabbixServersController < ApplicationController
   include Concerns::InfraLogger
   # ------------- Auth
   before_action :authenticate_user!
-  before_action :set_zabbix_server, only: [:show, :edit, :update, :destroy]
+  before_action :set_zabbix_server, only: %i[show edit update destroy]
 
   # GET /zabbix_servers
   # GET /zabbix_servers.json
@@ -17,8 +17,7 @@ class ZabbixServersController < ApplicationController
 
   # GET /zabbix_servers/1
   # GET /zabbix_servers/1.json
-  def show
-  end
+  def show; end
 
   # GET /zabbix_servers/new
   def new
@@ -48,14 +47,14 @@ class ZabbixServersController < ApplicationController
         params[:version] = z.version
         @zabbix_server = ZabbixServer.new(params)
         @zabbix_server.save!
-        ws.push_as_json({status: true, message: I18n.t('zabbix_servers.msg.created'), url: zabbix_servers_url})
-      rescue => ex
-        ws.push_as_json({status: false, message: ex.message})
-        render status: 404 and return
+        ws.push_as_json({ status: true, message: I18n.t('zabbix_servers.msg.created'), url: zabbix_servers_url })
+      rescue StandardError => ex
+        ws.push_as_json({ status: false, message: ex.message })
+        render status: :not_found and return
       end
     end
 
-      render nothing: true, status: 200 and return
+    render body: nil, status: :ok and return
   end
 
   # PATCH/PUT /zabbix_servers/1
@@ -65,30 +64,30 @@ class ZabbixServersController < ApplicationController
     begin
       Zabbix.new(params[:fqdn], params[:username], params[:password])
       @zabbix_server.update(params)
-    rescue => ex
-      render text: ex.message, status: 500 and return
+    rescue StandardError => ex
+      render plain: ex.message, status: :internal_server_error and return
     end
 
-    render text: I18n.t('zabbix_servers.msg.updated') and return
-
+    render plain: I18n.t('zabbix_servers.msg.updated') and return
   end
 
   # DELETE /zabbix_servers/1
   # DELETE /zabbix_servers/1.json
   def destroy
-    go = -> () { redirect_to zabbix_servers_url }
+    go = -> { redirect_to zabbix_servers_url }
     begin
       @zabbix_server.destroy!
-    rescue => ex
+    rescue StandardError => ex
       flash[:alert] = ex.message
-      go.() and return
+      go.call and return
     end
 
     ws_send(t('zabbix_servers.msg.deleted', name: @zabbix_server.fqdn), true)
-    go.() and return
+    go.call and return
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_zabbix_server
     @zabbix_server = ZabbixServer.find(params[:id])
@@ -98,5 +97,4 @@ class ZabbixServersController < ApplicationController
   def zabbix_server_params
     params.require(:zabbix_server).permit(:fqdn, :username, :password, :details)
   end
-
 end
