@@ -1,0 +1,35 @@
+---
+- name: Get Amzn ver
+  shell: uname -r | grep -o 'amzn[0-9]' | grep -o '[0-9]'
+  register: amznver
+  changed_when: False
+
+- name: Calculate rhel ver
+  shell: echo '{{ amznver.stdout }}+5' | bc
+  register: rhelver
+  changed_when: False
+
+- name: zabbix repositories
+  yum_repository:
+    name: zabbix
+    description: Zabbix Official Repository
+    baseurl: https://repo.zabbix.com/zabbix/{{ agent_version | default(4.4)}}/rhel/{{ rhelver.stdout }}/x86_64/
+    enabled: no
+
+- name: add zabbix repository key (1)
+  rpm_key:
+    key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+
+- name: add zabbix repository key (2)
+  rpm_key:
+    key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
+
+- name: install zabbix-agent
+  yum:
+    name: zabbix-agent
+    state: present
+    enablerepo: zabbix
+
+- name: configure zabbix-agent
+  script: zabbix-config.sh {{ zabbix_server | default('127.0.0.1')}}
+
