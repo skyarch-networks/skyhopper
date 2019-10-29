@@ -108,7 +108,7 @@ group :development, :test do
 end
 
 # for Login
-gem 'devise', '~> 4.4.3'
+gem 'devise', '~> 4.7.1'
 gem 'pundit'
 
 # pagination
