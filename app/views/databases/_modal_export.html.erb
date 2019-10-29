@@ -23,6 +23,12 @@
         </div>
         <form action="<%= export_database_path %>" method="POST">
           <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" >
+          <div class="form-group">
+            <label for="no_compatibility" class="col-sm-11 control-label"><%= t('databases.msg.no_compatibility') %></label>
+            <div class="col-sm-1">
+              <input type="checkbox" name="no_compatibility" value="yes">
+            </div>
+          </div>
           <button type="submit" class="btn btn-primary btn-lg btn-block" :disabled="loading" @click="">
             <div-loader v-if="loading"></div-loader>
             <span v-if="!loading">

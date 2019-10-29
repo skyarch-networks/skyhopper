@@ -16,12 +16,16 @@ class DatabaseManager
   }.freeze
 
   class << self
-    def export_as_zip
+    def export_as_zip(no_compatibility: false)
       dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
       filename = "#{dbname}.sql"
       path     = Rails.root.join("tmp/#{filename}")
 
-      system('rails db:data:dump')
+      if no_compatibility
+        system('rails db:data:dump[,modern]')
+      else
+        system('rails db:data:dump[,legacy]')
+      end
 
       zipfile = Tempfile.open('skyhopper')
       ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
