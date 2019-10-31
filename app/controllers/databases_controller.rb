@@ -42,7 +42,7 @@ class DatabasesController < ApplicationController
     end.join
     MaintenanceMode.activate(reason: reason)
 
-    zip_temp = ::Tempfile.new() # import_zipの中で閉じます
+    zip_temp = ::Tempfile.new # import_zipの中で閉じます
     ::FileUtils.cp(file.path, zip_temp.path)
 
     Thread.new do
