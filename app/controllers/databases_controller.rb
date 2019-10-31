@@ -25,8 +25,10 @@ class DatabasesController < ApplicationController
   def export
     authenticate_user!
 
+    no_compatibility = params[:no_compatibility].present?
+
     time = Time.zone.now.strftime('%Y%m%d%H%M%S')
-    zipfile = DatabaseManager.export_as_zip
+    zipfile = DatabaseManager.export_as_zip(no_compatibility: no_compatibility)
     send_file(zipfile.path, filename: "SkyHopper-db-#{Rails.env}-#{time}.zip")
     zipfile.close
   end
