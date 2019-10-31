@@ -56,20 +56,23 @@ class DatabaseManager
     end
 
     def import_from_zip(path)
-      zip = ::Zip::File.open(path)
-      validate_zip!(zip)
+      secrets = nil
 
-      FileUtils.rm(SQLPATH) if File.exist?(SQLPATH)
-      zip.glob('*.sql').first.extract(SQLPATH)
-      secrets = SECRETS.map { |name| [name, zip.read(name)] }.to_h
-      zip.close
+      ::Zip::File.open(path) do |zipfile|
+        validate_zip!(zipfile)
+
+        FileUtils.rm(SQLPATH) if File.exist?(SQLPATH)
+        zipfile.glob('*.sql').first.extract(SQLPATH)
+        secrets = SECRETS.map { |name| [name, zipfile.read(name)] }.to_h
+      end
 
       import(SQLPATH, secrets)
     end
 
     def validate_zip_file!(path)
-      zip = ::Zip::File.open(path)
-      validate_zip!(zip)
+      ::Zip::File.open(path) do |zipfile|
+        validate_zip!(zipfile)
+      end
     end
 
     private
