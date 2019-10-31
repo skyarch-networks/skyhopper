@@ -42,8 +42,11 @@ class DatabasesController < ApplicationController
     end.join
     MaintenanceMode.activate(reason: reason)
 
+    zip_temp = ::Tempfile.new() # import_zipの中で閉じます
+    ::FileUtils.cp(file.path, zip_temp.path)
+
     Thread.new do
-      import_zip(file)
+      import_zip(zip_temp)
     end
 
     redirect_to root_path
@@ -60,7 +63,7 @@ class DatabasesController < ApplicationController
   rescue StandardError => ex
     Rails.cache.write(:err, "#{ex.inspect}\n#{ex.backtrace.join}")
   ensure
-    file.close
+    file.unlink
     MaintenanceMode.deactivate
   end
 end
