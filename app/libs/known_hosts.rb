@@ -22,23 +22,6 @@ module KnownHosts
       includes_keys_partial?(keys)
     end
 
-    def scan_keys(domain_name)
-      command = "ssh-keyscan #{Shellwords.escape(domain_name)}"
-      result = exec_command(command)
-      result.split("\n")
-    end
-
-    def add_keys(keys)
-      append_text = keys.map { |key| "#{key}\n" }.join
-
-      init_ssh_dir
-      File.open(known_hosts_path, mode: 'a') do |file|
-        file.flock(File::LOCK_EX)
-        file.puts(append_text)
-        file.flock(File::LOCK_UN)
-      end
-    end
-
     private
 
     def known_hosts_path
@@ -66,6 +49,23 @@ module KnownHosts
         end
       end
       false
+    end
+
+    def scan_keys(domain_name)
+      command = "ssh-keyscan #{Shellwords.escape(domain_name)}"
+      result = exec_command(command)
+      result.split("\n")
+    end
+
+    def add_keys(keys)
+      append_text = keys.map { |key| "#{key}\n" }.join
+
+      init_ssh_dir
+      File.open(known_hosts_path, mode: 'a') do |file|
+        file.flock(File::LOCK_EX)
+        file.puts(append_text)
+        file.flock(File::LOCK_UN)
+      end
     end
 
     def delete_keys(domain_name)
