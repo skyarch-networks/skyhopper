@@ -19,7 +19,7 @@ module KnownHosts
 
     def match_remote_key?(domain_name)
       keys = scan_keys(domain_name)
-      includes_keys_partial?(keys)
+      includes_keys_partial?(domain_name, keys)
     end
 
     private
@@ -35,7 +35,7 @@ module KnownHosts
       File.open(known_hosts_path, mode: 'w', perm: 0o600).close unless File.exist?(known_hosts_path)
     end
 
-    def includes_keys_partial?(keys)
+    def includes_keys_partial?(domain_name, keys)
       raise ::ArgumentError, '"keys" is allow only Array' unless keys.is_a?(Array)
 
       pub_keys = keys.map do |known_host_line|
@@ -45,7 +45,7 @@ module KnownHosts
       init_ssh_dir
       File.open(known_hosts_path, mode: 'r') do |file|
         file.each_line do |line|
-          return true if pub_keys.any? { |pub_key| line.include?(pub_key) }
+          return true if pub_keys.any? { |pub_key| line.include?(domain_name) && line.include?(pub_key) }
         end
       end
       false

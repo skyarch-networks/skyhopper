@@ -344,7 +344,7 @@ en:
       yum_update_success: |
         Yum update for <b> %{physical_id} </b> has been successful. <br>
         Do you want to see the logs for this operation?
-      not_register_in_known_hosts: There is no key registered in known_hosts. Please try again later.
+      not_register_in_known_hosts: There is no key registered in known_hosts.
 
   dishes:
     dishes:            'Dishes'

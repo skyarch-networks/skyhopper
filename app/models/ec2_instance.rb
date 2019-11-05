@@ -153,6 +153,13 @@ class EC2Instance < SimpleDelegator
     end
   end
 
+  def registered_in_known_hosts?
+    fqdn_memo = fqdn
+    raise 'failed to get fqdn' if fqdn_memo.blank?
+
+    ::KnownHosts::match_remote_key?(fqdn_memo)
+  end
+
   def platform
     @instance.platform
   end
