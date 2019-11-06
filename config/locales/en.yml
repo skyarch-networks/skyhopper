@@ -318,6 +318,7 @@ en:
     latest_serverspec_status: 'Latest Serverspec Status'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
+      register_for_known_hosts: 'Register for known_hosts'
       edit_playbook:    'Edit playbook'
       apply_dish:                 'Apply Dish'
       bootstrap_with_chef_server: 'Bootstrap with Chef Server'
@@ -667,6 +668,9 @@ en:
       detach_volume:         'Are you sure you want to detach %{volume_id} from %{physical_id}?'
       volume_detached:       '%{volume_id} has detached.'
       creating_volume:       'Creating volume <code>%{volume_id}</code> has started.'
+      register_for_known_hosts: |
+        Register remote server key for known_hosts.
+        If known_hosts registered key already, register after remove.
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'

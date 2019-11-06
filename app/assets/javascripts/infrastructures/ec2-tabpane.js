@@ -191,6 +191,15 @@ module.exports = Vue.extend({
       });
     },
 
+    register_for_known_hosts() {
+      const infra = new Infrastructure(this.infra_id);
+      const ec2 = new EC2Instance(infra, this.physical_id);
+
+      ec2.register_for_known_hosts()
+        .done(alertSuccess(this._show_ec2))
+        .fail(alertDanger(this._show_ec2));
+    },
+
     apply_dish() {
       const infra = new Infrastructure(this.infra_id);
       const ec2 = new EC2Instance(infra, this.physical_id);

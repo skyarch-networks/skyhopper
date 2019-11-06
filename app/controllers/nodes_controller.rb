@@ -238,6 +238,11 @@ class NodesController < ApplicationController
     render plain: ret[:message], status: :internal_server_error and return
   end
 
+  # PUT /nodes/:id/register_known_hosts
+  def register_for_known_hosts
+    raise 'register_for_known_hosts not implemented!'
+  end
+
   private
 
   def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)

@@ -65,6 +65,7 @@ SkyHopper::Application.routes.draw do
       post 'create_group'
     end
     member do
+      post 'register_for_known_hosts'
       put  'yum_update'
       post 'apply_dish'
       post 'submit_groups'

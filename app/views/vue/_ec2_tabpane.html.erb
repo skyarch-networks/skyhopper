@@ -285,6 +285,9 @@
     <%# Buttons %>
     <div class="col-xs-12" v-if="!inprogress">
       <div class="form-actions-top">
+        <button href="#register-for-known-hosts-modal" role="button" class="btn btn-warning btn-sm" data-toggle="modal">
+          <%= t 'nodes.btn.register_for_known_hosts' %>
+        </button>
         <div :class="{'border-blink': ansible_status === 'UnExecuted'}" class="btn-group dropup">
           <button disabled class="btn btn-sm btn-primary">
             <%= t 'nodes.ansible' %>
@@ -471,4 +474,5 @@
 
   <%= render 'infrastructures/modal/modal_snapshot_retention_policy' %>
   <%= render 'infrastructures/modal/modal_create_volume' %>
+  <%= render 'infrastructures/modal/modal_register_for_known_hosts' %>
 </div>
