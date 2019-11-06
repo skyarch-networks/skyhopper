@@ -12,9 +12,9 @@ module KnownHosts
       true
     end
 
-    def scan_and_update_keys(domain_name)
-      delete_keys(domain_name)
-      scan_and_add_keys(domain_name)
+    def delete_keys(domain_name)
+      command = "ssh-keygen -R #{Shellwords.escape(domain_name)}"
+      exec_command(command)
     end
 
     def match_remote_key?(domain_name)
@@ -66,11 +66,6 @@ module KnownHosts
         file.puts(append_text)
         file.flock(File::LOCK_UN)
       end
-    end
-
-    def delete_keys(domain_name)
-      command = "ssh-keygen -R #{Shellwords.escape(domain_name)}"
-      exec_command(command)
     end
 
     def pub_key_part(known_host_line)

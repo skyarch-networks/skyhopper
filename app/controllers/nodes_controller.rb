@@ -17,6 +17,7 @@ class NodesController < ApplicationController
   before_action :set_physical_id, only: %i[
     show get_security_groups submit_groups yum_update
     edit_ansible_playbook run_ansible_playbook update_ansible_playbook
+    register_for_known_hosts
   ]
 
   # infra
@@ -240,7 +241,11 @@ class NodesController < ApplicationController
 
   # PUT /nodes/:id/register_known_hosts
   def register_for_known_hosts
-    raise 'register_for_known_hosts not implemented!'
+    ec2_instance = @infra.instance(@physical_id)
+
+    ec2_instance.register_in_known_hosts(update: true)
+
+    render plain: I18n.t('nodes.msg.registered_in_known_hosts') and return
   end
 
   private

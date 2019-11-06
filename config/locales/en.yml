@@ -340,6 +340,7 @@ en:
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
       playbook_empty:     'playbook is empty'
+      registered_in_known_hosts: 'Key was registered for known_hosts'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
       yum_update_success: |

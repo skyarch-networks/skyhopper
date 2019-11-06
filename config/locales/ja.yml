@@ -337,6 +337,7 @@ ja:
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
       playbook_empty:     'playbook は空です'
+      registered_in_known_hosts: 'known_hostsに鍵が登録されました'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
       yum_update_success: |
