@@ -670,7 +670,7 @@ en:
       creating_volume:       'Creating volume <code>%{volume_id}</code> has started.'
       register_for_known_hosts: |
         Register remote server key for known_hosts.
-        If known_hosts registered key already, register after remove.
+        In case the key is already registered in known_hosts, register the new key after deleting the existing.
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
