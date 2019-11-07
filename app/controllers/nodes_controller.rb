@@ -239,7 +239,7 @@ class NodesController < ApplicationController
     render plain: ret[:message], status: :internal_server_error and return
   end
 
-  # PUT /nodes/:id/register_known_hosts
+  # PUT /nodes/:id/register_for_known_hosts
   def register_for_known_hosts
     ec2_instance = @infra.instance(@physical_id)
 
