@@ -74,10 +74,10 @@ describe NodesController, type: :controller do
     let(:resource) { create(:resource, infrastructure: infra) }
     let(:req) { post :register_for_known_hosts, params: { id: resource.physical_id, infra_id: infra.id } }
 
-    before {
+    before do
       allow_any_instance_of(EC2Instance).to receive(:register_in_known_hosts)
       req
-    }
+    end
 
     should_be_success
 
