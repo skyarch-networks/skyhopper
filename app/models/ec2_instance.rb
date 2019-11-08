@@ -39,19 +39,6 @@ class EC2Instance < SimpleDelegator
     end
   end
 
-  def wait_status_check_ok
-    loop do
-      s = status_check_info
-      if s[:instance_status] == 'ok' && s[:system_status] == 'ok'
-        break
-      end
-
-      raise StandardError, 'status check failed' unless %w[ok initializing].include?(s[:instance_status]) && %w[ok initializing].include?(s[:system_status])
-
-      sleep 5
-    end
-  end
-
   def status_check_info
     response = @infra.ec2.describe_instance_status(
       instance_ids: [physical_id],
