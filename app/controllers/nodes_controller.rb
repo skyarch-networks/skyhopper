@@ -243,7 +243,7 @@ class NodesController < ApplicationController
   def register_for_known_hosts
     ec2_instance = @infra.instance(@physical_id)
 
-    ec2_instance.register_in_known_hosts(update: true)
+    ec2_instance.register_in_known_hosts
 
     render plain: I18n.t('nodes.msg.registered_in_known_hosts') and return
   end
@@ -351,8 +351,8 @@ class NodesController < ApplicationController
 
   def check_register_in_knwon_hosts
     physical_id = params.require(:id)
-    ec2_instance = @infra.instance(physical_id)
+    resource = @infra.resource(physical_id)
 
-    raise I18n.t('nodes.msg.not_register_in_known_hosts') unless ec2_instance.registered_in_known_hosts?
+    resource.should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
   end
 end

@@ -87,7 +87,8 @@ class Resource < ApplicationRecord
   end
 
   def should_be_registered_in_known_hosts(msg)
-    raise NotRegisterInKnownHosts, msg unless register_in_known_hosts?
+    ec2_instance = infrastructure.instance(physical_id)
+    raise NotRegisterInKnownHosts, msg unless ec2_instance.registered_in_known_hosts?
   end
 
   private
