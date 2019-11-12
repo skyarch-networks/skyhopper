@@ -343,7 +343,7 @@ ja:
       yum_update_success: |
           %{physical_id}のYumアップデートが成功しました。 <br>
           この操作のログを表示しますか？
-      not_register_in_known_hosts: 'known_hostsに鍵が登録されていない、もしくはリモートホストの鍵と一致しません'
+      not_register_in_known_hosts: 'known_hostsに鍵が登録されていない、もしくはリモートホストの鍵と一致しません（処理は開始されていません）'
 
 
   dishes:

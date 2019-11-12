@@ -346,7 +346,7 @@ en:
       yum_update_success: |
         Yum update for <b> %{physical_id} </b> has been successful. <br>
         Do you want to see the logs for this operation?
-      not_register_in_known_hosts: Key is not registered, or not match remote host key, in known_hosts.
+      not_register_in_known_hosts: Key is not registered, or not match remote host key, in known_hosts.(Processing is not started)
 
   dishes:
     dishes:            'Dishes'
