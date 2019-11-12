@@ -70,6 +70,22 @@ describe NodesController, type: :controller do
     end
   end
 
+  describe '#register_for_known_hosts' do
+    let(:resource) { create(:resource, infrastructure: infra) }
+    let(:req) { post :register_for_known_hosts, params: { id: resource.physical_id, infra_id: infra.id } }
+
+    before do
+      allow_any_instance_of(EC2Instance).to receive(:register_in_known_hosts)
+      req
+    end
+
+    should_be_success
+
+    it 'should render message' do
+      expect(response.body).to eq I18n.t('nodes.msg.registered_in_known_hosts')
+    end
+  end
+
   describe '#apply_dish' do
     let(:resource) { create(:resource, infrastructure: infra) }
     let(:req) { post :apply_dish, params: { id: resource.physical_id, infra_id: infra.id, dish_id: dish.id } }
@@ -110,6 +126,7 @@ describe NodesController, type: :controller do
     let(:req) { put :yum_update, params: { id: resource.physical_id, infra_id: resource.infrastructure.id, security: security, exec: exec } }
 
     before do
+      allow_any_instance_of(EC2Instance).to receive(:registered_in_known_hosts?).and_return(true)
       allow_any_instance_of(NodesController).to receive(:exec_yum_update)
         .with(resource.infrastructure, resource.physical_id, security == 'security', exec == 'exec')
       req
@@ -184,6 +201,7 @@ describe NodesController, type: :controller do
     let(:run_ansible_playbook_request) { put :run_ansible_playbook, params: { id: resource.physical_id, infra_id: resource.infrastructure.id } }
 
     before do
+      allow_any_instance_of(EC2Instance).to receive(:registered_in_known_hosts?).and_return(true)
       allow(Thread).to receive(:new_with_db).and_yield
       expect_any_instance_of(NodesController).to receive(:run_ansible_playbook_node)
       run_ansible_playbook_request

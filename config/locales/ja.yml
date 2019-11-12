@@ -315,6 +315,7 @@ ja:
     latest_serverspec_status: 'Serverspec'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
+      register_for_known_hosts:   'known_hostsに登録'
       edit_playbook:              'playbook の編集'
       apply_dish:                 'ディッシュの適用'
       bootstrap_with_chef_server: 'Chef Server に登録'
@@ -336,12 +337,13 @@ ja:
       yum_update_started: 'yum が正常に開始されました'
       attr_not_exists:    '利用可能なアトリビュートは存在しません'
       playbook_empty:     'playbook は空です'
+      registered_in_known_hosts: 'known_hostsに鍵が登録されました'
       dish_applied:       'Dish が適用されました'
       stopped:            'インスタンスが停止しています。ブートストラップを可能にするには、インスタンスを起動してください。'
       yum_update_success: |
           %{physical_id}のYumアップデートが成功しました。 <br>
           この操作のログを表示しますか？
-      not_register_in_known_hosts: known_hostsに鍵が登録されていません。しばらくしてから再度お試しください。
+      not_register_in_known_hosts: 'known_hostsに鍵が登録されていない、もしくはリモートホストの鍵と一致しません（処理は開始されていません）'
 
 
   dishes:
@@ -664,6 +666,9 @@ ja:
       detach_volume:         '%{physical_id} から %{volume_id} をデタッチします。本当によろしいですか?'
       volume_detached:       '%{volume_id} をデタッチ中です...'
       creating_volume:       'ボリューム <code>%{volume_id}</code> の作成が開始されました'
+      register_for_known_hosts: |
+        known_hostsにリモートサーバの鍵を登録します。
+        既にknown_hostsに鍵が登録されている場合は、削除した後に登録します。
     btn:
       register:   'インスタンスを登録'
       deregister: 'インスタンスの登録を解除'
