@@ -9,6 +9,11 @@
   register: rhelver
   changed_when: False
 
+- name: Get Instance id
+  shell: curl -0 169.254.169.254/latest/meta-data/instance-id
+  register: instanceid
+  changed_when: False
+
 - name: Add zabbix repositories
   yum_repository:
     name: zabbix
@@ -31,7 +36,10 @@
     enablerepo: zabbix
 
 - name: Configure zabbix-agent
-  script: zabbix-config.sh {{ zabbix_server_address | default('127.0.0.1')}}
+  script: zabbix-config.sh {{ zabbix_server_address | default('127.0.0.1')}} {{ instanceid.stdout }}
 
 - name: Enable zabbix-agent
-  script: zabbix-enable.sh {{ amznver.stdout }}
+  service:
+    name: zabbix-agent
+    enabled: yes
+    state: restarted
