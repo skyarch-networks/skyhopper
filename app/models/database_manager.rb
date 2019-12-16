@@ -16,12 +16,16 @@ class DatabaseManager
   }.freeze
 
   class << self
-    def export_as_zip
+    def export_as_zip(no_compatibility: false)
       dbname   = ActiveRecord::Base.configurations[Rails.env]['database']
       filename = "#{dbname}.sql"
       path     = Rails.root.join("tmp/#{filename}")
 
-      system('rails db:data:dump')
+      if no_compatibility
+        system('rails db:data:dump[,modern]')
+      else
+        system('rails db:data:dump[,legacy]')
+      end
 
       zipfile = Tempfile.open('skyhopper')
       ::Zip::File.open(zipfile.path, ::Zip::File::CREATE) do |zip|
@@ -56,20 +60,23 @@ class DatabaseManager
     end
 
     def import_from_zip(path)
-      zip = ::Zip::File.open(path)
-      validate_zip!(zip)
+      secrets = nil
 
-      FileUtils.rm(SQLPATH) if File.exist?(SQLPATH)
-      zip.glob('*.sql').first.extract(SQLPATH)
-      secrets = SECRETS.map { |name| [name, zip.read(name)] }.to_h
-      zip.close
+      ::Zip::File.open(path) do |zipfile|
+        validate_zip!(zipfile)
+
+        FileUtils.rm(SQLPATH) if File.exist?(SQLPATH)
+        zipfile.glob('*.sql').first.extract(SQLPATH)
+        secrets = SECRETS.map { |name| [name, zipfile.read(name)] }.to_h
+      end
 
       import(SQLPATH, secrets)
     end
 
     def validate_zip_file!(path)
-      zip = ::Zip::File.open(path)
-      validate_zip!(zip)
+      ::Zip::File.open(path) do |zipfile|
+        validate_zip!(zipfile)
+      end
     end
 
     private

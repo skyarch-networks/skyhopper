@@ -72,7 +72,7 @@ config/database.yml
 
 # Docker
 /docker-compose.override.yml
-/amazonlinux2/known_hosts
+/amazonlinux2/.ssh/
 /mysql/
 /redis/
 /phpmyadmin/

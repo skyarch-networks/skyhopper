@@ -68,7 +68,6 @@ class ResourcesController < ApplicationController
         physical_id: physical_id,
         screen_name: screen_name,
         type_name: type_name,
-        register_in_known_hosts: true,
       )
     rescue StandardError => ex
       render plain: ex.message, status: :internal_server_error and return

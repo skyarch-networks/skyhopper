@@ -318,6 +318,7 @@ en:
     latest_serverspec_status: 'Latest Serverspec Status'
     cook_in_why_run_mode:     'Cook(why-run)'
     btn:
+      register_for_known_hosts: 'Register for known_hosts'
       edit_playbook:    'Edit playbook'
       apply_dish:                 'Apply Dish'
       bootstrap_with_chef_server: 'Bootstrap with Chef Server'
@@ -339,12 +340,13 @@ en:
       yum_update_started: 'yum command is started.'
       attr_not_exists:    'Available attributes does not exists'
       playbook_empty:     'playbook is empty'
+      registered_in_known_hosts: 'Key was registered for known_hosts'
       dish_applied:       'Dish was applied.'
       stopped:            'Instance has stopped. Please start instance to enable bootstrap.'
       yum_update_success: |
         Yum update for <b> %{physical_id} </b> has been successful. <br>
         Do you want to see the logs for this operation?
-      not_register_in_known_hosts: There is no key registered in known_hosts. Please try again later.
+      not_register_in_known_hosts: Key is not registered, or not match remote host key, in known_hosts.(Processing is not started)
 
   dishes:
     dishes:            'Dishes'
@@ -667,6 +669,9 @@ en:
       detach_volume:         'Are you sure you want to detach %{volume_id} from %{physical_id}?'
       volume_detached:       '%{volume_id} has detached.'
       creating_volume:       'Creating volume <code>%{volume_id}</code> has started.'
+      register_for_known_hosts: |
+        Register remote server key for known_hosts.
+        In case the key is already registered in known_hosts, register the new key after deleting the existing.
     btn:
       register:   'Register to ELB'
       deregister: 'Deregister from ELB'
@@ -761,6 +766,7 @@ en:
       secret:    'secret_key_base'
       db_key:    'db_crypt_key'
       db_salt:    'db_crypt_salt'
+      no_compatibility: 'Not keep compatibility'
       db_export: 'When exporting SkyHopper Database into a zip file, the following files are included: '
       db_import: 'When importing SkyHopper Database, select a zip file that contains these files: '
       db_import_finish: 'Database import has finished.'

@@ -39,19 +39,6 @@ class EC2Instance < SimpleDelegator
     end
   end
 
-  def wait_status_check_ok
-    loop do
-      s = status_check_info
-      if s[:instance_status] == 'ok' && s[:system_status] == 'ok'
-        break
-      end
-
-      raise StandardError, 'status check failed' unless %w[ok initializing].include?(s[:instance_status]) && %w[ok initializing].include?(s[:system_status])
-
-      sleep 5
-    end
-  end
-
   def status_check_info
     response = @infra.ec2.describe_instance_status(
       instance_ids: [physical_id],
@@ -140,17 +127,24 @@ class EC2Instance < SimpleDelegator
       private_ip_address
   end
 
-  def register_in_known_hosts(tries: 1, sleep: 5)
+  def register_in_known_hosts
     fqdn_memo = fqdn
     raise RegisterNotSuccessError, 'failed to get fqdn' if fqdn_memo.blank?
 
     private_ip_address_memo = private_ip_address
     raise RegisterNotSuccessError, 'failed to get private_ip_address' if private_ip_address_memo.blank?
 
-    Retryable.retryable(tries: tries, on: RegisterNotSuccessError, sleep: sleep) do
-      added = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{private_ip_address_memo}")
-      raise RegisterNotSuccessError, 'failed to add keys in known_hosts' unless added
-    end
+    ::KnownHosts::delete_keys(fqdn_memo)
+
+    registered = ::KnownHosts::scan_and_add_keys("#{fqdn_memo},#{private_ip_address_memo}")
+    raise RegisterNotSuccessError, 'failed to add keys in known_hosts' unless registered
+  end
+
+  def registered_in_known_hosts?
+    fqdn_memo = fqdn
+    raise 'failed to get fqdn' if fqdn_memo.blank?
+
+    ::KnownHosts::match_remote_key?(fqdn_memo)
   end
 
   def platform

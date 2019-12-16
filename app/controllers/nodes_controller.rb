@@ -17,6 +17,7 @@ class NodesController < ApplicationController
   before_action :set_physical_id, only: %i[
     show get_security_groups submit_groups yum_update
     edit_ansible_playbook run_ansible_playbook update_ansible_playbook
+    register_for_known_hosts
   ]
 
   # infra
@@ -238,6 +239,15 @@ class NodesController < ApplicationController
     render plain: ret[:message], status: :internal_server_error and return
   end
 
+  # PUT /nodes/:id/register_for_known_hosts
+  def register_for_known_hosts
+    ec2_instance = @infra.instance(@physical_id)
+
+    ec2_instance.register_in_known_hosts
+
+    render plain: I18n.t('nodes.msg.registered_in_known_hosts') and return
+  end
+
   private
 
   def update_playbook(physical_id: nil, infrastructure: nil, playbook_roles: nil, extra_vars: nil)
@@ -341,6 +351,8 @@ class NodesController < ApplicationController
 
   def check_register_in_knwon_hosts
     physical_id = params.require(:id)
-    @infra.resource(physical_id).should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
+    resource = @infra.resource(physical_id)
+
+    resource.should_be_registered_in_known_hosts(I18n.t('nodes.msg.not_register_in_known_hosts'))
   end
 end

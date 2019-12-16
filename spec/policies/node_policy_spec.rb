@@ -43,7 +43,7 @@ describe NodePolicy do
     end
   end
 
-  %i[apply_dish? yum_update? run_ansible_playbook? edit_ansible_playbook? update_ansible_playbook?].each do |action|
+  %i[register_for_known_hosts? apply_dish? yum_update? run_ansible_playbook? edit_ansible_playbook? update_ansible_playbook?].each do |action|
     permissions action do
       context 'when allowed user' do
         before do
