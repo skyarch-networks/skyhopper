@@ -30,7 +30,7 @@
     "clipboard": "^1.5.8",
     "jquery": "~2.1.4",
     "jquery-textcomplete": "^0.8.1",
-    "jquery-ui": "jquery/jquery-ui#~1.11.4",
+    "jquery-ui": "jquery/jquery-ui#~1.12.0",
     "jquery-ujs": "~1.0.4",
     "jszip": "^3.0.0",
     "md5": "^2.0.0",
