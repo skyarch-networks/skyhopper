@@ -1,0 +1,70 @@
+---
+- name: Get Amzn ver
+  shell: uname -r | grep -o 'amzn[0-9]' | grep -o '[0-9]'
+  register: amznver
+  changed_when: False
+
+- name: Calculate rhel ver
+  shell: echo '{{ amznver.stdout }}+5' | bc
+  register: rhelver
+  changed_when: False
+
+- name: Get Instance id
+  shell: curl -0 169.254.169.254/latest/meta-data/instance-id
+  register: instanceid
+  changed_when: False
+
+- name: Add zabbix repositories
+  yum_repository:
+    name: zabbix-{{ agent_version | default(4.4)}}
+    description: Zabbix Official Repository
+    baseurl: https://repo.zabbix.com/zabbix/{{ agent_version | default(4.4)}}/rhel/{{ rhelver.stdout }}/x86_64/
+    enabled: no
+
+- name: Add zabbix repository key (1)
+  rpm_key:
+    key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+
+- name: Add zabbix repository key (2)
+  rpm_key:
+    key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
+
+- name: Install zabbix-agent
+  yum:
+    name: zabbix-agent
+    state: present
+    enablerepo: zabbix-{{ agent_version | default(4.4)}}
+    update_cache: yes
+
+- name: Check zabbix-version (1)
+  shell: yum list installed zabbix-agent | grep {{ agent_version | default(4.4)}} | wc -l
+  register: installed
+  changed_when: False
+
+- name: Check zabbix-version (2)
+  fail: msg="version {{ agent_version | default(4.4)}} cannot be install because another version is installed"
+  when: installed.stdout | match("0")
+
+- name: Configure zabbix-agent (1)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: Server=127.0.0.1
+    replace: Server={{ zabbix_server_address | default('127.0.0.1')}}
+
+- name: Configure zabbix-agent (2)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: ServerActive=127.0.0.1
+    replace: ServerActive={{ zabbix_server_address | default('127.0.0.1')}}
+
+- name: Configure zabbix-agent (3)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: Hostname=Zabbix server
+    replace: Hostname={{ instanceid.stdout }}
+
+- name: Enable zabbix-agent
+  service:
+    name: zabbix-agent
+    enabled: yes
+    state: restarted
