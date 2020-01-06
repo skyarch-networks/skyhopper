@@ -16,7 +16,7 @@
 
 - name: Add zabbix repositories
   yum_repository:
-    name: zabbix
+    name: zabbix-{{ agent_version | default(4.4)}}
     description: Zabbix Official Repository
     baseurl: https://repo.zabbix.com/zabbix/{{ agent_version | default(4.4)}}/rhel/{{ rhelver.stdout }}/x86_64/
     enabled: no
@@ -29,14 +29,37 @@
   rpm_key:
     key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
 
+- name: Remove old packages
+  yum:
+    name: 
+      - zabbix-agent
+      - zabbix
+    state: absent
+
 - name: Install zabbix-agent
   yum:
     name: zabbix-agent
     state: present
-    enablerepo: zabbix
+    enablerepo: zabbix-{{ agent_version | default(4.4)}}
+    update_cache: yes
 
-- name: Configure zabbix-agent
-  script: zabbix-config.sh {{ zabbix_server_address | default('127.0.0.1')}} {{ instanceid.stdout }}
+- name: Configure zabbix-agent (1)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: Server=127.0.0.1
+    replace: Server={{ zabbix_server_address | default('127.0.0.1')}}
+
+- name: Configure zabbix-agent (2)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: ServerActive=127.0.0.1
+    replace: ServerActive={{ zabbix_server_address | default('127.0.0.1')}}
+
+- name: Configure zabbix-agent (3)
+  replace:
+    path: /etc/zabbix/zabbix_agentd.conf
+    regexp: Hostname=Zabbix server
+    replace: Hostname={{ instanceid.stdout }}
 
 - name: Enable zabbix-agent
   service:
