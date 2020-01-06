@@ -16,7 +16,7 @@
 
 - name: Add zabbix repositories
   yum_repository:
-    name: zabbix
+    name: zabbix-{{ agent_version | default(4.4)}}
     description: Zabbix Official Repository
     baseurl: https://repo.zabbix.com/zabbix/{{ agent_version | default(4.4)}}/rhel/{{ rhelver.stdout }}/x86_64/
     enabled: no
@@ -33,8 +33,17 @@
   yum:
     name: zabbix-agent
     state: present
-    enablerepo: zabbix
+    enablerepo: zabbix-{{ agent_version | default(4.4)}}
     update_cache: yes
+
+- name: Check zabbix-version (1)
+  shell: yum list installed zabbix-agent | grep {{ agent_version | default(4.4)}} | wc -l
+  register: installed
+  changed_when: False
+
+- name: Check zabbix-version (2)
+  fail: msg="version {{ agent_version | default(4.4)}} cannot be install because another version is installed"
+  when: installed.stdout | match("0")
 
 - name: Configure zabbix-agent (1)
   replace:
