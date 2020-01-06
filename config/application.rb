@@ -44,7 +44,7 @@ module SkyHopper
     config.active_job.queue_adapter = :sidekiq
 
     # Version information
-    config.my_version = 'Version 2.3.0'
+    config.my_version = 'Version 2.4.0'
 
     config.browserify_rails.paths << %r{frontend/}
   end
