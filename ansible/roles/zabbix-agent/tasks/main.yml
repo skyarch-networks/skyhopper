@@ -16,7 +16,7 @@
 
 - name: Add zabbix repositories
   yum_repository:
-    name: zabbix-{{ agent_version | default(4.4)}}
+    name: zabbix
     description: Zabbix Official Repository
     baseurl: https://repo.zabbix.com/zabbix/{{ agent_version | default(4.4)}}/rhel/{{ rhelver.stdout }}/x86_64/
     enabled: no
@@ -29,18 +29,11 @@
   rpm_key:
     key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
 
-- name: Remove old packages
-  yum:
-    name: 
-      - zabbix-agent
-      - zabbix
-    state: absent
-
 - name: Install zabbix-agent
   yum:
     name: zabbix-agent
     state: present
-    enablerepo: zabbix-{{ agent_version | default(4.4)}}
+    enablerepo: zabbix
     update_cache: yes
 
 - name: Configure zabbix-agent (1)
