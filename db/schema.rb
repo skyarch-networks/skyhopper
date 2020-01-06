@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_01_021016) do
+ActiveRecord::Schema.define(version: 2019_11_08_072820) do
 
   create_table "app_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "aws_region", null: false
@@ -170,7 +170,6 @@ ActiveRecord::Schema.define(version: 2019_10_01_021016) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "screen_name"
-    t.boolean "register_in_known_hosts"
     t.integer "dish_id"
     t.text "playbook_roles"
     t.text "extra_vars"

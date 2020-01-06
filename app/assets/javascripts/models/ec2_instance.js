@@ -16,6 +16,7 @@ const EC2Instance = class EC2Instance extends ModelBase {
     this.ajax_node.add_member('run_bootstrap', 'GET');
     this.ajax_node.add_member('get_rules', 'GET');
     this.ajax_node.add_member('get_security_groups', 'GET');
+    this.ajax_node.add_member('register_for_known_hosts', 'POST');
     this.ajax_node.add_member('apply_dish', 'POST');
     this.ajax_node.add_member('submit_groups', 'POST');
     this.ajax_node.add_member('edit_attributes', 'GET');
@@ -141,6 +142,12 @@ const EC2Instance = class EC2Instance extends ModelBase {
     };
     const params = Object.assign({}, this.params, extraParams);
     return this._cook('yum_update', params);
+  }
+
+  register_for_known_hosts() {
+    return this.WrapAndResolveReject(
+      () => this.ajax_node.register_for_known_hosts(this.params),
+    );
   }
 
   edit_ansible_playbook() {

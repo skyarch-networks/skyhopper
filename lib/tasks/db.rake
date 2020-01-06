@@ -4,14 +4,24 @@ namespace :db do
   namespace :data do
     error_msg = 'Please specify the path. (e.g. rails db:data:load[./db/hoge.sql]'
 
-    desc 'Dump the database to tmp/dbname.sql (path is optional)'
-    task :dump, [:path] => %i[environment load_config] do |_, args|
+    desc 'Dump the database to tmp/dbname.sql (path and mode is optional)'
+    task :dump, %i[path mode] => %i[environment load_config] do |_, args|
       set_config_and_cmd_host_part
 
       path =
         args[:path] || "tmp/#{@config['database']}.sql"
 
-      cmd = "mysqldump #{@cmd_host_part} -u#{@config['username']} -p#{@config['password']} #{@config['database']} --compatible=ansi > '#{path}'"
+      cmd_compatible_part = if args[:mode].blank? || args[:mode] == 'legacy'
+                              # このオプションが追加される前は、この指定になっていました
+                              # なので、互換性維持のため、デフォルトはこのモードにしています
+                              '--compatible=ansi'
+                            elsif args[:mode] == 'modern'
+                              ''
+                            else
+                              abort 'Option "mode" is allow to value legacy or modern.'
+                            end
+
+      cmd = "mysqldump #{@cmd_host_part} -u#{@config['username']} -p#{@config['password']} #{@config['database']} #{cmd_compatible_part} > '#{path}'"
       system(cmd)
     end
 

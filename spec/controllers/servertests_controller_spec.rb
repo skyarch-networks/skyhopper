@@ -307,6 +307,7 @@ describe ServertestsController, type: :controller do
 
     before do
       resource
+      allow_any_instance_of(EC2Instance).to receive(:registered_in_known_hosts?).and_return(true)
       allow(ServertestJob).to receive(:perform_now).and_return(resp)
     end
 

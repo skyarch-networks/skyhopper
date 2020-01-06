@@ -9,7 +9,7 @@ $ cd <project-root>
 $ cp config/database_docker.yml config/database.yml
 $ cp docker-compose.override-sample.yml docker-compose.override.yml
 $ # ここでconfig/database.ymlとdocker-compose.override.ymlのmysqlのパスワードを変更してください
-$ touch amazonlinux2/known_hosts
+$ touch amazonlinux2/.ssh/known_hosts
 $ chmod 644 amazonlinux2/known_hosts
 $ docker-compose build
 $ # ここで後述する「フォントのダウンロードとビルド」を行ってください
