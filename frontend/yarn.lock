@@ -1608,9 +1608,10 @@ jquery-textcomplete@^0.8.1:
   resolved "https://registry.yarnpkg.com/jquery-textcomplete/-/jquery-textcomplete-0.8.2.tgz#6667cb30aa8f847406df1182924c53de354cde0c"
   integrity sha1-ZmfLMKqPhHQG3xGCkkxT3jVM3gw=
 
-jquery-ui@jquery/jquery-ui#~1.11.4:
-  version "1.11.4"
-  resolved "https://codeload.github.com/jquery/jquery-ui/tar.gz/d6713024e16de90ea71dc0544ba34e1df01b4d8a"
+jquery-ui@jquery/jquery-ui#~1.12.0:
+  version "1.12.1"
+  uid c6f1735249295bb37153861aa97e5b3e38d46b02
+  resolved "https://codeload.github.com/jquery/jquery-ui/tar.gz/c6f1735249295bb37153861aa97e5b3e38d46b02"
 
 jquery-ujs@~1.0.4:
   version "1.0.4"
