@@ -132,7 +132,7 @@ gem 'sky_zabbix', '~> 2.2.0'
 
 gem 'nokogiri', '>= 1.8.5'
 
-gem 'rails-html-sanitizer', '~> 1.0.3'
+gem 'rails-html-sanitizer', '~> 1.4.3'
 
 gem 'rubyzip', '>= 1.2.2'
 gem 'ffi', '>= 1.9.24'
