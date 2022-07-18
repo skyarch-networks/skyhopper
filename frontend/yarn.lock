@@ -1608,9 +1608,12 @@ jquery-textcomplete@^0.8.1:
   resolved "https://registry.yarnpkg.com/jquery-textcomplete/-/jquery-textcomplete-0.8.2.tgz#6667cb30aa8f847406df1182924c53de354cde0c"
   integrity sha1-ZmfLMKqPhHQG3xGCkkxT3jVM3gw=
 
-jquery-ui@jquery/jquery-ui#~1.11.4:
-  version "1.11.4"
-  resolved "https://codeload.github.com/jquery/jquery-ui/tar.gz/d6713024e16de90ea71dc0544ba34e1df01b4d8a"
+jquery-ui@jquery/jquery-ui#~1.13.2:
+  version "1.13.2"
+  uid d6c028cc2e214a4f9f3a787313ef03a17a33a008
+  resolved "https://codeload.github.com/jquery/jquery-ui/tar.gz/d6c028cc2e214a4f9f3a787313ef03a17a33a008"
+  dependencies:
+    jquery ">=1.8.0 <4.0.0"
 
 jquery-ujs@~1.0.4:
   version "1.0.4"
@@ -1619,10 +1622,10 @@ jquery-ujs@~1.0.4:
   dependencies:
     jquery ">=1.8.0"
 
-jquery@>=1.7.1, jquery@>=1.8.0, "jquery@^1.8.3 || ^2.0 || ^3.0":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
-  integrity sha512-Ubldcmxp5np52/ENotGxlLe6aGMvmF4R8S6tZjsP6Knsaxd/xp3Zrh50cG93lR6nPXyUFwzN3ZSOQI0wRJNdGg==
+jquery@>=1.7.1, jquery@>=1.8.0, "jquery@>=1.8.0 <4.0.0", "jquery@^1.8.3 || ^2.0 || ^3.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
+  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
 jquery@^2.1.4:
   version "2.2.4"
